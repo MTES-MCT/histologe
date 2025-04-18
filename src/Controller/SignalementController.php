@@ -30,6 +30,7 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,6 +39,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
@@ -46,6 +48,8 @@ class SignalementController extends AbstractController
     public function __construct(
         #[Autowire(env: 'FEATURE_SITES_FACILES')]
         private readonly bool $featureSitesFaciles,
+        #[Autowire(env: 'FEATURE_SECURE_UUID_URL')]
+        private readonly bool $featureSecureUuidUrl,
     ) {
     }
 
@@ -437,7 +441,7 @@ class SignalementController extends AbstractController
         return $this->json(['error' => 'Aucun fichier n\'a été téléversé'], 400);
     }
 
-    #[Route('/suivre-ma-procedure/{code}', name: 'front_suivi_procedure', methods: 'GET')]
+    #[Route('/suivre-ma-procedure/{code}', name: 'front_suivi_procedure', methods: ['GET', 'POST'])]
     public function suiviProcedure(
         string $code,
         SignalementRepository $signalementRepository,
@@ -446,10 +450,13 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
+        Security $security,
+        AuthenticationUtils $authenticationUtils,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         HtmlSanitizerInterface $htmlSanitizer,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
+
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
             if ($this->featureSitesFaciles) {
@@ -458,8 +465,21 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('home');
         }
+
         $requestEmail = $request->get('from');
         $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+
+        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') && $this->featureSecureUuidUrl) {
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
+
+            return $this->render('security/login_suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+                'fromEmail' => $fromEmail,
+                'error' => $error,
+            ]);
+        }
+
         $suiviAuto = $request->get('suiviAuto');
 
         /** @var User $userOccupant */
@@ -559,17 +579,33 @@ class SignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: 'GET')]
+    #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: ['GET', 'POST'])]
     public function suiviSignalement(
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
         UserManager $userManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
+        Security $security,
+        AuthenticationUtils $authenticationUtils,
     ): Response {
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+
+            if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
+                $currentUser = $security->getUser();
+                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getUserIdentifier() !== $code) {
+                    // get the login error if there is one
+                    $error = $authenticationUtils->getLastAuthenticationError();
+
+                    return $this->render('security/login_suivi_signalement.html.twig', [
+                        'signalement' => $signalement,
+                        'fromEmail' => $fromEmail,
+                        'error' => $error,
+                    ]);
+                }
+            }
 
             $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
             $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);

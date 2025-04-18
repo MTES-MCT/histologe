@@ -5,6 +5,7 @@ namespace App\Tests\Functional\EventListener;
 use App\EventListener\AuthentificationHistoryListener;
 use App\Manager\HistoryEntryManager;
 use App\Repository\HistoryEntryRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -49,9 +50,11 @@ class AuthentificationHistoryListenerTest extends WebTestCase
     public function testOnSchebTwoFactorAuthenticationSuccess(): void
     {
         $historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         $authentificationHistoryListener = new AuthentificationHistoryListener(
             $historyEntryManager,
             $this->logger,
+            $signalementRepository,
             '1'
         );
 
