@@ -34,7 +34,7 @@
                                 <li>
                                     {% if app.user %}
                                         {% if 'ROLE_SUIVI_SIGNALEMENT' in app.user.roles %}
-                                            <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout') }}">
+                                            <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_user') }}">
                                                 Se déconnecter
                                             </a>
                                         {% else %}
@@ -62,7 +62,7 @@
                         <li>
                             {% if app.user %}
                                 {% if 'ROLE_SUIVI_SIGNALEMENT' in app.user.roles %}
-                                    <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout') }}">
+                                    <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_user') }}">
                                         Se déconnecter
                                     </a>
                                 {% else %}
@@ -112,7 +112,7 @@
                                 <li>
                                     {% if app.user %}
                                         {% if 'ROLE_SUIVI_SIGNALEMENT' in app.user.roles %}
-                                            <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout') }}">
+                                            <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_user') }}">
                                                 Se déconnecter
                                             </a>
                                         {% else %}

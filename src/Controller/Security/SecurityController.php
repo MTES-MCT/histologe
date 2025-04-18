@@ -133,4 +133,16 @@ class SecurityController extends AbstractController
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
+
+    #[Route('/logout-suivi', name: 'app_logout_signalement_user')]
+    public function logoutSignalementUser(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route('/logout-suivi-success', name: 'app_logout_signalement_user_success')]
+    public function logoutSignalementUserSuccess(): Response
+    {
+        return $this->redirectToRoute('home');
+    }
 }

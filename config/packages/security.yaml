@@ -36,8 +36,7 @@ security:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
         code_suivi:
-            pattern: ^/(suivre-mon-signalement|suivre-ma-procedure)
-            lazy: false
+            pattern: ^/(suivre-mon-signalement|suivre-ma-procedure|logout-suivi)
             stateless: false
             provider: app_signalement_user_provider
             custom_authenticator: App\Security\CodeSuiviLoginAuthenticator
@@ -45,7 +44,8 @@ security:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
             logout:
-                path: app_logout
+                path: app_logout_signalement_user
+                target: app_logout_signalement_user_success
         main:
             lazy: true
             stateless: false
@@ -59,8 +59,6 @@ security:
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 2592000 # 30 days in seconds

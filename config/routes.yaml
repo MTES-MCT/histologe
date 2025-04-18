@@ -11,3 +11,10 @@ show_file:
     controller: App\Controller\FileController::showFile
     defaults:
         _signed: '%feature_secure_uuid_url%'
+
+app_logout_signalement_user:
+    path: /logout-suivi
+
+app_logout_signalement_user_success:
+    path: /logout-suivi-success
+    controller: App\Controller\Security\SecurityController::logoutSignalementUserSuccess
