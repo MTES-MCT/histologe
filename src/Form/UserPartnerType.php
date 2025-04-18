@@ -96,6 +96,17 @@ class UserPartnerType extends AbstractType
                 'label' => 'Recevoir les e-mails ?',
                 'help' => 'Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.',
             ]);
+        if (!$user->getId()) {
+            $builder->add('isMailingSummary', ChoiceType::class, [
+                'choices' => [
+                    'Un e-mail récapitulatif par jour' => true,
+                    'Tous les e-mails' => false,
+                ],
+                'expanded' => true,
+                'label' => 'Fréquence de notifications par e-mail',
+                'help' => 'Choisissez si ce compte va recevoir un e-mail à chaque nouveauté sur ses signalements ou un e-mail récapitulatif quotidien.',
+            ]);
+        }
         if (1 === $user->getUserPartners()->count() && $this->security->isGranted('ASSIGN_PERMISSION_AFFECTATION', $user->getPartners()->first())) {
             $builder->add('hasPermissionAffectation', CheckboxType::class, [
                 'label' => 'Cet utilisateur peut affecter d\'autres partenaires à ses signalements',

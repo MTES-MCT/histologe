@@ -707,36 +707,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findUsersPartnerEmailAffectedToSignalement(int $signalementId, ?Partner $partnerToExclude = null): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder
-            ->select('u.email')
-            ->innerJoin('s.affectations', 'a')
-            ->innerJoin('a.partner', 'p')
-            ->innerJoin('p.userPartners', 'up')
-            ->innerJoin('up.user', 'u')
-            ->where('s.id = :signalement_id')
-            ->setParameter('signalement_id', $signalementId)
-            ->andWhere('u.statut = '.User::STATUS_ACTIVE)
-            ->andWhere('u.isMailingActive = true');
-
-        if (null !== $partnerToExclude) {
-            $queryBuilder
-                ->andWhere('a.partner != :partner')
-                ->setParameter('partner', $partnerToExclude);
-        }
-
-        $usersEmail = [];
-        foreach ($queryBuilder->getQuery()->getArrayResult() as $value) {
-            if ($value['email'] && !\in_array($value['email'], $usersEmail)) {
-                $usersEmail[] = $value['email'];
-            }
-        }
-
-        return $usersEmail;
-    }
-
     public function getAverageCriticite(
         ?Territory $territory,
         ?ArrayCollection $partners,

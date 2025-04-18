@@ -70,6 +70,10 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         } elseif (Suivi::TYPE_USAGER_POST_CLOTURE === $row['type']) {
             $createdAt = $signalement->getClosedAt()->modify('+3 days');
         }
+        $context = null;
+        if (isset($row['context'])) {
+            $context = $row['context'];
+        }
 
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
@@ -78,6 +82,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             isPublic: $row['is_public'],
             user: $createdBy,
             createdAt: $createdAt,
+            context: $context,
             flush: false,
         );
         $manager->persist($suivi);

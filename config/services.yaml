@@ -52,6 +52,7 @@ parameters:
     feature_sites_faciles: '%env(bool:FEATURE_SITES_FACILES)%'
     feature_banner_histologe: '%env(bool:FEATURE_BANNER_HISTOLOGE)%'
     feature_secure_uuid_url: '%env(bool:FEATURE_SECURE_UUID_URL)%'
+    feature_email_recap: '%env(bool:FEATURE_EMAIL_RECAP)%'
 
 services:
     # default configuration for services in *this* file
