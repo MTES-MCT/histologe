@@ -34,8 +34,6 @@ class StatistiquesController extends AbstractController
         private MotifClotureStatisticProvider $motifClotureStatisticProvider,
         #[Autowire(env: 'SITES_FACILES_URL')]
         private readonly string $sitesFacilesUrl,
-        #[Autowire(env: 'FEATURE_SITES_FACILES')]
-        private readonly bool $featureSitesFaciles,
     ) {
     }
 
@@ -46,11 +44,7 @@ class StatistiquesController extends AbstractController
     )]
     public function statistiques(): Response
     {
-        if ($this->featureSitesFaciles) {
-            return $this->redirect($this->sitesFacilesUrl.'a-propos/statistiques/', Response::HTTP_MOVED_PERMANENTLY);
-        }
-
-        return $this->render('front/statistiques.html.twig');
+        return $this->redirect($this->sitesFacilesUrl.'a-propos/statistiques/', Response::HTTP_MOVED_PERMANENTLY);
     }
 
     #[Route('/statistiques-filter', name: 'front_statistiques_filter')]

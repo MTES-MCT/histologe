@@ -54,7 +54,7 @@ class SignalementControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
         if (SignalementStatus::ARCHIVED->value === $status || SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
-            $this->assertResponseRedirects('/');
+            $this->assertEquals('Le lien utilisé est expiré ou invalide.', $crawler->filter('.fr-alert p')->text());
         } elseif (SignalementStatus::ACTIVE->value === $status) {
             $this->assertEquals('Signalement #2022-1 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
         } else {
@@ -101,10 +101,8 @@ class SignalementControllerTest extends WebTestCase
                 'Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.',
                 $crawler->filter('.fr-alert--error p')->text()
             );
-        } elseif (SignalementStatus::DRAFT->value === $status) {
-            $this->assertResponseRedirects('/');
-        } elseif (SignalementStatus::DRAFT_ARCHIVED->value === $status) {
-            $this->assertResponseRedirects('/');
+        } elseif (SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
+            $this->assertEquals('Le lien utilisé est invalide, vérifiez votre saisie.', $crawler->filter('.fr-alert p')->text());
         }
     }
 
@@ -126,7 +124,7 @@ class SignalementControllerTest extends WebTestCase
             'code' => $codeSuivi = $signalement->getCodeSuivi(),
         ]);
 
-        $client->request('POST', $urlSuiviSignalementUserResponse, [
+        $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
             '_token' => $this->generateCsrfToken($client, 'signalement_front_response_'.$signalement->getUuid()),
             'signalement_front_response' => [
                 'email' => $emailOccupant = $signalement->getMailOccupant(),
@@ -137,7 +135,7 @@ class SignalementControllerTest extends WebTestCase
         if (SignalementStatus::ACTIVE->value === $status) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'?from='.$emailOccupant);
         } else {
-            $this->assertResponseRedirects('/');
+            $this->assertEquals('Vous n\'avez pas les droits pour effectuer cette action.', $crawler->filter('.fr-alert p')->text());
         }
     }
 

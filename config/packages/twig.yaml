@@ -16,7 +16,6 @@ twig:
             banner_message: '%maintenance_banner_message%'
             enable: '%maintenance_enable%'
         mise_en_berne: '%env(MISE_EN_BERNE_ENABLE)%'
-        feature_sites_faciles: '%env(bool:FEATURE_SITES_FACILES)%'
         feature_banner_histologe: '%env(bool:FEATURE_BANNER_HISTOLOGE)%'
         sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
         feature_bo_signalement_create: '%env(bool:FEATURE_BO_SIGNALEMENT_CREATE)%'
