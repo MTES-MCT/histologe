@@ -20,6 +20,7 @@ class SignalementExportFiltersDisplay
         'statuses' => 'Statut',
         'epcis' => 'EPCI',
         'procedure' => 'Procédure suspectée',
+        'procedureConstatee' => 'Procédure constatée',
         'dates' => 'Date de dépôt',
         'visites' => 'Visite',
         'typeDernierSuivi' => 'Type dernier suivi',
@@ -36,6 +37,7 @@ class SignalementExportFiltersDisplay
         'allocs' => 'Allocataire',
         'delays' => 'Nb jours sans suivi',
         'nouveau_suivi' => 'Avec nouveau suivi',
+        'motifCloture' => 'Motif de clôture',
     ];
 
     private const STATUS_AFFECTATION = [

@@ -22,6 +22,7 @@ export const store = {
         searchTerms: null,
         status: null,
         procedure: null,
+        procedureConstatee: null,
         visiteStatus: null,
         typeDernierSuivi: null,
         typeDeclarant: null,
@@ -37,7 +38,8 @@ export const store = {
         showWithoutAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,
-        criticiteScoreMax: null
+        criticiteScoreMax: null,
+        motifCloture: null
       }
     },
     user: {
@@ -100,6 +102,15 @@ export const store = {
       { Id: 'suroccupation', Text: 'Suroccupation' },
       { Id: 'assurantiel', Text: 'Assurantiel' }
     ],
+    procedureConstateeList: [
+      { Id: 'non_decence', Text: 'Non décence' },
+      { Id: 'rsd', Text: 'Infraction RSD' },
+      { Id: 'insalubrite', Text: 'Insalubrité' },
+      { Id: 'mise_en_securite_peril', Text: 'Mise en sécurité / Péril' },
+      { Id: 'logement_decent', Text: 'Logement décent / Pas d\'infraction' },
+      { Id: 'responsabilite_occupant_assurantiel', Text: 'Responsabilité occupant / Assurantiel' },
+      { Id: 'autre', Text: 'Autre' },
+    ],    
     typeDernierSuiviList: [
       { Id: 'partenaire', Text: 'Suivi Partenaire' },
       { Id: 'usager', Text: 'Suivi Usager' },
@@ -129,6 +140,23 @@ export const store = {
       { Id: 'oui', Text: 'Enfant(s) moins de 6ans' },
       { Id: 'non', Text: 'Aucun enfant(s) moins de 6ans' },
       { Id: 'non_renseigne', Text: 'Présence d\'enfants moins de 6ans non renseignée' }
+    ],
+    motifClotureList: [
+      { Id: 'abandon_de_procedure_absence_de_reponse', Text: 'Abandon de procédure / absence de réponse' },
+      { Id: 'depart_occupant', Text: 'Départ occupant' },
+      { Id: 'insalubrite', Text: 'Insalubrité' },
+      { Id: 'logement_decent', Text: 'Logement décent / Pas d\'infraction' },
+      { Id: 'logement_vendu', Text: 'Logement vendu' },
+      { Id: 'non_decence', Text: 'Non décence' },
+      { Id: 'peril', Text: 'Mise en sécurité / Péril' },
+      { Id: 'refus_de_visite', Text: 'Refus de visite' },
+      { Id: 'refus_de_travaux', Text: 'Refus de travaux' },
+      { Id: 'relogement_occupant', Text: 'Relogement occupant' },
+      { Id: 'responsabilite_de_l_occupant', Text: 'Responsabilité de l\'occupant / assurantiel' },
+      { Id: 'rsd', Text: 'RSD' },
+      { Id: 'travaux_faits_ou_en_cours', Text: 'Travaux faits ou en cours' },
+      { Id: 'doublon', Text: 'Doublon' },
+      { Id: 'autre', Text: 'Autre' }
     ]
   },
   props: {
