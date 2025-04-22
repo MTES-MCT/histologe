@@ -464,7 +464,8 @@ class SignalementController extends AbstractController
         $requestEmail = $request->get('from');
         $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
 
-        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') && $this->featureSecureUuidUrl) {
+        $currentUser = $security->getUser();
+        if ((!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getUserIdentifier() !== $code) && $this->featureSecureUuidUrl) {
             // get the login error if there is one
             $error = $authenticationUtils->getLastAuthenticationError();
 

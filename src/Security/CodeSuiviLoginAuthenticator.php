@@ -63,13 +63,19 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     private function denyAccessIfNotAllowed(Signalement $signalement, string $inputFirstLetterPrenom, string $inputFirstLetterNom, string $inputCodePostal): void
     {
-        $prenomToCheck = !empty($signalement->getPrenomDeclarant()) ? $signalement->getPrenomDeclarant() : $signalement->getPrenomOccupant();
-        $firstLetterPrenomToCheck = mb_strtoupper(substr($prenomToCheck, 0, 1));
-        $nomToCheck = !empty($signalement->getNomDeclarant()) ? $signalement->getNomDeclarant() : $signalement->getNomOccupant();
-        $firstLetterNomToCheck = mb_strtoupper(substr($nomToCheck, 0, 1));
-        if ($firstLetterPrenomToCheck !== $inputFirstLetterPrenom
-                || $firstLetterNomToCheck !== $inputFirstLetterNom
-                || $signalement->getCpOccupant() !== $inputCodePostal) {
+        $testDeclarant = false;
+        if (!empty($signalement->getPrenomDeclarant()) && !empty($signalement->getNomDeclarant())) {
+            $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomDeclarant(), 0, 1));
+            $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomDeclarant(), 0, 1));
+            $testDeclarant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
+        }
+        $testOccupant = false;
+        if (!empty($signalement->getPrenomOccupant()) && !empty($signalement->getNomOccupant())) {
+            $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomOccupant(), 0, 1));
+            $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomOccupant(), 0, 1));
+            $testOccupant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
+        }
+        if ((!$testDeclarant && !$testOccupant) || $signalement->getCpOccupant() !== $inputCodePostal) {
             throw new CustomUserMessageAuthenticationException('Informations incorrectes');
         }
     }
