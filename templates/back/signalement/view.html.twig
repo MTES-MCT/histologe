@@ -3,6 +3,22 @@
 {% set static_picto_yes = '<p class="fr-badge fr-badge--success">Oui</p>' %}
 {% set static_picto_no = '<p class="fr-badge fr-badge--error">Non</p>' %}
 
+{% block notice %}
+    {% if signalement.createdBy and signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
+        <div class="fr-notice fr-notice--info">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p>
+                        <span class="fr-notice__title">Signalement BO</span>
+                        <span class="fr-notice__desc">Ce signalement a été créé depuis le formulaire pro par {{ signalement.createdBy.prenom }} {{ signalement.createdBy.nom }}, du partenaire {{ signalement.createdBy.getPartnerInTerritory(signalement.territory).nom }}.</span>
+                    </p>
+                    <button title="Masquer le message" onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)" id="button-1299" class="fr-btn--close fr-btn">Masquer le message</button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     {% if canSeePartnerAffectation and canTogglePartnerAffectation %}
         {% include '_partials/_modal_affectation.html.twig' %}
