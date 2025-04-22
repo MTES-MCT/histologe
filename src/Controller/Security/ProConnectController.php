@@ -78,8 +78,8 @@ class ProConnectController extends AbstractController
             }
 
             $this->addFlash('warning',
-                'Aucun compte actif associé à votre adresse email ou identifiant ProConnect n’a été trouvé.'.
-                ' Veuillez contacter votre responsable territoire.');
+                'L\'adresse e-mail liée à votre compte ProConnect ne correspond à aucun compte sur la plateforme Signal Logement.'
+                        .' Merci de contacter votre responsable de territoire.');
             $this->logger->warning('Tentative de connexion ProConnect refusée : aucun utilisateur actif trouvé.', [
                 'email' => $proConnectUser->email,
                 'sub' => $proConnectUser->sub,
