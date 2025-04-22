@@ -26,7 +26,6 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         api:
-            context: api_context
             pattern: ^/api
             stateless: true
             provider: app_user_provider
@@ -37,7 +36,6 @@ security:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
         code_suivi:
-            context: code_suivi_context
             pattern: ^/(suivre-mon-signalement|suivre-ma-procedure|logout-suivi)
             stateless: false
             provider: app_signalement_user_provider
@@ -50,7 +48,6 @@ security:
                 target: app_logout_signalement_user_success
                 invalidate_session: false
         main:
-            context: main_context
             lazy: true
             stateless: false
             provider: app_user_provider
