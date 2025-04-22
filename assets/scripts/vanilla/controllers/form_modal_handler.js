@@ -68,7 +68,6 @@ async function submitPayload (formElement) {
       let firstErrorElement = true
       for (const property in errors) {
         const inputElements = document.querySelectorAll(`.fr-modal--opened [name="${property}"]`)
-        console.log(inputElements)
         let inputElement
         let parentElement
         if(inputElements.length > 1) {

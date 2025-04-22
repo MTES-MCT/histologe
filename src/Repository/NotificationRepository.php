@@ -256,4 +256,34 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
 
         $qb->getQuery()->execute();
     }
+
+    public function findWaitingSummaryForUser(User $user): array
+    {
+        return $this->createQueryBuilder('n')
+            ->select('n', 's')
+            ->leftJoin('n.signalement', 's')
+            ->where('n.user = :user')
+            ->andWhere('n.waitMailingSummary = :waitMailingSummary')
+            ->setParameter('user', $user)
+            ->setParameter('waitMailingSummary', true)
+            ->addOrderBy('n.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function massUpdate(array $notifications, array $data): void
+    {
+        $qb = $this->createQueryBuilder('n')
+        ->update()
+        ->set('n.waitMailingSummary', ':waitMailingSummary')
+        ->setParameter('waitMailingSummary', $data['waitMailingSummary'])
+        ->where('n.id IN (:ids)')
+        ->setParameter('ids', array_map(fn (Notification $notification) => $notification->getId(), $notifications));
+        if (isset($data['mailingSummarySentAt'])) {
+            $qb->set('n.mailingSummarySentAt', ':mailingSummarySentAt')
+                ->setParameter('mailingSummarySentAt', $data['mailingSummarySentAt']);
+        }
+
+        $qb->getQuery()->execute();
+    }
 }

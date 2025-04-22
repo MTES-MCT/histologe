@@ -29,7 +29,7 @@ class SendSummaryEmailsCommand extends AbstractCronCommand
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
         #[Autowire(env: 'FEATURE_EMAIL_RECAP')]
-        private bool $featureEmailRecap,
+        private readonly bool $featureEmailRecap,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -45,11 +45,16 @@ class SendSummaryEmailsCommand extends AbstractCronCommand
         }
 
         $users = $this->userRepository->findUserWaitingSummaryEmail();
+        $progressBar = $this->io->createProgressBar(\count($users));
+        $progressBar->start();
+
         $nbMails = 0;
         foreach ($users as $user) {
             $nbMails += $this->summaryMailService->sendSummaryEmailIfNeeded($user);
+            $progressBar->advance();
         }
 
+        $progressBar->finish();
         $message = $nbMails.' emails récapitulatifs envoyés.';
         $this->io->success($message);
 

@@ -6,13 +6,11 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\SummaryMailService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SummaryMailServiceTest extends KernelTestCase
 {
-    private EntityManagerInterface $entityManager;
     private NotificationRepository $notificationRepository;
     private SummaryMailService $summaryMailService;
     private NotificationMailerRegistry $notificationMailerRegistry;
@@ -20,15 +18,14 @@ class SummaryMailServiceTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        $this->entityManager = $this->getContainer()->get(EntityManagerInterface::class);
         $this->notificationRepository = $this->getContainer()->get(NotificationRepository::class);
         $this->notificationMailerRegistry = $this->getContainer()->get(NotificationMailerRegistry::class);
         $this->userRepository = $this->getContainer()->get(UserRepository::class);
 
         $this->summaryMailService = new SummaryMailService(
-            $this->entityManager,
             $this->notificationRepository,
-            $this->notificationMailerRegistry
+            $this->notificationMailerRegistry,
+            true
         );
     }
 

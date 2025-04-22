@@ -26,16 +26,19 @@ class SendSummaryEmailsCommandTest extends KernelTestCase
 
             return;
         }
-
-        $this->assertStringContainsString(' emails récapitulatifs envoyés.', $output);
-        $nb = (int) str_replace(['[OK] ', ' emails récapitulatifs envoyés.'], '', $output);
+        $explodedOutput = explode("\n", $output);
+        $lastLine = $explodedOutput[count($explodedOutput) - 3];
+        $this->assertStringContainsString(' emails récapitulatifs envoyés.', $lastLine);
+        $nb = (int) str_replace(['[OK] ', ' emails récapitulatifs envoyés.'], '', $lastLine);
         ++$nb;
         $this->assertEmailCount($nb);
 
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('0 emails récapitulatifs envoyés.', $output);
+        $explodedOutput = explode("\n", $output);
+        $lastLine = $explodedOutput[count($explodedOutput) - 3];
+        $this->assertStringContainsString('0 emails récapitulatifs envoyés.', $lastLine);
         ++$nb;
         $this->assertEmailCount($nb);
     }

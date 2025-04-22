@@ -20,7 +20,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -64,22 +63,19 @@ class ProfilController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        /** @var Form $form */
         $form = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
-
-            return $this->json($response, $response['code']);
-        }
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $user->setIsMailingActive(true);
             $entityManager->flush();
 
             $this->addFlash('success', 'Vos préférences en matière de notifications par e-mail ont bien été enregistrées.');
-        }
 
-        return $this->json(['code' => Response::HTTP_OK]);
+            return $this->json(['code' => Response::HTTP_OK]);
+        }
+        $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
+
+        return $this->json($response, $response['code']);
     }
 
     #[Route('/edit-infos', name: 'back_profil_edit_infos', methods: ['POST'])]

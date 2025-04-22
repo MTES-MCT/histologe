@@ -68,12 +68,11 @@ function histoUpdatePermissionsFromRole () {
 
 function updateMailingSumaryState() {
   const isMailingActive = document.querySelector('input[name="user_partner[isMailingActive]"]:checked').value
-  console.log('isMailingActive', isMailingActive)
   if(isMailingActive == 1) {
     document.querySelectorAll('input[name="user_partner[isMailingSummary]"]').forEach(input => {
       input.removeAttribute('disabled')
     })
-  }else {
+  } else {
     document.querySelectorAll('input[name="user_partner[isMailingSummary]"]').forEach(input => {
       input.setAttribute('disabled', 'disabled')
     })
