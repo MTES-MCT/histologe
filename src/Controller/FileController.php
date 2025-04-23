@@ -31,7 +31,7 @@ class FileController extends AbstractController
                 ]);
 
             return new BinaryFileResponse(
-                new SymfonyFile($this->getParameter('images_dir').'image-404.png'),
+                new SymfonyFile($this->getParameter('images_dir').'doc-file-403.png'),
             );
         }
 

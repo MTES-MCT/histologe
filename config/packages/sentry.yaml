@@ -26,6 +26,7 @@ when@prod:
           type: sentry
           level: !php/const Monolog\Logger::ERROR
           hub_id: Sentry\State\HubInterface
+          fill_extra_context: true
 
     services:
       Monolog\Processor\PsrLogMessageProcessor:

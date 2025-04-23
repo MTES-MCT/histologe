@@ -17,7 +17,7 @@ class FileScanner
         private readonly ParameterBagInterface $parameterBag,
         private readonly LoggerInterface $logger,
         #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
-        private bool $clamavScanEnable,
+        private readonly bool $clamavScanEnable,
     ) {
     }
 
@@ -47,6 +47,7 @@ class FileScanner
                 'filename' => $scannedFile->getFileName(),
                 'response' => $scannedFile->getRawResponse(),
                 'virus' => $scannedFile->getVirusName(),
+                'is_clean' => false,
             ]);
 
             return false;

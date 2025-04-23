@@ -174,7 +174,7 @@ class SignalementFileUploadController extends AbstractController
      *     date: \DateTimeImmutable,
      *     type: string,
      *     documentType: ?DocumentType,
-     *     is_suspicious: bool
+     *     isSuspicious: bool
      * }>
      *
      * @throws \Throwable

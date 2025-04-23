@@ -32,6 +32,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -408,6 +409,7 @@ class SignalementController extends AbstractController
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
+                    /** @var UploadedFile $file */
                     if (!$fileScanner->isClean($file->getPathname())) {
                         if ('application/pdf' === $file->getMimeType()) {
                             return $this->json(['error' => 'Par mesure de sécurité, le fichier '.$file->getClientOriginalName().' a été rejeté car il contient du code exécutable.'], 400);

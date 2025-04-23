@@ -43,7 +43,7 @@ class SignalementFileProcessor
      *     date: \DateTimeImmutable,
      *     type: string,
      *     documentType: ?DocumentType,
-     *     is_suspicious: bool
+     *     isSuspicious: bool
      * }>
      *
      * @throws \Throwable
@@ -199,7 +199,7 @@ class SignalementFileProcessor
             'date' => new \DateTimeImmutable(),
             'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
             'documentType' => $documentType,
-            'is_suspicious' => $isSuspicious,
+            'isSuspicious' => $isSuspicious,
         ];
     }
 
