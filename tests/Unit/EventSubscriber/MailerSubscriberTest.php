@@ -32,8 +32,8 @@ class MailerSubscriberTest extends TestCase
         $event = new MessageEvent($email, $envelope, 'smtp', false);
 
         $subscriber = new MailerSubscriber(
-            mailTestEnable: true,
-            mailTestEmail: 'mailcatcher@signal-logement.fr'
+            mailTestEnable: (bool) $_ENV['MAIL_TEST_ENABLE'],
+            mailTestEmail: $_ENV['MAIL_TEST_EMAIL'],
         );
 
         $subscriber->onMessage($event);
