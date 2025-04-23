@@ -41,44 +41,35 @@
         {% endfor %}
     </section>
 
-    {% if nbResults == 0 %}  
-        <section class="fr-p-5v">
-            <p class="fr-mt-3v fr-alert fr-alert--warning">
-                Votre liste est vide : vous ne pouvez pas exporter une liste vide.<br>
-                Vous pouvez retourner sur la liste des utilisateurs pour changer les filtres et avoir des utilisateurs à exporter.
-            </p>
-        </section>
-    {% else %}
-        <section class="fr-p-5v">
-            <form action="" method="POST" id="export-user">
-                <h2>Format</h2>
-                {% include 'form/form-choice-export-format.html.twig' %}
-            </form>
+    <section class="fr-p-5v">
+        <form action="" method="POST" id="export-user">
+            <h2>Format</h2>
+            {% include 'form/form-choice-export-format.html.twig' %}
+        </form>
 
-            <h2 class="fr-mt-5v">Informations du fichier</h2>
-            <div class="fr-alert fr-alert--warning fr-alert--sm">
-                <p>Les informations contenues dans ce fichier ne doivent en aucun cas être partagées en dehors de vos services.</p>
-            </div>
-            <p class="fr-mt-5v">
-                Votre fichier contient les informations suivantes :
-            </p>
-            <ul>
-                {% for column in columns %}
-                    <li><strong>{{column.label}} : </strong>{{column.desc}}</li>
-                {% endfor %}
-            </ul>
-            <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--right fr-btns-group--icon-left">
-                <li>
-                    <a href="{{ path('back_user_index', searchUser.urlParams) }}" class="fr-btn fr-w-100 fr-btn--secondary fr-btn--icon-left fr-icon-close-line">
-                        Annuler
-                    </a>
-                </li>
-                <li>
-                    <button type="submit" form="export-user" class="fr-btn fr-w-100 fr-btn--icon-left fr-icon-check-line">
-                        Exporter le fichier
-                    </button>
-                </li>
-            </ul>
-        </section>
-    {% endif %}
+        <h2 class="fr-mt-5v">Informations du fichier</h2>
+        <div class="fr-alert fr-alert--warning fr-alert--sm">
+            <p>Les informations contenues dans ce fichier ne doivent en aucun cas être partagées en dehors de vos services.</p>
+        </div>
+        <p class="fr-mt-5v">
+            Votre fichier contient les informations suivantes :
+        </p>
+        <ul>
+            {% for column in columns %}
+                <li><strong>{{column.label}} : </strong>{{column.desc}}</li>
+            {% endfor %}
+        </ul>
+        <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--right fr-btns-group--icon-left">
+            <li>
+                <a href="{{ path('back_user_index', searchUser.urlParams) }}" class="fr-btn fr-w-100 fr-btn--secondary fr-btn--icon-left fr-icon-close-line">
+                    Annuler
+                </a>
+            </li>
+            <li>
+                <button type="submit" form="export-user" class="fr-btn fr-w-100 fr-btn--icon-left fr-icon-check-line">
+                    Exporter le fichier
+                </button>
+            </li>
+        </ul>
+    </section>
 {% endblock %}

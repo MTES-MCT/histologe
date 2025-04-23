@@ -36,109 +36,102 @@
         {% endfor %}
     </section>
 
-    {% if count_signalements == 0 %}  
-        <p class="fr-mt-3v fr-alert fr-alert--warning">
-            Votre liste est vide : vous ne pouvez pas exporter une liste vide.<br>
-            Vous pouvez retourner sur la liste de signalements pour changer les filtres et avoir des signalements à exporter.
+    <form action="{{ path('back_signalement_list_export_file') }}" method="POST" class="fr-mt-5v">
+        <h2>Format</h2>
+        {% include 'form/form-choice-export-format.html.twig' %}
+        
+        <h2 class="fr-mt-5v">Informations du fichier</h2>
+        <div class="fr-alert fr-alert--warning fr-alert--sm">
+            <p>Les informations contenues dans ce fichier ne doivent en aucun cas être partagées en dehors des services compétents à traiter le dossier.</p>
+        </div>
+
+        <h3 class="fr-mt-5v">Infos obligatoires</h3>
+        <p>
+            Par défaut, votre fichier contient les informations suivantes :
         </p>
-    {% else %}
-        <form action="{{ path('back_signalement_list_export_file') }}" method="POST" class="fr-mt-5v">
-            <h2>Format</h2>
-            {% include 'form/form-choice-export-format.html.twig' %}
-            
-            <h2 class="fr-mt-5v">Informations du fichier</h2>
-            <div class="fr-alert fr-alert--warning fr-alert--sm">
-                <p>Les informations contenues dans ce fichier ne doivent en aucun cas être partagées en dehors des services compétents à traiter le dossier.</p>
+        <ul>
+            <li><strong>Référence :</strong> la référence du signalement</li>
+            <li><strong>Déposé le :</strong> la date de dépôt du signalement</li>
+            <li><strong>Statut :</strong> le statut du signalement (nouveau, en cours, fermé)</li>
+            <li><strong>Description :</strong> le message laissé par l'usager au dépôt du signalement, décrivant la situation</li>
+            <li><strong>Type déclarant :</strong> le type de déclarant (occupant, tiers, propriétaire occupant, services de secours...)</li>
+            <li><strong>Nom occupant :</strong> le nom de l'occupant du logement</li>
+            <li><strong>Prénom occupant :</strong> le prénom de l'occupant du logement</li>
+            <li><strong>Téléphone occupant :</strong> le numéro de téléphone de l'occupant</li>
+            <li><strong>E-mail occupant :</strong> l'adresse e-mail de l'occupant</li>
+            <li><strong>Adresse :</strong> l'adresse postale du logement</li>
+            <li><strong>Code postal :</strong> le code postal du logement</li>
+            <li><strong>Commune :</strong> la commune du logement</li>
+            <li><strong>Situation :</strong> les catégories de désordres présents dans le logement</li>
+            <li><strong>Désordres :</strong> le détail des désordres présents dans le logement</li>
+            <li><strong>Allocataire :</strong> si l'usager est allocataire ou non</li>
+            <li><strong>Logement social :</strong> s'il s'agit d'un logement social ou non</li>
+        </ul>
+
+        <h2 class="fr-mb-0" id="desc-table">
+            Infos à sélectionner
+            <div class="fr-text--sm fr-text--light">
+                Dans le tableau ci-dessous, sélectionnez les colonnes à ajouter à votre fichier.
+                <br>
+                Cliquez sur la case dans l'en-tête pour tout sélectionner.
+                <br>
+                Si vous ne cochez aucune case, seule les informations obligatoires vous seront transmises.
             </div>
-
-            <h3 class="fr-mt-5v">Infos obligatoires</h3>
-            <p>
-                Par défaut, votre fichier contient les informations suivantes :
-            </p>
-            <ul>
-                <li><strong>Référence :</strong> la référence du signalement</li>
-                <li><strong>Déposé le :</strong> la date de dépôt du signalement</li>
-                <li><strong>Statut :</strong> le statut du signalement (nouveau, en cours, fermé)</li>
-                <li><strong>Description :</strong> le message laissé par l'usager au dépôt du signalement, décrivant la situation</li>
-                <li><strong>Type déclarant :</strong> le type de déclarant (occupant, tiers, propriétaire occupant, services de secours...)</li>
-                <li><strong>Nom occupant :</strong> le nom de l'occupant du logement</li>
-                <li><strong>Prénom occupant :</strong> le prénom de l'occupant du logement</li>
-                <li><strong>Téléphone occupant :</strong> le numéro de téléphone de l'occupant</li>
-                <li><strong>E-mail occupant :</strong> l'adresse e-mail de l'occupant</li>
-                <li><strong>Adresse :</strong> l'adresse postale du logement</li>
-                <li><strong>Code postal :</strong> le code postal du logement</li>
-                <li><strong>Commune :</strong> la commune du logement</li>
-                <li><strong>Situation :</strong> les catégories de désordres présents dans le logement</li>
-                <li><strong>Désordres :</strong> le détail des désordres présents dans le logement</li>
-                <li><strong>Allocataire :</strong> si l'usager est allocataire ou non</li>
-                <li><strong>Logement social :</strong> s'il s'agit d'un logement social ou non</li>
-            </ul>
-
-            <h2 class="fr-mb-0" id="desc-table">
-                Infos à sélectionner
-                <div class="fr-text--sm fr-text--light">
-                    Dans le tableau ci-dessous, sélectionnez les colonnes à ajouter à votre fichier.
-                    <br>
-                    Cliquez sur la case dans l'en-tête pour tout sélectionner.
-                    <br>
-                    Si vous ne cochez aucune case, seule les informations obligatoires vous seront transmises.
+        </h2>
+        
+        {% set tableHead %}
+            <th class="fr-cell--fixed" role="columnheader">
+                <div class="fr-checkbox-group fr-checkbox-group--sm">
+                    <input id="table-select-checkbox-all" type="checkbox">
+                    <label class="fr-label" for="table-select-checkbox-all">
+                        Nom de la colonne
+                    </label>
                 </div>
-            </h2>
-            
-            {% set tableHead %}
-                <th class="fr-cell--fixed" role="columnheader">
+            </th>
+            <th scope="col">
+                Nom de la colonne
+            </th>
+            <th scope="col">
+                Détails
+            </th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for colId, col in selectable_cols %}
+            <tr data-row-key="{{ loop.index }}">
+                <th class="fr-cell--fixed" scope="row">
                     <div class="fr-checkbox-group fr-checkbox-group--sm">
-                        <input id="table-select-checkbox-all" type="checkbox">
-                        <label class="fr-label" for="table-select-checkbox-all">
-                            Nom de la colonne
+                        <input name="cols[]" value="{{ colId }}" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column"
+                            {% if colId in selected_cols %}checked="checked"{% endif %}>
+                        <label class="fr-label" for="table-select-checkbox-{{ colId }}">
+                            {{ col.name }}
                         </label>
                     </div>
                 </th>
-                <th scope="col">
-                    Nom de la colonne
-                </th>
-                <th scope="col">
-                    Détails
-                </th>
-            {% endset %}
+                <td>
+                    {{ col.name }}
+                </td>
+                <td>
+                    {{ col.description }}
+                </td>
+            </tr>
+            {% endfor %}
+        {% endset %}
 
-            {% set tableBody %}
-                {% for colId, col in selectable_cols %}
-                <tr data-row-key="{{ loop.index }}">
-                    <th class="fr-cell--fixed" scope="row">
-                        <div class="fr-checkbox-group fr-checkbox-group--sm">
-                            <input name="cols[]" value="{{ colId }}" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column"
-                                {% if colId in selected_cols %}checked="checked"{% endif %}>
-                            <label class="fr-label" for="table-select-checkbox-{{ colId }}">
-                                {{ col.name }}
-                            </label>
-                        </div>
-                    </th>
-                    <td>
-                        {{ col.name }}
-                    </td>
-                    <td>
-                        {{ col.description }}
-                    </td>
-                </tr>
-                {% endfor %}
-            {% endset %}
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des colonnes à exporter', 'tableDescId': 'desc-table-expired', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true, 'cancelMultiline': true } %}
 
-            {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des colonnes à exporter', 'tableDescId': 'desc-table-expired', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true, 'cancelMultiline': true } %}
-
-            <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--right fr-btns-group--icon-left">
-                <li>
-                    <a href="{{ path('back_signalements_index') }}" class="fr-btn fr-w-100 fr-btn--secondary fr-btn--icon-left fr-icon-close-line">
-                        Annuler
-                    </a>
-                </li>
-                <li>
-                    <button class="fr-btn fr-w-100 fr-btn--icon-left fr-icon-check-line">
-                        Exporter le fichier
-                    </button>
-                </li>
-            </ul>
-        </form>
-    {% endif %}
+        <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--right fr-btns-group--icon-left">
+            <li>
+                <a href="{{ path('back_signalements_index') }}" class="fr-btn fr-w-100 fr-btn--secondary fr-btn--icon-left fr-icon-close-line">
+                    Annuler
+                </a>
+            </li>
+            <li>
+                <button class="fr-btn fr-w-100 fr-btn--icon-left fr-icon-check-line">
+                    Exporter le fichier
+                </button>
+            </li>
+        </ul>
+    </form>
 </div>
 {% endblock %}
