@@ -33,7 +33,7 @@ class MailerSubscriberTest extends TestCase
 
         $subscriber = new MailerSubscriber(
             mailTestEnable: (bool) $_ENV['MAIL_TEST_ENABLE'],
-            mailTestEmail: $_ENV['MAIL_TEST_EMAIL'],
+            mailTestEmail: 'mailcatcher@signal-logement.fr',
         );
 
         $subscriber->onMessage($event);
