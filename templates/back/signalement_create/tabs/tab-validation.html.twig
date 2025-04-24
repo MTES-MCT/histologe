@@ -1,1 +1,142 @@
 <h2 class="fr-h4">Validation</h2>
+
+{% for error in errorMsgs %}
+    <div class="fr-alert fr-alert--sm fr-alert--error fr-mb-2v">
+        <p>{{ error }}</p>
+    </div>
+{% endfor %}
+
+{% if is_granted('ROLE_ADMIN_TERRITORY') %}
+    <p>
+        Une fois votre signalement enregistré, il sera validé et les partenaires sélectionnés seront affectés. 
+        <br>
+        Vous pourrez toujours affecter des partenaires ou modifier les affectations plus tard.
+    </p>
+{% else %}
+    {% if assignablePartners|length %}
+        <div class="fr-alert fr-alert--warning fr-mb-2w">
+            <p>
+                Attention, des affectations automatiques sont paramétrées sur le territoire. 
+                <br>
+                Une fois le signalement créé, il sera automatiquement affecté à des partenaires. 
+                Assurez-vous d'avoir renseigné toutes les informations avant de créer le signalement !
+            </p>
+        </div>
+        <div class="fr-alert fr-alert--info fr-mb-2w">
+            <p>Après validation, vous pourrez voir le signalement uniquement s'il vous a été affecté !</p>
+        </div>
+    {% else %}
+        <p>
+            Une fois votre signalement enregistré, il sera soumis à validation aux responsables de territoire.
+            <br>
+            Les responsables de territoire pourront valider le signalement et l'affecter aux partenaires compétents.
+        </p>
+        <div class="fr-alert fr-alert--info fr-mb-2w">
+            <p>Après validation par les responsables de territoire, vous pourrez voir le signalement uniquement s'il vous a été affecté !</p>
+        </div>
+    {% endif %}
+{% endif %}
+
+<div class="fr-callout">
+    <h3 class="fr-callout__title fr-h6">Préqualification de la situation</h3>
+    <p class="fr-callout__text fr-mb-2w">
+        Sur la base des informations renseignées, la préqualification est la suivante :
+    </p>
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-6">
+            <strong>Criticité du signalement</strong>
+            <p>
+                <strong>{{ signalement.score|round(2) }}%</strong>
+                <br>
+                (Score bâtiment : {{ signalement.scoreBatiment|round(2) }}% - Score logement : {{ signalement.scoreLogement|round(2) }}%)
+            </p>
+        </div>
+        <div class="fr-col-6">
+            <strong>Situation(s) suspectée(s)</strong>
+            <br>
+            {% for qualification in signalement.signalementQualifications %}
+                {% include '_partials/signalement/qualification.html.twig' with { 'qualificationStatusLabel': qualification.status.label } %}
+            {% endfor %}
+        </div>             
+    </div>
+</div>
+
+<form id="bo-form-signalement-validation" method="post" action="{{ path('back_signalement_draft_form_validation', {uuid: signalement.uuid}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('form_signalement_validation') }}">
+    {% if assignablePartners|length %}
+        <div class="fr-callout">
+            <h3 class="fr-callout__title fr-h6">Affectation automatique</h3>
+            <p class="fr-callout__text">
+                Voici les partenaires auquel le signalement sera affecté, d'aprés les régles d'affectation automatique de votre territoire.
+                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                    <br>
+                    NB : Vous pourrez toujours modifier les affectations après validation !
+                {% endif %}
+                <br>
+                <strong>Partenaires affectés</strong>
+                <br>
+                {% for partner in assignablePartners %}
+                    <span class="fr-badge fr-badge--blue-ecume fr-m-1v">{{ partner.nom }}</span>
+                {% endfor %}
+            </p>
+        </div>
+    {% elseif is_granted('ROLE_ADMIN_TERRITORY') %}
+        <h3 class="fr-h6">Affectation des partenaires (facultatif)</h3>
+        <p>
+            Une fois le signalement enregistré, il sera automatiquement validé et affecté selon les affectations définies ci-dessous. 
+            <br>
+            Si vous ne définissez aucune affectation, vous pourrez le faire plus tard.
+        </p>
+        <div class="fr-grid-row fr-grid-row--gutters search-and-select-badges-container">
+            <div class="fr-col-6">
+                <strong>Sélectionner les partenaires</strong>
+                <br>
+                <p>Recherchez les partenaires à affecter au signalement puis cliquez dessus.</p>
+                <div class="fr-search-bar" role="search">
+                    <label class="fr-label" for="partner-filter-input">
+                        Recherche
+                    </label>
+                    <input class="fr-input search-and-select-badges-search-input" placeholder="Rechercher" type="search" id="partner-filter-input" name="partner-filter-input">
+                    <button class="fr-btn" title="Rechercher">
+                        Rechercher
+                    </button>
+                </div>
+                <div class="fr-my-3v">
+                    {% for item in partners %}
+                        <span
+                            class="fr-badge fr-m-1v search-and-select-badge-add search-and-select-badge-add-{{ item.id }}"
+                            data-badge-id="{{ item.id }}" data-badge-label="{{ item.nom }}"
+                            >{{ item.nom }} <span class="fr-icon-add-line" aria-hidden="true"></span></span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="fr-col-6">
+                <strong>Partenaires sélectionnés</strong>
+                <p>Cliquez sur un partenaire pour le retirer du signalement.</p>
+                <div class="search-and-select-badges-selected fr-my-3v">
+                    <em class="search-and-select-badges-no-selection fr-text-default--warning fr-fi-close-line fr-icon--xs">
+                        <small>Aucune partenaire affecté à ce signalement.</small>
+                    </em>
+                </div>
+            </div>
+                <input type="hidden" class="search-and-select-badges-input" id="affectation-partner-ids" name="partner-ids" value="">   
+        </div>
+    {% endif %}
+
+    <div class="fr-grid-row fr-grid-row--right">
+        <div>
+            <button type="button" id="quit-validation" data-route="{{path('back_signalement_drafts')}}" class="fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline fr-btn">Finir plus tard</button>
+        </div>
+        <div class="fr-ml-2w">
+            <button type="submit" class="fr-btn fr-icon-check-line fr-btn--icon-left fr-btn">
+                {% if is_granted('ROLE_ADMIN_TERRITORY') or assignablePartners|length %}
+                    Valider et affecter
+                {% else %}
+                    Créer et faire valider
+                {% endif %}
+            </button>
+        </div>
+    </div>
+</form>  
+
+

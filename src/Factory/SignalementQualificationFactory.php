@@ -78,7 +78,7 @@ class SignalementQualificationFactory
             $this->qualificationStatusService->getNDEStatus($signalementQualification)
         );
 
-        if (null == $signalement->getCreatedFrom()) {
+        if (!$signalement->isV2()) {
             $signalementQualification->setCriticites($listNDECriticites);
         } else {
             $signalementQualification->setDesordrePrecisionIds($listNDECriticites);

@@ -18,7 +18,7 @@ class SignalementDesordresProcessor
         $criticitesArranged = [];
         $photos = [];
         $criteres = [];
-        if (null == $signalement->getCreatedFrom()) {
+        if (!$signalement->isV2()) {
             foreach ($signalement->getCriticites() as $criticite) {
                 $situationLabel = $criticite->getCritere()->getSituation()->getLabel();
                 $critereLabel = $criticite->getCritere()->getLabel();

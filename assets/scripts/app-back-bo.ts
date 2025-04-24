@@ -13,6 +13,7 @@ import './vanilla/services/table_sortable.js'
 import './vanilla/services/list_filter_helper.js';
 import './vanilla/services/component_search_checkbox.js';
 import './vanilla/services/component_phone_number_row.js';
+import './vanilla/services/component_search_and_select_badges.js';
 import './vanilla/services/tabs_manager.js';
 import './vanilla/services/notice_helper.js';
 import './vanilla/services/modales_helper.js';

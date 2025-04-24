@@ -4,14 +4,11 @@ namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
 use App\Entity\AutoAffectationRule;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
-use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\PartnerRepository;
@@ -35,7 +32,6 @@ class AutoAssigner
     public function __construct(
         private SignalementManager $signalementManager,
         private AffectationManager $affectationManager,
-        private SuiviManager $suiviManager,
         private UserManager $userManager,
         private ParameterBagInterface $parameterBag,
         private InterconnectionBus $interconnectionBus,
@@ -93,32 +89,11 @@ class AutoAssigner
         $assignablePartners = array_values($assignablePartners);
 
         if (!$simulation && !empty($assignablePartners)) {
-            $this->activateSignalement($signalement);
-            $this->createSuivi($signalement, $adminUser);
+            $this->signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $adminUser);
             $this->assignPartners($signalement, $adminUser, $assignablePartners);
         }
 
         return $assignablePartners;
-    }
-
-    private function activateSignalement(Signalement $signalement): void
-    {
-        $signalement->setStatut(SignalementStatus::ACTIVE);
-        $signalement->setValidatedAt(new \DateTimeImmutable());
-        $this->signalementManager->persist($signalement);
-    }
-
-    private function createSuivi(Signalement $signalement, ?User $adminUser): void
-    {
-        $suivi = $this->suiviManager->createSuivi(
-            user: $adminUser,
-            signalement: $signalement,
-            description: 'Signalement validé',
-            type: Suivi::TYPE_AUTO,
-            isPublic: true,
-            flush: false
-        );
-        $this->suiviManager->persist($suivi);
     }
 
     private function assignPartners(Signalement $signalement, ?User $adminUser, array $assignablePartners): void
@@ -130,6 +105,7 @@ class AutoAssigner
                 $partner,
                 $adminUser
             );
+            $signalement->addAffectation($affectation);
             ++$this->countAffectations;
             $this->affectedPartnersNames[] = $partner->getNom();
             if ($affectation instanceof Affectation) {

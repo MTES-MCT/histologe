@@ -268,9 +268,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
             $validationGroups = ['Default'];
-            $validationGroups[] = null !== $signalement->getCreatedFrom()
-                ? $signalement->getProfileDeclarant()->value :
-                'EDIT_'.$signalement->getProfileDeclarant()->value;
+            $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
 
             $errorMessage = FormHelper::getErrorsFromRequest(
                 $validator,
@@ -318,9 +316,7 @@ class SignalementEditController extends AbstractController
             );
 
             $validationGroups = ['Default'];
-            $validationGroups[] = null !== $signalement->getCreatedFrom()
-                ? $signalement->getProfileDeclarant()->value :
-                'EDIT_'.$signalement->getProfileDeclarant()->value;
+            $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
 
             $errorMessage = FormHelper::getErrorsFromRequest(
                 $validator,
@@ -370,9 +366,7 @@ class SignalementEditController extends AbstractController
             );
 
             $validationGroups = ['Default'];
-            $validationGroups[] = null !== $signalement->getCreatedFrom()
-                ? $signalement->getProfileDeclarant()->value :
-                'EDIT_'.$signalement->getProfileDeclarant()->value;
+            $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
 
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $situationFoyerRequest, $validationGroups);
 
@@ -415,9 +409,7 @@ class SignalementEditController extends AbstractController
                 'json'
             );
             $validationGroups = ['Default'];
-            $validationGroups[] = null !== $signalement->getCreatedFrom()
-                ? $signalement->getProfileDeclarant()->value :
-                'EDIT_'.$signalement->getProfileDeclarant()->value;
+            $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
 
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $procedureDemarchesRequest, $validationGroups);
 

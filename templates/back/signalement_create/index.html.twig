@@ -8,6 +8,7 @@
     } %}
 
     {% include '_partials/_modal_duplicate.html.twig' %}
+    {% include '_partials/_modal_form_bo_quit_validation.html.twig' %}
     <section class="fr-p-5v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Mes brouillons',
@@ -84,8 +85,8 @@
                 <div id="tabpanel-desordres-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-desordres" tabindex="0">
                     {% include 'back/signalement_create/tabs/tab-desordres.html.twig' %}
                 </div>
-                <div id="tabpanel-validation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-validation" tabindex="0">
-                    {% include 'back/signalement_create/tabs/tab-validation.html.twig' %}
+                <div id="tabpanel-validation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-validation" tabindex="0" data-route="{{ path('back_signalement_draft_form_validation', {uuid: signalement.uuid}) }}">
+
                 </div>
             {% endif %}
         </div>

@@ -61,7 +61,6 @@ class PdfExportMessageHandler
             }, $listConcludeProcedures));
 
             $htmlContent = $this->twig->render('pdf/signalement.html.twig', [
-                'createdFromDraft' => $signalement->getCreatedFrom(),
                 'signalement' => $signalement,
                 'situations' => $infoDesordres['criticitesArranged'],
                 'listConcludeProcedures' => $listConcludeProcedures,

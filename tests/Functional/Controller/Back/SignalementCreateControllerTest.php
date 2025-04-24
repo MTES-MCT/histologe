@@ -4,17 +4,23 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
+use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Routing\RouterInterface;
 
 class SignalementCreateControllerTest extends WebTestCase
 {
+    use SessionHelper;
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
     private SignalementRepository $signalementRepository;
+    private PartnerRepository $partnerRepository;
+    private RouterInterface $router;
 
     protected function setUp(): void
     {
@@ -22,6 +28,8 @@ class SignalementCreateControllerTest extends WebTestCase
         /* @var UserRepository $userRepository */
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
     }
 
     public function testCreateWithDoublon()
@@ -244,5 +252,60 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('Florent', $signalement->getPrenomOccupant());
         $this->assertEquals('florent.bernard@floodcast.fr', $signalement->getMailOccupant());
         $this->assertEquals('Arnaque & cie', $signalement->getDenominationAgence());
+    }
+
+    public function testValidationSignalementWithAutoAffectation()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+
+        $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
+        ]);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertTrue($response['redirect']);
+        $this->assertStringEndsWith($this->router->generate('back_signalements_index'), $response['url']);
+
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+        $this->assertCount(1, $signalement->getSuivis());
+        $this->assertCount(1, $signalement->getAffectations());
+
+        $this->assertEmailCount(3);
+    }
+
+    public function testValidationSignalementWithManualAffectation()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+        $signalement->setInseeOccupant(null);
+        $partner1 = $this->partnerRepository->findOneBy(['nom' => 'SDIS 44']);
+        $partner2 = $this->partnerRepository->findOneBy(['nom' => 'Partner Habitat 44']);
+
+        $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
+            'partner-ids' => $partner1->getId().','.$partner2->getId(),
+        ]);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertTrue($response['redirect']);
+        $this->assertStringEndsWith($this->router->generate('back_signalements_index'), $response['url']);
+
+        $this->assertNull($signalement->getInseeOccupant());
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+        $this->assertCount(1, $signalement->getSuivis());
+        $this->assertCount(2, $signalement->getAffectations());
+
+        $this->assertEmailCount(4);
     }
 }

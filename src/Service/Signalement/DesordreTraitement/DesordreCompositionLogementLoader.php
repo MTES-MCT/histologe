@@ -23,7 +23,7 @@ class DesordreCompositionLogementLoader
         TypeCompositionLogement $typeCompositionLogement,
     ): void {
         $this->signalement = $signalement;
-        if (null === $this->signalement->getCreatedFrom()) {
+        if (!$this->signalement->isV2()) {
             return;
         }
         if ('oui' === $typeCompositionLogement->getTypeLogementSousCombleSansFenetre()) {

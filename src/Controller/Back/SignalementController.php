@@ -171,7 +171,7 @@ class SignalementController extends AbstractController
             'signalement' => $signalement,
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
 
-        if (null == $signalement->getCreatedFrom()) {
+        if (!$signalement->isV2()) {
             $signalementQualificationNDECriticites = $signalementQualificationNDE
                 ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()])
                 : null;
@@ -217,7 +217,6 @@ class SignalementController extends AbstractController
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
-            'createdFromDraft' => $signalement->getCreatedFrom(),
             'situations' => $infoDesordres['criticitesArranged'],
             'photos' => $infoDesordres['photos'],
             'criteres' => $infoDesordres['criteres'],
