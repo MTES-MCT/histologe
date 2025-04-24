@@ -19,6 +19,11 @@ rule Malicious_PDF_JS_Heuristics
         $decodeURIComponent = "decodeURIComponent"
         $atob = "atob"
 
+        // Fonctions de dialogue utilisateur
+        $alert = "alert"
+        $response = "response"
+        $execMenu = "execMenuItem"
+
         // Encodage
         $large_encoded = /(\\x[0-9a-fA-F]{2}){10,}/
         $unicode_encoded = /(\\u[0-9a-fA-F]{4}){5,}/
@@ -31,6 +36,7 @@ rule Malicious_PDF_JS_Heuristics
         (any of (
             $eval, $unescape, $function_ctor, $setTimeout,
             $setInterval, $fromCharCode, $decodeURIComponent,
-            $atob, $large_encoded, $unicode_encoded, $stream
+            $atob, $alert, $response, $execMenu,
+            $large_encoded, $unicode_encoded, $stream
         ))
 }
