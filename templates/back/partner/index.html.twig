@@ -12,6 +12,23 @@
             'level3Title': 'Partenaires',
             'level3Link': '',
         } %}
+
+        {% if is_granted('ROLE_ADMIN_TERRITORY') and not is_granted('ROLE_ADMIN') %}
+        <div class="fr-notice fr-notice--warning fr-mb-3v">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p>
+                        <span class="fr-notice__desc">
+                            Les responsables de territoire sont en charge de la gestion des utilisateurs.
+                            Pour des raisons de sécurité, nous vous recommandons de vérifier régulièrement les comptes inutilisés et de les supprimer le cas échéant.
+                        </span>
+                    </p>
+                    <button title="Masquer le message" onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)" id="button-1305" class="fr-btn--close fr-btn">Masquer le message</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-6 fr-text--left">
