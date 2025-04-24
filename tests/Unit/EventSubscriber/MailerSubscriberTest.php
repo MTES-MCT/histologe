@@ -13,7 +13,7 @@ class MailerSubscriberTest extends TestCase
 {
     public function testEmailIsRedirected(): void
     {
-        putenv('APP_NAME=staging');
+        putenv('APP=staging');
         $_ENV['MAIL_TEST_ENABLE'] = '1';
 
         $email = (new Email())

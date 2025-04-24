@@ -18,7 +18,7 @@ readonly class MailerSubscriber implements EventSubscriberInterface
         #[Autowire(env: 'MAIL_TEST_EMAIL')]
         private string $mailTestEmail,
     ) {
-        $this->appName = getenv('APP_NAME');
+        $this->appName = getenv('APP');
     }
 
     public function onMessage(MessageEvent $event): void
