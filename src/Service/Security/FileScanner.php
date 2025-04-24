@@ -2,6 +2,7 @@
 
 namespace App\Service\Security;
 
+use Psr\Log\LoggerInterface;
 use Sineflow\ClamAV\Exception\FileScanException;
 use Sineflow\ClamAV\Exception\SocketException;
 use Sineflow\ClamAV\Scanner;
@@ -14,8 +15,9 @@ class FileScanner
     public function __construct(
         private readonly Scanner $scanner,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly LoggerInterface $logger,
         #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
-        private bool $clamavScanEnable,
+        private readonly bool $clamavScanEnable,
     ) {
     }
 
@@ -40,7 +42,17 @@ class FileScanner
         }
 
         $scannedFile = $this->scanner->scan($copiedFilepath);
+        if (!$scannedFile->isClean()) {
+            $this->logger->error('Le fichier semble infecté', [
+                'filename' => $scannedFile->getFileName(),
+                'response' => $scannedFile->getRawResponse(),
+                'virus' => $scannedFile->getVirusName(),
+                'is_clean' => false,
+            ]);
 
-        return $scannedFile->isClean();
+            return false;
+        }
+
+        return true;
     }
 }

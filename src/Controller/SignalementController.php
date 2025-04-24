@@ -33,6 +33,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -410,11 +411,9 @@ class SignalementController extends AbstractController
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
-                    if (!$fileScanner->isClean($file->getPathname())) {
-                        if ('application/pdf' === $file->getMimeType()) {
-                            return $this->json(['error' => 'Par mesure de sécurité, le fichier '.$file->getClientOriginalName().' a été rejeté car il contient du code exécutable.'], 400);
-                        }
-
+                    /** @var UploadedFile $file */
+                    // PDF files will be checked asynchronously and flagged as suspicious if necessary
+                    if (!$fileScanner->isClean($file->getPathname()) && 'application/pdf' !== $file->getMimeType()) {
                         return $this->json(['error' => 'Le fichier est infecté par un virus.'], 400);
                     }
                     $res = $uploadHandlerService->toTempFolder($file, $key);
@@ -685,11 +684,11 @@ class SignalementController extends AbstractController
 
         $typeSuivi = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
         $suiviManager->createSuivi(
-            user: $user,
             signalement: $signalement,
             description: $description,
             type: $typeSuivi,
             isPublic: true,
+            user: $user,
         );
 
         $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?

@@ -143,7 +143,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testEditFileSignalementSucces(): void
+    public function testEditFileSignalementSuccess(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000009']);
         $route = $this->router->generate('back_signalement_edit_file', ['uuid' => $signalement->getUuid()]);

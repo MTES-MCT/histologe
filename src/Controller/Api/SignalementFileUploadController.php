@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Model\File as FileResponse;
 use App\Dto\Api\Request\FilesUploadRequest;
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -40,6 +41,7 @@ class SignalementFileUploadController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws \Throwable
      */
     #[Route('/signalements/{uuid:signalement}/files', name: 'api_signalements_files_post', methods: ['POST'])]
     #[OA\Post(
@@ -165,6 +167,18 @@ class SignalementFileUploadController extends AbstractController
         return $this->json($response, Response::HTTP_CREATED);
     }
 
+    /**
+     * @return array<int, array{
+     *     file: string,
+     *     title: string,
+     *     date: \DateTimeImmutable,
+     *     type: string,
+     *     documentType: ?DocumentType,
+     *     isSuspicious: bool
+     * }>
+     *
+     * @throws \Throwable
+     */
     private function processFiles(FilesUploadRequest $fileRequest): array
     {
         $files = $fileList = [];

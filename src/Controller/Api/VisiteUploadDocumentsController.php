@@ -233,6 +233,9 @@ class VisiteUploadDocumentsController extends AbstractController
         return $this->json($this->interventionFactory->createInstance($intervention), Response::HTTP_OK);
     }
 
+    /**
+     * @throws \Throwable
+     */
     private function uploadDocumentsVisite(
         FilesUploadRequest $filesUploadRequest,
         Signalement $signalement,

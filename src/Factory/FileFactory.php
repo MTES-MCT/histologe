@@ -24,6 +24,7 @@ class FileFactory
         ?bool $isTemp = false,
         ?\DateTimeImmutable $scannedAt = null,
         ?bool $isVariantsGenerated = false,
+        ?bool $isSuspicious = false,
     ): ?File {
         $file = (new File())
             ->setFilename($filename)
@@ -63,6 +64,10 @@ class FileFactory
 
         if (null !== $isVariantsGenerated) {
             $file->setIsVariantsGenerated($isVariantsGenerated);
+        }
+
+        if (null !== $isSuspicious) {
+            $file->setIsSuspicious($isSuspicious);
         }
 
         return $file;

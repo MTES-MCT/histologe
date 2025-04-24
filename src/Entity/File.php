@@ -130,6 +130,9 @@ class File implements EntityHistoryInterface
     #[ORM\Column]
     private ?bool $isOriginalDeleted = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isSuspicious = null;
+
     public function __construct()
     {
         $this->uuid = Uuid::v4();
@@ -407,6 +410,18 @@ class File implements EntityHistoryInterface
     public function setIsOriginalDeleted(bool $isOriginalDeleted): static
     {
         $this->isOriginalDeleted = $isOriginalDeleted;
+
+        return $this;
+    }
+
+    public function getIsSuspicious(): ?bool
+    {
+        return $this->isSuspicious;
+    }
+
+    public function setIsSuspicious(?bool $isSuspicious): self
+    {
+        $this->isSuspicious = $isSuspicious;
 
         return $this;
     }

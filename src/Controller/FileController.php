@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class FileController extends AbstractController
 {
-    public const SIGNATURE_VALIDITY_DURATION = 86400; // 24h
+    public const int SIGNATURE_VALIDITY_DURATION = 86400; // 24h
 
     #[Route('/show/{uuid:file}', name: 'show_file')]
     public function showFile(
@@ -23,6 +23,18 @@ class FileController extends AbstractController
         LoggerInterface $logger,
         ImageVariantProvider $imageVariantProvider,
     ): BinaryFileResponse {
+        if ($file->getIsSuspicious()) {
+            $logger->error(
+                'Tentative d\'accès à un fichier suspect', [
+                    'uuid' => $file->getUuid(),
+                    'filename' => $file->getFilename(),
+                ]);
+
+            return new BinaryFileResponse(
+                new SymfonyFile($this->getParameter('images_dir').'doc-file-403.png'),
+            );
+        }
+
         try {
             $variant = $request->query->get('variant');
             $filename = $file->getFilename();
