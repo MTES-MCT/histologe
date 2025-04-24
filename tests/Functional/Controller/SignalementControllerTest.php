@@ -55,7 +55,8 @@ class SignalementControllerTest extends WebTestCase
         $crawler = $client->request('GET', $urlSuiviProcedureUser);
 
         if (SignalementStatus::ARCHIVED->value === $status || SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
-            $this->assertResponseRedirects('/');
+            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+            $this->assertEquals('Le lien utilisé est expiré ou invalide.', $crawler->filter('div.fr-alert p')->text());
         } else {
             $this->assertEquals('Suivre mon signalement', $crawler->filter('p.fr-callout__title')->text());
 
@@ -98,7 +99,8 @@ class SignalementControllerTest extends WebTestCase
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
 
         if (SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
-            $this->assertResponseRedirects('/');
+            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+            $this->assertEquals('Le lien utilisé est invalide, vérifiez votre saisie.', $crawler->filter('div.fr-alert p')->text());
         } else {
             $this->assertEquals('Suivre mon signalement', $crawler->filter('p.fr-callout__title')->text());
 
