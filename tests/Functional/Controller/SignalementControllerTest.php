@@ -48,19 +48,32 @@ class SignalementControllerTest extends WebTestCase
         ]);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $urlSuiviSignalementUser = $router->generate('front_suivi_procedure', [
+        $urlSuiviProcedureUser = $router->generate('front_suivi_procedure', [
             'code' => $signalement->getCodeSuivi(),
         ]).'?from='.$signalement->getMailOccupant().'&suiviAuto='.Suivi::ARRET_PROCEDURE;
 
-        $crawler = $client->request('GET', $urlSuiviSignalementUser);
+        $crawler = $client->request('GET', $urlSuiviProcedureUser);
+
         if (SignalementStatus::ARCHIVED->value === $status || SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
-            $this->assertEquals('Le lien utilisé est expiré ou invalide.', $crawler->filter('.fr-alert p')->text());
-        } elseif (SignalementStatus::ACTIVE->value === $status) {
-            $this->assertEquals('Signalement #2022-1 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
+            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+            $this->assertEquals('Le lien utilisé est expiré ou invalide.', $crawler->filter('div.fr-alert p')->text());
         } else {
-            $this->assertResponseRedirects(
-                '/suivre-mon-signalement/'.$signalement->getCodeSuivi().'?from='.$signalement->getMailOccupant()
-            );
+            $this->assertEquals('Suivre mon signalement', $crawler->filter('p.fr-callout__title')->text());
+
+            $crawler = $client->request('POST', $urlSuiviProcedureUser, [
+                '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+                'login-first-letter-prenom' => !empty($signalement->getPrenomDeclarant()) ? $signalement->getPrenomDeclarant()[0] : $signalement->getPrenomOccupant()[0],
+                'login-first-letter-nom' => !empty($signalement->getNomDeclarant()) ? $signalement->getNomDeclarant()[0] : $signalement->getNomOccupant()[0],
+                'login-code-postal' => $signalement->getCpOccupant(),
+            ]);
+
+            if (SignalementStatus::ACTIVE->value === $status) {
+                $this->assertEquals('Signalement #2022-1 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
+            } else {
+                $this->assertResponseRedirects(
+                    '/suivre-mon-signalement/'.$signalement->getCodeSuivi().'?from='.$signalement->getMailOccupant()
+                );
+            }
         }
     }
 
@@ -84,25 +97,38 @@ class SignalementControllerTest extends WebTestCase
         ]).'?from='.$signalement->getMailOccupant();
 
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
-        if (SignalementStatus::ARCHIVED->value === $status) {
-            $this->assertEquals(
-                'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
-                $crawler->filter('.fr-alert--error p')->text()
-            );
-        } elseif (SignalementStatus::ACTIVE->value === $status) {
-            $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
-        } elseif (SignalementStatus::CLOSED->value === $status) {
-            $this->assertEquals(
-                'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.',
-                $crawler->filter('.fr-alert--error p')->text()
-            );
-        } elseif (SignalementStatus::REFUSED->value === $status) {
-            $this->assertEquals(
-                'Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.',
-                $crawler->filter('.fr-alert--error p')->text()
-            );
-        } elseif (SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
-            $this->assertEquals('Le lien utilisé est invalide, vérifiez votre saisie.', $crawler->filter('.fr-alert p')->text());
+
+        if (SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
+            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+            $this->assertEquals('Le lien utilisé est invalide, vérifiez votre saisie.', $crawler->filter('div.fr-alert p')->text());
+        } else {
+            $this->assertEquals('Suivre mon signalement', $crawler->filter('p.fr-callout__title')->text());
+
+            $crawler = $client->request('POST', $urlSuiviSignalementUser, [
+                '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+                'login-first-letter-prenom' => !empty($signalement->getPrenomDeclarant()) ? $signalement->getPrenomDeclarant()[0] : $signalement->getPrenomOccupant()[0],
+                'login-first-letter-nom' => !empty($signalement->getNomDeclarant()) ? $signalement->getNomDeclarant()[0] : $signalement->getNomOccupant()[0],
+                'login-code-postal' => $signalement->getCpOccupant(),
+            ]);
+
+            if (SignalementStatus::ARCHIVED->value === $status) {
+                $this->assertEquals(
+                    'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
+                    $crawler->filter('.fr-alert--error p')->text()
+                );
+            } elseif (SignalementStatus::ACTIVE->value === $status) {
+                $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
+            } elseif (SignalementStatus::CLOSED->value === $status) {
+                $this->assertEquals(
+                    'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.',
+                    $crawler->filter('.fr-alert--error p')->text()
+                );
+            } elseif (SignalementStatus::REFUSED->value === $status) {
+                $this->assertEquals(
+                    'Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.',
+                    $crawler->filter('.fr-alert--error p')->text()
+                );
+            }
         }
     }
 
