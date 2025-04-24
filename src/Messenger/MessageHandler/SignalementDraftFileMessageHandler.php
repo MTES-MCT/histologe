@@ -9,6 +9,7 @@ use App\Messenger\Message\SignalementDraftFileMessage;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -18,15 +19,16 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class SignalementDraftFileMessageHandler
 {
     public function __construct(
-        private SignalementRepository $signalementRepository,
-        private SignalementDraftRepository $signalementDraftRepository,
-        private SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
-        private FileFactory $fileFactory,
-        private UploadHandlerService $uploadHandlerService,
-        private LoggerInterface $logger,
-        private UserManager $userManager,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly SignalementDraftRepository $signalementDraftRepository,
+        private readonly SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
+        private readonly FileFactory $fileFactory,
+        private readonly UploadHandlerService $uploadHandlerService,
+        private readonly LoggerInterface $logger,
+        private readonly UserManager $userManager,
+        private readonly FileScanner $fileScanner,
         #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
-        private bool $clamavScanEnable,
+        private readonly bool $clamavScanEnable,
     ) {
     }
 
@@ -61,6 +63,12 @@ class SignalementDraftFileMessageHandler
                     $file->setUploadedBy($uploadUser);
                     if ($this->clamavScanEnable) {
                         $file->setScannedAt(new \DateTimeImmutable());
+                        if (str_ends_with(strtolower($file->getFilename()), '.pdf')) {
+                            $filepath = $this->uploadHandlerService->getTmpFilepath($file->getFilename());
+                            if ($filepath && !$this->fileScanner->isClean($filepath)) {
+                                $file->setIsSuspicious(true);
+                            }
+                        }
                     }
                     $signalement->addFile($file);
                 }

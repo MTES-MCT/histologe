@@ -410,11 +410,8 @@ class SignalementController extends AbstractController
             try {
                 foreach ($files as $key => $file) {
                     /** @var UploadedFile $file */
-                    if (!$fileScanner->isClean($file->getPathname())) {
-                        if ('application/pdf' === $file->getMimeType()) {
-                            return $this->json(['error' => 'Par mesure de sécurité, le fichier '.$file->getClientOriginalName().' a été rejeté car il contient du code exécutable.'], 400);
-                        }
-
+                    // PDF files will be checked asynchronously and flagged as suspicious if necessary
+                    if (!$fileScanner->isClean($file->getPathname()) && 'application/pdf' !== $file->getMimeType()) {
                         return $this->json(['error' => 'Le fichier est infecté par un virus.'], 400);
                     }
                     $res = $uploadHandlerService->toTempFolder($file, $key);
@@ -653,13 +650,7 @@ class SignalementController extends AbstractController
                 }
                 $doc->setIsTemp(false);
                 $url = $this->generateUrl('show_file', ['uuid' => $doc->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
-                if (!$doc->getIsSuspicious()) {
-                    $descriptionList[] = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$doc->getTitle().'</a></li>';
-                } else {
-                    $descriptionList[] = sprintf(
-                        '<li>Le fichier <strong>%s</strong> a été désactivé pour raisons de sécurité. Une analyse par notre équipe est en cours.</li>',
-                        $doc->getTitle());
-                }
+                $descriptionList[] = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$doc->getTitle().'</a></li>';
             }
             $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
         }

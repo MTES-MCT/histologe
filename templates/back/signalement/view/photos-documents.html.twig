@@ -159,8 +159,10 @@
                             <i>Rapport de la visite du {{ doc.intervention.scheduledAt|date('d/m/Y') }} par {{ doc.intervention.partner.nom}}</i>
                         {% endif %}
                     {% else %}
-                        <i>Ce fichier a été désactivé par mesure de sécurité.
-                            Il présente des éléments suspects et nécessite une analyse par notre équipe de support. Merci de votre compréhension.
+                        <i>
+                            <i><strong>{{ doc.title|truncate_filename(45) }}</strong> a été désactivé par mesure de sécurité.
+                                Une analyse par notre équipe de support est nécéssaire. Merci de votre compréhension.
+                            </i>
                         </i>
                     {% endif %}
                 </div>
