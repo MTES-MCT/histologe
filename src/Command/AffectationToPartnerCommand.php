@@ -48,7 +48,9 @@ class AffectationToPartnerCommand extends Command
                 continue;
             }
 
-            $affectationStatus = SignalementStatus::ACTIVE === $signalement->getStatut() ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_CLOSED;
+            $affectationStatus = SignalementStatus::NEED_VALIDATION === $signalement->getStatut() || SignalementStatus::ACTIVE === $signalement->getStatut()
+                ? Affectation::STATUS_ACCEPTED
+                : Affectation::STATUS_CLOSED;
 
             $affectation = (new Affectation())
                 ->setSignalement($signalement)
