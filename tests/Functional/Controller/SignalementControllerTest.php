@@ -58,10 +58,11 @@ class SignalementControllerTest extends WebTestCase
             $this->assertResponseStatusCodeSame(Response::HTTP_OK);
             $this->assertEquals('Le lien utilisé est expiré ou invalide.', $crawler->filter('div.fr-alert p')->text());
         } else {
-            $this->assertEquals('Suivre mon signalement', $crawler->filter('p.fr-callout__title')->text());
+            $this->assertEquals('Suivre mon signalement', $crawler->filter('h1')->text());
 
             $crawler = $client->request('POST', $urlSuiviProcedureUser, [
                 '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+                'visitor-type' => 'declarant',
                 'login-first-letter-prenom' => !empty($signalement->getPrenomDeclarant()) ? $signalement->getPrenomDeclarant()[0] : $signalement->getPrenomOccupant()[0],
                 'login-first-letter-nom' => !empty($signalement->getNomDeclarant()) ? $signalement->getNomDeclarant()[0] : $signalement->getNomOccupant()[0],
                 'login-code-postal' => $signalement->getCpOccupant(),
@@ -102,10 +103,11 @@ class SignalementControllerTest extends WebTestCase
             $this->assertResponseStatusCodeSame(Response::HTTP_OK);
             $this->assertEquals('Le lien utilisé est invalide, vérifiez votre saisie.', $crawler->filter('div.fr-alert p')->text());
         } else {
-            $this->assertEquals('Suivre mon signalement', $crawler->filter('p.fr-callout__title')->text());
+            $this->assertEquals('Suivre mon signalement', $crawler->filter('h1')->text());
 
             $crawler = $client->request('POST', $urlSuiviSignalementUser, [
                 '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+                'visitor-type' => 'declarant',
                 'login-first-letter-prenom' => !empty($signalement->getPrenomDeclarant()) ? $signalement->getPrenomDeclarant()[0] : $signalement->getPrenomOccupant()[0],
                 'login-first-letter-nom' => !empty($signalement->getNomDeclarant()) ? $signalement->getNomDeclarant()[0] : $signalement->getNomOccupant()[0],
                 'login-code-postal' => $signalement->getCpOccupant(),
