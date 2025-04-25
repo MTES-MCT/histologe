@@ -132,10 +132,10 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $linkChoices = OccupantLink::getLabelList();
             $signalement
                 ->setIsNotOccupant($row['is_not_occupant'])
-                ->setNomDeclarant($faker->lastName())
-                ->setPrenomDeclarant($faker->firstName())
-                ->setTelDeclarant($phoneNumber)
-                ->setMailDeclarant($faker->email())
+                ->setNomDeclarant($row['nom_declarant'] ?? $faker->lastName())
+                ->setPrenomDeclarant($row['prenom_declarant'] ?? $faker->firstName())
+                ->setTelDeclarant($row['tel_declarant'] ?? $phoneNumber)
+                ->setMailDeclarant($row['mail_declarant'] ?? $faker->email())
                 ->setStructureDeclarant($faker->company())
                 ->setLienDeclarantOccupant($linkChoices[array_rand($linkChoices)]);
         } else {

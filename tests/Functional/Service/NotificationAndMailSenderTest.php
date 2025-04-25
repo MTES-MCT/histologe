@@ -197,4 +197,88 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertEquals(\count($expectedNotification), \count($newNotifications));
         $this->assertEquals($expectedNotificationIds, $newNotificationIds);
     }
+
+    public function testSendNewSuiviToUsagersProfilTiers(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-4',
+        ]);
+
+        /** @var User $respTerritoire */
+        $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
+        ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($respTerritoire)
+        ->setSignalement($signalement)
+        ->setDescription('test description')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setIsPublic(true);
+
+        $this->entityManager->persist($suivi);
+
+        $expectedAdress = [$signalement->getMailOccupant(), $signalement->getMailDeclarant()];
+
+        $notificationAndMailSender = new NotificationAndMailSender(
+            $this->entityManager,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->notificationFactory,
+            $this->notificationMailerRegistry,
+            $this->security,
+        );
+
+        $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
+
+        $this->assertEmailCount(2);
+        $i = 0;
+        foreach ($expectedAdress as $adressMail) {
+            $email = $this->getMailerMessage($i);
+            $this->assertEmailAddressContains($email, 'To', $adressMail);
+            ++$i;
+        }
+    }
+
+    public function testSendNewSuiviToUsagersTiersDeclarantIsAgent(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-1', // signalement actif tiers pro
+        ]);
+        /** @var User $agentDeclarant */
+        $agentDeclarant = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => $signalement->getMailDeclarant(),
+        ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($agentDeclarant)
+        ->setSignalement($signalement)
+        ->setDescription('test description')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setIsPublic(true);
+
+        $this->entityManager->persist($suivi);
+
+        $expectedAdress = [$signalement->getMailOccupant()];
+
+        $notificationAndMailSender = new NotificationAndMailSender(
+            $this->entityManager,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->notificationFactory,
+            $this->notificationMailerRegistry,
+            $this->security,
+        );
+
+        $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
+
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+
+        foreach ($expectedAdress as $adressMail) {
+            $this->assertEmailAddressContains($email, 'To', $adressMail);
+        }
+    }
 }
