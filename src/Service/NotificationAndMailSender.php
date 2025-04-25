@@ -170,7 +170,6 @@ class NotificationAndMailSender
             $recipients->removeElement($this->suivi->getCreatedBy()?->getEmail());
             foreach ($recipients as $recipient) {
                 if ($recipient === $this->signalement->getMailDeclarant()) {
-                    // TODO : supprimer le mail déclarant s'il a un compte sur le BO
                     $agentExist = $this->userRepository->findAgentByEmail(email: $recipient, userStatus: User::STATUS_ACTIVE, acceptRoleApi: false);
                     if ($agentExist) {
                         continue;
