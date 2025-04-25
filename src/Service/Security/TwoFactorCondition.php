@@ -23,6 +23,7 @@ class TwoFactorCondition implements TwoFactorConditionInterface
         if (!$this->isLocalEnvironment()) {
             $this->requestContext->setScheme('https');
         }
+
         return $this->feature2faEmailEnabled;
     }
 
