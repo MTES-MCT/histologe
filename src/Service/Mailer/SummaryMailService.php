@@ -55,28 +55,28 @@ class SummaryMailService
             NotificationType::CLOTURE_PARTENAIRE->name => [],
         ];
         foreach ($notifications as $notification) {
-            $key = $notification->getType()->name;
+            $notificationType = $notification->getType()->name;
             switch ($notification->getType()) {
                 case NotificationType::NOUVEAU_SIGNALEMENT:
                 case NotificationType::NOUVELLE_AFFECTATION:
                 case NotificationType::CLOTURE_SIGNALEMENT:
-                    $events[$key][$notification->getSignalement()->getId()] = [
+                    $events[$notificationType][$notification->getSignalement()->getId()] = [
                         'uuid' => $notification->getSignalement()->getUuid(),
                         'reference' => $notification->getSignalement()->getReference(),
                     ];
                     break;
                 case NotificationType::NOUVEAU_SUIVI:
-                    if (!isset($events[$key][$notification->getSignalement()->getId()])) {
-                        $events[$key][$notification->getSignalement()->getId()] = [
+                    if (!isset($events[$notificationType][$notification->getSignalement()->getId()])) {
+                        $events[$notificationType][$notification->getSignalement()->getId()] = [
                             'uuid' => $notification->getSignalement()->getUuid(),
                             'reference' => $notification->getSignalement()->getReference(),
                             'nb' => 0,
                         ];
                     }
-                    ++$events[$key][$notification->getSignalement()->getId()]['nb'];
+                    ++$events[$notificationType][$notification->getSignalement()->getId()]['nb'];
                     break;
                 case NotificationType::CLOTURE_PARTENAIRE:
-                    $events[$key][$notification->getSignalement()->getId()] = [
+                    $events[$notificationType][$notification->getSignalement()->getId()] = [
                         'uuid' => $notification->getSignalement()->getUuid(),
                         'reference' => $notification->getSignalement()->getReference(),
                         'partenaire' => $notification->getAffectation()->getPartner()->getNom(),
