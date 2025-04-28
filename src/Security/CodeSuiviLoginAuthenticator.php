@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,16 +45,25 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     public function authenticate(Request $request): Passport
     {
         $codeSuivi = $request->get('code');
-        $firstLetterPrenom = mb_strtoupper($request->request->get('login-first-letter-prenom'));
-        $firstLetterNom = mb_strtoupper($request->request->get('login-first-letter-nom'));
-        $codePostal = $request->request->get('login-code-postal');
 
         $signalement = $this->signalementRepository->findOneByCodeForPublic($codeSuivi, false);
         if (!$signalement) {
             throw new CustomUserMessageAuthenticationException('Code de suivi invalide');
         }
 
-        $this->denyAccessIfNotAllowed($signalement, $firstLetterPrenom, $firstLetterNom, $codePostal);
+        $visitorType = $request->request->get('visitor-type');
+        $firstLetterPrenom = mb_strtoupper($request->request->get('login-first-letter-prenom'));
+        $firstLetterNom = mb_strtoupper($request->request->get('login-first-letter-nom'));
+        $codePostal = $request->request->get('login-code-postal');
+
+        if (ProfileDeclarant::LOCATAIRE !== $signalement->getProfileDeclarant()
+            && ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant()
+            && empty($visitorType)
+        ) {
+            throw new CustomUserMessageAuthenticationException('Merci de sélectionner si vous occupez le logement ou si vous avez fait la déclaration.');
+        }
+
+        $this->denyAccessIfNotAllowed($signalement, $firstLetterPrenom, $firstLetterNom, $codePostal, $visitorType);
 
         return new SelfValidatingPassport(
             new UserBadge($codeSuivi),
@@ -61,19 +71,26 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
-    private function denyAccessIfNotAllowed(Signalement $signalement, string $inputFirstLetterPrenom, string $inputFirstLetterNom, string $inputCodePostal): void
+    private function denyAccessIfNotAllowed(Signalement $signalement, string $inputFirstLetterPrenom, string $inputFirstLetterNom, string $inputCodePostal, ?string $visitorType): void
     {
-        $testDeclarant = false;
-        if (!empty($signalement->getPrenomDeclarant()) && !empty($signalement->getNomDeclarant())) {
-            $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomDeclarant(), 0, 1));
-            $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomDeclarant(), 0, 1));
-            $testDeclarant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
-        }
         $testOccupant = false;
-        if (!empty($signalement->getPrenomOccupant()) && !empty($signalement->getNomOccupant())) {
-            $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomOccupant(), 0, 1));
-            $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomOccupant(), 0, 1));
-            $testOccupant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
+        if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
+            || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()
+            || 'occupant' === $visitorType
+        ) {
+            if (!empty($signalement->getPrenomOccupant()) && !empty($signalement->getNomOccupant())) {
+                $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomOccupant(), 0, 1));
+                $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomOccupant(), 0, 1));
+                $testOccupant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
+            }
+        }
+        $testDeclarant = false;
+        if (!$testOccupant && 'declarant' === $visitorType) {
+            if (!empty($signalement->getPrenomDeclarant()) && !empty($signalement->getNomDeclarant())) {
+                $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomDeclarant(), 0, 1));
+                $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomDeclarant(), 0, 1));
+                $testDeclarant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
+            }
         }
         if ((!$testDeclarant && !$testOccupant) || $signalement->getCpOccupant() !== $inputCodePostal) {
             throw new CustomUserMessageAuthenticationException('Informations incorrectes');

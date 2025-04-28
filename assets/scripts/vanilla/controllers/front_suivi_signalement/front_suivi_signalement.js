@@ -1,5 +1,34 @@
 import { disableHeaderAndFooterButtonOfModal, enableHeaderAndFooterButtonOfModal } from '../../services/modales_helper'
 
+const fieldsetVisitorType = document?.querySelector('#fieldset-visitor-type')
+if (fieldsetVisitorType) {
+  document.querySelectorAll('#radio-visitor-type-occupant, #radio-visitor-type-declarant').forEach(element => {
+    element.addEventListener('change', (event) => {
+      refreshLoginFields()
+    })
+  })
+
+  function refreshLoginFields() {
+    const listVisibleOccupant = document.querySelectorAll('.visible-if-occupant')
+    const listVisibleDeclarant = document.querySelectorAll('.visible-if-declarant')
+    if (document.querySelector('#radio-visitor-type-occupant').checked) {
+      listVisibleOccupant.forEach(element => {
+        element.classList.remove('fr-hidden')
+      })
+      listVisibleDeclarant.forEach(element => {
+        element.classList.add('fr-hidden')
+      })
+    } else {
+      listVisibleOccupant.forEach(element => {
+        element.classList.add('fr-hidden')
+      })
+      listVisibleDeclarant.forEach(element => {
+        element.classList.remove('fr-hidden')
+      })
+    }
+  }
+}
+
 const modalUploadFiles = document?.querySelector('#fr-modal-upload-files-usager')
 if (modalUploadFiles) {
   const dropArea = document.querySelector('.modal-upload-drop-section')
