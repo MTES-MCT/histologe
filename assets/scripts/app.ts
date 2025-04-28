@@ -7,6 +7,7 @@ import './vanilla/services/component_search_address.js';
 import './vanilla/services/form_helper.js';
 import './vanilla/services/cookie_banner.js';
 import './vanilla/services/maintenance_banner.js';
+import './vanilla/services/notice_helper.js';
 import './vanilla/services/modales_helper.js';
 import './vanilla/services/file_delete.js';
 
