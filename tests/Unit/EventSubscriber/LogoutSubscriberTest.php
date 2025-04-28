@@ -73,9 +73,8 @@ class LogoutSubscriberTest extends TestCase
 
         $request = new Request();
         $session = $this->createMock(FlashBagAwareSessionInterface::class);
-        $session
-            ->method('getFlashBag')
-            ->willReturn($flashBag);
+        $session->method('has')->willReturn(true);
+        $session->method('getFlashBag')->willReturn($flashBag);
 
         $request->setSession($session);
 

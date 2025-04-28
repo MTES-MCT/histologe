@@ -61,13 +61,16 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
             if ($logoutUrl) {
                 $event->setResponse(new RedirectResponse($logoutUrl));
             }
-            $flashBag = $event->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+
+            if ($session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
+                $flashBag = $event->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+                $flashBag->add('warning',
+                    'Vous êtes bien déconnecté de l\'application, mais la déconnexion de votre compte ProConnect '
+                    .'n\'a pas pu être effectuée automatiquement. '
+                    .'Veuillez penser à fermer manuellement votre session sur ProConnect.'
+                );
+            }
             $this->clearSession($session);
-            $flashBag->add('warning',
-                'Vous êtes bien déconnecté de l\'application, mais la déconnexion de votre compte ProConnect '
-                .'n\'a pas pu être effectuée automatiquement. '
-                .'Veuillez penser à fermer manuellement votre session sur ProConnect.'
-            );
             $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
 
             return;

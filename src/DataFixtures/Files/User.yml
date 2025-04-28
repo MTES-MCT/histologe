@@ -475,3 +475,4 @@ users:
     partner: "Partenaire 13-01"
     statut: 1
     is_mailing_active: 1
+    is_mailing_summary: 0

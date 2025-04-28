@@ -519,10 +519,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $queryBuilder = $this->createQueryBuilder('u')
             ->andWhere('(u.email = :email OR u.proConnectUserId = :proConnectUserId)')
-            ->andWhere('u.statut = :statut')
+            ->andWhere('u.statut = :statutActive OR u.statut = :statutInactive')
             ->setParameter('email', $proConnectUser->email)
             ->setParameter('proConnectUserId', $proConnectUser->sub)
-            ->setParameter('statut', User::STATUS_ACTIVE);
+            ->setParameter('statutActive', User::STATUS_ACTIVE)
+            ->setParameter('statutInactive', User::STATUS_INACTIVE);
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
