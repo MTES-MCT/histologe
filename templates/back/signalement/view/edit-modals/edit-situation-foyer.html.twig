@@ -29,7 +29,7 @@
                                         'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
                                         'isRelogement',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="situationFoyerIsRelogement" name="isRelogement">
@@ -46,7 +46,7 @@
                                         'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
                                         'isAllocataire',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="situationFoyerIsAllocataire" name="isAllocataire">
@@ -84,7 +84,7 @@
                                         'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
                                         'travailleurSocialQuitteLogement',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="situationFoyerTravailleurSocialQuitteLogement" name="travailleurSocialQuitteLogement">
@@ -121,7 +121,7 @@
                                         'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
                                         'travailleurSocialAccompagnement',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="situationFoyerTravailleurSocialAccompagnement" name="travailleurSocialAccompagnement">

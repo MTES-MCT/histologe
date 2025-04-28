@@ -526,7 +526,7 @@
             {% if signalement.isV2 %}
                 <div>(Score bâtiment : {{ signalement.scoreBatiment|round(2) }} % - Score logement : {{ signalement.scoreLogement|round(2) }} %)</div>
             {% endif %}
-            {% if signalement.createdFrom %}
+            {% if signalement.isV2 %}
                 <h4>Désordres logement</h4>
                 {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
                     {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}

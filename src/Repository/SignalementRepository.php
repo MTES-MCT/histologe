@@ -349,7 +349,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.desordreCriteres', 'desordreCriteres')
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
-            ->andWhere('s.createdFrom IS NOT NULL');
+            ->andWhere('s.createdFrom IS NOT NULL OR s.createdBy IS NOT NULL');
 
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
