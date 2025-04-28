@@ -1,0 +1,36 @@
+notifications:
+-
+  user: "admin-territoire-30@signal-logement.fr"
+  type: "NOUVEAU_SIGNALEMENT"
+  signalement: "2024-12"
+-
+  user: "admin-territoire-30@signal-logement.fr"
+  type: "NOUVEAU_SIGNALEMENT"
+  signalement: "2025-04"
+-
+  user: "user-partenaire-multi-ter-34-30@signal-logement.fr"
+  type: "CLOTURE_PARTENAIRE"
+  affectation: "Alès Agglomération"
+  signalement: "2024-12"
+-
+  user: "user-partenaire-30@signal-logement.fr"
+  type: "CLOTURE_PARTENAIRE"
+  affectation: "Alès Agglomération"
+  signalement: "2024-12"
+-
+  user: "admin-territoire-30@signal-logement.fr"
+  type: "CLOTURE_PARTENAIRE"
+  affectation: "Alès Agglomération"
+  signalement: "2024-12"
+-
+  user: "user-partenaire-multi-ter-34-30@signal-logement.fr"
+  type: "CLOTURE_SIGNALEMENT"
+  signalement: "2025-07"
+-
+  user: "user-partenaire-30@signal-logement.fr"
+  type: "CLOTURE_SIGNALEMENT"
+  signalement: "2025-07"
+-
+  user: "admin-territoire-30@signal-logement.fr"
+  type: "CLOTURE_SIGNALEMENT"
+  signalement: "2025-07"

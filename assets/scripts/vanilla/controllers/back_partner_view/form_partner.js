@@ -66,6 +66,19 @@ function histoUpdatePermissionsFromRole () {
   }
 }
 
+function updateMailingSumaryState() {
+  const isMailingActive = document.querySelector('input[name="user_partner[isMailingActive]"]:checked').value
+  if(isMailingActive == 1) {
+    document.querySelectorAll('input[name="user_partner[isMailingSummary]"]').forEach(input => {
+      input.removeAttribute('disabled')
+    })
+  } else {
+    document.querySelectorAll('input[name="user_partner[isMailingSummary]"]').forEach(input => {
+      input.setAttribute('disabled', 'disabled')
+    })
+  }
+}
+
 document.querySelectorAll('.btn-transfer-partner-user').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
     const target = evt.target
@@ -171,7 +184,7 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
     document.querySelector('#fr-modal-user-edit-title').innerHTML = 'Chargement en cours...'
     document.querySelector('#fr-modal-user-edit-form-container').innerHTML = 'Chargement en cours...'
     fetch(refreshUrl).then(response => {
-      updateModaleFromResponse(response, '#fr-modal-user-edit', addEventListenerOnRoleChange)
+      updateModaleFromResponse(response, '#fr-modal-user-edit', addEventListenerOnFormUser)
     })
   })
 })
@@ -182,17 +195,25 @@ if (modalPartnerUserCreate) {
     const refreshUrl = event.target.dataset.refreshUrl
     modalPartnerUserCreate.querySelector('button[type="submit"]').disabled = true
     fetch(refreshUrl).then(response => {
-      updateModaleFromResponse(response, '#fr-modal-user-create', addEventListenerOnRoleChange)
+      updateModaleFromResponse(response, '#fr-modal-user-create', addEventListenerOnFormUser)
     })
   })
 }
 
-function addEventListenerOnRoleChange () {
+function addEventListenerOnFormUser () {
   if (document.querySelector('#user_partner_role')) {
     document.querySelector('#user_partner_role').addEventListener('change', () => {
       histoUpdatePermissionsFromRole()
     })
     histoUpdatePermissionsFromRole()
+  }
+  if(document.querySelector('#user_partner_isMailingSummary_0')) {
+    document.querySelectorAll('input[name="user_partner[isMailingActive]"]').forEach(input => {
+      input.addEventListener('change', () => {
+        updateMailingSumaryState()
+      })
+    })
+    updateMailingSumaryState()
   }
 }
 

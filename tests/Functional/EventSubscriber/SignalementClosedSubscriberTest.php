@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\EventSubscriber;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\NotificationType;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -14,6 +15,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -77,7 +79,15 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $this->assertInstanceOf(Signalement::class, $event->getSignalement());
         $this->assertIsArray($event->getParams());
         $this->assertEmailCount(2);
-        $notifications = $this->notificationRepository->findBy(['signalement' => $signalementClosed]);
-        $this->assertCount(4, $notifications);
+        /** @var NotificationEmail $clotureMail */
+        $clotureMail = $this->getMailerMessages()[0];
+        $this->assertEmailSubjectContains($clotureMail, 'Clôture du signalement');
+        $this->assertEmailAddressContains($clotureMail, 'to', 'ne-pas-repondre@signal-logement.beta.gouv.fr');
+        $this->assertCount(2, $clotureMail->getBcc());
+        $this->assertEmailAddressContains($clotureMail, 'bcc', 'partenaire-34-04@signal-logement.fr');
+        $this->assertEmailAddressContains($clotureMail, 'bcc', 'user-partenaire-34-02@signal-logement.fr');
+
+        $notifications = $this->notificationRepository->findBy(['signalement' => $signalementClosed, 'type' => NotificationType::CLOTURE_SIGNALEMENT]);
+        $this->assertCount(5, $notifications);
     }
 }

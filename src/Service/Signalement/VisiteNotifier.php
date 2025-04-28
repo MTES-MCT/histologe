@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\NotificationType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
@@ -106,7 +107,7 @@ class VisiteNotifier
             }
         }
 
-        $notification = $this->notificationFactory->createInstanceFrom($user, $suivi);
+        $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
         $this->entityManager->persist($notification);
         $this->entityManager->flush();
     }

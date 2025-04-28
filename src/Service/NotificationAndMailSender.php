@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\NotificationType;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -18,6 +19,7 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class NotificationAndMailSender
 {
@@ -32,6 +34,8 @@ class NotificationAndMailSender
         private readonly NotificationFactory $notificationFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly Security $security,
+        #[Autowire(env: 'FEATURE_EMAIL_RECAP')]
+        private readonly bool $featureEmailRecap,
     ) {
         $this->suivi = null;
     }
@@ -43,6 +47,7 @@ class NotificationAndMailSender
         $territory = $this->signalement->getTerritory();
         $recipients = $this->getRecipientsAdmin($territory);
         $this->sendMail($recipients, $mailerType);
+        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SIGNALEMENT, signalement: $signalement);
     }
 
     public function sendNewAffectation(Affectation $affectation): void
@@ -52,6 +57,19 @@ class NotificationAndMailSender
         $this->signalement = $affectation->getSignalement();
         $recipients = $this->getRecipientsPartner($affectation->getPartner());
         $this->sendMail($recipients, $mailerType);
+        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVELLE_AFFECTATION, affectation: $affectation);
+    }
+
+    public function sendAffectationClosed(Affectation $affectation, User $user): void
+    {
+        $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER;
+        $this->affectation = $affectation;
+        $this->signalement = $affectation->getSignalement();
+        $partnerToExclude = $user->getPartnerInTerritoryOrFirstOne($this->signalement->getTerritory());
+        $userList = $this->userRepository->findUsersAffectedToSignalement($this->signalement, $partnerToExclude);
+        $recipients = new ArrayCollection($userList);
+        $this->sendMail($recipients, $mailerType);
+        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::CLOTURE_PARTENAIRE, affectation: $affectation);
     }
 
     public function sendNewSuiviToAdminsAndPartners(Suivi $suivi, bool $sendEmail): void
@@ -61,20 +79,14 @@ class NotificationAndMailSender
         $this->signalement = $suivi->getSignalement();
         $territory = $this->signalement->getTerritory();
 
-        [$partnerRecipientsMail, $partnerRecipientsInAppNotif] = $this->getRecipientsPartners(isFilteredAffectationStatus: true);
-
-        $recipientsAdminEmail = $this->getRecipientsAdmin($territory);
-        $recipientsEmail = new ArrayCollection(
-            array_merge($partnerRecipientsMail->toArray(), $recipientsAdminEmail->toArray())
+        $partnerRecipients = $this->getRecipientsPartners(isFilteredAffectationStatus: true);
+        $adminRecipients = $this->getRecipientsAdmin($territory);
+        $recipients = new ArrayCollection(
+            array_merge($partnerRecipients->toArray(), $adminRecipients->toArray())
         );
 
-        $recipientsAdminInAppNotif = $this->getRecipientsAdmin($territory);
-        $recipientsInAppNotif = new ArrayCollection(
-            array_merge($partnerRecipientsInAppNotif->toArray(), $recipientsAdminInAppNotif->toArray())
-        );
-
-        $this->sendMail($recipientsEmail, $mailerType);
-        $this->createInAppNotifications($recipientsInAppNotif);
+        $this->sendMail($recipients, $mailerType);
+        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
     }
 
     public function sendNewSuiviToUsagers(Suivi $suivi): void
@@ -109,34 +121,45 @@ class NotificationAndMailSender
     {
         $this->suivi = $suivi;
         $this->signalement = $this->suivi->getSignalement();
-        [$partnerRecipientsMail, $partnerRecipientsInAppNotif] = $this->getRecipientsPartners(isFilteredAffectationStatus: false);
+        $partnerRecipients = $this->getRecipientsPartners(isFilteredAffectationStatus: false);
 
-        $this->sendMail($partnerRecipientsMail, NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS);
+        $this->sendMail($partnerRecipients, NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS);
 
-        $recipientsAdminInAppNotif = $this->getRecipientsAdmin(null);
+        $adminRecipients = $this->getRecipientsAdmin(null);
         $recipientsInAppNotif = new ArrayCollection(
-            array_merge($partnerRecipientsInAppNotif->toArray(), $recipientsAdminInAppNotif->toArray())
+            array_merge($partnerRecipients->toArray(), $adminRecipients->toArray())
         );
-        $this->createInAppNotifications($recipientsInAppNotif);
+        $this->createInAppNotifications(recipients: $recipientsInAppNotif, type: NotificationType::CLOTURE_SIGNALEMENT, suivi: $suivi);
     }
 
-    private function createInAppNotifications(ArrayCollection $recipients)
+    private function createInAppNotifications(ArrayCollection $recipients, NotificationType $type, ?Suivi $suivi = null, ?Affectation $affectation = null, ?Signalement $signalement = null): void
     {
         foreach ($recipients as $user) {
-            if ($user instanceof User && $user !== $this->suivi->getCreatedBy()) {
-                $this->createInAppNotification($user);
+            if (!($user instanceof User)) {
+                continue;
             }
+            if (NotificationType::NOUVEAU_SUIVI === $type && $user === $suivi->getCreatedBy()) {
+                continue;
+            }
+            $this->createInAppNotification(user: $user, type: $type, suivi: $suivi, affectation: $affectation, signalement: $signalement);
         }
         $this->entityManager->flush();
     }
 
-    private function createInAppNotification($user): void
+    private function createInAppNotification($user, NotificationType $type, ?Suivi $suivi = null, ?Affectation $affectation = null, ?Signalement $signalement = null): void
     {
-        if (empty($this->suivi) || Suivi::DESCRIPTION_SIGNALEMENT_VALIDE === $this->suivi->getDescription()) {
+        if (!$this->featureEmailRecap && !in_array($type, [NotificationType::NOUVEAU_SUIVI])) {
             return;
         }
-
-        $notification = $this->notificationFactory->createInstanceFrom($user, $this->suivi);
+        if (NotificationType::NOUVEAU_SUIVI === $type) {
+            if (Suivi::DESCRIPTION_SIGNALEMENT_VALIDE === $this->suivi->getDescription()) {
+                return;
+            }
+        }
+        $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: $type, suivi: $suivi, affectation: $affectation, signalement: $signalement);
+        if ($affectation) {
+            $this->entityManager->persist($affectation);
+        }
         $this->entityManager->persist($notification);
     }
 
@@ -193,33 +216,24 @@ class NotificationAndMailSender
         return $recipients;
     }
 
-    private function getRecipientsPartners(bool $isFilteredAffectationStatus): array
+    private function getRecipientsPartners(bool $isFilteredAffectationStatus): ArrayCollection
     {
         $partnerRecipientsMail = new ArrayCollection();
-        $partnerRecipientsInAppNotif = new ArrayCollection();
         foreach ($this->signalement->getAffectations() as $affectation) {
-            if (!$isFilteredAffectationStatus
-                    || AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
+            if (!$isFilteredAffectationStatus || AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
                     || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
                 $partner = $this->partnerRepository->getWithUserPartners($affectation->getPartner());
                 $partnerRecipientsMailItem = $this->getRecipientsPartner($partner);
-                $partnerRecipientsInAppNotifItem = $this->getRecipientsPartner($partner, false);
                 $partnerRecipientsMail = new ArrayCollection(
                     array_merge($partnerRecipientsMail->toArray(), $partnerRecipientsMailItem->toArray())
-                );
-                $partnerRecipientsInAppNotif = new ArrayCollection(
-                    array_merge($partnerRecipientsInAppNotif->toArray(), $partnerRecipientsInAppNotifItem->toArray())
                 );
             }
         }
 
-        return [
-            $partnerRecipientsMail,
-            $partnerRecipientsInAppNotif,
-        ];
+        return $partnerRecipientsMail;
     }
 
-    private function getRecipientsPartner(Partner $partner, bool $filterMailingActive = true): ArrayCollection
+    private function getRecipientsPartner(Partner $partner): ArrayCollection
     {
         $recipients = new ArrayCollection();
         if ($partner->getEmail()) {
@@ -227,7 +241,7 @@ class NotificationAndMailSender
         }
 
         foreach ($partner->getUsers() as $user) {
-            if ($this->isUserNotified($partner, $user) && (!$filterMailingActive || $user->getIsMailingActive())) {
+            if ($this->isUserNotified($partner, $user)) {
                 $recipients->add($user);
             }
         }
@@ -237,16 +251,22 @@ class NotificationAndMailSender
 
     private function getRecipientsFilteredEmail(ArrayCollection $recipients): array
     {
+        $copyRecipients = clone $recipients;
         /** @var ?User $user */
         $user = $this->security->getUser();
         if ($user) {
-            $recipients->removeElement($user);
+            $copyRecipients->removeElement($user);
         }
 
         $recipientsEmails = [];
-        foreach ($recipients as $recipientUserOrPartner) {
-            if ($recipientUserOrPartner instanceof User && !$recipientUserOrPartner->getIsMailingActive()) {
-                continue;
+        foreach ($copyRecipients as $recipientUserOrPartner) {
+            if ($recipientUserOrPartner instanceof User) {
+                if (!$recipientUserOrPartner->getIsMailingActive()) {
+                    continue;
+                }
+                if ($this->featureEmailRecap && $recipientUserOrPartner->getIsMailingSummary()) {
+                    continue;
+                }
             }
             if ('' !== trim($recipientUserOrPartner->getEmail()) && null !== $recipientUserOrPartner->getEmail()) {
                 $recipientsEmails[] = $recipientUserOrPartner->getEmail();

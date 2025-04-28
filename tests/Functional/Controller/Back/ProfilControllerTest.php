@@ -709,4 +709,41 @@ class ProfilControllerTest extends WebTestCase
             ],
         ]));
     }
+
+    public function testEditNotificationEmailError(): void
+    {
+        $route = $this->router->generate('back_profil');
+        $crawler = $this->client->request('GET', $route);
+        $form = $crawler->filter('#notification_email_form')->form();
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertJson(json_encode([
+            'code' => Response::HTTP_BAD_REQUEST,
+            'errors' => [
+                'isMailingSummary' => [
+                    'errors' => ['Merci de choisir une option de notification.'],
+                ],
+            ],
+        ]));
+    }
+
+    public function testEditNotificationEmailSuccess(): void
+    {
+        $route = $this->router->generate('back_profil');
+        $crawler = $this->client->request('GET', $route);
+        $form = $crawler->filter('#notification_email_form')->form();
+
+        $form->setValues([
+            'isMailingSummary' => 0,
+        ]);
+
+        $this->client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->assertFalse($user->getIsMailingSummary());
+        $this->assertTrue($user->getIsMailingActive());
+    }
 }

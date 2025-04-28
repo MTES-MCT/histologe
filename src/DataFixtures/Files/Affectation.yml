@@ -273,3 +273,11 @@ affectations:
     affected_by: "admin-03@signal-logement.fr"
     motif_cloture: "DEPART_OCCUPANT"
     territory: "Bouches-du-Rhône"
+  -
+    signalement: 2025-07
+    partner: "partenaire-30-02@signal-logement.fr"
+    statut: 0
+    answered_by: ""
+    affected_by: "admin-01@signal-logement.fr"
+    motif_cloture: ""
+    territory: "Gard"

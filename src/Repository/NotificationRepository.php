@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\NotificationType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Notification;
 use App\Entity\Signalement;
@@ -35,8 +36,10 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         $qb = $this->createQueryBuilder('n')
             ->where('n.user = :user')
             ->andWhere('n.type = :type_notification')
+            ->andWhere('n.deleted = :deleted')
             ->setParameter('user', $searchNotification->getUser())
-            ->setParameter('type_notification', Notification::TYPE_SUIVI)
+            ->setParameter('type_notification', NotificationType::NOUVEAU_SUIVI)
+            ->setParameter('deleted', false)
             ->leftJoin('n.user', 'u')
             ->leftJoin('n.suivi', 's')
             ->leftJoin('s.createdBy', 'cb')
@@ -94,10 +97,12 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->innerJoin('n.suivi', 'su')
             ->where('n.isSeen = :is_seen')
             ->andWhere('n.type = :type')
+            ->andWhere('n.deleted = :deleted')
             ->andWhere('n.user = :user')
             ->andWhere('su.type IN (:type_suivi_usager, :type_suivi_partner)')
             ->setParameter('is_seen', 0)
-            ->setParameter('type', 1)
+            ->setParameter('type', NotificationType::NOUVEAU_SUIVI)
+            ->setParameter('deleted', false)
             ->setParameter('user', $user)
             ->setParameter('type_suivi_usager', Suivi::TYPE_USAGER)
             ->setParameter('type_suivi_partner', Suivi::TYPE_PARTNER);
@@ -118,10 +123,12 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->innerJoin('n.suivi', 'su')
             ->where('n.isSeen = :is_seen')
             ->andWhere('n.type = :type')
+            ->andWhere('n.deleted = :deleted')
             ->andWhere('n.user = :user')
             ->andWhere('su.type IN (:type_suivi_usager, :type_suivi_partner)')
             ->setParameter('is_seen', 0)
-            ->setParameter('type', 1)
+            ->setParameter('type', NotificationType::NOUVEAU_SUIVI)
+            ->setParameter('deleted', false)
             ->setParameter('user', $user)
             ->setParameter('type_suivi_usager', Suivi::TYPE_USAGER)
             ->setParameter('type_suivi_partner', Suivi::TYPE_PARTNER);
@@ -152,11 +159,13 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->innerJoin('n.suivi', 'su')
             ->where('n.isSeen = :is_seen')
             ->andWhere('n.type = :type_notification')
+            ->andWhere('n.deleted = :deleted')
             ->andWhere('n.user = :user')
             ->andWhere('si.statut = :statut')
             ->andWhere('su.description LIKE :description')
             ->setParameter('is_seen', 0)
-            ->setParameter('type_notification', Notification::TYPE_SUIVI)
+            ->setParameter('type_notification', NotificationType::NOUVEAU_SUIVI)
+            ->setParameter('deleted', false)
             ->setParameter('statut', SignalementStatus::CLOSED->value)
             ->setParameter('description', Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
             ->setParameter('user', $user);
@@ -181,11 +190,13 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->innerJoin('n.suivi', 'su')
             ->where('n.isSeen = :is_seen')
             ->andWhere('n.type = :type_notification')
+            ->andWhere('n.deleted = :deleted')
             ->andWhere('n.user = :user')
             ->andWhere('si.statut != :status_closed')
             ->andWhere('su.description NOT LIKE :description_all AND su.description LIKE :description_partner')
             ->setParameter('is_seen', 0)
-            ->setParameter('type_notification', Notification::TYPE_SUIVI)
+            ->setParameter('type_notification', NotificationType::NOUVEAU_SUIVI)
+            ->setParameter('deleted', false)
             ->setParameter('description_all', Suivi::DESCRIPTION_MOTIF_CLOTURE_ALL.'%')
             ->setParameter('description_partner', Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.'%')
             ->setParameter('status_closed', SignalementStatus::CLOSED)
@@ -204,7 +215,11 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->update()
             ->set('n.isSeen', 1)
             ->where('n.user = :user')
-            ->setParameter('user', $user);
+            ->setParameter('user', $user)
+            ->andWhere('n.type = :type_notification')
+            ->setParameter('type_notification', NotificationType::NOUVEAU_SUIVI)
+            ->andWhere('n.deleted = :deleted')
+            ->setParameter('deleted', false);
         if (\count($ids)) {
             $qb->andWhere('n.id IN (:ids)')
                 ->setParameter('ids', $ids);
@@ -216,9 +231,14 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     public function deleteUserNotifications(User $user, array $ids = []): void
     {
         $qb = $this->createQueryBuilder('n')
-            ->delete()
+            ->update()
+            ->set('n.deleted', 1)
             ->where('n.user = :user')
-            ->setParameter('user', $user);
+            ->setParameter('user', $user)
+            ->andWhere('n.deleted = :deleted')
+            ->setParameter('type_notification', NotificationType::NOUVEAU_SUIVI)
+            ->setParameter('deleted', false)
+            ->andWhere('n.type = :type_notification');
         if (\count($ids)) {
             $qb->andWhere('n.id IN (:ids)')
                 ->setParameter('ids', $ids);
@@ -233,6 +253,36 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->delete()
             ->where('n.signalement = :signalement')
             ->setParameter('signalement', $signalement);
+
+        $qb->getQuery()->execute();
+    }
+
+    public function findWaitingSummaryForUser(User $user): array
+    {
+        return $this->createQueryBuilder('n')
+            ->select('n', 's')
+            ->leftJoin('n.signalement', 's')
+            ->where('n.user = :user')
+            ->andWhere('n.waitMailingSummary = :waitMailingSummary')
+            ->setParameter('user', $user)
+            ->setParameter('waitMailingSummary', true)
+            ->addOrderBy('n.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function massUpdate(array $notifications, array $data): void
+    {
+        $qb = $this->createQueryBuilder('n')
+        ->update()
+        ->set('n.waitMailingSummary', ':waitMailingSummary')
+        ->setParameter('waitMailingSummary', $data['waitMailingSummary'])
+        ->where('n.id IN (:ids)')
+        ->setParameter('ids', array_map(fn (Notification $notification) => $notification->getId(), $notifications));
+        if (isset($data['mailingSummarySentAt'])) {
+            $qb->set('n.mailingSummarySentAt', ':mailingSummarySentAt')
+                ->setParameter('mailingSummarySentAt', $data['mailingSummarySentAt']);
+        }
 
         $qb->getQuery()->execute();
     }

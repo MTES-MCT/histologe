@@ -22,6 +22,7 @@ env:
   FEATURE_SECURE_UUID_URL: 1
   MAIL_TEST_ENABLE: 0
   MAIL_TEST_EMAIL: 'mailcatcher@signal-logement.fr'
+  FEATURE_EMAIL_RECAP: 1
 jobs:
   code-quality:
     name: Signal-logement (PHP ${{ matrix.php-versions }})

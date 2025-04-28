@@ -5,6 +5,7 @@ namespace App\DataFixtures\Loader;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Event\AffectationCreatedEvent;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
@@ -12,15 +13,17 @@ use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadAffectationData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
-        private SignalementRepository $signalementRepository,
-        private PartnerRepository $partnerRepository,
-        private TerritoryRepository $territoryRepository,
-        private UserRepository $userRepository,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly PartnerRepository $partnerRepository,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly UserRepository $userRepository,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -64,6 +67,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($affectation);
+        $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
     }
 
     public function getOrder(): int

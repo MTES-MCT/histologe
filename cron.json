@@ -26,6 +26,9 @@
     },
     {
       "command": "0 4 * * * php bin/console app:notify-and-archive-inactive-accounts"
+    },
+    {
+      "command": "45 5 * * * php bin/console app:send-summary-emails"
     }
   ]
 }
