@@ -119,7 +119,7 @@ S3_URL_BUCKET=
 | Bouches-du-Rhône | Agent Partenaire 13   | user-13-01@signal-logement.fr             | ROLE_USER_PARTNER    |
 | Ain              | Agent Partenaire 01   | user-01-01@signal-logement.fr             | ROLE_USER_PARTNER    |
 
-> Pour les mails générique partenaire, la nomenclature est la suivante : partenaire-[zip]-[index]
+> Pour les mails de contact partenaire, la nomenclature est la suivante : partenaire-[zip]-[index]
 
 ## API
 

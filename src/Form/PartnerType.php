@@ -17,6 +17,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -65,6 +66,15 @@ class PartnerType extends AbstractType
                     'class' => 'fr-input',
                 ],
                 'required' => false,
+            ])
+            ->add('emailNotifiable', ChoiceType::class, [
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false,
+                ],
+                'expanded' => true,
+                'label' => 'Notifier l\'adresse e-mail de contact ?',
+                'help' => 'Est-ce que les e-mails concernant les signalements du partenaire doivent être envoyés à cette adresse ?',
             ])
             ->add('type', EnumType::class, [
                 'class' => EnumPartnerType::class,

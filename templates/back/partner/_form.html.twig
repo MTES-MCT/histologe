@@ -23,11 +23,14 @@
 			<div class="fr-fieldset__element">
 				<div class="fr-input-group">
 					<label for="{{ form.email.vars.id }}" class="fr-label">
-						E-mail générique (facultatif)
-						<span class="fr-hint-text">Des e-mails concernant les signalements du partenaire seront envoyés à cette adresse.</span>
+						E-mail de contact (facultatif)
+						<span class="fr-hint-text">S'il y a des responsables de territoire au sein du partenaire, cette adresse e-mail sera visible par les agents du territoire.</span>
 					</label>
 					{{ form_widget(form.email) }}
 				</div>
+			</div>
+			<div class="fr-fieldset__element fr-mb-n1v">
+				{{ form_row(form.emailNotifiable) }}
 			</div>
 			<div class="fr-fieldset__element">
 				<div class="fr-select-group">

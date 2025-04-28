@@ -236,7 +236,7 @@ class NotificationAndMailSender
     private function getRecipientsPartner(Partner $partner): ArrayCollection
     {
         $recipients = new ArrayCollection();
-        if ($partner->getEmail()) {
+        if ($partner->getEmail() && $partner->isEmailNotifiable()) {
             $recipients->add($partner);
         }
 
