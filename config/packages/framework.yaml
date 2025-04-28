@@ -23,7 +23,6 @@ framework:
         default_uuid_version: 7
         time_based_uuid_version: 7
 
-
     #esi: true
     #fragments: true
     php_errors:
@@ -34,6 +33,8 @@ when@prod:
         session:
             cookie_secure: true
             cookie_httponly: true
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    trusted_headers: [ "x-forwarded-for", "x-forwarded-proto", "x-forwarded-port", "x-forwarded-host" ]
 
 when@test:
     framework:
