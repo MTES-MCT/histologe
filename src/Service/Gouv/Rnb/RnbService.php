@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\BetaGouv;
+namespace App\Service\Gouv\Rnb;
 
-use App\Service\BetaGouv\Response\RnbBuilding;
+use App\Service\Gouv\Rnb\Response\RnbBuilding;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

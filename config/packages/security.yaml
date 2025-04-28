@@ -60,6 +60,13 @@ security:
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
             logout:
                 path: app_logout
+                # Session must remain active until custom logout logic runs.
+                # It's manually invalidated in App\EventSubscriber\LogoutSubscriber
+                # because we need access to ProConnect session data before destroying it.
+                # https://symfony.com/doc/current/reference/configuration/security.html#invalidate-session
+                invalidate_session: false
+                # where to redirect after logout
+                # target: app_any_route
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 2592000 # 30 days in seconds

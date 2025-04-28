@@ -69,6 +69,7 @@ class NotificationFactoryTest extends KernelTestCase
     public function testCreateInstanceNotificationNouvelleAffectation(): void
     {
         $user = $this->getUserFromRole(User::ROLE_USER_PARTNER);
+        $user->setIsMailingActive(false);
         $signalement = new Signalement();
         $affectation = new Affectation();
         $affectation->setSignalement($signalement);

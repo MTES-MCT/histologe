@@ -61,6 +61,6 @@ class UserRepositoryTest extends KernelTestCase
         $users = $userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId(), $signalement->getInseeOccupant());
 
         $this->assertIsArray($users);
-        $this->assertCount(2, $users);
+        $this->assertCount(3, $users);
     }
 }

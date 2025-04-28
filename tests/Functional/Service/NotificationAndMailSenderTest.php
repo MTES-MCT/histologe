@@ -69,13 +69,13 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $mail = $this->getMailerMessages()[0];
         $this->assertEmailSubjectContains($mail, 'Un nouveau signalement vous attend');
         $this->assertEmailAddressContains($mail, 'to', 'ne-pas-repondre@signal-logement.beta.gouv.fr');
-        $this->assertCount(1, $mail->getBcc());
+        $this->assertCount(2, $mail->getBcc());
         $this->assertEmailAddressContains($mail, 'bcc', 'admin-territoire-13-01@signal-logement.fr');
 
         $notificationsSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::NOUVEAU_SIGNALEMENT, 'waitMailingSummary' => true]);
         $this->assertCount(0, $notificationsSummary);
         $notificationNoSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::NOUVEAU_SIGNALEMENT, 'waitMailingSummary' => false]);
-        $this->assertCount(5, $notificationNoSummary);
+        $this->assertCount(6, $notificationNoSummary);
     }
 
     public function testSendNewAffectation(): void

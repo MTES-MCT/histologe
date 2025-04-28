@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\DataGouv\Response;
+namespace App\Service\Gouv\Ban\Response;
 
 class Address
 {

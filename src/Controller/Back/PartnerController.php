@@ -574,6 +574,7 @@ class PartnerController extends AbstractController
         );
         $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
         $user->setStatut(User::STATUS_ARCHIVE);
+        $user->setProConnectUserId(null);
         $userManager->save($user);
         $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
 

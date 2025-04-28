@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Tests\Unit\Service\DataGouv;
+namespace App\Tests\Unit\Service\Gouv\Ban;
 
-use App\Service\DataGouv\AddressService;
+use App\Service\Gouv\Ban\AddressService;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -16,7 +16,7 @@ class AddressServiceTest extends TestCase
     protected function setUp(): void
     {
         $mockResponse = new MockResponse(
-            file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response.json')
+            file_get_contents(__DIR__.'/../../../../files/datagouv/get_api_ban_item_response.json')
         );
         $mockHttpClient = new MockHttpClient($mockResponse);
         $this->addressService = new AddressService($mockHttpClient, $this->createMock(LoggerInterface::class));

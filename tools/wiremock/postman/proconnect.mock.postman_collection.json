@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "694f84ed-51d1-4463-882e-389f2543cf7c",
+		"name": "proconnect-mock",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1569180"
+	},
+	"item": [
+		{
+			"name": "/api/v2/.well-known/openid-configuration",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/api/v2/.well-known/openid-configuration",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"v2",
+						".well-known",
+						"openid-configuration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/authorize",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8082/authorize?response_type=code&client_id=dummy&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fproconnect%2Fcallback&acr_values=eidas1&scope=openid+given_name+usual_name+email+uid&state=teststate&nonce=testnonce",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"authorize"
+					],
+					"query": [
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "client_id",
+							"value": "dummy"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http%3A%2F%2Flocalhost%3A8080%2Fproconnect%2Fcallback"
+						},
+						{
+							"key": "acr_values",
+							"value": "eidas1"
+						},
+						{
+							"key": "scope",
+							"value": "openid+given_name+usual_name+email+uid"
+						},
+						{
+							"key": "state",
+							"value": "teststate"
+						},
+						{
+							"key": "nonce",
+							"value": "testnonce"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/session/end",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8082/session/end?id_token_hint=eyJhbGciOiJSUzI1NiIsImtpZCI6Im1vY2stZ2VuZXJhdGVkIiwidHlwIjoiSldUIn0.eyJzdWIiOiI3ODU1IiwidWlkIjoiNzg1NSIsImVtYWlsIjoicHJvY29ubmVjdEBzaWduYWwtbG9nZW1lbnQuZnIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmFtaWx5X25hbWUiOiJQIiwiZ2l2ZW5fbmFtZSI6IlByb2Nvbm5lY3QiLCJ1c3VhbF9uYW1lIjoiUHJvY29ubmVjdCIsInVwZGF0ZWRfYXQiOiIyMDI1LTA0LTA5VDEwOjA1OjU4Ljg2MFoiLCJqb2IiOiJERFQiLCJsYWJlbCI6IkREVE0gMTMiLCJzaXJldCI6IjIxMzcwMjA4NzAwMDE1IiwiaXNfY29tbXVuZSI6dHJ1ZSwiaXNfZXh0ZXJuYWwiOmZhbHNlLCJpc19wdWJsaWNfc2VydmljZSI6dHJ1ZSwiaXNfc2VydmljZV9wdWJsaWMiOnRydWUsIm5vbmNlIjoiZmFrZV9ub25jZSIsImFtciI6WyJtYWlsIl0sImF0X2hhc2giOiIwX2VFUkl0RU92VkFCMy1IbEU5TXhnIiwiYXVkIjoiY2xpZW50X2lkIiwiZXhwIjoxOTAxOTAyNTMwLCJpYXQiOjE3NDQyMjI1MzAsImlzcyI6Imh0dHBzOi8vaWRlbnRpdGUtc2FuZGJveC5wcm9jb25uZWN0LmdvdXYuZnIiLCJzY29wZSI6Im9wZW5pZCBlbWFpbCBnaXZlbl9uYW1lIGZhbWlseV9uYW1lIHVzdWFsX25hbWUgdWlkIn0.CpFJcwnMJNWOPfBDgIijoOiOfAUVDZk879L0Dmvq87eVps78H1NsJtLy5AYRUpZDKIrxZE3zcDybSHWxeh5yRB6a-zOwWuiJJL7FK3whdK3G68MB1BMQYY2P6qdN-0MsqxeqVpgqcvOuwykjMMclEi1ppy0X1SRxwpzxR3JY8gFVV4ZeTJ3tgnZ_ZDUI_rOAX-floqzkRIuE_R6tkpsoThgWJNq-DApNsio251MlEXqsdsjQdlS5er8SXVFzvUJtzvW3lKhtb7scH4Q8lz7CNBmOrbSgw16gkH2Z7eZKdd-IQt4f4OeI3Lm-hhRkG79hOrenCN40_Ryu42cdcg2AWg&state=fake_state&post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Flogout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"session",
+						"end"
+					],
+					"query": [
+						{
+							"key": "id_token_hint",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6Im1vY2stZ2VuZXJhdGVkIiwidHlwIjoiSldUIn0.eyJzdWIiOiI3ODU1IiwidWlkIjoiNzg1NSIsImVtYWlsIjoicHJvY29ubmVjdEBzaWduYWwtbG9nZW1lbnQuZnIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmFtaWx5X25hbWUiOiJQIiwiZ2l2ZW5fbmFtZSI6IlByb2Nvbm5lY3QiLCJ1c3VhbF9uYW1lIjoiUHJvY29ubmVjdCIsInVwZGF0ZWRfYXQiOiIyMDI1LTA0LTA5VDEwOjA1OjU4Ljg2MFoiLCJqb2IiOiJERFQiLCJsYWJlbCI6IkREVE0gMTMiLCJzaXJldCI6IjIxMzcwMjA4NzAwMDE1IiwiaXNfY29tbXVuZSI6dHJ1ZSwiaXNfZXh0ZXJuYWwiOmZhbHNlLCJpc19wdWJsaWNfc2VydmljZSI6dHJ1ZSwiaXNfc2VydmljZV9wdWJsaWMiOnRydWUsIm5vbmNlIjoiZmFrZV9ub25jZSIsImFtciI6WyJtYWlsIl0sImF0X2hhc2giOiIwX2VFUkl0RU92VkFCMy1IbEU5TXhnIiwiYXVkIjoiY2xpZW50X2lkIiwiZXhwIjoxOTAxOTAyNTMwLCJpYXQiOjE3NDQyMjI1MzAsImlzcyI6Imh0dHBzOi8vaWRlbnRpdGUtc2FuZGJveC5wcm9jb25uZWN0LmdvdXYuZnIiLCJzY29wZSI6Im9wZW5pZCBlbWFpbCBnaXZlbl9uYW1lIGZhbWlseV9uYW1lIHVzdWFsX25hbWUgdWlkIn0.CpFJcwnMJNWOPfBDgIijoOiOfAUVDZk879L0Dmvq87eVps78H1NsJtLy5AYRUpZDKIrxZE3zcDybSHWxeh5yRB6a-zOwWuiJJL7FK3whdK3G68MB1BMQYY2P6qdN-0MsqxeqVpgqcvOuwykjMMclEi1ppy0X1SRxwpzxR3JY8gFVV4ZeTJ3tgnZ_ZDUI_rOAX-floqzkRIuE_R6tkpsoThgWJNq-DApNsio251MlEXqsdsjQdlS5er8SXVFzvUJtzvW3lKhtb7scH4Q8lz7CNBmOrbSgw16gkH2Z7eZKdd-IQt4f4OeI3Lm-hhRkG79hOrenCN40_Ryu42cdcg2AWg"
+						},
+						{
+							"key": "state",
+							"value": "fake_state"
+						},
+						{
+							"key": "post_logout_redirect_uri",
+							"value": "http%3A%2F%2Flocalhost%3A8080%2Flogout"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded|",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/userinfo",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/userinfo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"userinfo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/jwks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/jwks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"jwks"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

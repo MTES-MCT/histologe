@@ -58,6 +58,7 @@ parameters:
       - "'self'"
     form-action:
       - "'self'"
+      - "%proconnect_scheme_protocol%%proconnect_domain%"
     frame-ancestors:
       - "'self'"
       - "https://signal-logement.beta.gouv.fr/"
