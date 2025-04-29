@@ -60,7 +60,7 @@ for (let iTables = 0; iTables < tables.length; iTables++) {
     headers = thead.querySelectorAll('th')
 
     for (let jHeaders = 0; jHeaders < headers.length; jHeaders++) {
-      headers[jHeaders].innerHTML = "<a href='#'>" + headers[jHeaders].innerText + '</a>'
+      headers[jHeaders].innerHTML = "<a href='#'>" + headers[jHeaders].textContent + '</a>'
     }
 
     thead.addEventListener('click', sortTableFunction(table))
