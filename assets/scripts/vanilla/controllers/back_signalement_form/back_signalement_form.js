@@ -258,17 +258,17 @@ function initBoFormSignalementDesordres() {
     // Récupérer les critères sélectionnés
     modal.querySelectorAll("input[type='checkbox']:checked").forEach(checkbox => {
       nbCriteres++
-      const critereLabel = checkbox.labels[0].innerText
       const critereId = checkbox.value
 
       // Créer un encart pour le critère sélectionné
       let encart = document.createElement("div");
       encart.classList.add("fr-grid-row", "fr-p-3v", "fr-mb-3v", "fr-grid-row--top", "fr-border--grey", `item-critere-${zone}`);
       encart.id = `item-critere-${critereId}`
-      encart.innerHTML = `
-        <div class="fr-col-12 fr-col-md-8">
-          ${critereLabel}
-        </div>`
+      const encartSubItem = document.createElement("div")
+      encartSubItem.classList.add("fr-col-12", "fr-col-md-8")
+      encartSubItem.innerText = checkbox.labels[0].innerText
+      encart.appendChild(encartSubItem);
+
       const modalId = `modal-precisions-${critereId}`
       const modalElement = document.getElementById(modalId) ;
       const buttonDeleteCritereHtml = `<button class="fr-a-edit fr-btn--icon-left fr-icon-delete-line delete-critere-btn" 
@@ -276,23 +276,30 @@ function initBoFormSignalementDesordres() {
                     Supprimer
             </button>`;
       if (modalElement) {
-        encart.innerHTML += `
-          <div class="fr-col-12 fr-col-md-4 fr-text--right">
-            <a href="#" aria-controls="${modalId}" data-fr-opened="false" 
+        const btnDeleteContainer = document.createElement("div")
+        btnDeleteContainer.classList.add("fr-col-12", "fr-col-md-4", "fr-text--right")
+        btnDeleteContainer.innerHTML = `
+          <a href="#" aria-controls="${modalId}" data-fr-opened="false" 
                 class="fr-a-edit fr-btn--icon-left fr-icon-edit-line edit-precisions-btn" 
                 title="Editer les détails" data-fr-js-modal-button="true">
                     Editer les détails
-            </a>  <br> 
-            ${buttonDeleteCritereHtml}
-          </div>
-          <div class="fr-col-12">
-            <ul class="fr-list" data-precisions="${checkbox.value}">
-              <!-- Les précisions seront injectées ici -->
-            </ul>
+          </a>
+          <br>
+          ${buttonDeleteCritereHtml}
+        `
+        encart.appendChild(btnDeleteContainer)
+
+        const listPrecisionsContainer = document.createElement("div")
+        listPrecisionsContainer.classList.add("fr-col-12")
+        const listPrecisions = document.createElement("ul")
+        listPrecisions.classList.add("fr-list")
+        listPrecisions.dataset.precisions = checkbox.value
+        listPrecisionsContainer.appendChild(listPrecisions)
+        listPrecisionsContainer.innerHTML += `
             <span id="details-critere"></span>
             <p class="fr-hidden fr-error-text"></p>
-          </div>
-        `;
+        `
+        encart.appendChild(listPrecisionsContainer)
       }else{
         encart.innerHTML += `<div class="fr-col-12 fr-col-md-4 fr-text--right">${buttonDeleteCritereHtml}</div>`;
       }
@@ -359,7 +366,12 @@ function initBoFormSignalementDesordres() {
       detailsCritereElement.innerHTML = ''
       const inputTextElement = modal.querySelector("input[type='text']");
       if ('' != inputTextElement.value) {
-        detailsCritereElement.innerHTML = 'Commentaire : <i>'+inputTextElement.value+'</i>'      
+        const detailItem = document.createElement("span");
+        detailItem.innerText = 'Commentaire : ';
+        const detailItemValue = document.createElement("i");
+        detailItemValue.innerText = inputTextElement.value;
+        detailItem.appendChild(detailItemValue);
+        detailsCritereElement.appendChild(detailItem);
         if ('desordres_batiment_nuisibles_autres' == modal.dataset.critereslug){
           hasPrecisionsChosen = true; // ce désordre doit automatiquement avoir un commentaire
         }
