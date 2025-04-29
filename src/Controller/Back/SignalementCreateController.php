@@ -396,11 +396,15 @@ class SignalementCreateController extends AbstractController
             $errorMsgs[] = 'Vous devez renseigner au moins un désordre pour pouvoir soumettre le signalement.';
         }
 
-        $partners = $partnerRepository->findAllList($signalement->getTerritory());
+        $partners = [];
         $assignablePartners = $autoAssigner->assign($signalement, true);
+        if (!count($assignablePartners)) {
+            $partners = $partnerRepository->findAllList($signalement->getTerritory());
+        }
 
-        $postData = $request->request->all();
-        if (!count($errorMsgs) && isset($postData['_token']) && $this->isCsrfTokenValid('form_signalement_validation', $postData['_token'])) {
+        $token = $request->request->get('_token');
+        $partnerIds = $request->request->get('partner-ids');
+        if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
             /** @var User $user */
             $user = $this->getUser();
 
@@ -416,6 +420,22 @@ class SignalementCreateController extends AbstractController
             if (!$signalement->getPrenomDeclarant()) {
                 $signalement->setPrenomDeclarant($user->getPrenom());
             }
+            if (!$signalement->getStructureDeclarant()) {
+                $signalement->setStructureDeclarant($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())->getNom());
+            }
+            if (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT])) {
+                if (!$signalement->getMailOccupant()) {
+                    $signalement->setMailOccupant($user->getEmail());
+                }
+                if (!$signalement->getNomOccupant()) {
+                    $signalement->setNomOccupant($user->getNom());
+                }
+                if (!$signalement->getPrenomOccupant()) {
+                    $signalement->setPrenomOccupant($user->getPrenom());
+                }
+            } else {
+                $signalement->setIsNotOccupant(true);
+            }
 
             $route = 'back_signalements_index';
             if (count($assignablePartners)) {
@@ -424,8 +444,8 @@ class SignalementCreateController extends AbstractController
                 if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
                     $route = 'back_signalement_drafts';
                 }
-            } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY') && !empty($postData['partner-ids'])) {
-                $partnersList = explode(',', $postData['partner-ids']);
+            } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY') && !empty($partnerIds)) {
+                $partnersList = explode(',', $partnerIds);
                 foreach ($partnersList as $partnerId) {
                     if (isset($partners[$partnerId])) {
                         $affectation = $affectationManager->createAffectationFrom($signalement, $partners[$partnerId], $user);
