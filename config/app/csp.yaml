@@ -63,6 +63,8 @@ parameters:
       - "'self'"
       - "https://signal-logement.beta.gouv.fr/"
       - "https://histologe-sites-faciles.osc-fr1.scalingo.io/"
+      - "https://histologe-demo.osc-fr1.scalingo.io/"
+      - "https://histologe-demo-sites-faciles.osc-fr1.scalingo.io/"
     media-src:
       - "'self'"
     worker-src:
