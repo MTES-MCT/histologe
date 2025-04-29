@@ -2013,50 +2013,49 @@ class AffectationToPartnerCommand extends Command
         $partner = $this->partnerRepository->findOneBy(['id' => self::PARTNER_ID]);
         $adminEmail = $this->parameterBag->get('user_system_email');
         $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
+        $createdAt = new \DateTimeImmutable();
 
         $progressBar = new ProgressBar($output, \count(self::SIGNALEMENTS_REFERENCE));
         $progressBar->start();
         $count = 0;
-        $i = 0;
         foreach (self::SIGNALEMENTS_REFERENCE as $idossId => $signalementReference) {
             $progressBar->advance();
-            ++$i;
             $signalement = $this->signalementRepository->findOneBy(['reference' => $signalementReference, 'territory' => $partner->getTerritory()]);
             if (!$signalement) {
                 continue;
             }
+            $idossData = ['id' => $idossId, 'created_at' => $createdAt->format('Y-m-d H:i:s')];
             $existingAffectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $partner]);
-            if ($existingAffectation) {
+            if ($existingAffectation && $signalement->getSynchroData(IdossService::TYPE_SERVICE)) {
                 continue;
+            } elseif ($existingAffectation) {
+                $signalement->setSynchroData($idossData, IdossService::TYPE_SERVICE);
+            } else {
+                $signalement->setSynchroData($idossData, IdossService::TYPE_SERVICE);
+
+                $affectationStatus = SignalementStatus::NEED_VALIDATION === $signalement->getStatut() || SignalementStatus::ACTIVE === $signalement->getStatut()
+                    ? Affectation::STATUS_ACCEPTED
+                    : Affectation::STATUS_CLOSED;
+
+                $affectation = (new Affectation())
+                    ->setSignalement($signalement)
+                    ->setPartner($partner)
+                    ->setTerritory($partner->getTerritory())
+                    ->setAffectedBy($adminUser)
+                    ->setAnsweredBy($adminUser)
+                    ->setAnsweredAt($createdAt)
+                    ->setIsSynchronized(true)
+                    ->setStatut($affectationStatus);
+
+                $this->entityManager->persist($affectation);
             }
-
             ++$count;
-
-            $createdAt = new \DateTimeImmutable();
-            $idossData = [
-                'id' => $idossId,
-                'created_at' => $createdAt->format('Y-m-d H:i:s'),
-            ];
-            $signalement->setSynchroData($idossData, IdossService::TYPE_SERVICE);
-
-            $affectationStatus = SignalementStatus::NEED_VALIDATION === $signalement->getStatut() || SignalementStatus::ACTIVE === $signalement->getStatut()
-                ? Affectation::STATUS_ACCEPTED
-                : Affectation::STATUS_CLOSED;
-
-            $affectation = (new Affectation())
-                ->setSignalement($signalement)
-                ->setPartner($partner)
-                ->setTerritory($partner->getTerritory())
-                ->setAffectedBy($adminUser)
-                ->setAnsweredBy($adminUser)
-                ->setAnsweredAt(new \DateTimeImmutable())
-                ->setIsSynchronized(true)
-                ->setStatut($affectationStatus);
-
-            $this->entityManager->persist($affectation);
-
             if (0 === $count % self::BATCH_SIZE) {
                 $this->entityManager->flush();
+                $this->entityManager->clear();
+                $partner = $this->partnerRepository->findOneBy(['id' => self::PARTNER_ID]);
+                $adminEmail = $this->parameterBag->get('user_system_email');
+                $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
             }
         }
         $this->entityManager->flush();
