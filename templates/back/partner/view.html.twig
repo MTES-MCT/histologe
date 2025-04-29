@@ -241,7 +241,7 @@
                             <td>
                                 <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">
                                     {% if user.isMailingActive %}
-                                        {{ user.isMailingSummary ? 'Récap' : 'Oui' }}
+                                        {{ user.isMailingSummary and feature_email_recap ? 'Récap' : 'Oui' }}
                                     {% else %}
                                         Non
                                     {% endif %}

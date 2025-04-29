@@ -416,10 +416,14 @@ class PartnerController extends AbstractController
                 return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire', 'submitLabel' => 'Ajouter l\'utilisateur']);
             }
             $user->setRoles([$formUserPartner->get('role')->getData()]);
+            if (null === $user->getIsMailingSummary()) {
+                $user->setIsMailingSummary(true);
+            }
             if ($userExist) {
                 $userExist->setNom($user->getNom());
                 $userExist->setPrenom($user->getPrenom());
                 $userExist->setIsMailingActive($user->getIsMailingActive());
+                $userExist->setIsMailingSummary($user->getIsMailingSummary());
                 $userExist->setHasPermissionAffectation($user->hasPermissionAffectation());
                 $userExist->setStatut(User::STATUS_INACTIVE);
                 $userExist->setRoles([$formUserPartner->get('role')->getData()]);

@@ -553,7 +553,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getIsMailingSummary(): bool
+    public function getIsMailingSummary(): ?bool
     {
         return $this->isMailingSummary;
     }
