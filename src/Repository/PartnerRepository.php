@@ -76,7 +76,7 @@ class PartnerRepository extends ServiceEntityRepository
 
         $queryBuilder->addSelect(
             '(CASE
-                WHEN p.email IS NOT NULL THEN 1
+                WHEN (p.email IS NOT NULL AND p.email != \'\' AND p.emailNotifiable = 1) THEN 1
                 WHEN EXISTS (
                     SELECT 1
                     FROM '.UserPartner::class.' up2
@@ -141,7 +141,7 @@ class PartnerRepository extends ServiceEntityRepository
         // Filtre sur les partenaires non notifiables
         $expr = $queryBuilder->expr();
         $queryBuilder
-            ->where('p.email IS NULL') // Pas d'email générique
+            ->where('(p.email IS NULL OR p.email = \'\' OR p.emailNotifiable = 0)')
             ->andWhere('p.isArchive = 0')
             ->andWhere(
                 $expr->orX(

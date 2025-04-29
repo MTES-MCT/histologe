@@ -34,7 +34,7 @@
         {% if partner.receiveEmailNotifications is same as false %}  
             <div class="fr-alert fr-alert--warning">
                 <h3 class="fr-alert__title">Ce partenaire n'est pas notifiable.</h3>
-                <p>Cela signifie qu'il n'a pas d'adresse e-mail générique et qu'aucun utilisateur ne reçoit de notifications par e-mail.</p>
+                <p>Cela signifie qu'il n'a pas d'adresse e-mail de contact ou qu'elle n'est pas notifiable et qu'aucun utilisateur ne reçoit de notifications par e-mail.</p>
             </div>     
         {% endif %}
     </section>
@@ -69,7 +69,7 @@
                     <div><b>Territoire :</b> {{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : ''}}</div>
                 </div>
                 <div class="fr-col-6">
-                    <div><b>E-mail générique :</b> {{ partner.email }}</div>
+                    <div><b>E-mail de contact :</b> {{ partner.email }}</div>
                 </div>
                 <div class="fr-col-6">
                     <div><b>Type :</b> {{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'N/A') }}</div>

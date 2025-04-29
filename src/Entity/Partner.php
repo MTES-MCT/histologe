@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks()]
 #[UniqueEntity(
     fields: ['email', 'territory', 'isArchive'],
-    message: 'L\'e-mail générique existe déjà pour ce territoire. Veuillez saisir un autre e-mail partenaire.',
+    message: 'L\'e-mail de contact existe déjà pour ce territoire. Veuillez saisir un autre e-mail partenaire.',
     errorPath: 'email',
     ignoreNull: true)
 ]
@@ -57,6 +57,9 @@ class Partner implements EntityHistoryInterface
     #[Assert\Email]
     #[Assert\Length(max: 255)]
     private ?string $email = null;
+
+    #[ORM\Column]
+    private ?bool $emailNotifiable = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Url]
@@ -125,6 +128,7 @@ class Partner implements EntityHistoryInterface
         $this->zones = new ArrayCollection();
         $this->userPartners = new ArrayCollection();
         $this->excludedZones = new ArrayCollection();
+        $this->emailNotifiable = true;
     }
 
     public function getId(): ?int
@@ -247,9 +251,21 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
+    public function isEmailNotifiable(): ?bool
+    {
+        return $this->emailNotifiable;
+    }
+
+    public function setEmailNotifiable(bool $emailNotifiable): static
+    {
+        $this->emailNotifiable = $emailNotifiable;
+
+        return $this;
+    }
+
     public function receiveEmailNotifications(?User $excludeUser = null): bool
     {
-        if ($this->email) {
+        if ($this->email && $this->emailNotifiable) {
             return true;
         }
         foreach ($this->getUsers() as $user) {

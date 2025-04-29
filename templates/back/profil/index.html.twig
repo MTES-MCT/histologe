@@ -69,7 +69,13 @@
                         </p>
                         <ul>
                             {% for userAdmin in activeTerritoryAdminsByTerritory[partner.territory.id] %}
-                            <li>{{ userAdmin.prenom }} {{ userAdmin.nom }} du partenaire {{ userAdmin.getPartnerInTerritoryOrFirstOne(partner.territory).nom }}</li>
+                            {% set partner = userAdmin.getPartnerInTerritoryOrFirstOne(partner.territory) %}
+                            <li>
+                                {{ userAdmin.prenom }} {{ userAdmin.nom }} du partenaire {{ partner.nom }}
+                                {% if partner.email %}
+                                    - {{ partner.email }}
+                                {% endif %}
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>
