@@ -110,6 +110,7 @@ class SecurityController extends AbstractController
         ?Signalement $signalement = null,
     ): BinaryFileResponse|RedirectResponse {
         $request = Request::createFromGlobals();
+        // TODO faire un vrai secret
         $expectedToken = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement?->getUuid().$filename, '$secret');
 
         if (
