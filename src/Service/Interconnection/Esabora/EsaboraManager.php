@@ -316,7 +316,13 @@ class EsaboraManager
     {
         $intervention
             ->setScheduledAt(DateParser::parse($dossierVisiteSISH->getVisiteDate()))
-            ->setDoneBy($dossierVisiteSISH->getVisitePar());
+            ->setDoneBy($visitePar = $dossierVisiteSISH->getVisitePar());
+
+        if ('ARS' !== $visitePar) {
+            $intervention
+                ->setExternalOperator($visitePar)
+                ->setPartner(null);
+        }
 
         $this->interventionRepository->save($intervention, true);
     }

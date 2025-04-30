@@ -26,7 +26,7 @@ class InterventionDescriptionGenerator
     public static function buildDescriptionVisiteCreated(Intervention $intervention): string
     {
         $labelVisite = strtolower($intervention->getType()->label());
-        $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
+        $partnerName = $intervention->getExternalOperator() ?? $intervention->getPartner()?->getNom() ?? 'Non renseigné';
         $today = new \DateTimeImmutable();
         $isInPast = $today > $intervention->getScheduledAt()
             && Intervention::STATUS_DONE === $intervention->getStatus();

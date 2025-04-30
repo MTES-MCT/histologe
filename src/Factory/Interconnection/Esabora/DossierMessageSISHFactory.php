@@ -49,12 +49,6 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $timezone = $partner->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
 
         $address = AddressParser::parse($signalement->getAdresseOccupant());
-        $firstSuivi = $this->suiviRepository->findFirstSuiviBy($signalement, Suivi::TYPE_PARTNER);
-
-        $cleanedSuiviDescription = null !== $firstSuivi && null !== $firstSuivi->getDescription()
-            ? HtmlCleaner::clean($firstSuivi->getDescription(false))
-            : null;
-
         $formatDate = AbstractEsaboraService::FORMAT_DATE;
         $formatDateTime = AbstractEsaboraService::FORMAT_DATE_TIME;
         $routeSignalement = $this->urlGenerator->generate(
@@ -143,7 +137,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSignalementScore(round($signalement->getScore(), 1))
             ->setSignalementOrigine(AbstractEsaboraService::SIGNALEMENT_ORIGINE)
             ->setSignalementNumero($signalement->getReference())
-            ->setSignalementCommentaire($cleanedSuiviDescription)
+            ->setSignalementCommentaire($this->buildSuivi($signalement))
             ->setSignalementDate($signalement->getCreatedAt()?->format($formatDate))
             ->setSignalementDetails($signalement->getDetails())
             ->setSignalementProblemes($this->buildProblemes($signalement))
@@ -247,5 +241,19 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         }
 
         return $commentaire;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    private function buildSuivi(Signalement $signalement): string
+    {
+        $suivis = $this->suiviRepository->findAllSuiviBy($signalement, Suivi::TYPE_PARTNER);
+        $cleanedSuivis = array_map(function (Suivi $suivi) {
+            return HtmlCleaner::clean($suivi->getDescription(false));
+        }, $suivis);
+        $separator = str_repeat('-', 50);
+
+        return implode(\PHP_EOL.$separator.\PHP_EOL, $cleanedSuivis);
     }
 }

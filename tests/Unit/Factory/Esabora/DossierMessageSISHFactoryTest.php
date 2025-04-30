@@ -29,8 +29,8 @@ class DossierMessageSISHFactoryTest extends TestCase
         $suiviRepositoryMock = $this->createMock(SuiviRepository::class);
         $suiviRepositoryMock
             ->expects($this->once())
-            ->method('findFirstSuiviBy')
-            ->willReturn($this->getSuiviPartner());
+            ->method('findAllSuiviBy')
+            ->willReturn($this->getSuiviPartnerList());
 
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
@@ -74,6 +74,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         $this->assertNotNull($dossierMessage->getLocalisationVille());
         $this->assertEquals('H', $dossierMessage->getSasLogicielProvenance());
         $this->assertEquals(75, $dossierMessage->getSitLogementSuperficie());
+        $this->assertCount(4, explode(\PHP_EOL.str_repeat('-', 50).\PHP_EOL, $dossierMessage->getSignalementCommentaire()));
         $this->assertEquals(
             AbstractEsaboraService::SIGNALEMENT_ORIGINE,
             $dossierMessage->getSignalementOrigine()

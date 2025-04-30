@@ -142,13 +142,23 @@ trait FixturesHelper
         return (new Affectation())->setSignalement($signalement)->setPartner($partner);
     }
 
-    public function getSuiviPartner(): Suivi
+    public function getSuiviPartner(string $description = 'Problèmes de condensation et de moisissures'): Suivi
     {
         return (new Suivi())
             ->setType(Suivi::TYPE_PARTNER)
-            ->setDescription('Problèmes de condensation et de moisissures')
+            ->setDescription($description)
             ->setCreatedAt(new \DateTimeImmutable())
             ->setCreatedBy(new User());
+    }
+
+    public function getSuiviPartnerList(): array
+    {
+        return [
+            $this->getSuiviPartner('Problèmes de condensation et de moisissure'),
+            $this->getSuiviPartner('Problèmes d\'humidité dans le logement'),
+            $this->getSuiviPartner('Absence de chauffage'),
+            $this->getSuiviPartner('Ventilation défectueuse'),
+        ];
     }
 
     public function getAdditionalInformationArrete(): array

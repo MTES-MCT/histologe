@@ -435,17 +435,16 @@ class SuiviRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function findFirstSuiviBy(Signalement $signalement, int $typeSuivi): ?Suivi
+    public function findAllSuiviBy(Signalement $signalement, int $typeSuivi): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.signalement = :signalement')
             ->andWhere('s.type = :type')
             ->orderBy('s.createdAt', 'ASC')
-            ->setMaxResults(1)
             ->setParameter('signalement', $signalement)
             ->setParameter('type', $typeSuivi);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getQuery()->getResult();
     }
 
     public function findExistingEventsForSCHS(): array
