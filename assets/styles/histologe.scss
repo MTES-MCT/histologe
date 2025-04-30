@@ -940,6 +940,12 @@ ul + p {
         list-style-position: inside;
     }
 }
+.message-box.message-box--unread {
+    .message-box-message {
+        border: 1px solid var(--background-flat-warning);
+        background: #FFE9E6;
+    }
+}
 
 .fr-modal__content .tox .tox-editor-header {
     z-index: 1;
