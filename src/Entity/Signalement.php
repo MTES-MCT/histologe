@@ -842,7 +842,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setNomProprio(?string $nomProprio): self
     {
-        $this->nomProprio = $nomProprio;
+        $this->nomProprio = \trim($nomProprio); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
@@ -899,7 +899,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setMailProprio(?string $mailProprio): self
     {
-        $this->mailProprio = $mailProprio;
+        $this->mailProprio = \trim($mailProprio); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
@@ -991,7 +991,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setNomDeclarant(?string $nomDeclarant): self
     {
-        $this->nomDeclarant = $nomDeclarant;
+        $this->nomDeclarant = \trim($nomDeclarant); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
@@ -1003,7 +1003,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setPrenomDeclarant(?string $prenomDeclarant): self
     {
-        $this->prenomDeclarant = $prenomDeclarant;
+        $this->prenomDeclarant = \trim($prenomDeclarant); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
@@ -1032,7 +1032,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setMailDeclarant(?string $mailDeclarant): self
     {
-        $this->mailDeclarant = $mailDeclarant;
+        $this->mailDeclarant = \trim($mailDeclarant); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
@@ -1070,7 +1070,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setNomOccupant(?string $nomOccupant): self
     {
-        $this->nomOccupant = $nomOccupant;
+        $this->nomOccupant = \trim($nomOccupant); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
@@ -1082,7 +1082,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setPrenomOccupant(?string $prenomOccupant): self
     {
-        $this->prenomOccupant = $prenomOccupant;
+        $this->prenomOccupant = \trim($prenomOccupant); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
@@ -1111,7 +1111,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setMailOccupant($mailOccupant): self
     {
-        $this->mailOccupant = $mailOccupant;
+        $this->mailOccupant = \trim($mailOccupant); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
@@ -2316,7 +2316,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setPrenomProprio(?string $prenomProprio): self
     {
-        $this->prenomProprio = $prenomProprio;
+        $this->prenomProprio = \trim($prenomProprio); // Replace with mb_trim($name); when php 8.4
 
         return $this;
     }
