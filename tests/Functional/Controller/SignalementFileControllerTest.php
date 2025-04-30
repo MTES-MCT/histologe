@@ -14,6 +14,7 @@ use App\Service\UploadHandlerService;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -188,5 +189,32 @@ class SignalementFileControllerTest extends WebTestCase
         $redirectUrl = $this->client->getResponse()->headers->get('Location');
         $this->client->request('GET', $redirectUrl);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testGeneratePdfSignalement()
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
+
+        $route = $this->router->generate('signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
+
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                'from' => $signalement->getMailDeclarant(),
+            ]
+        );
+
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+
+        $redirectUrl = $this->client->getResponse()->headers->get('Location');
+        /** @var Crawler $crawler */
+        $crawler = $this->client->request('GET', $redirectUrl);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString(
+            'L\'export pdf vous sera envoyé par e-mail',
+            $crawler->filter('.fr-alert')->text()
+        );
     }
 }
