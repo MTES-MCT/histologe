@@ -7,6 +7,7 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Security\Provider\SignalementUserProvider;
@@ -26,7 +27,7 @@ class SignalementFileControllerTest extends WebTestCase
 
     private ?KernelBrowser $client = null;
     private ?Signalement $signalement = null;
-    private ?User $user = null;
+    private ?SignalementUser $signalementUser = null;
     private RouterInterface $router;
     private SignalementRepository $signalementRepository;
     private UserRepository $userRepository;
@@ -39,9 +40,11 @@ class SignalementFileControllerTest extends WebTestCase
         /* @var Signalement $signalement */
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
 
-        /** @var UserRepository $userRepository */
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $this->user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->signalementUser = new SignalementUser(
+            $this->signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
+            $this->signalement->getMailOccupant(),
+            $this->signalement->getSignalementUsager()->getOccupant()
+        );
 
         /* @var RouterInterface $router */
         $this->router = self::getContainer()->get(RouterInterface::class);
@@ -65,7 +68,7 @@ class SignalementFileControllerTest extends WebTestCase
             true
         );
 
-        $this->client->loginUser($this->user);
+        $this->client->loginUser($this->signalementUser, 'code_suivi');
 
         $signalementFileProcessor = $this->createMock(SignalementFileProcessor::class);
         $signalementFileProcessor
@@ -94,7 +97,6 @@ class SignalementFileControllerTest extends WebTestCase
         $this->client->request('POST', $route,
             [
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
-                'email' => $this->signalement->getMailOccupant() ?? $this->signalement->getMailDeclarant(),
             ],
             [
                 'signalement-add-file' => [
@@ -120,7 +122,7 @@ class SignalementFileControllerTest extends WebTestCase
             true
         );
 
-        $this->client->loginUser($this->user);
+        $this->client->loginUser($this->signalementUser, 'code_suivi');
 
         $route = $this->router->generate('signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
         $this->client->request(
@@ -178,13 +180,20 @@ class SignalementFileControllerTest extends WebTestCase
 
         self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
 
+        $signalementUser = new SignalementUser(
+            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
+            $signalement->getMailOccupant(),
+            $signalement->getSignalementUsager()->getOccupant()
+        );
+        $this->client->loginUser($signalementUser, 'code_suivi');
+
         $this->client->request('POST', $route, [
             '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$signalement->getId()),
             'file_id' => $file->getId(),
-            'from' => $signalement->getMailOccupant(),
         ]);
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertStringContainsString('Photo supprimée', $lastSuivi->getDescription());
