@@ -31,6 +31,7 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $filename = $notificationMail->getParams()['filename'] ?? self::FILE_404;
+        // TODO : changer le secret
         $token = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement->getUuid().$filename, '$secret');
         $link = $this->generateLink(
             'show_uploaded_file', [
