@@ -2277,7 +2277,20 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getProfileDeclarant(): ?ProfileDeclarant
     {
-        return $this->profileDeclarant;
+        // TODO : faire une migration pour eviter ce code ?
+        if ($this->isV2()) {
+            return $this->profileDeclarant;
+        }
+
+        if (false === $this->isNotOccupant) {
+            return ProfileDeclarant::LOCATAIRE;
+        }
+
+        if (\in_array($this->lienDeclarantOccupant, ['PROFESSIONNEL', 'pro', 'assistante sociale', 'curatrice'])) {
+            return ProfileDeclarant::TIERS_PRO;
+        }
+
+        return ProfileDeclarant::TIERS_PARTICULIER;
     }
 
     public function setProfileDeclarant(?ProfileDeclarant $profileDeclarant): self
