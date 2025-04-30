@@ -62,15 +62,17 @@ class ScheduledTaskCommand extends Command
             $report = $cron->run();
 
             while ($cron->isRunning()) {
-                $this->logger->info(\sprintf('[CRON] %d tasks has been executed', \count($report->getReports())));
+            }
 
-                foreach ($report->getReports() as $jobReport) {
-                    $output = $jobReport->getOutput();
-                    foreach ($output as $line) {
-                        $this->logger->info(\sprintf('[CRON] %s', $line));
-                    }
+            $this->logger->info(\sprintf('[CRON] %d tasks has been executed', \count($report->getReports())));
+
+            foreach ($report->getReports() as $jobReport) {
+                $output = $jobReport->getOutput();
+                foreach ($output as $line) {
+                    $this->logger->info(\sprintf('[CRON] %s', $line));
                 }
             }
+
             sleep($sleepInterval);
         }
 
