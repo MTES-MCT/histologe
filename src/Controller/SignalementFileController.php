@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
+use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -17,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/signalement')]
@@ -150,6 +152,37 @@ class SignalementFileController extends AbstractController
         } else {
             $this->addFlash('error', 'Token CSRF invalide, veuillez rechargez la page');
         }
+
+        return $this->redirectToRoute(
+            'front_suivi_signalement',
+            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+        );
+    }
+
+    #[Route('/{uuid:signalement}/pdf', name: 'signalement_gen_pdf')]
+    public function generatePdfSignalement(
+        Signalement $signalement,
+        Request $request,
+        MessageBusInterface $messageBus,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+
+        $fromEmail = $request->get('from');
+        // TODO : si on n'a pas, on envoie déclarant et occupant
+        $message = (new PdfExportMessage())
+            ->setSignalementId($signalement->getId())
+            ->setUserEmail($fromEmail)
+            ->setIsForUsager(true);
+
+        $messageBus->dispatch($message);
+
+        $this->addFlash(
+            'success',
+            \sprintf(
+                'L\'export pdf vous sera envoyé par e-mail à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
+                $fromEmail
+            )
+        );
 
         return $this->redirectToRoute(
             'front_suivi_signalement',

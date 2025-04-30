@@ -89,51 +89,61 @@
             <div class="fr-hidden" id="tippy_photovisite_{{ photo.id }}">
                 {% include '_partials/_tippy_photo_template.html.twig' %}
             </div>
-            <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
-                 data-template="tippy_photovisite_{{ photo.id }}"
-                 style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover">
-                <button 
-                    class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
-                    data-id={{ photo.id }} 
-                    title="Voir la photo {{ photo.filename }}"
-                ></button>
-                {% if is_granted('FILE_EDIT', photo) %}
-                    {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
-                    {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
-                    {% set partner = photo.uploadedBy ? photo.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}       
+            {% if isForBO is defined and isForBO %}
+                <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
+                    data-template="tippy_photovisite_{{ photo.id }}"
+                    style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover">
                     <button 
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
-                        id="file_edit_{{ photo.id }}" 
-                        title="Editer la photo {{ photo.filename }}"
-                        aria-controls="fr-modal-edit-file"
-                        data-fr-opened="false" 
-                        data-filename="{{ photo.filename }}" 
-                        data-type="photo" 
-                        data-file-id="{{ photo.id}}" 
-                        data-signalement-uuid="{{ signalement.uuid}}" 
-                        data-file-path="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}"
-                        data-description="{{ photo.description }}" 
-                        data-documentType="{{ photo.documentType.name }}" 
-                        data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
-                        data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
-                        data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                        data-desordreSlug="{{ photo.desordreSlug }}"
-                        data-signalement-desordres="{{ criteres | json_encode }}"
+                        class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
+                        data-id={{ photo.id }} 
+                        title="Voir la photo {{ photo.filename }}"
                     ></button>
-                {% endif %}                
-                {% if is_granted('FILE_DELETE', photo) %}
-                    {% include '_partials/_modal_file_delete.html.twig' %}
-                    <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
-                        id="file_delete_{{ photo.id }}" 
-                        title="Supprimer la photo {{ photo.filename }}"
-                        aria-controls="fr-modal-delete-file"
-                        data-fr-opened="false" 
-                        data-filename="{{ photo.filename }}" 
-                        data-type="photo" 
-                        data-file-id="{{ photo.id}}"                     
-                    ></button>
+                    {% if is_granted('FILE_EDIT', photo) %}
+                        {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+                        {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+                        {% set partner = photo.uploadedBy ? photo.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}       
+                        <button 
+                            class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                            id="file_edit_{{ photo.id }}" 
+                            title="Editer la photo {{ photo.filename }}"
+                            aria-controls="fr-modal-edit-file"
+                            data-fr-opened="false" 
+                            data-filename="{{ photo.filename }}" 
+                            data-type="photo" 
+                            data-file-id="{{ photo.id}}" 
+                            data-signalement-uuid="{{ signalement.uuid}}" 
+                            data-file-path="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}"
+                            data-description="{{ photo.description }}" 
+                            data-documentType="{{ photo.documentType.name }}" 
+                            data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
+                            data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
+                            data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                            data-desordreSlug="{{ photo.desordreSlug }}"
+                            data-signalement-desordres="{{ criteres | json_encode }}"
+                        ></button>
+                    {% endif %}                
+                    {% if is_granted('FILE_DELETE', photo) %}
+                        {% include '_partials/_modal_file_delete.html.twig' %}
+                        <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
+                            id="file_delete_{{ photo.id }}" 
+                            title="Supprimer la photo {{ photo.filename }}"
+                            aria-controls="fr-modal-delete-file"
+                            data-fr-opened="false" 
+                            data-filename="{{ photo.filename }}" 
+                            data-type="photo" 
+                            data-file-id="{{ photo.id}}"                     
+                        ></button>
+                    {% endif %}
+                </div>
+            {% else %}       
+                {# TODO : voir si on garde ou si on 'naffiche rien car plus loin dans le pdf     #}
+                {% set encodedImage = photo.filename(constant('App\\Service\\ImageManipulationHandler::SUFFIX_THUMB')) | image64 %}
+                {% if encodedImage is not null %}                    
+                    <img src="{{ encodedImage }}" style="max-width:100%" id="{{ photo.filename }}" alt="{{ photo.title }}"/>
+                {% else %}
+                    La photo n'existe plus
                 {% endif %}
-            </div>
+            {% endif %}
         </div>
     {% endfor %}
 </div>
