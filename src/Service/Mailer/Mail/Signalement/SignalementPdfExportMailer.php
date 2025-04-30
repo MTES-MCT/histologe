@@ -30,16 +30,20 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
+        $filename = $notificationMail->getParams()['filename'] ?? self::FILE_404;
+        $token = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement->getUuid().$filename, '$secret');
+        $link = $this->generateLink(
+            'show_uploaded_file', [
+                'folder' => '_up',
+                'filename' => $filename,
+                'uuid' => $signalement->getUuid(),
+                't' => $token, // TODO : seulement si depuis front
+            ]
+        );
 
         return [
             'signalement_reference' => $signalement->getReference(),
-            'link' => $this->generateLink(
-                'show_uploaded_file', [
-                    'folder' => '_up',
-                    'filename' => $notificationMail->getParams()['filename'] ?? self::FILE_404,
-                    'uuid' => $signalement->getUuid(),
-                ]
-            ),
+            'link' => $link,
         ];
     }
 }
