@@ -1370,6 +1370,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function getStatutLabel(): string
+    {
+        return ucfirst(SignalementStatus::getLabel($this->statut));
+    }
+
     public function getReference(): ?string
     {
         return $this->reference;

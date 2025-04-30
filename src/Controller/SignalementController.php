@@ -19,6 +19,7 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use App\Security\User\SignalementUser;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\ImageManipulationHandler;
@@ -29,6 +30,7 @@ use App\Service\Security\FileScanner;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDuplicateChecker;
+use App\Service\SuiviCategorizerService;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -51,8 +53,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class SignalementController extends AbstractController
 {
     public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
         #[Autowire(env: 'FEATURE_SECURE_UUID_URL')]
-        private readonly bool $featureSecureUuidUrl, private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly bool $featureSecureUuidUrl, 
+        #[Autowire(env: 'FEATURE_SUIVI_ACTION')]
+        private readonly bool $featureSuiviAction,
     ) {
     }
 
@@ -437,7 +442,6 @@ class SignalementController extends AbstractController
 
             return $this->render('security/login_suivi_signalement.html.twig', [
                 'signalement' => $signalement,
-                'fromEmail' => $fromEmail,
                 'error' => $error,
             ]);
         }
@@ -546,38 +550,58 @@ class SignalementController extends AbstractController
     public function suiviSignalement(
         string $code,
         SignalementRepository $signalementRepository,
+        SuiviRepository $suiviRepository,
         Request $request,
         UserManager $userManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         Security $security,
         AuthenticationUtils $authenticationUtils,
+        SuiviCategorizerService $suiviCategorizerService,
     ): Response {
-        if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
-            $requestEmail = $request->get('from');
-            $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
+        if (!$signalement) {
+            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
 
-            $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
-            $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
-            if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
-                /** @var SignalementUser $currentUser */
-                $currentUser = $security->getUser();
-                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
-                    // get the login error if there is one
-                    $error = $authenticationUtils->getLastAuthenticationError();
+            return $this->render('front/flash-messages.html.twig');
+        }
 
-                    return $this->render('security/login_suivi_signalement.html.twig', [
-                        'signalement' => $signalement,
-                        'fromEmail' => $fromEmail,
-                        'error' => $error,
-                    ]);
-                }
+        // TODO : delete when remove FEATURE_SECURE_UUID_URL
+        $requestEmail = $request->get('from');
+        $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+        // TODO : get type from auth when remove FEATURE_SECURE_UUID_URL
+        $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
+        $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
+
+        if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
+            /** @var SignalementUser $currentUser */
+            $currentUser = $security->getUser();
+            if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
+                // get the login error if there is one
+                $error = $authenticationUtils->getLastAuthenticationError();
+
+                return $this->render('security/login_suivi_signalement.html.twig', [
+                    'signalement' => $signalement,
+                    'error' => $error,
+                ]);
             }
-            $infoDesordres = $signalementDesordresProcessor->process($signalement);
+        }
 
-            $demandeLienSignalement = new DemandeLienSignalement();
-            $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
-                'action' => $this->generateUrl('front_demande_lien_signalement'),
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
+
+        if ($this->featureSuiviAction) {
+            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement);
+
+            return $this->render('front/suivi_signalement_dashboard.html.twig', [
+                'signalement' => $signalement,
+                'formDemandeLienSignalement' => $formDemandeLienSignalement,
+                'suiviCategory' => $lastSuiviPublic ? $suiviCategorizerService->getSuiviCategory($lastSuiviPublic) : null,
             ]);
+        }
+
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
             /** @var SignalementUser $signalementUser */
             $signalementUser = $this->getUser();
@@ -586,18 +610,123 @@ class SignalementController extends AbstractController
                 SuiviViewedEvent::NAME
             );
 
-            return $this->render('front/suivi_signalement.html.twig', [
-                'signalement' => $signalement,
-                'email' => $fromEmail,
-                'type' => $type,
-                'infoDesordres' => $infoDesordres,
-                'formDemandeLienSignalement' => $formDemandeLienSignalement,
-            ]);
+        return $this->render('front/suivi_signalement.html.twig', [
+            'signalement' => $signalement,
+            'email' => $fromEmail,
+            'type' => $type,
+            'infoDesordres' => $infoDesordres,
+            'formDemandeLienSignalement' => $formDemandeLienSignalement,
+        ]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/dossier', name: 'front_suivi_signalement_dossier', methods: ['GET', 'POST'])]
+    public function suiviSignalementDossier(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+        UserManager $userManager,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
+        Security $security,
+        AuthenticationUtils $authenticationUtils,
+    ): Response {
+        if (!$this->featureSuiviAction) {
+            throw $this->createNotFoundException();
+        }
+        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
+        if (!$signalement) {
+            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+            return $this->render('front/flash-messages.html.twig');
         }
 
-        $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+        // TODO : delete when remove FEATURE_SECURE_UUID_URL
+        $requestEmail = $request->get('from');
+        $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
+        // TODO : get type from auth when remove FEATURE_SECURE_UUID_URL
+        $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
+        $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
 
-        return $this->render('front/flash-messages.html.twig');
+        if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
+            $currentUser = $security->getUser();
+            if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getUserIdentifier() !== $code) {
+                // get the login error if there is one
+                $error = $authenticationUtils->getLastAuthenticationError();
+
+                return $this->render('security/login_suivi_signalement.html.twig', [
+                    'signalement' => $signalement,
+                    'error' => $error,
+                ]);
+            }
+        }
+
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
+
+        return $this->render('front/suivi_signalement.html.twig', [
+            'signalement' => $signalement,
+            'email' => $fromEmail,
+            'type' => $type,
+            'infoDesordres' => $infoDesordres,
+            'formDemandeLienSignalement' => $formDemandeLienSignalement,
+        ]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/messages', name: 'front_suivi_signalement_messages', methods: ['GET', 'POST'])]
+    public function suiviSignalementMessages(
+        string $code,
+        SignalementRepository $signalementRepository,
+    ): Response {
+        if (!$this->featureSuiviAction) {
+            throw $this->createNotFoundException();
+        }
+        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
+        if (!$signalement) {
+            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+            return $this->render('front/flash-messages.html.twig');
+        }
+
+        return new Response('<html><body>TODO</body></html>');
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/documents', name: 'front_suivi_signalement_documents', methods: ['GET', 'POST'])]
+    public function suiviSignalementDocuments(
+        string $code,
+        SignalementRepository $signalementRepository,
+    ): Response {
+        if (!$this->featureSuiviAction) {
+            throw $this->createNotFoundException();
+        }
+        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
+        if (!$signalement) {
+            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+            return $this->render('front/flash-messages.html.twig');
+        }
+
+        return new Response('<html><body>TODO</body></html>');
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/procedure', name: 'front_suivi_signalement_procedure', methods: ['GET', 'POST'])]
+    public function suiviSignalementProcedure(
+        string $code,
+        SignalementRepository $signalementRepository,
+    ): Response {
+        if (!$this->featureSuiviAction) {
+            throw $this->createNotFoundException();
+        }
+        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
+        if (!$signalement) {
+            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+            return $this->render('front/flash-messages.html.twig');
+        }
+
+        return new Response('<html><body>TODO</body></html>');
     }
 
     #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
