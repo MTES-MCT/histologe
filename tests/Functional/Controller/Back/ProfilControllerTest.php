@@ -714,7 +714,6 @@ class ProfilControllerTest extends WebTestCase
     {
         $route = $this->router->generate('back_profil');
         $crawler = $this->client->request('GET', $route);
-        var_dump($crawler);
         $form = $crawler->filter('#notification_email_form')->form();
         $this->client->submit($form);
 

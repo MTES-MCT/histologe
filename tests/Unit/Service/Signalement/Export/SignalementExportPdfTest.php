@@ -28,6 +28,7 @@ class SignalementExportPdfTest extends KernelTestCase
             'signalement' => $signalement,
             'situations' => [],
             'listQualificationStatusesLabelsCheck' => [],
+            'isForUsager' => false,
         ]);
         $options = static::getContainer()->getParameter('export_options');
         $pdfContent = $signalementExportPdfGenerator->generate($html, $options);
