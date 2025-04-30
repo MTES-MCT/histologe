@@ -18,6 +18,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/bo/statistiques')]
 class BackStatistiquesController extends AbstractController
@@ -31,6 +33,7 @@ class BackStatistiquesController extends AbstractController
         private ListTagsStatisticProvider $listTagStatisticProvider,
         private GlobalBackAnalyticsProvider $globalBackAnalyticsProvider,
         private FilteredBackAnalyticsProvider $filteredBackAnalyticsProvider,
+        private TagAwareCacheInterface $cache,
     ) {
     }
 
@@ -57,13 +60,24 @@ class BackStatistiquesController extends AbstractController
 
         $this->buildFilterLists($territory);
 
-        $globalStatistics = $this->globalBackAnalyticsProvider->getData($territory, $partners);
-        $this->result['count_signalement'] = $globalStatistics['count_signalement'];
-        $this->result['average_criticite'] = $globalStatistics['average_criticite'];
-        $this->result['average_days_validation'] = $globalStatistics['average_days_validation'];
-        $this->result['average_days_closure'] = $globalStatistics['average_days_closure'];
-        $this->result['count_signalement_refuses'] = $globalStatistics['count_signalement_refuses'];
-        $this->result['count_signalement_archives'] = $globalStatistics['count_signalement_archives'];
+        $territoryKey = !empty($territory) ? $territory->getZip() : '';
+        $partnersIds = implode('-', $partners->map(fn ($partner) => $partner->getId())->toArray());
+        $cacheKey = 'backGlobalStatistics-zip-'.$territoryKey.'-partners-'.$partnersIds;
+        $backGlobalStatistics = $this->cache->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($territory, $partners) {
+                $item->expiresAfter(120); // 2 minutes for global back stats
+
+                return $this->globalBackAnalyticsProvider->getData($territory, $partners);
+            }
+        );
+
+        $this->result['count_signalement'] = $backGlobalStatistics['count_signalement'];
+        $this->result['average_criticite'] = $backGlobalStatistics['average_criticite'];
+        $this->result['average_days_validation'] = $backGlobalStatistics['average_days_validation'];
+        $this->result['average_days_closure'] = $backGlobalStatistics['average_days_closure'];
+        $this->result['count_signalement_refuses'] = $backGlobalStatistics['count_signalement_refuses'];
+        $this->result['count_signalement_archives'] = $backGlobalStatistics['count_signalement_archives'];
 
         $statisticsFilters = $this->createFilters($request, $territory, $partners);
         $filteredStatistics = $this->filteredBackAnalyticsProvider->getData($statisticsFilters);
@@ -159,8 +173,24 @@ class BackStatistiquesController extends AbstractController
             $this->result['can_filter_territoires'] = '1';
             $this->result['list_territoires'] = $this->listTerritoryStatisticProvider->getData($user);
         }
-        $this->result['list_communes'] = $this->listCommunesStatisticProvider->getData($territory);
-        $this->result['list_epcis'] = $this->listEpciStatisticProvider->getData($territory);
-        $this->result['list_etiquettes'] = $this->listTagStatisticProvider->getData($territory);
+
+        $territoryKey = !empty($territory) ? $territory->getZip() : '';
+        $cacheKey = 'filters-zip-'.$territoryKey;
+        $filterLists = $this->cache->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($territory) {
+                $item->expiresAfter(120); // 2 minutes for filters
+
+                return [
+                    'list_communes' => $this->listCommunesStatisticProvider->getData($territory),
+                    'list_epcis' => $this->listEpciStatisticProvider->getData($territory),
+                    'list_etiquettes' => $this->listTagStatisticProvider->getData($territory),
+                ];
+            }
+        );
+
+        $this->result['list_communes'] = $filterLists['list_communes'];
+        $this->result['list_epcis'] = $filterLists['list_epcis'];
+        $this->result['list_etiquettes'] = $filterLists['list_etiquettes'];
     }
 }

@@ -17,6 +17,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class StatistiquesController extends AbstractController
 {
@@ -32,6 +34,7 @@ class StatistiquesController extends AbstractController
         private LogementDesordresStatisticProvider $logementDesordresStatisticProvider,
         private BatimentDesordresStatisticProvider $batimentDesordresStatisticProvider,
         private MotifClotureStatisticProvider $motifClotureStatisticProvider,
+        private TagAwareCacheInterface $cache,
         #[Autowire(env: 'SITES_FACILES_URL')]
         private readonly string $sitesFacilesUrl,
     ) {
@@ -53,7 +56,20 @@ class StatistiquesController extends AbstractController
         $this->ajaxResult = [];
         $this->ajaxResult['response'] = 'success';
 
-        $globalStatistics = $this->globalAnalyticsProvider->getData();
+        $frontGlobalStatistics = $this->cache->get(
+            'frontGlobalStatistics',
+            function (ItemInterface $item) {
+                $item->expiresAfter(7200); // 2 hours for front stats
+
+                return [
+                    'global' => $this->globalAnalyticsProvider->getData(),
+                    'list_territoires' => $this->listTerritoryStatisticProvider->getData(),
+                    'signalement_per_territoire' => $this->territoryStatisticProvider->getData(),
+                ];
+            }
+        );
+
+        $globalStatistics = $frontGlobalStatistics['global'];
         $this->ajaxResult['count_signalement_resolus'] = $globalStatistics['count_signalement_resolus'];
         $this->ajaxResult['count_signalement'] = $globalStatistics['count_signalement'];
         $this->ajaxResult['count_territory'] = $globalStatistics['count_territory'];
@@ -62,8 +78,8 @@ class StatistiquesController extends AbstractController
         $this->ajaxResult['percent_refused'] = $globalStatistics['percent_refused'];
         $this->ajaxResult['count_imported'] = $globalStatistics['count_imported'];
 
-        $this->ajaxResult['list_territoires'] = $this->listTerritoryStatisticProvider->getData();
-        $this->ajaxResult['signalement_per_territoire'] = $this->territoryStatisticProvider->getData();
+        $this->ajaxResult['list_territoires'] = $frontGlobalStatistics['list_territoires'];
+        $this->ajaxResult['signalement_per_territoire'] = $frontGlobalStatistics['signalement_per_territoire'];
 
         $territory = null;
         $requestTerritory = $request->get('territoire');
