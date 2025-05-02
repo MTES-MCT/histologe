@@ -69,7 +69,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     {
         $commentaire = 'Points signalés:'.\PHP_EOL;
 
-        if ($signalement->getCreatedFrom()) {
+        if ($signalement->isV2()) {
             $commentaire .= $this->buildDesordresCreatedFrom($signalement);
         } else {
             foreach ($signalement->getCriticites() as $criticite) {
@@ -80,7 +80,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         $commentaire .= \PHP_EOL.'Propriétaire averti : ';
         $commentaire .= $signalement->getIsProprioAverti() ? 'OUI' : 'NON';
 
-        if ($signalement->getCreatedFrom()) {
+        if ($signalement->isV2()) {
             $commentaire .= \PHP_EOL.'Nb personnes : '
                 .$signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes();
             $commentaire .= \PHP_EOL.'Enfants moins de 6 ans : '

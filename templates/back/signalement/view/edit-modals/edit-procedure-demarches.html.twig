@@ -19,7 +19,7 @@
                                         'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
                                         'isRelogement',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="procedureDemarchesIsProprioAverti" name="isProprioAverti">
@@ -37,7 +37,7 @@
                                         'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
                                         'infoProcedureBailMoyen',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 {% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact') %}
@@ -58,7 +58,7 @@
                                         'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
                                         'infoProcedureBailMoyen',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                     <span class="fr-hint-text">Format : mm/aaaa</span>
                                 </label>
@@ -71,7 +71,7 @@
                                         'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
                                         'infoProcedureBailMoyen',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}</label>
                                 <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailReponse" name="infoProcedureBailReponse">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailReponse ? signalement.informationProcedure.infoProcedureBailReponse : '' }}</textarea>
                             </div>
@@ -89,7 +89,7 @@
                                         'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
                                         'infoProcedureAssuranceContactee',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="procedureDemarchesInfoProcedureAssuranceContactee" name="infoProcedureAssuranceContactee">
@@ -112,7 +112,7 @@
                                         'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
                                         'infoProcedureDepartApresTravaux',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="procedureDemarchesInfoProcedureDepartApresTravaux" name="infoProcedureDepartApresTravaux">

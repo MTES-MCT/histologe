@@ -311,7 +311,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 
 <div class="fr-mb-4v">
 	<h4 class="fr-mb-2v">Les désordres</h4>
-	{% if signalement.createdFrom %}
+	{% if signalement.isV2 %}
 		{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
 			<div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
 				<div class="fr-col-2 fr-col-md-1">

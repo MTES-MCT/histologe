@@ -18,7 +18,7 @@ class CriticiteCalculator
 
     public function calculate(Signalement $signalement): float|int
     {
-        if (null !== $signalement->getCreatedFrom()) {
+        if ($signalement->isV2()) {
             return $this->calculateFromNewFormulaire($signalement);
         }
         $this->scoreBatiment = 0;

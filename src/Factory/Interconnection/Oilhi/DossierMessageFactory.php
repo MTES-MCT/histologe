@@ -122,7 +122,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
     {
         /** @var Desordre[] $desordres */
         $desordres = [];
-        if ($signalement->getCreatedFrom()) {
+        if ($signalement->isV2()) {
             foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
                 $desordre = new Desordre(
                     desordre: $desordrePrecision->getDesordreCritere()->getDesordreCategorie()->getLabel(),
@@ -156,7 +156,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
     private function getTypeDeclarant(Signalement $signalement): ?string
     {
         $typeDeclarant = null;
-        if ($signalement->getCreatedFrom()) {
+        if ($signalement->isV2()) {
             $typeDeclarant = $signalement->getProfileDeclarant()->label();
         }
 

@@ -39,7 +39,7 @@
                                         'App\\Dto\\Request\\Signalement\\CompositionLogementRequest',
                                         'typeCompositionLogement',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="compositionLogementTypeCompositionLogement" name="typeCompositionLogement">
@@ -55,7 +55,7 @@
                                         'App\\Dto\\Request\\Signalement\\CompositionLogementRequest',
                                         'superficie',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <input class="fr-input" type="number" id="compositionLogementSuperficie" name="superficie" value="{{ signalement.superficie }}">
@@ -69,7 +69,7 @@
                                         'App\\Dto\\Request\\Signalement\\CompositionLogementRequest',
                                         'compositionLogementHauteur',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="compositionLogementHauteur" name="compositionLogementHauteur">
@@ -151,7 +151,7 @@
                                         'App\\Dto\\Request\\Signalement\\CompositionLogementRequest',
                                         'typeLogementCommoditesPieceAVivre9m',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom
+                                        signalement.isV2
                                     )
                                     }}
                                 </label>

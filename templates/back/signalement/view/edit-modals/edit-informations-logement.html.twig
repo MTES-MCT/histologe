@@ -41,7 +41,7 @@
                                         'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                         'compositionLogementNombreEnfants',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <input class="fr-input" type="number" id="informationLogementCompositionLogementNombreEnfants" name="compositionLogementNombreEnfants" value="{{ compositionLogementNombreEnfants }}">
@@ -63,7 +63,7 @@
                                         'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                         'compositionLogementEnfants',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="informationLogementCompositionLogementEnfants" name="compositionLogementEnfants">
@@ -83,7 +83,7 @@
                                         'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                         'dateEntree',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <input class="fr-input" type="date" id="informationLogementDateEntree" name="dateEntree" value="{{ dateEntree }}">
@@ -105,7 +105,7 @@
                                         'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                         'bailDpeBail',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="informationLogementBailDpeBail" name="bailDpeBail">
@@ -129,7 +129,7 @@
                                         'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                         'bailDpeEtatDesLieux',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="informationLogementBailDpeEtatDesLieux" name="bailDpeEtatDesLieux">
@@ -147,7 +147,7 @@
                                         'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                         'bailDpeDpe',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="informationLogementBailDpeDpe" name="bailDpeDpe">
@@ -165,7 +165,7 @@
                                         'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                         'bailDpeClasseEnergetique',
                                         signalement.profileDeclarant,
-                                        null != signalement.createdFrom)
+                                        signalement.isV2)
                                     }}
                                 </label>
                                 <select class="fr-select" id="informationLogementBailDpeClasseEnergetique" name="bailDpeClasseEnergetique">

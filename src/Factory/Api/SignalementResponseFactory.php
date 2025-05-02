@@ -290,7 +290,7 @@ readonly class SignalementResponseFactory
     {
         $desordres = [];
         $desordresInfos = $this->signalementDesordresProcessor->process($signalement);
-        if (!$signalement->getCreatedFrom()) {
+        if (!$signalement->isV2()) {
             foreach ($desordresInfos['criticitesArranged'] as $label => $data) {
                 $desordres[] = new Desordre($label, $data);
             }

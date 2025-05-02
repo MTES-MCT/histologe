@@ -43,6 +43,7 @@ class SignalementBoManager
             $signalement->setProfileDeclarant(null);
         }
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+        $typeCompositionLogement->setCompositionLogementNombrePersonnes($form->get('nbOccupantsLogement')->getData());
         $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData());
         $typeCompositionLogement->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
@@ -79,7 +80,9 @@ class SignalementBoManager
         $signalement->setCreatedBy($this->user);
         $signalement->setTerritory($territory);
         $signalement->setIsCguAccepted(true);
-        $signalement->setReference($this->referenceGenerator->generate($territory));
+        if (!$signalement->getReference()) {
+            $signalement->setReference($this->referenceGenerator->generate($territory));
+        }
 
         return true;
     }

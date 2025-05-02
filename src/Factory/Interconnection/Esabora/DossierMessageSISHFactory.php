@@ -238,7 +238,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
     {
         $commentaire = null;
 
-        if ($signalement->getCreatedFrom()) {
+        if ($signalement->isV2()) {
             return $this->buildDesordresCreatedFrom($signalement);
         }
 

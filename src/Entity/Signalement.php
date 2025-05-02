@@ -2258,6 +2258,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function isV2(): bool
+    {
+        return $this->createdFrom || $this->createdBy;
+    }
+
     public function getCreatedFrom(): ?SignalementDraft
     {
         return $this->createdFrom;
@@ -2272,7 +2277,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getProfileDeclarant(): ?ProfileDeclarant
     {
-        if (null !== $this->createdFrom || null !== $this->createdBy) {
+        // TODO : faire une migration pour eviter ce code ?
+        if ($this->isV2()) {
             return $this->profileDeclarant;
         }
 

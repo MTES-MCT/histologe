@@ -27,6 +27,7 @@ use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
@@ -575,12 +576,12 @@ class SignalementManager extends AbstractManager
         );
     }
 
-    private function updateDesordresAndScoreWithSuroccupationChanges(
+    public function updateDesordresAndScoreWithSuroccupationChanges(
         Signalement $signalement,
     ): void {
         $situationFoyer = $signalement->getSituationFoyer();
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
-        if ($signalement->getCreatedFrom()) {
+        if ($signalement->isV2()) {
             if (
                 null !== $situationFoyer
                 && null !== $typeCompositionLogement
@@ -881,5 +882,22 @@ class SignalementManager extends AbstractManager
                 $row,
             );
         }
+    }
+
+    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser)
+    {
+        $signalement->setStatut(SignalementStatus::ACTIVE);
+        $signalement->setValidatedAt(new \DateTimeImmutable());
+        $this->persist($signalement);
+
+        $suivi = $this->suiviManager->createSuivi(
+            user: $adminUser,
+            signalement: $signalement,
+            description: 'Signalement validé',
+            type: Suivi::TYPE_AUTO,
+            isPublic: true,
+            flush: false
+        );
+        $this->persist($suivi);
     }
 }

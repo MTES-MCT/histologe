@@ -129,7 +129,7 @@ class SuiviManager extends Manager
                 }
                 $description .= $nbPhotos;
                 $description .= $nbPhotos > 1 ? ' photos' : ' photo';
-                if (null !== $signalement->getCreatedFrom()) {
+                if ($signalement->isV2()) {
                     $description .= ' concernant les désordres suivants';
                 }
             }

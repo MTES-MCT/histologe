@@ -890,7 +890,7 @@ ul + p {
     filter: drop-shadow(var(--raised-shadow));
 }
 
-.signalement-tag-add, .signalement-tag-remove {
+.search-and-select-badge-add, .search-and-select-badge-remove {
     cursor: pointer;
 }
 
@@ -1038,7 +1038,8 @@ ul + p {
     }
 }
 
-.fr-tabs__panel.fr-tabs__panel--saving::after {
+.fr-tabs__panel.fr-tabs__panel--saving::after,
+.fr-tabs__panel.fr-tabs__panel--loading::after {
     display: block;
     position: absolute;
     content: "Sauvegarde en cours...";
@@ -1050,6 +1051,10 @@ ul + p {
     font-size: 20px;
     background-color: #FFF;
     text-align: center;
+}
+
+.fr-tabs__panel.fr-tabs__panel--loading::after {
+    content: "Chargement en cours...";
 }
 
 .fr-connect {

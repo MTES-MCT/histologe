@@ -1,7 +1,14 @@
 import { attacheAutocompleteAddressEvent } from '../../services/component_search_address'
+import { initSearchAndSelectBadges } from '../../services/component_search_and_select_badges'
 
 let boFormSignalementCurrentTabIsDirty = false
+let boFormNeedRefreshValidationTab = true
 let boFormSignalementTargetTab = ''
+
+const boFormValidationTab = document.getElementById('tabpanel-validation-panel')
+if(boFormValidationTab && window.location.hash === '#validation') {
+  refreshValidationTab()
+}
 
 const modaleDuplicateIgnoreButton = document.querySelector('#fr-modal-duplicate-ignore-duplicates')
 if(modaleDuplicateIgnoreButton) {
@@ -20,13 +27,37 @@ tabButtons.forEach((tabButton) => {
       boFormSignalementTargetTab = event.target.id.substring(9)
       saveCurrentTab(event)
     }
+    if(event.target.id === 'tabpanel-validation' && boFormNeedRefreshValidationTab) {
+      refreshValidationTab()
+    }
   })
 })
 
+function refreshValidationTab() {
+  boFormNeedRefreshValidationTab = false;
+  boFormValidationTab.classList.add('fr-tabs__panel--loading')
+  fetch(boFormValidationTab.dataset.route).then(response => {
+    if (response.ok) {
+      response.json().then((response) => {
+        boFormValidationTab.innerHTML = response.tabContent
+        initBoFormValidation()
+        boFormValidationTab.classList.remove('fr-tabs__panel--loading')
+      })
+    } else {
+      const errorHtml = '<div class="fr-alert fr-alert--sm fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue, veuillez rafraichir la page.</p></div>';
+      boFormValidationTab.innerHTML = errorHtml; 
+      boFormValidationTab.classList.remove('fr-tabs__panel--loading')
+    }
+  })
+}
+
 function saveCurrentTab(event) {
   const currentTab = document?.querySelector('.fr-tabs__panel.fr-tabs__panel--selected')
-  currentTab.classList.add('fr-tabs__panel--saving')
   const currentTabName = currentTab.id.substring(9, currentTab.id.length - 6)
+  if(currentTabName === 'validation') {
+    return
+  }
+  currentTab.classList.add('fr-tabs__panel--saving')
   
   let formData = null
   let formAction = null
@@ -60,6 +91,7 @@ function saveCurrentTab(event) {
 
         if (response.redirect) {
           boFormSignalementCurrentTabIsDirty = false
+          boFormNeedRefreshValidationTab = true
 
           if (response.url === undefined || response.url === '') {
             const targetTabButton = document?.querySelector('#tabpanel-' + boFormSignalementTargetTab)
@@ -426,6 +458,48 @@ function initComponentAdress(id) {
 
   if(addressInput.value == '' && hasManualAddressValues) {
     manualAddressSwitcher.click()
+  }
+}
+
+function initBoFormValidation(){
+  initSearchAndSelectBadges()
+  const quitValidationButton = document.getElementById('quit-validation');
+  if (quitValidationButton) {
+    quitValidationButton.addEventListener('click', (event) => {
+      const inputAffectationPartnerIds = document.querySelector('#affectation-partner-ids')
+      if (inputAffectationPartnerIds && inputAffectationPartnerIds.value !== '') {
+        const modalQuitValidation = document.getElementById('fr-modal-form-bo-quit-validation')
+        dsfr(modalQuitValidation).modal.disclose()
+      } else {
+        window.location.href = quitValidationButton.dataset.route;
+      }
+    });
+  }
+  const boFormSignalementValidation = document.querySelector('#bo-form-signalement-validation')
+  if (boFormSignalementValidation) {
+    boFormSignalementValidation.addEventListener('submit', (event) => {
+      event.preventDefault()
+      boFormValidationTab.classList.add('fr-tabs__panel--saving')
+      const formData = new FormData(boFormSignalementValidation)
+      const formAction = boFormSignalementValidation.action
+      fetch(formAction, {method: 'POST', body: formData}).then(response => {
+        if (response.ok) {
+          response.json().then((response) => {
+            if (response.redirect) {
+                window.location.href = response.url;
+            } else {
+              boFormValidationTab.innerHTML = response.tabContent
+              initBoFormValidation()
+              boFormValidationTab.classList.remove('fr-tabs__panel--saving')
+            }
+          })
+        } else {
+          const errorHtml = '<div class="fr-alert fr-alert--sm fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue, veuillez rafraichir la page.</p></div>';
+          boFormValidationTab.innerHTML = errorHtml; 
+          boFormValidationTab.classList.remove('fr-tabs__panel--saving')
+        }
+      })
+    })
   }
 }
 

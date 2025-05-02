@@ -2,25 +2,32 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Event\SignalementCreatedEvent;
 use App\Form\SearchDraftType;
 use App\Form\SignalementDraftAddressType;
 use App\Form\SignalementDraftCoordonneesType;
 use App\Form\SignalementDraftDesordresType;
 use App\Form\SignalementDraftLogementType;
 use App\Form\SignalementDraftSituationType;
+use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\FileRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
+use App\Service\Signalement\AutoAssigner;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementBoManager;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -362,6 +369,112 @@ class SignalementCreateController extends AbstractController
             'formDesordres' => $form,
             'signalement' => $signalement,
             'criteresByZone' => $criteresByZone,
+        ]);
+
+        return $this->json(['tabContent' => $tabContent]);
+    }
+
+    #[Route('/bo-form-validation/{uuid:signalement}', name: 'back_signalement_draft_form_validation', methods: ['GET', 'POST'])]
+    public function formValidation(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SignalementQualificationUpdater $signalementQualificationUpdater,
+        PartnerRepository $partnerRepository,
+        AutoAssigner $autoAssigner,
+        AffectationManager $affectationManager,
+        EventDispatcherInterface $eventDispatcher,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
+        $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement);
+        $signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        $signalementManager->flush();
+
+        $errorMsgs = [];
+        if (!count($signalement->getDesordrePrecisions())) {
+            $errorMsgs[] = 'Vous devez renseigner au moins un désordre pour pouvoir soumettre le signalement.';
+        }
+
+        $partners = [];
+        $assignablePartners = $autoAssigner->assign($signalement, true);
+        if (!count($assignablePartners)) {
+            $partners = $partnerRepository->findAllList($signalement->getTerritory());
+        }
+
+        $token = $request->request->get('_token');
+        $partnerIds = $request->request->get('partner-ids');
+        if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
+            /** @var User $user */
+            $user = $this->getUser();
+
+            if (!$signalement->getProfileDeclarant()) {
+                $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
+            }
+            if (!$signalement->getMailDeclarant()) {
+                $signalement->setMailDeclarant($user->getEmail());
+            }
+            if (!$signalement->getNomDeclarant()) {
+                $signalement->setNomDeclarant($user->getNom());
+            }
+            if (!$signalement->getPrenomDeclarant()) {
+                $signalement->setPrenomDeclarant($user->getPrenom());
+            }
+            if (!$signalement->getStructureDeclarant()) {
+                $signalement->setStructureDeclarant($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())->getNom());
+            }
+            if (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT])) {
+                if (!$signalement->getMailOccupant()) {
+                    $signalement->setMailOccupant($user->getEmail());
+                }
+                if (!$signalement->getNomOccupant()) {
+                    $signalement->setNomOccupant($user->getNom());
+                }
+                if (!$signalement->getPrenomOccupant()) {
+                    $signalement->setPrenomOccupant($user->getPrenom());
+                }
+            } else {
+                $signalement->setIsNotOccupant(true);
+            }
+
+            $route = 'back_signalements_index';
+            if (count($assignablePartners)) {
+                $autoAssigner->assign($signalement);
+                $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis par l\'auto-affectation');
+                if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
+                    $route = 'back_signalement_drafts';
+                }
+            } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY') && !empty($partnerIds)) {
+                $partnersList = explode(',', $partnerIds);
+                foreach ($partnersList as $partnerId) {
+                    if (isset($partners[$partnerId])) {
+                        $affectation = $affectationManager->createAffectationFrom($signalement, $partners[$partnerId], $user);
+                        $signalement->addAffectation($affectation);
+                        $affectationManager->persist($affectation);
+                    }
+                }
+                $signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $user);
+                $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis.');
+            } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
+                $signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $user);
+                $this->addFlash('success', 'Le signalement a bien été créé et validé. Vous n\'avez pas défini de partenaires à affecter, rendez-vous dans le signalement pour en affecter !');
+            } else {
+                $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+                $eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
+
+                $this->addFlash('success', 'Le signalement a bien été créé. Il doit être validé par les responsables de territoire. Si ce signalement est affecté à votre partenaire, il sera visible dans la liste des signalements.');
+                $route = 'back_signalement_drafts';
+            }
+            $signalementManager->flush();
+
+            return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, [], UrlGeneratorInterface::ABSOLUTE_URL)]);
+        }
+
+        $tabContent = $this->renderView('back/signalement_create/tabs/tab-validation.html.twig', [
+            'signalement' => $signalement,
+            'partners' => $partners,
+            'assignablePartners' => $assignablePartners,
+            'errorMsgs' => $errorMsgs,
         ]);
 
         return $this->json(['tabContent' => $tabContent]);

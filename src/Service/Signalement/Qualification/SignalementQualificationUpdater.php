@@ -50,7 +50,7 @@ class SignalementQualificationUpdater
             }
         }
 
-        if (null === $signalement->getCreatedFrom()) {
+        if (!$signalement->isV2()) {
             $this->addNonDecenceAndRSDQualification($signalement, $addNonDecence, $addRSD);
             $this->updateInsalubriteQualification($signalement, $existingQualificationInsalubrite);
         } else {
@@ -452,7 +452,7 @@ class SignalementQualificationUpdater
         Signalement $signalement,
     ): array {
         $listCriticiteNDE = [];
-        if (null === $signalement->getCreatedFrom()) {
+        if (!$signalement->isV2()) {
             foreach ($signalement->getCriticites() as $criticite) {
                 if ($criticite->getQualification()
                     && \in_array(Qualification::NON_DECENCE_ENERGETIQUE->value, $criticite->getQualification())
@@ -491,7 +491,7 @@ class SignalementQualificationUpdater
             }
         // If not added yet, but should be added
         } elseif (!empty($listCriticiteDanger)) {
-            if (null === $signalement->getCreatedFrom()) {
+            if (!$signalement->isV2()) {
                 $signalementQualification = $this->signalementQualificationFactory->createInstanceFrom(
                     qualification: Qualification::DANGER,
                     qualificationStatus: QualificationStatus::DANGER_CHECK,
@@ -512,7 +512,7 @@ class SignalementQualificationUpdater
         Signalement $signalement,
     ): array {
         $listCriticiteDanger = [];
-        if (null === $signalement->getCreatedFrom()) {
+        if (!$signalement->isV2()) {
             foreach ($signalement->getCriticites() as $criticite) {
                 if ($criticite->getIsDanger()) {
                     $listCriticiteDanger[] = $criticite->getId();
