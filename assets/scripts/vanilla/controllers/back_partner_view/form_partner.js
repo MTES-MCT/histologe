@@ -1,4 +1,4 @@
-import { loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent } from '../../services/list_filter_helper'
+import { loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent } from '../../services/ui/list_filter_helper'
 function histoUpdateSubmitButton (elementName, elementLabel) {
   document.querySelector(elementName).innerHTML = elementLabel
   document.querySelector(elementName).disabled = true

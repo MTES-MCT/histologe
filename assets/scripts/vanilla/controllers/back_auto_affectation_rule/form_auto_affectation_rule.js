@@ -1,4 +1,4 @@
-import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent } from '../../services/list_filter_helper'
+import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent } from '../../services/ui/list_filter_helper'
 
 document.querySelectorAll('.btn-delete-autoaffectationrule').forEach(swbtn => {
   swbtn.addEventListener('click', evt => {
