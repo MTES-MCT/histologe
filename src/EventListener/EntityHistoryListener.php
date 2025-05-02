@@ -15,6 +15,7 @@ use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Uid\Uuid;
 
 #[AsDoctrineListener(event: Events::onFlush)]
 class EntityHistoryListener
@@ -147,8 +148,9 @@ class EntityHistoryListener
         array $changes,
     ): void {
         try {
-            $historyKey = $entity::class.'_'.$entity->getId().'_'.$event->value;
-            if (isset($this->historyEntryBuffer->pendingHistoryEntries[$historyKey])) {
+            $id = $entity->getId() ?? Uuid::v4();
+            $historyKey = $entity::class.'_'.$id.'_'.$event->value;
+            if (HistoryEntryEvent::CREATE !== $event && isset($this->historyEntryBuffer->pendingHistoryEntries[$historyKey])) {
                 $oldChanges = $this->historyEntryBuffer->pendingHistoryEntries[$historyKey]->getChanges();
                 $this->historyEntryBuffer->pendingHistoryEntries[$historyKey]->setChanges(array_merge($oldChanges, $changes));
             } else {
