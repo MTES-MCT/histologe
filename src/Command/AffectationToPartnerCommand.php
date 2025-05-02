@@ -2044,7 +2044,6 @@ class AffectationToPartnerCommand extends Command
                     ->setAffectedBy($adminUser)
                     ->setAnsweredBy($adminUser)
                     ->setAnsweredAt($createdAt)
-                    ->setIsSynchronized(true)
                     ->setStatut($affectationStatus);
 
                 $this->entityManager->persist($affectation);
