@@ -4,10 +4,7 @@ document?.querySelectorAll('[data-delete]')?.forEach(actionBtn => {
   actionBtn.addEventListeners('click touchdown', event => {
     event.preventDefault()
     let className
-    if (event.target.classList.contains('partner-user-delete')) { className = '.partner-row-user' } // n'existe plus
-    else if (event.target.classList.contains('situation-critere-delete')) { className = '.situation-row-critere' } // n'existe plus
-    else if (event.target.classList.contains('signalement-row-delete')) { className = '.signalement-row' } // n'existe plus
-    else if (event.target.classList.contains('partner-row-delete')) { className = '.partner-row' }
+    if (event.target.classList.contains('partner-row-delete')) { className = '.partner-row' }
     if (confirm('Voulez-vous vraiment supprimer cet élément ?')) {
       const formData = new FormData()
       formData.append('_token', actionBtn.getAttribute('data-token'))
