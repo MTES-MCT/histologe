@@ -8,7 +8,7 @@ enum InterventionType: string
     case VISITE_CONTROLE = 'VISITE_CONTROLE';
     case ARRETE_PREFECTORAL = 'ARRETE_PREFECTORAL';
 
-    public const INTERVENTION_TYPE_LABEL = [
+    public const array INTERVENTION_TYPE_LABEL = [
         'VISITE' => 'Visite',
         'VISITE_CONTROLE' => 'Visite de contrôle',
         'ARRETE_PREFECTORAL' => 'Arrêté préfectoral',

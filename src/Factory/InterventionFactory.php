@@ -34,6 +34,14 @@ class InterventionFactory
             ->setDetails($details)
             ->setAdditionalInformation($additionalInformation);
 
+        if ('ARS' === $doneBy) {
+            $intervention->setPartner($affectation->getPartner());
+        } else {
+            $intervention
+                ->setExternalOperator($doneBy)
+                ->setPartner(null);
+        }
+
         if (!empty($concludeProcedures)) {
             $intervention->setConcludeProcedure($concludeProcedures);
         }
