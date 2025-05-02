@@ -52,7 +52,6 @@ class HistoryEntryManager extends AbstractManager
         HistoryEntryEvent $historyEntryEvent,
         EntityHistoryInterface|Collection $entityHistory,
         array $changes = [],
-        bool $flush = true,
     ): ?HistoryEntry {
         $historyEntry = $this->historyEntryFactory->createInstanceFrom(
             historyEntryEvent: $historyEntryEvent,
@@ -63,8 +62,6 @@ class HistoryEntryManager extends AbstractManager
         $historyEntry
             ->setChanges($changes)
             ->setSource($source);
-
-        $this->save($historyEntry, $flush);
 
         return $historyEntry;
     }

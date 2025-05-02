@@ -54,7 +54,6 @@ class AuthentificationHistoryListener
             $historyEntry = $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
                 entityHistory: $user instanceof SignalementUser ? $signalement : $user,
-                flush: false
             );
 
             $source = $this->historyEntryManager->getSource();

@@ -168,7 +168,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $changes['statut'] = [];
         $changes['statut']['new'] = Affectation::STATUS_ACCEPTED;
         $changes['statut']['old'] = $affectations[0]->getStatut();
-        $historyEntry = $this->historyEntryManager->create(HistoryEntryEvent::UPDATE, $affectations[0], $changes, true);
+        $historyEntry = $this->historyEntryManager->create(HistoryEntryEvent::UPDATE, $affectations[0], $changes);
         $source = $this->historyEntryManager->getSource();
         $historyEntry->setSource($source);
         $this->historyEntryManager->save($historyEntry);

@@ -25,6 +25,7 @@ readonly class HistoryEntryFactory
         $user = $this->security->getUser();
         $historyEntry = (new HistoryEntry())
             ->setEvent($historyEntryEvent)
+            ->setEntity($entityHistory)
             ->setEntityId($entityHistory->getId())
             ->setEntityName(str_replace(self::ENTITY_PROXY_PREFIX, '', $entityHistory::class))
             ->setUser($user);

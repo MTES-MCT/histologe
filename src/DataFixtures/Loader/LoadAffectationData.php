@@ -45,7 +45,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAffectedBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
-            ->setAnsweredBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
+            ->setAnsweredBy($this->userRepository->findOneBy(['email' => $row['answered_by']]))
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setIsSynchronized($row['is_synchronized'] ?? false)
         ;
