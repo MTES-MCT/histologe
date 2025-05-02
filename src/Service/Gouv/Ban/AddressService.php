@@ -9,7 +9,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AddressService
 {
-    private const string API_URL = 'https://api-adresse.data.gouv.fr/search/?q=';
+    private const string API_URL = 'https://data.geopf.fr/geocodage/search/?q=';
     private const string API_PARAM_LIMIT = '&limit=1';
 
     public function __construct(

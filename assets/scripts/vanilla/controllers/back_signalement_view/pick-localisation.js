@@ -31,7 +31,7 @@ if (modalLocalisation) {
   modalPickLocalisation.addEventListener('dsfr.disclose', (e) => {
     if(modalPickLocalisation.dataset.loaded == 'false'){
       modalPickLocalisation.dataset.loaded = 'true'
-      const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
+      const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
       let address = modalPickLocalisation.dataset.address
       let postCode = modalPickLocalisation.dataset.postcode
       fetch(apiAdresse + address + '&postcode=' + postCode).then(response => response.json()).then(json => {

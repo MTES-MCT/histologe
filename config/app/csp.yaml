@@ -41,7 +41,7 @@ parameters:
       - "https://cdn.redoc.ly"
     connect-src:
       - "'self'"
-      - "https://api-adresse.data.gouv.fr"
+      - "https://data.geopf.fr"
       - "https://cdn.matomo.cloud"
       - "https://histologe.matomo.cloud"
       - "https://koumoul.com"
