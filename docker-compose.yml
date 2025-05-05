@@ -1,15 +1,15 @@
 # docker-compose.yml
 services:
-  histologe_mysql:
+  signal_logement_mysql:
     image: 'mysql:8.0.40'
     command: --max_allowed_packet=32505856
-    container_name: histologe_mysql
+    container_name: signal_logement_mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: histologe_db
-      MYSQL_USER: histologe
-      MYSQL_PASSWORD: histologe
+      MYSQL_DATABASE: signal_logement_db
+      MYSQL_USER: signal_logement
+      MYSQL_PASSWORD: signal_logement
       MYSQL_TCP_PORT: 3307
     ports:
       - 3307:3307
@@ -17,26 +17,26 @@ services:
       - dbdata:/var/lib/mysql
       - ./.docker/mysql:/docker-entrypoint-initdb.d
 
-  histologe_phpmyadmin:
+  signal_logement_phpmyadmin:
     image: phpmyadmin/phpmyadmin
     depends_on:
-      - histologe_mysql
+      - signal_logement_mysql
     restart: always
-    container_name: histologe_phpmyadmin
+    container_name: signal_logement_phpmyadmin
     environment:
-      PMA_HOST: histologe_mysql
+      PMA_HOST: signal_logement_mysql
       PMA_PORT: 3307
-      PMA_USER: histologe
-      PMA_PASSWORD: histologe
+      PMA_USER: signal_logement
+      PMA_PASSWORD: signal_logement
     ports:
       - 8081:80
 
-  histologe_phpfpm:
+  signal_logement_phpfpm:
     build: .docker/php-fpm
-    container_name: histologe_phpfpm
+    container_name: signal_logement_phpfpm
     depends_on:
-      - histologe_wiremock
-      - histologe_clamav
+      - signal_logement_wiremock
+      - signal_logement_clamav
     working_dir: /app
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -47,9 +47,9 @@ services:
     volumes:
       - .:/app/
 
-  histologe_phpworker:
+  signal_logement_phpworker:
     build: .docker/php-worker
-    container_name: histologe_worker
+    container_name: signal_logement_worker
     working_dir: /app
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -60,11 +60,11 @@ services:
     volumes:
       - .:/app/
 
-  histologe_nginx:
+  signal_logement_nginx:
     build: .docker/nginx
     depends_on:
-      - histologe_phpfpm
-    container_name: histologe_nginx
+      - signal_logement_phpfpm
+    container_name: signal_logement_nginx
     working_dir: /app
     volumes:
       - .:/app/
@@ -72,28 +72,28 @@ services:
     ports:
       - 8080:80
 
-  histologe_mailer:
+  signal_logement_mailer:
     image: schickling/mailcatcher
-    container_name: histologe_mailer
+    container_name: signal_logement_mailer
     ports:
       - 1025:1025
       - 1080:1080
 
-  histologe_wiremock:
+  signal_logement_wiremock:
     image: wiremock/wiremock:2.35.0
-    container_name: histologe_wiremock
+    container_name: signal_logement_wiremock
     ports:
       - 8082:8080
     volumes:
       - .:/home/wiremock
 
-  histologe_redis:
+  signal_logement_redis:
     image: redis:7.2.7-alpine
-    container_name: histologe_redis
+    container_name: signal_logement_redis
 
-  histologe_clamav:
+  signal_logement_clamav:
     image: clamav/clamav
-    container_name: histologe_clamav
+    container_name: signal_logement_clamav
     ports:
       - 3310:3310
     volumes:
