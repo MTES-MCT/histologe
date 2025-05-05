@@ -12,6 +12,7 @@ use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -22,15 +23,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class GridAffectationLoader
 {
-    private const FLUSH_COUNT = 250;
+    private const int FLUSH_COUNT = 250;
 
     private array $metadata = [
         'nb_users_created' => 0,
+        'nb_users_multi_territory' => 0,
         'nb_partners' => 0,
         'errors' => [],
     ];
 
-    public const OLD_ROLES = [
+    public const array OLD_ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Utilisateur' => 'ROLE_USER_PARTNER',
         'Administrateur' => 'ROLE_ADMIN_PARTNER',
@@ -200,14 +202,17 @@ class GridAffectationLoader
         array $ignoreNotifPartnerTypes,
         ?OutputInterface $output = null,
     ): void {
-        $countUsers = 0;
+        $countNewUsers = $countUserMultiTerritory = 0;
         $partner = null;
         $newPartnerNames = [];
         if (null !== $output) {
             $progressBar = new ProgressBar($output, \count($data));
             $progressBar->start();
         }
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
         foreach ($data as $item) {
+            $canAddUserPartner = false;
             if (\count($item) > 1) {
                 $partnerName = trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]); // Replace with mb_trim($name); when php 8.4
                 $partnerType = PartnerType::tryFromLabel($item[GridAffectationHeader::PARTNER_TYPE]);
@@ -245,30 +250,45 @@ class GridAffectationLoader
 
                 $email = trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (!empty($roleLabel) && !empty($email)) {
-                    ++$countUsers;
-                    $user = $this->userFactory->createInstanceFrom(
-                        roleLabel: $roleLabel,
-                        firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
-                        lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),
-                        email: $email,
-                        isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
-                    );
-                    $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
-                    $user->addUserPartner($userPartner);
-                    /** @var ConstraintViolationList $errors */
-                    $errors = $this->validator->validate($user);
-                    if (0 === $errors->count()) {
-                        $this->userManager->save($user, false);
-                        $this->userManager->persist($partner);
-                        $this->userManager->persist($userPartner);
-                        ++$this->metadata['nb_users_created'];
+                    $user = $userRepository->findAgentByEmail($email);
+                    if (null === $user) {
+                        ++$countNewUsers;
+                        $user = $this->userFactory->createInstanceFrom(
+                            roleLabel: $roleLabel,
+                            firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
+                            lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),
+                            email: $email,
+                            isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
+                        );
+                        $canAddUserPartner = true;
+                    } elseif (!$currentPartner = $user->getPartnerInTerritory($territory)) {
+                        ++$countUserMultiTerritory;
+                        $canAddUserPartner = true;
                     } else {
-                        $this->metadata['errors'][] = \sprintf('line : %s', (string) $errors);
+                        $this->metadata['errors'][] = \sprintf(
+                            '%s existe déja sur le territoire %s',
+                            $email,
+                            $currentPartner->getTerritory()->getName()
+                        );
+                    }
+                    if ($canAddUserPartner) {
+                        $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
+                        $user->addUserPartner($userPartner);
+
+                        /** @var ConstraintViolationList $errors */
+                        $errors = $this->validator->validate($user);
+                        if (0 === $errors->count()) {
+                            $this->userManager->save($user, false);
+                            $this->userManager->persist($partner);
+                            $this->userManager->persist($userPartner);
+                        } else {
+                            $this->metadata['errors'][] = \sprintf('line : %s', (string) $errors);
+                        }
                     }
                 }
 
-                if (0 === $countUsers % self::FLUSH_COUNT) {
-                    $this->logger->info(\sprintf('in progress - %s users created or updated', $countUsers));
+                if (0 === $countNewUsers % self::FLUSH_COUNT) {
+                    $this->logger->info(\sprintf('in progress - %s users created or updated', $countNewUsers));
                     $this->manager->flush();
                 }
             }
@@ -282,6 +302,8 @@ class GridAffectationLoader
             $progressBar->finish();
             $progressBar->clear();
         }
+        $this->metadata['nb_users_created'] = $countNewUsers;
+        $this->metadata['nb_users_multi_territory'] = $countUserMultiTerritory;
     }
 
     public function getMetadata(): array
