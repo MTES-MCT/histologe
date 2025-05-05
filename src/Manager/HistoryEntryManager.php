@@ -113,7 +113,7 @@ class HistoryEntryManager extends AbstractManager
         $this->removeListeners(
             $eventManager,
             EntityHistoryListener::class,
-            [Events::postPersist, Events::postUpdate, Events::preRemove]
+            [Events::onFlush]
         );
     }
 
