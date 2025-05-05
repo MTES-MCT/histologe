@@ -37,18 +37,18 @@ partners:
     email: "partenaire-13-05@signal-logement.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    esabora_url: "http://signal_logement_wiremock:8080/ws/rest"
     is_esabora_active: 1
     type: "COMMUNE_SCHS"
     competence: "VISITES"
     is_idoss_active: 1
-    idoss_url: "http://histologe_wiremock:8080/idoss/"
+    idoss_url: "http://signal_logement_wiremock:8080/idoss/"
   -
     nom: "Partenaire 13-06 ESABORA ARS"
     email: "partenaire-13-06@signal-logement.fr"
     is_archive: 0
     territory: "Bouches-du-Rhône"
-    esabora_url: "http://histologe_wiremock:8080/ARS/ws/rest"
+    esabora_url: "http://signal_logement_wiremock:8080/ARS/ws/rest"
     is_esabora_active: 1
     type: "ARS"
     competence: "VISITES"
@@ -76,7 +76,7 @@ partners:
     is_archive: 0
     insee: "[\"\"]"
     territory: "Ain"
-    esabora_url: "http://histologe_wiremock:8080/ws/rest"
+    esabora_url: "http://signal_logement_wiremock:8080/ws/rest"
     is_esabora_active: 0
     type: "AUTRE"
   -
