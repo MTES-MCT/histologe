@@ -79,7 +79,7 @@ class SignalementExportFactoryTest extends TestCase
             'interventionNbVisites' => 2,
             'interventionOccupantPresent' => 1,
             'interventionConcludeProcedure' => 'RSD,INSALUBRITE',
-            'interventionDetails' => 'dossier envoyé pour manquement sanitaire',
+            'interventionDetails' => '<p>dossier envoyé à ARS pour une suspicion d&#039;insalubrité</p>',
         ];
 
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
@@ -119,6 +119,6 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(VisiteStatus::TERMINEE->value, $signalementExportFactory->interventionStatus);
         $this->assertEquals('RSD,INSALUBRITE', $signalementExportFactory->interventionConcludeProcedure);
         $this->assertEquals('Entre 1 et 2 ans', $signalementExportFactory->debutDesordres);
-        $this->assertEquals('dossier envoyé pour manquement sanitaire', $signalementExportFactory->interventionDetails);
+        $this->assertEquals('dossier envoyé à ARS pour une suspicion d\'insalubrité', $signalementExportFactory->interventionDetails);
     }
 }
