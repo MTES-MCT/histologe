@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Entity;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Tests\FixturesHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -57,7 +58,7 @@ class UserTest extends KernelTestCase
         $user->anonymize();
         $this->assertNull($user->getAnonymizedAt());
 
-        $user->setStatut(User::STATUS_ARCHIVE);
+        $user->setStatut(UserStatus::ARCHIVE);
         $user->anonymize();
         $this->assertNotNull($user->getAnonymizedAt());
         $this->assertEquals(User::ANONYMIZED_PRENOM, $user->getPrenom());

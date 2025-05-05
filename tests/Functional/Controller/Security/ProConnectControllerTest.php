@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Security;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Gouv\ProConnect\Model\ProConnectUser;
@@ -43,7 +44,7 @@ class ProConnectControllerTest extends WebTestCase
         $em = $container->get('doctrine.orm.entity_manager');
         $user = (new User())
             ->setEmail($proConnectUser->email)
-            ->setStatut(User::STATUS_ACTIVE);
+            ->setStatut(UserStatus::ACTIVE);
         $em->persist($user);
 
         $userRepositoryMock = $this->createMock(UserRepository::class);

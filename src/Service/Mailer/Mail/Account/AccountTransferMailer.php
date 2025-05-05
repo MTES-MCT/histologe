@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Account;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
@@ -33,16 +34,16 @@ class AccountTransferMailer extends AbstractNotificationMailer
     {
         $user = $notificationMail->getUser();
         $this->userManager->loadUserTokenForUser($user);
-        if (User::STATUS_ACTIVE === $user->getStatut()) {
+        if (UserStatus::ACTIVE === $user->getStatut()) {
             $link = $this->generateLink('back_dashboard', []);
         } else {
             $link = $this->generateLink('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         }
 
         return [
-            'btntext' => User::STATUS_ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
+            'btntext' => UserStatus::ACTIVE === $user->getStatut() ? 'Accéder à mon compte' : 'Activer mon compte',
             'link' => $link,
-            'user_status' => $user->getStatut(),
+            'user_status' => $user->getStatut()->value,
             'partner_name' => $notificationMail->getParams()['partner_name'],
             'territory_name' => $notificationMail->getTerritory()->getName(),
         ];

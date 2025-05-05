@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -60,7 +61,7 @@ class UserManager extends AbstractManager
     {
         // if the user is not active yet, he is activating his account, so he just saw the cgu
         $currentCguVersion = $this->parameterBag->get('cgu_current_version');
-        if (User::STATUS_ACTIVE !== $user->getStatut()) {
+        if (UserStatus::ACTIVE !== $user->getStatut()) {
             $user->setCguVersionChecked($currentCguVersion);
         }
 
@@ -68,7 +69,7 @@ class UserManager extends AbstractManager
         $user
             ->setPassword($password)
             ->setToken(null)
-            ->setStatut(User::STATUS_ACTIVE)
+            ->setStatut(UserStatus::ACTIVE)
             ->setTokenExpiredAt(null);
 
         $this->save($user);
@@ -180,7 +181,7 @@ class UserManager extends AbstractManager
     public function sendAccountActivationNotification(User $user): void
     {
         if (!\in_array('ROLE_USAGER', $user->getRoles())
-            && User::STATUS_ARCHIVE !== $user->getStatut()
+            && UserStatus::ARCHIVE !== $user->getStatut()
         ) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(

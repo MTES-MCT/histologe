@@ -2,6 +2,7 @@
 
 namespace App\Command\Cron;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
@@ -134,7 +135,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
 
         foreach ($users as $user) {
             $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
-            $user->setStatut(User::STATUS_ARCHIVE);
+            $user->setStatut(UserStatus::ARCHIVE);
             $user->setArchivingScheduledAt(null);
 
             ++$count;

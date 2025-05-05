@@ -131,9 +131,9 @@
                         {% endfor %}
                     </td>
                     <td>
-                        {% if user.statut is same as constant('App\\Entity\\User::STATUS_INACTIVE') %}
+                        {% if user.statut is same as enum('App\\Entity\\Enum\\UserStatus').INACTIVE %}
                             <span class="fr-badge fr-badge--no-icon fr-badge--error">Non activé</span>
-                        {% elseif user.statut is same as constant('App\\Entity\\User::STATUS_ACTIVE') %}
+                        {% elseif user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE %}
                             <span class="fr-badge fr-badge--no-icon fr-badge--success">Activé</span>
                         {% else %}
                             {{ user.statutLabel }}

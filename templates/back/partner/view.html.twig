@@ -247,13 +247,13 @@
                                     {% endif %}
                                 </span>
                             </td>
-                            <td>{% if user.statut == 0 %}
+                            <td>{% if user.statut is same as enum('App\\Entity\\Enum\\UserStatus').INACTIVE %}
                                     {% set classe = 'fr-badge--orange-terre-battue' %}
                                     {% set label = 'INACTIF' %}
-                                {% elseif user.statut == 1 %}
+                                {% elseif user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE %}
                                     {% set classe = 'fr-badge--green-emeraude' %}
                                     {% set label = 'ACTIF' %}
-                                {% elseif user.statut == 2 %}
+                                {% elseif user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ARCHIVE %}
                                     {% set classe = 'fr-badge--blue-ecume' %}
                                     {% set label = 'ARCHIVE' %}
                                 {% endif %}

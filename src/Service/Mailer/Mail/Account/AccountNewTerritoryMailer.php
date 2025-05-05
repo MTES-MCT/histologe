@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Account;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
@@ -32,7 +33,7 @@ class AccountNewTerritoryMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $user = $notificationMail->getUser();
-        if (User::STATUS_ACTIVE === $user->getStatut()) {
+        if (UserStatus::ACTIVE === $user->getStatut()) {
             $btntext = 'Me connecter à Signal Logement';
             $link = $this->generateLink('back_dashboard', []);
         } else {

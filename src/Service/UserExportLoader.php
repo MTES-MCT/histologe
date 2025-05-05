@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchUser;
@@ -67,7 +68,7 @@ readonly class UserExportLoader
                     'partner' => $partners,
                     'partnerType' => $partnerTypes,
                     'createdAt' => $user->getCreatedAt()->format('d/m/Y'),
-                    'statut' => User::STATUS_ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
+                    'statut' => UserStatus::ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
                     'lastLoginAt' => $user->getLastLoginAt() ? $user->getLastLoginAt()->format('d/m/Y') : '',
                     'role' => $user->getRoleLabel(),
                     'permissionAffectation' => $user->isSuperAdmin() || $user->isTerritoryAdmin() || $user->hasPermissionAffectation() ? 'oui' : 'non',

@@ -86,8 +86,8 @@ class SearchUserType extends AbstractType
         });
         $builder->add('statut', ChoiceType::class, [
             'choices' => [
-                'Activé' => 1,
-                'Non activé' => 0,
+                'Activé' => 'ACTIVE',
+                'Non activé' => 'INACTIVE',
             ],
             'required' => false,
             'placeholder' => 'Tous les statuts',

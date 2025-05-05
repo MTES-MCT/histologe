@@ -2,14 +2,14 @@
 
 {% block body %}
     <p>Bonjour,</p>
-    {% if user_status == 1 %}
+    {% if user_status is same as 'ACTIVE' %}
         <p>Votre compte a été transféré vers le partenaire {{ partner_name }} sur votre plateforme {{ platform.name }}
             - {{ territory_name }}. </p>
         <p>Vous pouvez désormais traiter et assurer le suivi des signalements du partenaire {{ partner_name }}. <p>
         <p> Votre adresse de connexion et mot de passe ne changent pas. <br/>
             Cliquez ci-dessous pour vous connecter à votre compte.</p>
     {% endif %}
-    {% if user_status == 0 %}
+    {% if user_status is same as 'INACTIVE' %}
         <p>Votre compte a été transféré vers le partenaire {{ partner_name }} sur votre plateforme {{ platform.name }}
             - {{ territory_name }}.</p>
         <p>Vous devez activer votre compte pour traiter les signalements du partenaire {{ partner_name }}. <br/>

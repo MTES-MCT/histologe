@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Entity\UserPartner;
 use App\Factory\PartnerFactory;
@@ -134,7 +135,7 @@ class CreateApiPartnerUsersCommand extends Command
                 );
                 $password = $this->userManager->getComplexRandomPassword();
                 $passwordHashed = $this->hasher->hashPassword($boUser, $password);
-                $boUser->setStatut(User::STATUS_ACTIVE)->setPassword($passwordHashed);
+                $boUser->setStatut(UserStatus::ACTIVE)->setPassword($passwordHashed);
 
                 $boUserPartner = (new UserPartner())->setPartner($partner)->setUser($boUser);
                 $boUser->addUserPartner($boUserPartner);
@@ -167,7 +168,7 @@ class CreateApiPartnerUsersCommand extends Command
         );
         $password = $this->userManager->getComplexRandomPassword();
         $passwordHashed = $this->hasher->hashPassword($user, $password);
-        $user->setStatut(User::STATUS_ACTIVE)->setPassword($passwordHashed);
+        $user->setStatut(UserStatus::ACTIVE)->setPassword($passwordHashed);
 
         $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
         $user->addUserPartner($userPartner);

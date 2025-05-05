@@ -9,6 +9,7 @@ use App\Entity\Criticite;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\UserStatus;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
@@ -371,7 +372,7 @@ trait FixturesHelper
             ->setNom('Doe')
             ->setPrenom('John')
             ->setRoles($roles)
-            ->setStatut(User::STATUS_ACTIVE);
+            ->setStatut(UserStatus::ACTIVE);
         $userPartner = (new UserPartner())->setPartner($this->getPartner())->setUser($user);
         $user->addUserPartner($userPartner);
 

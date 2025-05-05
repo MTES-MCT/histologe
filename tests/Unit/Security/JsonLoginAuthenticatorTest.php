@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Security;
 
 use App\Entity\ApiUserToken;
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Security\JsonLoginAuthenticator;
@@ -53,7 +54,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $user = new User();
         $user->setEmail('user@example.com');
         $user->setRoles([User::ROLE_API_USER]);
-        $user->setStatut(User::STATUS_ACTIVE);
+        $user->setStatut(UserStatus::ACTIVE);
 
         $request = Request::create('/api/login', 'POST', [], [], [], [], json_encode(['email' => 'user@example.com', 'password' => 'password']));
         $passport = $this->authenticator->authenticate($request);
@@ -71,7 +72,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $user = new User();
         $user->setEmail('user@example.com');
         $user->setRoles([User::ROLE_API_USER]);
-        $user->setStatut(User::STATUS_ACTIVE);
+        $user->setStatut(UserStatus::ACTIVE);
 
         $apiUserToken = new ApiUserToken();
         $user->addApiUserToken($apiUserToken);

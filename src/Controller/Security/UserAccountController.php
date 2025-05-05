@@ -2,6 +2,7 @@
 
 namespace App\Controller\Security;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
@@ -42,7 +43,7 @@ class UserAccountController extends AbstractController
                 ]);
             }
 
-            $user = $userRepository->findAgentByEmail($email, User::STATUS_INACTIVE);
+            $user = $userRepository->findAgentByEmail($email, UserStatus::INACTIVE);
             if ($user) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
@@ -88,7 +89,7 @@ class UserAccountController extends AbstractController
             }
 
             $user = $userRepository->findAgentByEmail($email);
-            if ($user && User::STATUS_ACTIVE === $user->getStatut()) {
+            if ($user && UserStatus::ACTIVE === $user->getStatut()) {
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_LOST_PASSWORD,

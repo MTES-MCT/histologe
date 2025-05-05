@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
@@ -138,7 +139,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
-        $this->assertEquals(User::STATUS_ACTIVE, $account->getStatut());
+        $this->assertEquals(UserStatus::ACTIVE, $account->getStatut());
         $this->assertResponseRedirects('/bo/comptes-archives/');
     }
 
@@ -188,7 +189,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
-        $this->assertEquals(User::STATUS_ARCHIVE, $account->getStatut());
+        $this->assertEquals(UserStatus::ARCHIVE, $account->getStatut());
     }
 
     public function testAccountReactivateError(): void
@@ -226,7 +227,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
-        $this->assertEquals(User::STATUS_ARCHIVE, $account->getStatut());
+        $this->assertEquals(UserStatus::ARCHIVE, $account->getStatut());
     }
 
     public function testAccountReactivateAnonymizedUser(): void
@@ -301,7 +302,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
 
         /** @var User $account */
         $account = $userRepository->findOneBy(['email' => $accountEmail]);
-        $this->assertEquals(User::STATUS_ACTIVE, $account->getStatut());
+        $this->assertEquals(UserStatus::ACTIVE, $account->getStatut());
         $this->assertResponseRedirects('/bo/comptes-archives/');
     }
 }

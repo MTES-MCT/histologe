@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
@@ -150,10 +151,10 @@ class PartnerControllerTest extends WebTestCase
         $this->assertStringStartsWith($mailBeforArchive.User::SUFFIXE_ARCHIVED, $partner->getEmail());
         foreach ($partnerUsers as $user) {
             if ('admin-partenaire-multi-ter-13-01@signal-logement.fr' === $user->getEmail()) {
-                $this->assertEquals(User::STATUS_ACTIVE, $user->getStatut());
+                $this->assertEquals(UserStatus::ACTIVE, $user->getStatut());
                 $this->assertCount(1, $user->getPartners());
             } else {
-                $this->assertEquals(User::STATUS_ARCHIVE, $user->getStatut());
+                $this->assertEquals(UserStatus::ARCHIVE, $user->getStatut());
                 $this->assertStringContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
             }
         }
@@ -489,7 +490,7 @@ class PartnerControllerTest extends WebTestCase
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
 
-        $this->assertEquals(2, $user->getStatut());
+        $this->assertEquals(UserStatus::ARCHIVE, $user->getStatut());
         $this->assertStringContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
         $this->assertEmailCount(1);
     }
@@ -504,7 +505,7 @@ class PartnerControllerTest extends WebTestCase
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
 
-        $this->assertEquals(1, $user->getStatut());
+        $this->assertEquals(UserStatus::ACTIVE, $user->getStatut());
         $this->assertEmailCount(1);
         $this->assertCount(1, $user->getPartners());
     }
@@ -532,7 +533,7 @@ class PartnerControllerTest extends WebTestCase
             '_token' => $this->generateCsrfToken($this->client, 'bad_csrf'),
         ]);
 
-        $this->assertNotEquals(2, $user->getStatut());
+        $this->assertNotEquals(UserStatus::ARCHIVE, $user->getStatut());
         $this->assertStringNotContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
         $this->assertResponseRedirects('/bo/partenaires/');
     }

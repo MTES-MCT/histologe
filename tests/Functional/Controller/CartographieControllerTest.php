@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -49,7 +50,7 @@ class CartographieControllerTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $users = $userRepository->findBy(['statut' => User::STATUS_ACTIVE]);
+        $users = $userRepository->findBy(['statut' => UserStatus::ACTIVE]);
         /** @var User $user */
         foreach ($users as $user) {
             if ($user->getFirstTerritory()) {

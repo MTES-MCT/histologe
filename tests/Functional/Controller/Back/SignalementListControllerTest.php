@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -107,7 +108,7 @@ class SignalementListControllerTest extends WebTestCase
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $users = $userRepository->findBy(['statut' => User::STATUS_ACTIVE]);
+        $users = $userRepository->findBy(['statut' => UserStatus::ACTIVE]);
         $users = array_filter($users, function (User $user) {
             return !in_array('ROLE_API_USER', $user->getRoles(), true);
         });

@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -165,7 +166,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
                 }
 
                 foreach ($partner->getUsers() as $user) {
-                    if (User::STATUS_ACTIVE === $user->getStatut()) {
+                    if (UserStatus::ACTIVE === $user->getStatut()) {
                         if ($user->getIsMailingActive() && !$user->getIsMailingSummary()) {
                             $expectedAdress[] = $user->getEmail();
                         }

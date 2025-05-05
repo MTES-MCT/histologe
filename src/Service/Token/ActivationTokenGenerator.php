@@ -2,6 +2,7 @@
 
 namespace App\Service\Token;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 
@@ -26,13 +27,13 @@ class ActivationTokenGenerator extends AbstractTokenGenerator
     {
         return null !== $user
             && new \DateTimeImmutable() < $user->getTokenExpiredAt()
-            && User::STATUS_INACTIVE === $user->getStatut();
+            && UserStatus::INACTIVE === $user->getStatut();
     }
 
     private function canUpdatePassword(?User $user): bool
     {
         return null !== $user
             && new \DateTimeImmutable() < $user->getTokenExpiredAt()
-            && User::STATUS_ACTIVE === $user->getStatut();
+            && UserStatus::ACTIVE === $user->getStatut();
     }
 }

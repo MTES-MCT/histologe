@@ -6,6 +6,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\UserStatus;
 use App\Repository\UserRepository;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -29,15 +30,6 @@ use Symfony\Component\Validator\Constraints\Email;
 class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     use TimestampableTrait;
-
-    public const int STATUS_INACTIVE = 0;
-    public const int STATUS_ACTIVE = 1;
-    public const int STATUS_ARCHIVE = 2;
-    public const array STATUS_LABELS = [
-        self::STATUS_INACTIVE => 'Inactif',
-        self::STATUS_ACTIVE => 'Actif',
-        self::STATUS_ARCHIVE => 'Archivé',
-    ];
 
     public const string ROLE_API_USER = 'ROLE_API_USER';
     public const string ROLE_USAGER = self::ROLES['Usager'];
@@ -123,8 +115,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
     private ?string $prenom = null;
 
-    #[ORM\Column(type: 'integer')]
-    private ?int $statut = null;
+    #[ORM\Column(type: 'string', enumType: UserStatus::class)]
+    private ?UserStatus $statut = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $lastLoginAt = null;
@@ -192,7 +184,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
-        $this->statut = self::STATUS_INACTIVE;
+        $this->statut = UserStatus::INACTIVE;
         $this->notifications = new ArrayCollection();
         $this->uuid = Uuid::v4();
         $this->files = new ArrayCollection();
@@ -502,12 +494,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return mb_strtoupper($this->nom ?? '').' '.ucfirst($this->prenom ?? '');
     }
 
-    public function getStatut(): ?int
+    public function getStatut(): ?UserStatus
     {
         return $this->statut;
     }
 
-    public function setStatut(int $statut): self
+    public function setStatut(UserStatus $statut): self
     {
         $this->statut = $statut;
 
@@ -516,7 +508,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function getStatutLabel(): string
     {
-        return self::STATUS_LABELS[$this->statut];
+        return $this->statut->label();
     }
 
     public function getLastLoginAt(): ?\DateTimeImmutable
@@ -781,7 +773,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function anonymize(): static
     {
-        if (self::STATUS_ARCHIVE === $this->getStatut() && null === $this->anonymizedAt) {
+        if (UserStatus::ARCHIVE === $this->getStatut() && null === $this->anonymizedAt) {
             $this->setEmail(self::ANONYMIZED_MAIL.date('YmdHis').'.'.uniqid());
             $this->setPrenom(self::ANONYMIZED_PRENOM);
             $this->setNom(self::ANONYMIZED_NOM);

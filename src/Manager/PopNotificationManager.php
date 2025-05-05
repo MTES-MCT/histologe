@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\PopNotification;
 use App\Entity\User;
@@ -21,7 +22,7 @@ class PopNotificationManager extends Manager
         string $type,
         Partner $partner,
     ): ?PopNotification {
-        if (User::STATUS_ACTIVE !== $user->getStatut()) {
+        if (UserStatus::ACTIVE !== $user->getStatut()) {
             return null;
         }
         if ($user->getPopNotifications()->count()) {

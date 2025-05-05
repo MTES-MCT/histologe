@@ -4,6 +4,7 @@ namespace App\Tests\Functional\EventSubscriber;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -46,7 +47,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         /** @var Signalement $signalementClosed */
         $signalementClosed = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
 
-        $user = $this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]);
+        $user = $this->userRepository->findOneBy(['statut' => UserStatus::ACTIVE]);
 
         $securityMock = $this->createMock(Security::class);
         $securityMock->expects($this->once())->method('getUser')->willReturn($user);
