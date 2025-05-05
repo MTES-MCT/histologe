@@ -52,12 +52,13 @@ sed -i '/DEFINER/d' "${backup_file_name}"
 
 # Loading database
 echo ">>> Loading database"
-mysql -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}"
+mysql -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}" 2> mysql_error.log
 EXIT_CODE=$?
 
 TITLE="[Metabase] Synchronisation de Bdd"
 if [ $EXIT_CODE -ne 0 ]; then
     echo ">>> ERROR: Database sync failed!"
+    cat mysql_error.log
 
     # Capture les logs MySQL pour le diagnostic
     ERROR_MESSAGE="La synchronisation de la bdd a échoué avec le code $EXIT_CODE"
