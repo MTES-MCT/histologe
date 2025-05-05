@@ -5,7 +5,6 @@ namespace App\Factory\Interconnection\Oilhi;
 use App\Controller\FileController;
 use App\Entity\Affectation;
 use App\Entity\Criticite;
-use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -45,7 +44,7 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
         $interventionData = $this->buildInterventionData($signalement);
-        $typeDeclarant = $this->getTypeDeclarant($signalement);
+        $typeDeclarant = $signalement->getProfileDeclarant()->label();
 
         return (new DossierMessage())
             ->setAction(HookZapierService::ACTION_PUSH_DOSSIER)
@@ -151,22 +150,6 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         }
 
         return $desordres;
-    }
-
-    private function getTypeDeclarant(Signalement $signalement): ?string
-    {
-        $typeDeclarant = null;
-        if ($signalement->isV2()) {
-            $typeDeclarant = $signalement->getProfileDeclarant()->label();
-        }
-
-        if (!$signalement->getIsNotOccupant()) {
-            $typeDeclarant = $signalement->getLienDeclarantOccupant()
-            ? strtoupper($signalement->getLienDeclarantOccupant())
-            : OccupantLink::AUTRE->label();
-        }
-
-        return $typeDeclarant;
     }
 
     private function getRapportVisite(Intervention $intervention): ?string
