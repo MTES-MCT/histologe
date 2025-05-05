@@ -36,8 +36,8 @@ class JobEventHttpClient implements HttpClientInterface
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
         if (str_contains($this->host, 'localhost')) {
-            if (!str_contains($url, 'histologe_wiremock')) {
-                throw new \LogicException('url must contain "histologe_wiremock" when on localhost.');
+            if (!str_contains($url, 'signal_logement_wiremock')) {
+                throw new \LogicException('url must contain "signal_logement_wiremock" when on localhost.');
             }
         }
 

@@ -1,8 +1,8 @@
 {
     "authorization_endpoint": "http://localhost:8082/authorize",
-    "token_endpoint": "http://histologe_wiremock:8080/token",
-    "userinfo_endpoint": "http://histologe_wiremock:8080/userinfo",
+    "token_endpoint": "http://signal_logement_wiremock:8080/token",
+    "userinfo_endpoint": "http://signal_logement_wiremock:8080/userinfo",
     "end_session_endpoint": "http://localhost:8082/session/end",
-    "jwks_uri": "http://histologe_wiremock:8080/jwks"
+    "jwks_uri": "http://signal_logement_wiremock:8080/jwks"
 }
 

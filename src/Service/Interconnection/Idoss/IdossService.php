@@ -259,8 +259,8 @@ class IdossService
     private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
     {
         if (str_contains($this->params->get('host_url'), 'localhost')) {
-            if (!str_contains($url, 'histologe_wiremock')) {
-                throw new \LogicException('url must contain "histologe_wiremock" when on localhost.');
+            if (!str_contains($url, 'signal_logement_wiremock')) {
+                throw new \LogicException('url must contain "signal_logement_wiremock" when on localhost.');
             }
         }
         $options = ['headers' => []];
