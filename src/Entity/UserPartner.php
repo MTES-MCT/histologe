@@ -8,6 +8,7 @@ use App\Repository\UserPartnerRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserPartnerRepository::class)]
+#[ORM\UniqueConstraint(name: 'unique_user_partner', columns: ['user_id', 'partner_id'])]
 class UserPartner implements EntityHistoryInterface
 {
     #[ORM\Id]

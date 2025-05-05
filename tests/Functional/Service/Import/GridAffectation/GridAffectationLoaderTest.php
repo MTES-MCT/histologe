@@ -20,20 +20,20 @@ class GridAffectationLoaderTest extends KernelTestCase
 {
     use FixturesHelper;
 
-    public const FIXTURE_PARTNER_DDT = 'DDT/M';
-    public const FIXTURE_PARTNER_ARS = 'ARS';
-    public const FIXTURE_PARTNER_SCHS = 'Commune / SCHS';
-    public const FIXTURE_PARTNER_ADIL = 'ADIL';
-    public const FIXTURE_PARTNER_EPCI = 'EPCI';
-    public const FIXTURE_PARTNER_FAKE = 'Random Type';
+    public const string FIXTURE_PARTNER_DDT = 'DDT/M';
+    public const string FIXTURE_PARTNER_ARS = 'ARS';
+    public const string FIXTURE_PARTNER_SCHS = 'Commune / SCHS';
+    public const string FIXTURE_PARTNER_ADIL = 'ADIL';
+    public const string FIXTURE_PARTNER_EPCI = 'EPCI';
+    public const string FIXTURE_PARTNER_FAKE = 'Random Type';
 
-    public const FIXTURE_PARTNER_DDT_EMAIL = 'ddt-m@signal-logement.fr';
-    public const FIXTURE_PARTNER_ARS_EMAIL = 'ars@signal-logement.fr';
+    public const string FIXTURE_PARTNER_DDT_EMAIL = 'ddt-m@signal-logement.fr';
+    public const string FIXTURE_PARTNER_ARS_EMAIL = 'ars@signal-logement.fr';
 
-    public const FIXTURE_USER_EMAIL_DUPLICATE = 'user-ddt@signal-logement.fr';
-    public const FIXTURE_ROLE_RT = 'Resp. Territoire';
-    public const FIXTURE_ROLE_PARTNER = 'Admin. partenaire';
-    public const FIXTURE_ROLE_USER = 'Agent';
+    public const string FIXTURE_USER_EMAIL_DUPLICATE = 'user-ddt@signal-logement.fr';
+    public const string FIXTURE_ROLE_RT = 'Resp. Territoire';
+    public const string FIXTURE_ROLE_PARTNER = 'Admin. partenaire';
+    public const string FIXTURE_ROLE_USER = 'Agent';
 
     private GridAffectationLoader $gridAffectationLoader;
     private EntityManagerInterface $entityManager;

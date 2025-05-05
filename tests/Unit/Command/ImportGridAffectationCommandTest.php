@@ -65,7 +65,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
         $this->gridAffectationLoader
             ->expects($this->once())
             ->method('getMetaData')
-            ->willReturn(['nb_partners' => 10, 'nb_users_created' => 55, 'errors' => []]);
+            ->willReturn(['nb_partners' => 10, 'nb_users_created' => 55, 'nb_users_multi_territory' => 2, 'errors' => []]);
 
         $this->uploadHandlerServiceMock
             ->expects($this->once())
@@ -118,7 +118,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
         $this->gridAffectationLoader
             ->expects($this->once())
             ->method('getMetaData')
-            ->willReturn(['nb_partners' => 1, 'nb_users_created' => 1, 'errors' => []]);
+            ->willReturn(['nb_partners' => 1, 'nb_users_created' => 1, 'nb_users_multi_territory' => 0, 'errors' => []]);
 
         $command = $application->add(new ImportGridAffectationCommand(
             $this->fileStorage,

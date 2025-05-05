@@ -127,9 +127,11 @@ class ImportGridAffectationCommand extends Command
             $io->warning($error);
         }
 
-        $io->success(\sprintf('%d partner(s) created, %d user(s) created',
+        $io->success(\sprintf(
+            '%d partner(s) created, %d user(s) created, %d multi-territory user(s)',
             $metadata['nb_partners'],
-            $metadata['nb_users_created']
+            $metadata['nb_users_created'],
+            $metadata['nb_users_multi_territory'],
         ));
 
         if (0 === $metadata['nb_partners'] && 0 === $metadata['nb_users_created']) {
