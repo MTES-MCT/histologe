@@ -3,7 +3,6 @@
 namespace App\Service\Mailer\Mail\Account;
 
 use App\Entity\Enum\UserStatus;
-use App\Entity\User;
 use App\Manager\UserManager;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
