@@ -6,6 +6,7 @@ use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
+use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Service\Statistics\FilteredBackAnalyticsProvider;
 use App\Service\Statistics\GlobalBackAnalyticsProvider;
 use App\Service\Statistics\ListCommunesStatisticProvider;
@@ -66,7 +67,8 @@ class BackStatistiquesController extends AbstractController
         $backGlobalStatistics = $this->cache->get(
             $cacheKey,
             function (ItemInterface $item) use ($territory, $partners) {
-                $item->expiresAfter(120); // 2 minutes for global back stats
+                $item->expiresAfter(3600); // 1 hour for global back stats
+                $item->tag([SearchFilterOptionDataProvider::CACHE_TAG.$territory->getZip()]);
 
                 return $this->globalBackAnalyticsProvider->getData($territory, $partners);
             }
@@ -175,11 +177,12 @@ class BackStatistiquesController extends AbstractController
         }
 
         $territoryKey = !empty($territory) ? $territory->getZip() : '';
-        $cacheKey = 'filters-zip-'.$territoryKey;
+        $cacheKey = 'back-statistiques-filters-zip-'.$territoryKey;
         $filterLists = $this->cache->get(
             $cacheKey,
             function (ItemInterface $item) use ($territory) {
-                $item->expiresAfter(120); // 2 minutes for filters
+                $item->expiresAfter(7200); // 2 hours for filters
+                $item->tag([SearchFilterOptionDataProvider::CACHE_TAG.$territory->getZip()]);
 
                 return [
                     'list_communes' => $this->listCommunesStatisticProvider->getData($territory),
