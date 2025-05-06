@@ -126,11 +126,11 @@ class SignalementExportFactory
             isOccupantPresentVisite: ($isOccupantPresentVisite && '-' !== $isOccupantPresentVisite) ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
             interventionStatus: $interventionStatus,
             interventionConcludeProcedure: $data['interventionConcludeProcedure'],
-            interventionDetails: HtmlCleaner::clean($data['interventionDetails']),
+            interventionDetails: $data['interventionDetails'] ? HtmlCleaner::clean($data['interventionDetails']) : '',
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
-            comCloture: HtmlCleaner::clean($data['comCloture']),
+            comCloture: $data['comCloture'] ? HtmlCleaner::clean($data['comCloture']) : '',
             longitude: is_array($geoloc) ? $geoloc['lng'] ?? '' : '',
             latitude: is_array($geoloc) ? $geoloc['lat'] ?? '' : '',
         );
