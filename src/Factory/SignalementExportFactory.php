@@ -11,6 +11,7 @@ use App\Entity\Intervention;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\User;
+use App\Service\HtmlCleaner;
 use App\Service\Signalement\SignalementAffectationHelper;
 use App\Utils\DateHelper;
 
@@ -125,11 +126,11 @@ class SignalementExportFactory
             isOccupantPresentVisite: ($isOccupantPresentVisite && '-' !== $isOccupantPresentVisite) ? self::OUI : ('0' === $isOccupantPresentVisite ? self::NON : ''),
             interventionStatus: $interventionStatus,
             interventionConcludeProcedure: $data['interventionConcludeProcedure'],
-            interventionDetails: $data['interventionDetails'],
+            interventionDetails: $data['interventionDetails'] ? HtmlCleaner::clean($data['interventionDetails']) : '',
             modifiedAt: $modifiedAt,
             closedAt: $closedAt,
             motifCloture: $motifCloture,
-            comCloture: $data['comCloture'],
+            comCloture: $data['comCloture'] ? HtmlCleaner::clean($data['comCloture']) : '',
             longitude: is_array($geoloc) ? $geoloc['lng'] ?? '' : '',
             latitude: is_array($geoloc) ? $geoloc['lat'] ?? '' : '',
         );
