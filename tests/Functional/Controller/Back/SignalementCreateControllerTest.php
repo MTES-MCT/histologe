@@ -276,7 +276,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(1, $signalement->getSuivis());
         $this->assertCount(1, $signalement->getAffectations());
 
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
     }
 
     public function testValidationSignalementWithManualAffectation()

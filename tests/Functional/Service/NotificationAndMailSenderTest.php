@@ -228,6 +228,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            false
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -270,6 +271,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            false
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
