@@ -17,7 +17,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class JobEventHttpClientTest extends TestCase
 {
-    public const string API_WIREMOCK_URL = 'http://histologe_wiremock:8080';
+    public const string API_WIREMOCK_URL = 'http://signal_logement_wiremock:8080';
     public const string API_RANDOM_URL = 'https://example.com';
     public const string HISTOLOGE_LOCAL_URL = 'http://localhost:8080';
 
@@ -160,7 +160,7 @@ class JobEventHttpClientTest extends TestCase
         );
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('url must contain "histologe_wiremock" when on localhost.');
+        $this->expectExceptionMessage('url must contain "signal_logement_wiremock" when on localhost.');
 
         $jobEventHttpClient->request('POST', self::API_RANDOM_URL, $options);
     }

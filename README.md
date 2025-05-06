@@ -1,4 +1,4 @@
-# signal-logement.beta.gouv.fr (ex histologe)
+# signal-logement.beta.gouv.fr (ex Histologe)
 
 Une solution pour détecter et accélérer la prise en charge du “mal-logement”.
 
@@ -45,7 +45,7 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 
 | Description                | Lien                                    |
 |----------------------------|-----------------------------------------|
-| Plateforme signal-logement | [localhost:8080](http://localhost:8080) |
+| Plateforme Signal Logement | [localhost:8080](http://localhost:8080) |
 | phpMyAdmin                 | [localhost:8081](http://localhost:8081) |
 | MailCatcher                | [localhost:1080](http://localhost:1080) |
 | Wiremock                   | [localhost:1082](http://localhost:1082) |
@@ -58,17 +58,17 @@ Merci de vérifier que ces ports ne soient pas utilisés sur votre poste local
 
 | Service     | Hostname                   | Port number          |
 |-------------|----------------------------|----------------------|
-| Nginx       | signal-logement_nginx      | **8080**             |
-| php-fpm     | signal-logement_phpfpm     | **9000**             |
-| php-worker  | signal-logement_phpworker  | **8089**             |
-| MySQL       | signal-logement_mysql      | **3307**             |
-| PhpMyAdmin  | signal-logement_phpmyadmin | **8081**             |
-| Mailcatcher | signal-logement_mailer     | **1025** et **1080** |
-| Wiremock    | signal-logement_wiremock   | **8082**             |
-| Metabase    | signal-logement_metabase   | **3007**             |
-| Matomo      | signal-logement_matomo     | **1083**             |
-| Redis       | signal-logement_redis      | /                    |
-| ClamAV      | signal-logement_clamav     | /                    |
+| Nginx       | signal_logement_nginx      | **8080**             |
+| php-fpm     | signal_logement_phpfpm     | **9000**             |
+| php-worker  | signal_logement_phpworker  | **8089**             |
+| MySQL       | signal_logement_mysql      | **3307**             |
+| PhpMyAdmin  | signal_logement_phpmyadmin | **8081**             |
+| Mailcatcher | signal_logement_mailer     | **1025** et **1080** |
+| Wiremock    | signal_logement_wiremock   | **8082**             |
+| Metabase    | signal_logement_metabase   | **3007**             |
+| Matomo      | signal_logement_matomo     | **1083**             |
+| Redis       | signal_logement_redis      | /                    |
+| ClamAV      | signal_logement_clamav     | /                    |
 
 ## Installation
 
