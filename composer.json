@@ -83,7 +83,7 @@
         "fakerphp/faker": "^1.20",
         "phpro/grumphp-shim": "^1.13",
         "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "1.10.44",
+        "phpstan/phpstan": "^1.10.52",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "7.3.*",
         "symfony/css-selector": "7.3.*",
