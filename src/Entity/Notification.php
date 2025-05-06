@@ -15,7 +15,7 @@ class Notification
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'notifications')]
     #[ORM\JoinColumn(nullable: false)]

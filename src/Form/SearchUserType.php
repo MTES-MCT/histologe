@@ -45,6 +45,9 @@ class SearchUserType extends AbstractType
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('queryUser', SearchType::class, [

@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WidgetFactoryTest extends TestCase
 {
-    public function testCreateWidgetFactoryInstance()
+    public function testCreateWidgetFactoryInstance(): void
     {
         $faker = Factory::create();
         $url = $faker->url();

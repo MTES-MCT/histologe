@@ -19,6 +19,7 @@ class File implements EntityHistoryInterface
     public const string FILE_TYPE_PHOTO = 'photo';
     public const string INPUT_NAME_PHOTOS = 'photos';
     public const string INPUT_NAME_DOCUMENTS = 'documents';
+    /** @var array<string> DOCUMENT_MIME_TYPES */
     public const array DOCUMENT_MIME_TYPES = [
         'image/jpeg',
         'image/png',
@@ -34,6 +35,7 @@ class File implements EntityHistoryInterface
         'message/rfc822',
         'application/vnd.ms-outlook',
     ];
+    /** @var array<string> DOCUMENT_MIME_TYPES */
     public const array DOCUMENT_EXTENSION = [
         'jpeg',
         'jpg',
@@ -49,17 +51,20 @@ class File implements EntityHistoryInterface
         'eml',
         'msg',
     ];
+    /** @var array<string> DOCUMENT_MIME_TYPES */
     public const array RESIZABLE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
         'image/gif',
     ];
+    /** @var array<string> DOCUMENT_MIME_TYPES */
     public const array IMAGE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
         'image/gif',
         'application/pdf',
     ];
+    /** @var array<string> DOCUMENT_MIME_TYPES */
     public const array IMAGE_EXTENSION = [
         'jpeg',
         'jpg',
@@ -118,6 +123,7 @@ class File implements EntityHistoryInterface
     #[ORM\Column]
     private ?bool $isTemp = null;
 
+    /** @var array<mixed> $synchroData */
     #[ORM\Column(nullable: true)]
     private ?array $synchroData = null;
 
@@ -362,6 +368,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getSynchroData(?string $key): ?array
     {
         if ($key) {
@@ -371,6 +378,7 @@ class File implements EntityHistoryInterface
         return $this->synchroData;
     }
 
+    /** @param array<mixed> $data */
     public function setSynchroData(array $data, string $key): self
     {
         $this->synchroData[$key] = $data;
@@ -426,6 +434,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

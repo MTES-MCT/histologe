@@ -29,7 +29,9 @@ class Partner implements EntityHistoryInterface
     use TimestampableTrait;
 
     public const string DEFAULT_PARTNER = 'Administrateurs Signal-logement';
+    /** @var array<int> OILHI_TERRITORY_ZIP_ALLOWED */
     public const array OILHI_TERRITORY_ZIP_ALLOWED = [62, 55]; // Should be replaced by OILHI_CODE_INSEE_ALLOWED
+    /** @var array<int> OILHI_CODE_INSEE_ALLOWED */
     public const array OILHI_CODE_INSEE_ALLOWED = [62091, 55502, 55029, 55545]; // for testing production
 
     #[ORM\Id]
@@ -47,9 +49,11 @@ class Partner implements EntityHistoryInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isArchive = false;
 
+    /** @var array<mixed> $insee */
     #[ORM\Column(type: 'json')]
     private array $insee = [];
 
+    /** @var Collection<int, Affectation> $affectations */
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Affectation::class, orphanRemoval: true)]
     private Collection $affectations;
 
@@ -75,12 +79,14 @@ class Partner implements EntityHistoryInterface
     #[ORM\Column(type: 'string', nullable: true, enumType: PartnerType::class)]
     private ?PartnerType $type = null;
 
+    /** @var array<Qualification> $competence */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
     private array $competence = [];
 
     #[ORM\Column(nullable: true)]
     private ?bool $isEsaboraActive = null;
 
+    /** @var Collection<int, Intervention> $interventions */
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
     private Collection $interventions;
 
@@ -136,7 +142,7 @@ class Partner implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function setId($id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -207,11 +213,13 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getInsee(): array
     {
         return $this->insee;
     }
 
+    /** @param array<mixed> $insee */
     public function setInsee(array $insee): self
     {
         $this->insee = $insee;
@@ -220,7 +228,7 @@ class Partner implements EntityHistoryInterface
     }
 
     /**
-     * @return Collection|Affectation[]
+     * @return Collection<int, Affectation>
      */
     public function getAffectations(): Collection
     {
@@ -316,6 +324,7 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<string> */
     public function getEsaboraCredential(): array
     {
         return [
@@ -341,11 +350,13 @@ class Partner implements EntityHistoryInterface
         return PartnerType::COMMUNE_SCHS === $this->type;
     }
 
+    /** @return array<Qualification> */
     public function getCompetence(): ?array
     {
         return $this->competence;
     }
 
+    /** @param array<Qualification> $competence */
     public function setCompetence(?array $competence): self
     {
         $this->competence = $competence;
@@ -370,11 +381,13 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return Collection<int, Intervention> */
     public function getInterventions(): Collection
     {
         return $this->interventions;
     }
 
+    /** @return array<string> */
     public function getEmailActiveUsers(): array
     {
         $emailUsers = [];
@@ -463,6 +476,7 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

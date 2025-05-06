@@ -35,6 +35,8 @@ class LoadSignalementDraft extends Fixture implements OrderedFixtureInterface
     }
 
     /**
+     * @param array<string, mixed> $row
+     *
      * @throws \Exception
      */
     private function loadSignalementsDraft(ObjectManager $manager, array $row): void

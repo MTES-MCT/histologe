@@ -13,6 +13,7 @@ enum NotificationType: string
     case CLOTURE_SIGNALEMENT = 'CLOTURE_SIGNALEMENT';
     case CLOTURE_PARTENAIRE = 'CLOTURE_PARTENAIRE';
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [

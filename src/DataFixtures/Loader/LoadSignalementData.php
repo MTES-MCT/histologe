@@ -72,9 +72,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     }
 
     /**
+     * @param array<string, mixed> $row
+     *
      * @throws \Exception
      */
-    private function loadSignalements(ObjectManager $manager, array $row)
+    private function loadSignalements(ObjectManager $manager, array $row): void
     {
         $faker = Factory::create('fr_FR');
         $phoneNumber = $row['phone_number'];
@@ -303,9 +305,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     }
 
     /**
+     * @param array<string, mixed> $row
+     *
      * @throws \Exception
      */
-    private function loadNewSignalements(ObjectManager $manager, array $row)
+    private function loadNewSignalements(ObjectManager $manager, array $row): void
     {
         $faker = Factory::create('fr_FR');
         $phoneNumber = $row['phone_number'];
@@ -483,6 +487,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $manager->persist($signalement);
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     private function buildSignalementQualification(
         Signalement $signalement,
         array $row,

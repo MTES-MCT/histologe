@@ -26,7 +26,7 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onSignalementViewed(SignalementViewedEvent $event)
+    public function onSignalementViewed(SignalementViewedEvent $event): void
     {
         $signalement = $event->getSignalement();
         $user = $event->getUser();

@@ -42,23 +42,23 @@ class Suivi implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: true)]
-    private $createdBy;
+    private ?User $createdBy;
 
     #[ORM\Column(type: 'text')]
-    private $description;
+    private string $description;
 
     #[ORM\Column(type: 'boolean')]
-    private $isPublic;
+    private bool $isPublic;
 
     #[ORM\Column(type: 'integer')]
-    private $type;
+    private int $type;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
@@ -70,12 +70,13 @@ class Suivi implements EntityHistoryInterface
     private bool $sendMail = true;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $deletedAt;
+    private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private $deletedBy;
+    private ?User $deletedBy;
 
+    /** @var array<mixed> $originalData */
     #[ORM\Column(nullable: true)]
     private ?array $originalData = null;
 
@@ -157,7 +158,7 @@ class Suivi implements EntityHistoryInterface
         return 'OCCUPANT : '.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
-    public function getDescription($transformHtml = true): ?string
+    public function getDescription(bool $transformHtml = true): ?string
     {
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
@@ -267,11 +268,13 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getOriginalData(): ?array
     {
         return $this->originalData;
     }
 
+    /** @param array<mixed> $originalData */
     public function setOriginalData(?array $originalData): static
     {
         $this->originalData = $originalData;
@@ -279,6 +282,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

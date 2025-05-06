@@ -20,7 +20,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class StatistiquesController extends AbstractController
 {
-    private $ajaxResult;
+    /** @var array<string, mixed> */
+    private array $ajaxResult;
 
     public function __construct(
         private GlobalAnalyticsProvider $globalAnalyticsProvider,

@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class PdfExportMessageHandlerTest extends WebTestCase
 {
-    public function testHandleGeneratePdfMessage()
+    public function testHandleGeneratePdfMessage(): void
     {
         self::bootKernel();
 

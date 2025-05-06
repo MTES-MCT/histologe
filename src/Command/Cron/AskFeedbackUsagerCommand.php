@@ -147,6 +147,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         return $nbSignalements;
     }
 
+    /** @param array<int> $signalementsIds */
     protected function sendMailToUsagers(
         InputInterface $input,
         array $signalementsIds,

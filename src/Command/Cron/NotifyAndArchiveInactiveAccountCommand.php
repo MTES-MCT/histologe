@@ -154,6 +154,10 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         return \count($users);
     }
 
+    /**
+     * @param array<User> $adminsList
+     * @param array<User> $usersList
+     */
     private function sendRtNotification(array $adminsList, array $usersList): void
     {
         $territory = $adminsList[0]->getFirstTerritory();

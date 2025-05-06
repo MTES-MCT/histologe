@@ -59,7 +59,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         );
     }
 
-    public function testVisiteDescriptionOnUnknownEvent()
+    public function testVisiteDescriptionOnUnknownEvent(): void
     {
         $this->assertNull(InterventionDescriptionGenerator::generate(
             (new Intervention())->setType(InterventionType::VISITE),

@@ -13,6 +13,7 @@ enum EtageType: string
     case SOUSSOL = 'SOUSSOL';
     case AUTRE = 'AUTRE';
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [

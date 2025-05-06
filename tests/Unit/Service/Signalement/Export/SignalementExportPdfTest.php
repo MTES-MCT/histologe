@@ -11,7 +11,7 @@ use Twig\Environment;
 
 class SignalementExportPdfTest extends KernelTestCase
 {
-    public function testGeneratePdf()
+    public function testGeneratePdf(): void
     {
         self::bootKernel();
         $pdf = static::getContainer()->get(Pdf::class);
