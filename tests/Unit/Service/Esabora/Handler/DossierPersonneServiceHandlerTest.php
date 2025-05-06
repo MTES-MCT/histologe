@@ -19,7 +19,7 @@ class DossierPersonneServiceHandlerTest extends TestCase
         $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
     }
 
-    public function testHandle()
+    public function testHandle(): void
     {
         $this->esaboraSISHService
             ->expects($this->atLeast(1))

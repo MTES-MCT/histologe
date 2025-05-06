@@ -22,7 +22,8 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class StatistiquesController extends AbstractController
 {
-    private $ajaxResult;
+    /** @var array<string, mixed> */
+    private array $ajaxResult;
 
     public function __construct(
         private GlobalAnalyticsProvider $globalAnalyticsProvider,

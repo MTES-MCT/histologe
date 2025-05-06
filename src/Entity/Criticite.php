@@ -25,39 +25,41 @@ class Criticite
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'text')]
-    private $label;
+    private string $label;
 
     #[ORM\ManyToOne(targetEntity: Critere::class, inversedBy: 'criticites')]
     #[ORM\JoinColumn(nullable: false)]
-    private $critere;
+    private Critere $critere;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $modifiedAt;
+    private ?\DateTimeImmutable $modifiedAt;
 
+    /** @var Collection<int, Signalement> $signalements */
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'criticites')]
-    private $signalements;
+    private Collection $signalements;
 
     #[ORM\Column(type: 'integer')]
-    private $score;
+    private int $score;
 
     #[ORM\Column(type: 'float')]
-    private $newScore;
+    private float $newScore;
 
     #[ORM\Column(type: 'boolean')]
-    private $isDanger;
+    private bool $isDanger;
 
     #[ORM\Column(type: 'boolean')]
-    private $isArchive;
+    private bool $isArchive;
 
     #[ORM\Column(type: 'boolean')]
-    private $isDefault;
+    private bool $isDefault;
 
+    /** @var array<mixed> $qualification */
     #[ORM\Column(type: 'json', nullable: true)]
     private $qualification = [];
 
@@ -121,7 +123,7 @@ class Criticite
     }
 
     /**
-     * @return Collection|Signalement[]
+     * @return Collection<int, Signalement>
      */
     public function getSignalements(): Collection
     {
@@ -218,11 +220,13 @@ class Criticite
         };
     }
 
+    /** @return array<mixed> */
     public function getQualification(): ?array
     {
         return $this->qualification;
     }
 
+    /** @param array<mixed> $qualification */
     public function setQualification(?array $qualification): self
     {
         $this->qualification = $qualification;

@@ -31,7 +31,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class SynchronizeIdossCommand extends AbstractCronCommand
 {
     private SymfonyStyle $io;
+    /** @var array<string> */
     private array $errors = [];
+    /** @var array<Partner> */
     private array $partners;
     private User $adminUser;
 

@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class CommandContextTest extends TestCase
 {
-    public function testCommandContextDto()
+    public function testCommandContextDto(): void
     {
         $commandContext = (new CommandContext())
             ->setCommandName('app:add-auto-affectation-rule');

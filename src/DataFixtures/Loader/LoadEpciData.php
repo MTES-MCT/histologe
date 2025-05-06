@@ -24,6 +24,9 @@ class LoadEpciData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     private function loadEpci(ObjectManager $manager, array $row): void
     {
         $communeList = $this->communeRepository->findAll();

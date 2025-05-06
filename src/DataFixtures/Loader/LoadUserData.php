@@ -59,6 +59,8 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
     }
 
     /**
+     * @param array<string, mixed> $row
+     *
      * @throws \DateMalformedStringException
      */
     private function loadUsers(ObjectManager $manager, array $row): void

@@ -19,6 +19,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class ClearEntitiesCommand extends AbstractCronCommand
 {
+    /**
+     * @param iterable<EntityCleanerRepositoryInterface> $entityCleanerRepositories
+     */
     public function __construct(
         readonly private ParameterBagInterface $parameterBag,
         readonly private ClearEntitiesHandler $clearEntitiesHandler,
@@ -30,7 +33,7 @@ class ClearEntitiesCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        /** @var ServiceEntityRepository|EntityCleanerRepositoryInterface $entityCleanerRepository */
+        /** @var ServiceEntityRepository<object>|EntityCleanerRepositoryInterface $entityCleanerRepository */
         foreach ($this->entityCleanerRepositories as $entityCleanerRepository) {
             $entity = explode('\\', $entityCleanerRepository->getClassName());
             $entityName = end($entity);

@@ -13,6 +13,11 @@ class DesordreTraitementPieces implements DesordreTraitementInterface
     ) {
     }
 
+    /**
+     * @param array<string, string> $payload
+     *
+     * @return array<DesordrePrecision|null>
+     */
     public function findDesordresPrecisionsBy(array $payload, string $slug, string $suffixe = ''): array
     {
         $precisions = [];

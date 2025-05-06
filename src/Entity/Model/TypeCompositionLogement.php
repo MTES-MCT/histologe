@@ -396,7 +396,7 @@ class TypeCompositionLogement
         return $this->desordresLogementChauffageDetailsDpeConsoFinale;
     }
 
-    public function setDesordresLogementChauffageDetailsDpeConsoFinale($desordresLogementChauffageDetailsDpeConsoFinale): self
+    public function setDesordresLogementChauffageDetailsDpeConsoFinale(?string $desordresLogementChauffageDetailsDpeConsoFinale): self
     {
         $this->desordresLogementChauffageDetailsDpeConsoFinale = $desordresLogementChauffageDetailsDpeConsoFinale;
 
@@ -408,7 +408,7 @@ class TypeCompositionLogement
         return $this->desordresLogementChauffageDetailsDpeConso;
     }
 
-    public function setDesordresLogementChauffageDetailsDpeConso($desordresLogementChauffageDetailsDpeConso): self
+    public function setDesordresLogementChauffageDetailsDpeConso(?string $desordresLogementChauffageDetailsDpeConso): self
     {
         $this->desordresLogementChauffageDetailsDpeConso = $desordresLogementChauffageDetailsDpeConso;
 
@@ -420,7 +420,7 @@ class TypeCompositionLogement
         return $this->desordresLogementChauffageDetailsDpeAnnee;
     }
 
-    public function setDesordresLogementChauffageDetailsDpeAnnee($desordresLogementChauffageDetailsDpeAnnee): self
+    public function setDesordresLogementChauffageDetailsDpeAnnee(?string $desordresLogementChauffageDetailsDpeAnnee): self
     {
         $this->desordresLogementChauffageDetailsDpeAnnee = $desordresLogementChauffageDetailsDpeAnnee;
 
@@ -432,13 +432,14 @@ class TypeCompositionLogement
         return $this->desordresLogementChauffageDetailsDpeConsoVide;
     }
 
-    public function setDesordresLogementChauffageDetailsDpeConsoVide($desordresLogementChauffageDetailsDpeConsoVide): self
+    public function setDesordresLogementChauffageDetailsDpeConsoVide(?string $desordresLogementChauffageDetailsDpeConsoVide): self
     {
         $this->desordresLogementChauffageDetailsDpeConsoVide = $desordresLogementChauffageDetailsDpeConsoVide;
 
         return $this;
     }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

@@ -18,7 +18,7 @@ class TimezoneProviderTest extends KernelTestCase
      *
      * @dataProvider provideTimezones
      */
-    public function testGetTimezoneFrom(string $userEmail, string $timezone)
+    public function testGetTimezoneFrom(string $userEmail, string $timezone): void
     {
         static::bootKernel();
 

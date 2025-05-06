@@ -27,6 +27,9 @@ class SignalementDraftAddressType extends AbstractType
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $signalement = $builder->getData();

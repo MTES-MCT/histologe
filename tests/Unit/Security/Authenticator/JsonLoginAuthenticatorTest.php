@@ -40,7 +40,7 @@ class JsonLoginAuthenticatorTest extends TestCase
             });
     }
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $request = Request::create('/api/login', 'POST', [], [], [], [], json_encode(['email' => 'user@example.com', 'password' => 'password']));
         $this->assertTrue($this->authenticator->supports($request));
@@ -67,7 +67,7 @@ class JsonLoginAuthenticatorTest extends TestCase
     /**
      * @throws RandomException
      */
-    public function testOnAuthenticationSuccess()
+    public function testOnAuthenticationSuccess(): void
     {
         $user = new User();
         $user->setEmail('user@example.com');
@@ -89,7 +89,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $this->assertSame($apiUserToken->getExpiresAt()->format(\DATE_ATOM), $data['expires_at']);
     }
 
-    public function testOnAuthenticationFailure()
+    public function testOnAuthenticationFailure(): void
     {
         $request = new Request();
         $exception = new AuthenticationException('Identifiants invalides.');

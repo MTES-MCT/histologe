@@ -13,7 +13,7 @@ class MaintenanceListenerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    public function testMaintenanceForApiRoutes()
+    public function testMaintenanceForApiRoutes(): void
     {
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
@@ -29,7 +29,7 @@ class MaintenanceListenerTest extends WebTestCase
     /**
      * @dataProvider provideRoutes
      */
-    public function testMaintenanceRedirect(string $routeName, array $parameters = [])
+    public function testMaintenanceRedirect(string $routeName, array $parameters = []): void
     {
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
@@ -49,7 +49,7 @@ class MaintenanceListenerTest extends WebTestCase
         yield 'Fiche signalement' => ['front_suivi_signalement', ['code' => '123456778']];
     }
 
-    public function testNonMaintenanceRequest()
+    public function testNonMaintenanceRequest(): void
     {
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '0';
@@ -60,7 +60,7 @@ class MaintenanceListenerTest extends WebTestCase
         $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testMaintenanceNoRedirectForSuperAdmin()
+    public function testMaintenanceNoRedirectForSuperAdmin(): void
     {
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
@@ -77,7 +77,7 @@ class MaintenanceListenerTest extends WebTestCase
         $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testMaintenanceRedirectForNoSuperAdmin()
+    public function testMaintenanceRedirectForNoSuperAdmin(): void
     {
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';

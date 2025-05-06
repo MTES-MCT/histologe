@@ -7,6 +7,9 @@ use App\Validator\SanitizedLengthValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
+/**
+ * @extends ConstraintValidatorTestCase<SanitizedLengthValidator>
+ */
 class SanitizedLengthValidatorTest extends ConstraintValidatorTestCase
 {
     protected function createValidator(): SanitizedLengthValidator

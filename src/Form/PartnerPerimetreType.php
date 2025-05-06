@@ -24,6 +24,9 @@ class PartnerPerimetreType extends AbstractType
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $territory = false;
@@ -97,7 +100,7 @@ class PartnerPerimetreType extends AbstractType
         ]);
     }
 
-    public function validateInseeInTerritory($codesInsee, ExecutionContextInterface $context)
+    public function validateInseeInTerritory($codesInsee, ExecutionContextInterface $context): void
     {
         $partner = $context->getObject()->getParent()->getData();
         $territory = $partner->getTerritory();

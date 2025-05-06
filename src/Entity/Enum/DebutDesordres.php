@@ -15,6 +15,7 @@ enum DebutDesordres: string
     case MORE_2_YEARS = 'MORE_2_YEARS';
     case NSP = 'NSP';
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [

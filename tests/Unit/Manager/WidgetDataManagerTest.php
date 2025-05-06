@@ -41,7 +41,7 @@ class WidgetDataManagerTest extends TestCase
         );
     }
 
-    public function testCountSignalementAcceptedNoSuivi()
+    public function testCountSignalementAcceptedNoSuivi(): void
     {
         $territories = [];
         $this->signalementRepositoryMock
@@ -52,7 +52,7 @@ class WidgetDataManagerTest extends TestCase
         $this->assertEquals([], $this->widgetDataManager->countSignalementAcceptedNoSuivi($territories));
     }
 
-    public function testGetCountSignalementsByTerritory()
+    public function testGetCountSignalementsByTerritory(): void
     {
         $this->signalementRepositoryMock
             ->expects($this->once())
@@ -67,7 +67,7 @@ class WidgetDataManagerTest extends TestCase
         ], $this->widgetDataManager->countSignalementsByTerritory());
     }
 
-    public function testCountAffectationPartner()
+    public function testCountAffectationPartner(): void
     {
         $territories = [];
         $this->affectationRepositoryMock
@@ -84,7 +84,7 @@ class WidgetDataManagerTest extends TestCase
         ], $this->widgetDataManager->countAffectationPartner($territories));
     }
 
-    public function testFindLastJobEventByType()
+    public function testFindLastJobEventByType(): void
     {
         $this->jobEventRepositoryMock
             ->expects($this->once())
@@ -99,7 +99,7 @@ class WidgetDataManagerTest extends TestCase
         );
     }
 
-    public function testCountDataKpi()
+    public function testCountDataKpi(): void
     {
         $countDataKpi = $this->widgetDataManager->countDataKpi([]);
         $this->assertInstanceOf(CountSignalement::class, $countDataKpi->getCountSignalement());

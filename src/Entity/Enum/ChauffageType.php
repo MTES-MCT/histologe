@@ -14,6 +14,7 @@ enum ChauffageType: string
         return self::getLabelList()[$this->name];
     }
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [
@@ -38,7 +39,7 @@ enum ChauffageType: string
         return self::tryFrom($key);
     }
 
-    private static function getKeyFromLabel(string $label): string|int|false
+    private static function getKeyFromLabel(string $label): string|false
     {
         $label = mb_trim($label);
 

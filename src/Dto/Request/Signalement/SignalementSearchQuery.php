@@ -11,6 +11,13 @@ class SignalementSearchQuery
 {
     public const int MAX_LIST_PAGINATION = 25;
 
+    /**
+     * @param array<mixed> $communes
+     * @param array<mixed> $epcis
+     * @param array<mixed> $etiquettes
+     * @param array<mixed> $zones
+     * @param array<mixed> $partenaires
+     */
     public function __construct(
         private readonly ?string $territoire = null,
         private readonly ?string $searchTerms = null,
@@ -124,21 +131,25 @@ class SignalementSearchQuery
         return $this->status;
     }
 
+    /** @return array<mixed> */
     public function getCommunes(): ?array
     {
         return $this->communes;
     }
 
+    /** @return array<mixed> */
     public function getEpcis(): ?array
     {
         return $this->epcis;
     }
 
+    /** @return array<mixed> */
     public function getEtiquettes(): ?array
     {
         return $this->etiquettes;
     }
 
+    /** @return array<mixed> */
     public function getZones(): ?array
     {
         return $this->zones;
@@ -154,6 +165,7 @@ class SignalementSearchQuery
         return $this->dateDepotFin;
     }
 
+    /** @return array<mixed> */
     public function getPartenaires(): ?array
     {
         return $this->partenaires;
@@ -283,6 +295,8 @@ class SignalementSearchQuery
      * @todo: Après la MEP, s'appuyer exclusivement sur le DTO au lieu du tableau de filtres
      *
      * @see SearchFilter::buildFilters()
+     *
+     * @return array<mixed>
      */
     public function getFilters(): array
     {

@@ -24,6 +24,7 @@ class Desordre
         nullable: true
     )]
     public ?string $zone;
+    /** @var array<string> $details */
     #[OA\Property(
         description: 'Liste des observations détaillées associées au désordre.',
         example: [
@@ -35,6 +36,9 @@ class Desordre
     )]
     public array $details = [];
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(
         string $categorie,
         array $data,

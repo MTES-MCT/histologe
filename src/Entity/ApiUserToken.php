@@ -94,6 +94,7 @@ class ApiUserToken implements EntityHistoryInterface
         return $this->getExpiresAt() > new \DateTimeImmutable();
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE];

@@ -31,6 +31,9 @@ class ZoneType extends AbstractType
         $this->package = new Package(new EmptyVersionStrategy());
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $zone = $builder->getData();

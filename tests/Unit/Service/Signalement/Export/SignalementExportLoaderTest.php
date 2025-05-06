@@ -15,7 +15,7 @@ class SignalementExportLoaderTest extends TestCase
 {
     use UserHelper;
 
-    public function testLoad()
+    public function testLoad(): void
     {
         /** @var MockObject|SignalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);

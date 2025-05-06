@@ -44,7 +44,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public const string ANONYMIZED_PRENOM = 'Utilisateur';
     public const string ANONYMIZED_NOM = 'Anonymisé';
 
-    /** @var array<string, string> */
+    /** @var array<string, string> ROLES */
     public const array ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Agent' => 'ROLE_USER_PARTNER',
@@ -71,6 +71,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
     private ?string $email = null;
 
+    /** @var array<mixed> $roles */
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
@@ -94,15 +95,19 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $tokenExpiredAt = null;
 
+    /** @var Collection<int, Signalement> $signalementsModified */
     #[ORM\OneToMany(mappedBy: 'modifiedBy', targetEntity: Signalement::class)]
     private Collection $signalementsModified;
 
+    /** @var Collection<int, Signalement> $signalementsCreated */
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Signalement::class)]
     private Collection $signalementsCreated;
 
+    /** @var Collection<int, Signalement> $signalementsClosed */
     #[ORM\OneToMany(mappedBy: 'closedBy', targetEntity: Signalement::class)]
     private Collection $signalementsClosed; // @phpstan-ignore-line
 
+    /** @var Collection<int, Suivi> $suivis */
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Suivi::class, orphanRemoval: true)]
     private Collection $suivis;
 
@@ -127,20 +132,24 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     #[ORM\Column(type: 'boolean')]
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.')]
-    private $isMailingSummary;
+    private ?bool $isMailingSummary;
 
+    /** @var Collection<int, Notification> $notifications */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
     private Collection $notifications;
 
+    /** @var Collection<int, File> $files */
     #[ORM\OneToMany(mappedBy: 'uploadedBy', targetEntity: File::class)]
     private Collection $files;
 
     #[ORM\Column]
     private bool $isActivateAccountNotificationEnabled = true;
 
+    /** @var Collection<int, SignalementUsager> $signalementUsagerDeclarants */
     #[ORM\OneToMany(mappedBy: 'declarant', targetEntity: SignalementUsager::class)]
     private Collection $signalementUsagerDeclarants;
 
+    /** @var Collection<int, SignalementUsager> $signalementUsagerOccupants */
     #[ORM\OneToMany(mappedBy: 'occupant', targetEntity: SignalementUsager::class)]
     private Collection $signalementUsagerOccupants;
 
@@ -163,18 +172,15 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tempEmail = null;
 
+    /** @var Collection<int, ApiUserToken> $apiUserTokens */
     #[ORM\OneToMany(mappedBy: 'ownedBy', targetEntity: ApiUserToken::class, cascade: ['persist'])]
     private Collection $apiUserTokens;
 
-    /**
-     * @var Collection<int, UserPartner>
-     */
+    /** @var Collection<int, UserPartner> $userPartners */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserPartner::class, orphanRemoval: true)]
     private Collection $userPartners;
 
-    /**
-     * @var Collection<int, PopNotification>
-     */
+    /** @var Collection<int, PopNotification> $popNotifications */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PopNotification::class, orphanRemoval: true)]
     private Collection $popNotifications;
 
@@ -263,7 +269,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     }
 
     /**
-     * @return Collection|Signalement[]
+     * @return Collection<int, Signalement>
      */
     public function getSignalementsModified(): Collection
     {
@@ -293,7 +299,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     }
 
     /**
-     * @return Collection|Signalement[]
+     * @return Collection<int, Signalement>
      */
     public function getSignalementsCreated(): Collection
     {
@@ -301,7 +307,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     }
 
     /**
-     * @return Collection|Signalement[]
+     * @return Collection<int, Signalement>
      */
     public function getSignalementsCreatedByStatut(SignalementStatus $statut): Collection
     {
@@ -333,7 +339,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     }
 
     /**
-     * @return Collection|Suivi[]
+     * @return Collection<int, Suivi>
      */
     public function getSuivis(): Collection
     {
@@ -411,7 +417,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getPartnersTerritories($forceLoadObject = false): array
+    /** @return array<Territory> */
+    public function getPartnersTerritories(bool $forceLoadObject = false): array
     {
         $territories = [];
         foreach ($this->userPartners as $userPartner) {
@@ -488,7 +495,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getNomComplet($firstNameFirst = false)
+    public function getNomComplet(bool $firstNameFirst = false): string
     {
         if ($firstNameFirst) {
             return ucfirst($this->prenom ?? '').' '.mb_strtoupper($this->nom ?? '');
@@ -514,7 +521,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->lastLoginAt;
     }
 
-    public function getLastLoginAtStr($format): string
+    public function getLastLoginAtStr(string $format): string
     {
         if (!empty($this->lastLoginAt)) {
             return $this->lastLoginAt->format($format);
@@ -556,7 +563,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     }
 
     /**
-     * @return Collection|Notification[]
+     * @return Collection<int, Notification>
      */
     public function getNotifications(): Collection
     {
@@ -610,6 +617,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return '';
     }
 
+    /** @param array<mixed> $roles */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
@@ -742,11 +750,13 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->prenom.' '.$this->nom;
     }
 
+    /** @return Collection<int, SignalementUsager> */
     public function getSignalementUsagerDeclarants(): Collection
     {
         return $this->signalementUsagerDeclarants;
     }
 
+    /** @return Collection<int, SignalementUsager> */
     public function getSignalementUsagerOccupants(): Collection
     {
         return $this->signalementUsagerOccupants;
@@ -841,11 +851,13 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 
+    /** @return Collection<int, ApiUserToken> */
     public function getApiUserTokens(): Collection
     {
         return $this->apiUserTokens;

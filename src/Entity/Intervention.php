@@ -61,6 +61,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $details = null;
 
+    /** @var array<ProcedureType> $concludeProcedure */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: ProcedureType::class)]
     private array $concludeProcedure = [];
 
@@ -85,9 +86,11 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(nullable: true, options: ['comment' => 'Unique id used by the provider'])]
     private ?int $providerId = null;
 
+    /** @var array<mixed> $additionalInformation */
     #[ORM\Column(nullable: true)]
     private ?array $additionalInformation = [];
 
+    /** @var Collection<int, File> $files */
     #[ORM\OneToMany(mappedBy: 'intervention', targetEntity: File::class, cascade: ['persist'])]
     private Collection $files;
 
@@ -220,11 +223,13 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
+    /** @return array<ProcedureType> */
     public function getConcludeProcedure(): ?array
     {
         return $this->concludeProcedure;
     }
 
+    /** @param array<ProcedureType> $concludeProcedure */
     public function setConcludeProcedure(?array $concludeProcedure): self
     {
         $this->concludeProcedure = $concludeProcedure;
@@ -316,11 +321,13 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getAdditionalInformation(): ?array
     {
         return $this->additionalInformation;
     }
 
+    /** @param array<mixed> $additionalInformation */
     public function setAdditionalInformation(?array $additionalInformation): self
     {
         $this->additionalInformation = $additionalInformation;
@@ -368,6 +375,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         });
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

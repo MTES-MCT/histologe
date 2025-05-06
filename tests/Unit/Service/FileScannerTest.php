@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class FileScannerTest extends TestCase
 {
-    public function testIsCleanWithEmptyFilePath()
+    public function testIsCleanWithEmptyFilePath(): void
     {
         $scanner = $this->createMock(Scanner::class);
         $parameterBag = $this->createMock(ParameterBagInterface::class);
@@ -23,7 +23,7 @@ class FileScannerTest extends TestCase
         $this->assertFalse($result, 'Should return false for empty file path.');
     }
 
-    public function testIsCleanWithCopyOption()
+    public function testIsCleanWithCopyOption(): void
     {
         $scanner = $this->createMock(Scanner::class);
         $parameterBag = $this->createMock(ParameterBagInterface::class);

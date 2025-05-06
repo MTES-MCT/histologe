@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
 {
     private SymfonyStyle $io;
+    /** @var array<Suivi> */
     private array $existingEvents = [];
     private int $nbEventsAdded = 0;
     private int $nbEventFilesAdded = 0;

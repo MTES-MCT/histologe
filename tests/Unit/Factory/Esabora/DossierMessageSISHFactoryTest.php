@@ -21,7 +21,7 @@ class DossierMessageSISHFactoryTest extends TestCase
     /**
      * @throws NonUniqueResultException
      */
-    public function testDossierMessageFactoryIsFullyCreated()
+    public function testDossierMessageFactoryIsFullyCreated(): void
     {
         $affectation = $this->getSignalementAffectation(PartnerType::ARS);
         $signalement = $affectation->getSignalement();

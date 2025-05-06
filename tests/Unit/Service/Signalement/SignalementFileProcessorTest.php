@@ -76,7 +76,7 @@ class SignalementFileProcessorTest extends TestCase
         }
     }
 
-    public function testAddFilesToSignalement()
+    public function testAddFilesToSignalement(): void
     {
         $this->uploadHandlerService
             ->expects($this->atLeast(1))

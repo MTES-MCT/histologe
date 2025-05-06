@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class DesordreTraitementProcessorTest extends TestCase
 {
-    public function testFindDesordresPrecisionsBy()
+    public function testFindDesordresPrecisionsBy(): void
     {
         $desordreCategorie = new DesordreCategorie();
         $desordreCategorie->setLabel('test');
@@ -51,7 +51,7 @@ class DesordreTraitementProcessorTest extends TestCase
         );
     }
 
-    public function testProcessKO()
+    public function testProcessKO(): void
     {
         $desordreCategorie = new DesordreCategorie();
         $desordreCategorie->setLabel('test');
@@ -84,7 +84,7 @@ class DesordreTraitementProcessorTest extends TestCase
             'desordres_logement_humidite' => $desordreLogementHumidite,
         ]);
 
-        /** @var array $precisions */
+        /** @var array<DesordrePrecision> $precisions */
         $precisions = $desordreTraitementProcessor->findDesordresPrecisionsBy(
             $desordreCritere,
             $payload

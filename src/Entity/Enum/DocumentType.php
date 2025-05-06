@@ -26,6 +26,7 @@ enum DocumentType: string
     case PHOTO_VISITE = 'PHOTO_VISITE';
     case EXPORT = 'EXPORT';
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [
@@ -47,6 +48,7 @@ enum DocumentType: string
         ];
     }
 
+    /** @return array<string> */
     public static function getOrderedPhotosList(): array
     {
         return [
@@ -55,6 +57,7 @@ enum DocumentType: string
         ];
     }
 
+    /** @return array<string> */
     public static function getOrderedSituationList(): array
     {
         return [
@@ -67,6 +70,7 @@ enum DocumentType: string
         ];
     }
 
+    /** @return array<string> */
     public static function getOrderedProcedureList(): array
     {
         return [

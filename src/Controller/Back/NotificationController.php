@@ -46,7 +46,7 @@ class NotificationController extends AbstractController
         Request $request,
         NotificationRepository $notificationRepository,
         WidgetDataManagerCache $widgetDataManagerCache,
-    ) {
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
         if ($request->get('selected_notifications')) {
@@ -71,7 +71,7 @@ class NotificationController extends AbstractController
         Request $request,
         NotificationRepository $notificationRepository,
         WidgetDataManagerCache $widgetDataManagerCache,
-    ) {
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
         if ($request->get('selected_notifications')) {

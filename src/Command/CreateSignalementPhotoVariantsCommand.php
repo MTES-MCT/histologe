@@ -23,6 +23,7 @@ class CreateSignalementPhotoVariantsCommand extends Command
 {
     private SymfonyStyle $io;
     private int $i = 1;
+    /** @var File[] */
     private array $files = [];
 
     public function __construct(

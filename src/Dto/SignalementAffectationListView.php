@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 
+use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -14,8 +15,15 @@ class SignalementAffectationListView
     public const string SEPARATOR_GROUP_CONCAT = ';';
     public const int MAX_LIST_PAGINATION = 30;
 
+    /** @var array<string> */
     private ?array $qualificationsStatusesLabels = null;
 
+    /**
+     * @param array<Affectation>   $affectations
+     * @param array<Qualification> $qualifications
+     * @param array<string>        $qualificationsStatuses
+     * @param array<mixed>         $conclusionsProcedure
+     */
     public function __construct(
         private ?int $id = null,
         private ?string $uuid = null,
@@ -122,11 +130,13 @@ class SignalementAffectationListView
         return $this->profileDeclarant;
     }
 
+    /** @return array<Affectation> */
     public function getAffectations(): array
     {
         return $this->affectations;
     }
 
+    /** @return array<Qualification> */
     public function getQualifications(): array
     {
         return $this->qualifications;
@@ -146,11 +156,13 @@ class SignalementAffectationListView
         return false;
     }
 
+    /** @return array<string> */
     public function getQualificationsStatuses(): ?array
     {
         return $this->qualificationsStatuses;
     }
 
+    /** @return array<string> */
     public function getQualificationsStatusesLabels(): array
     {
         $this->qualificationsStatusesLabels = [];
@@ -182,6 +194,7 @@ class SignalementAffectationListView
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getConclusionsProcedure(): ?array
     {
         return $this->conclusionsProcedure;

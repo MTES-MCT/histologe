@@ -81,7 +81,7 @@ class AffectationManagerTest extends KernelTestCase
         $this->assertEquals(1, $countAffectationAfterRemove);
     }
 
-    public function testCloseAffectation()
+    public function testCloseAffectation(): void
     {
         $affectationRepository = $this->managerRegistry->getRepository(Affectation::class);
         /** @var Affectation $affectationAccepted */

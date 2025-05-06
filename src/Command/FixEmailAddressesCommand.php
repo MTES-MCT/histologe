@@ -81,6 +81,9 @@ class FixEmailAddressesCommand extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * @param array<Signalement> $listSignalements
+     */
     private function fixEmailsWithValue(array $listSignalements, string $field, ?string $newValue): void
     {
         /** @var Signalement $signalement */
@@ -99,6 +102,11 @@ class FixEmailAddressesCommand extends Command
         }
     }
 
+    /**
+     * @param array<Signalement> $listSignalements
+     * @param array<string>      $listSearch
+     * @param array<string>      $listReplace
+     */
     private function fixEmailsWithReplace(array $listSignalements, string $field, array $listSearch, array $listReplace): void
     {
         /** @var Signalement $signalement */

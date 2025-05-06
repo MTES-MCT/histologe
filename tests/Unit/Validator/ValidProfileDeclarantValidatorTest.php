@@ -8,6 +8,9 @@ use App\Validator\ValidProfileDeclarantValidator;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
+/**
+ * @extends ConstraintValidatorTestCase<ValidProfileDeclarantValidator>
+ */
 class ValidProfileDeclarantValidatorTest extends ConstraintValidatorTestCase
 {
     protected function createValidator(): ConstraintValidatorInterface

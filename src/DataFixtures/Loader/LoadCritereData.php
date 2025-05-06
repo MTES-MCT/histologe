@@ -24,6 +24,9 @@ class LoadCritereData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function loadCritere(ObjectManager $manager, array $row): void
     {
         $critere = (new Critere())

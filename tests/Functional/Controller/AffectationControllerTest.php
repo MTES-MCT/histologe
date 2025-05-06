@@ -198,7 +198,7 @@ class AffectationControllerTest extends WebTestCase
         }
     }
 
-    public function testToggleAffectationOnUnnotifiedPartners()
+    public function testToggleAffectationOnUnnotifiedPartners(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
         $this->client->loginUser($user);
@@ -232,7 +232,7 @@ class AffectationControllerTest extends WebTestCase
         $this->assertEquals('Les affectations ont bien été effectuées.<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : Partenaire 13-09 Non Notifiable', $successMessages[0]);
     }
 
-    public function testToggleAffectationWithRoleUserPartner()
+    public function testToggleAffectationWithRoleUserPartner(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
         $this->client->loginUser($user);
@@ -248,7 +248,7 @@ class AffectationControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testToggleAffectationWithInactiveSignalement()
+    public function testToggleAffectationWithInactiveSignalement(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
         $this->client->loginUser($user);
@@ -264,7 +264,7 @@ class AffectationControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testRemoveAffectation()
+    public function testRemoveAffectation(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
         $this->client->loginUser($user);
@@ -284,7 +284,7 @@ class AffectationControllerTest extends WebTestCase
         $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
     }
 
-    public function testRemoveAffectationFromOtherSignalement()
+    public function testRemoveAffectationFromOtherSignalement(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
         $this->client->loginUser($user);

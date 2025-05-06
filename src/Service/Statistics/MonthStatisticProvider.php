@@ -49,7 +49,7 @@ class MonthStatisticProvider
         return $data;
     }
 
-    private function fillBlankMonths(&$data, $previousMonth, $currentMonth)
+    private function fillBlankMonths(&$data, $previousMonth, $currentMonth): void
     {
         if (null !== $previousMonth) {
             $shouldBeMonth = $previousMonth->format('m') + 1;

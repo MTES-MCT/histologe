@@ -22,9 +22,11 @@ class DesordreCategorie
     #[ORM\Column(length: 255)]
     private ?string $label = null;
 
+    /** @var Collection<int, DesordreCritere> $desordreCriteres */
     #[ORM\OneToMany(mappedBy: 'desordreCategorie', targetEntity: DesordreCritere::class, orphanRemoval: true)]
     private Collection $desordreCriteres;
 
+    /** @var Collection<int, Signalement> $signalement */
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'desordreCategories')]
     private Collection $signalement;
 

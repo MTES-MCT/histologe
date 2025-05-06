@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class AndSpecificationTest extends TestCase
 {
-    public function testAllSpecificationsSatisfied()
+    public function testAllSpecificationsSatisfied(): void
     {
         $spec1 = $this->createMock(SpecificationInterface::class);
         $spec1->method('isSatisfiedBy')->willReturn(true);
@@ -29,7 +29,7 @@ class AndSpecificationTest extends TestCase
         $this->assertTrue($andSpec->isSatisfiedBy($context));
     }
 
-    public function testOneSpecificationNotSatisfied()
+    public function testOneSpecificationNotSatisfied(): void
     {
         $spec1 = $this->createMock(SpecificationInterface::class);
         $spec1->method('isSatisfiedBy')->willReturn(true);
@@ -49,7 +49,7 @@ class AndSpecificationTest extends TestCase
         $this->assertFalse($andSpec->isSatisfiedBy($context));
     }
 
-    public function testBothSpecificationNotSatisfied()
+    public function testBothSpecificationNotSatisfied(): void
     {
         $spec1 = $this->createMock(SpecificationInterface::class);
         $spec1->method('isSatisfiedBy')->willReturn(false);
@@ -63,7 +63,7 @@ class AndSpecificationTest extends TestCase
         $this->assertFalse($andSpec->isSatisfiedBy($context));
     }
 
-    public function testNoSpecifications()
+    public function testNoSpecifications(): void
     {
         $andSpec = new AndSpecification();
 

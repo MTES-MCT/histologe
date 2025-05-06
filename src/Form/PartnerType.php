@@ -48,6 +48,9 @@ class PartnerType extends AbstractType
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $territory = false;
@@ -223,7 +226,7 @@ class PartnerType extends AbstractType
         ]);
     }
 
-    public function validateEmailIsUnique(mixed $value, ExecutionContextInterface $context)
+    public function validateEmailIsUnique(mixed $value, ExecutionContextInterface $context): void
     {
         if ($value instanceof Partner) {
             $partner = $value;

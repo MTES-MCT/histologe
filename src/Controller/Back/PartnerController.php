@@ -323,7 +323,7 @@ class PartnerController extends AbstractController
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
         InterventionManager $interventionManager,
-    ) {
+    ): void {
         if (\in_array(Qualification::VISITES, $partner->getCompetence())) {
             /** @var Intervention $intervention */
             foreach ($partner->getInterventions() as $intervention) {

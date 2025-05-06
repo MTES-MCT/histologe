@@ -15,7 +15,8 @@ class CriticitePercentStatisticProvider
     {
     }
 
-    public function getFilteredData(StatisticsFilters $statisticsFilters)
+    /** @return array<string, string> */
+    public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
         $countPerCriticites = $this->signalementRepository->countByCriticitePercentFiltered($statisticsFilters);
 

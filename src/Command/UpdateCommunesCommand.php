@@ -25,6 +25,10 @@ class UpdateCommunesCommand extends Command
 {
     private SymfonyStyle $io;
 
+    /**
+     * @param array<Commune> $communes
+     * @param array<mixed>   $csvData
+     */
     public function __construct(
         private readonly ParameterBagInterface $params,
         private readonly EntityManagerInterface $entityManager,

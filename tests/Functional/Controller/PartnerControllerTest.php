@@ -36,7 +36,7 @@ class PartnerControllerTest extends WebTestCase
         $this->client->loginUser($user);
     }
 
-    public function testPartnersSuccessfullyDisplay()
+    public function testPartnersSuccessfullyDisplay(): void
     {
         $route = $this->router->generate('back_partner_index');
         $this->client->request('GET', $route);
@@ -44,7 +44,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function testPartnersExperimentalTerritorySuccessfullyDisplay()
+    public function testPartnersExperimentalTerritorySuccessfullyDisplay(): void
     {
         $route = $this->router->generate('back_partner_index');
         $this->client->request('GET', $route);
@@ -78,7 +78,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
     }
 
-    public function testPartnerSuccessfullyDisplay()
+    public function testPartnerSuccessfullyDisplay(): void
     {
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
 
@@ -129,7 +129,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertSelectorNotExists('.fr-alert--error', 'E-mail de contact manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
     }
 
-    public function testDeletePartner()
+    public function testDeletePartner(): void
     {
         /** @var Partner $partner */
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
@@ -163,7 +163,7 @@ class PartnerControllerTest extends WebTestCase
     /**
      * @dataProvider provideAgentEmailToAddOnPartner
      */
-    public function testAddNewAgentToPartner(string $email, string $expected)
+    public function testAddNewAgentToPartner(string $email, string $expected): void
     {
         /** @var Partner $partner */
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
@@ -218,7 +218,7 @@ class PartnerControllerTest extends WebTestCase
     /**
      * @dataProvider provideMultiTerAgentEmailToAddOnPartner
      */
-    public function testAddExistingAgentToPartner(string $email, string $expected)
+    public function testAddExistingAgentToPartner(string $email, string $expected): void
     {
         /** @var Partner $partner */
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
@@ -262,7 +262,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'redirect'];
     }
 
-    public function testEditRoleOfUserOfPartner()
+    public function testEditRoleOfUserOfPartner(): void
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
@@ -291,7 +291,7 @@ class PartnerControllerTest extends WebTestCase
     /**
      * @dataProvider provideAgentEmailToEdit
      */
-    public function testEditUserOfPartner(string $email, string $expected, int $nbEmailSent)
+    public function testEditUserOfPartner(string $email, string $expected, int $nbEmailSent): void
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
@@ -338,7 +338,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Changed email' => ['new.email@test.com', 'redirect', 1];
     }
 
-    public function testEditAnonymizedUser()
+    public function testEditAnonymizedUser(): void
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findAnonymizedUsers()[0];
@@ -363,7 +363,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testEditApiUser()
+    public function testEditApiUser(): void
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'api-02@signal-logement.fr']);
@@ -388,7 +388,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testEditLastNotifiedUser()
+    public function testEditLastNotifiedUser(): void
     {
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-08']);
         $user = $this->userRepository->findOneBy(['email' => 'user-13-10@signal-logement.fr']);

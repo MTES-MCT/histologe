@@ -21,7 +21,7 @@ class DesordreLogementHumiditeTest extends KernelTestCase
         $this->desordreTraitementOuiNon = static::getContainer()->get(DesordreTraitementOuiNon::class);
     }
 
-    public function testFindDesordresPrecisionsBy()
+    public function testFindDesordresPrecisionsBy(): void
     {
         /** @var DesordrePrecisionRepository $desordrePrecisionRepository */
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
@@ -31,7 +31,7 @@ class DesordreLogementHumiditeTest extends KernelTestCase
             true
         );
 
-        /** @var array $precisions */
+        /** @var array<DesordrePrecision> $precisions */
         $precisions = (new DesordreLogementHumidite($desordrePrecisionRepository, $this->desordreTraitementOuiNon))->findDesordresPrecisionsBy(
             $payload,
             'desordres_logement_humidite_piece_a_vivre'
