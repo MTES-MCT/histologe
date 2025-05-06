@@ -8,7 +8,10 @@ namespace App\Dto\Api\Request;
  */
 interface RequestFileInterface
 {
-    public function getFiles();
+    /**
+     * @return array<mixed>
+     */
+    public function getFiles(): array;
 
-    public function getDescription();
+    public function getDescription(): ?string;
 }

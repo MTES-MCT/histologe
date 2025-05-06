@@ -36,6 +36,9 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function loadAffectation(ObjectManager $manager, array $row): void
     {
         $affectation = (new Affectation())

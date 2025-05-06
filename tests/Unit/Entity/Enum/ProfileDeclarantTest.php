@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ProfileDeclarantTest extends TestCase
 {
-    public function testGetListWithGroup()
+    public function testGetListWithGroup(): void
     {
         $list = ProfileDeclarant::getListWithGroup();
 

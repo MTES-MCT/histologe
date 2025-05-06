@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Dto\StatisticsFilters;
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
@@ -25,6 +26,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 #[Route('/bo/statistiques')]
 class BackStatistiquesController extends AbstractController
 {
+    /** @var array<string, mixed> */
     private array $result;
 
     public function __construct(
@@ -101,6 +103,9 @@ class BackStatistiquesController extends AbstractController
         return $this->json($this->result);
     }
 
+    /**
+     * @param ArrayCollection<int, Partner> $partners
+     */
     private function createFilters(Request $request, ?Territory $territory, ArrayCollection $partners): StatisticsFilters
     {
         $communes = json_decode($request->get('communes'));
@@ -131,6 +136,9 @@ class BackStatistiquesController extends AbstractController
         );
     }
 
+    /**
+     * @return Collection<int, Partner>
+     */
     private function getSelectedPartners(): Collection
     {
         /** @var User $user */
@@ -164,7 +172,7 @@ class BackStatistiquesController extends AbstractController
     /**
      * Build lists of data that will be returned as filters.
      */
-    private function buildFilterLists(?Territory $territory)
+    private function buildFilterLists(?Territory $territory): void
     {
         /** @var User $user */
         $user = $this->getUser();

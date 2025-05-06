@@ -23,7 +23,7 @@ class DesordreCategorieManagerTest extends KernelTestCase
         );
     }
 
-    public function testCreateOrUpdateDesordreCategorie()
+    public function testCreateOrUpdateDesordreCategorie(): void
     {
         $desordreCategorie = $this->desordreCategorieManager->createOrUpdate(
             'rideaux et moquette'

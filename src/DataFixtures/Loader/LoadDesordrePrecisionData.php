@@ -27,7 +27,10 @@ class LoadDesordrePrecisionData extends Fixture implements OrderedFixtureInterfa
         $manager->flush();
     }
 
-    private function loadSituations(ObjectManager $manager, array $row)
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function loadSituations(ObjectManager $manager, array $row): void
     {
         $desordrePrecision = (new DesordrePrecision())
             ->setCoef($row['coef'])

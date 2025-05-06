@@ -56,7 +56,7 @@ class SignalementDraftManagerTest extends WebTestCase
         $client->loginUser($user);
     }
 
-    public function testFindSignalementDraftByAddressAndMail()
+    public function testFindSignalementDraftByAddressAndMail(): void
     {
         $signalementDraftRequest = new SignalementDraftRequest();
         $signalementDraftRequest->setAdresseLogementAdresse('33 Rue des phoceens 13002 Marseille');

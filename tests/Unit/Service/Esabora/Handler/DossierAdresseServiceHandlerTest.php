@@ -25,7 +25,7 @@ class DossierAdresseServiceHandlerTest extends TestCase
         $this->partnerRepository = $this->createMock(PartnerRepository::class);
     }
 
-    public function testHandle()
+    public function testHandle(): void
     {
         $this->esaboraSISHService
             ->expects($this->atLeast(1))
