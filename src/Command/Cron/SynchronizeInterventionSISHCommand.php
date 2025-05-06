@@ -12,6 +12,7 @@ use App\Service\Interconnection\Esabora\Handler\InterventionSISHHandlerInterface
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -38,6 +39,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
         #[AutowireIterator(
             'app.intervention_sish_handler',
             defaultPriorityMethod: 'getPriority'
@@ -49,6 +51,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
             $this->serializer,
             $this->notificationMailerRegistry,
             $this->parameterBag,
+            $this->entityManager,
         );
         $this->interventionHandlers = $interventionHandlers;
     }
@@ -68,17 +71,18 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
             partnerType: PartnerType::ARS,
             uuidSignalement: $uuidSignalement
         );
-
-        foreach ($affectations as $affectation) {
+        $count = 0;
+        foreach ($affectations as $row) {
+            $affectation = $row[0];
             /** @var InterventionSISHHandlerInterface $interventionHandler */
             foreach ($this->interventionHandlers as $key => $interventionHandler) {
                 try {
-                    $interventionHandler->handle($affectation);
+                    $interventionHandler->handle($affectation, $row['uuid']);
                     $io->writeln(\sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
                 } catch (\Throwable $e) {
                     $signalement = $affectation->getSignalement();
                     $message = $interventionHandler->getServiceName()
-                        .' - Signalement '.$signalement->getUuid()
+                        .' - Signalement '.$row['uuid']
                         .' ('.$signalement->getId().') : '
                         .$e->getMessage();
                     if (!($e instanceof \Exception)) {
@@ -88,8 +92,12 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                     $errorMessages[] = $message;
                 }
             }
+            ++$count;
+            if (0 === $count % self::BATCH_SIZE) {
+                $this->entityManager->flush();
+            }
         }
-
+        $this->entityManager->flush();
         /** @var JobEventRepository $jobEventRepository */
         $jobEventRepository = $this->jobEventManager->getRepository();
         ['success_count' => $countSuccess, 'failed_count' => $countFailed] =

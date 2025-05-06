@@ -64,9 +64,9 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
         ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
-    abstract public function getStateDossier(Affectation $affectation): DossierResponseInterface;
+    abstract public function getStateDossier(Affectation $affectation, string $uuidSignalement): DossierResponseInterface;
 
-    public function prepareInterventionPayload(Affectation $affectation, string $serviceName): array
+    public function prepareInterventionPayload(string $uuidSignalement, string $serviceName): array
     {
         return [
             'searchName' => $serviceName,
@@ -74,7 +74,7 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
                 [
                     'criterionName' => 'Reference_Dossier',
                     'criterionValueList' => [
-                        $affectation->getSignalement()->getUuid(),
+                        $uuidSignalement,
                     ],
                 ],
                 [

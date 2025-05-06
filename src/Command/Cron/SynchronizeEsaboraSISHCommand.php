@@ -7,6 +7,7 @@ use App\Repository\AffectationRepository;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Mailer\NotificationMailerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,6 +28,7 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct(
             $this->esaboraManager,
@@ -34,6 +36,7 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
             $this->serializer,
             $this->notificationMailerRegistry,
             $this->parameterBag,
+            $this->entityManager,
         );
     }
 

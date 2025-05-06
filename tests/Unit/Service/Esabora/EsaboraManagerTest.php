@@ -23,7 +23,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -40,7 +39,6 @@ class EsaboraManagerTest extends TestCase
     protected MockObject|EventDispatcherInterface $eventDispatcher;
     protected MockObject|UserManager $userManager;
     private MockObject|LoggerInterface $logger;
-    private MockObject|ParameterBagInterface $parameterBag;
     private MockObject|EntityManager $entityManager;
     private MockObject|ZipHelper $zipHelper;
     private MockObject|FileScanner $fileScanner;
@@ -59,7 +57,6 @@ class EsaboraManagerTest extends TestCase
         $this->userManager = $this->createMock(UserManager::class);
         $this->eventDispatcher = new EventDispatcher();
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->parameterBag = $this->createMock(ParameterBagInterface::class);
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->zipHelper = $this->createMock(ZipHelper::class);
         $this->fileScanner = $this->createMock(FileScanner::class);
@@ -99,6 +96,11 @@ class EsaboraManagerTest extends TestCase
             ->expects($this->once())
             ->method('error');
 
+        $this->userManager
+            ->expects($this->once())
+            ->method('getSystemUser')
+            ->willReturn($this->getUser([User::ROLE_ADMIN]));
+
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
@@ -107,7 +109,6 @@ class EsaboraManagerTest extends TestCase
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
-            $this->parameterBag,
             $this->entityManager,
             $this->zipHelper,
             $this->fileScanner,
@@ -174,7 +175,6 @@ class EsaboraManagerTest extends TestCase
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
-            $this->parameterBag,
             $this->entityManager,
             $this->zipHelper,
             $this->fileScanner,

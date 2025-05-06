@@ -12,7 +12,6 @@ use App\Service\Interconnection\Esabora\Handler\InterventionArreteServiceHandler
 use App\Service\Interconnection\Esabora\Handler\InterventionVisiteServiceHandler;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Tests\FixturesHelper;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -40,11 +39,14 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
         $jobEventManagerMock->expects($this->once())->method('getRepository')->willReturn($jobEventRepositoryMock);
 
-        $collection = (new ArrayCollection([$this->getAffectation(PartnerType::ARS)]));
+        $affectation = $this->getAffectation(PartnerType::ARS);
+        $affectations = [
+            [0 => $affectation, 'uuid' => $affectation->getUuid()],
+        ];
         $affectationRepositoryMock
             ->expects($this->atLeast(1))
             ->method('findAffectationSubscribedToEsabora')
-            ->willReturn($collection->toArray());
+            ->willReturn($affectations);
 
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
@@ -58,6 +60,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
             $serializerMock,
             $notificationMailerRegistry,
             $parameterBag,
+            self::getContainer()->get('doctrine')->getManager(),
             [$visiteHandler, $arreteHandler],
         ));
 

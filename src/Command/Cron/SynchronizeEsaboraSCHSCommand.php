@@ -51,6 +51,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
             $this->serializer,
             $this->notificationMailerRegistry,
             $this->parameterBag,
+            $this->entityManager,
         );
     }
 
@@ -77,22 +78,28 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
             partnerType: PartnerType::COMMUNE_SCHS
         );
         $this->existingEvents = $this->suiviRepository->findExistingEventsForSCHS();
-        foreach ($affectations as $affectation) {
+        $count = 0;
+        foreach ($affectations as $row) {
+            $affectation = $row[0];
             try {
-                $dossierEvents = $this->esaboraService->getDossierEvents($affectation);
+                $dossierEvents = $this->esaboraService->getDossierEvents($affectation, $row['uuid']);
                 foreach ($dossierEvents->getCollection() as $eventItem) {
                     $this->synchronizeEvent($eventItem, $affectation);
                 }
-                $this->entityManager->flush();
             } catch (\Throwable $exception) {
                 $msg = sprintf('Error while synchronizing events on signalement %s: %s',
-                    $affectation->getSignalement()->getUuid(),
+                    $row['uuid'],
                     $exception->getMessage()
                 );
                 $this->io->error($msg);
                 $this->logger->error($msg);
             }
+            ++$count;
+            if (0 === $count % self::BATCH_SIZE) {
+                $this->entityManager->flush();
+            }
         }
+        $this->entityManager->flush();
         $msg = sprintf('Synchronized %d new events with %d files', $this->nbEventsAdded, $this->nbEventFilesAdded);
         $this->io->success($msg);
         $this->notificationMailerRegistry->send(

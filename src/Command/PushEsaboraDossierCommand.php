@@ -86,7 +86,8 @@ class PushEsaboraDossierCommand extends Command
             return Command::FAILURE;
         }
 
-        foreach ($affectations as $affectation) {
+        foreach ($affectations as $row) {
+            $affectation = $row[0];
             $this->esaboraBus->dispatch($affectation);
             $io->success(\sprintf(
                 '[%s] Dossier %s pushed to esabora',

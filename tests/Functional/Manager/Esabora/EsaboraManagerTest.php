@@ -25,7 +25,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EsaboraManagerTest extends KernelTestCase
@@ -39,7 +38,6 @@ class EsaboraManagerTest extends KernelTestCase
     private EventDispatcherInterface $eventDispatcher;
     private UserManager $userManager;
     private LoggerInterface $logger;
-    private ParameterBagInterface $parameterBag;
     private ZipHelper $zipHelper;
     private FileScanner $fileScanner;
     private UploadHandlerService $uploadHander;
@@ -58,7 +56,6 @@ class EsaboraManagerTest extends KernelTestCase
         $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         $this->userManager = self::getContainer()->get(UserManager::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
-        $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $this->zipHelper = self::getContainer()->get(ZipHelper::class);
         $this->fileScanner = self::getContainer()->get(FileScanner::class);
         $this->uploadHander = self::getContainer()->get(UploadHandlerService::class);
@@ -102,7 +99,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
-            $this->parameterBag,
             $this->entityManager,
             $this->zipHelper,
             $this->fileScanner,
@@ -220,7 +216,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
-            $this->parameterBag,
             $this->entityManager,
             $this->zipHelper,
             $this->fileScanner,
