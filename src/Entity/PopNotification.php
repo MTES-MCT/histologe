@@ -23,6 +23,7 @@ class PopNotification implements EntityHistoryInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    /** @var array<mixed> $params */
     #[ORM\Column]
     private array $params = [];
 
@@ -43,11 +44,13 @@ class PopNotification implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getParams(): array
     {
         return $this->params;
     }
 
+    /** @param array<mixed> $params */
     public function setParams(array $params): static
     {
         $this->params = $params;
@@ -55,6 +58,7 @@ class PopNotification implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

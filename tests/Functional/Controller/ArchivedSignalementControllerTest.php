@@ -40,7 +40,7 @@ class ArchivedSignalementControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2', '3 signalements archivés');
     }
 
-    public function testReactiveSignalement()
+    public function testReactiveSignalement(): void
     {
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy([

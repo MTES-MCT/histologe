@@ -18,7 +18,7 @@ class DesordreBatimentIsolationDernierEtageToitTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testFindDesordresPrecisionsBy()
+    public function testFindDesordresPrecisionsBy(): void
     {
         /** @var DesordrePrecisionRepository $desordrePrecisionRepository */
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
@@ -28,7 +28,7 @@ class DesordreBatimentIsolationDernierEtageToitTest extends KernelTestCase
             true
         );
 
-        /** @var array $precisions */
+        /** @var array<DesordrePrecision> $precisions */
         $precisions = (new DesordreBatimentIsolationDernierEtageToit($desordrePrecisionRepository))->findDesordresPrecisionsBy(
             $payload,
             'desordres_batiment_isolation_dernier_etage_toit'

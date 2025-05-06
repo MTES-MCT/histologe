@@ -30,8 +30,10 @@ use Symfony\Component\Serializer\SerializerInterface;
 )]
 class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraCommand
 {
+    /** @var iterable<InterventionSISHHandlerInterface> */
     private iterable $interventionHandlers;
 
+    /** @param iterable<InterventionSISHHandlerInterface> $interventionHandlers */
     public function __construct(
         private readonly EsaboraManager $esaboraManager,
         private readonly JobEventManager $jobEventManager,

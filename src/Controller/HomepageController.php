@@ -11,6 +11,7 @@ use App\Service\Mailer\NotificationMailerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\Cache;
@@ -152,7 +153,7 @@ class HomepageController extends AbstractController
 
     #[Cache(public: true, maxage: 3600)]
     #[Route('/sitemap.{_format}', name: 'app_front_sitemap', defaults: ['_format' => 'xml'])]
-    public function generateSitemap()
+    public function generateSitemap(): RedirectResponse
     {
         return $this->redirect($this->sitesFacilesUrl.'sitemap.xml', Response::HTTP_MOVED_PERMANENTLY);
     }

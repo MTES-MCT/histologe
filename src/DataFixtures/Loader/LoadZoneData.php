@@ -31,6 +31,9 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     private function loadZone(ObjectManager $manager, array $row): void
     {
         $zone = new Zone();

@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement\DesordreTraitement;
 
+use App\Entity\DesordrePrecision;
 use App\Repository\DesordrePrecisionRepository;
 
 class DesordreBatimentSecuriteEscalier implements DesordreTraitementInterface
@@ -14,6 +15,11 @@ class DesordreBatimentSecuriteEscalier implements DesordreTraitementInterface
     ) {
     }
 
+    /**
+     * @param array<string, string> $payload
+     *
+     * @return array<DesordrePrecision|null>
+     */
     public function findDesordresPrecisionsBy(array $payload, string $slug): array
     {
         $precisions = [];

@@ -10,14 +10,14 @@ class InterventionTypeTest extends TestCase
     /**
      * @dataProvider provideInterventionType
      */
-    public function testFromValidLabel(string $label, InterventionType $interventionType)
+    public function testFromValidLabel(string $label, InterventionType $interventionType): void
     {
         $intervention = InterventionType::tryFromLabel($label);
 
         $this->assertEquals($interventionType, $intervention);
     }
 
-    public function testFromInvalidLabel()
+    public function testFromInvalidLabel(): void
     {
         $intervention = InterventionType::tryFromLabel('Type de visite invalide');
         $this->assertNull($intervention);

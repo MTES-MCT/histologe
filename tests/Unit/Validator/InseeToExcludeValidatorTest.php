@@ -7,6 +7,9 @@ use App\Validator\InseeToExcludeValidator;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
+/**
+ * @extends ConstraintValidatorTestCase<InseeToExcludeValidator>
+ */
 class InseeToExcludeValidatorTest extends ConstraintValidatorTestCase
 {
     private const ERROR = 'La valeur "{{ value }}" n\'est pas valide. Elle doit être une liste de codes INSEE séparés par des virgules ou vide.';

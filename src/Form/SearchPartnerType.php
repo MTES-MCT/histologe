@@ -34,6 +34,9 @@ class SearchPartnerType extends AbstractType
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('queryPartner', SearchType::class, [

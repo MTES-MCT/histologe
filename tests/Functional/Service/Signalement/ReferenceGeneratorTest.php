@@ -25,7 +25,7 @@ class ReferenceGeneratorTest extends KernelTestCase
      * @throws TransactionRequiredException
      * @throws NonUniqueResultException
      */
-    public function testGenerateReferenceFromExistingSignalement()
+    public function testGenerateReferenceFromExistingSignalement(): void
     {
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => 13]);
@@ -48,7 +48,7 @@ class ReferenceGeneratorTest extends KernelTestCase
      * @throws TransactionRequiredException
      * @throws NonUniqueResultException
      */
-    public function testGenerateReferenceFromNoSignalement()
+    public function testGenerateReferenceFromNoSignalement(): void
     {
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => 85]);
