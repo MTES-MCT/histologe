@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementFactoryTest extends KernelTestCase
 {
-    public function testCreateSignalementIsValid()
+    public function testCreateSignalementIsValid(): void
     {
         $faker = Factory::create('fr_FR');
         $data = [

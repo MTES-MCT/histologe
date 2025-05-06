@@ -26,6 +26,7 @@ class Epci
     #[Groups(['widget-settings:read'])]
     private ?string $nom = null;
 
+    /** @var Collection<int, Commune> $communes */
     #[ORM\OneToMany(mappedBy: 'epci', targetEntity: Commune::class)]
     private Collection $communes;
 

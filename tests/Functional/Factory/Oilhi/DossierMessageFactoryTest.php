@@ -109,7 +109,7 @@ class DossierMessageFactoryTest extends KernelTestCase
      * @throws ClientExceptionInterface
      * @throws ExceptionInterface
      */
-    public function testPushDossierWithException()
+    public function testPushDossierWithException(): void
     {
         $faker = Factory::create();
 

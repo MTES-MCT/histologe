@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class WidgetDataKpiTest extends TestCase
 {
-    public function testValidWidgetDataKpi()
+    public function testValidWidgetDataKpi(): void
     {
         $widgetDataKpi = new WidgetDataKpi(
             ['cardMesAffectations' => ['Mes affectations', 2, 'back_signalements_index']],

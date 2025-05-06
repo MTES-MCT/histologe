@@ -10,7 +10,7 @@ class CommuneTest extends TestCase
     /**
      * @dataProvider provideCommune
      */
-    public function testCommunes(string $nomFromDatabase, string $nomCleaned)
+    public function testCommunes(string $nomFromDatabase, string $nomCleaned): void
     {
         $commune = (new Commune())->setNom($nomFromDatabase);
         $this->assertEquals($nomCleaned, $commune->getNom());

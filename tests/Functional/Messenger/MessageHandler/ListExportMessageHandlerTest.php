@@ -31,7 +31,7 @@ class ListExportMessageHandlerTest extends WebTestCase
         $this->messageBus = static::getContainer()->get(MessageBusInterface::class);
     }
 
-    public function testHandleGenerateListCsv()
+    public function testHandleGenerateListCsv(): void
     {
         $userEmail = 'admin-01@signal-logement.fr';
         /** @var User $user */
@@ -70,7 +70,7 @@ class ListExportMessageHandlerTest extends WebTestCase
         $this->assertEmailAddressContains($email, 'To', $userEmail);
     }
 
-    public function testHandleGenerateListXlsWithOptions()
+    public function testHandleGenerateListXlsWithOptions(): void
     {
         $userEmail = 'admin-territoire-13-01@signal-logement.fr';
         /** @var User $user */

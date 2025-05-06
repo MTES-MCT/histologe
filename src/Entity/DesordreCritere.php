@@ -39,9 +39,11 @@ class DesordreCritere
     #[ORM\JoinColumn(nullable: false)]
     private ?DesordreCategorie $desordreCategorie = null;
 
+    /** @var Collection<int, DesordrePrecision> $desordrePrecisions */
     #[ORM\OneToMany(mappedBy: 'desordreCritere', targetEntity: DesordrePrecision::class, orphanRemoval: true)]
     private Collection $desordrePrecisions;
 
+    /** @var Collection<int, Signalement> $signalement */
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'desordreCriteres')]
     private Collection $signalement;
 

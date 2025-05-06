@@ -46,6 +46,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
     #[Assert\Type('bool')]
     public ?bool $notifyUsager = null;
 
+    /** @var array<mixed> $concludeProcedure */
     #[OA\Property(
         description: 'Liste des procédures conclues<br>
         <ul>
@@ -81,6 +82,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
     #[OA\Property(description: 'Détails de la visite', example: '<p>Compte rendu de visite...</p>')]
     public ?string $details = null;
 
+    /** @var array<mixed> $files */
     #[OA\Property(
         description: 'Tableau contenant une liste d\'UUID des fichiers associés au signalement.',
         type: 'array',
@@ -96,6 +98,9 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
         return $this->details ?? null;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFiles(): array
     {
         return $this->files;

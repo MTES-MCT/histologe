@@ -51,12 +51,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
     private ?ProfileDeclarant $profileDeclarant = null;
 
+    /** @var Collection<int, Situation> $situations */
     #[ORM\ManyToMany(targetEntity: Situation::class, inversedBy: 'signalements')]
     private Collection $situations;
 
+    /** @var Collection<int, Critere> $criteres */
     #[ORM\ManyToMany(targetEntity: Critere::class, inversedBy: 'signalements')]
     private Collection $criteres;
 
+    /** @var Collection<int, Criticite> $criticites */
     #[ORM\ManyToMany(targetEntity: Criticite::class, inversedBy: 'signalements')]
     private Collection $criticites;
 
@@ -264,9 +267,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 100)]
     private ?string $reference = null;
 
+    /** @var array<mixed> $jsonContent */
     #[ORM\Column(type: 'json')]
     private array $jsonContent = [];
 
+    /** @var array<mixed> $geoloc */
     #[ORM\Column(type: 'json')]
     private array $geoloc = [];
 
@@ -279,6 +284,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'signalementsCreated')]
     private ?User $createdBy = null;
 
+    /** @var Collection<int, Suivi> $suivis */
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Suivi::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $suivis;
 
@@ -388,6 +394,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $nbOccupantsLogement = null;
 
+    /** @var Collection<int, Affectation> $affectations */
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Affectation::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $affectations;
 
@@ -407,6 +414,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[AppAssert\TelephoneFormat]
     private ?string $telOccupantBis = null;
 
+    /** @var Collection<int, Tag> $tags */
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'signalements')]
     #[ORM\JoinTable(name: 'tag_signalement')]
     private Collection $tags;
@@ -418,6 +426,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isImported = null;
 
+    /** @var Collection<int, SignalementQualification> $signalementQualifications */
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: SignalementQualification::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $signalementQualifications;
 
@@ -430,6 +439,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column]
     private ?float $scoreBatiment = null;
 
+    /** @var Collection<int, Intervention> $interventions */
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
     private Collection $interventions;
 
@@ -439,6 +449,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dateNaissanceOccupant = null;
 
+    /** @var Collection<int, File> $files */
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: File::class, cascade: ['persist'])]
     private Collection $files;
 
@@ -457,14 +468,17 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'information_complementaire', nullable: true)]
     private ?InformationComplementaire $informationComplementaire = null;
 
+    /** @var Collection<int, DesordreCategorie> $desordreCategories */
     #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, inversedBy: 'signalement', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'desordre_categorie_signalement')]
     private Collection $desordreCategories;
 
+    /** @var Collection<int, DesordreCritere> $desordreCriteres */
     #[ORM\ManyToMany(targetEntity: DesordreCritere::class, inversedBy: 'signalement', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'desordre_critere_signalement')]
     private Collection $desordreCriteres;
 
+    /** @var Collection<int, DesordrePrecision> $desordrePrecisions */
     #[ORM\ManyToMany(targetEntity: DesordrePrecision::class, inversedBy: 'signalement', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'desordre_precision_signalement')]
     private Collection $desordrePrecisions;
@@ -476,6 +490,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(nullable: true)]
     private ?bool $lastSuiviIsPublic = null;
 
+    /** @var array<mixed> $synchroData */
     #[ORM\Column(nullable: true)]
     private ?array $synchroData = null;
 
@@ -542,7 +557,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection|Situation[]
+     * @return Collection<int, Situation>
      */
     public function getSituations(): Collection
     {
@@ -566,7 +581,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection|Critere[]
+     * @return Collection<int, Critere>
      */
     public function getCriteres(): Collection
     {
@@ -590,7 +605,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection|Criticite[]
+     * @return Collection<int, Criticite>
      */
     public function getCriticites(): Collection
     {
@@ -650,7 +665,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode @see setTypeCompositionLogement() afin de mettre à jour le nombre de personnes qui vivent dans le logement
      */
-    public function setNbAdultes($nbAdultes): self
+    public function setNbAdultes(?string $nbAdultes): self
     {
         $this->nbAdultes = $nbAdultes;
 
@@ -670,7 +685,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode @see setTypeCompositionLogement() afin de mettre si des enfants de moins de 6 ans occupe le logement
      */
-    public function setNbEnfantsM6($nbEnfantsM6): self
+    public function setNbEnfantsM6(?string $nbEnfantsM6): self
     {
         $this->nbEnfantsM6 = $nbEnfantsM6;
 
@@ -692,7 +707,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
      * Sera supprimé à la prochaine version
      */
-    public function setNbEnfantsP6($nbEnfantsP6): self
+    public function setNbEnfantsP6(?string $nbEnfantsP6): self
     {
         $this->nbEnfantsP6 = $nbEnfantsP6;
 
@@ -735,7 +750,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isAllocataire;
     }
 
-    public function setIsAllocataire(?string $isAllocataire)
+    public function setIsAllocataire(?string $isAllocataire): self
     {
         $this->isAllocataire = $isAllocataire;
 
@@ -1044,6 +1059,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /** @return array<string> */
     public function getMailUsagers(): array
     {
         $usagers = [];
@@ -1104,7 +1120,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telOccupant, $national);
     }
 
-    public function setTelOccupant($telOccupant): self
+    public function setTelOccupant(?string $telOccupant): self
     {
         $this->telOccupant = $telOccupant;
 
@@ -1116,7 +1132,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->mailOccupant;
     }
 
-    public function setMailOccupant($mailOccupant): self
+    public function setMailOccupant(?string $mailOccupant): self
     {
         $this->mailOccupant = TrimHelper::safeTrim($mailOccupant);
 
@@ -1159,7 +1175,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getAddressCompleteOccupant($withArrondisement = true): ?string
+    public function getAddressCompleteOccupant(bool $withArrondisement = true): ?string
     {
         $ville = $withArrondisement ? $this->villeOccupant : CommuneHelper::getCommuneFromArrondissement($this->villeOccupant);
 
@@ -1390,11 +1406,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getJsonContent(): ?array
     {
         return $this->jsonContent;
     }
 
+    /** @param array<mixed> $jsonContent */
     public function setJsonContent(array $jsonContent): self
     {
         $this->jsonContent = $jsonContent;
@@ -1402,11 +1420,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getGeoloc(): ?array
     {
         return $this->geoloc;
     }
 
+    /** @param array<mixed> $geoloc */
     public function setGeoloc(array $geoloc): self
     {
         $this->geoloc = $geoloc;
@@ -1480,6 +1500,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getAffectationStatusByPartner(): array
     {
         $result = [];
@@ -1544,7 +1565,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getComplementAdresseOccupant($autre = true): string
+    public function getComplementAdresseOccupant(bool $autre = true): string
     {
         $complement = '';
         if ($this->etageOccupant) {
@@ -1920,7 +1941,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection|Affectation[]
+     * @return Collection<int, Affectation>
      */
     public function getAffectations(): Collection
     {
@@ -2011,7 +2032,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection|Tag[]
+     * @return Collection<int, Tag>
      */
     public function getTags(): Collection
     {
@@ -2189,7 +2210,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection|Intervention[]
+     * @return Collection<int, Intervention>
      */
     public function getInterventions(): Collection
     {
@@ -2636,6 +2657,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $desordreSlug;
     }
 
+    /** @return array<string> */
     public function getDesordreCritereSlugs(): array
     {
         return $this->getDesordreCriteres()->map(
@@ -2643,6 +2665,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         )->toArray();
     }
 
+    /** @return array<string> */
     public function getDesordrePrecisionSlugs(): array
     {
         return $this->getDesordrePrecisions()->map(
@@ -2650,6 +2673,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         )->toArray();
     }
 
+    /** @return array<string> */
     public function getDesordreCategorieSlugs(): array
     {
         return $this->getDesordreCriteres()->map(
@@ -2681,6 +2705,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getSynchroData(?string $key): ?array
     {
         if ($key) {
@@ -2690,6 +2715,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->synchroData;
     }
 
+    /** @param array<mixed> $data */
     public function setSynchroData(array $data, string $key): self
     {
         $this->synchroData[$key] = $data;
@@ -2718,11 +2744,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->getTerritory()->getTimezone();
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 
+    /** @return array<string> */
     public function getManyToManyFieldsToTrack(): array
     {
         return ['tags'];

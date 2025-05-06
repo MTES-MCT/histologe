@@ -62,7 +62,7 @@ class CartographieControllerTest extends WebTestCase
     /**
      * @dataProvider provideFilterSearch
      */
-    public function testCartographieWithFilter(string $email, string $filter, string|array $terms)
+    public function testCartographieWithFilter(string $email, string $filter, string|array $terms): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */

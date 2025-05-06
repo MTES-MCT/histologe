@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImportSignalementCommandTest extends KernelTestCase
 {
-    public function testDisplaySuccessfullyMessage()
+    public function testDisplaySuccessfullyMessage(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
@@ -99,7 +99,7 @@ class ImportSignalementCommandTest extends KernelTestCase
         $this->assertStringContainsString('signalement(s) have been imported', $output);
     }
 
-    public function testTerritoryDoesNotExist()
+    public function testTerritoryDoesNotExist(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
@@ -141,7 +141,7 @@ class ImportSignalementCommandTest extends KernelTestCase
         $this->assertStringContainsString('Territory does not exists', $output);
     }
 
-    public function testFileDoesNotExist()
+    public function testFileDoesNotExist(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);

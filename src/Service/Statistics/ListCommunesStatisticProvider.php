@@ -7,7 +7,8 @@ use App\Entity\Territory;
 
 class ListCommunesStatisticProvider
 {
-    public function getData(?Territory $territory)
+    /** @return array<string, string> */
+    public function getData(?Territory $territory): array
     {
         $data = [];
         if (null !== $territory) {
