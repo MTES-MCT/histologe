@@ -15,6 +15,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SuiviSummariesType extends AbstractType
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

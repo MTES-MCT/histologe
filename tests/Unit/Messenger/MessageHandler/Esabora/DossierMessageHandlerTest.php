@@ -57,7 +57,7 @@ class DossierMessageHandlerTest extends TestCase
         $dossierMessageHandler($dossierMessage);
     }
 
-    public function testProcessDossierMessageSISH()
+    public function testProcessDossierMessageSISH(): void
     {
         $dossierMessageSISH = new DossierMessageSISH();
 

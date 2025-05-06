@@ -128,7 +128,7 @@ class Critere
     }
 
     /**
-     * @return Collection|Criticite[]
+     * @return Collection<int, Criticite>
      */
     public function getCriticites(): Collection
     {
@@ -158,7 +158,7 @@ class Critere
     }
 
     /**
-     * @return Collection|Signalement[]
+     * @return Collection<int, Signalement>
      */
     public function getSignalements(): Collection
     {

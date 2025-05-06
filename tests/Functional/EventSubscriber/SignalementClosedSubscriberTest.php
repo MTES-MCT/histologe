@@ -42,7 +42,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $this->assertArrayHasKey(SignalementClosedEvent::NAME, SignalementClosedSubscriber::getSubscribedEvents());
     }
 
-    public function testOnSignalementClosedForAllPartnerCallNotificationMethods()
+    public function testOnSignalementClosedForAllPartnerCallNotificationMethods(): void
     {
         /** @var Signalement $signalementClosed */
         $signalementClosed = $this->signalementRepository->findOneBy(['reference' => '2024-08']);

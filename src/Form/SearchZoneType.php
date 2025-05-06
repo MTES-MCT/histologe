@@ -22,6 +22,9 @@ class SearchZoneType extends AbstractType
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('queryName', SearchType::class, [

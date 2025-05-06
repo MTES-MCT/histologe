@@ -29,6 +29,9 @@ class SignalementDraftDesordresType extends AbstractType
         $this->desordreCritereRepository = $desordreCritereRepository;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Signalement $signalement */

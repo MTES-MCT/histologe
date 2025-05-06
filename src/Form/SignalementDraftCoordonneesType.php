@@ -28,6 +28,9 @@ class SignalementDraftCoordonneesType extends AbstractType
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var User $user */

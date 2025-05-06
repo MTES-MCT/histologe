@@ -19,7 +19,7 @@ class MenuBuilderTest extends KernelTestCase
         self::bootKernel();
     }
 
-    public function testBuild()
+    public function testBuild(): void
     {
         $user = $this->getUser([User::ROLE_ADMIN]);
         /** @var MockObject&Security $security */
