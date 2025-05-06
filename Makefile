@@ -198,7 +198,7 @@ e2e: ## Run E2E tests
 	@$(NPX) cypress open
 
 stan: ## Run PHPStan
-	@$(DOCKER_COMP) exec -it histologe_phpfpm composer stan
+	@$(DOCKER_COMP) exec -it histologe_phpfpm composer stan $(FILE) 
 
 cs-check: ## Check source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it histologe_phpfpm composer cs-check
