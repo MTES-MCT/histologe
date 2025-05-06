@@ -68,7 +68,9 @@ class BackStatistiquesController extends AbstractController
             $cacheKey,
             function (ItemInterface $item) use ($territory, $partners) {
                 $item->expiresAfter(3600); // 1 hour for global back stats
-                $item->tag([SearchFilterOptionDataProvider::CACHE_TAG.$territory->getZip()]);
+                if (!empty($territory)) {
+                    $item->tag([SearchFilterOptionDataProvider::CACHE_TAG.$territory->getZip()]);
+                }
 
                 return $this->globalBackAnalyticsProvider->getData($territory, $partners);
             }
@@ -182,7 +184,9 @@ class BackStatistiquesController extends AbstractController
             $cacheKey,
             function (ItemInterface $item) use ($territory) {
                 $item->expiresAfter(7200); // 2 hours for filters
-                $item->tag([SearchFilterOptionDataProvider::CACHE_TAG.$territory->getZip()]);
+                if (!empty($territory)) {
+                    $item->tag([SearchFilterOptionDataProvider::CACHE_TAG.$territory->getZip()]);
+                }
 
                 return [
                     'list_communes' => $this->listCommunesStatisticProvider->getData($territory),
