@@ -83,6 +83,7 @@ class PdfExportMessageHandler
                     signalement: $signalement,
                     params: [
                         'filename' => $filename,
+                        'isForUsager' => $pdfExportMessage->isForUsager(),
                     ]
                 )
             );

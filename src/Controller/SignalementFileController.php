@@ -167,14 +167,25 @@ class SignalementFileController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
+        // TODO : pour l'instant ancien système en récupérant le from,
+        // voir pour faire quelque-chose de plus robuste grâce à l'authentification sur la page de suivi
         $fromEmail = $request->get('from');
-        // TODO : si on n'a pas, on envoie déclarant et occupant
-        $message = (new PdfExportMessage())
-            ->setSignalementId($signalement->getId())
-            ->setUserEmail($fromEmail)
-            ->setIsForUsager(true);
 
-        $messageBus->dispatch($message);
+        $emails = $fromEmail
+            ? [$fromEmail]
+            : array_unique(array_filter([
+                $signalement->getMailOccupant(),
+                $signalement->getMailDeclarant(),
+            ]));
+
+        foreach ($emails as $email) {
+            $message = (new PdfExportMessage())
+                ->setSignalementId($signalement->getId())
+                ->setUserEmail($email)
+                ->setIsForUsager(true);
+
+            $messageBus->dispatch($message);
+        }
 
         $this->addFlash(
             'success',
