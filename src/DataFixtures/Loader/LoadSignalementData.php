@@ -365,7 +365,10 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 $this->signalementDraftRepository->findOneBy(['uuid' => $row['created_from_uuid']])
             );
         }
-        $signalement->setProfileDeclarant(ProfileDeclarant::tryFrom($row['profile_declarant']))
+        if (isset($row['profile_declarant'])) {
+            $signalement->setProfileDeclarant(ProfileDeclarant::from($row['profile_declarant']));
+        }
+        $signalement
             ->setTypeCompositionLogement(
                 TypeCompositionLogementFactory::createFromArray(json_decode($row['type_composition_logement'], true))
             )
