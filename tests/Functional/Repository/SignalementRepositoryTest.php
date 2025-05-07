@@ -205,4 +205,24 @@ class SignalementRepositoryTest extends KernelTestCase
         yield 'Search all for user partner multi territories' => ['user-partenaire-multi-ter-34-30@signal-logement.fr', [], 2];
         yield 'Search in Hérault for user partner multi territories' => ['user-partenaire-multi-ter-34-30@signal-logement.fr', ['territories' => 35], 1];
     }
+
+    public function testfindSignalementsLastSuiviWithSuiviAuto(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
+
+        $signalements = $signalementRepository->findSignalementsLastSuiviWithSuiviAuto($territory, 10);
+        $this->assertCount(0, $signalements);
+    }
+
+    public function testfindSignalementsLastSuiviByPartnerOlderThan(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
+
+        $signalements = $signalementRepository->findSignalementsLastSuiviByPartnerOlderThan($territory, 10, 0);
+        $this->assertCount(2, $signalements);
+    }
 }
