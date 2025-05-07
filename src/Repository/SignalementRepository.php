@@ -1504,7 +1504,7 @@ class SignalementRepository extends ServiceEntityRepository
         $statement = $connexion->prepare($sql);
 
         return $statement->executeQuery([
-            'statusSignalement' => SignalementStatus::ACTIVE,
+            'statusSignalement' => SignalementStatus::ACTIVE->value,
             'territoryId' => $territory->getId(),
             'suiviTypeTechnical' => Suivi::TYPE_TECHNICAL,
             'suiviTypeUsager' => Suivi::TYPE_USAGER,
@@ -1534,7 +1534,7 @@ class SignalementRepository extends ServiceEntityRepository
         $statement = $connexion->prepare($sql);
 
         return $statement->executeQuery([
-            'statusSignalement' => SignalementStatus::ACTIVE,
+            'statusSignalement' => SignalementStatus::ACTIVE->value,
             'territoryId' => $territory->getId(),
             'suiviTypePartner' => Suivi::TYPE_PARTNER,
             'nbDays' => $nbDays,
