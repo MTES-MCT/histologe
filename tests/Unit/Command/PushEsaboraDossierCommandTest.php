@@ -39,10 +39,9 @@ class PushEsaboraDossierCommandTest extends TestCase
         $affectation1->setIsSynchronized(false);
         $affectation2->setIsSynchronized(false);
 
-        $affectation = $this->getAffectation(PartnerType::ARS);
         $affectations = [
-            [0 => $affectation1, 'uuid' => $affectation1->getUuid()],
-            [0 => $affectation2, 'uuid' => $affectation2->getUuid()],
+            ['affectation' => $affectation1, 'signalement_uuid' => $affectation1->getUuid()],
+            ['affectation' => $affectation2, 'signalement_uuid' => $affectation2->getUuid()],
         ];
 
         $this->territoryRepository
@@ -89,7 +88,7 @@ class PushEsaboraDossierCommandTest extends TestCase
     {
         $affectation = $this->getAffectation(PartnerType::ARS);
         $affectations = [
-            [0 => $affectation, 'uuid' => $affectation->getUuid()],
+            ['affectation' => $affectation, 'signalement_uuid' => $affectation->getUuid()],
         ];
 
         $this->affectationRepository

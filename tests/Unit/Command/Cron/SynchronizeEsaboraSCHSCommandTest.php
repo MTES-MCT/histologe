@@ -54,7 +54,7 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
 
         $affectations = [
-            [0 => $affectation, 'uuid' => $affectation->getSignalement()->getUuid()],
+            ['affectation' => $affectation, 'signalement_uuid' => $affectation->getSignalement()->getUuid()],
         ];
 
         $affectationRepositoryMock

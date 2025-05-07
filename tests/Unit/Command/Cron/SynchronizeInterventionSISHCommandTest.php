@@ -41,7 +41,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
 
         $affectation = $this->getAffectation(PartnerType::ARS);
         $affectations = [
-            [0 => $affectation, 'uuid' => $affectation->getUuid()],
+            ['affectation' => $affectation, 'signalement_uuid' => $affectation->getUuid()],
         ];
         $affectationRepositoryMock
             ->expects($this->atLeast(1))

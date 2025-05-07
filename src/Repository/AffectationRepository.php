@@ -108,7 +108,7 @@ class AffectationRepository extends ServiceEntityRepository
         ?Territory $territory = null,
     ): array {
         $qb = $this->createQueryBuilder('a');
-        $qb->select('a', 's.uuid');
+        $qb->select('a AS affectation', 's.uuid AS signalement_uuid');
         $qb = $qb
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')

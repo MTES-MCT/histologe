@@ -80,15 +80,15 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
         $this->existingEvents = $this->suiviRepository->findExistingEventsForSCHS();
         $count = 0;
         foreach ($affectations as $row) {
-            $affectation = $row[0];
+            $affectation = $row['affectation'];
             try {
-                $dossierEvents = $this->esaboraService->getDossierEvents($affectation, $row['uuid']);
+                $dossierEvents = $this->esaboraService->getDossierEvents($affectation, $row['signalement_uuid']);
                 foreach ($dossierEvents->getCollection() as $eventItem) {
                     $this->synchronizeEvent($eventItem, $affectation);
                 }
             } catch (\Throwable $exception) {
                 $msg = sprintf('Error while synchronizing events on signalement %s: %s',
-                    $row['uuid'],
+                    $row['signalement_uuid'],
                     $exception->getMessage()
                 );
                 $this->io->error($msg);

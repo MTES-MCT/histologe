@@ -76,8 +76,8 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         $countSyncFailed = 0;
         $count = 0;
         foreach ($affectations as $row) {
-            $affectation = $row[0];
-            $dossierResponse = $esaboraService->getStateDossier($affectation, $row['uuid']);
+            $affectation = $row['affectation'];
+            $dossierResponse = $esaboraService->getStateDossier($affectation, $row['signalement_uuid']);
             if (AbstractEsaboraService::hasSuccess($dossierResponse)) {
                 $this->esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
                 $io->success($this->printInfo($dossierResponse));

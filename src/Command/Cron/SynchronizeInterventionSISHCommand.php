@@ -73,16 +73,16 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         );
         $count = 0;
         foreach ($affectations as $row) {
-            $affectation = $row[0];
+            $affectation = $row['affectation'];
             /** @var InterventionSISHHandlerInterface $interventionHandler */
             foreach ($this->interventionHandlers as $key => $interventionHandler) {
                 try {
-                    $interventionHandler->handle($affectation, $row['uuid']);
+                    $interventionHandler->handle($affectation, $row['signalement_uuid']);
                     $io->writeln(\sprintf('#%s: %s was executed', $key, $interventionHandler->getServiceName()));
                 } catch (\Throwable $e) {
                     $signalement = $affectation->getSignalement();
                     $message = $interventionHandler->getServiceName()
-                        .' - Signalement '.$row['uuid']
+                        .' - Signalement '.$row['signalement_uuid']
                         .' ('.$signalement->getId().') : '
                         .$e->getMessage();
                     if (!($e instanceof \Exception)) {
