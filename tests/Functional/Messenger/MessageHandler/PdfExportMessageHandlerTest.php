@@ -42,6 +42,7 @@ class PdfExportMessageHandlerTest extends WebTestCase
         $this->assertEmailHtmlBodyContains($email, '#2023-1');
         $this->assertEmailAddressContains($email, 'To', 'test@yopmail.com');
     }
+
     public function testHandleGeneratePdfMessageWithDesordres()
     {
         self::bootKernel();
@@ -72,5 +73,4 @@ class PdfExportMessageHandlerTest extends WebTestCase
         $this->assertEmailHtmlBodyContains($email, '#2024-12');
         $this->assertEmailAddressContains($email, 'To', 'test@yopmail.com');
     }
-    // TODO : faire un test pour un isForUsager signalement tiers de déclarant/occupant
 }

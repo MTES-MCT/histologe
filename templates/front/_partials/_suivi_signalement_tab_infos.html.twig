@@ -1,7 +1,8 @@
 <h2 class="fr-h3 fr-mb-5v">Mes infos</h2>
 {% if feature_suivi_action %}
 	<div class="fr-btns-group fr-btns-group--icon-left">
-		{# TODO : Cas tiers déclarant : si on ne sait pas qui du tiers ou de l'occupant est sur la page, on ouvre une modale pour demander à qui envoyer le PDF. Modale avec 2 boutons radio (un pour le déclarant / un pour l'occupant) #}
+        {# TODO : pour l'instant ancien système en récupérant l'e-mail de l'adresse', 
+        voir pour faire quelque-chose de plus robuste grâce à l'authentification sur la page de suivi #}
 		<a href="{{ path('signalement_gen_pdf',{uuid:signalement.uuid, from:email}) }}"
 		class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-file-download-line fr-mt-1v ignore-blank-style"
 		title="Télécharger le PDF">Télécharger le dossier
