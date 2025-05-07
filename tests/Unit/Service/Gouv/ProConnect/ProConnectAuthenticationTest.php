@@ -64,8 +64,6 @@ class ProConnectAuthenticationTest extends KernelTestCase
             'sub' => '1234',
             'uid' => '1234',
             'email' => 'proconnect@signal-logement.fr',
-            'given_name' => 'Proconnect',
-            'usual_name' => 'Proconnect',
         ];
         $httpClient
             ->expects(self::once())
@@ -90,8 +88,6 @@ class ProConnectAuthenticationTest extends KernelTestCase
         $user = $proConnectAuthentication->authenticateFromCallback(new CallbackRequest('valid_code', 'valid_state'));
         $this->assertSame('1234', $user->uid);
         $this->assertSame('proconnect@signal-logement.fr', $user->email);
-        $this->assertSame('Proconnect', $user->givenName);
-        $this->assertSame('Proconnect', $user->usualName);
     }
 
     /**

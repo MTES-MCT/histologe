@@ -34,9 +34,6 @@ class ProConnectControllerTest extends WebTestCase
             'uid' => '1234',
             'sub' => '1234',
             'email' => 'test@proconnect.fr',
-            'given_name' => 'Jean',
-            'family_name' => 'Dupont',
-            'usual_name' => 'JD',
         ]);
 
         /** @var \Doctrine\ORM\EntityManagerInterface $em */
