@@ -30,6 +30,7 @@ signalements:
     situation_occupant: "1"
     origine_signalement: "Guichet Unique"
     type_energie_logement: "Electrique"
+    mail_declarant: "admin-partenaire-13-01@signal-logement.fr"
     tags:
       - "Urgent"
     situations:
