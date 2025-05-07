@@ -52,6 +52,7 @@ parameters:
     feature_banner_histologe: '%env(bool:FEATURE_BANNER_HISTOLOGE)%'
     feature_secure_uuid_url: '%env(bool:FEATURE_SECURE_UUID_URL)%'
     feature_email_recap: '%env(bool:FEATURE_EMAIL_RECAP)%'
+    app_secret_for_links: '%env(APP_SECRET_FOR_LINKS)%'
     proconnect_scheme_protocol: '%env(resolve:PROCONNECT_SCHEME_PROTOCOL)%'
     proconnect_domain: '%env(resolve:PROCONNECT_DOMAIN)%'
 
