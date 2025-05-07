@@ -15,9 +15,13 @@ help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
 ## Service management
-build: ## Install local environement
-	@bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db npm-install npm-build mock-stop mock-start'
-
+build: ## Install local environment (use SKIP_NPM_BUILD=1 to skip npm-build step)
+	@if [ "$(SKIP_NPM_BUILD)" = "1" ]; then \
+		echo "Skipping npm-build step"; \
+		bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db create-db-test npm-install mock-stop mock-start'; \
+	else \
+		bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db create-db-test npm-install npm-build mock-stop mock-start'; \
+	fi
 run: ## Start containers
 	@echo -e '\e[1;32mStart containers\032'
 	@bash -l -c '$(DOCKER_COMP) up -d'
