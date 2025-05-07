@@ -31,7 +31,7 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
     suffix = '-' + inputAdresse.dataset.suffix
   }
   const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
-  const apiAdresse = 'https://api-adresse.data.gouv.fr/search/?q='
+  const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
   inputAdresse.addEventListener('input', (e) => {
     const adresse = e.target.value
     if (adresse.length > 8) {
