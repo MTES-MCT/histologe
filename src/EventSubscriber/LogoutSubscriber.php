@@ -39,16 +39,17 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
         }
 
         $token = $event->getToken();
-        /** @var User $user */
+        /** @var ?User $user */
         $user = $token?->getUser();
         $request = $event->getRequest();
         $session = $request->getSession();
         $logoutUrl = null;
         try {
-            if ($user && null !== $user->getProConnectUserId()) {
+            if ($user?->getProConnectUserId() && $session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
                 $logoutUrl = $this->proConnectAuthentication->getLogoutUrl();
                 $this->clearSession($session);
                 if ($logoutUrl) {
+                    $this->logger->info('ProConnect logout');
                     $event->setResponse(new RedirectResponse($logoutUrl));
 
                     return;
@@ -75,11 +76,13 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
 
             return;
         }
+        $this->logger->info('App logout');
         $this->clearSession($session);
     }
 
     private function clearSession(SessionInterface $session): void
     {
+        $this->logger->info('Clearing session');
         $this->proConnectContext->clearSession();
         $session->invalidate();
     }
