@@ -65,6 +65,7 @@ class GridAffectationLoader
 
     /**
      * @param array<array<string, mixed>> $data Un tableau de données du fichier CSV à valider
+     *
      * @return string[] Liste des messages d'erreur
      */
     public function validate(array $data, Territory $territory, bool $isModeUpdate = false): array
@@ -212,8 +213,8 @@ class GridAffectationLoader
     }
 
     /**
-     * @param array<array<string, mixed>> $data Un tableau de données du fichier CSV
-     * @param string[] $ignoreNotifPartnerTypes
+     * @param array<array<string, mixed>> $data                    Un tableau de données du fichier CSV
+     * @param string[]                    $ignoreNotifPartnerTypes
      */
     public function load(
         Territory $territory,
@@ -346,11 +347,13 @@ class GridAffectationLoader
 
     /**
      * @param string[] $emails Liste des emails à vérifier
+     *
      * @return array<string, int> Tableau associatif des emails en doublon
      */
     private function checkIfDuplicates(array $emails): array
     {
         $occurrencesEmails = array_count_values($emails);
+
         return array_filter($occurrencesEmails, function ($value) {
             return $value > 1;
         });
