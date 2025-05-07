@@ -148,16 +148,24 @@ trait FixturesHelper
             ->setType(Suivi::TYPE_PARTNER)
             ->setDescription($description)
             ->setCreatedAt(new \DateTimeImmutable())
-            ->setCreatedBy(new User());
+            ->setCreatedBy($this->getUser([User::ROLE_USER_PARTNER]));
     }
 
     public function getSuiviPartnerList(): array
     {
         return [
-            $this->getSuiviPartner('Problèmes de condensation et de moisissure'),
-            $this->getSuiviPartner('Problèmes d\'humidité dans le logement'),
-            $this->getSuiviPartner('Absence de chauffage'),
-            $this->getSuiviPartner('Ventilation défectueuse'),
+            $this
+                ->getSuiviPartner('Problèmes de condensation et de moisissure')
+                ->setSignalement($this->getSignalement($this->getTerritory())),
+            $this
+                ->getSuiviPartner('Problèmes d\'humidité dans le logement')
+                ->setSignalement($this->getSignalement($this->getTerritory())),
+            $this
+                ->getSuiviPartner('Absence de chauffage')
+                ->setSignalement($this->getSignalement($this->getTerritory())),
+            $this
+                ->getSuiviPartner('Ventilation défectueuse')
+                ->setSignalement($this->getSignalement($this->getTerritory())),
         ];
     }
 

@@ -74,7 +74,11 @@ class DossierMessageSISHFactoryTest extends TestCase
         $this->assertNotNull($dossierMessage->getLocalisationVille());
         $this->assertEquals('H', $dossierMessage->getSasLogicielProvenance());
         $this->assertEquals(75, $dossierMessage->getSitLogementSuperficie());
-        $this->assertCount(4, explode(\PHP_EOL.str_repeat('-', 50).\PHP_EOL, $dossierMessage->getSignalementCommentaire()));
+        $suivis = explode(\PHP_EOL.str_repeat('-', 50).\PHP_EOL, $dossierMessage->getSignalementCommentaire());
+        foreach ($suivis as $suivi) {
+            $this->assertStringContainsString('Par ARS : John Doe, le', $suivi);
+        }
+        $this->assertCount(4, $suivis);
         $this->assertEquals(
             AbstractEsaboraService::SIGNALEMENT_ORIGINE,
             $dossierMessage->getSignalementOrigine()

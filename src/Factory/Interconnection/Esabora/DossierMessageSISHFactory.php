@@ -250,7 +250,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
     {
         $suivis = $this->suiviRepository->findAllSuiviBy($signalement, Suivi::TYPE_PARTNER);
         $cleanedSuivis = array_map(function (Suivi $suivi) {
-            return HtmlCleaner::clean($suivi->getDescription(false));
+            $mention = 'Par '.$suivi->getCreatedByLabel().', le '.$suivi->getCreatedAt()->format('d/m/Y');
+            $cleanSuivi = HtmlCleaner::clean($suivi->getDescription(false));
+
+            return $mention.\PHP_EOL.$cleanSuivi;
         }, $suivis);
         $separator = str_repeat('-', 50);
 

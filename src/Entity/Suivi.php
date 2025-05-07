@@ -42,27 +42,27 @@ class Suivi implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private $createdAt;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: true)]
-    private $createdBy;
+    private ?User $createdBy = null;
 
     #[ORM\Column(type: 'text')]
-    private $description;
+    private ?string $description = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isPublic;
+    private ?bool $isPublic = null;
 
     #[ORM\Column(type: 'integer')]
-    private $type;
+    private ?int $type = null;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
-    private Signalement $signalement;
+    private ?Signalement $signalement = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $context = null;
@@ -70,11 +70,11 @@ class Suivi implements EntityHistoryInterface
     private bool $sendMail = true;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $deletedAt;
+    private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private $deletedBy;
+    private ?User $deletedBy = null;
 
     #[ORM\Column(nullable: true)]
     private ?array $originalData = null;
