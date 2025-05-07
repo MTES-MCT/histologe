@@ -7,18 +7,21 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Manager\HistoryEntryManager;
 use App\Service\History\EntityComparator;
+use App\Service\History\HistoryEntryBuffer;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Uid\Uuid;
 
-#[AsDoctrineListener(event: Events::postPersist)]
-#[AsDoctrineListener(event: Events::postUpdate)]
-#[AsDoctrineListener(event: Events::preRemove)]
-readonly class EntityHistoryListener
+#[AsDoctrineListener(event: Events::onFlush)]
+class EntityHistoryListener
 {
+    private UnitOfWork $uow;
+
     public const array FIELDS_TO_IGNORE = [
         'lastLoginAt',
         'updatedAt',
@@ -28,59 +31,68 @@ readonly class EntityHistoryListener
     ];
 
     public function __construct(
-        private HistoryEntryManager $historyEntryManager,
-        private EntityManagerInterface $entityManager,
-        private EntityComparator $entityComparator,
-        private LoggerInterface $logger,
+        private readonly HistoryEntryManager $historyEntryManager,
+        private readonly EntityComparator $entityComparator,
+        private readonly LoggerInterface $logger,
+        private readonly HistoryEntryBuffer $historyEntryBuffer,
         #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
-        private string $historyTrackingEnable,
+        private readonly string $historyTrackingEnable,
     ) {
     }
 
-    public function postPersist(LifecycleEventArgs $eventArgs): void
+    public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        try {
-            $this->processEntity($eventArgs, HistoryEntryEvent::CREATE);
-        } catch (\Throwable $exception) {
-            $this->logger->error($exception->getMessage());
+        if (!$this->historyTrackingEnable) {
+            return;
         }
-    }
-
-    public function postUpdate(LifecycleEventArgs $eventArgs): void
-    {
-        try {
-            $this->processEntity($eventArgs, HistoryEntryEvent::UPDATE);
-            $this->processCollection(HistoryEntryEvent::UPDATE);
-        } catch (\Throwable $exception) {
-            $this->logger->error($exception->getMessage());
+        $this->uow = $eventArgs->getObjectManager()->getUnitOfWork();
+        foreach ($this->uow->getScheduledEntityInsertions() as $entity) {
+            try {
+                $this->processEntity($entity, HistoryEntryEvent::CREATE);
+            } catch (\Throwable $exception) {
+                $this->logger->error($exception->getMessage());
+            }
         }
-    }
 
-    public function preRemove(LifecycleEventArgs $eventArgs): void
-    {
-        try {
-            $this->processEntity($eventArgs, HistoryEntryEvent::DELETE);
-        } catch (\Throwable $e) {
-            $this->logger->error($e->getMessage());
+        foreach ($this->uow->getScheduledEntityUpdates() as $entity) {
+            try {
+                $this->processEntity($entity, HistoryEntryEvent::UPDATE);
+            } catch (\Throwable $exception) {
+                $this->logger->error($exception->getMessage());
+            }
+        }
+
+        foreach ($this->uow->getScheduledEntityDeletions() as $entity) {
+            try {
+                $this->processEntity($entity, HistoryEntryEvent::DELETE);
+            } catch (\Throwable $exception) {
+                $this->logger->error($exception->getMessage());
+            }
+        }
+
+        foreach ($this->uow->getScheduledCollectionUpdates() as $col) {
+            try {
+                if ($col instanceof PersistentCollection) {
+                    $this->processCollection($col, HistoryEntryEvent::UPDATE);
+                }
+            } catch (\Throwable $exception) {
+                $this->logger->error($exception->getMessage());
+            }
         }
     }
 
     /**
      * @throws \ReflectionException
      */
-    protected function processEntity(LifecycleEventArgs $eventArgs, HistoryEntryEvent $event): void
+    protected function processEntity(object $entity, HistoryEntryEvent $event): void
     {
-        $entity = $eventArgs->getObject();
-        if (!$this->historyTrackingEnable
-            || !$entity instanceof EntityHistoryInterface
-            || !in_array($event, $entity->getHistoryRegisteredEvent())) {
+        if (!$entity instanceof EntityHistoryInterface || !in_array($event, $entity->getHistoryRegisteredEvent())) {
             return;
         }
 
         $changes = [];
         if (HistoryEntryEvent::UPDATE === $event) {
-            $unitOfWork = $this->entityManager->getUnitOfWork();
-            foreach ($unitOfWork->getEntityChangeSet($entity) as $field => $changed) {
+            foreach ($this->uow->getEntityChangeSet($entity) as $field => $changed) {
                 if (in_array($field, self::FIELDS_TO_IGNORE)) {
                     continue;
                 }
@@ -111,27 +123,22 @@ readonly class EntityHistoryListener
         $this->saveEntityHistory($event, $entity, $changes);
     }
 
-    public function processCollection(HistoryEntryEvent $event): void
+    public function processCollection(PersistentCollection $collection, HistoryEntryEvent $event): void
     {
-        $unitOfWork = $this->entityManager->getUnitOfWork();
         $changes = [];
-        foreach ($unitOfWork->getScheduledCollectionUpdates() as $collection) {
-            $ownerEntity = $collection->getOwner();
-            $fieldName = $collection->getMapping()['fieldName'];
-            if ($ownerEntity instanceof EntityHistoryCollectionInterface
-                && in_array($fieldName, $ownerEntity->getManyToManyFieldsToTrack())
-            ) {
-                foreach ($collection->getInsertDiff() as $insertItem) {
-                    /* @var EntityHistoryInterface $insertItem */
-                    $changes[$fieldName]['new'][] = $insertItem->getId();
-                }
-
-                foreach ($collection->getDeleteDiff() as $deleteItem) {
-                    /* @var EntityHistoryInterface $deleteItem */
-                    $changes[$fieldName]['old'][] = $deleteItem->getId();
-                }
-                $this->saveEntityHistory($event, $ownerEntity, $changes); // @phpstan-ignore-line
+        $ownerEntity = $collection->getOwner();
+        $fieldName = $collection->getMapping()['fieldName'];
+        if ($ownerEntity instanceof EntityHistoryCollectionInterface && in_array($fieldName, $ownerEntity->getManyToManyFieldsToTrack())) {
+            foreach ($collection->getInsertDiff() as $insertItem) {
+                /* @var EntityHistoryInterface $insertItem */
+                $changes[$fieldName]['new'][] = $insertItem->getId();
             }
+
+            foreach ($collection->getDeleteDiff() as $deleteItem) {
+                /* @var EntityHistoryInterface $deleteItem */
+                $changes[$fieldName]['old'][] = $deleteItem->getId();
+            }
+            $this->saveEntityHistory($event, $ownerEntity, $changes); // @phpstan-ignore-line
         }
     }
 
@@ -141,11 +148,18 @@ readonly class EntityHistoryListener
         array $changes,
     ): void {
         try {
-            $this->historyEntryManager->create(
-                historyEntryEvent: $event,
-                entityHistory: $entity,
-                changes: $changes
-            );
+            $id = $entity->getId() ?? Uuid::v4();
+            $historyKey = $entity::class.'_'.$id.'_'.$event->value;
+            if (HistoryEntryEvent::CREATE !== $event && $this->historyEntryBuffer->exist($historyKey)) {
+                $this->historyEntryBuffer->update($historyKey, $changes);
+            } else {
+                $historyEntry = $this->historyEntryManager->create(
+                    historyEntryEvent: $event,
+                    entityHistory: $entity,
+                    changes: $changes,
+                );
+                $this->historyEntryBuffer->add($historyKey, $historyEntry);
+            }
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }

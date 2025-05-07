@@ -40,6 +40,8 @@ class HistoryEntry
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
+    private object $entity;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -149,6 +151,18 @@ class HistoryEntry
     public function setSignalement(?Signalement $signalement): self
     {
         $this->signalement = $signalement;
+
+        return $this;
+    }
+
+    public function getEntity(): object
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(object $entity): static
+    {
+        $this->entity = $entity;
 
         return $this;
     }
