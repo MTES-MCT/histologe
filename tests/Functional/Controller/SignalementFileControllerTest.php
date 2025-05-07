@@ -198,6 +198,8 @@ class SignalementFileControllerTest extends WebTestCase
 
         $route = $this->router->generate('signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
 
+        // TODO : pour l'instant ancien système en envoyant le from,
+        // voir pour faire quelque-chose de plus robuste grâce à l'authentification sur la page de suivi
         $this->client->request(
             'GET',
             $route,
