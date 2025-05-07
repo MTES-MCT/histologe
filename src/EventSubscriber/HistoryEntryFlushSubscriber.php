@@ -19,7 +19,7 @@ class HistoryEntryFlushSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            // KernelEvents::RESPONSE => 'onKernelResponse',
+            // KernelEvents::RESPONSE => 'onKernelResponse', // decommenter avec la fonction onKernelResponse si besoin de suivre les requetes doctrine dans le profiler symfony pour aide au debug
             KernelEvents::TERMINATE => 'onKernelTerminate',
             ConsoleEvents::TERMINATE => 'onConsoleTerminate',
         ];

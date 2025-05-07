@@ -2,21 +2,41 @@
 
 namespace App\Service\History;
 
+use App\Entity\HistoryEntry;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 class HistoryEntryBuffer
 {
-    public array $pendingHistoryEntries = [];
+    private array $pendingHistoryEntries = [];
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
+    public function exist(string $key): bool
+    {
+        return isset($this->pendingHistoryEntries[$key]);
+    }
+
+    public function add(string $key, HistoryEntry $entry): void
+    {
+        $this->pendingHistoryEntries[$key] = $entry;
+    }
+
+    public function update(string $key, array $changes): void
+    {
+        $oldChanges = $this->pendingHistoryEntries[$key]->getChanges();
+        $this->pendingHistoryEntries[$key]->setChanges(array_merge($oldChanges, $changes));
+    }
+
     public function flushPendingHistoryEntries(): void
     {
+        if (empty($this->pendingHistoryEntries)) {
+            return;
+        }
         // for prevent flushing invalid entities
         $this->entityManager->clear();
         foreach ($this->pendingHistoryEntries as $entry) {

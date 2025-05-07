@@ -150,16 +150,15 @@ class EntityHistoryListener
         try {
             $id = $entity->getId() ?? Uuid::v4();
             $historyKey = $entity::class.'_'.$id.'_'.$event->value;
-            if (HistoryEntryEvent::CREATE !== $event && isset($this->historyEntryBuffer->pendingHistoryEntries[$historyKey])) {
-                $oldChanges = $this->historyEntryBuffer->pendingHistoryEntries[$historyKey]->getChanges();
-                $this->historyEntryBuffer->pendingHistoryEntries[$historyKey]->setChanges(array_merge($oldChanges, $changes));
+            if (HistoryEntryEvent::CREATE !== $event && $this->historyEntryBuffer->exist($historyKey)) {
+                $this->historyEntryBuffer->update($historyKey, $changes);
             } else {
                 $historyEntry = $this->historyEntryManager->create(
                     historyEntryEvent: $event,
                     entityHistory: $entity,
                     changes: $changes,
                 );
-                $this->historyEntryBuffer->pendingHistoryEntries[$historyKey] = $historyEntry;
+                $this->historyEntryBuffer->add($historyKey, $historyEntry);
             }
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
