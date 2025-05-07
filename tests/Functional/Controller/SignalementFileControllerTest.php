@@ -213,7 +213,7 @@ class SignalementFileControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $redirectUrl);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertStringContainsString(
-            'L\'export pdf vous sera envoyé par e-mail',
+            'Le signalement au format PDF vous sera envoyé par e-mail à',
             $crawler->filter('.fr-alert')->text()
         );
     }

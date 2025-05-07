@@ -632,10 +632,20 @@
 
     <section>
         <div class="page">
-        {% for index, photo in signalement.files|filter(photo => photo.isTypePhoto) %}
+        {% set sortedPhotos = signalement.files
+            |filter(photo => photo.isTypePhoto)
+            |sort((a, b) =>
+                (a.documentType.name == 'PHOTO_VISITE' ? 1 : 0) <=> (b.documentType.name == 'PHOTO_VISITE' ? 1 : 0)
+                ?: (a.createdAt <=> b.createdAt)
+            )
+        %}
+        {% for photo in sortedPhotos %}
                 <div style="page-break-inside: avoid;margin-top: 25px;">
                     <h2>Photo : {{ photo.title }}</h2>
-                    <small>Ajouté par {{ photo.uploadedBy.nomComplet ?? 'N/R' }}</small><br>
+                    {% if photo.documentType.name == 'PHOTO_VISITE' %}
+                       <h3>Photo de la visite du {{ photo.intervention is defined and photo.intervention.scheduledAt is defined ? photo.intervention.scheduledAt|date('d/m/Y') : 'N/R'}}</h3>  
+                    {% endif %}                    
+                    <small>Ajoutée par {{ photo.uploadedBy.nomComplet ?? 'N/R' }}</small><br>
                     <small>le {{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}</small><br>                    
                     {% set encodedImage = photo.filename(constant('App\\Service\\ImageManipulationHandler::SUFFIX_RESIZE')) | image64 %}
                     {% if encodedImage is not null %}                    
