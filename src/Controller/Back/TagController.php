@@ -75,6 +75,7 @@ class TagController extends AbstractController
             $entityManager->persist($tag);
             $entityManager->flush();
             $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
+
             $this->addFlash('success', 'L\'étiquette a bien été ajoutée.');
         }
         if ($form->isSubmitted() && !$form->isValid()) {
