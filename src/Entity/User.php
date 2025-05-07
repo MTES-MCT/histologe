@@ -506,11 +506,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getStatutLabel(): string
-    {
-        return $this->statut->label();
-    }
-
     public function getLastLoginAt(): ?\DateTimeImmutable
     {
         return $this->lastLoginAt;

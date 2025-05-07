@@ -136,7 +136,7 @@
                         {% elseif user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE %}
                             <span class="fr-badge fr-badge--no-icon fr-badge--success">Activé</span>
                         {% else %}
-                            {{ user.statutLabel }}
+                            {{ user.statut.label }}
                         {% endif %}
                     </td>
                     <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>

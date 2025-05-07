@@ -171,7 +171,7 @@ class NotificationAndMailSender
             $recipients->removeElement($this->suivi->getCreatedBy()?->getEmail());
             foreach ($recipients as $recipient) {
                 if ($this->signalement->isTiersDeclarant() && $recipient === $this->signalement->getMailDeclarant()) {
-                    $agentExist = $this->userRepository->findAgentByEmail(email: $recipient, userStatus: User::STATUS_ACTIVE, acceptRoleApi: false);
+                    $agentExist = $this->userRepository->findAgentByEmail(email: $recipient, userStatus: UserStatus::ACTIVE, acceptRoleApi: false);
                     if ($agentExist) {
                         continue;
                     }
