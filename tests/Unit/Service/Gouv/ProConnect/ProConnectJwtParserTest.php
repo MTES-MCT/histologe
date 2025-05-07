@@ -25,11 +25,5 @@ class ProConnectJwtParserTest extends TestCase
 
         $this->assertArrayHasKey('uid', $claims);
         $this->assertSame('7855', $claims['uid']);
-
-        $this->assertArrayHasKey('given_name', $claims);
-        $this->assertSame('Proconnect', $claims['given_name']);
-
-        $this->assertArrayHasKey('family_name', $claims);
-        $this->assertSame('P', $claims['family_name']);
     }
 }
