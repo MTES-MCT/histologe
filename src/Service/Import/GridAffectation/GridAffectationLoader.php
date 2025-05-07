@@ -25,6 +25,14 @@ class GridAffectationLoader
 {
     private const int FLUSH_COUNT = 250;
 
+    /**
+     * @var array{
+     *     nb_users_created: int,
+     *     nb_users_multi_territory: int,
+     *     nb_partners: int,
+     *     errors: string[]
+     * }
+     */
     private array $metadata = [
         'nb_users_created' => 0,
         'nb_users_multi_territory' => 0,
@@ -32,6 +40,9 @@ class GridAffectationLoader
         'errors' => [],
     ];
 
+    /**
+     * @var array<string, string>
+     */
     public const array OLD_ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Utilisateur' => 'ROLE_USER_PARTNER',
@@ -52,6 +63,10 @@ class GridAffectationLoader
     ) {
     }
 
+    /**
+     * @param array<array<string, mixed>> $data Un tableau de données du fichier CSV à valider
+     * @return string[] Liste des messages d'erreur
+     */
     public function validate(array $data, Territory $territory, bool $isModeUpdate = false): array
     {
         $errors = [];
@@ -196,6 +211,10 @@ class GridAffectationLoader
         return $errors;
     }
 
+    /**
+     * @param array<array<string, mixed>> $data Un tableau de données du fichier CSV
+     * @param string[] $ignoreNotifPartnerTypes
+     */
     public function load(
         Territory $territory,
         array $data,
@@ -213,23 +232,29 @@ class GridAffectationLoader
         $userRepository = $this->entityManager->getRepository(User::class);
         foreach ($data as $item) {
             $canAddUserPartner = false;
+            $isNewPartner = false;
             if (\count($item) > 1) {
                 $partnerName = trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]); // Replace with mb_trim($name); when php 8.4
                 $partnerType = PartnerType::tryFromLabel($item[GridAffectationHeader::PARTNER_TYPE]);
 
                 if (!\in_array($partnerName, $newPartnerNames)) {
-                    $partner = $this->partnerFactory->createInstanceFrom(
-                        territory: $territory,
-                        name: $partnerName,
-                        email: !empty($item[GridAffectationHeader::PARTNER_EMAIL])
-                            ? trim($item[GridAffectationHeader::PARTNER_EMAIL])
-                            : null,
-                        type: $partnerType,
-                        insee: $item[GridAffectationHeader::PARTNER_CODE_INSEE]
-                    );
+                    $partner = $this->partnerManager->findOneBy(['nom' => $partnerName, 'territory' => $territory]);
+                    if (null === $partner) {
+                        $partner = $this->partnerFactory->createInstanceFrom(
+                            territory: $territory,
+                            name: $partnerName,
+                            email: !empty($item[GridAffectationHeader::PARTNER_EMAIL])
+                                ? trim($item[GridAffectationHeader::PARTNER_EMAIL])
+                                : null,
+                            type: $partnerType,
+                            insee: $item[GridAffectationHeader::PARTNER_CODE_INSEE]
+                        );
+                        $isNewPartner = true;
+                    }
+
                     /** @var ConstraintViolationList $errors */
                     $errors = $this->validator->validate($partner);
-                    if (0 === $errors->count() && !$this->partnerAlreadyExists($partner)) {
+                    if (0 === $errors->count() && $isNewPartner) {
                         $this->partnerManager->save($partner, false);
                         ++$this->metadata['nb_partners'];
                         $newPartnerNames[] = $partnerName;
@@ -306,32 +331,28 @@ class GridAffectationLoader
         $this->metadata['nb_users_multi_territory'] = $countUserMultiTerritory;
     }
 
+    /**
+     * @return array{
+     *     nb_users_created: int,
+     *     nb_users_multi_territory: int,
+     *     nb_partners: int,
+     *     errors: string[]
+     * }
+     */
     public function getMetadata(): array
     {
         return $this->metadata;
     }
 
+    /**
+     * @param string[] $emails Liste des emails à vérifier
+     * @return array<string, int> Tableau associatif des emails en doublon
+     */
     private function checkIfDuplicates(array $emails): array
     {
         $occurrencesEmails = array_count_values($emails);
-        $duplicatesEmails = array_filter($occurrencesEmails, function ($value) {
+        return array_filter($occurrencesEmails, function ($value) {
             return $value > 1;
         });
-
-        return $duplicatesEmails;
-    }
-
-    private function partnerAlreadyExists(Partner $partner): bool
-    {
-        $partners = $this->entityManager->getRepository(Partner::class)->findBy([
-            'nom' => $partner->getNom(),
-            'territory' => $partner->getTerritory(),
-        ]);
-
-        if (0 === \count($partners)) {
-            return false;
-        }
-
-        return true;
     }
 }

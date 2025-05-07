@@ -11,6 +11,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\UploadHandlerService;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -28,20 +29,20 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 )]
 class ImportGridAffectationCommand extends Command
 {
-    private const PARAM_TERRITORY_ZIP = 'territory_zip';
-    private const PARAM_IGNORE_NOTIFICATION_ALL_PARTNER = 'ignore-notification-all';
-    private const PARAM_IGNORE_NOTIFICATION_PARTNER = 'ignore-notification-partners';
-    private const PARAM_FILE_VERSION = 'file-version';
+    private const string PARAM_TERRITORY_ZIP = 'territory_zip';
+    private const string PARAM_IGNORE_NOTIFICATION_ALL_PARTNER = 'ignore-notification-all';
+    private const string PARAM_IGNORE_NOTIFICATION_PARTNER = 'ignore-notification-partners';
+    private const string PARAM_FILE_VERSION = 'file-version';
 
     public function __construct(
-        private FilesystemOperator $fileStorage,
-        private ParameterBagInterface $parameterBag,
-        private CsvParser $csvParser,
-        private TerritoryManager $territoryManager,
-        private GridAffectationLoader $gridAffectationLoader,
-        private UploadHandlerService $uploadHandlerService,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private UrlGeneratorInterface $urlGenerator,
+        private readonly FilesystemOperator $fileStorage,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly CsvParser $csvParser,
+        private readonly TerritoryManager $territoryManager,
+        private readonly GridAffectationLoader $gridAffectationLoader,
+        private readonly UploadHandlerService $uploadHandlerService,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct();
     }
@@ -69,6 +70,9 @@ class ImportGridAffectationCommand extends Command
         ;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -180,6 +184,9 @@ class ImportGridAffectationCommand extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function canExecute(
         SymfonyStyle $io,
         bool $isModeUpdate,
