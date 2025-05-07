@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class SignalementPdfExportMailer extends AbstractNotificationMailer
 {
@@ -23,6 +24,8 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
+        #[Autowire('%env(APP_SECRET_FOR_LINKS)%')] 
+        protected string $appSecretForLinks,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
@@ -31,8 +34,7 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $filename = $notificationMail->getParams()['filename'] ?? self::FILE_404;
-        // TODO : changer le secret
-        $token = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement->getUuid().$filename, '$secret');
+        $token = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement->getUuid().$filename, $this->appSecretForLinks);
         $link = $this->generateLink(
             'show_uploaded_file', [
                 'folder' => '_up',
