@@ -39,6 +39,10 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
 
     private function normalizeErrorMessage(array $event): string
     {
+        if (!isset($event['response'])) {
+            return 'Réponse vide';
+        }
+
         $response = json_decode($event['response'], true);
         if (!$response) {
             return 'Réponse vide';

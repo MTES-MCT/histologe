@@ -26,7 +26,7 @@ class SignalementCreatedSubscriber implements EventSubscriberInterface
     {
         $signalement = $event->getSignalement();
 
-        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::OCCUPANT);
+        $this->userManager->createUsagerFromSignalement($signalement);
         $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
 
         $this->notificationAndMailSender->sendNewSignalement($signalement);

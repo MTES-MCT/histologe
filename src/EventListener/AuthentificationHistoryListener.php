@@ -6,7 +6,7 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\User;
 use App\Manager\HistoryEntryManager;
 use App\Repository\SignalementRepository;
-use App\Security\SignalementUser;
+use App\Security\User\SignalementUser;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -49,7 +49,7 @@ class AuthentificationHistoryListener
         }
         try {
             if ($user instanceof SignalementUser) {
-                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getUserIdentifier(), false);
+                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi(), false);
             }
             $historyEntry = $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
@@ -63,7 +63,7 @@ class AuthentificationHistoryListener
             return;
         } catch (\Throwable $exception) {
             if ($user instanceof SignalementUser) {
-                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getUserIdentifier(), false);
+                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi(), false);
                 $this->logger->error(\sprintf(
                     'Failed to create login history entry (%s) on signalement : %d',
                     $exception->getMessage(),

@@ -64,7 +64,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         $user = (new User())
             ->setRoles(json_decode($row['roles'], true))
             ->setStatut(UserStatus::from($row['statut']))
-            ->setIsMailingActive($row['is_mailing_active'])
+            ->setIsMailingActive($row['is_mailing_active'] ?? false)
             ->setPrenom($faker->firstName())
             ->setNom($faker->lastName());
 

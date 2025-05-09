@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security;
+namespace App\Security\Authenticator;
 
 use App\Entity\ApiUserToken;
 use App\Entity\Enum\UserStatus;
