@@ -254,7 +254,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('Arnaque & cie', $signalement->getDenominationAgence());
     }
 
-    public function testValidationSignalementWithAutoAffectation()
+    public function testValidationSignalementWithAutoAffectationWithRT()
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -270,7 +270,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalements_index'), $response['url']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
 
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
@@ -279,7 +279,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEmailCount(2);
     }
 
-    public function testValidationSignalementWithManualAffectation()
+    public function testValidationSignalementWithManualAffectationWithRT()
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -299,7 +299,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalements_index'), $response['url']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
 
         $this->assertNull($signalement->getInseeOccupant());
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
@@ -307,5 +307,57 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(2, $signalement->getAffectations());
 
         $this->assertEmailCount(4);
+    }
+
+    public function testValidationSignalementWithManualAffectationWithAgent()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-44-02@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000008']);
+        $signalement->setInseeOccupant(null);
+
+        $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
+        ]);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertTrue($response['redirect']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']);
+
+        $this->assertNull($signalement->getInseeOccupant());
+        $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+        $this->assertCount(0, $signalement->getSuivis());
+        $this->assertCount(0, $signalement->getAffectations());
+
+        $this->assertEmailCount(0);
+    }
+
+    public function testValidationSignalementWithAutoAffectationWithAgent()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-44-02@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000008']);
+
+        $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
+        ]);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertTrue($response['redirect']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']);
+
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+        $this->assertCount(1, $signalement->getSuivis());
+        $this->assertCount(1, $signalement->getAffectations());
+
+        $this->assertEmailCount(2);
     }
 }
