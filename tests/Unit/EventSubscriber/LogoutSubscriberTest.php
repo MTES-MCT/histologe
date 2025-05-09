@@ -30,6 +30,11 @@ class LogoutSubscriberTest extends TestCase
 
         $request = new Request();
         $session = $this->createMock(SessionInterface::class);
+        $session
+            ->expects($this->once())
+            ->method('has')
+            ->with('proconnect_id_token')
+            ->willReturn(true);
         $request->setSession($session);
 
         $event = new LogoutEvent($request, $token);
