@@ -392,6 +392,15 @@ class SignalementCreateController extends AbstractController
         $signalementManager->flush();
 
         $errorMsgs = [];
+        if (!$signalement->getAdresseOccupant()) {
+            $errorMsgs[] = 'Vous devez renseigner l\'adresse du logement pour pouvoir soumettre le signalement.';
+        }
+        if (null === $signalement->getIsLogementSocial()) {
+            $errorMsgs[] = 'Vous devez renseigner le champ logement social pour pouvoir soumettre le signalement.';
+        }
+        if (ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant() && !$signalement->getIsBailEnCours() && !$signalement->getIsLogementVacant()) {
+            $errorMsgs[] = 'Vous devez renseigner le champ Occupation du logement pour pouvoir soumettre le signalement.';
+        }
         if (!count($signalement->getDesordrePrecisions())) {
             $errorMsgs[] = 'Vous devez renseigner au moins un désordre pour pouvoir soumettre le signalement.';
         }
