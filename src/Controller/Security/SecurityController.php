@@ -9,6 +9,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -107,11 +108,18 @@ class SecurityController extends AbstractController
         LoggerInterface $logger,
         ImageVariantProvider $imageVariantProvider,
         string $filename,
-        ?Signalement $signalement = null,
+        ?Signalement $signalement,
+        #[Autowire('%env(APP_SECRET_FOR_LINKS)%')]
+        string $appSecretForLinks,
     ): BinaryFileResponse|RedirectResponse {
         $request = Request::createFromGlobals();
+        $expectedToken = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement?->getUuid().$filename, $appSecretForLinks);
 
-        if (!$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t')) && !$this->isGranted('SIGN_VIEW', $signalement)) {
+        if (
+            !$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t'))
+            && $request->get('t') !== $expectedToken
+            && !$this->isGranted('SIGN_VIEW', $signalement)
+        ) {
             throw $this->createAccessDeniedException();
         }
         try {

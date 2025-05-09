@@ -89,4 +89,24 @@ class SecurityControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/connexion');
     }
+
+    public function testShowUploadedFileSucceedWithToken(): void
+    {
+        $uuid = '00000000-0000-0000-2022-000000000001';
+        $filename = 'export-pdf-signalement-'.$uuid.'.pdf';
+        $secret = $_ENV['APP_SECRET_FOR_LINKS'] ?? $_SERVER['APP_SECRET_FOR_LINKS'] ?? 'valeur_de_secours';
+        $token = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$uuid.$filename, $secret);
+
+        $_GET['t'] = $token;
+        $_GET['folder'] = '_up';
+        $client = static::createClient();
+        $client->request(
+            'GET',
+            '/_up/'.$filename.'/'.$uuid.'?folder=_up&t='.$token,
+        );
+        /** @var BinaryFileResponse $response */
+        $response = $client->getResponse();
+        $this->assertTrue($response->isSuccessful());
+        $this->assertInstanceOf(BinaryFileResponse::class, $response);
+    }
 }

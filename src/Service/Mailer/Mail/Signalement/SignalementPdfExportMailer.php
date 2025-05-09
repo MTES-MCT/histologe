@@ -6,6 +6,7 @@ use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -23,6 +24,8 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
         protected ParameterBagInterface $parameterBag,
         protected LoggerInterface $logger,
         protected UrlGeneratorInterface $urlGenerator,
+        #[Autowire('%env(APP_SECRET_FOR_LINKS)%')]
+        protected string $appSecretForLinks,
     ) {
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
@@ -30,16 +33,21 @@ class SignalementPdfExportMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
+        $filename = $notificationMail->getParams()['filename'] ?? self::FILE_404;
+        $params = [
+            'folder' => '_up',
+            'filename' => $filename,
+            'uuid' => $signalement->getUuid(),
+        ];
+        if ($notificationMail->getParams()['isForUsager']) {
+            $token = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement->getUuid().$filename, $this->appSecretForLinks);
+            $params['t'] = $token;
+        }
+        $link = $this->generateLink('show_uploaded_file', $params);
 
         return [
             'signalement_reference' => $signalement->getReference(),
-            'link' => $this->generateLink(
-                'show_uploaded_file', [
-                    'folder' => '_up',
-                    'filename' => $notificationMail->getParams()['filename'] ?? self::FILE_404,
-                    'uuid' => $signalement->getUuid(),
-                ]
-            ),
+            'link' => $link,
         ];
     }
 }

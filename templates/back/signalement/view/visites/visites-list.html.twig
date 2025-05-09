@@ -43,7 +43,7 @@
 </div>
 
 {% if signalement.interventions is empty %}
-    {% include 'back/signalement/view/visites/visite-item.html.twig' %}
+    {% include 'back/signalement/view/visites/visite-item.html.twig' with { 'isForBO': true } %}
 {% else %}
     {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
         <div class="fr-background-alt--grey fr-p-5v fr-mb-5v">
@@ -61,7 +61,7 @@
                     {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
                 </div>
             </div>
-            {% include 'back/signalement/view/visites/visite-item.html.twig' %}
+            {% include 'back/signalement/view/visites/visite-item.html.twig' with { 'isForBO': true } %}
         </div>
     {% endfor %}
 {% endif %}
