@@ -46,6 +46,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/')]
 class SignalementController extends AbstractController
 {
+    private const NB_DAYS_RECENTLY_CREATED_SIGNALEMENT = 90;
+
     public function __construct(
         #[Autowire(env: 'FEATURE_SECURE_UUID_URL')]
         private readonly bool $featureSecureUuidUrl,
@@ -153,19 +155,29 @@ class SignalementController extends AbstractController
 
             if (!empty($existingSignalements)) {
                 $signalements = array_map(function (Signalement $existingSignalement) {
+                    $todayDate = new \DateTimeImmutable();
+                    $durationSinceCreated = $todayDate->diff($existingSignalement->getCreatedAt());
+
                     return [
                         'uuid' => $existingSignalement->getUuid(),
                         'created_at' => $existingSignalement->getCreatedAt(),
+                        'has_created_recently' => ($durationSinceCreated->days <= self::NB_DAYS_RECENTLY_CREATED_SIGNALEMENT),
                         'prenom_occupant' => $existingSignalement->getPrenomOccupant(),
                         'nom_occupant' => $existingSignalement->getNomOccupant(),
                         'complement_adresse_occupant' => $existingSignalement->getComplementAdresseOccupant(),
                     ];
                 }, $existingSignalements);
 
+                $hasCreatedRecently = false;
+                foreach ($signalements as $signalement) {
+                    $hasCreatedRecently = $hasCreatedRecently || $signalement['has_created_recently'];
+                }
+
                 return $this->json([
                     'already_exists' => true,
                     'type' => 'signalement',
                     'signalements' => $signalements,
+                    'has_created_recently' => $hasCreatedRecently,
                     'draft_exists' => (bool) $existingSignalementDraft,
                 ]);
             }

@@ -1210,6 +1210,8 @@ class SignalementRepository extends ServiceEntityRepository
             return [];
         }
 
+        $city = CommuneHelper::getCommuneFromArrondissement($city);
+
         $qb = $this->createQueryBuilder('s');
         if ($isTiersDeclarant) {
             $qb->andWhere('s.mailDeclarant = :email')->setParameter('email', $email);

@@ -7,9 +7,21 @@
             <div class="fr-modal__header">
               <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-already-exists" id="fr-modal-already-exists-close">Fermer</button>
             </div>
-            <div class="fr-modal__content" v-if="formStore.alreadyExists.type==='signalement'">
-              <h1 id="fr-modal-title-modal-already-exists" class="fr-modal__title"><span v-if="formStore.alreadyExists.signalements?.length === 1">Ce signalement existe déjà</span><span v-else>Ces signalements existent déjà</span></h1>
-              <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.alreadyExists.signalements?.length === 1">
+            <div class="fr-modal__content" v-if="formStore.alreadyExists.type === 'signalement'">
+              <h1 id="fr-modal-title-modal-already-exists" class="fr-modal__title">
+                <span v-if="formStore.alreadyExists.signalements?.length === 1">Ce signalement existe déjà</span>
+                <span v-else>Ces signalements existent déjà</span>
+              </h1>
+              <div v-if="formStore.alreadyExists.hasCreatedRecently">
+                <p>
+                  Un signalement existe déjà et est déjà en cours de traitement par les services.
+                  Pour compléter votre dossier ou demander des informations merci de laisser un message directement sur votre page de suivi.
+                </p>
+                <p>
+                  Pour récupérer le lien vers votre page de suivi, cliquez sur le bouton ci-dessous.
+                </p>
+              </div>
+              <div v-else-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.alreadyExists.signalements?.length === 1">
                 Il semblerait que vous ayez déjà déposé un signalement pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong><div class=""></div>
                 <span v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.alreadyExists.signalements" v-html="signalementLabel(formStore.alreadyExists.signalements[0])"></span>
                 Ce signalement est en cours de traitement.<br>
@@ -51,6 +63,7 @@
                 Souhaitez-vous compléter le signalement sélectionné ou en créer un nouveau ?
               </div>
               <SignalementFormWarning
+                v-if="!formStore.alreadyExists.hasCreatedRecently"
                 id="fr-modal-already-exists-info"
                 label="Créer un nouveau signalement pour le même logement risque de ralentir la procédure."
               >
@@ -85,7 +98,7 @@
                     Recevoir mon lien de suivi
                   </button>
                 </li>
-                <li>
+                <li v-if="!formStore.alreadyExists.hasCreatedRecently">
                   <button
                     :class="[ 'fr-btn fr-btn--secondary', isButtonClicked ? 'fr-btn--loading fr-btn--icon-right fr-icon-refresh-line' : '' ]"
                     aria-controls="fr-modal-already-exists"

@@ -227,6 +227,7 @@ export default defineComponent({
           const link = document.getElementById('fr-modal-already-exists-button')
           formStore.alreadyExists.type = requestResponse.type
           formStore.alreadyExists.signalements = requestResponse.signalements
+          formStore.alreadyExists.hasCreatedRecently = requestResponse.has_created_recently
           formStore.alreadyExists.createdAt = requestResponse.created_at
           formStore.alreadyExists.updatedAt = requestResponse.updated_at
           formStore.alreadyExists.draftExists = requestResponse.draft_exists
