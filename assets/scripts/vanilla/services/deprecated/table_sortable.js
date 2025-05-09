@@ -48,6 +48,8 @@ const sortNumber = (e, t) => { return t - e }
 const sortDateVal = (e, t) => { const r = Date.parse(e.value); const a = Date.parse(t.value); return sortNumber(r, a) }
 const sortTextVal = (e, t) => { const r = (e.value + '').toUpperCase(); const a = (t.value + '').toUpperCase(); return r < a ? -1 : r > a ? 1 : 0 }
 
+// encore utilisé dans les logs iDoss, les règles d'auto-affectation, et le simulator d'auto-affectation 
+// essayer de les supprimer (recherche sur cancelSortable à faire)
 const tables = document.querySelectorAll('table.sortable')
 let table
 let thead
