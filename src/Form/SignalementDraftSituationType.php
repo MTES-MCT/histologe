@@ -24,6 +24,7 @@ class SignalementDraftSituationType extends AbstractType
         $bail = $signalement->getTypeCompositionLogement()->getBailDpeBail();
         $dpe = $signalement->getTypeCompositionLogement()->getBailDpeDpe();
         $classeEnergetique = $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique();
+        $dateDpe = $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee();
         $etatDesLieux = $signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux();
         $dateEntreeLogement = $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement() ? new \DateTime($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()) : null;
         $montantLoyer = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesLogementMontantLoyer() : null;
@@ -109,6 +110,19 @@ class SignalementDraftSituationType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $classeEnergetique,
+            ])
+            ->add('dateDpe', ChoiceType::class, [
+                'label' => 'Date du DPE',
+                'choices' => [
+                    'A partir de 2023' => 'post2023',
+                    'Avant 2023' => 'before2023',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $dateDpe,
             ])
             ->add('etatDesLieux', ChoiceType::class, [
                 'label' => 'Etat des lieux',

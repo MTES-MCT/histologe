@@ -90,6 +90,12 @@
             <div class="fr-fieldset__element">
                 {{ form_row(formCoordonnees.profileDeclarantTiers) }}
             </div>
+            <div id="warning_profile_declarant_bailleur_occupant" class="fr-alert fr-alert--warning fr-alert--sm fr-mt-n2w fr-mb-2w fr-hidden">
+                <p>
+                    <strong>Propriétaire occupant</strong> représente un profil occupant. 
+                    Merci de bien renseigner le nom, prénom et e-mail de l'occupant, dans le cas inverse vos informations seront utilisées.
+                </p>
+            </div>
             <div class="fr-fieldset__element">
                 {{ form_row(formCoordonnees.lienDeclarantOccupant) }}
             </div>

@@ -178,6 +178,7 @@ class SignalementBoManager
         $typeCompositionLogement->setBailDpeBail($form->get('bail')->getData());
         $typeCompositionLogement->setBailDpeDpe($form->get('dpe')->getData());
         $typeCompositionLogement->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData());
+        $typeCompositionLogement->setDesordresLogementChauffageDetailsDpeAnnee($form->get('dateDpe')->getData());
         $typeCompositionLogement->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData());
         if ($form->get('dateEntreeLogement')->getData()) {
             $typeCompositionLogement->setBailDpeDateEmmenagement($form->get('dateEntreeLogement')->getData()->format('Y-m-d'));

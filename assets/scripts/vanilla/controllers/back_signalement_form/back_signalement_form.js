@@ -158,6 +158,15 @@ function initBoFormSignalementSubmit(tabName) {
   switch (tabName) {
     case 'adresse':
       initComponentAdress('#signalement_draft_address_adresseCompleteOccupant')
+      const occupationLogementBailleurOccupant = document.querySelector('#signalement_draft_address_occupationLogement_1')
+      const profileBailleurOccupant = document.querySelector('#signalement_draft_coordonnees_profileDeclarantTiers_4')
+    
+      if (occupationLogementBailleurOccupant.checked && profileBailleurOccupant) {
+        profileBailleurOccupant.checked = true
+      } else {
+        profileBailleurOccupant.checked = false
+      }
+      handleChangeOnProfileBailleurOccupant()
       break
     case 'logement':
       initBoFormSignalementLogement()
@@ -723,5 +732,37 @@ function initBoFormSignalementCoordonnees() {
     }
   })
 
+  manageProfileBailleurOccupant()
+
   window.dispatchEvent(new Event('refreshPhoneNumberEvent'))
+}
+
+function manageProfileBailleurOccupant() {
+  const occupationLogementBailleurOccupant = document.querySelector('#signalement_draft_address_occupationLogement_1')
+  const profileBailleurOccupant = document.querySelector('#signalement_draft_coordonnees_profileDeclarantTiers_4')
+  const radioBtnsProfileOccupant = document.querySelectorAll(`input[type="radio"][name="signalement_draft_coordonnees[profileDeclarantTiers]"]`)
+
+  if (occupationLogementBailleurOccupant.checked) {
+    profileBailleurOccupant.checked = true
+  }
+  
+  radioBtnsProfileOccupant.forEach(radio => {
+    radio.addEventListener('change', () => {
+      handleChangeOnProfileBailleurOccupant()
+    })
+  })
+  handleChangeOnProfileBailleurOccupant()
+}
+
+function handleChangeOnProfileBailleurOccupant() {
+  const occupationLogementBailleurOccupant = document.querySelector('#signalement_draft_address_occupationLogement_1')
+  const profileBailleurOccupant = document.querySelector('#signalement_draft_coordonnees_profileDeclarantTiers_4')
+  const warningProfileBailleurOccupant = document.querySelector('#warning_profile_declarant_bailleur_occupant')
+  if (profileBailleurOccupant.checked) {
+    occupationLogementBailleurOccupant.checked = true
+    warningProfileBailleurOccupant.classList.remove('fr-hidden')
+  } else {
+    occupationLogementBailleurOccupant.checked = false
+    warningProfileBailleurOccupant.classList.add('fr-hidden')
+  }
 }

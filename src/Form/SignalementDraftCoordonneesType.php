@@ -48,6 +48,7 @@ class SignalementDraftCoordonneesType extends AbstractType
             ProfileDeclarant::TIERS_PRO,
             ProfileDeclarant::SERVICE_SECOURS,
             ProfileDeclarant::BAILLEUR,
+            ProfileDeclarant::BAILLEUR_OCCUPANT,
         ];
         $choicesProfilesTiers = [];
         foreach ($profilesTiersList as $profileTiers) {
