@@ -72,8 +72,8 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-
-        $dossierStateSISHResponse = $esaboraService->getStateDossier($this->getAffectation(PartnerType::ARS));
+        $affectation = $this->getAffectation(PartnerType::ARS);
+        $dossierStateSISHResponse = $esaboraService->getStateDossier($affectation, $affectation->getSignalement()->getUuid());
 
         $this->assertEquals(200, $dossierStateSISHResponse->getStatusCode());
         $this->assertNull($dossierStateSISHResponse->getErrorReason());
@@ -86,7 +86,8 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $dossierVisiteSISHCollectionResponse = $esaboraService->getVisiteDossier($this->getAffectation(PartnerType::ARS));
+        $affectation = $this->getAffectation(PartnerType::ARS);
+        $dossierVisiteSISHCollectionResponse = $esaboraService->getVisiteDossier($affectation, $affectation->getSignalement()->getUuid());
 
         $this->assertEquals(200, $dossierVisiteSISHCollectionResponse->getStatusCode());
         $this->assertNull($dossierVisiteSISHCollectionResponse->getErrorReason());
@@ -100,7 +101,8 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
-        $dossierArreteSISHCollectionResponse = $esaboraService->getArreteDossier($this->getAffectation(PartnerType::ARS));
+        $affectation = $this->getAffectation(PartnerType::ARS);
+        $dossierArreteSISHCollectionResponse = $esaboraService->getArreteDossier($affectation, $affectation->getSignalement()->getUuid());
 
         $this->assertEquals(200, $dossierArreteSISHCollectionResponse->getStatusCode());
         $this->assertNull($dossierArreteSISHCollectionResponse->getErrorReason());

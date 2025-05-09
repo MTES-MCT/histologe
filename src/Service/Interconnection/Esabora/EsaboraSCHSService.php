@@ -50,7 +50,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         return $this->request($url, $token, $payload, $options);
     }
 
-    public function getStateDossier(Affectation $affectation): DossierStateSCHSResponse
+    public function getStateDossier(Affectation $affectation, string $uuidSignalement): DossierStateSCHSResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -59,7 +59,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
                 [
                     'criterionName' => 'SAS_Référence',
                     'criterionValueList' => [
-                        $affectation->getSignalement()->getUuid(),
+                        $uuidSignalement,
                     ],
                 ],
             ],
@@ -95,7 +95,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         );
     }
 
-    public function getDossierEvents(Affectation $affectation): DossierEventsSCHSCollectionResponse
+    public function getDossierEvents(Affectation $affectation, string $uuidSignalement): DossierEventsSCHSCollectionResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
@@ -105,7 +105,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
                 [
                     'criterionName' => 'SAS_Référence',
                     'criterionValueList' => [
-                        $affectation->getSignalement()->getUuid(),
+                        $uuidSignalement,
                     ],
                 ],
             ],

@@ -77,8 +77,10 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $affectation = $this->getAffectation(PartnerType::COMMUNE_SCHS);
         $dossierResponse = $esaboraService->getStateDossier(
-            $this->getAffectation(PartnerType::COMMUNE_SCHS)
+            $affectation,
+            $affectation->getSignalement()->getUuid()
         );
 
         $this->assertInstanceOf(DossierStateSCHSResponse::class, $dossierResponse);
@@ -95,8 +97,10 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         });
 
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $affectation = $this->getAffectation(PartnerType::COMMUNE_SCHS);
         $dossierResponse = $esaboraService->getStateDossier(
-            $this->getAffectation(PartnerType::COMMUNE_SCHS)
+            $affectation,
+            $affectation->getSignalement()->getUuid()
         );
         $this->assertEquals(Response::HTTP_SERVICE_UNAVAILABLE, $dossierResponse->getStatusCode());
     }
@@ -131,8 +135,10 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
         $mockHttpClient = new MockHttpClient([$mockResponse, $mockResponseEventFiles]);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $affectation = $this->getAffectation(PartnerType::COMMUNE_SCHS);
         $dossierEvents = $esaboraService->getDossierEvents(
-            $this->getAffectation(PartnerType::COMMUNE_SCHS)
+            $affectation,
+            $affectation->getSignalement()->getUuid(),
         );
         $this->assertEquals('27207', $dossierEvents->getSearchId());
         $affectation = $this->getAffectation(PartnerType::COMMUNE_SCHS);

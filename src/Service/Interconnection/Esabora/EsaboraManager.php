@@ -31,13 +31,14 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EsaboraManager
 {
+    private User $adminUser;
+
     public function __construct(
         private readonly AffectationManager $affectationManager,
         private readonly SuiviManager $suiviManager,
@@ -46,7 +47,6 @@ class EsaboraManager
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly UserManager $userManager,
         private readonly LoggerInterface $logger,
-        private readonly ParameterBagInterface $parameterBag,
         private readonly EntityManagerInterface $entityManager,
         private readonly ZipHelper $zipHelper,
         private readonly FileScanner $fileScanner,
@@ -56,22 +56,21 @@ class EsaboraManager
         private readonly FileFactory $fileFactory,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
     ) {
+        $this->adminUser = $this->userManager->getSystemUser();
     }
 
     public function synchronizeAffectationFrom(
         DossierResponseInterface $dossierResponse,
         Affectation $affectation,
     ): void {
-        $adminUser = $this->userManager->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         $signalement = $affectation->getSignalement();
-
-        $description = $this->updateStatusFor($affectation, $adminUser, $dossierResponse);
+        $description = $this->updateStatusFor($affectation, $this->adminUser, $dossierResponse);
         if (!empty($description)) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement <b>'.$description.'</b> par '.$affectation->getPartner()->getNom(),
                 type: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? Suivi::TYPE_TECHNICAL : Suivi::TYPE_AUTO,
-                user: $adminUser,
+                user: $this->adminUser,
             );
         }
     }
@@ -140,7 +139,7 @@ class EsaboraManager
         if (null !== $intervention) {
             $this->updateFromDossierVisite($intervention, $dossierVisiteSISH);
             $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent($intervention, $this->userManager->getSystemUser()),
+                new InterventionCreatedEvent($intervention, $this->adminUser),
                 InterventionCreatedEvent::UPDATED_BY_ESABORA
             );
         } else {
@@ -170,7 +169,7 @@ class EsaboraManager
                 );
                 $this->interventionRepository->save($newIntervention, true);
                 $this->eventDispatcher->dispatch(
-                    new InterventionCreatedEvent($newIntervention, $this->userManager->getSystemUser()),
+                    new InterventionCreatedEvent($newIntervention, $this->adminUser),
                     InterventionCreatedEvent::NAME
                 );
             }
@@ -195,7 +194,7 @@ class EsaboraManager
             $intervention->setAdditionalInformation($additionalInformation);
             $this->updateFromDossierArrete($intervention, $dossierArreteSISH);
             $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent($intervention, $this->userManager->getSystemUser()),
+                new InterventionCreatedEvent($intervention, $this->adminUser),
                 InterventionCreatedEvent::UPDATED_BY_ESABORA
             );
         } else {
@@ -218,7 +217,7 @@ class EsaboraManager
                 [ProcedureType::INSALUBRITE]
             );
             $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent($intervention, $this->userManager->getSystemUser()),
+                new InterventionCreatedEvent($intervention, $this->adminUser),
                 InterventionCreatedEvent::NAME
             );
         }
@@ -240,7 +239,7 @@ class EsaboraManager
             signalement: $affectation->getSignalement(),
             description: $description,
             type: Suivi::TYPE_PARTNER,
-            user: $this->userManager->getSystemUser(),
+            user: $this->adminUser,
             context: Suivi::CONTEXT_SCHS,
             flush: false,
         );

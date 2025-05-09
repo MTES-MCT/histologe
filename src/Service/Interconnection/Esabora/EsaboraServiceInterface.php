@@ -7,5 +7,5 @@ use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
 
 interface EsaboraServiceInterface
 {
-    public function getStateDossier(Affectation $affectation): DossierResponseInterface;
+    public function getStateDossier(Affectation $affectation, string $uuidSignalement): DossierResponseInterface;
 }

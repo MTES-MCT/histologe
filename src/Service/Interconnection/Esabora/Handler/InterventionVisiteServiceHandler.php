@@ -21,10 +21,10 @@ class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterfa
     /**
      * @throws \Exception
      */
-    public function handle(Affectation $affectation): void
+    public function handle(Affectation $affectation, string $uuidSignalement): void
     {
         $hasDateError = false;
-        $dossierVisiteSISHCollectionResponse = $this->esaboraSISHService->getVisiteDossier($affectation);
+        $dossierVisiteSISHCollectionResponse = $this->esaboraSISHService->getVisiteDossier($affectation, $uuidSignalement);
         if (AbstractEsaboraService::hasSuccess($dossierVisiteSISHCollectionResponse)) {
             foreach ($dossierVisiteSISHCollectionResponse->getCollection() as $dossierVisite) {
                 if (!$dossierVisite->getVisiteDate()) {

@@ -23,6 +23,7 @@ class JobEventManager extends AbstractManager
         ?int $signalementId,
         ?int $partnerId,
         ?PartnerType $partnerType,
+        ?bool $flush = true,
     ): JobEvent {
         $jobEvent = (new JobEvent())
             ->setSignalementId($signalementId)
@@ -35,7 +36,7 @@ class JobEventManager extends AbstractManager
             ->setStatus($status)
             ->setCodeStatus($codeStatus);
 
-        $this->save($jobEvent);
+        $this->save($jobEvent, $flush);
 
         return $jobEvent;
     }

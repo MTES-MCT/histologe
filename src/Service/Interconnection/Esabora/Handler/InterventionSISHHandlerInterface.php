@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('app.intervention_sish_handler')]
 interface InterventionSISHHandlerInterface
 {
-    public function handle(Affectation $affectation);
+    public function handle(Affectation $affectation, string $uuidSignalement);
 
     public function getServiceName(): string;
 
