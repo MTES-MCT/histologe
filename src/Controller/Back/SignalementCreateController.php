@@ -446,12 +446,14 @@ class SignalementCreateController extends AbstractController
                 $signalement->setIsNotOccupant(true);
             }
 
-            $route = 'back_signalements_index';
+            $route = 'back_signalement_view';
+            $params = ['uuid' => $signalement->getUuid()];
             if (count($assignablePartners)) {
                 $autoAssigner->assign($signalement);
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis par l\'auto-affectation');
                 if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
                     $route = 'back_signalement_drafts';
+                    $params = [];
                 }
             } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY') && !empty($partnerIds)) {
                 $partnersList = explode(',', $partnerIds);
@@ -473,10 +475,11 @@ class SignalementCreateController extends AbstractController
 
                 $this->addFlash('success', 'Le signalement a bien été créé. Il doit être validé par les responsables de territoire. Si ce signalement est affecté à votre partenaire, il sera visible dans la liste des signalements.');
                 $route = 'back_signalement_drafts';
+                $params = [];
             }
             $signalementManager->flush();
 
-            return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, [], UrlGeneratorInterface::ABSOLUTE_URL)]);
+            return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL)]);
         }
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-validation.html.twig', [
