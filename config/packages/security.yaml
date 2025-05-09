@@ -20,7 +20,7 @@ security:
                 class: App\Entity\User
                 property: email
         app_signalement_user_provider:
-            id: App\Security\SignalementUserProvider
+            id: App\Security\Provider\SignalementUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -30,8 +30,8 @@ security:
             stateless: true
             provider: app_user_provider
             custom_authenticators:
-                - App\Security\JsonLoginAuthenticator
-                - App\Security\TokenAuthenticator
+                - App\Security\Authenticator\JsonLoginAuthenticator
+                - App\Security\Authenticator\TokenAuthenticator
             login_throttling:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
@@ -39,7 +39,7 @@ security:
             pattern: ^/(suivre-mon-signalement|suivre-ma-procedure|logout-suivi)
             stateless: false
             provider: app_signalement_user_provider
-            custom_authenticator: App\Security\CodeSuiviLoginAuthenticator
+            custom_authenticator: App\Security\Authenticator\CodeSuiviLoginAuthenticator
             login_throttling:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
@@ -51,7 +51,7 @@ security:
             lazy: true
             stateless: false
             provider: app_user_provider
-            custom_authenticator: App\Security\FormLoginAuthenticator
+            custom_authenticator: App\Security\Authenticator\FormLoginAuthenticator
             two_factor:
                 auth_form_path: 2fa_login
                 check_path: 2fa_login_check

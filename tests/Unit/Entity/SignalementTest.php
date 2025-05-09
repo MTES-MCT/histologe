@@ -51,7 +51,10 @@ class SignalementTest extends KernelTestCase
 
     public function testGetProfileDeclarant(): void
     {
-        $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
+        $signalement = $this->getSignalement(
+            territory: $this->getTerritory('Pas-de-calais', '62'),
+            profileDeclarant: ProfileDeclarant::LOCATAIRE
+        );
         $this->assertEquals(ProfileDeclarant::LOCATAIRE, $signalement->getProfileDeclarant());
     }
 

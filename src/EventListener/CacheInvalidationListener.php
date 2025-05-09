@@ -5,7 +5,7 @@ namespace App\EventListener;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Security\SignalementUser;
+use App\Security\User\SignalementUser;
 use App\Service\CacheCommonKeyGenerator;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;

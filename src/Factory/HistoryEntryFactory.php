@@ -7,6 +7,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\HistoryEntry;
 use App\Entity\User;
+use App\Security\User\SignalementUser;
 use Symfony\Bundle\SecurityBundle\Security;
 
 readonly class HistoryEntryFactory
@@ -23,6 +24,9 @@ readonly class HistoryEntryFactory
     ): HistoryEntry {
         /** @var User $user */
         $user = $this->security->getUser();
+        if ($user instanceof SignalementUser) {
+            $user = $user->getUser();
+        }
         $historyEntry = (new HistoryEntry())
             ->setEvent($historyEntryEvent)
             ->setEntity($entityHistory)

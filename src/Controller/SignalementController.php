@@ -17,6 +17,7 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
 use App\Repository\SignalementRepository;
+use App\Security\User\SignalementUser;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
@@ -423,8 +424,11 @@ class SignalementController extends AbstractController
         $requestEmail = $request->get('from');
         $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
 
+        /** @var SignalementUser $currentUser */
         $currentUser = $security->getUser();
-        if ((!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getUserIdentifier() !== $code) && $this->featureSecureUuidUrl) {
+        if ((!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || !str_starts_with($currentUser->getUserIdentifier(), $code))
+            && $this->featureSecureUuidUrl
+        ) {
             // get the login error if there is one
             $error = $authenticationUtils->getLastAuthenticationError();
 
@@ -510,11 +514,11 @@ class SignalementController extends AbstractController
             }
 
             $suiviManager->createSuivi(
-                user: $user,
                 signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_USAGER,
                 isPublic: true,
+                user: $user,
             );
 
             return $this->redirectToRoute(
@@ -549,8 +553,9 @@ class SignalementController extends AbstractController
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
 
             if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
+                /** @var SignalementUser $currentUser */
                 $currentUser = $security->getUser();
-                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getUserIdentifier() !== $code) {
+                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || !str_starts_with($currentUser->getUserIdentifier(), $code)) {
                     // get the login error if there is one
                     $error = $authenticationUtils->getLastAuthenticationError();
 

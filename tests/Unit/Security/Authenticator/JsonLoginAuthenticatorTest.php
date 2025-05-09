@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Unit\Security;
+namespace App\Tests\Unit\Security\Authenticator;
 
 use App\Entity\ApiUserToken;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Security\JsonLoginAuthenticator;
+use App\Security\Authenticator\JsonLoginAuthenticator;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 use Symfony\Component\HttpFoundation\Request;
