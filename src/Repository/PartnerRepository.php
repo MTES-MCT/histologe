@@ -6,6 +6,7 @@ use App\Dto\CountPartner;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -83,7 +84,7 @@ class PartnerRepository extends ServiceEntityRepository
                     JOIN up2.user u2
                     WHERE up2.partner = p
                     AND u2.email IS NOT NULL
-                    AND u2.statut = 1
+                    AND u2.statut LIKE \''.UserStatus::ACTIVE->value.'\'
                     AND u2.isMailingActive = 1
                 ) THEN 1
                 ELSE 0

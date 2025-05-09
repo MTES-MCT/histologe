@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Entity\User;
+use App\Entity\Enum\UserStatus;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
@@ -46,7 +46,7 @@ class ReinitAdminPasswordsCommand extends Command
 
         foreach ($users as $user) {
             /* @var User $user */
-            $user->setPassword('')->setStatut(User::STATUS_INACTIVE);
+            $user->setPassword('')->setStatut(UserStatus::INACTIVE);
             $this->userManager->loadUserTokenForUser($user, false);
 
             /** @var ConstraintViolationList $errors */

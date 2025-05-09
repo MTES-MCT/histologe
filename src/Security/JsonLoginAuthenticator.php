@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\ApiUserToken;
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Random\RandomException;
@@ -55,7 +56,7 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
             new UserBadge($email, function (string $email) {
                 $user = $this->userRepository->findOneBy([
                     'email' => $email,
-                    'statut' => User::STATUS_ACTIVE,
+                    'statut' => UserStatus::ACTIVE,
                 ]);
 
                 if (null === $user || !in_array(User::ROLE_API_USER, $user->getRoles(), true)) {

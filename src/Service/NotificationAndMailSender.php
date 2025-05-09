@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -170,7 +171,7 @@ class NotificationAndMailSender
             $recipients->removeElement($this->suivi->getCreatedBy()?->getEmail());
             foreach ($recipients as $recipient) {
                 if ($this->signalement->isTiersDeclarant() && $recipient === $this->signalement->getMailDeclarant()) {
-                    $agentExist = $this->userRepository->findAgentByEmail(email: $recipient, userStatus: User::STATUS_ACTIVE, acceptRoleApi: false);
+                    $agentExist = $this->userRepository->findAgentByEmail(email: $recipient, userStatus: UserStatus::ACTIVE, acceptRoleApi: false);
                     if ($agentExist) {
                         continue;
                     }
@@ -295,7 +296,7 @@ class NotificationAndMailSender
             $suiviPartner = $this->suivi->getCreatedBy()?->getPartnerInTerritory($this->suivi->getSignalement()->getTerritory());
         }
 
-        return User::STATUS_ACTIVE === $user->getStatut()
+        return UserStatus::ACTIVE === $user->getStatut()
             && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()
             && (!empty($this->affectation) || ($this->suivi->getCreatedBy() && $partner !== $suiviPartner));
     }

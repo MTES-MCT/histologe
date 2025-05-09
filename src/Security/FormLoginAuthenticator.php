@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -49,7 +50,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
 
         $passport = new Passport(
             new UserBadge($email, function (string $email) {
-                return $this->userRepository->findAgentByEmail(email: $email, userStatus: User::STATUS_ACTIVE, acceptRoleApi: false);
+                return $this->userRepository->findAgentByEmail(email: $email, userStatus: UserStatus::ACTIVE, acceptRoleApi: false);
             }),
             new PasswordCredentials($request->request->get('password', '')),
             [

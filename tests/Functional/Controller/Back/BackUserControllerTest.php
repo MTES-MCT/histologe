@@ -38,7 +38,7 @@ class BackUserControllerTest extends WebTestCase
         yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 22];
         yield 'Search with territory 13' => [['territory' => 13], 16];
         yield 'Search with territory 13 and partner 6 and 7' => [['territory' => 13, 'partners' => [6, 7]], 2];
-        yield 'Search with status 0' => [['statut' => 0], 10];
+        yield 'Search with status INACTIVE' => [['statut' => 'INACTIVE'], 10];
         yield 'Search with role ROLE_ADMIN' => [['role' => 'ROLE_ADMIN'], 3];
         yield 'Search with role ROLE_ADMIN and territory 13' => [['role' => 'ROLE_ADMIN', 'territory' => 13], 0];
         yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 14];
@@ -70,9 +70,9 @@ class BackUserControllerTest extends WebTestCase
         yield 'Search without params' => [[], 15];
         yield 'Search with queryUser user' => [['queryUser' => 'user'], 10];
         yield 'Search with partner 6 and 7' => [['partners' => [2]], 5];
-        yield 'Search with status 1' => [['statut' => 1], 11];
+        yield 'Search with status ACTIVE' => [['statut' => 'ACTIVE'], 11];
         yield 'Search with role ROLE_USER_PARTNER' => [['role' => 'ROLE_USER_PARTNER'], 10];
-        yield 'Search with role ROLE_USER_PARTNER and status 1' => [['role' => 'ROLE_USER_PARTNER', 'statut' => 1], 6];
+        yield 'Search with role ROLE_USER_PARTNER and status ACTIVE' => [['role' => 'ROLE_USER_PARTNER', 'statut' => 'ACTIVE'], 6];
         yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 15];
         yield 'Search with partnerType Ars' => [['partnerType' => 'ARS'], 1];
     }

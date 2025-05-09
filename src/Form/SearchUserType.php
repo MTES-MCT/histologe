@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -86,8 +87,8 @@ class SearchUserType extends AbstractType
         });
         $builder->add('statut', ChoiceType::class, [
             'choices' => [
-                'Activé' => 1,
-                'Non activé' => 0,
+                'Activé' => UserStatus::ACTIVE->value,
+                'Non activé' => UserStatus::INACTIVE->value,
             ],
             'required' => false,
             'placeholder' => 'Tous les statuts',

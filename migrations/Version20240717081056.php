@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Entity\User;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -19,11 +18,12 @@ final class Version20240717081056 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE user ADD cgu_version_checked VARCHAR(255) DEFAULT NULL');
 
+        $statusActive = 1;
         $this->addSql("
             UPDATE user
             SET cgu_version_checked = '05/06/2024'
             WHERE last_login_at IS NOT NULL
-              AND statut = ".User::STATUS_ACTIVE.'
+              AND statut = ".$statusActive.'
         ');
     }
 

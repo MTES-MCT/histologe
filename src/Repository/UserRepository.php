@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Dto\CountUser;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -68,7 +69,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('u.roles LIKE :role')
             ->setParameter('role', '%"ROLE_ADMIN"%')
             ->andWhere('u.statut LIKE :active')
-            ->setParameter('active', User::STATUS_ACTIVE)
+            ->setParameter('active', UserStatus::ACTIVE)
             ->getQuery()
             ->getResult();
     }
@@ -85,7 +86,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('role2', '"ROLE_ADMIN_TERRITORY"')
                 ->setParameter('territory', $territory)
             ->andWhere('u.statut LIKE :active')
-                ->setParameter('active', User::STATUS_ACTIVE);
+                ->setParameter('active', UserStatus::ACTIVE);
 
         return $queryBuilder->getQuery()
             ->getResult();
@@ -99,7 +100,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('u.email LIKE :email')
             ->setParameter('email', $email.'%')
             ->andWhere('u.statut LIKE :archived')
-            ->setParameter('archived', User::STATUS_ARCHIVE)
+            ->setParameter('archived', UserStatus::ARCHIVE)
             ->andWhere('u.anonymizedAt IS NULL')
             ->getQuery()
             ->getOneOrNullResult();
@@ -138,7 +139,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('JSON_CONTAINS(u.roles, :role) = 1 ')
             ->setParameter('role', '"ROLE_ADMIN_TERRITORY"')
             ->andWhere('u.statut = :active')
-            ->setParameter('active', User::STATUS_ACTIVE);
+            ->setParameter('active', UserStatus::ACTIVE);
 
         if ($inseeOccupant) {
             $queryBuilder->andWhere(
@@ -162,7 +163,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 FROM user u
                 LEFT JOIN user_partner up ON up.user_id = u.id
                 LEFT JOIN affectation a ON a.partner_id = up.partner_id AND a.statut = 0
-                WHERE u.statut = 0 AND DATE(u.created_at) <= (DATE(NOW()) - INTERVAL 10 DAY)
+                WHERE u.statut LIKE \''.UserStatus::INACTIVE->value.'\' AND DATE(u.created_at) <= (DATE(NOW()) - INTERVAL 10 DAY)
                 AND u.roles NOT LIKE "%ROLE_USAGER%"
                 GROUP BY u.email, u.created_at
                 ORDER BY nb_signalements desc';
@@ -213,7 +214,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             $queryBuilder
                 ->andWhere('u.statut = :archived'.$builtOrCondition)
-                ->setParameter('archived', User::STATUS_ARCHIVE);
+                ->setParameter('archived', UserStatus::ARCHIVE);
 
             if (!empty($territory)) {
                 $queryBuilder
@@ -272,11 +273,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             SUM(CASE WHEN u.statut = :inactive THEN 1 ELSE 0 END))',
             CountUser::class
         ))
-            ->setParameter('active', User::STATUS_ACTIVE)
-            ->setParameter('inactive', User::STATUS_INACTIVE)
+            ->setParameter('active', UserStatus::ACTIVE)
+            ->setParameter('inactive', UserStatus::INACTIVE)
             ->where('u.statut != :statut')
             ->andWhere('u.roles not like :role')
-            ->setParameter('statut', User::STATUS_ARCHIVE)
+            ->setParameter('statut', UserStatus::ARCHIVE)
             ->setParameter('role', '%'.User::ROLE_USAGER.'%')
             ->leftJoin('u.userPartners', 'up')
             ->leftJoin('up.partner', 'p');
@@ -321,7 +322,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb = $this->getQueryBuilerForinactiveUsersSince('2 years');
         $qb->andWhere('u.anonymizedAt IS NULL');
-        $qb->andWhere('u.statut = :statut')->setParameter('statut', User::STATUS_ARCHIVE);
+        $qb->andWhere('u.statut = :statut')->setParameter('statut', UserStatus::ARCHIVE);
 
         return $qb->getQuery()->execute();
     }
@@ -330,7 +331,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb = $this->getQueryBuilerForinactiveUsersSince('1 year');
 
-        $qb->andWhere('u.statut != :statut')->setParameter('statut', User::STATUS_ARCHIVE);
+        $qb->andWhere('u.statut != :statut')->setParameter('statut', UserStatus::ARCHIVE);
         $qb->andWhere('u.anonymizedAt IS NULL');
         $qb->andWhere('u.archivingScheduledAt IS NULL');
 
@@ -413,7 +414,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $qb->orderBy('u.nom', 'ASC');
         }
 
-        $qb->andWhere('u.statut != :statutArchive')->setParameter('statutArchive', User::STATUS_ARCHIVE);
+        $qb->andWhere('u.statut != :statutArchive')->setParameter('statutArchive', UserStatus::ARCHIVE);
 
         $qb->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')->setParameter('roleUsager', '"ROLE_USAGER"');
         if (!$searchUser->getUser()->isSuperAdmin()) {
@@ -460,7 +461,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb;
     }
 
-    public function findAgentByEmail(string $email, ?int $userStatus = null, $acceptRoleApi = true): ?User
+    public function findAgentByEmail(string $email, ?UserStatus $userStatus = null, $acceptRoleApi = true): ?User
     {
         $queryBuilder = $this->createQueryBuilder('u')
             ->andWhere('u.email = :email')
@@ -490,7 +491,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->innerJoin('p.affectations', 'a')
             ->where('a.signalement = :signalement')
             ->setParameter('signalement', $signalement)
-            ->andWhere('u.statut = '.User::STATUS_ACTIVE);
+            ->andWhere('u.statut = :userStatus')
+            ->setParameter('userStatus', UserStatus::ACTIVE);
 
         if (null !== $partnerToExclude) {
             $queryBuilder
@@ -507,7 +509,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->innerJoin('u.notifications', 'n')
             ->where('n.waitMailingSummary = 1')
             ->andWhere('u.statut = :active')
-            ->setParameter('active', User::STATUS_ACTIVE);
+            ->setParameter('active', UserStatus::ACTIVE);
 
         return $queryBuilder->getQuery()->getResult();
     }
@@ -522,8 +524,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('u.statut = :statutActive OR u.statut = :statutInactive')
             ->setParameter('email', $proConnectUser->email)
             ->setParameter('proConnectUserId', $proConnectUser->sub)
-            ->setParameter('statutActive', User::STATUS_ACTIVE)
-            ->setParameter('statutInactive', User::STATUS_INACTIVE);
+            ->setParameter('statutActive', UserStatus::ACTIVE)
+            ->setParameter('statutInactive', UserStatus::INACTIVE);
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }

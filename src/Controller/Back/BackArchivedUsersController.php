@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Entity\UserPartner;
 use App\Form\SearchArchivedUserType;
@@ -63,7 +64,7 @@ class BackArchivedUsersController extends AbstractController
     ): Response {
         $isUserUnlinked = $user->getPartners()->isEmpty();
 
-        if ((User::STATUS_ARCHIVE !== $user->getStatut() && !$isUserUnlinked) || $user->getAnonymizedAt()) {
+        if ((UserStatus::ARCHIVE !== $user->getStatut() && !$isUserUnlinked) || $user->getAnonymizedAt()) {
             $this->addFlash('error', 'Ce compte ne peut pas être réactivé.');
 
             return $this->redirect($this->generateUrl('back_archived_users_index'));
@@ -90,7 +91,7 @@ class BackArchivedUsersController extends AbstractController
         }
 
         if (!$userExist && !$partnerExist && $form->isSubmitted() && $form->isValid()) {
-            $user->setStatut(User::STATUS_ACTIVE);
+            $user->setStatut(UserStatus::ACTIVE);
             $user->setEmail($untaggedEmail);
             // tempPartner is not mapped, so we need to set the partner manually
             foreach ($user->getUserPartners() as $userPartner) {

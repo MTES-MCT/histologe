@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ApiUserToken;
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -31,7 +32,7 @@ class ApiUserTokenRepository extends ServiceEntityRepository implements EntityCl
             ->andWhere('a.token = :token')
             ->andWhere('a.expiresAt > :now')
             ->setParameter('role_api', '%'.User::ROLE_API_USER.'%')
-            ->setParameter('statut_active', User::STATUS_ACTIVE)
+            ->setParameter('statut_active', UserStatus::ACTIVE)
             ->setParameter('token', $token)
             ->setParameter('now', new \DateTimeImmutable())
             ->setMaxResults(1);

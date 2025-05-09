@@ -12,6 +12,7 @@ use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\UserStatus;
 use App\Entity\File;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
@@ -172,7 +173,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $signalement
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
                 ->setClosedAt(new \DateTimeImmutable())
-                ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
+                ->setClosedBy($this->userRepository->findOneBy(['statut' => UserStatus::ACTIVE]));
         }
 
         if (SignalementStatus::REFUSED->value === $row['statut']) {
@@ -414,7 +415,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $signalement
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
                 ->setClosedAt(new \DateTimeImmutable())
-                ->setClosedBy($this->userRepository->findOneBy(['statut' => User::STATUS_ACTIVE]));
+                ->setClosedBy($this->userRepository->findOneBy(['statut' => UserStatus::ACTIVE]));
         }
 
         if (SignalementStatus::REFUSED->value === $row['statut']) {

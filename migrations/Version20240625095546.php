@@ -18,9 +18,9 @@ final class Version20240625095546 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $suffixArchived = User::SUFFIXE_ARCHIVED;
-        $statusActive = User::STATUS_ACTIVE;
-        $statusInactive = User::STATUS_INACTIVE;
-        $statusArchive = User::STATUS_ARCHIVE;
+        $statusActive = 1;
+        $statusInactive = 0;
+        $statusArchive = 2;
 
         $this->addSql("
             UPDATE user

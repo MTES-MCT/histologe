@@ -7,6 +7,7 @@ use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\UserStatus;
 use App\Repository\PartnerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -161,7 +162,7 @@ class Partner implements EntityHistoryInterface
     public function getUserPartners(): Collection
     {
         return $this->userPartners->filter(function (UserPartner $userPartner) {
-            return User::STATUS_ARCHIVE !== $userPartner->getUser()->getStatut();
+            return UserStatus::ARCHIVE !== $userPartner->getUser()->getStatut();
         });
     }
 
@@ -272,7 +273,7 @@ class Partner implements EntityHistoryInterface
             if ($excludeUser && $user->getId() === $excludeUser->getId()) {
                 continue;
             }
-            if (User::STATUS_ACTIVE === $user->getStatut() && $user->getIsMailingActive()) {
+            if (UserStatus::ACTIVE === $user->getStatut() && $user->getIsMailingActive()) {
                 return true;
             }
         }

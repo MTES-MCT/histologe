@@ -3,6 +3,7 @@
 namespace App\Service\ListFilters;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
@@ -20,7 +21,7 @@ class SearchUser
     private ?Territory $territory = null;
     private Collection $partners;
     private ?PartnerType $partnerType = null;
-    private ?int $statut = null;
+    private ?string $statut = null;
     private ?string $role = null;
     private ?string $permissionAffectation = null;
     private ?string $orderType = null;
@@ -79,12 +80,12 @@ class SearchUser
         $this->partnerType = $partnerType;
     }
 
-    public function getStatut(): ?int
+    public function getStatut(): ?string
     {
         return $this->statut;
     }
 
-    public function setStatut(?int $statut): void
+    public function setStatut(?string $statut): void
     {
         $this->statut = $statut;
     }
@@ -150,7 +151,7 @@ class SearchUser
             $filters['Type de partenaire'] = $this->partnerType->label();
         }
         if (null !== $this->statut) {
-            $filters['Statut'] = User::STATUS_LABELS[$this->statut];
+            $filters['Statut'] = UserStatus::from($this->statut)->label();
         }
         if ($this->role) {
             $filters['Rôle'] = array_search($this->role, User::ROLES);

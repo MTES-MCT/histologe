@@ -2,7 +2,7 @@
 
 namespace App\Controller\Security;
 
-use App\Entity\User;
+use App\Entity\Enum\UserStatus;
 use App\Repository\UserRepository;
 use App\Security\FormLoginAuthenticator;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
@@ -64,8 +64,8 @@ class ProConnectController extends AbstractController
             if ($user) {
                 if ($user->getProConnectUserId() !== $proConnectUser->sub) {
                     $user->setProConnectUserId($proConnectUser->sub);
-                    if (User::STATUS_INACTIVE === $user->getStatut()) {
-                        $user->setStatut(User::STATUS_ACTIVE);
+                    if (UserStatus::INACTIVE === $user->getStatut()) {
+                        $user->setStatut(UserStatus::ACTIVE);
                     }
                     $this->entityManager->flush();
                 }

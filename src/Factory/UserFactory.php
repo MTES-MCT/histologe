@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 
 class UserFactory
@@ -20,7 +21,7 @@ class UserFactory
             ->setPrenom($firstname)
             ->setNom($lastname)
             ->setEmail($email)
-            ->setStatut(User::STATUS_INACTIVE)
+            ->setStatut(UserStatus::INACTIVE)
             ->setIsMailingActive($isMailActive)
             ->setIsActivateAccountNotificationEnabled($isActivateAccountNotificationEnabled)
             ->setHasPermissionAffectation($hasPermissionAffectation);

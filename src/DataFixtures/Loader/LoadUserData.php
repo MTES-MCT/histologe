@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Entity\UserPartner;
@@ -62,7 +63,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         $faker = Factory::create();
         $user = (new User())
             ->setRoles(json_decode($row['roles'], true))
-            ->setStatut($row['statut'])
+            ->setStatut(UserStatus::from($row['statut']))
             ->setIsMailingActive($row['is_mailing_active'])
             ->setPrenom($faker->firstName())
             ->setNom($faker->lastName());
@@ -71,7 +72,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             $user->setHasPermissionAffectation($row['has_permission_affectation']);
         }
 
-        if (User::STATUS_ARCHIVE === $row['statut']) {
+        if (UserStatus::ARCHIVE->value === $row['statut']) {
             $user->setEmail(Sanitizer::tagArchivedEmail($row['email']));
         } else {
             $user->setEmail($row['email']);
@@ -132,7 +133,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             isMailActive: false,
         );
         $password = $this->hasher->hashPassword($user, self::APP_PLAIN_PASSWORD);
-        $user->setStatut(User::STATUS_ACTIVE)->setPassword($password);
+        $user->setStatut(UserStatus::ACTIVE)->setPassword($password);
         $manager->persist($user);
 
         $partner = $this->partnerRepository->findOneBy(['nom' => Partner::DEFAULT_PARTNER]);

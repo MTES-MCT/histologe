@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
@@ -284,7 +285,7 @@ class PartnerController extends AbstractController
                     }
                 } else {
                     $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
-                    $user->setStatut(User::STATUS_ARCHIVE);
+                    $user->setStatut(UserStatus::ARCHIVE);
                     $entityManager->persist($user);
                     $notificationMailerRegistry->send(
                         new NotificationMail(
@@ -425,7 +426,7 @@ class PartnerController extends AbstractController
                 $userExist->setIsMailingActive($user->getIsMailingActive());
                 $userExist->setIsMailingSummary($user->getIsMailingSummary());
                 $userExist->setHasPermissionAffectation($user->hasPermissionAffectation());
-                $userExist->setStatut(User::STATUS_INACTIVE);
+                $userExist->setStatut(UserStatus::INACTIVE);
                 $userExist->setRoles([$formUserPartner->get('role')->getData()]);
                 $userPartner->setUser($userExist);
                 $user = $userExist;
@@ -542,7 +543,7 @@ class PartnerController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted('USER_DELETE', $user);
-        if (User::STATUS_ARCHIVE === $user->getStatut()) {
+        if (UserStatus::ARCHIVE === $user->getStatut()) {
             $this->addFlash('error', 'Cet utilisateur est déjà supprimé.');
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
@@ -577,7 +578,7 @@ class PartnerController extends AbstractController
             )
         );
         $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
-        $user->setStatut(User::STATUS_ARCHIVE);
+        $user->setStatut(UserStatus::ARCHIVE);
         $user->setProConnectUserId(null);
         $userManager->save($user);
         $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');

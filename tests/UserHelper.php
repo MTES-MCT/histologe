@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -39,7 +40,7 @@ trait UserHelper
     {
         return (new User())
             ->setEmail('proconnect@signal-logement.fr')
-            ->setStatut(User::STATUS_ACTIVE)
+            ->setStatut(UserStatus::ACTIVE)
             ->setRoles([User::ROLE_ADMIN_TERRITORY])
             ->setProConnectUserId('1234');
     }
