@@ -4,7 +4,7 @@ namespace App\Controller\Security;
 
 use App\Entity\Enum\UserStatus;
 use App\Repository\UserRepository;
-use App\Security\FormLoginAuthenticator;
+use App\Security\Authenticator\FormLoginAuthenticator;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
 use App\Service\Gouv\ProConnect\Request\CallbackRequest;
