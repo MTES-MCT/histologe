@@ -58,7 +58,9 @@ EXIT_CODE=$?
 TITLE="[Metabase] Synchronisation de Bdd"
 if [ $EXIT_CODE -ne 0 ]; then
     echo ">>> ERROR: Database sync failed!"
-    cat mysql_error.log
+    
+    line=$(tail -n 1 mysql_error.log)
+    echo $line
 
     # Capture les logs MySQL pour le diagnostic
     ERROR_MESSAGE="La synchronisation de la bdd a échoué avec le code $EXIT_CODE"
