@@ -2,24 +2,24 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Enum\Qualification;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserVoter extends Voter
 {
-    public const EDIT = 'USER_EDIT';
-    public const TRANSFER = 'USER_TRANSFER';
-    public const DELETE = 'USER_DELETE';
-    public const SEE_NDE = 'USER_SEE_NDE';
+    public const string EDIT = 'USER_EDIT';
+    public const string TRANSFER = 'USER_TRANSFER';
+    public const string DELETE = 'USER_DELETE';
+    public const string SEE_NDE = 'USER_SEE_NDE';
 
     public function __construct(
-        private Security $security,
-        private RoleHierarchyInterface $roleHierarchy,
+        private readonly Security $security,
+        private readonly RoleHierarchyInterface $roleHierarchy,
     ) {
     }
 
@@ -33,7 +33,7 @@ class UserVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof BoUserInterface) {
             return false;
         }
         if ($subject->getAnonymizedAt()) {

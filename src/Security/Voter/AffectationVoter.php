@@ -3,12 +3,12 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class AffectationVoter extends Voter
 {
@@ -36,7 +36,7 @@ class AffectationVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
+        if (!$user instanceof BoUserInterface || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
             return false;
         }
 

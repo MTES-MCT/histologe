@@ -3,15 +3,16 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Security\User\SignalementUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementVoter extends Voter
 {
@@ -59,11 +60,15 @@ class SignalementVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if ($user instanceof SignalementUser) {
             if (self::USAGER_EDIT === $attribute && $this->canUsagerEdit($subject)) {
                 return true;
             }
 
+            return false;
+        }
+
+        if (!$user instanceof BoUserInterface) {
             return false;
         }
 

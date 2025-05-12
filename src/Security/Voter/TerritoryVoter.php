@@ -2,17 +2,17 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Territory;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class TerritoryVoter extends Voter
 {
-    public const GET_DOCUMENT = 'GET_DOCUMENT';
-    public const GET_BAILLEURS_LIST = 'GET_BAILLEURS_LIST';
+    public const string GET_DOCUMENT = 'GET_DOCUMENT';
+    public const string GET_BAILLEURS_LIST = 'GET_BAILLEURS_LIST';
 
     public function __construct(private Security $security)
     {
@@ -27,7 +27,7 @@ class TerritoryVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof BoUserInterface) {
             return false;
         }
 

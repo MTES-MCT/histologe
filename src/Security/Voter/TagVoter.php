@@ -2,17 +2,17 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Tag;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class TagVoter extends Voter
 {
-    public const CREATE = 'TAG_CREATE';
-    public const EDIT = 'TAG_EDIT';
-    public const DELETE = 'TAG_DELETE';
+    public const string CREATE = 'TAG_CREATE';
+    public const string EDIT = 'TAG_EDIT';
+    public const string DELETE = 'TAG_DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -24,7 +24,7 @@ class TagVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof BoUserInterface) {
             return false;
         }
         if ($user->isSuperAdmin()) {
