@@ -451,7 +451,14 @@ class SignalementCreateController extends AbstractController
             if (count($assignablePartners)) {
                 $autoAssigner->assign($signalement);
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis par l\'auto-affectation');
-                if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
+                $hasAssignable = $user->getPartners()->exists(function ($key, $partner) use ($assignablePartners) {
+                    return in_array($partner, $assignablePartners, true);
+                });
+
+                if (
+                    !$this->isGranted('ROLE_ADMIN_TERRITORY')
+                    && !$hasAssignable
+                ) {
                     $route = 'back_signalement_drafts';
                     $params = [];
                 }

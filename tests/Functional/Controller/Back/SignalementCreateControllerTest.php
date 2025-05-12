@@ -336,12 +336,38 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEmailCount(0);
     }
 
-    public function testValidationSignalementWithAutoAffectationWithAgent()
+    public function testValidationSignalementWithAutoAffectationWithAgentAffected()
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-44-02@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000008']);
+
+        $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
+        ]);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertTrue($response['redirect']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
+
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+        $this->assertCount(1, $signalement->getSuivis());
+        $this->assertCount(1, $signalement->getAffectations());
+
+        $this->assertEmailCount(2);
+    }
+
+    public function testValidationSignalementWithAutoAffectationWithAgentNotAffected()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-44-04@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000008']);
+        $signalement->setCreatedBy($user);
 
         $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
         $this->client->request('POST', $route, [
