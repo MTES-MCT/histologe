@@ -227,6 +227,16 @@ const formStore: FormStore = reactive({
       }
     }
     return inputComponentsByScreen
+  },
+  countMonthsSinceBailleurPrevenu (): number {
+    if (formStore.data.info_procedure_bail_date.indexOf('/') === -1) {
+      return 0
+    }
+    const dateToday = new Date()
+    const dateBailleurPrevenuSplit = formStore.data.info_procedure_bail_date.split('/')
+    const dateBailleurPrevenu = new Date(dateBailleurPrevenuSplit[1], dateBailleurPrevenuSplit[0])
+    
+    return dateToday.getMonth() - dateBailleurPrevenu.getMonth() + (12 * (dateToday.getFullYear() - dateBailleurPrevenu.getFullYear()))
   }
 })
 
