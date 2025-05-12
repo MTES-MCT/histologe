@@ -59,7 +59,7 @@ class SignalementVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if ($user instanceof SignalementUser) {
+        if (!$user || $user instanceof SignalementUser) {
             if (self::USAGER_EDIT === $attribute && $this->canUsagerEdit($subject)) {
                 return true;
             }
