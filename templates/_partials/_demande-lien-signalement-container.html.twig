@@ -1,4 +1,4 @@
-<div id="container-form-demande-lien-signalement">
+<div id="container-form-demande-lien-signalement" class="{% if formatVertical is defined %}format-vertical{% endif %}">
 	{% include 'form/form-demande-lien-signalement.html.twig' with {'form': formDemandeLienSignalement} only %}
 </div>
 
