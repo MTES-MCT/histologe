@@ -7,7 +7,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
-use App\Manager\UserManager;
 use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -153,15 +152,19 @@ class SignalementControllerTest extends WebTestCase
         ]);
 
         $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
-            '_token' => $this->generateCsrfToken($client, 'signalement_front_response_'.$signalement->getUuid()),
-            'signalement_front_response' => [
-                'email' => $emailOccupant = $signalement->getMailOccupant(),
-                'type' => UserManager::OCCUPANT,
-                'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-            ],
+            '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+            'visitor-type' => 'occupant',
+            'login-first-letter-prenom' => mb_substr($signalement->getPrenomOccupant(), 0, 1),
+            'login-first-letter-nom' => mb_substr($signalement->getNomOccupant(), 0, 1),
+            'login-code-postal' => $signalement->getCpOccupant(),
         ]);
+        if ($status !== SignalementStatus::ACTIVE->value && $client->getResponse()->isRedirect()) {
+            $crawler = $client->followRedirect();
+        }
         if (SignalementStatus::ACTIVE->value === $status) {
-            $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'?from='.$emailOccupant);
+            $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
+        } elseif (SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
+            $this->assertEquals('Le lien utilisé est expiré ou invalide.', $crawler->filter('.fr-alert p')->text());
         } else {
             $this->assertEquals('Vous n\'avez pas les droits pour effectuer cette action.', $crawler->filter('.fr-alert p')->text());
         }

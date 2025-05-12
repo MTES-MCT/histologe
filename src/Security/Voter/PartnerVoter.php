@@ -7,15 +7,14 @@ use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class PartnerVoter extends Voter
 {
-    public const CREATE = 'PARTNER_CREATE';
-    public const EDIT = 'PARTNER_EDIT';
-    public const DELETE = 'PARTNER_DELETE';
-    public const USER_CREATE = 'USER_CREATE';
-    public const ASSIGN_PERMISSION_AFFECTATION = 'ASSIGN_PERMISSION_AFFECTATION';
+    public const string CREATE = 'PARTNER_CREATE';
+    public const string EDIT = 'PARTNER_EDIT';
+    public const string DELETE = 'PARTNER_DELETE';
+    public const string USER_CREATE = 'USER_CREATE';
+    public const string ASSIGN_PERMISSION_AFFECTATION = 'ASSIGN_PERMISSION_AFFECTATION';
 
     public function __construct(
         private Security $security,
@@ -31,7 +30,7 @@ class PartnerVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
         if ($this->security->isGranted('ROLE_ADMIN')) {

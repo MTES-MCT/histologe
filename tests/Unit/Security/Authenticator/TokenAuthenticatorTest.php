@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Unit\Security;
+namespace App\Tests\Unit\Security\Authenticator;
 
 use App\Entity\ApiUserToken;
 use App\Entity\User;
 use App\Repository\ApiUserTokenRepository;
-use App\Security\TokenAuthenticator;
+use App\Security\Authenticator\TokenAuthenticator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

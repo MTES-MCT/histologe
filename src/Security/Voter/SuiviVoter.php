@@ -9,11 +9,10 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class SuiviVoter extends Voter
 {
-    public const CREATE = 'COMMENT_CREATE';
+    public const string CREATE = 'COMMENT_CREATE';
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -25,7 +24,7 @@ class SuiviVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
+        if (!$user instanceof User || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
             return false;
         }
 

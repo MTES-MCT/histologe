@@ -7,13 +7,12 @@ use App\Entity\Zone;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class ZoneVoter extends Voter
 {
-    public const MANAGE = 'ZONE_MANAGE';
+    public const string MANAGE = 'ZONE_MANAGE';
 
-    public function __construct(private Security $security)
+    public function __construct(private readonly Security $security)
     {
     }
 
@@ -26,7 +25,7 @@ class ZoneVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 

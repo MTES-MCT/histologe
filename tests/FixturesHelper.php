@@ -48,38 +48,72 @@ trait FixturesHelper
             );
     }
 
-    public function getSignalement(?Territory $territory = null): Signalement
-    {
+    public function getSignalement(
+        ?Territory $territory = null,
+        ?ProfileDeclarant $profileDeclarant = null,
+        ?string $nom = null,
+        ?string $prenom = null,
+        ?string $codePostal = null,
+        ?string $codeSuivi = null,
+        ?string $email = null,
+    ): Signalement {
         $faker = Factory::create('fr_FR');
 
-        return (new Signalement())
-            ->setIsProprioAverti(false)
-            ->setNbAdultes(2)
-            ->setNbEnfantsP6(1)
-            ->setNbEnfantsM6(1)
-            ->setTelOccupant($faker->phoneNumber())
-            ->setAdresseOccupant('25 rue du test')
-            ->setEtageOccupant('2')
-            ->setVilleOccupant('Calais')
-            ->setCpOccupant('62100')
-            ->setNumAppartOccupant('2')
-            ->setCiviliteOccupant('mme')
-            ->setNomOccupant($faker->lastName())
-            ->setPrenomOccupant($faker->firstName())
-            ->setTelOccupant($faker->phoneNumber())
-            ->setMailOccupant($faker->email())
-            ->setNomProprio($faker->lastName())
-            ->setPrenomProprio($faker->firstName())
-            ->setAdresseProprio('27 rue de la république')
-            ->setCodePostalProprio('13002')
-            ->setVilleProprio('Marseille')
-            ->setTerritory($territory)
-            ->setInseeOccupant('62193')
-            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
-            ->setValidatedAt(new \DateTimeImmutable())
-            ->setScore(1.46265448)
-            ->setSuperficie(75.5)
-            ->addSuivi($this->getSuiviPartner());
+        $signalement = (new Signalement())
+           ->setIsProprioAverti(false)
+           ->setNbAdultes(2)
+           ->setNbEnfantsP6(1)
+           ->setNbEnfantsM6(1)
+           ->setTelOccupant($faker->phoneNumber())
+           ->setAdresseOccupant('25 rue du test')
+           ->setEtageOccupant('2')
+           ->setVilleOccupant('Calais')
+           ->setCpOccupant($codePostal ?? '62100')
+           ->setNumAppartOccupant('2')
+           ->setCiviliteOccupant('mme')
+           ->setNomOccupant($nom ?? $faker->lastName())
+           ->setPrenomOccupant($prenom ?? $faker->firstName())
+           ->setTelOccupant($faker->phoneNumber())
+           ->setMailOccupant($email ?? $faker->email())
+           ->setNomProprio($faker->lastName())
+           ->setPrenomProprio($faker->firstName())
+           ->setAdresseProprio('27 rue de la république')
+           ->setCodePostalProprio('13002')
+           ->setVilleProprio('Marseille')
+           ->setTerritory($territory)
+           ->setInseeOccupant('62193')
+           ->setProfileDeclarant($profileDeclarant ?? ProfileDeclarant::LOCATAIRE)
+           ->setValidatedAt(new \DateTimeImmutable())
+           ->setScore(1.46265448)
+           ->setSuperficie(75.5)
+           ->addSuivi($this->getSuiviPartner());
+
+        if (null !== $profileDeclarant && ProfileDeclarant::LOCATAIRE !== $profileDeclarant) {
+            $signalement
+                ->setProfileDeclarant($profileDeclarant)
+                ->setPrenomDeclarant($prenom)
+                ->setNomDeclarant($nom)
+                ->setMailDeclarant($email)
+                ->setCpOccupant($codePostal);
+        }
+
+        if ($codeSuivi) {
+            $signalement->setCodeSuivi($codeSuivi);
+        }
+
+        return $signalement;
+    }
+
+    public function getSignalementLocataire(): Signalement
+    {
+        return $this->getSignalement(
+            profileDeclarant: ProfileDeclarant::LOCATAIRE,
+            nom: 'Martin',
+            prenom: 'Luc',
+            codePostal: '13001',
+            codeSuivi: '12345678',
+            email: 'luc.martin@example.com'
+        );
     }
 
     /**

@@ -7,13 +7,12 @@ use App\Service\DashboardWidget\Widget;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class WidgetVoter extends Voter
 {
-    public const VIEW_WIDGET = 'VIEW_WIDGET';
+    public const string VIEW_WIDGET = 'VIEW_WIDGET';
 
-    public function __construct(private ParameterBagInterface $parameterBag)
+    public function __construct(private readonly ParameterBagInterface $parameterBag)
     {
     }
 
@@ -27,14 +26,14 @@ class WidgetVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 
         return $this->canViewWidget($subject, $user);
     }
 
-    public function canViewWidget(Widget $widget, UserInterface $user): bool
+    public function canViewWidget(Widget $widget, User $user): bool
     {
         if (!$this->parameterBag->has($widget->getType())) { // ignore voter if widget does not exists
             return true;

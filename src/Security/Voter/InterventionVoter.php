@@ -9,11 +9,10 @@ use App\Entity\Intervention;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class InterventionVoter extends Voter
 {
-    public const EDIT_VISITE = 'INTERVENTION_EDIT_VISITE';
+    public const string EDIT_VISITE = 'INTERVENTION_EDIT_VISITE';
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -24,7 +23,7 @@ class InterventionVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 

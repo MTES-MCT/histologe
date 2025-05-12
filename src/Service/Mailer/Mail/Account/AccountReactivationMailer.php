@@ -2,7 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Account;
 
-use App\Security\FormLoginAuthenticator;
+use App\Security\Authenticator\FormLoginAuthenticator;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;

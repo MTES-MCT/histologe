@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Security;
+namespace App\Security\Authenticator;
 
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
+use App\Security\Provider\SignalementUserProvider;
+use App\Security\User\SignalementUser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,6 +29,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SignalementRepository $signalementRepository,
+        private readonly SignalementUserProvider $signalementUserProvider,
     ) {
     }
 
@@ -65,14 +68,34 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
         $this->denyAccessIfNotAllowed($signalement, $firstLetterPrenom, $firstLetterNom, $codePostal, $visitorType);
 
+        $userIdentifier = $codeSuivi.':'.$visitorType;
+
         return new SelfValidatingPassport(
-            new UserBadge($codeSuivi),
+            new UserBadge($userIdentifier, function () use ($signalement, $userIdentifier) {
+                [$codeSuivi, $visitorType] = explode(':', $userIdentifier);
+                $usagerData = $this->signalementUserProvider->getUsagerData(
+                    $signalement,
+                    $visitorType,
+                    $codeSuivi
+                );
+
+                return new SignalementUser(
+                    $usagerData['identifier'],
+                    $usagerData['email'],
+                    $usagerData['user'] ?? null,
+                );
+            }),
             [new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token'))]
         );
     }
 
-    private function denyAccessIfNotAllowed(Signalement $signalement, string $inputFirstLetterPrenom, string $inputFirstLetterNom, string $inputCodePostal, ?string $visitorType): void
-    {
+    private function denyAccessIfNotAllowed(
+        Signalement $signalement,
+        string $inputFirstLetterPrenom,
+        string $inputFirstLetterNom,
+        string $inputCodePostal,
+        ?string $visitorType,
+    ): void {
         $testOccupant = false;
         if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
             || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()
