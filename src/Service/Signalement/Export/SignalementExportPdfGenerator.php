@@ -21,11 +21,16 @@ class SignalementExportPdfGenerator
     public function generateToTempFolder(
         Signalement $signalement,
         string $content,
+        bool $isForUsager = false,
         ?array $options = null,
     ): string {
         $pdfContent = $this->generate($content, $options);
 
-        $filename = 'export-pdf-signalement-'.$signalement->getUuid().'.pdf';
+        if ($isForUsager) {
+            $filename = 'export-pdf-dossier-'.$signalement->getUuid().'.pdf';
+        } else {
+            $filename = 'export-pdf-signalement-'.$signalement->getUuid().'.pdf';
+        }
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
         file_put_contents($tmpFilepath, $pdfContent);
 
