@@ -71,6 +71,7 @@ class PdfExportMessageHandler
             $tmpFilename = $this->signalementExportPdfGenerator->generateToTempFolder(
                 $signalement,
                 $htmlContent,
+                $pdfExportMessage->isForUsager(),
                 $this->parameterBag->get('export_options')
             );
 
