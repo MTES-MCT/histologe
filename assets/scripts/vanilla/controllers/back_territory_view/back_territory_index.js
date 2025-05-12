@@ -1,4 +1,4 @@
-import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams } from '../../services/list_filter_helper'
+import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams } from '../../services/ui/list_filter_helper'
 
 const searchTerritoryForm = document.getElementById('search-territory-form')
 

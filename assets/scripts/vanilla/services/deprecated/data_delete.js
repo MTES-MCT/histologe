@@ -1,8 +1,10 @@
+// n'est plus utilisé que pour supprimer des suivis ou des partenaires affectés dans la fiche signalement
+// essayer de s'en séparer
 document?.querySelectorAll('[data-delete]')?.forEach(actionBtn => {
   actionBtn.addEventListeners('click touchdown', event => {
     event.preventDefault()
     let className
-    if (event.target.classList.contains('partner-user-delete')) { className = '.partner-row-user' } else if (event.target.classList.contains('situation-critere-delete')) { className = '.situation-row-critere' } else if (event.target.classList.contains('signalement-row-delete')) { className = '.signalement-row' } else if (event.target.classList.contains('partner-row-delete')) { className = '.partner-row' }
+    if (event.target.classList.contains('partner-row-delete')) { className = '.partner-row' }
     if (confirm('Voulez-vous vraiment supprimer cet élément ?')) {
       const formData = new FormData()
       formData.append('_token', actionBtn.getAttribute('data-token'))

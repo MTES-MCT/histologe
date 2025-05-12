@@ -1,5 +1,5 @@
-import { attacheAutocompleteAddressEvent } from '../../services/component_search_address'
-import { initSearchAndSelectBadges } from '../../services/component_search_and_select_badges'
+import { attacheAutocompleteAddressEvent } from '../../services/component/component_search_address'
+import { initSearchAndSelectBadges } from '../../services/component/component_search_and_select_badges'
 
 let boFormSignalementCurrentTabIsDirty = false
 let boFormNeedRefreshValidationTab = true

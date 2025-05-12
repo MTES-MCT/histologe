@@ -1,4 +1,4 @@
-import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent } from '../../services/list_filter_helper'
+import { loadWindowWithLocalStorage, updateLocalStorageWithFormParams, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent } from '../../services/ui/list_filter_helper'
 
 const searchArchivedUsersForm = document.getElementById('search-archived-users-form')
 if (searchArchivedUsersForm) {

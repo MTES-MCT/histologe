@@ -1,4 +1,4 @@
-import { disableHeaderAndFooterButtonOfModal, enableHeaderAndFooterButtonOfModal } from '../../services/modales_helper'
+import { disableHeaderAndFooterButtonOfModal, enableHeaderAndFooterButtonOfModal } from '../../services/ui/modales_helper'
 
 const fieldsetVisitorType = document?.querySelector('#fieldset-visitor-type')
 if (fieldsetVisitorType) {

@@ -1,4 +1,4 @@
-import { loadWindowWithLocalStorage } from '../../services/list_filter_helper'
+import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper'
 
 if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   window.onscroll = function () {
