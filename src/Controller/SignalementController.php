@@ -25,7 +25,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
-use App\Service\Signalement\SignalementDraftHelper;
+use App\Service\Signalement\SignalementDuplicateChecker;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -116,9 +116,9 @@ class SignalementController extends AbstractController
     public function checkSignalementOrDraftAlreadyExists(
         Request $request,
         SignalementDraftRequestSerializer $serializer,
-        SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
-        SignalementRepository $signalementRepository,
+        SignalementDuplicateChecker $signalementDuplicateChecker,
+        SignalementDraftManager $signalementDraftManager,
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -138,55 +138,15 @@ class SignalementController extends AbstractController
         }
 
         if (0 === $errors->count()) {
-            $isTiersDeclarant = SignalementDraftHelper::isTiersDeclarant($signalementDraftRequest);
-            $existingSignalements = $signalementRepository->findAllForEmailAndAddress(
-                SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest),
-                $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
-                $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
-                $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
-                $isTiersDeclarant
-            );
-
-            $existingSignalementDraft = $signalementDraftManager->findSignalementDraftByAddressAndMail(
-                $signalementDraftRequest,
-            );
-
-            if (!empty($existingSignalements)) {
-                $signalements = array_map(function (Signalement $existingSignalement) {
-                    return [
-                        'uuid' => $existingSignalement->getUuid(),
-                        'created_at' => $existingSignalement->getCreatedAt(),
-                        'prenom_occupant' => $existingSignalement->getPrenomOccupant(),
-                        'nom_occupant' => $existingSignalement->getNomOccupant(),
-                        'complement_adresse_occupant' => $existingSignalement->getComplementAdresseOccupant(),
-                    ];
-                }, $existingSignalements);
-
-                return $this->json([
-                    'already_exists' => true,
-                    'type' => 'signalement',
-                    'signalements' => $signalements,
-                    'draft_exists' => (bool) $existingSignalementDraft,
-                ]);
-            }
-
-            if (null !== $existingSignalementDraft) {
-                return $this->json([
-                    'already_exists' => true,
-                    'type' => 'draft',
-                    'draft_exists' => true,
-                    'created_at' => $existingSignalementDraft->getCreatedAt(),
-                    'updated_at' => $existingSignalementDraft->getUpdatedAt(),
-                ]);
-            }
-
-            return $this->json([
-                'already_exists' => false,
-                'uuid' => $signalementDraftManager->create(
+            $result = $signalementDuplicateChecker->check($signalementDraftRequest);
+            if (!empty($result['uuid']) && 'waiting_creation' === $result['uuid']) {
+                $result['uuid'] = $signalementDraftManager->create(
                     $signalementDraftRequest,
                     json_decode($payload, true)
-                ),
-            ]);
+                );
+            }
+
+            return $this->json($result);
         }
 
         return $this->json($errors);
