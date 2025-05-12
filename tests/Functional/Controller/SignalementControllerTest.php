@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Controller;
 
-use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -296,39 +295,6 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
     }
-
-    /*
-    public function testCheckSignalementOrDraftAlreadyExistsOld(): void
-    {
-        $client = static::createClient();
-
-        /** @var RouterInterface $router *
-        $router = self::getContainer()->get(RouterInterface::class);
-        $url = $router->generate('check_signalement_or_draft_already_exists');
-
-        /** @var EntityManagerInterface $entityManager *
-        $entityManager = self::getContainer()->get('doctrine');
-        /** @var Signalement $signalement *
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
-            'uuid' => '00000000-0000-0000-2022-000000000008',
-        ]);
-
-        $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../files/post_signalement_draft_payload.json');
-        
-        $payloadLocataireSignalementDecoded = json_decode($payloadLocataireSignalement);
-        $payloadLocataireSignalementDecoded->profil = ProfileDeclarant::LOCATAIRE->name;
-        $payloadLocataireSignalementDecoded->adresse_logement_adresse_detail_numero = $signalement->getAdresseOccupant();
-        $payloadLocataireSignalementDecoded->adresse_logement_adresse_detail_code_postal = $signalement->getCpOccupant();
-        $payloadLocataireSignalementDecoded->adresse_logement_adresse_detail_commune = $signalement->getVilleOccupant();
-        $payloadLocataireSignalementDecoded->vos_coordonnees_occupant_email = $signalement->getMailOccupant();
-
-        $client->request('POST', $url, [], [], [], json_encode($payloadLocataireSignalement));
-
-        $content = $client->getResponse()->getContent();
-        dd($content);
-
-        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-    }*/
 
     public function provideSignalementRequestPayload(): \Generator
     {
