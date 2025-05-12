@@ -426,7 +426,7 @@ class SignalementController extends AbstractController
 
         /** @var SignalementUser $currentUser */
         $currentUser = $security->getUser();
-        if ((!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || !str_starts_with($currentUser->getUserIdentifier(), $code))
+        if ((!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code)
             && $this->featureSecureUuidUrl
         ) {
             // get the login error if there is one
@@ -555,7 +555,7 @@ class SignalementController extends AbstractController
             if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
                 /** @var SignalementUser $currentUser */
                 $currentUser = $security->getUser();
-                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || !str_starts_with($currentUser->getUserIdentifier(), $code)) {
+                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
                     // get the login error if there is one
                     $error = $authenticationUtils->getLastAuthenticationError();
 
