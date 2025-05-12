@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Entity\Signalement;
 use App\Service\Gouv\Ban\AddressService;
+use App\Service\Gouv\Rial\RialService;
 use App\Service\Gouv\Rnb\RnbService;
 
 class SignalementAddressUpdater
@@ -13,6 +14,7 @@ class SignalementAddressUpdater
     public function __construct(
         private readonly AddressService $addressService,
         private readonly RnbService $rnbService,
+        private readonly RialService $rialService,
     ) {
     }
 
@@ -21,6 +23,10 @@ class SignalementAddressUpdater
         $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant(false));
         if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
             $signalement->setBanIdOccupant($addressResult->getBanId());
+            // TODO : on récupère la liste d'invariants fiscaux
+            // limiter à maison seule ? ou à un seul résultat ?
+            // envoyer étage ?
+            $listeInvariants = $this->rialService->getInvariantsFiscaux($addressResult->getBanId());
             if ($updateGeolocAndRnbId) {
                 $signalement
                     ->setAdresseOccupant($addressResult->getStreet())

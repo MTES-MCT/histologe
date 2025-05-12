@@ -53,6 +53,7 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
         if (empty($signalement->getInseeOccupant())) {
             $address = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
             $this->signalementManager->updateAddressOccupantFromAddress($signalement, $address);
+            // TODO : chercher invariant fiscal RIAL ici aussi ?
             $this->signalementManager->persist($signalement);
         }
     }
