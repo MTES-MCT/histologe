@@ -1002,7 +1002,7 @@ ul + p {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 
-    .fr-btn--close, .fr-nav__item.fr-ml-auto {
+    button.fr-btn--close.fr-btn, .fr-nav__item.fr-ml-auto {
         margin-left: 0px;
     }
     .fr-nav__list {
@@ -1010,6 +1010,10 @@ ul + p {
             justify-content: inherit;
         }
     }
+}
+
+#fr-menu-mobile.fr-header__menu.fr-modal.fr-modal--opened div.fr-container button.fr-btn--close.fr-btn {    
+    margin-left: 0px;
 }
 
 .cartography-page {
