@@ -13,7 +13,6 @@ use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Esabora\Response\DossierEventsSCHSCollectionResponse;
 use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Mailer\NotificationMailerRegistry;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -54,13 +53,14 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
 
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
 
-        $collection = (new ArrayCollection());
-        $collection->add($affectation);
+        $affectations = [
+            ['affectation' => $affectation, 'signalement_uuid' => $affectation->getSignalement()->getUuid()],
+        ];
 
         $affectationRepositoryMock
             ->expects($this->atLeast(1))
             ->method('findAffectationSubscribedToEsabora')
-            ->willReturn($collection->toArray());
+            ->willReturn($affectations);
 
         $serializerMock = $this->createMock(SerializerInterface::class);
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);

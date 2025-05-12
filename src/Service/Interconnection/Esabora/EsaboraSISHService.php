@@ -68,7 +68,7 @@ class EsaboraSISHService extends AbstractEsaboraService
         return $this->getDossierPushResponse($url, $token, $payload, $dossierMessageSISH);
     }
 
-    public function getStateDossier(Affectation $affectation): DossierStateSISHResponse
+    public function getStateDossier(Affectation $affectation, string $uuidSignalement): DossierStateSISHResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $payload = [
@@ -77,7 +77,7 @@ class EsaboraSISHService extends AbstractEsaboraService
                 [
                     'criterionName' => 'Reference_Dossier',
                     'criterionValueList' => [
-                        $affectation->getSignalement()->getUuid(),
+                        $uuidSignalement,
                     ],
                 ],
             ],
@@ -113,11 +113,11 @@ class EsaboraSISHService extends AbstractEsaboraService
         );
     }
 
-    public function getVisiteDossier(Affectation $affectation): DossierVisiteSISHCollectionResponse
+    public function getVisiteDossier(Affectation $affectation, string $uuidSignalement): DossierVisiteSISHCollectionResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
-        $payload = $this->prepareInterventionPayload($affectation, self::SISH_VISITES_DOSSIER_SAS);
+        $payload = $this->prepareInterventionPayload($uuidSignalement, self::SISH_VISITES_DOSSIER_SAS);
 
         $options['extra']['job_event_metadata'] = new JobEventMetaData(
             service: self::TYPE_SERVICE,
@@ -147,11 +147,11 @@ class EsaboraSISHService extends AbstractEsaboraService
         );
     }
 
-    public function getArreteDossier(Affectation $affectation): DossierArreteSISHCollectionResponse
+    public function getArreteDossier(Affectation $affectation, string $uuidSignalement): DossierArreteSISHCollectionResponse
     {
         list($url, $token) = $affectation->getPartner()->getEsaboraCredential();
         $statusCode = Response::HTTP_SERVICE_UNAVAILABLE;
-        $payload = $this->prepareInterventionPayload($affectation, self::SISH_ARRETES_DOSSIER_SAS);
+        $payload = $this->prepareInterventionPayload($uuidSignalement, self::SISH_ARRETES_DOSSIER_SAS);
         $options['extra']['job_event_metadata'] = new JobEventMetaData(
             service: self::TYPE_SERVICE,
             action: self::ACTION_SYNC_DOSSIER_ARRETE,

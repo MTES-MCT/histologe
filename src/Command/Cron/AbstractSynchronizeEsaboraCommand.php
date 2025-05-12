@@ -14,6 +14,7 @@ use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,12 +30,15 @@ use Symfony\Component\Serializer\SerializerInterface;
 )]
 class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
 {
+    public const int BATCH_SIZE = 100;
+
     public function __construct(
         private readonly EsaboraManager $esaboraManager,
         private readonly AffectationRepository $affectationRepository,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -70,8 +74,10 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         );
         $countSyncSuccess = 0;
         $countSyncFailed = 0;
-        foreach ($affectations as $affectation) {
-            $dossierResponse = $esaboraService->getStateDossier($affectation);
+        $count = 0;
+        foreach ($affectations as $row) {
+            $affectation = $row['affectation'];
+            $dossierResponse = $esaboraService->getStateDossier($affectation, $row['signalement_uuid']);
             if (AbstractEsaboraService::hasSuccess($dossierResponse)) {
                 $this->esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
                 $io->success($this->printInfo($dossierResponse));
@@ -80,7 +86,12 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
                 $io->error(\sprintf('%s', $this->serializer->serialize($dossierResponse, 'json')));
                 ++$countSyncFailed;
             }
+            ++$count;
+            if (0 === $count % self::BATCH_SIZE) {
+                $this->entityManager->flush();
+            }
         }
+        $this->entityManager->flush();
         $io->table(['Count success', 'Count Failed'], [[$countSyncSuccess, $countSyncFailed]]);
         $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);
     }

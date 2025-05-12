@@ -39,6 +39,11 @@ class PushEsaboraDossierCommandTest extends TestCase
         $affectation1->setIsSynchronized(false);
         $affectation2->setIsSynchronized(false);
 
+        $affectations = [
+            ['affectation' => $affectation1, 'signalement_uuid' => $affectation1->getUuid()],
+            ['affectation' => $affectation2, 'signalement_uuid' => $affectation2->getUuid()],
+        ];
+
         $this->territoryRepository
             ->expects($this->once())
             ->method('findOneBy')
@@ -54,7 +59,7 @@ class PushEsaboraDossierCommandTest extends TestCase
                 null,
                 (new Territory())->setZip('01')->setIsActive(true)->setName('Ain')
             )
-            ->willReturn([$affectation1, $affectation2]);
+            ->willReturn($affectations);
 
         $this->affectationRepository
             ->expects($this->atMost(3))
@@ -82,6 +87,9 @@ class PushEsaboraDossierCommandTest extends TestCase
     public function testExecuteWithUuidOption(): void
     {
         $affectation = $this->getAffectation(PartnerType::ARS);
+        $affectations = [
+            ['affectation' => $affectation, 'signalement_uuid' => $affectation->getUuid()],
+        ];
 
         $this->affectationRepository
             ->expects($this->once())
@@ -91,7 +99,7 @@ class PushEsaboraDossierCommandTest extends TestCase
                 null,
                 $this->equalTo('00000000-0000-0000-2023-000000000010')
             )
-            ->willReturn([$affectation]);
+            ->willReturn($affectations);
 
         $this->affectationRepository
             ->expects($this->atMost(2))

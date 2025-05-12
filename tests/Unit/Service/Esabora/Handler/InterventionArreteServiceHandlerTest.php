@@ -62,7 +62,7 @@ class InterventionArreteServiceHandlerTest extends TestCase
             $this->esaboraManager,
         );
 
-        $this->handler->handle($this->affectation);
+        $this->handler->handle($this->affectation, $this->affectation->getSignalement()->getUuid());
         $this->assertEquals(1, $this->handler->getCountSuccess());
         $this->assertEquals(0, $this->handler->getCountFailed());
     }
