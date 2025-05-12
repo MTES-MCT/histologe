@@ -161,12 +161,14 @@ function initBoFormSignalementSubmit(tabName) {
       const occupationLogementBailleurOccupant = document.querySelector('#signalement_draft_address_occupationLogement_1')
       const profileBailleurOccupant = document.querySelector('#signalement_draft_coordonnees_profileDeclarantTiers_4')
     
-      if (occupationLogementBailleurOccupant.checked && profileBailleurOccupant) {
-        profileBailleurOccupant.checked = true
-      } else {
-        profileBailleurOccupant.checked = false
+      if (profileBailleurOccupant) {
+        if (occupationLogementBailleurOccupant.checked) {
+          profileBailleurOccupant.checked = true
+        } else {
+          profileBailleurOccupant.checked = false
+        }
+        handleChangeOnProfileBailleurOccupant()
       }
-      handleChangeOnProfileBailleurOccupant()
       break
     case 'logement':
       initBoFormSignalementLogement()
@@ -758,11 +760,13 @@ function handleChangeOnProfileBailleurOccupant() {
   const occupationLogementBailleurOccupant = document.querySelector('#signalement_draft_address_occupationLogement_1')
   const profileBailleurOccupant = document.querySelector('#signalement_draft_coordonnees_profileDeclarantTiers_4')
   const warningProfileBailleurOccupant = document.querySelector('#warning_profile_declarant_bailleur_occupant')
-  if (profileBailleurOccupant.checked) {
-    occupationLogementBailleurOccupant.checked = true
-    warningProfileBailleurOccupant.classList.remove('fr-hidden')
-  } else {
-    occupationLogementBailleurOccupant.checked = false
-    warningProfileBailleurOccupant.classList.add('fr-hidden')
+  if (profileBailleurOccupant) {
+    if (profileBailleurOccupant.checked) {
+      occupationLogementBailleurOccupant.checked = true
+      warningProfileBailleurOccupant.classList.remove('fr-hidden')
+    } else {
+      occupationLogementBailleurOccupant.checked = false
+      warningProfileBailleurOccupant.classList.add('fr-hidden')
+    }
   }
 }
