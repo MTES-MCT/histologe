@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Tag;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -24,7 +23,7 @@ class TagVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof BoUserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
         if ($user->isSuperAdmin()) {

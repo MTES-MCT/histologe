@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
@@ -28,7 +27,7 @@ use Symfony\Component\Validator\Constraints\Email;
 #[ORM\HasLifecycleCallbacks()]
 #[AppAssert\UserPartnerEmailMulti(groups: ['user_partner_mail_multi'])]
 #[AppAssert\UserPartnerEmail(groups: ['user_partner_mail'])]
-class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, BoUserInterface
+class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     use TimestampableTrait;
 

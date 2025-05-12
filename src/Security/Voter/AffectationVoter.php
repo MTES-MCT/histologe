@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
-use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -36,7 +35,7 @@ class AffectationVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof BoUserInterface || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
+        if (!$user instanceof User || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
             return false;
         }
 

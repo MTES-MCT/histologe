@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Partner;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -31,7 +30,7 @@ class PartnerVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof BoUserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
         if ($this->security->isGranted('ROLE_ADMIN')) {

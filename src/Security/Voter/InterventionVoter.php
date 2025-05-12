@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
-use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
@@ -24,7 +23,7 @@ class InterventionVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof BoUserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 

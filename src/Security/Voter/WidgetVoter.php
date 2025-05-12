@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\User;
 use App\Service\DashboardWidget\Widget;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -27,14 +26,14 @@ class WidgetVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof BoUserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 
         return $this->canViewWidget($subject, $user);
     }
 
-    public function canViewWidget(Widget $widget, BoUserInterface $user): bool
+    public function canViewWidget(Widget $widget, User $user): bool
     {
         if (!$this->parameterBag->has($widget->getType())) { // ignore voter if widget does not exists
             return true;

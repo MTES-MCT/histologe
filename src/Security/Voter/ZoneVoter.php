@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Behaviour\BoUserInterface;
 use App\Entity\User;
 use App\Entity\Zone;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -26,7 +25,7 @@ class ZoneVoter extends Voter
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof BoUserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 
