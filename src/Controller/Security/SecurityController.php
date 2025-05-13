@@ -4,16 +4,18 @@ namespace App\Controller\Security;
 
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\SignalementRepository;
+use App\Security\User\SignalementUser;
 use App\Service\Files\ImageVariantProvider;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,6 +24,14 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_SECURE_UUID_URL')]
+        private readonly bool $featureSecureUuidUrl,
+        #[Autowire(env: 'FEATURE_SUIVI_ACTION')]
+        private readonly bool $featureSuiviAction,
+    ) {
+    }
+
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     #[Security(name: null)]
     #[OA\Post(
@@ -108,16 +118,12 @@ class SecurityController extends AbstractController
         LoggerInterface $logger,
         ImageVariantProvider $imageVariantProvider,
         string $filename,
-        ?Signalement $signalement,
-        #[Autowire('%env(APP_SECRET_FOR_LINKS)%')]
-        string $appSecretForLinks,
-    ): BinaryFileResponse|RedirectResponse {
+        ?Signalement $signalement = null,
+    ): Response {
         $request = Request::createFromGlobals();
-        $expectedToken = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement?->getUuid().$filename, $appSecretForLinks);
 
         if (
             !$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t'))
-            && $request->get('t') !== $expectedToken
             && !$this->isGranted('SIGN_VIEW', $signalement)
         ) {
             throw $this->createAccessDeniedException();
@@ -134,6 +140,57 @@ class SecurityController extends AbstractController
         return new BinaryFileResponse(
             new File($this->getParameter('images_dir').'image-404.png'),
         );
+    }
+
+    /**
+     * Use only for exporting pdf usager.
+     */
+    #[Route('/show-export-pdf-usager/{filename}/{code}', name: 'show_export_pdf_usager')]
+    public function showExportPdfUsager(
+        LoggerInterface $logger,
+        ImageVariantProvider $imageVariantProvider,
+        string $filename,
+        string $code,
+        SignalementRepository $signalementRepository,
+        SymfonySecurity $security,
+        AuthenticationUtils $authenticationUtils,
+    ): Response {
+        $request = Request::createFromGlobals();
+
+        if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
+            if ($this->featureSecureUuidUrl && $this->featureSuiviAction) { // TODO Remove FEATURE_SECURE_UUID_URL
+                /** @var SignalementUser $currentUser */
+                $currentUser = $security->getUser();
+                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
+                    // get the login error if there is one
+                    $error = $authenticationUtils->getLastAuthenticationError();
+
+                    return $this->render('security/login_suivi_signalement.html.twig', [
+                        'signalement' => $signalement,
+                        'fromEmail' => $request->get('from'),
+                        'error' => $error,
+                    ]);
+                }
+            } else {
+                throw $this->createAccessDeniedException();
+            }
+
+            try {
+                $file = $imageVariantProvider->getFileVariant($filename);
+
+                return new BinaryFileResponse($file);
+            } catch (\Throwable $exception) {
+                $logger->error($exception->getMessage());
+            }
+
+            return new BinaryFileResponse(
+                new File($this->getParameter('images_dir').'image-404.png'),
+            );
+        }
+
+        $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+        return $this->render('front/flash-messages.html.twig');
     }
 
     #[Route('/logout', name: 'app_logout')]

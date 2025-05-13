@@ -25,7 +25,8 @@ class PdfExportMessageHandlerTest extends WebTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
         $message = (new PdfExportMessage())
             ->setSignalementId($signalement->getId())
-            ->setUserEmail('test@yopmail.com');
+            ->setUserEmail('test@yopmail.com')
+            ->setIsForUsager();
 
         $messageBus->dispatch($message);
 
@@ -56,7 +57,8 @@ class PdfExportMessageHandlerTest extends WebTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2024-12']);
         $message = (new PdfExportMessage())
             ->setSignalementId($signalement->getId())
-            ->setUserEmail('test@yopmail.com');
+            ->setUserEmail('test@yopmail.com')
+            ->setIsForUsager();
 
         $messageBus->dispatch($message);
 

@@ -6,7 +6,7 @@ class PdfExportMessage
 {
     private int $signalementId;
     private string $userEmail;
-    private bool $isForUsager = false;
+    private bool $isForUsager;
 
     public function getSignalementId(): int
     {
@@ -37,7 +37,7 @@ class PdfExportMessage
         return $this->isForUsager;
     }
 
-    public function setIsForUsager(bool $isForUsager): self
+    public function setIsForUsager(bool $isForUsager = false): self
     {
         $this->isForUsager = $isForUsager;
 

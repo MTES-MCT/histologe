@@ -10,11 +10,13 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
+use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -164,28 +166,27 @@ class SignalementFileController extends AbstractController
         Signalement $signalement,
         Request $request,
         MessageBusInterface $messageBus,
+        Security $security,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
-        // TODO : pour l'instant ancien système en récupérant le from,
-        // voir pour faire quelque-chose de plus robuste grâce à l'authentification sur la page de suivi
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        // dump('$this->getUser()');
+        // dump($this->getUser());
+        // dump('$currentUser');
+        // dump($currentUser);
+        // dump('$request->get("from")');
+        // dump($request->get('from'));
+        // TODO : le from récupère l'utilisateur connecté (envoyé via twig, car curieusement $this->getUser() renvoie NULL)
         $fromEmail = $request->get('from');
 
-        $emails = $fromEmail
-            ? [$fromEmail]
-            : array_unique(array_filter([
-                $signalement->getMailOccupant(),
-                $signalement->getMailDeclarant(),
-            ]));
+        $message = (new PdfExportMessage())
+            ->setSignalementId($signalement->getId())
+            ->setUserEmail($fromEmail)
+            ->setIsForUsager(true);
 
-        foreach ($emails as $email) {
-            $message = (new PdfExportMessage())
-                ->setSignalementId($signalement->getId())
-                ->setUserEmail($email)
-                ->setIsForUsager(true);
-
-            $messageBus->dispatch($message);
-        }
+        $messageBus->dispatch($message);
 
         $this->addFlash(
             'success',

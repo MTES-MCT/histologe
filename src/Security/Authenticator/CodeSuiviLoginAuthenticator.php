@@ -25,6 +25,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public const string LOGIN_ROUTE_SUIVI = 'front_suivi_signalement';
     public const string LOGIN_ROUTE_PROCEDURE = 'front_suivi_procedure';
+    public const string LOGIN_ROUTE_EXPORT_PDF = 'show_export_pdf_usager';
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -129,8 +130,13 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     {
         $codeSuivi = $request->attributes->get('code');
 
-        return (self::LOGIN_ROUTE_SUIVI === $request->get('_route')) ?
-            $this->urlGenerator->generate(self::LOGIN_ROUTE_SUIVI, ['code' => $codeSuivi]) :
-            $this->urlGenerator->generate(self::LOGIN_ROUTE_PROCEDURE, ['code' => $codeSuivi]);
+        switch ($request->get('_route')) {
+            case self::LOGIN_ROUTE_SUIVI:
+                return $this->urlGenerator->generate(self::LOGIN_ROUTE_SUIVI, ['code' => $codeSuivi]);
+            case self::LOGIN_ROUTE_EXPORT_PDF:
+                return $this->urlGenerator->generate(self::LOGIN_ROUTE_EXPORT_PDF, ['code' => $codeSuivi]);
+            default:
+                return $this->urlGenerator->generate(self::LOGIN_ROUTE_PROCEDURE, ['code' => $codeSuivi]);
+        }
     }
 }
