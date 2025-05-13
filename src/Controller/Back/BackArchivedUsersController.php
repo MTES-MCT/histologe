@@ -97,6 +97,9 @@ class BackArchivedUsersController extends AbstractController
             foreach ($user->getUserPartners() as $userPartner) {
                 $entityManager->remove($userPartner);
             }
+            // we need to flush the removed userPartners before flushing the new one to prevent a duplicate user_partner because doctrine perform the insert before the delete
+            $entityManager->flush();
+
             $partner = $form->get('tempPartner')->getData();
             $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
             $user->addUserPartner($userPartner);

@@ -107,23 +107,14 @@ class BackArchivedUsersControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
-        $territory = $territoryRepository->findOneBy(['zip' => '01']);
-
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = static::getContainer()->get(PartnerRepository::class);
-        $partner = $partnerRepository->findOneBy([
-            'territory' => $territory->getId(),
-            'isArchive' => '0',
-        ]);
-
         $accountEmail = 'user-01-09@signal-logement.fr';
         /** @var User $account */
         $account = $userRepository->findArchivedUserByEmail($accountEmail);
         $route = $router->generate('back_archived_users_reactiver', [
             'id' => $account->getId(),
         ]);
+
+        $partner = $account->getUserPartners()->first()->getPartner();
 
         $crawler = $client->request('GET', $route);
 
@@ -133,7 +124,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $form['user[prenom]'] = $faker->name();
         $form['user[nom]'] = $faker->lastName();
         $form['user[email]'] = (string) $account->getEmail();
-        $form['user[territory]'] = (string) $territory->getId();
+        $form['user[territory]'] = (string) $partner->getTerritory()->getId();
         $form['user[tempPartner]'] = (string) $partner->getId();
         $client->submit($form);
 
