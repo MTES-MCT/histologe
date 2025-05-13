@@ -347,6 +347,14 @@
           }
         },
         {
+          "type": "SignalementFormInfo",
+          "label": "Avant de déposer un signalement, il est obligatoire pour les locataires du parc social de prévenir le bailleur. Ils peuvent le faire grâce au modèle de courrier que vous pourrez télécharger à la page suivante ou en le sollicitant par les canaux de communication habituels.",
+          "slug": "info_procedure_bailleur_prevenu_info",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non' && formStore.data.signalement_concerne_logement_social_service_secours === 'oui'"
+          }
+        },
+        {
           "type": "SignalementFormSelect",
           "slug": "info_procedure_bail_moyen",
           "label": "Comment le bailleur (propriétaire) a-t-il été informé ?",
@@ -440,7 +448,7 @@
                 "action": "goto.save:zone_concernee",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "formStore.data.signalement_concerne_logement_social_autre_tiers !== 'oui' || formStore.data.info_procedure_bailleur_prevenu === 'nsp' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() >= 3)"
+                  "show": "formStore.data.signalement_concerne_logement_social_service_secours !== 'oui' || formStore.data.info_procedure_bailleur_prevenu === 'nsp' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() >= 3)"
                 }
               },
               {
@@ -450,7 +458,7 @@
                 "action": "goto.save:prevenir_bailleur_info",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "(formStore.data.info_procedure_bailleur_prevenu === 'non' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui') || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() < 3)"
+                  "show": "formStore.data.signalement_concerne_logement_social_service_secours === 'oui' && (formStore.data.info_procedure_bailleur_prevenu === 'non' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() < 3))"
                 }
               },
               {
@@ -617,7 +625,7 @@
                 "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "zone_concernee_zone_previous",
-                "action": "goto:coordonnees_bailleur",
+                "action": "goto:info_procedure_bail",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]

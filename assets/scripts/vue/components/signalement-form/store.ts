@@ -228,9 +228,9 @@ const formStore: FormStore = reactive({
     }
     return inputComponentsByScreen
   },
-  countMonthsSinceBailleurPrevenu (): number {
-    if (formStore.data.info_procedure_bail_date.indexOf('/') === -1) {
-      return 0
+  countMonthsSinceBailleurPrevenu (): number|undefined {
+    if (formStore.data.info_procedure_bail_date === undefined || formStore.data.info_procedure_bail_date.indexOf('/') === -1) {
+      return undefined
     }
     const dateToday = new Date()
     const dateBailleurPrevenuSplit = formStore.data.info_procedure_bail_date.split('/')
