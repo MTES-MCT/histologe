@@ -494,7 +494,16 @@
         {
           "type": "SignalementFormWarning",
           "label": "Si le problème représente un danger pour la sécurité de l'occupant, contactez les services de secours (pompiers, police, gendarmerie) !",
-          "slug": "prevenir_bailleur_info_modal"
+          "slug": "prevenir_bailleur_info_warning"
+        },
+        {
+          "type": "SignalementFormLink",
+          "label": "Télécharger le courrier",
+          "description": "Télécharger le modèle de courrier à envoyer au bailleur",
+          "customCss": "fr-btn",
+          "link": "/build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf",
+          "linktarget": "_blank",
+          "slug": "prevenir_bailleur_info_link"
         }
       ],
       "footer": [
