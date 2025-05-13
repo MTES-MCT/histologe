@@ -64,25 +64,25 @@
 								<p class="fr-badge fr-badge--sm fr-badge--error">Signalement fermé</p>           
 							</div>
 						{% else %}
-							<h3 class="fr-tile__title">
-								<a href="#">Intitulé de la tuile</a>
-							</h3>            
-							<p class="fr-tile__detail">Détail (optionel)</p>
-							<div class="fr-tile__start">
-								<p class="fr-badge fr-badge--sm fr-badge--purple-glycine">label badge</p>           
-							</div>   
+							{% if suiviCategory %}
+								<h3 class="fr-tile__title">
+									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">{{suiviCategory.title}}</a>
+								</h3>            
+								<p class="fr-tile__detail">{{suiviCategory.suivi.createdAt|date('d/m/Y')}}</p>
+								<div class="fr-tile__start">
+									<p class="fr-badge fr-badge--sm {{suiviCategory.labelClass}}">{{suiviCategory.label}}</p>           
+								</div>  
+							{% endif %}  
 						{% endif %}     
 					</div>    
 				</div>    
-				<div class="fr-tile__header">        
-					<div class="fr-tile__pictogram">
-						<svg aria-hidden="true" class="fr-artwork" viewBox="0 0 80 80" width="80px" height="80px">
-							<use class="fr-artwork-decorative" href="{{ asset('img/picto-dsfr/document.svg') }}#artwork-decorative"></use>
-							<use class="fr-artwork-minor" href="{{ asset('img/picto-dsfr/document.svg') }}#artwork-minor"></use>
-							<use class="fr-artwork-major" href="{{ asset('img/picto-dsfr/document.svg') }}#artwork-major"></use>
-						</svg>
+				{% if suiviCategory %}
+					<div class="fr-tile__header">        
+						<div class="fr-tile__pictogram" style="width:60px;height:60px;">
+        					<img src="{{ asset('img/picto-dsfr/' ~ suiviCategory.icon) }}" aria-hidden="true" class="fr-artwork" style="width:100%;">
+						</div>
 					</div>
-				</div>
+				{% endif %}
 			</div>
 
 			<ul class="fr-btns-group fr-btns-group--center fr-btns-group--icon-left">

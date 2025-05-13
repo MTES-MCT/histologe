@@ -17,6 +17,7 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
@@ -26,6 +27,7 @@ use App\Service\Security\FileScanner;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDraftHelper;
+use App\Service\SuiviCategorizerService;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -580,11 +582,13 @@ class SignalementController extends AbstractController
     public function suiviSignalement(
         string $code,
         SignalementRepository $signalementRepository,
+        SuiviRepository $suiviRepository,
         Request $request,
         UserManager $userManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         Security $security,
         AuthenticationUtils $authenticationUtils,
+        SuiviCategorizerService $suiviCategorizerService,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
         if (!$signalement) {
@@ -619,9 +623,12 @@ class SignalementController extends AbstractController
         ]);
 
         if ($this->featureSuiviAction) {
+            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement);
+
             return $this->render('front/suivi_signalement_dashboard.html.twig', [
                 'signalement' => $signalement,
                 'formDemandeLienSignalement' => $formDemandeLienSignalement,
+                'suiviCategory' => $lastSuiviPublic ? $suiviCategorizerService->getSuiviCategory($lastSuiviPublic) : null,
             ]);
         }
 

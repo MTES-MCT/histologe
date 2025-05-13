@@ -463,4 +463,17 @@ class SuiviRepository extends ServiceEntityRepository
 
         return $indexed;
     }
+
+    public function findLastPublicSuivi(Signalement $signalement): ?Suivi
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.signalement = :signalement')
+            ->andWhere('s.isPublic = 1')
+            ->andWhere('s.deletedBy IS NULL')
+            ->orderBy('s.createdAt', 'DESC')
+            ->setParameter('signalement', $signalement)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }
