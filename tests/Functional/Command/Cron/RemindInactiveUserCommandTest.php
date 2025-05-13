@@ -10,6 +10,8 @@ class RemindInactiveUserCommandTest extends KernelTestCase
 {
     public function testDisplayMessageSuccessfully(): void
     {
+        putenv('APP=test');
+
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 

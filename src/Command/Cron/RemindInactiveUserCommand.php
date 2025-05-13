@@ -43,6 +43,12 @@ class RemindInactiveUserCommand extends AbstractCronCommand
     {
         $io = new SymfonyStyle($input, $output);
 
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP')) {
+            $io->error('This command is only available on production and test environment');
+
+            return Command::FAILURE;
+        }
+
         /** @var UserRepository $userRepository */
         $userRepository = $this->userManager->getRepository();
         $userList = $userRepository->findInactiveWithNbAffectationPending();
