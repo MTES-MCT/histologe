@@ -318,7 +318,7 @@
     "type": "SignalementFormScreen",
     "label": "",
     "slug": "info_procedure_bail",
-    "screenCategory": "Procédure",
+    "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
@@ -444,7 +444,7 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Suivant",
-                "slug": "info_procedure_bail_next",
+                "slug": "info_procedure_bail_next_zone_concernee",
                 "action": "goto.save:zone_concernee",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
@@ -454,7 +454,7 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Suivant",
-                "slug": "info_procedure_bail_next",
+                "slug": "info_procedure_bail_next_prevenir_bailleur_info",
                 "action": "goto.save:prevenir_bailleur_info",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
