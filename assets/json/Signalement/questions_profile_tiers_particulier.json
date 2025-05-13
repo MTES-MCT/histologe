@@ -307,7 +307,7 @@
                 "type": "SignalementFormButton",
                 "label": "Suivant",
                 "slug": "coordonnees_bailleur_next",
-                "action": "goto.save:zone_concernee",
+                "action": "goto.save:info_procedure_bail",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
@@ -316,6 +316,199 @@
                 "slug": "coordonnees_bailleur_previous",
                 "action": "goto:coordonnees_occupant",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "info_procedure_bail",
+    "screenCategory": "Procédure",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Le bailleur (propriétaire) du logement a-t-il été informé de la situation ?",
+          "slug": "info_procedure_bailleur_prevenu",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si le bailleur (propriétaire) du logement a été informé de la situation."
+          },
+          "accessibility": {
+            "focus": true
+          }
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Avant de déposer un signalement, il est obligatoire pour les locataires du parc social de prévenir le bailleur. Ils peuvent le faire grâce au modèle de courrier que vous pourrez télécharger à la page suivante ou en le sollicitant par les canaux de communication habituels.",
+          "slug": "info_procedure_bailleur_prevenu_info",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormSelect",
+          "slug": "info_procedure_bail_moyen",
+          "label": "Comment le bailleur (propriétaire) a-t-il été informé ?",
+          "description": "Sélectionnez une réponse dans la liste",
+          "values": [
+            {
+              "label": "Courrier",
+              "value": "courrier"
+            },
+            {
+              "label": "E-mail",
+              "value": "email"
+            },
+            {
+              "label": "Téléphone",
+              "value": "telephone"
+            },
+            {
+              "label": "SMS",
+              "value": "sms"
+            },
+            {
+              "label": "Autre",
+              "value": "autre"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer par quel moyen le bailleur a été informé."
+          },
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Quand le bailleur (propriétaire) a-t-il été prévenu ? (facultatif)",
+          "description": "Format attendu : MM/AAAA",
+          "slug": "info_procedure_bail_date",
+          "placeholder": "01/1970",
+          "validate": {
+            "pattern": "^(0[1-9]|1[0-2])\\/\\d{4}$",
+            "patternMessage": "Veuillez renseigner quand vous avez prévenu votre bailleur.",
+            "required": false
+          },
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormTextarea",
+          "label": "Quelle a été la réponse du bailleur (propriétaire) ? (facultatif)",
+          "slug": "info_procedure_bail_reponse",
+          "description": "Format attendu : 255 caractères maximum",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
+          },
+          "validate": {
+            "maxLength": 255,
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Si vous l'avez, indiquez le numéro de réclamation fourni par le bailleur (facultatif)",
+          "slug": "info_procedure_bail_numero",
+          "description": "Format attendu : 30 caractères maximum",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
+          },
+          "validate": {
+            "maxLength": 30,
+            "required": false
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "info_procedure_bail_footer",
+          "customCss": "button-group-responsive-inverted",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "info_procedure_bail_next",
+                "action": "goto.save:zone_concernee",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_logement_social_autre_tiers !== 'oui' || formStore.data.info_procedure_bailleur_prevenu === 'nsp' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() >= 3)"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "info_procedure_bail_next",
+                "action": "goto.save:prevenir_bailleur_info",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui' && (formStore.data.info_procedure_bailleur_prevenu === 'non' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() < 3))"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "info_procedure_bail_previous",
+                "action": "goto:coordonnees_bailleur",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Votre signalement ne peut pas être déposé",
+    "description": "<p>Avant de déposer un signalement sur Signal Logement le locataire doit prévenir son bailleur et lui laisser un délai de 2 mois pour lui répondre.</p><p><strong>Le service Signal Logement ne peut pour le moment donner suite à votre démarche.</strong></p><p>Si vous voyez cette page c'est que vous avez indiqué</p><ul><li>soit que le locataire n'a pas averti son bailleur des désordres rencontrés</li><li>soit que le locataire a averti son bailleur mais il y a moins de 2 mois</li></ul><p><strong>Si le locataire n'a pas contacté son bailleur,</strong> prenez contact avec lui directement via les canaux de communications mis à votre disposition dans le cadre de sa gestion locative (ou en téléchargeant le modèle de courrier ci-dessous). Il est fort probable que celui-ci intervienne pour résoudre les problèmes dans les meilleurs délais.</p><p><strong>Si le locataire a bien contacté son bailleur,</strong> il dispose d'un délai de 2 mois pour lui répondre. Nous vous enverrons un e-mail automatiquement à l'issue du délai des 2 mois pour vous permettre de poursuivre si nécessaire votre signalement. N'hésitez pas à relancer le bailleur entre temps !</p>",
+    "slug": "prevenir_bailleur_info",
+    "screenCategory": "Adresse et coordonnées",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormWarning",
+          "label": "Si le problème représente un danger pour la sécurité de l'occupant, contactez les services de secours (pompiers, police, gendarmerie) !",
+          "slug": "prevenir_bailleur_info_modal"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "prevenir_bailleur_info_footer",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormLink",
+                "link": "/",
+                "label": "Fermer",
+                "slug": "prevenir_bailleur_info_close",
+                "customCss": "fr-btn--icon-left fr-icon-close-line"
               }
             ]
           }
@@ -441,7 +634,7 @@
                 "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "zone_concernee_zone_previous",
-                "action": "goto:coordonnees_bailleur",
+                "action": "goto:info_procedure_bail",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
@@ -1604,152 +1797,13 @@
                 "type": "SignalementFormButton",
                 "label": "J'y suis presque !",
                 "slug": "ecran_intermediaire_procedure_next",
-                "action": "goto:info_procedure_bail"
+                "action": "goto:info_procedure_assurance"
               },
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "ecran_intermediaire_procedure_previous",
                 "action": "goto:desordres_renseignes",
-                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  },
-  {
-    "type": "SignalementFormScreen",
-    "label": "",
-    "slug": "info_procedure_bail",
-    "screenCategory": "Procédure",
-    "components": {
-      "body": [
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Le bailleur (propriétaire) du logement a-t-il été informé de la situation ?",
-          "slug": "info_procedure_bailleur_prevenu",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ],
-          "validate": {
-            "message": "Veuillez indiquer si le bailleur (propriétaire) du logement a été informé de la situation."
-          },
-          "accessibility": {
-            "focus": true
-          }
-        },
-        {
-          "type": "SignalementFormSelect",
-          "slug": "info_procedure_bail_moyen",
-          "label": "Comment le bailleur (propriétaire) a-t-il été informé ?",
-          "description": "Sélectionnez une réponse dans la liste",
-          "values": [
-            {
-              "label": "Courrier",
-              "value": "courrier"
-            },
-            {
-              "label": "E-mail",
-              "value": "email"
-            },
-            {
-              "label": "Téléphone",
-              "value": "telephone"
-            },
-            {
-              "label": "SMS",
-              "value": "sms"
-            },
-            {
-              "label": "Autre",
-              "value": "autre"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ],
-          "validate": {
-            "message": "Veuillez indiquer par quel moyen le bailleur a été informé."
-          },
-          "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
-          }
-        },
-        {
-          "type": "SignalementFormTextfield",
-          "label": "Quand le bailleur (propriétaire) a-t-il été prévenu ? (facultatif)",
-          "description": "Format attendu : MM/AAAA",
-          "slug": "info_procedure_bail_date",
-          "placeholder": "01/1970",
-          "validate": {
-            "pattern": "^(0[1-9]|1[0-2])\\/\\d{4}$",
-            "patternMessage": "Veuillez renseigner quand vous avez prévenu votre bailleur.",
-            "required": false
-          },
-          "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
-          }
-        },
-        {
-          "type": "SignalementFormTextarea",
-          "label": "Quelle a été la réponse du bailleur (propriétaire) ? (facultatif)",
-          "slug": "info_procedure_bail_reponse",
-          "description": "Format attendu : 255 caractères maximum",
-          "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
-          },
-          "validate": {
-            "maxLength": 255,
-            "required": false
-          }
-        },
-        {
-          "type": "SignalementFormTextfield",
-          "label": "Si vous l'avez, indiquez le numéro de réclamation fourni par le bailleur (facultatif)",
-          "slug": "info_procedure_bail_numero",
-          "description": "Format attendu : 30 caractères maximum",
-          "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
-          },
-          "validate": {
-            "maxLength": 30,
-            "required": false
-          }
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormSubscreen",
-          "slug": "info_procedure_bail_footer",
-          "customCss": "button-group-responsive-inverted",
-          "components": {
-            "body": [
-              {
-                "type": "SignalementFormButton",
-                "label": "Suivant",
-                "slug": "info_procedure_bail_next",
-                "action": "goto.save:info_procedure_assurance",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
-              },
-              {
-                "type": "SignalementFormButton",
-                "label": "Précédent",
-                "slug": "info_procedure_bail_previous",
-                "action": "goto:ecran_intermediaire_procedure",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
@@ -1843,7 +1897,7 @@
                 "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "info_procedure_assurance_previous",
-                "action": "goto:info_procedure_bail",
+                "action": "goto:ecran_intermediaire_procedure",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
