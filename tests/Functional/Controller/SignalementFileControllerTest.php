@@ -9,6 +9,8 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Security\Provider\SignalementUserProvider;
+use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use App\Tests\SessionHelper;
@@ -27,11 +29,13 @@ class SignalementFileControllerTest extends WebTestCase
     private ?User $user = null;
     private RouterInterface $router;
     private SignalementRepository $signalementRepository;
+    private UserRepository $userRepository;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
         /* @var Signalement $signalement */
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
 
@@ -194,18 +198,23 @@ class SignalementFileControllerTest extends WebTestCase
     public function testGeneratePdfSignalement()
     {
         /** @var Signalement $signalement */
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000012']);
 
         $route = $this->router->generate('signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
 
-        // TODO : pour l'instant ancien système en envoyant le from,
-        // voir pour faire quelque-chose de plus robuste grâce à l'authentification sur la page de suivi
+        // on logue l'occupant du signalement
+        /** @var User $usager */
+        $usager = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
+        $signalementUser = new SignalementUser(
+            userIdentifier: $signalement->getCodeSuivi().':'.SignalementUserProvider::OCCUPANT,
+            email: $signalement->getMailOccupant(),
+            user: $usager
+        );
+        $this->client->loginUser($signalementUser, 'code_suivi');
+
         $this->client->request(
             'GET',
             $route,
-            [
-                'from' => $signalement->getMailDeclarant(),
-            ]
         );
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());

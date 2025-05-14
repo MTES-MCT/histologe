@@ -10,11 +10,13 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
+use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -164,12 +166,13 @@ class SignalementFileController extends AbstractController
         Signalement $signalement,
         Request $request,
         MessageBusInterface $messageBus,
+        Security $security,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
-        // TODO : le from récupère l'utilisateur connecté (envoyé via twig, car curieusement $this->getUser() renvoie NULL)
-        // si corrigé, modifier testGeneratePdfSignalement() et templates/front/_partials/_suivi_signalement_tab_infos.html.twig pour ne plus envoyer le from
-        $fromEmail = $request->get('from');
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        $fromEmail = $currentUser->getEmail();
 
         $message = (new PdfExportMessage())
             ->setSignalementId($signalement->getId())

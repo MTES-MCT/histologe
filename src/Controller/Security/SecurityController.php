@@ -159,9 +159,9 @@ class SecurityController extends AbstractController
 
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
             if ($this->featureSecureUuidUrl && $this->featureSuiviAction) { // TODO Remove FEATURE_SECURE_UUID_URL
-                /** @var SignalementUser $currentUser */
+                /** @var ?SignalementUser $currentUser */
                 $currentUser = $security->getUser();
-                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
+                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser?->getCodeSuivi() !== $code) {
                     // get the login error if there is one
                     $error = $authenticationUtils->getLastAuthenticationError();
 
