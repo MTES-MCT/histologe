@@ -29,6 +29,8 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
+use App\Service\Signalement\SuiviSeenMarker;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,6 +44,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
 {
+    /**
+     * @throws \DateMalformedStringException
+     * @throws Exception
+     */
     #[Route('/{uuid:signalement}', name: 'back_signalement_view')]
     public function viewSignalement(
         Signalement $signalement,
@@ -62,6 +68,7 @@ class SignalementController extends AbstractController
         ZoneRepository $zoneRepository,
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
+        SuiviSeenMarker $suiviSeenMarker,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -110,7 +117,7 @@ class SignalementController extends AbstractController
         $canValidateOrRefuseSignalement = $this->isGranted(SignalementVoter::VALIDATE, $signalement)
                                             && !$isClosedForMe
                                             && SignalementStatus::NEED_VALIDATION === $signalement->getStatut();
-        $canReopenAffectation = $affectation ? $this->isGranted(AffectationVoter::REOPEN, $affectation) : false;
+        $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
 
         $clotureForm = $this->createForm(ClotureType::class);
         $clotureForm->handleRequest($request);
@@ -215,6 +222,7 @@ class SignalementController extends AbstractController
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
+        $suiviSeenMarker->markSeenByUsager($signalement);
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],

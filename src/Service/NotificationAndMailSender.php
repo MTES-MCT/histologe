@@ -24,9 +24,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class NotificationAndMailSender
 {
-    private Signalement $signalement;
-    private ?Suivi $suivi;
-    private ?Affectation $affectation;
+    private ?Signalement $signalement = null;
+    private ?Suivi $suivi = null;
+    private ?Affectation $affectation = null;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -95,6 +95,7 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER);
+        $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
     public function sendSignalementIsAcceptedToUsager(Suivi $suivi): void
@@ -102,6 +103,7 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_TO_USAGER);
+        $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
     public function sendSignalementIsRefusedToUsager(Suivi $suivi, string $motif): void
@@ -109,6 +111,7 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL_TO_USAGER, $motif);
+        $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
     public function sendSignalementIsClosedToUsager(Suivi $suivi): void
@@ -116,6 +119,7 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER);
+        $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
     public function sendSignalementIsClosedToPartners(Suivi $suivi): void
@@ -133,8 +137,16 @@ class NotificationAndMailSender
         $this->createInAppNotifications(recipients: $recipientsInAppNotif, type: NotificationType::CLOTURE_SIGNALEMENT, suivi: $suivi);
     }
 
-    private function createInAppNotifications(ArrayCollection $recipients, NotificationType $type, ?Suivi $suivi = null, ?Affectation $affectation = null, ?Signalement $signalement = null): void
-    {
+    /**
+     * @param ArrayCollection<int, User> $recipients
+     */
+    private function createInAppNotifications(
+        ArrayCollection $recipients,
+        NotificationType $type,
+        ?Suivi $suivi = null,
+        ?Affectation $affectation = null,
+        ?Signalement $signalement = null,
+    ): void {
         foreach ($recipients as $user) {
             if (!($user instanceof User)) {
                 continue;
@@ -142,13 +154,24 @@ class NotificationAndMailSender
             if (in_array($type, [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT]) && $user === $suivi->getCreatedBy()) {
                 continue;
             }
-            $this->createInAppNotification(user: $user, type: $type, suivi: $suivi, affectation: $affectation, signalement: $signalement);
+            $this->createInAppNotification(
+                user: $user,
+                type: $type,
+                suivi: $suivi,
+                affectation: $affectation,
+                signalement: $signalement
+            );
         }
         $this->entityManager->flush();
     }
 
-    private function createInAppNotification($user, NotificationType $type, ?Suivi $suivi = null, ?Affectation $affectation = null, ?Signalement $signalement = null): void
-    {
+    private function createInAppNotification(
+        User $user,
+        NotificationType $type,
+        ?Suivi $suivi = null,
+        ?Affectation $affectation = null,
+        ?Signalement $signalement = null,
+    ): void {
         if (!$this->featureEmailRecap && !in_array($type, [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT])) {
             return;
         }
@@ -157,7 +180,13 @@ class NotificationAndMailSender
                 return;
             }
         }
-        $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: $type, suivi: $suivi, affectation: $affectation, signalement: $signalement);
+        $notification = $this->notificationFactory->createInstanceFrom(
+            user: $user,
+            type: $type,
+            suivi: $suivi,
+            affectation: $affectation,
+            signalement: $signalement
+        );
         if ($affectation) {
             $this->entityManager->persist($affectation);
         }
@@ -280,9 +309,7 @@ class NotificationAndMailSender
             }
         }
 
-        $recipientsEmails = array_unique($recipientsEmails);
-
-        return $recipientsEmails;
+        return array_unique($recipientsEmails);
     }
 
     private function isUserNotified(Partner $partner, User $user): bool
@@ -299,5 +326,13 @@ class NotificationAndMailSender
         return UserStatus::ACTIVE === $user->getStatut()
             && !$user->isSuperAdmin() && !$user->isTerritoryAdmin()
             && (!empty($this->affectation) || ($this->suivi->getCreatedBy() && $partner !== $suiviPartner));
+    }
+
+    public function createInAppUsagersNotifications(Suivi $suivi): void
+    {
+        $this->signalement = $suivi->getSignalement();
+        $usagers = $this->userRepository->findUsagers($this->signalement);
+        $recipients = new ArrayCollection($usagers);
+        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::SUIVI_USAGER, suivi: $suivi);
     }
 }

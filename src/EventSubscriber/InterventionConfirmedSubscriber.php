@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SuiviManager;
@@ -34,6 +35,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
 
     public function onInterventionConfirmed(Event $event): void
     {
+        /** @var Intervention $intervention */
         $intervention = $event->getSubject();
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
@@ -64,16 +66,20 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
 
             $isUsagerNotified = $event->getContext()['isUsagerNotified'] ?? true;
             $suivi = $this->suiviManager->createSuivi(
-                user: $currentUser,
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 isPublic: $isUsagerNotified,
+                user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
             if ($isUsagerNotified) {
-                $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER);
+                $this->visiteNotifier->notifyUsagers(
+                    intervention: $intervention,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER,
+                    suivi: $suivi
+                );
             }
 
             $this->visiteNotifier->notifyAgents(

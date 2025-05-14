@@ -1426,6 +1426,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /**
+     * @return Collection<int, Suivi>
+     */
     public function getSuivis(): Collection
     {
         return $this->suivis;

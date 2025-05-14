@@ -83,6 +83,8 @@ class Suivi implements EntityHistoryInterface
     #[ORM\Column]
     private ?bool $isSanitized = null;
 
+    private ?bool $seenByUsager = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -295,5 +297,18 @@ class Suivi implements EntityHistoryInterface
         $this->isSanitized = $isSanitized;
 
         return $this;
+    }
+
+    public function setSeenByUsager(bool $seen): void
+    {
+        $this->seenByUsager = $seen;
+    }
+
+    /**
+     * @see templates/back/signalement/view/suivis.html.twig
+     */
+    public function isSeenByUsager(): ?bool
+    {
+        return $this->seenByUsager;
     }
 }
