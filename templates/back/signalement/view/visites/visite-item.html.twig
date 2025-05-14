@@ -81,7 +81,7 @@
 
 <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
     {% for index, photo in signalement.files|filter(
-        photo => photo.fileType == 'photo'
+        photo => photo.isTypePhoto
                 and photo.intervention is not null
                 and photo.intervention.id is same as intervention.id
         ) %}
@@ -140,7 +140,7 @@
 <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
     <div class="fr-col-12">
         {% for index, doc in signalement.files|filter(
-            doc => doc.fileType == 'document'
+            doc => doc.isTypeDocument
                     and doc.documentType.name == 'PHOTO_VISITE'
                     and doc.intervention is not null
                     and doc.intervention.id is same as intervention.id

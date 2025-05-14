@@ -30,7 +30,7 @@ class FileManagerTest extends KernelTestCase
 
         $this->assertEquals('blank.pdf', $file->getFilename());
         $this->assertEquals('Blank', $file->getTitle());
-        $this->assertEquals('document', $file->getFileType());
+        $this->assertTrue($file->isTypeDocument());
         $this->assertEquals($signalement->getReference(), $file->getSignalement()->getReference());
         $this->assertEquals(DocumentType::AUTRE, $file->getDocumentType());
     }
@@ -56,7 +56,7 @@ class FileManagerTest extends KernelTestCase
 
         $this->assertEquals('blank.jpg', $file->getFilename());
         $this->assertEquals('Blank', $file->getTitle());
-        $this->assertEquals('photo', $file->getFileType());
+        $this->assertTrue($file->isTypePhoto());
         $this->assertEquals($signalement->getReference(), $file->getSignalement()->getReference());
         $this->assertEquals($desc, $file->getDescription());
         $this->assertEquals(DocumentType::PROCEDURE_RAPPORT_DE_VISITE, $file->getDocumentType());

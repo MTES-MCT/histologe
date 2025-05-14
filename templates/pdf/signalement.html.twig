@@ -625,7 +625,7 @@
 
     <section>
         <div class="page">
-        {% for index, photo in signalement.files|filter(photo => photo.fileType == 'photo') %}
+        {% for index, photo in signalement.files|filter(photo => photo.isTypePhoto) %}
                 <div style="page-break-inside: avoid;margin-top: 25px;">
                     <h2>Photo : {{ photo.title }}</h2>
                     <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
