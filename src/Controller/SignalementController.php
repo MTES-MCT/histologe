@@ -703,6 +703,10 @@ class SignalementController extends AbstractController
     public function suiviSignalementMessages(
         string $code,
         SignalementRepository $signalementRepository,
+        UserManager $userManager,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
+        Security $security,
+        AuthenticationUtils $authenticationUtils,
     ): Response {
         if (!$this->featureSuiviAction) {
             throw $this->createNotFoundException();
@@ -713,8 +717,34 @@ class SignalementController extends AbstractController
 
             return $this->render('front/flash-messages.html.twig');
         }
+        $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+        $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
 
-        return new Response('<html><body>TODO</body></html>');
+        if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
+            $currentUser = $security->getUser();
+            if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getUserIdentifier() !== $code) {
+                // get the login error if there is one
+                $error = $authenticationUtils->getLastAuthenticationError();
+
+                return $this->render('security/login_suivi_signalement.html.twig', [
+                    'signalement' => $signalement,
+                    'error' => $error,
+                ]);
+            }
+        }
+
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
+
+        return $this->render('front/suivi_signalement_messages.html.twig', [
+            'signalement' => $signalement,
+            'formDemandeLienSignalement' => $formDemandeLienSignalement,
+            'infoDesordres' => $infoDesordres,
+        ]);
     }
 
     #[Route('/suivre-mon-signalement/{code}/documents', name: 'front_suivi_signalement_documents', methods: ['GET', 'POST'])]
