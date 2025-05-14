@@ -21,7 +21,7 @@ class BailleurController extends AbstractController
         #[MapQueryParameter] string $inseecode,
         #[MapQueryParameter] ?bool $sanitize,
     ): JsonResponse {
-        $name = trim($name);
+        $name = mb_trim($name);
         $territory = $zipcodeProvider->getTerritoryByInseeCode($inseecode);
         $bailleurs = !empty($name) ? $bailleurRepository->findBailleursBy($name, $territory) : [];
 
@@ -53,6 +53,6 @@ class BailleurController extends AbstractController
 
     private function sanitizeName($name): string
     {
-        return trim(str_replace(Bailleur::BAILLEUR_RADIE, '', $name));
+        return mb_trim(str_replace(Bailleur::BAILLEUR_RADIE, '', $name));
     }
 }

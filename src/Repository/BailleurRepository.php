@@ -59,7 +59,7 @@ class BailleurRepository extends ServiceEntityRepository
 
     public function findBailleursBy(string $name, Territory $territory): array
     {
-        $terms = explode(' ', trim($name));
+        $terms = explode(' ', mb_trim($name));
         $queryBuilder = $this
             ->createQueryBuilder('b')
             ->innerJoin('b.bailleurTerritories', 'bt')

@@ -54,7 +54,7 @@ class EscalierParser
         }
 
         if ($match) {
-            return trim($match['value']);
+            return mb_trim($match['value']);
         }
 
         $pattern = '/\b(\d+)\s*(?:ER|ÈRE|EME|èRE|èME|IèME|IèM)?\s*(?=ESCALIER)/i';

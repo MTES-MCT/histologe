@@ -106,7 +106,7 @@ class PartnerPerimetreType extends AbstractType
         }
         foreach ($codesInsee as $insee) {
             /** @var ?Commune $commune */
-            $commune = $this->communeManager->findOneBy(['codeInsee' => trim($insee)]);
+            $commune = $this->communeManager->findOneBy(['codeInsee' => mb_trim($insee)]);
             if (null === $commune) {
                 $context->buildViolation('Il n\'existe pas de commune avec le code insee '.$insee)->atPath('insee')->addViolation();
             } elseif ($commune->getTerritory() !== $territory) {

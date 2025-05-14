@@ -92,7 +92,7 @@ class GridAffectationLoader
                     );
                 }
                 // if partner has an email, it should be valid and not existing in the same territory
-                $emailPartner = trim($item[GridAffectationHeader::PARTNER_EMAIL]);
+                $emailPartner = $this->safe_trim($item[GridAffectationHeader::PARTNER_EMAIL]);
                 if (!empty($emailPartner)) {
                     $violations = $this->validator->validate($emailPartner, $emailConstraint);
                     if (\count($violations) > 0) {
@@ -128,7 +128,7 @@ class GridAffectationLoader
                     }
                 }
 
-                $emailUser = trim($item[GridAffectationHeader::USER_EMAIL]);
+                $emailUser = $this->safe_trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (empty($emailUser) && !empty($item[GridAffectationHeader::USER_ROLE])) {
                     $errors[] = \sprintf(
                         'line %d : E-mail manquant pour %s %s, partenaire %s',
@@ -235,7 +235,7 @@ class GridAffectationLoader
             $canAddUserPartner = false;
             $isNewPartner = false;
             if (\count($item) > 1) {
-                $partnerName = trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]); // Replace with mb_trim($name); when php 8.4
+                $partnerName = $this->safe_trim($item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]);
                 $partnerType = PartnerType::tryFromLabel($item[GridAffectationHeader::PARTNER_TYPE]);
 
                 if (!\in_array($partnerName, $newPartnerNames)) {
@@ -244,9 +244,7 @@ class GridAffectationLoader
                         $partner = $this->partnerFactory->createInstanceFrom(
                             territory: $territory,
                             name: $partnerName,
-                            email: !empty($item[GridAffectationHeader::PARTNER_EMAIL])
-                                ? trim($item[GridAffectationHeader::PARTNER_EMAIL])
-                                : null,
+                            email: $this->safe_trim($item[GridAffectationHeader::PARTNER_EMAIL]),
                             type: $partnerType,
                             insee: $item[GridAffectationHeader::PARTNER_CODE_INSEE]
                         );
@@ -274,15 +272,15 @@ class GridAffectationLoader
                     $roleLabel = 'Resp. Territoire';
                 }
 
-                $email = trim($item[GridAffectationHeader::USER_EMAIL]);
+                $email = $this->safe_trim($item[GridAffectationHeader::USER_EMAIL]);
                 if (!empty($roleLabel) && !empty($email)) {
                     $user = $userRepository->findAgentByEmail($email);
                     if (null === $user) {
                         ++$countNewUsers;
                         $user = $this->userFactory->createInstanceFrom(
                             roleLabel: $roleLabel,
-                            firstname: trim($item[GridAffectationHeader::USER_FIRSTNAME]),
-                            lastname: trim($item[GridAffectationHeader::USER_LASTNAME]),
+                            firstname: $this->safe_trim($item[GridAffectationHeader::USER_FIRSTNAME]),
+                            lastname: $this->safe_trim($item[GridAffectationHeader::USER_LASTNAME]),
                             email: $email,
                             isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
                         );
@@ -357,5 +355,10 @@ class GridAffectationLoader
         return array_filter($occurrencesEmails, function ($value) {
             return $value > 1;
         });
+    }
+
+    private function safe_trim(mixed $value): mixed
+    {
+        return is_string($value) ? mb_trim($value) : $value;
     }
 }

@@ -176,7 +176,7 @@ class SignalementDraftDesordresType extends AbstractType
                     if (str_contains($name, '_details_type_nuisibles')) {
                         if (preg_match('/_(desordres_[a-z_]+_nuisibles_autres)_details_type_nuisibles$/', $name, $matches)) {
                             $slug = $matches[1];
-                            $commentaires[$slug] = trim($field->getData());
+                            $commentaires[$slug] = is_string($field->getData()) ? mb_trim($field->getData()) : $field->getData();
                         }
                     }
                 }

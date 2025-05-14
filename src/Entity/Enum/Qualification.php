@@ -57,7 +57,7 @@ enum Qualification: string
 
     private static function getKeyFromLabel(string $label): string|int|false
     {
-        $label = trim($label);
+        $label = mb_trim($label);
         $label = str_contains($label, 'Péril') ? self::MISE_EN_SECURITE_PERIL->label() : $label;
 
         return array_search($label, self::getLabelList());

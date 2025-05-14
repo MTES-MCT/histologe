@@ -41,8 +41,8 @@ class SignalementDraftCoordonneesType extends AbstractType
 
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
-        $adresseCompleteProprio = trim($signalement->getAdresseProprio().' '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio());
-        $adresseCompleteAgence = trim($signalement->getAdresseAgence().' '.$signalement->getCodePostalAgence().' '.$signalement->getVilleAgence());
+        $adresseCompleteProprio = mb_trim($signalement->getAdresseProprio().' '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio());
+        $adresseCompleteAgence = mb_trim($signalement->getAdresseAgence().' '.$signalement->getCodePostalAgence().' '.$signalement->getVilleAgence());
         $profilesTiersList = [
             ProfileDeclarant::TIERS_PARTICULIER,
             ProfileDeclarant::TIERS_PRO,

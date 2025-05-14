@@ -13,6 +13,6 @@ class ImportCommune
 
     public static function sanitizeCommuneWithArrondissement(string $nom): string
     {
-        return trim(preg_replace('/(\d+e|\d+er) Arrondissement$/', '', $nom));
+        return mb_trim(preg_replace('/(\d+e|\d+er) Arrondissement$/', '', $nom));
     }
 }
