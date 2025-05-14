@@ -23,6 +23,7 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
+use App\Manager\UserManager;
 use App\Repository\BailleurRepository;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
@@ -43,21 +44,25 @@ use Symfony\Component\Yaml\Yaml;
 class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 {
     public function __construct(
-        private TerritoryRepository $territoryRepository,
-        private BailleurRepository $bailleurRepository,
-        private SituationRepository $situationRepository,
-        private CritereRepository $critereRepository,
-        private CriticiteRepository $criticiteRepository,
-        private DesordreCategorieRepository $desordreCategorieRepository,
-        private DesordreCritereRepository $desordreCritereRepository,
-        private DesordrePrecisionRepository $desordrePrecisionRepository,
-        private SignalementDraftRepository $signalementDraftRepository,
-        private TagRepository $tagRepository,
-        private UserRepository $userRepository,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly BailleurRepository $bailleurRepository,
+        private readonly SituationRepository $situationRepository,
+        private readonly CritereRepository $critereRepository,
+        private readonly CriticiteRepository $criticiteRepository,
+        private readonly DesordreCategorieRepository $desordreCategorieRepository,
+        private readonly DesordreCritereRepository $desordreCritereRepository,
+        private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
+        private readonly SignalementDraftRepository $signalementDraftRepository,
+        private readonly TagRepository $tagRepository,
+        private readonly UserRepository $userRepository,
         private readonly FileFactory $fileFactory,
+        private readonly UserManager $userManager,
     ) {
     }
 
+    /**
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager): void
     {
         $signalementRows = Yaml::parseFile(__DIR__.'/../Files/Signalement.yml');
@@ -75,7 +80,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     /**
      * @throws \Exception
      */
-    private function loadSignalements(ObjectManager $manager, array $row)
+    private function loadSignalements(ObjectManager $manager, array $row): void
     {
         $faker = Factory::create('fr_FR');
         $phoneNumber = $row['phone_number'];
@@ -214,6 +219,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($signalement);
+        $this->userManager->createUsagerFromSignalement($signalement);
+        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
 
         if (isset($row['qualifications'])) {
             foreach ($row['qualifications'] as $qualificationLabel) {
@@ -306,7 +313,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     /**
      * @throws \Exception
      */
-    private function loadNewSignalements(ObjectManager $manager, array $row)
+    private function loadNewSignalements(ObjectManager $manager, array $row): void
     {
         $faker = Factory::create('fr_FR');
         $phoneNumber = $row['phone_number'];
@@ -485,6 +492,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($signalement);
+        $this->userManager->createUsagerFromSignalement($signalement);
+        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
     }
 
     private function buildSignalementQualification(

@@ -1178,6 +1178,7 @@ signalements:
     ville_occupant: "Marseille"
     statut: "ACTIVE"
     reference: "2023-15"
+    mail_occupant: 'joude.bellingham@uk.com'
     synchro_data:
         id: 202315
         created_at: "2024-07-01 12:34:56"

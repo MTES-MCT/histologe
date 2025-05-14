@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\NotificationSuiviUser;
 use App\Entity\Enum\NotificationType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Notification;
@@ -292,5 +293,33 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         }
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param string[] $usagerEmails
+     *
+     * @return NotificationSuiviUser[]
+     */
+    public function getNotificationsFrom(Signalement $signalement, array $usagerEmails): array
+    {
+        return array_map(
+            fn (array $row) => new NotificationSuiviUser(
+                (int) $row['suiviId'],
+                (int) $row['userId'],
+                (bool) $row['isSeen'],
+                $row['suiviCreatedAt']
+            ),
+            $this->createQueryBuilder('n')
+                ->select('s.id as suiviId', 'u.id as userId', 'n.isSeen as isSeen', 's.createdAt as suiviCreatedAt')
+                ->join('n.user', 'u')
+                ->join('n.suivi', 's')
+                ->andWhere('n.signalement = :signalement')
+                ->andWhere('u.email IN (:emails)')
+                ->setParameter('signalement', $signalement)
+                ->setParameter('emails', $usagerEmails)
+                ->orderBy('s.createdAt', 'DESC')
+                ->getQuery()
+                ->getArrayResult()
+        );
     }
 }

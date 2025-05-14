@@ -290,6 +290,16 @@ small {
     background-color: var(--background-contrast-orange-terre-battue);
 }
 
+.fr-background--notif-info {
+    background-color: var(--background-action-info);
+    color: var(--text-default-info);
+}
+
+.fr-background--notif-error {
+    background-color: var(--background-contrast-grey);
+    color: var(--text-default-grey);
+}
+
 .leaflet-control-zoom a[href]{
     background: #fff;
 }

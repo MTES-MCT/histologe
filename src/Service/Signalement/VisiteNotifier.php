@@ -15,16 +15,18 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\NotificationAndMailSender;
 use Doctrine\ORM\EntityManagerInterface;
 
 class VisiteNotifier
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private SignalementManager $signalementManager,
-        private NotificationFactory $notificationFactory,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private UserRepository $userRepository,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SignalementManager $signalementManager,
+        private readonly NotificationFactory $notificationFactory,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly UserRepository $userRepository,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
     ) {
     }
 
@@ -32,8 +34,10 @@ class VisiteNotifier
         Intervention $intervention,
         NotificationMailerType $notificationMailerType,
         ?\DateTimeImmutable $previousDate = null,
+        ?Suivi $suivi = null,
     ): void {
         $toRecipients = $intervention->getSignalement()->getMailUsagers();
+        $this->notificationAndMailSender->createInAppUsagersNotifications($suivi);
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(

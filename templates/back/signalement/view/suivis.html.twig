@@ -63,6 +63,9 @@
                     {{ signalement.isNotOccupant ? 'DECLARANT':'OCCUPANT'}}
                 {% endif %}
             {% endif %}
+            {% if suivi.isPublic and suivi.type is not same as (2) %}
+                <span class="fr-badge fr-badge--{{ suivi.isSeenByUsager ? 'success fr-background--notif-info' : 'error fr-background--notif-error' }}">{{ suivi.isSeenByUsager ? 'Lu' : 'Non lu' }}</span>
+            {% endif %}
         </div>
 
         {% if is_granted('ROLE_ADMIN') %}

@@ -92,6 +92,8 @@ class Suivi implements EntityHistoryInterface
     )]
     private ?SuiviCategory $category = null;
 
+    private ?bool $seenByUsager = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -316,5 +318,18 @@ class Suivi implements EntityHistoryInterface
         $this->category = $category;
 
         return $this;
+    }
+
+    public function setSeenByUsager(bool $seen): void
+    {
+        $this->seenByUsager = $seen;
+    }
+
+    /**
+     * @see templates/back/signalement/view/suivis.html.twig
+     */
+    public function isSeenByUsager(): ?bool
+    {
+        return $this->seenByUsager;
     }
 }

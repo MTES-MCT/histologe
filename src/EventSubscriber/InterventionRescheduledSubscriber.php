@@ -38,11 +38,11 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $description .= '<br>';
             $description .= 'La visite sera effectuée par '.$partnerName.'.';
             $suivi = $this->suiviManager->createSuivi(
-                user: $event->getUser(),
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 isPublic: true,
+                user: $event->getUser(),
                 context: Suivi::CONTEXT_INTERVENTION,
                 category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
             );
@@ -51,6 +51,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
                 previousDate: $event->getPreviousDate(),
+                suivi: $suivi
             );
 
             $this->visiteNotifier->notifyAgents(
