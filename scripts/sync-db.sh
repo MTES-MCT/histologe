@@ -37,7 +37,7 @@ scalingo --app "${DUPLICATE_SOURCE_APP}" --addon "${addon_id}" \
     backups-download --output "${archive_name}"
 
 # Extract the archive containing the downloaded backup:
-echo ">>> Extraction the archive containing the downloaded backup"
+echo ">>> Extract the archive containing the downloaded backup"
 backup_file_name="$( tar --extract --verbose --file="${archive_name}" --directory="/app/" \
                      | cut -d " " -f 2 | cut -d "/" -f 2 )"
 
@@ -51,14 +51,16 @@ sed -i '/^USE/d' "${backup_file_name}"
 sed -i '/DEFINER/d' "${backup_file_name}"
 
 # Avoids missing silent errors
+echo ">>> Avoids missing silent errors"
 set -e
 set -o pipefail
 
-cat "$backup_file_name" | grep -v '^--' | grep -v '^/' | mysql --no-defaults --force --user="${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
-     --host="${DATABASE_HOST}" --port="${DATABASE_PORT}" "${DATABASE_NAME}" 2> mysql_error.log
-line=$(tail -n 1 mysql_error.log)
-echo "> mysql log with cat"
-echo $line
+### TESTS
+# cat "$backup_file_name" | grep -v '^--' | grep -v '^/' | mysql --no-defaults --force --user="${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
+#      --host="${DATABASE_HOST}" --port="${DATABASE_PORT}" "${DATABASE_NAME}" 2> mysql_error.log
+# line=$(tail -n 1 mysql_error.log)
+# echo "> mysql log with cat"
+# echo $line
 
 # Loading database
 echo ">>> Loading database"
