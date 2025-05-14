@@ -343,6 +343,16 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
+    public function isTypePhoto(): bool
+    {
+        return $this::FILE_TYPE_PHOTO === $this->fileType;
+    }
+
+    public function isTypeDocument(): bool
+    {
+        return $this::FILE_TYPE_DOCUMENT === $this->fileType;
+    }
+
     public function isSituationPhoto(): bool
     {
         return $this->fileType === $this::FILE_TYPE_PHOTO

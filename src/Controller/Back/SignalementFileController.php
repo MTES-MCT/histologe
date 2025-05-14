@@ -178,13 +178,12 @@ class SignalementFileController extends AbstractController
         } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))
         ) {
             $filename = $file->getFilename();
-            $type = $file->getFileType();
             if ($uploadHandlerService->deleteFile($file)) {
                 if (!$this->isGranted('ROLE_ADMIN') && SignalementStatus::CLOSED !== $signalement->getStatut()) {
                     /** @var User $user */
                     $user = $this->getUser();
                     $description = $user->getNomComplet().' a supprimé ';
-                    $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
+                    $description .= $file->isTypeDocument() ? 'le document suivant :' : 'la photo suivante :';
                     $description .= '<ul><li>'.$filename.'</li></ul>';
                     $suiviManager->createSuivi(
                         user: $user,
@@ -195,7 +194,7 @@ class SignalementFileController extends AbstractController
                 }
 
                 if ('1' !== $request->get('is_draft')) {
-                    if (File::FILE_TYPE_DOCUMENT === $type) {
+                    if ($file->isTypeDocument()) {
                         $this->addFlash('success', 'Le document a bien été supprimé.');
                     } else {
                         $this->addFlash('success', 'La photo a bien été supprimée.');
@@ -304,7 +303,7 @@ class SignalementFileController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return $this->json(['response' => 'success']);
         }
-        if ('document' === $file->getFileType()) {
+        if ($file->isTypeDocument()) {
             $this->addFlash('success', 'Le document a bien été modifié.');
         } else {
             $this->addFlash('success', 'La photo a bien été modifiée.');

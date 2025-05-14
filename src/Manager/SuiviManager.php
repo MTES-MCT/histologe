@@ -92,8 +92,9 @@ class SuiviManager extends Manager
 
         /** @var ?Intervention $intervention */
         $intervention = null;
+        /** @var File $file */
         foreach ($files as $file) {
-            if (File::FILE_TYPE_PHOTO === $file->getFileType()) {
+            if ($file->isTypePhoto()) {
                 ++$nbPhotos;
             } else {
                 ++$nbDocs;
