@@ -3,8 +3,6 @@
 namespace App\Command;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\SignalementStatus;
-use App\Manager\UserManager;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -16,7 +14,6 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
     name: 'app:affectation-to-partner',
@@ -24,7 +21,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class AffectationToPartnerCommand extends Command
 {
-    public const int BATCH_SIZE = 20;
+    public const int BATCH_SIZE = 200;
     private const SIGNALEMENTS_REFERENCE = [
         '66467' => '2024-1784',
         '66498' => '2023-118',
@@ -1998,8 +1995,6 @@ class AffectationToPartnerCommand extends Command
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly PartnerRepository $partnerRepository,
-        private readonly ParameterBagInterface $parameterBag,
-        private readonly UserManager $userManager,
         private readonly AffectationRepository $affectationRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -2011,56 +2006,36 @@ class AffectationToPartnerCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $partner = $this->partnerRepository->findOneBy(['id' => self::PARTNER_ID]);
-        $adminEmail = $this->parameterBag->get('user_system_email');
-        $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
-        $createdAt = new \DateTimeImmutable();
 
         $progressBar = new ProgressBar($output, \count(self::SIGNALEMENTS_REFERENCE));
         $progressBar->start();
         $count = 0;
-        foreach (self::SIGNALEMENTS_REFERENCE as $idossId => $signalementReference) {
+        foreach (self::SIGNALEMENTS_REFERENCE as $signalementReference) {
             $progressBar->advance();
             $signalement = $this->signalementRepository->findOneBy(['reference' => $signalementReference, 'territory' => $partner->getTerritory()]);
             if (!$signalement) {
                 continue;
             }
-            $idossData = ['id' => $idossId, 'created_at' => $createdAt->format('Y-m-d H:i:s')];
             $existingAffectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $partner]);
-            if ($existingAffectation && $signalement->getSynchroData(IdossService::TYPE_SERVICE)) {
-                continue;
-            } elseif ($existingAffectation) {
-                $signalement->setSynchroData($idossData, IdossService::TYPE_SERVICE);
-            } else {
-                $signalement->setSynchroData($idossData, IdossService::TYPE_SERVICE);
-
-                $affectationStatus = SignalementStatus::NEED_VALIDATION === $signalement->getStatut() || SignalementStatus::ACTIVE === $signalement->getStatut()
-                    ? Affectation::STATUS_ACCEPTED
-                    : Affectation::STATUS_CLOSED;
-
-                $affectation = (new Affectation())
-                    ->setSignalement($signalement)
-                    ->setPartner($partner)
-                    ->setTerritory($partner->getTerritory())
-                    ->setAffectedBy($adminUser)
-                    ->setAnsweredBy($adminUser)
-                    ->setAnsweredAt($createdAt)
-                    ->setStatut($affectationStatus);
-
-                $this->entityManager->persist($affectation);
+            if (!$existingAffectation) {
+                throw new \Exception('Affectation not found for signalement '.$signalement->getReference());
             }
+            if (!$signalement->getSynchroData(IdossService::TYPE_SERVICE)) {
+                throw new \Exception('Signalement not synchronized '.$signalement->getReference());
+            }
+            if (Affectation::STATUS_WAIT !== $existingAffectation->getStatut()) {
+                continue;
+            }
+            $existingAffectation->setStatut(Affectation::STATUS_ACCEPTED);
             ++$count;
             if (0 === $count % self::BATCH_SIZE) {
                 $this->entityManager->flush();
-                $this->entityManager->clear();
-                $partner = $this->partnerRepository->findOneBy(['id' => self::PARTNER_ID]);
-                $adminEmail = $this->parameterBag->get('user_system_email');
-                $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
             }
         }
         $this->entityManager->flush();
         $progressBar->finish();
 
-        $io->success($count.'/'.\count(self::SIGNALEMENTS_REFERENCE).' signalements were affected to partner.');
+        $io->success(sprintf('Affectations updated: %d', $count));
 
         return Command::SUCCESS;
     }
