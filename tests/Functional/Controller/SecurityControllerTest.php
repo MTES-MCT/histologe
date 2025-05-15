@@ -94,27 +94,6 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseRedirects('/connexion');
     }
 
-    public function testShowExportPdfUsagerNotLogged(): void
-    {
-        $_GET['folder'] = '_up';
-        $client = static::createClient();
-        $uuid = '00000000-0000-0000-2022-000000000001';
-        $filename = 'export-pdf-signalement-'.$uuid.'.pdf';
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
-        $codeSuivi = $signalement->getCodeSuivi();
-
-        $crawler = $client->request(
-            'GET',
-            '/show-export-pdf-usager/'.$filename.'/'.$codeSuivi.'?folder=_up',
-        );
-        /** @var BinaryFileResponse $response */
-        $response = $client->getResponse();
-        $this->assertTrue($response->isSuccessful());
-        $this->assertEquals('Accéder à mon export pdf', $crawler->filter('h1')->text());
-    }
-
     public function testShowExportPdfUsagerLogged(): void
     {
         $_GET['folder'] = '_up';
@@ -146,5 +125,26 @@ class SecurityControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertTrue($response->isSuccessful());
         $this->assertInstanceOf(BinaryFileResponse::class, $response);
+    }
+
+    public function testShowExportPdfUsagerNotLogged(): void
+    {
+        $_GET['folder'] = '_up';
+        $client = static::createClient();
+        $uuid = '00000000-0000-0000-2022-000000000001';
+        $filename = 'export-pdf-signalement-'.$uuid.'.pdf';
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
+        $codeSuivi = $signalement->getCodeSuivi();
+
+        $crawler = $client->request(
+            'GET',
+            '/show-export-pdf-usager/'.$filename.'/'.$codeSuivi.'?folder=_up',
+        );
+        /** @var Response $response */
+        $response = $client->getResponse();
+        $this->assertEquals('Accéder à mon export pdf', $crawler->filter('h1')->text());
+        $this->assertTrue($response->isSuccessful());
     }
 }
