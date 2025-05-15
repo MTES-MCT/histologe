@@ -16,6 +16,11 @@ class NotificationCounter implements RuntimeExtensionInterface
 
     public function countUnseenNotification(User $user): int
     {
-        return $this->notificationRepository->count(['user' => $user, 'isSeen' => 0, 'type' => NotificationType::NOUVEAU_SUIVI, 'deleted' => false]);
+        return $this->notificationRepository->count([
+            'user' => $user,
+            'isSeen' => 0,
+            'type' => [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT],
+            'deleted' => false]
+        );
     }
 }

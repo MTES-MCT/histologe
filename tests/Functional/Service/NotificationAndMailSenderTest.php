@@ -130,7 +130,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $notificationsSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::CLOTURE_SIGNALEMENT, 'waitMailingSummary' => true]);
         $this->assertCount(1, $notificationsSummary);
         $notificationNoSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::CLOTURE_SIGNALEMENT, 'waitMailingSummary' => false]);
-        $this->assertCount(4, $notificationNoSummary);
+        $this->assertCount(3, $notificationNoSummary);
     }
 
     public function testSendNewSuiviToAdminsAndPartners(): void

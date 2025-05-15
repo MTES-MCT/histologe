@@ -139,7 +139,7 @@ class NotificationAndMailSender
             if (!($user instanceof User)) {
                 continue;
             }
-            if (NotificationType::NOUVEAU_SUIVI === $type && $user === $suivi->getCreatedBy()) {
+            if (in_array($type, [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT]) && $user === $suivi->getCreatedBy()) {
                 continue;
             }
             $this->createInAppNotification(user: $user, type: $type, suivi: $suivi, affectation: $affectation, signalement: $signalement);
@@ -149,7 +149,7 @@ class NotificationAndMailSender
 
     private function createInAppNotification($user, NotificationType $type, ?Suivi $suivi = null, ?Affectation $affectation = null, ?Signalement $signalement = null): void
     {
-        if (!$this->featureEmailRecap && !in_array($type, [NotificationType::NOUVEAU_SUIVI])) {
+        if (!$this->featureEmailRecap && !in_array($type, [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT])) {
             return;
         }
         if (NotificationType::NOUVEAU_SUIVI === $type) {
