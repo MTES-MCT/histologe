@@ -4,14 +4,14 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Suivi;
-use App\Event\InterventionCreatedEvent;
+use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Manager\SuiviManager;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
+readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private VisiteNotifier $visiteNotifier,
@@ -22,14 +22,14 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            InterventionCreatedEvent::NAME => 'onInterventionCreated',
+            InterventionUpdatedByEsaboraEvent::NAME => 'onInterventionEdited',
         ];
     }
 
-    public function onInterventionCreated(InterventionCreatedEvent $event): void
+    public function onInterventionEdited(InterventionUpdatedByEsaboraEvent $event): void
     {
         $intervention = $event->getIntervention();
-        $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
+        $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionUpdatedByEsaboraEvent::NAME);
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
             description: $description,
@@ -44,7 +44,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
         ) {
             $this->visiteNotifier->notifyUsagers(
                 $intervention,
-                NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER
+                NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER // TYPE_VISITE_RESCHEDULED_TO_USAGER ou TYPE_VISITE_EDITED_TO_USAGER ?
             );
         }
 

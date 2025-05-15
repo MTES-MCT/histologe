@@ -6,19 +6,19 @@ use App\Dto\Api\Request\ArreteRequest;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Event\InterventionCreatedEvent;
+use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 
 class InterventionDescriptionGenerator
 {
     public static function generate(Intervention $intervention, string $eventName): ?string
     {
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+            return $intervention->getDetails();
+        }
         if (InterventionCreatedEvent::NAME === $eventName) {
-            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
-                return $intervention->getDetails();
-            }
-
             return self::buildDescriptionVisiteCreated($intervention);
-        } elseif (InterventionCreatedEvent::UPDATED_BY_ESABORA === $eventName) {
+        } elseif (InterventionUpdatedByEsaboraEvent::NAME === $eventName) {
             return self::buildDescriptionVisiteUpdated($intervention);
         }
 
@@ -52,6 +52,8 @@ class InterventionDescriptionGenerator
         $labelVisite = strtolower($intervention->getType()->label());
 
         // TODO : récupérer SI-Santé Habitat ailleurs ? $dossierResponse->getNameSI() ?
+        // Pour l'instant le seul besoin remonté par SISH est celui de la modification de date
+        // Mais l'opérateur pourrait aussi être modifié (que ce soit ARS ou un opérateur externe)
         return \sprintf(
             'La date de %s dans SI-Santé Habitat a été modifiée ; La nouvelle date est le %s.',
             $labelVisite,
