@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -41,6 +42,8 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
                 type: Suivi::TYPE_AUTO,
                 isPublic: true,
                 user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]),
+                context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
+                category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 flush: false,
             );
             $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');

@@ -6,6 +6,7 @@ use App\Dto\DemandeLienSignalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
@@ -518,6 +519,7 @@ class SignalementController extends AbstractController
                 description: $description,
                 type: Suivi::TYPE_USAGER,
                 isPublic: true,
+                category: SuiviCategory::MESSAGE_USAGER,
                 user: $user,
             );
 
@@ -654,6 +656,7 @@ class SignalementController extends AbstractController
             type: $typeSuivi,
             isPublic: true,
             user: $user,
+            category: SuiviCategory::MESSAGE_USAGER,
         );
 
         $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?

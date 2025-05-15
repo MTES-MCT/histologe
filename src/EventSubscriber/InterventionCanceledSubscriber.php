@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SuiviManager;
@@ -47,6 +48,7 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
                 type: Suivi::TYPE_AUTO,
                 isPublic: true,
                 context: Suivi::CONTEXT_INTERVENTION,
+                category: SuiviCategory::INTERVENTION_IS_CANCELED,
             );
 
             $this->visiteNotifier->notifyUsagers(
