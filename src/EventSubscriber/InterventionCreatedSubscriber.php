@@ -33,18 +33,18 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
 
     public function onInterventionCreated(InterventionCreatedEvent $event): void
     {
-        $this->createSuiviAndNotify($event);
+        $this->createSuiviAndNotify($event, InterventionCreatedEvent::NAME);
     }
 
     public function onInterventionEdited(InterventionCreatedEvent $event): void
     {
-        $this->createSuiviAndNotify($event);
+        $this->createSuiviAndNotify($event, InterventionCreatedEvent::UPDATED_BY_ESABORA);
     }
 
-    private function createSuiviAndNotify(InterventionCreatedEvent $event): void
+    private function createSuiviAndNotify(InterventionCreatedEvent $event, string $eventName): void
     {
         $intervention = $event->getIntervention();
-        $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
+        $description = (string) InterventionDescriptionGenerator::generate($intervention, $eventName);
         $foundSuivi = $this->suiviManager->findOneBy([
             'signalement' => $intervention->getSignalement(),
             'description' => $this->htmlSanitizer->sanitize($description),

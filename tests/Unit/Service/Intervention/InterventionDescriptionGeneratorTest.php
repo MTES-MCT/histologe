@@ -59,6 +59,42 @@ class InterventionDescriptionGeneratorTest extends TestCase
         );
     }
 
+    public function testVisiteDescriptionOnInterventionUpdated(): void
+    {
+        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'));
+        $intervention = $this->getIntervention(
+            InterventionType::VISITE,
+            $dateInFutur,
+            Intervention::STATUS_PLANNED
+        );
+
+        $this->assertEquals(
+            'La date de visite dans SI-Santé Habitat a été modifiée ; La nouvelle date est le '.$dateInFutur->format('d/m/Y').'.',
+            InterventionDescriptionGenerator::generate(
+                $intervention,
+                InterventionCreatedEvent::UPDATED_BY_ESABORA
+            )
+        );
+    }
+
+    public function testVisiteControleDescriptionOnInterventionUpdated(): void
+    {
+        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'));
+        $intervention = $this->getIntervention(
+            InterventionType::VISITE_CONTROLE,
+            $dateInFutur,
+            Intervention::STATUS_PLANNED
+        );
+
+        $this->assertEquals(
+            'La date de visite de contrôle dans SI-Santé Habitat a été modifiée ; La nouvelle date est le '.$dateInFutur->format('d/m/Y').'.',
+            InterventionDescriptionGenerator::generate(
+                $intervention,
+                InterventionCreatedEvent::UPDATED_BY_ESABORA
+            )
+        );
+    }
+
     public function testVisiteDescriptionOnUnknownEvent()
     {
         $this->assertNull(InterventionDescriptionGenerator::generate(

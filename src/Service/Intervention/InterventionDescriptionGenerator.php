@@ -18,6 +18,8 @@ class InterventionDescriptionGenerator
             }
 
             return self::buildDescriptionVisiteCreated($intervention);
+        } elseif (InterventionCreatedEvent::UPDATED_BY_ESABORA === $eventName) {
+            return self::buildDescriptionVisiteUpdated($intervention);
         }
 
         return null;
@@ -42,6 +44,18 @@ class InterventionDescriptionGenerator
             $labelVisite,
             $isInPast ? 'a été réalisée' : 'sera effectuée',
             $partnerName
+        );
+    }
+
+    public static function buildDescriptionVisiteUpdated(Intervention $intervention): string
+    {
+        $labelVisite = strtolower($intervention->getType()->label());
+
+        // TODO : récupérer SI-Santé Habitat ailleurs ? $dossierResponse->getNameSI() ?
+        return \sprintf(
+            'La date de %s dans SI-Santé Habitat a été modifiée ; La nouvelle date est le %s.',
+            $labelVisite,
+            $intervention->getScheduledAt()->format('d/m/Y'),
         );
     }
 
