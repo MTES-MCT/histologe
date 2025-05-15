@@ -11,6 +11,7 @@ use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
+use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
@@ -137,11 +138,13 @@ class EsaboraManager
     {
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierVisiteSISH->getVisiteId()]);
         if (null !== $intervention) {
-            $this->updateFromDossierVisite($intervention, $dossierVisiteSISH);
-            $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent($intervention, $this->adminUser),
-                InterventionCreatedEvent::UPDATED_BY_ESABORA
-            );
+            $isVisiteUpdated = $this->updateFromDossierVisite($intervention, $dossierVisiteSISH, $affectation);
+            if ($isVisiteUpdated) {
+                $this->eventDispatcher->dispatch(
+                    new InterventionUpdatedByEsaboraEvent($intervention, $this->adminUser),
+                    InterventionUpdatedByEsaboraEvent::NAME
+                );
+            }
         } else {
             if (null === InterventionType::tryFromLabel($dossierVisiteSISH->getVisiteType())) {
                 $this->logger->error(
@@ -191,12 +194,13 @@ class EsaboraManager
         ];
 
         if (null !== $intervention) {
-            $intervention->setAdditionalInformation($additionalInformation);
-            $this->updateFromDossierArrete($intervention, $dossierArreteSISH);
-            $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent($intervention, $this->adminUser),
-                InterventionCreatedEvent::UPDATED_BY_ESABORA
-            );
+            $isArreteUpdated = $this->updateFromDossierArrete($intervention, $dossierArreteSISH, $additionalInformation);
+            if ($isArreteUpdated) {
+                $this->eventDispatcher->dispatch(
+                    new InterventionUpdatedByEsaboraEvent($intervention, $this->adminUser),
+                    InterventionUpdatedByEsaboraEvent::NAME
+                );
+            }
         } else {
             $intervention = $this->interventionFactory->createInstanceFrom(
                 affectation: $affectation,
@@ -311,32 +315,77 @@ class EsaboraManager
     /**
      * @throws \Exception
      */
-    private function updateFromDossierVisite(Intervention $intervention, DossierVisiteSISH $dossierVisiteSISH): void
+    private function updateFromDossierVisite(Intervention $intervention, DossierVisiteSISH $dossierVisiteSISH, Affectation $affectation): bool
     {
-        $intervention
-            ->setScheduledAt(DateParser::parse($dossierVisiteSISH->getVisiteDate()))
-            ->setDoneBy($visitePar = $dossierVisiteSISH->getVisitePar());
+        $hasChanged = false;
 
-        if ('ARS' !== $visitePar) {
-            $intervention
-                ->setExternalOperator($visitePar)
-                ->setPartner(null);
+        $scheduledAt = DateParser::parse(
+            $dossierVisiteSISH->getVisiteDate(),
+            $affectation->getSignalement()->getTimezone()
+        );
+        if ($intervention->getScheduledAt()?->getTimestamp() !== $scheduledAt->getTimestamp()) {
+            $intervention->setScheduledAt($scheduledAt);
+            $hasChanged = true;
         }
 
-        $this->interventionRepository->save($intervention, true);
+        $visitePar = $dossierVisiteSISH->getVisitePar();
+        if ($intervention->getDoneBy() !== $visitePar) {
+            $intervention->setDoneBy($visitePar);
+            $hasChanged = true;
+
+            if ('ARS' !== $visitePar && null !== $visitePar) {
+                if ($intervention->getExternalOperator() !== $visitePar) {
+                    $intervention->setExternalOperator($visitePar);
+                    $hasChanged = true;
+                }
+                if (null !== $intervention->getPartner()) {
+                    $intervention->setPartner(null);
+                    $hasChanged = true;
+                }
+            }
+        }
+
+        if ($hasChanged) {
+            $this->interventionRepository->save($intervention, true);
+        }
+
+        return $hasChanged;
     }
 
     /**
      * @throws \Exception
      */
-    private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH): void
+    private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH, array $additionalInformation): bool
     {
-        $intervention
-            ->setScheduledAt(DateParser::parse($dossierArreteSISH->getArreteDate()))
-            ->setDetails(InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH))
-            ->setStatus(Intervention::STATUS_DONE);
+        $hasChanged = false;
 
-        $this->interventionRepository->save($intervention, true);
+        if ($intervention->getAdditionalInformation() !== $additionalInformation) {
+            $intervention->setAdditionalInformation($additionalInformation);
+            $hasChanged = true;
+        }
+
+        $scheduledAt = DateParser::parse($dossierArreteSISH->getArreteDate());
+        if ($intervention->getScheduledAt() != $scheduledAt) {
+            $intervention->setScheduledAt($scheduledAt);
+            $hasChanged = true;
+        }
+
+        $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
+        if ($intervention->getDetails() !== $newDetails) {
+            $intervention->setDetails($newDetails);
+            $hasChanged = true;
+        }
+
+        if (Intervention::STATUS_DONE !== $intervention->getStatus()) {
+            $intervention->setStatus(Intervention::STATUS_DONE);
+            $hasChanged = true;
+        }
+
+        if ($hasChanged) {
+            $this->interventionRepository->save($intervention, true);
+        }
+
+        return $hasChanged;
     }
 
     private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
