@@ -2,6 +2,7 @@
 
 namespace App\Command\Cron;
 
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Suivi;
@@ -137,6 +138,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                         signalement: $signalement,
                         description: $description,
                         type: Suivi::TYPE_TECHNICAL,
+                        category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
                         flush: false
                     );
                     $this->entityManager->persist($suivi);
