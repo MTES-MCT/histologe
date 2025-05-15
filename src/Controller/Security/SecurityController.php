@@ -155,24 +155,24 @@ class SecurityController extends AbstractController
         SymfonySecurity $security,
         AuthenticationUtils $authenticationUtils,
     ): Response {
-        $request = Request::createFromGlobals();
-
         if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
-            if ($this->featureSecureUuidUrl && $this->featureSuiviAction) { // TODO Remove FEATURE_SECURE_UUID_URL
-                /** @var ?SignalementUser $currentUser */
-                $currentUser = $security->getUser();
-                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser?->getCodeSuivi() !== $code) {
-                    // get the login error if there is one
-                    $error = $authenticationUtils->getLastAuthenticationError();
-
-                    return $this->render('security/login_suivi_signalement.html.twig', [
-                        'signalement' => $signalement,
-                        'fromEmail' => $request->get('from'),
-                        'error' => $error,
-                    ]);
-                }
-            } else {
+            if (!$this->featureSecureUuidUrl) {// TODO Remove FEATURE_SECURE_UUID_URL
                 throw $this->createAccessDeniedException();
+            }
+            if (!$this->featureSuiviAction) {
+                throw $this->createAccessDeniedException();
+            }
+            /** @var ?SignalementUser $currentUser */
+            $currentUser = $security->getUser();
+            if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser?->getCodeSuivi() !== $code) {
+                // get the login error if there is one
+                $error = $authenticationUtils->getLastAuthenticationError();
+
+                return $this->render('security/login_suivi_signalement.html.twig', [
+                    'signalement' => $signalement,
+                    'fromEmail' => '', // TODO : à supprimer
+                    'error' => $error,
+                ]);
             }
 
             try {

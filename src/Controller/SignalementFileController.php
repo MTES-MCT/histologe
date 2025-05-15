@@ -164,7 +164,6 @@ class SignalementFileController extends AbstractController
     #[Route('/{uuid:signalement}/export-pdf-usager', name: 'signalement_gen_pdf')]
     public function generatePdfSignalement(
         Signalement $signalement,
-        Request $request,
         MessageBusInterface $messageBus,
         Security $security,
     ): Response {
@@ -172,26 +171,30 @@ class SignalementFileController extends AbstractController
 
         /** @var SignalementUser $currentUser */
         $currentUser = $security->getUser();
-        $fromEmail = $currentUser->getEmail();
+        if (!$currentUser instanceof SignalementUser || null === $currentUser->getEmail()) {
+            $this->addFlash('error', 'Il n\'y a pas d\'adresse e-mail à laquelle vous envoyer le signalement au format PDF.');
+        } else {
+            $fromEmail = $currentUser->getEmail();
 
-        $message = (new PdfExportMessage())
-            ->setSignalementId($signalement->getId())
-            ->setUserEmail($fromEmail)
-            ->setIsForUsager(true);
+            $message = (new PdfExportMessage())
+                ->setSignalementId($signalement->getId())
+                ->setUserEmail($fromEmail)
+                ->setIsForUsager(true);
 
-        $messageBus->dispatch($message);
+            $messageBus->dispatch($message);
 
-        $this->addFlash(
-            'success',
-            \sprintf(
-                'Le signalement au format PDF vous sera envoyé par e-mail à l\'adresse suivante : %s. L\'envoi peut prendre plusieurs minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
-                $fromEmail
-            )
-        );
+            $this->addFlash(
+                'success',
+                \sprintf(
+                    'Le signalement au format PDF vous sera envoyé par e-mail à l\'adresse suivante : %s. L\'envoi peut prendre plusieurs minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
+                    $fromEmail
+                )
+            );
+        }
 
         return $this->redirectToRoute(
             'front_suivi_signalement',
-            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail ?? '']
         );
     }
 }
