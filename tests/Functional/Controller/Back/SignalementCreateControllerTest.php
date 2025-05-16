@@ -6,6 +6,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\SignalementUsagerRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -20,6 +21,7 @@ class SignalementCreateControllerTest extends WebTestCase
     private UserRepository $userRepository;
     private SignalementRepository $signalementRepository;
     private PartnerRepository $partnerRepository;
+    private SignalementUsagerRepository $signalementUsagerRepository;
     private RouterInterface $router;
 
     protected function setUp(): void
@@ -29,6 +31,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->signalementUsagerRepository = static::getContainer()->get(SignalementUsagerRepository::class);
         $this->router = static::getContainer()->get(RouterInterface::class);
     }
 
@@ -275,6 +278,9 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
         $this->assertCount(1, $signalement->getAffectations());
+        $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
+        $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
+        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
 
         $this->assertEmailCount(2);
     }
@@ -297,7 +303,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $response = json_decode($this->client->getResponse()->getContent(), true);
-
+        $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
+        $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
+        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
         $this->assertTrue($response['redirect']);
         $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
 
@@ -332,6 +340,9 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
         $this->assertCount(0, $signalement->getSuivis());
         $this->assertCount(0, $signalement->getAffectations());
+        $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
+        $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
+        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
 
         $this->assertEmailCount(0);
     }
@@ -357,6 +368,9 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
         $this->assertCount(1, $signalement->getAffectations());
+        $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
+        $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
+        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
 
         $this->assertEmailCount(2);
     }
@@ -383,6 +397,9 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
         $this->assertCount(1, $signalement->getAffectations());
+        $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
+        $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
+        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
 
         $this->assertEmailCount(2);
     }
