@@ -15,6 +15,7 @@ use App\Form\SignalementDraftLogementType;
 use App\Form\SignalementDraftSituationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Manager\UserManager;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -384,6 +385,7 @@ class SignalementCreateController extends AbstractController
         AutoAssigner $autoAssigner,
         AffectationManager $affectationManager,
         EventDispatcherInterface $eventDispatcher,
+        UserManager $userManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
 
@@ -416,7 +418,6 @@ class SignalementCreateController extends AbstractController
         if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
             /** @var User $user */
             $user = $this->getUser();
-
             if (!$signalement->getProfileDeclarant()) {
                 $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
             }
@@ -445,6 +446,12 @@ class SignalementCreateController extends AbstractController
             } else {
                 $signalement->setIsNotOccupant(true);
             }
+            /** @var User $userOccupant */
+            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+            /** @var User $userDeclarant */
+            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            // var_dump($userDeclarant?->getEmail());
+            // var_dump($userOccupant?->getEmail());
 
             $route = 'back_signalement_view';
             $params = ['uuid' => $signalement->getUuid()];
