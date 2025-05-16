@@ -20,6 +20,7 @@ use App\Repository\SignalementRepository;
 use App\Service\TimezoneProvider;
 use App\Utils\CommuneHelper;
 use App\Utils\Phone;
+use App\Utils\TrimHelper;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -842,7 +843,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setNomProprio(?string $nomProprio): self
     {
-        $this->nomProprio = \trim($nomProprio); // Replace with mb_trim($name); when php 8.4
+        $this->nomProprio = TrimHelper::safeTrim($nomProprio);
 
         return $this;
     }
@@ -899,7 +900,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setMailProprio(?string $mailProprio): self
     {
-        $this->mailProprio = \trim($mailProprio); // Replace with mb_trim($name); when php 8.4
+        $this->mailProprio = TrimHelper::safeTrim($mailProprio);
 
         return $this;
     }
@@ -991,7 +992,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setNomDeclarant(?string $nomDeclarant): self
     {
-        $this->nomDeclarant = \trim($nomDeclarant); // Replace with mb_trim($name); when php 8.4
+        $this->nomDeclarant = TrimHelper::safeTrim($nomDeclarant);
 
         return $this;
     }
@@ -1003,7 +1004,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setPrenomDeclarant(?string $prenomDeclarant): self
     {
-        $this->prenomDeclarant = \trim($prenomDeclarant); // Replace with mb_trim($name); when php 8.4
+        $this->prenomDeclarant = TrimHelper::safeTrim($prenomDeclarant);
 
         return $this;
     }
@@ -1032,7 +1033,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setMailDeclarant(?string $mailDeclarant): self
     {
-        $this->mailDeclarant = \trim($mailDeclarant); // Replace with mb_trim($name); when php 8.4
+        $this->mailDeclarant = TrimHelper::safeTrim($mailDeclarant);
 
         return $this;
     }
@@ -1070,7 +1071,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setNomOccupant(?string $nomOccupant): self
     {
-        $this->nomOccupant = \trim($nomOccupant); // Replace with mb_trim($name); when php 8.4
+        $this->nomOccupant = TrimHelper::safeTrim($nomOccupant);
 
         return $this;
     }
@@ -1082,7 +1083,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setPrenomOccupant(?string $prenomOccupant): self
     {
-        $this->prenomOccupant = \trim($prenomOccupant); // Replace with mb_trim($name); when php 8.4
+        $this->prenomOccupant = TrimHelper::safeTrim($prenomOccupant);
 
         return $this;
     }
@@ -1111,7 +1112,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setMailOccupant($mailOccupant): self
     {
-        $this->mailOccupant = \trim($mailOccupant); // Replace with mb_trim($name); when php 8.4
+        $this->mailOccupant = TrimHelper::safeTrim($mailOccupant);
 
         return $this;
     }
@@ -2309,7 +2310,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function setPrenomProprio(?string $prenomProprio): self
     {
-        $this->prenomProprio = \trim($prenomProprio); // Replace with mb_trim($name); when php 8.4
+        $this->prenomProprio = TrimHelper::safeTrim($prenomProprio);
 
         return $this;
     }

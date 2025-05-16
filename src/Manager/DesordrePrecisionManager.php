@@ -41,8 +41,8 @@ class DesordrePrecisionManager extends AbstractManager
         if (isset($data['procedure'])) {
             $procedure = explode(',', $data['procedure']);
             foreach ($procedure as $qualificationLabel) {
-                if ('' !== trim($qualificationLabel)) {
-                    $qualification[] = Qualification::tryFromLabel(trim($qualificationLabel));
+                if ('' !== mb_trim($qualificationLabel)) {
+                    $qualification[] = Qualification::tryFromLabel(mb_trim($qualificationLabel));
                 }
             }
         }

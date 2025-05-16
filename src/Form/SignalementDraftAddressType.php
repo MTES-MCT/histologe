@@ -22,7 +22,7 @@ class SignalementDraftAddressType extends AbstractType
         $signalement = $builder->getData();
         $adresseCompleteOccupant = '';
         if ($signalement->getBanIdOccupant()) {
-            $adresseCompleteOccupant = trim($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
+            $adresseCompleteOccupant = mb_trim($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
         }
         $occupationLogement = null;
         if (true === $signalement->getIsBailEnCours()) {
