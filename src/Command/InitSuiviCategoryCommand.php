@@ -124,7 +124,6 @@ class InitSuiviCategoryCommand extends Command
             $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_STATUS_IS_SYNCHRO ('.$intro.')', $rowCount));
         }
 
-        // TODO : GARDER CES DEUX CATEGORIE A LA FIN ET DANS CET ORDRE
         // NEW_DOCUMENT
         $descriptionNewDocumentContains = '<ul><li><a class="fr-link" target="_blank"';
         $sql = 'UPDATE suivi SET category = :category WHERE category IS NULL AND description LIKE :description';
