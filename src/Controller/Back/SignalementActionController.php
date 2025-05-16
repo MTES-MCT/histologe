@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
@@ -38,11 +39,13 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
                 && $response = $request->get('signalement-validation-response')) {
+            $suiviCategory = null;
             if (isset($response['accept'])) {
                 $suiviContext = Suivi::CONTEXT_SIGNALEMENT_ACCEPTED;
                 $statut = SignalementStatus::ACTIVE;
-                $description = 'validé';
+                $description = Suivi::DESCRIPTION_SIGNALEMENT_VALIDE;
                 $signalement->setValidatedAt(new \DateTimeImmutable());
+                $suiviCategory = SuiviCategory::SIGNALEMENT_IS_ACTIVE;
             } else {
                 $suiviContext = Suivi::CONTEXT_SIGNALEMENT_REFUSED;
                 $statut = SignalementStatus::REFUSED;
@@ -53,7 +56,7 @@ class SignalementActionController extends AbstractController
                     return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
                 }
                 $signalement->setMotifRefus($motifRefus);
-                $description = 'cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
+                $description = 'Signalement cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
             }
             /** @var User $user */
             $user = $this->getUser();
@@ -62,11 +65,12 @@ class SignalementActionController extends AbstractController
             $suiviManager->createSuivi(
                 user : $user,
                 signalement: $signalement,
-                description: 'Signalement '.$description,
+                description: $description,
                 type : Suivi::TYPE_AUTO,
                 isPublic: true,
                 sendMail: true,
                 context: $suiviContext,
+                category: $suiviCategory,
             );
 
             $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');

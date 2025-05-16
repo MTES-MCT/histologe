@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\InterventionRescheduledEvent;
 use App\Manager\SuiviManager;
@@ -43,6 +44,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 type: Suivi::TYPE_AUTO,
                 isPublic: true,
                 context: Suivi::CONTEXT_INTERVENTION,
+                category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
             );
 
             $this->visiteNotifier->notifyUsagers(

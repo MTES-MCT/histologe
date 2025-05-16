@@ -2,6 +2,7 @@
 
 namespace App\Command\Cron;
 
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -179,6 +180,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                 signalement: $signalement,
                 description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
                 type: Suivi::TYPE_TECHNICAL,
+                category: SuiviCategory::ASK_FEEDBACK_SENT,
                 flush: false
             );
 
