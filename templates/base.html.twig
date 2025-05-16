@@ -179,7 +179,7 @@
                     text: 'Partager un document',
                     fetch: function (callback) {
                         let items = [
-                            {% for doc in signalement.files|filter(doc => doc.fileType == 'document' and not doc.isSuspicious) %}
+                            {% for doc in signalement.files|filter(doc => doc.isTypeDocument and not doc.isSuspicious) %}
                             {
                                 type: 'menuitem',
                                 text: '{{ doc.title }}',
