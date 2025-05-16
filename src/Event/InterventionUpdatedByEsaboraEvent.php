@@ -7,9 +7,9 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class InterventionCreatedEvent extends Event
+class InterventionUpdatedByEsaboraEvent extends Event
 {
-    public const string NAME = 'intervention.created';
+    public const string NAME = 'intervention.updated.esabora';
 
     private ?Suivi $suivi = null;
 
