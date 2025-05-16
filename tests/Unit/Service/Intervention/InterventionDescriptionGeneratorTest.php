@@ -7,6 +7,7 @@ use App\Entity\Intervention;
 use App\Event\InterventionCreatedEvent;
 use App\Event\InterventionRescheduledEvent;
 use App\Event\InterventionUpdatedByEsaboraEvent;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
@@ -70,7 +71,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         );
 
         $this->assertEquals(
-            'La date de visite dans SI-Santé Habitat a été modifiée ; La nouvelle date est le '.$dateInFutur->format('d/m/Y').'.',
+            'La date de visite dans '.EsaboraSISHService::NAME_SI.' a été modifiée ; La nouvelle date est le '.$dateInFutur->format('d/m/Y').'.',
             InterventionDescriptionGenerator::generate(
                 $intervention,
                 InterventionUpdatedByEsaboraEvent::NAME
@@ -88,7 +89,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         );
 
         $this->assertEquals(
-            'La date de visite de contrôle dans SI-Santé Habitat a été modifiée ; La nouvelle date est le '.$dateInFutur->format('d/m/Y').'.',
+            'La date de visite de contrôle dans '.EsaboraSISHService::NAME_SI.' a été modifiée ; La nouvelle date est le '.$dateInFutur->format('d/m/Y').'.',
             InterventionDescriptionGenerator::generate(
                 $intervention,
                 InterventionUpdatedByEsaboraEvent::NAME

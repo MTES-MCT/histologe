@@ -15,6 +15,7 @@ use App\Service\Files\ZipHelper;
 use App\Service\ImageManipulationHandler;
 use App\Service\Interconnection\Esabora\Enum\EsaboraStatus;
 use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Security\FileScanner;
@@ -169,7 +170,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_REJECTED->value.' SISH' => [
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_rejete.json',
-            'refusé via SI-Santé Habitat (SI-SH) pour motif suivant:',
+            'refusé via '.EsaboraSISHService::NAME_SI.' pour motif suivant:',
             Affectation::STATUS_REFUSED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
@@ -178,7 +179,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_ACCEPTED->value.' SISH' => [
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_importe.json',
-            'accepté via SI-Santé Habitat (SI-SH) (Dossier 2023/SISH/0010)',
+            'accepté via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)',
             Affectation::STATUS_ACCEPTED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
@@ -189,7 +190,7 @@ class EsaboraManagerTest extends KernelTestCase
     ): void {
         $referenceSignalement = '2022-2';
         $filename = '../../sish/ws_etat_dossier_sas/etat_importe.json';
-        $suiviDescription = 'accepté via SI-Santé Habitat (SI-SH) (Dossier 2023/SISH/0010)';
+        $suiviDescription = 'accepté via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)';
         $expectedAffectationStatus = Affectation::STATUS_ACCEPTED;
         $suiviStatus = Suivi::TYPE_AUTO;
         /** @var Signalement $signalement */

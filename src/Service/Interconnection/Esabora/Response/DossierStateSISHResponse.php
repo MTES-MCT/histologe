@@ -2,6 +2,8 @@
 
 namespace App\Service\Interconnection\Esabora\Response;
 
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
+
 class DossierStateSISHResponse implements DossierResponseInterface
 {
     private ?string $referenceDossier = null;
@@ -127,6 +129,6 @@ class DossierStateSISHResponse implements DossierResponseInterface
 
     public function getNameSI(): ?string
     {
-        return 'SI-Santé Habitat (SI-SH)';
+        return EsaboraSISHService::NAME_SI;
     }
 }
