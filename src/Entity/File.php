@@ -89,6 +89,9 @@ class File implements EntityHistoryInterface
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible photo or document'])]
     private ?string $fileType = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $extension = null;
+
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -230,6 +233,18 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
+    public function getExtension(): ?string
+    {
+        return $this->extension;
+    }
+
+    public function setExtension(?string $extension): self
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -345,17 +360,28 @@ class File implements EntityHistoryInterface
 
     public function isTypePhoto(): bool
     {
-        return $this::FILE_TYPE_PHOTO === $this->fileType;
+        if (empty($this->getExtension())) {
+            return $this::FILE_TYPE_PHOTO === $this->fileType;
+        }
+
+        return (self::FILE_TYPE_PHOTO === $this->getDocumentType()->mapFileType() || DocumentType::AUTRE === $this->getDocumentType())
+            && \in_array($this->getExtension(), self::IMAGE_EXTENSION)
+            && 'pdf' !== $this->getExtension()
+        ;
     }
 
     public function isTypeDocument(): bool
     {
-        return $this::FILE_TYPE_DOCUMENT === $this->fileType;
+        if (empty($this->getExtension())) {
+            return $this::FILE_TYPE_DOCUMENT === $this->fileType;
+        }
+
+        return !$this->isTypePhoto();
     }
 
     public function isSituationPhoto(): bool
     {
-        return $this->fileType === $this::FILE_TYPE_PHOTO
+        return $this->isTypePhoto()
         && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList())
         && null === $this->intervention;
     }
