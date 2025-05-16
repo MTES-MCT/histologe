@@ -60,8 +60,9 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
 
             if ($event->isUsagerNotified()) {
                 $this->visiteNotifier->notifyUsagers(
-                    $intervention,
-                    NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER
+                    intervention: $intervention,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER,
+                    suivi: $suivi
                 );
             }
 

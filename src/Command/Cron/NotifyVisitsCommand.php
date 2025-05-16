@@ -64,8 +64,9 @@ class NotifyVisitsCommand extends AbstractCronCommand
             );
 
             $this->visiteNotifier->notifyUsagers(
-                $intervention,
-                NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER,
+                suivi: $suivi
             );
 
             $this->visiteNotifier->notifyAgents(

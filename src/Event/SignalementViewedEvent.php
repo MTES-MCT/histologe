@@ -7,9 +7,9 @@ use App\Entity\User;
 
 class SignalementViewedEvent
 {
-    public const NAME = 'signalement.viewed';
+    public const string NAME = 'signalement.viewed';
 
-    public function __construct(private Signalement $signalement, private User $user)
+    public function __construct(private readonly Signalement $signalement, private readonly User $user)
     {
     }
 

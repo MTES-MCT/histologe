@@ -49,8 +49,17 @@ class LoadNotification extends Fixture implements OrderedFixtureInterface
         if ('CLOTURE_SIGNALEMENT' === $row['type']) {
             $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'context' => 'signalementClosed']);
         }
+        if (!empty($row['suivi'])) {
+            $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'description' => $row['suivi']]);
+        }
 
-        $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: $type, suivi: $suivi, affectation: $affectation, signalement: $signalement);
+        $notification = $this->notificationFactory->createInstanceFrom(
+            user: $user,
+            type: $type,
+            suivi: $suivi,
+            affectation: $affectation,
+            signalement: $signalement
+        );
         $manager->persist($notification);
     }
 

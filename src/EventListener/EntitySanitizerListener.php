@@ -39,14 +39,14 @@ readonly class EntitySanitizerListener
 
     private function sanitize(EntitySanitizerInterface $entity, string $eventType): void
     {
-        $this->logger->info('[$eventType] Before sanitization', [
+        $this->logger->info("[$eventType] Before sanitization", [
             'class' => $entity::class,
             'description' => $entity->getDescription(),
         ]);
 
         $entity->sanitizeDescription($this->htmlSanitizer);
 
-        $this->logger->info('[$eventType] After sanitization', [
+        $this->logger->info("[$eventType] After sanitization", [
             'class' => $entity::class,
             'description' => $entity->getDescription(),
         ]);
