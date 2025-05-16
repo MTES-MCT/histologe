@@ -51,16 +51,17 @@ sed -i '/^USE/d' "${backup_file_name}"
 sed -i '/DEFINER/d' "${backup_file_name}"
 
 # Avoids missing silent errors
-echo ">>> Avoids missing silent errors"
-set -e
-set -o pipefail
+#echo ">>> Avoids missing silent errors"
+#set -e
+#set -o pipefail
 
 ### TESTS
-# cat "$backup_file_name" | grep -v '^--' | grep -v '^/' | mysql --no-defaults --force --user="${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
-#      --host="${DATABASE_HOST}" --port="${DATABASE_PORT}" "${DATABASE_NAME}" 2> mysql_error.log
-# line=$(tail -n 1 mysql_error.log)
-# echo "> mysql log with cat"
-# echo $line
+echo ">>> Test with cat"
+cat "$backup_file_name" | grep -v '^--' | grep -v '^/' | mysql --no-defaults --force --user="${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
+      --host="${DATABASE_HOST}" --port="${DATABASE_PORT}" "${DATABASE_NAME}" 2> mysql_error.log
+line=$(tail -n 1 mysql_error.log)
+echo "> mysql log with cat"
+echo $line
 
 # Loading database
 echo ">>> Loading database"
