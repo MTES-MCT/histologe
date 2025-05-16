@@ -52,6 +52,9 @@ class FileVoter extends Voter
         if (SignalementStatus::DRAFT === $file->getSignalement()->getStatut() && $file->getSignalement()->getCreatedBy() === $user) {
             return true;
         }
+        if (SignalementStatus::NEED_VALIDATION === $file->getSignalement()->getStatut() && $user->isSuperAdmin()) {
+            return true;
+        }
         if (SignalementStatus::ACTIVE !== $file->getSignalement()->getStatut()) {
             return false;
         }
