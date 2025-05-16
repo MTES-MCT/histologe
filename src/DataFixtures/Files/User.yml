@@ -476,3 +476,7 @@ users:
     statut: "ACTIVE"
     is_mailing_active: 1
     is_mailing_summary: 0
+  -
+    email: nelson.monfort@yopmail.com
+    roles: "[\"ROLE_USAGER\"]"
+    statut: "ACTIVE"

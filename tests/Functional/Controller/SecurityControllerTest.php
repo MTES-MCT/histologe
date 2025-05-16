@@ -2,7 +2,11 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\User;
+use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Security\Provider\SignalementUserProvider;
+use App\Security\User\SignalementUser;
 use App\Tests\ApiHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -88,5 +92,59 @@ class SecurityControllerTest extends WebTestCase
         $client->request('GET', '/_up/check.png');
 
         $this->assertResponseRedirects('/connexion');
+    }
+
+    public function testShowExportPdfUsagerLogged(): void
+    {
+        $_GET['folder'] = '_up';
+        $client = static::createClient();
+        $uuid = '00000000-0000-0000-2024-000000000012';
+        $filename = 'export-pdf-signalement-'.$uuid.'.pdf';
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
+        $codeSuivi = $signalement->getCodeSuivi();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        // on logue l'occupant du signalement
+        /** @var User $usager */
+        $usager = $userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
+        $signalementUser = new SignalementUser(
+            userIdentifier: $signalement->getCodeSuivi().':'.SignalementUserProvider::OCCUPANT,
+            email: $signalement->getMailOccupant(),
+            user: $usager
+        );
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $crawler = $client->request(
+            'GET',
+            '/show-export-pdf-usager/'.$filename.'/'.$codeSuivi.'?folder=_up',
+        );
+        /** @var BinaryFileResponse $response */
+        $response = $client->getResponse();
+        $this->assertTrue($response->isSuccessful());
+        $this->assertInstanceOf(BinaryFileResponse::class, $response);
+    }
+
+    public function testShowExportPdfUsagerNotLogged(): void
+    {
+        $_GET['folder'] = '_up';
+        $client = static::createClient();
+        $uuid = '00000000-0000-0000-2022-000000000001';
+        $filename = 'export-pdf-signalement-'.$uuid.'.pdf';
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
+        $codeSuivi = $signalement->getCodeSuivi();
+
+        $crawler = $client->request(
+            'GET',
+            '/show-export-pdf-usager/'.$filename.'/'.$codeSuivi.'?folder=_up',
+        );
+        /** @var Response $response */
+        $response = $client->getResponse();
+        $this->assertEquals('Accéder à mon export pdf', $crawler->filter('h1')->text());
+        $this->assertTrue($response->isSuccessful());
     }
 }

@@ -8,15 +8,19 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
+use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
+use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/signalement')]
@@ -155,6 +159,43 @@ class SignalementFileController extends AbstractController
         return $this->redirectToRoute(
             'front_suivi_signalement',
             ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+        );
+    }
+
+    #[Route('/{uuid:signalement}/export-pdf-usager', name: 'signalement_gen_pdf')]
+    public function generatePdfSignalement(
+        Signalement $signalement,
+        MessageBusInterface $messageBus,
+        Security $security,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        if (!$currentUser instanceof SignalementUser || null === $currentUser->getEmail()) {
+            $this->addFlash('error', 'Il n\'y a pas d\'adresse e-mail à laquelle vous envoyer le signalement au format PDF.');
+        } else {
+            $fromEmail = $currentUser->getEmail();
+
+            $message = (new PdfExportMessage())
+                ->setSignalementId($signalement->getId())
+                ->setUserEmail($fromEmail)
+                ->setIsForUsager(true);
+
+            $messageBus->dispatch($message);
+
+            $this->addFlash(
+                'success',
+                \sprintf(
+                    'Le signalement au format PDF vous sera envoyé par e-mail à l\'adresse suivante : %s. L\'envoi peut prendre plusieurs minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
+                    $fromEmail
+                )
+            );
+        }
+
+        return $this->redirectToRoute(
+            'front_suivi_signalement',
+            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail ?? '']
         );
     }
 }

@@ -65,11 +65,13 @@ class PdfExportMessageHandler
                 'situations' => $infoDesordres['criticitesArranged'],
                 'listConcludeProcedures' => $listConcludeProcedures,
                 'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
+                'isForUsager' => $pdfExportMessage->isForUsager(),
             ]);
 
             $tmpFilename = $this->signalementExportPdfGenerator->generateToTempFolder(
                 $signalement,
                 $htmlContent,
+                $pdfExportMessage->isForUsager(),
                 $this->parameterBag->get('export_options')
             );
 
@@ -82,6 +84,7 @@ class PdfExportMessageHandler
                     signalement: $signalement,
                     params: [
                         'filename' => $filename,
+                        'isForUsager' => $pdfExportMessage->isForUsager(),
                     ]
                 )
             );

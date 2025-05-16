@@ -9,11 +9,14 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Security\Provider\SignalementUserProvider;
+use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -26,11 +29,13 @@ class SignalementFileControllerTest extends WebTestCase
     private ?User $user = null;
     private RouterInterface $router;
     private SignalementRepository $signalementRepository;
+    private UserRepository $userRepository;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
         /* @var Signalement $signalement */
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
 
@@ -188,5 +193,39 @@ class SignalementFileControllerTest extends WebTestCase
         $redirectUrl = $this->client->getResponse()->headers->get('Location');
         $this->client->request('GET', $redirectUrl);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testGeneratePdfSignalement()
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000012']);
+
+        $route = $this->router->generate('signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
+
+        // on logue l'occupant du signalement
+        /** @var User $usager */
+        $usager = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
+        $signalementUser = new SignalementUser(
+            userIdentifier: $signalement->getCodeSuivi().':'.SignalementUserProvider::OCCUPANT,
+            email: $signalement->getMailOccupant(),
+            user: $usager
+        );
+        $this->client->loginUser($signalementUser, 'code_suivi');
+
+        $this->client->request(
+            'GET',
+            $route,
+        );
+
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+
+        $redirectUrl = $this->client->getResponse()->headers->get('Location');
+        /** @var Crawler $crawler */
+        $crawler = $this->client->request('GET', $redirectUrl);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString(
+            'Le signalement au format PDF vous sera envoyé par e-mail à',
+            $crawler->filter('.fr-alert')->text()
+        );
     }
 }
