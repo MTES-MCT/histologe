@@ -7,6 +7,7 @@ use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Event\InterventionCreatedEvent;
 use App\Event\InterventionUpdatedByEsaboraEvent;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 
 class InterventionDescriptionGenerator
@@ -51,12 +52,12 @@ class InterventionDescriptionGenerator
     {
         $labelVisite = strtolower($intervention->getType()->label());
 
-        // TODO : récupérer SI-Santé Habitat ailleurs ? $dossierResponse->getNameSI() ?
         // Pour l'instant le seul besoin remonté par SISH est celui de la modification de date
         // Mais l'opérateur pourrait aussi être modifié (que ce soit ARS ou un opérateur externe)
         return \sprintf(
-            'La date de %s dans SI-Santé Habitat a été modifiée ; La nouvelle date est le %s.',
+            'La date de %s dans %s a été modifiée ; La nouvelle date est le %s.',
             $labelVisite,
+            EsaboraSISHService::NAME_SI,
             $intervention->getScheduledAt()->format('d/m/Y'),
         );
     }
