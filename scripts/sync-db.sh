@@ -37,7 +37,7 @@ scalingo --app "${DUPLICATE_SOURCE_APP}" --addon "${addon_id}" \
     backups-download --output "${archive_name}"
 
 # Extract the archive containing the downloaded backup:
-echo ">>> Extraction the archive containing the downloaded backup"
+echo ">>> Extract the archive containing the downloaded backup"
 backup_file_name="$( tar --extract --verbose --file="${archive_name}" --directory="/app/" \
                      | cut -d " " -f 2 | cut -d "/" -f 2 )"
 
@@ -50,21 +50,38 @@ sed -i '/CREATE DATABASE/d' "${backup_file_name}"
 sed -i '/^USE/d' "${backup_file_name}"
 sed -i '/DEFINER/d' "${backup_file_name}"
 
+# Avoids missing silent errors
+#echo ">>> Avoids missing silent errors"
+#set -e
+#set -o pipefail
+
+### TESTS
+echo ">>> Test with cat"
+cat "$backup_file_name" | grep -v '^--' | grep -v '^/' | mysql --no-defaults --force --user="${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
+      --host="${DATABASE_HOST}" --port="${DATABASE_PORT}" "${DATABASE_NAME}" 2> mysql_error.log
+line=$(tail -n 1 mysql_error.log)
+echo "> mysql log with cat"
+echo $line
+
 # Loading database
 echo ">>> Loading database"
-mysql -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}"
+mysql --verbose --show-warnings -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}" > mysql_output.log 2> mysql_error.log
 EXIT_CODE=$?
 
 TITLE="[Metabase] Synchronisation de Bdd"
 if [ $EXIT_CODE -ne 0 ]; then
     echo ">>> ERROR: Database sync failed!"
+    
+    line=$(tail -n 1 mysql_error.log)
+    echo "> mysql log with exec"
+    echo $line
 
     # Capture les logs MySQL pour le diagnostic
     ERROR_MESSAGE="La synchronisation de la bdd a échoué avec le code $EXIT_CODE"
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
     HOSTNAME=$(hostname)
     
-    # En cas d'erreur  envoi de mail via une route sur la prod
+    # If error, call prod env to send email
     curl -X POST "${SIGNAL_LOGEMENT_PROD_URL}/send-email" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
@@ -76,7 +93,7 @@ else
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
     HOSTNAME=$(hostname)
     
-    # A la fin envoi de mail via une route sur la prod
+    # If success, call prod env to send email
     curl -X POST "${SIGNAL_LOGEMENT_PROD_URL}/send-email" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
