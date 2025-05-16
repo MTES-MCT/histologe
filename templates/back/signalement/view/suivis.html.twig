@@ -26,7 +26,7 @@
             <strong>{{ suivi.createdAt|date('d/m/Y') }}</strong>
             <br>
             {% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
-                Suivi automatique
+                Suivi automatique<br>
 
             {% elseif suivi.createdBy is not null %}
                 <div class="fr-hidden" id="tippy_suivi_{{ suivi.id }}">
