@@ -379,6 +379,14 @@
                                 </li>
                             {% endif %}
                             <li>
+                                <b>Logement vacant :</b>
+                                {% if signalement.isLogementVacant is same as true %}
+                                    {{ picto_yes|raw }}
+                                {% elseif signalement.isLogementVacant is same as false %}
+                                    {{ picto_no|raw }}
+                                {% endif %}
+                            </li>
+                            <li>
                                 <b>Logement social :</b>
                                 {% if signalement.isLogementSocial %}
                                     {{ picto_yes|raw }}

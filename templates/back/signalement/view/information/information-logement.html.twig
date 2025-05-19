@@ -72,6 +72,14 @@
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">
+        <strong>Logement vacant :</strong>
+        {% if signalement.isLogementVacant is same as true %}
+            {{ static_picto_yes|raw }}
+        {% elseif signalement.isLogementVacant is same as false %}
+            {{ static_picto_no|raw }}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
         <strong>Invariant fiscal :</strong>
         {% if signalement.typeCompositionLogement %}
             {{ signalement.typeCompositionLogement.bailDpeInvariant}}

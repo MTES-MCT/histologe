@@ -113,6 +113,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->reponseProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailReponse();
         $signalementResponse->numeroReclamationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailNumero();
         $signalementResponse->loyer = $signalement->getLoyer();
+        $signalementResponse->logementVacant = $signalement->getIsLogementVacant();
         $signalementResponse->bailEnCours = $signalement->getIsBailEnCours();
         $signalementResponse->bailExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeBail());
         $signalementResponse->invariantFiscal = $signalement->getTypeCompositionLogement()?->getBailDpeInvariant();
