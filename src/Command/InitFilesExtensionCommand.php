@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Manager\HistoryEntryManager;
 use App\Repository\FileRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -16,18 +17,21 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class InitFilesExtensionCommand extends Command
 {
-    public const int BATCH_TOTAL_SIZE = 5000;
-    public const int BATCH_FLUSH_SIZE = 500;
+    public const int BATCH_TOTAL_SIZE = 50000;
+    public const int BATCH_FLUSH_SIZE = 5000;
 
     public function __construct(
         private readonly FileRepository $fileRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly HistoryEntryManager $historyEntryManager,
     ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->historyEntryManager->removeEntityListeners();
+
         $io = new SymfonyStyle($input, $output);
 
         $files = $this->fileRepository->findBy(['extension' => null], ['createdAt' => 'DESC'], self::BATCH_TOTAL_SIZE);

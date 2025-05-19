@@ -361,7 +361,7 @@ class File implements EntityHistoryInterface
     public function isTypePhoto(): bool
     {
         if (empty($this->getExtension())) {
-            return $this::FILE_TYPE_PHOTO === $this->fileType;
+            return self::FILE_TYPE_PHOTO === $this->fileType;
         }
 
         return (self::FILE_TYPE_PHOTO === $this->getDocumentType()->mapFileType() || DocumentType::AUTRE === $this->getDocumentType())
@@ -373,7 +373,7 @@ class File implements EntityHistoryInterface
     public function isTypeDocument(): bool
     {
         if (empty($this->getExtension())) {
-            return $this::FILE_TYPE_DOCUMENT === $this->fileType;
+            return self::FILE_TYPE_DOCUMENT === $this->fileType;
         }
 
         return !$this->isTypePhoto();
