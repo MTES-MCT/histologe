@@ -25,7 +25,9 @@ class DateParserTest extends TestCase
     {
         $date = '04/05/2023';
         $parsedDate = DateParser::parse($date, 'Europe/Paris');
-        $this->assertEquals(new \DateTimeImmutable('2023-05-04 00:00'), $parsedDate);
+        $this->assertEquals(new \DateTimeImmutable('2023-05-04 00:00', new \DateTimeZone('UTC')),
+            $parsedDate);
+
         $this->assertSame('00:00:00', $parsedDate->format('H:i:s'));
     }
 }
