@@ -446,12 +446,6 @@ class SignalementCreateController extends AbstractController
             } else {
                 $signalement->setIsNotOccupant(true);
             }
-            /** @var User $userOccupant */
-            $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
-            /** @var User $userDeclarant */
-            $userDeclarant = $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
-            // var_dump($userDeclarant?->getEmail());
-            // var_dump($userOccupant?->getEmail());
 
             $route = 'back_signalement_view';
             $params = ['uuid' => $signalement->getUuid()];
@@ -491,6 +485,8 @@ class SignalementCreateController extends AbstractController
                 $route = 'back_signalement_drafts';
                 $params = [];
             }
+            $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+            $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
             $signalementManager->flush();
 
             return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL)]);
