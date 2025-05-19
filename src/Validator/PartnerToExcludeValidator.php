@@ -19,7 +19,7 @@ class PartnerToExcludeValidator extends ConstraintValidator
         }
 
         foreach ($value as $code) {
-            if (!preg_match('/^\d*$/', trim($code))) {
+            if (!preg_match('/^\d*$/', mb_trim($code))) {
                 $this->context->buildViolation($constraint->message)
                     ->setParameter('{{ value }}', implode(',', $value))
                     ->addViolation();

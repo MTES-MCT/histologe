@@ -275,7 +275,7 @@ class NotificationAndMailSender
                     continue;
                 }
             }
-            if ('' !== trim($recipientUserOrPartner->getEmail()) && null !== $recipientUserOrPartner->getEmail()) {
+            if (null !== $recipientUserOrPartner->getEmail() && '' !== mb_trim($recipientUserOrPartner->getEmail())) {
                 $recipientsEmails[] = $recipientUserOrPartner->getEmail();
             }
         }

@@ -36,7 +36,7 @@ enum DesordreCritereZone: string
 
     private static function getKeyFromLabel(string $label): string|int|false
     {
-        $label = trim($label);
+        $label = mb_trim($label);
 
         return array_search($label, self::getLabelList());
     }

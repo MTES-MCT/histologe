@@ -28,7 +28,7 @@ class InseeToIncludeValidator extends ConstraintValidator
 
         $inseeCodes = explode(',', $value);
         foreach ($inseeCodes as $code) {
-            if (!preg_match('/^\d{5}$/', trim($code))) {
+            if (!preg_match('/^\d{5}$/', mb_trim($code))) {
                 $this->context->buildViolation($constraint->message)
                     ->setParameter('{{ value }}', $value)
                     ->addViolation();

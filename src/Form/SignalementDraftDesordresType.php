@@ -7,6 +7,7 @@ use App\Entity\DesordrePrecision;
 use App\Entity\Signalement;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\DesordreCritereRepository;
+use App\Utils\TrimHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -176,7 +177,7 @@ class SignalementDraftDesordresType extends AbstractType
                     if (str_contains($name, '_details_type_nuisibles')) {
                         if (preg_match('/_(desordres_[a-z_]+_nuisibles_autres)_details_type_nuisibles$/', $name, $matches)) {
                             $slug = $matches[1];
-                            $commentaires[$slug] = trim($field->getData());
+                            $commentaires[$slug] = TrimHelper::safeTrim($field->getData());
                         }
                     }
                 }

@@ -15,6 +15,7 @@ use App\Form\SignalementDraftLogementType;
 use App\Form\SignalementDraftSituationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Manager\UserManager;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -384,6 +385,7 @@ class SignalementCreateController extends AbstractController
         AutoAssigner $autoAssigner,
         AffectationManager $affectationManager,
         EventDispatcherInterface $eventDispatcher,
+        UserManager $userManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
 
@@ -416,7 +418,6 @@ class SignalementCreateController extends AbstractController
         if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
             /** @var User $user */
             $user = $this->getUser();
-
             if (!$signalement->getProfileDeclarant()) {
                 $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
             }
@@ -484,6 +485,8 @@ class SignalementCreateController extends AbstractController
                 $route = 'back_signalement_drafts';
                 $params = [];
             }
+            $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+            $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
             $signalementManager->flush();
 
             return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL)]);

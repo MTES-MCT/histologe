@@ -168,7 +168,7 @@ class SignalementImportLoader
                 $partnersName = [$dataMapped['partners']];
             }
             foreach ($partnersName as $partnerName) {
-                $partnerNameCleaned = trim(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $partnerName)); // remove non printable chars
+                $partnerNameCleaned = mb_trim(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $partnerName)); // remove non printable chars
                 $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
                     'nom' => $partnerNameCleaned,
                     'territory' => $territory,
@@ -261,7 +261,7 @@ class SignalementImportLoader
             foreach ($dataMapped['suivi'] as $suivi) {
                 preg_match(self::REGEX_DATE_FORMAT_CSV, $suivi, $matches);
                 $createdAt = array_shift($matches);
-                $description = trim(preg_replace(self::REGEX_DATE_FORMAT_CSV, '', $suivi));
+                $description = mb_trim(preg_replace(self::REGEX_DATE_FORMAT_CSV, '', $suivi));
 
                 $suivi = $this->suiviManager->findOneBy([
                     'description' => $this->htmlSanitizer->sanitize($description),
