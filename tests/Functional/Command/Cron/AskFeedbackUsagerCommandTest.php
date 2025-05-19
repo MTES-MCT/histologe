@@ -49,6 +49,6 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $this->assertEmailCount(11);
 
         $nbSuiviFeedback = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::ASK_FEEDBACK_SENT]);
-        $this->assertEquals(8, $nbSuiviFeedback);
+        $this->assertEquals(11, $nbSuiviFeedback);
     }
 }

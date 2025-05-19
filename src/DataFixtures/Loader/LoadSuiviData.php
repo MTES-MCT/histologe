@@ -77,6 +77,10 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         if (isset($row['context'])) {
             $context = $row['context'];
         }
+        $category = null;
+        if (isset($row['category'])) {
+            $category = SuiviCategory::from($row['category']);
+        }
 
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
@@ -86,6 +90,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             user: $createdBy,
             createdAt: $createdAt,
             context: $context,
+            category: $category,
             flush: false,
         );
         $manager->persist($suivi);
