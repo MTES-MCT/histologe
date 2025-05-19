@@ -314,7 +314,10 @@ class EsaboraManager
     private function updateFromDossierVisite(Intervention $intervention, DossierVisiteSISH $dossierVisiteSISH): void
     {
         $intervention
-            ->setScheduledAt(DateParser::parse($dossierVisiteSISH->getVisiteDate()))
+            ->setScheduledAt(DateParser::parse(
+                $dossierVisiteSISH->getVisiteDate(),
+                $intervention->getSignalement()->getTimezone())
+            )
             ->setDoneBy($visitePar = $dossierVisiteSISH->getVisitePar());
 
         if ('ARS' !== $visitePar) {
