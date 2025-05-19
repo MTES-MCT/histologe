@@ -116,6 +116,22 @@
                                 </select>
                             </div>
 
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="informationLogementVacant">Logement vacant
+                                    {{ show_label_facultatif(
+                                        'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                                        'logementVacant',
+                                        signalement.profileDeclarant,
+                                        signalement.isV2)
+                                    }}
+                                </label>
+                                <select class="fr-select" id="informationLogementVacant" name="logementVacant">
+                                    <option value="" {{ signalement.isLogementVacant not in [true, false] ? 'selected' : '' }}></option>
+                                    <option value="oui" {{ signalement.isLogementVacant is same as true ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ signalement.isLogementVacant is same as false ? 'selected' : '' }}>Non</option>
+                                </select>
+                            </div>
+
                             <div class="fr-input-group">
                                 {% set bailDpeInvariant = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeInvariant : null %}
                                 <label class="fr-label" for="informationLogementBailDpeInvariant">Invariant fiscal (facultatif)</label>

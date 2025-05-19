@@ -504,6 +504,14 @@ class SignalementManager extends AbstractManager
             $signalement->setDateEntree(null);
         }
 
+        if ('oui' === $informationsLogementRequest->getLogementVacant()) {
+            $signalement->setIsLogementVacant(true);
+        } elseif ('non' === $informationsLogementRequest->getLogementVacant()) {
+            $signalement->setIsLogementVacant(false);
+        } else {
+            $signalement->setIsLogementVacant(null);
+        }
+
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();

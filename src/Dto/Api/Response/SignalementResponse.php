@@ -177,6 +177,7 @@ class SignalementResponse
         nullable: true
     )]
     public ?bool $constructionAvant1949;
+
     #[OA\Property(
         description: 'Nombre d\'étages dans le logement.',
         format: 'int',
@@ -461,6 +462,18 @@ class SignalementResponse
         nullable: true
     )]
     public ?float $loyer;
+
+    #[OA\Property(
+        description: 'Indique si un logement est actuellement vacant.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
+        example: true,
+        nullable: true
+    )]
+    public bool|string|null $logementVacant;
 
     #[OA\Property(
         description: 'Indique si un bail est actuellement en cours.<br>
