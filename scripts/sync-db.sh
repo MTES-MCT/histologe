@@ -56,21 +56,30 @@ sed -i '/DEFINER/d' "${backup_file_name}"
 #set -o pipefail
 
 ### TESTS
-echo ">>> Test with cat"
-cat "$backup_file_name" | grep -v '^--' | grep -v '^/' | mysql --no-defaults --force --user="${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
-      --host="${DATABASE_HOST}" --port="${DATABASE_PORT}" "${DATABASE_NAME}" 2> mysql_error.log
-line=$(tail -n 1 mysql_error.log)
-echo "> mysql log with cat"
-echo $line
+#echo ">>> Test with cat"
+#cat "$backup_file_name" | grep -v '^--' | grep -v '^/' | mysql --no-defaults --force --user="${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
+#      --host="${DATABASE_HOST}" --port="${DATABASE_PORT}" "${DATABASE_NAME}" 2> mysql_error.log
+#line=$(tail -n 1 mysql_error.log)
+#echo "> mysql log with cat"
+#echo $line
+
+# Test import ligne par ligne pour traquer l’erreur
+while IFS= read -r line; do
+    echo "$line" | mysql -u "${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
+         -h "${DATABASE_HOST}" -P "${DATABASE_PORT}" "${DATABASE_NAME}" 2>> mysql_error_line.log
+done < "$backup_file_name"
 
 # Loading database
 echo ">>> Loading database"
-mysql --verbose --show-warnings -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}" > mysql_output.log 2> mysql_error.log
+mysql --connect-timeout=10 --verbose --show-warnings -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}" > mysql_full_output.log 2>&1
 EXIT_CODE=$?
 
 TITLE="[Metabase] Synchronisation de Bdd"
 if [ $EXIT_CODE -ne 0 ]; then
     echo ">>> ERROR: Database sync failed!"
+
+    echo ">>> Import échoué. Dernières lignes du log :"
+    tail -n 20 mysql_full_output.log
     
     line=$(tail -n 1 mysql_error.log)
     echo "> mysql log with exec"
