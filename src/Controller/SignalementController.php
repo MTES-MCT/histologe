@@ -552,6 +552,8 @@ class SignalementController extends AbstractController
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
 
+            $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
+            $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
             if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
                 /** @var SignalementUser $currentUser */
                 $currentUser = $security->getUser();
@@ -566,10 +568,6 @@ class SignalementController extends AbstractController
                     ]);
                 }
             }
-
-            $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
-            $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
-
             $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
             $demandeLienSignalement = new DemandeLienSignalement();
