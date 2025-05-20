@@ -171,14 +171,15 @@ class SignalementFileController extends AbstractController
 
         /** @var SignalementUser $currentUser */
         $currentUser = $security->getUser();
+        // TODO Remove  with FEATURE_SECURE_UUID_URL
         if (!$currentUser instanceof SignalementUser || null === $currentUser->getEmail()) {
             $this->addFlash('error', 'Il n\'y a pas d\'adresse e-mail à laquelle vous envoyer le signalement au format PDF.');
         } else {
-            $fromEmail = $currentUser->getEmail();
+            $usagerEmail = $currentUser->getEmail();
 
             $message = (new PdfExportMessage())
                 ->setSignalementId($signalement->getId())
-                ->setUserEmail($fromEmail)
+                ->setUserEmail($usagerEmail)
                 ->setIsForUsager(true);
 
             $messageBus->dispatch($message);
@@ -187,14 +188,14 @@ class SignalementFileController extends AbstractController
                 'success',
                 \sprintf(
                     'Le signalement au format PDF vous sera envoyé par e-mail à l\'adresse suivante : %s. L\'envoi peut prendre plusieurs minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
-                    $fromEmail
+                    $usagerEmail
                 )
             );
         }
 
         return $this->redirectToRoute(
             'front_suivi_signalement',
-            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail ?? '']
+            ['code' => $signalement->getCodeSuivi(), 'from' => $usagerEmail ?? '']
         );
     }
 }
