@@ -31,6 +31,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UserFactory $userFactory,
+        private readonly UserCreatedListener $userCreatedListener,
     ) {
     }
 
@@ -40,6 +41,9 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
+        // do not send activation mail on loading fixtures
+        $this->entityManager->getEventManager()->removeEventListener([Events::postPersist], $this->userCreatedListener);
+
         $userRows = Yaml::parseFile(__DIR__.'/../Files/User.yml');
         foreach ($userRows['users'] as $row) {
             $this->loadUsers($manager, $row);
@@ -57,9 +61,6 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
      */
     private function loadUsers(ObjectManager $manager, array $row): void
     {
-        // do not send activation mail on loading fixtures
-        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], UserCreatedListener::class); // @phpstan-ignore-line
-
         $faker = Factory::create();
         $user = (new User())
             ->setRoles(json_decode($row['roles'], true))

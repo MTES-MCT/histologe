@@ -26,7 +26,7 @@ framework:
             App\Messenger\Message\ListExportMessage: async_priority_high
             App\Messenger\Message\UserExportMessage: async_priority_high
             App\Messenger\Message\InactiveUserExportMessage: async_priority_high
-            App\Messenger\Message\PdfExportMessage: async_priority_high
+            #App\Messenger\Message\PdfExportMessage: async_priority_high
             App\Messenger\Message\SuiviSummariesMessage: async_priority_high
             App\Messenger\Message\SignalementDraftFileMessage: async_priority_high
             App\Messenger\Message\SignalementAddressUpdateAndAutoAssignMessage: async_priority_high

@@ -13,7 +13,6 @@ use App\Service\Signalement\Export\SignalementExportPdfGenerator;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Twig\Environment;
 
@@ -26,7 +25,6 @@ class PdfExportMessageHandler
         private readonly Environment $twig,
         private readonly SignalementRepository $signalementRepository,
         private readonly InterventionRepository $interventionRepository,
-        private readonly ParameterBagInterface $parameterBag,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly SignalementDesordresProcessor $signalementDesordresProcessor,
         private readonly LoggerInterface $logger,
@@ -77,7 +75,6 @@ class PdfExportMessageHandler
                 $signalement,
                 $htmlContent,
                 $pdfExportMessage->isForUsager(),
-                $this->parameterBag->get('export_options')
             );
 
             $filename = $this->uploadHandlerService->uploadFromFilename($tmpFilename);

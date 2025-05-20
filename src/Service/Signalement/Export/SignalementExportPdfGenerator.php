@@ -3,28 +3,39 @@
 namespace App\Service\Signalement\Export;
 
 use App\Entity\Signalement;
-use Knp\Snappy\Pdf;
+use Dompdf\Dompdf;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SignalementExportPdfGenerator
 {
-    public function __construct(private readonly Pdf $pdf, private readonly ParameterBagInterface $parameterBag)
+    public function __construct(private readonly ParameterBagInterface $parameterBag)
     {
-        $this->pdf->setTimeout(300);
     }
 
-    public function generate(string $content, ?array $options = null): string
+    public function generate(string $content): string
     {
-        return $this->pdf->getOutputFromHtml($content, $options ?? []);
+        $tmp = dump(sys_get_temp_dir());
+
+        $domPdf = new Dompdf([
+            'logOutputFile' => '',
+            'isRemoteEnabled' => true,
+            'fontDir' => $tmp,
+            'fontCache' => $tmp,
+            'tempDir' => $tmp,
+            'chroot' => $tmp,
+        ]);
+        $domPdf->loadHtml($content);
+        $domPdf->setPaper('A4', 'portrait');
+        $domPdf->render();
+        return $domPdf->output();
     }
 
     public function generateToTempFolder(
         Signalement $signalement,
         string $content,
         bool $isForUsager = false,
-        ?array $options = null,
     ): string {
-        $pdfContent = $this->generate($content, $options);
+        $pdfContent = $this->generate($content);
 
         if ($isForUsager) {
             $filename = 'export-pdf-dossier-'.$signalement->getUuid().'.pdf';
