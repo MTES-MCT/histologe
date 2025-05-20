@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User;
+use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
 use Psr\Log\LoggerInterface;
@@ -44,6 +45,20 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $session = $request->getSession();
         $logoutUrl = null;
+
+        if ($user instanceof SignalementUser) {
+            $this->logger->info('App usager logout');
+            $this->clearSession($session);
+            $response = new RedirectResponse(
+                $this->urlGenerator->generate(
+                    'home',
+                )
+            );
+            $event->setResponse($response);
+
+            return;
+        }
+
         try {
             if ($user?->getProConnectUserId() && $session->has(ProConnectContext::SESSION_KEY_ID_TOKEN)) {
                 $logoutUrl = $this->proConnectAuthentication->getLogoutUrl();
