@@ -4,13 +4,13 @@ namespace App\Service\Interconnection\Esabora\Response\Model;
 
 class DossierVisiteSISH
 {
-    public const SAS_LOGICIEL_PROVENANCE = 0;
-    public const REFERENCE_DOSSIER = 1;
-    public const DOSS_NUM = 2;
-    public const VISITE_DATE = 3;
-    public const VISITE_NUM = 4;
-    public const VISITE_TYPE = 5;
-    public const VISITE_PAR = 6;
+    public const int SAS_LOGICIEL_PROVENANCE = 0;
+    public const int REFERENCE_DOSSIER = 1;
+    public const int DOSS_NUM = 2;
+    public const int VISITE_DATE = 3;
+    public const int VISITE_NUM = 4;
+    public const int VISITE_TYPE = 5;
+    public const int VISITE_PAR = 6;
 
     private ?int $visiteId = null;
     private ?string $sasLogicielProvenance = null;

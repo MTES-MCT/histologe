@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Service\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Intervention;
 use App\Entity\User;
@@ -69,14 +70,20 @@ class EsaboraManagerTest extends TestCase
         $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateVisite(): void
     {
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
-        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::CREATE_ACTION);
+        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::CREATE_ACTION, InterventionType::VISITE);
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testFailureCreateVisite(): void
     {
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionWithDossierResponse()->getCollection();
@@ -123,36 +130,51 @@ class EsaboraManagerTest extends TestCase
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testUpdateVisite(): void
     {
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
-        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::UPDATE_ACTION);
+        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::UPDATE_ACTION, InterventionType::VISITE);
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCreateArrete(): void
     {
         $dossierArreteCollection = $this->getDossierArreteSISHCollectionResponse()->getCollection();
         $dossierArrete = $dossierArreteCollection[0];
-        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::CREATE_ACTION);
+        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::CREATE_ACTION, InterventionType::ARRETE_PREFECTORAL);
         $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testUpdateArrete(): void
     {
         $dossierArreteCollection = $this->getDossierArreteSISHCollectionResponse()->getCollection();
         $dossierArrete = $dossierArreteCollection[0];
-        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::UPDATE_ACTION);
+        $esaboraManager = $this->provideEsaboraManagerForIntervention(self::UPDATE_ACTION, InterventionType::ARRETE_PREFECTORAL);
         $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
     }
 
-    public function provideEsaboraManagerForIntervention(string $action): EsaboraManager
+    public function provideEsaboraManagerForIntervention(string $action, InterventionType $interventionType): EsaboraManager
     {
         $this->interventionRepository
             ->expects($this->once())
             ->method('findOneBy')
-            ->willReturn(self::CREATE_ACTION === $action ? null : new Intervention());
+            ->willReturn(self::CREATE_ACTION === $action
+                ? null
+                : $this->getIntervention(
+                    $interventionType,
+                    new \DateTimeImmutable('2024-01-20'),
+                    Intervention::STATUS_DONE)
+            );
 
         $this->interventionRepository
             ->expects($this->once())
