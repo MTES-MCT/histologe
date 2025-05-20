@@ -336,9 +336,6 @@ class EsaboraManager
             if ('ARS' !== $visitePar && null !== $visitePar) {
                 if ($intervention->getExternalOperator() !== $visitePar) {
                     $intervention->setExternalOperator($visitePar);
-                    $hasChanged = true;
-                }
-                if (null !== $intervention->getPartner()) {
                     $intervention->setPartner(null);
                     $hasChanged = true;
                 }
