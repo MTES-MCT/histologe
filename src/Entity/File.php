@@ -54,6 +54,12 @@ class File implements EntityHistoryInterface
         'image/png',
         'image/gif',
     ];
+    public const array RESIZABLE_EXTENSION = [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+    ];
     public const array IMAGE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
@@ -221,11 +227,17 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et doit être remplacée par isTypePhoto ou isTypeDocument
+     */
     public function getFileType(): ?string
     {
         return $this->fileType;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et doit être remplacée par isTypePhoto ou isTypeDocument
+     */
     public function setFileType(?string $fileType): self
     {
         $this->fileType = $fileType;
@@ -365,8 +377,7 @@ class File implements EntityHistoryInterface
         }
 
         return (self::FILE_TYPE_PHOTO === $this->getDocumentType()->mapFileType() || DocumentType::AUTRE === $this->getDocumentType())
-            && \in_array($this->getExtension(), self::IMAGE_EXTENSION)
-            && 'pdf' !== $this->getExtension()
+            && \in_array($this->getExtension(), self::RESIZABLE_EXTENSION)
         ;
     }
 

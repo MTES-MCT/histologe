@@ -48,10 +48,8 @@ class FileRepository extends ServiceEntityRepository
             ->select('f')
             ->innerJoin('f.signalement', 's')
             ->where('f.extension IN :extensionsImage')
-            ->andWhere('f.extension != :extensionPdf')
             ->andWhere('f.isVariantsGenerated = false')
-            ->setParameter('extensionsImage', File::IMAGE_EXTENSION)
-            ->setParameter('extensionPdf', 'pdf');
+            ->setParameter('extensionsImage', File::RESIZABLE_EXTENSION);
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
         }
