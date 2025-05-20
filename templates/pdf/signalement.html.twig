@@ -1,644 +1,556 @@
-{% extends 'pdf/base_pdf.html.twig' %}
-
-{% block title %}Signalement #{{ signalement.reference }}{% endblock %}
 {% set picto_yes = "OUI" %}
 {% set picto_no = "NON" %}
-{% block body %}
 
-    <div class="page">
-        <section>
-            <h1 style="text-align: right">Signalement #{{ signalement.reference }}</h1>
-            <h3 style="text-align: right">Déposé le {{ signalement.createdAt|format_datetime(locale='fr', timezone=signalement.getTimezone) }}</h3>
-            {% if signalement.isNotOccupant %}
-                <h3 style="text-align: right">Signalement par un tiers</h3>
+<style type="text/css">
+page{
+    font-family: "Helvetica", serif;
+    font-weight: 300;
+}
+h1, h2, h3, h4{
+    font-weight: 300;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+h1{
+    font-size: 18px;
+}
+h2, h3, h4{
+    font-size: 14px;
+}
+.text-right{
+    text-align: right;
+}
+table tr td{
+    padding: 0px;
+    text-align: left;
+}
+table.border, table.border tr, table.border td{
+    border: 1px solid #ccc;
+}
+.fr-badge{
+    background-color: #ccc;
+    padding: 3px;
+}
+</style>
 
-            {% else %}
-                <h3 style="text-align: right">Signalement par l'occupant</h3>
-            {% endif %}
-
-            <h3 style="text-align: left">Situation(s) suspectée(s) à la déclaration usager</h3>
-            {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
-                {% include '_partials/signalement/qualification.html.twig' %}
-            {% endfor %}
-
-            {% if listConcludeProcedures %}
-                <h3 style="text-align: left">Situation(s) observée(s) après visite</h3>
-                {% for concludeProcedure in listConcludeProcedures %}
-                    {% set typeBadge = 'info' %}
-                    {% if concludeProcedure is same as 'Mise en sécurité / Péril' %}
-                        {% set typeBadge = 'error' %}
-                    {% elseif concludeProcedure is same as 'Insalubrité' %}
-                        {% set typeBadge = 'warning' %}
-                    {% endif %}
-                    <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ concludeProcedure }}</small>
-                {% endfor %}
-            {% endif %}
-
-            <table style="width: 100%">
-                <tr>
-                    <td style="width: 50%">
-                        <h3 style="margin-bottom: 0">Informations de l'occupant</h3>
-                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                            <li><b>Nom :</b> {{ signalement.nomOccupant }} -
-                                <b>Prénom :</b> {{ signalement.prenomOccupant }}</li>
-                            <li><b>Courriel :</b> <a
-                                        href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
-                            </li>
-                            <li><b>Téléphone :</b> <a
-                                        href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
-                            <li>
-                                <b>Adresse :</b> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
-                                {% if signalement.complementAdresseOccupant %}
-                                    <br>
-                                    {{signalement.complementAdresseOccupant}}
-                                {% endif %}
-                            </li>
-                            <li>
-                                <b>Nb. personnes :</b>
-                                {% if signalement.typeCompositionLogement %}
-                                    {{ signalement.nbOccupantsLogement }}
-                                    {% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
-                                        <br><strong>- dont nb. enfants : </strong>{{ signalement.typeCompositionLogement.compositionLogementNombreEnfants }}
-                                    {% endif %}
-                                {% else %}
-                                    {{ signalement.nbPersonsDeprecated }} :
-                                    {{ signalement.nbAdultes }} {{ signalement.nbAdultes > 1 ? 'adultes' : 'adulte' }}
-                                    {% if signalement.nbEnfantsP6 %}
-                                        - {{ signalement.nbEnfantsP6 ?? '0' }} enfant(s) de plus de 6 ans
-                                    {% endif %}
-                                    {% if signalement.nbEnfantsM6 %}
-                                        - {{ signalement.nbEnfantsM6 ?? '0' }} enfant(s) de moins de 6 ans
-                                    {% endif %}
-                                {% endif %}
-                            </li>
-                            <li>
-                                <b>Enfants -6 ans :</b>
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.compositionLogementEnfants is same as 'oui' %}
-                                        {{ picto_yes|raw }}
-                                    {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
-                                        {{ picto_no|raw }}
-                                    {% else %}
-                                        {{signalement.typeCompositionLogement.compositionLogementEnfants}}
-                                    {% endif %}
-                                {% else %}
-                                    {% if signalement.nbEnfantsM6 > 0 %}
-                                        {{ picto_yes|raw }}
-                                    {% else %}
-                                        {{ picto_no|raw }}
-                                    {% endif %}
-                                {% endif %}
-                            </li>
-                            <li><b>Date d'entrée :</b> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
-                            </li>
-                            <li>
-                                <b>Loyer :</b> {{ signalement.loyer }} €/mois
-                            </li>
-                            <li>
-                                <b>Allocataire :</b>
-                                {% if signalement.isAllocataire %}
-                                    <small class="fr-background-alt--green-emeraude fr-rounded fr-p-1v fr-text--bold fr-valid-text fr-display-inline-flex fr-mt-0 fr-px-3v">{{ signalement.isAllocataire }}</small>
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
-                            {% if signalement.isAllocataire %}
-                                <li>
-                                    <b>N° allocataire :</b> {{ signalement.numAllocataire }}
-                                </li>
-                                <li>
-                                    <b>Montant allocation :</b> {{ signalement.montantAllocation ?? 'N/R' }}
-                                    €/mois
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </td>
-                    {% if signalement.isNotOccupant %}
-                        <td>
-                            <h3 style="margin-bottom: 0">Informations du déclarant</h3>
-                            <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                                <li><b>Nom :</b> {{ signalement.nomDeclarant }} -
-                                    <b>Prénom :</b> {{ signalement.prenomDeclarant }}</li>
-                                <li><b>Courriel :</b><a
-                                            href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
-                                </li>
-                                <li><b>Téléphone :</b>{{ signalement.telDeclarant }}</li>
-                                <li><b>Structure :</b> {{ signalement.structureDeclarant }}</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                            </ul>
-                        </td>
-                    {% endif %}
-                </tr>
-                <tr>
-                    <td>
-                        <h3 style="margin-bottom: 0">Description du logement</h3>
-                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                            <li>
-                                <b>Logement :</b> {{ signalement.natureLogement }}
-                                de {{ signalement.superficie }}m² -
-                            </li>
-                            {% if signalement.informationComplementaire %}
-                                <li>
-                                    <b>Nombre d'étages :</b>{{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages}}
-                                </li>
-                            {% endif %}
-                            {% if signalement.typeCompositionLogement %}
-                                {% if signalement.natureLogement|capitalize is same as 'Autre' %}
-                                    <li>
-                                        <b>Précisions :</b> {{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}
-                                    </li>
-                                {% endif %}
-                                <li>
-                                    <b>Logement :</b> {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
-                                </li>
-                                <li>
-                                    <b>Hauteur > 2m :</b> {{ signalement.typeCompositionLogement.compositionLogementHauteur(false) }}
-                                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' } %}
-                                </li>
-                                <li>
-                                    <b>Nombre de pièces à vivre :</b> {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
-                                </li>
-                                <li>
-                                    <b>Etage :</b>
-				                    {% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
-                                </li>
-                                <li>
-                                    <b>Avec fenêtres :</b>
-		                            {% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
-                                </li>
-                                <li>
-                                    <b>Au moins une des pièces à vivre > 9m² :</b>
-                                    {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)}}
-                                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' } %}
-                                </li>
-                                <li>
-                                    <b>Cuisine / coin cuisine :</b>
-                                    <br>
-                                    <ul>
-                                        <li>
-                                            Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine }}
-                                            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' } %}
-                                        </li>
-                                        {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' %}
-                                            <li>
-                                                Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective }}
-                                                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'non' } %}
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </li>                                
-                                <li>
-                                    <b>SDB (baignoire ou douche) :</b>
-                                    <br>
-                                    <ul>
-                                        <li>
-                                            Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain}}
-                                            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' } %}
-                                        </li>
-                                        {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
-                                            <li>
-                                                Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective }}
-                                                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'non' } %}
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </li>
-                                <li>
-                                    <b>WC :</b>
-                                    <br>
-                                    <ul>
-                                        <li>
-                                            Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesWc }}
-                                            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' } %}
-                                        </li>
-                                        {% if signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' %}
-                                            <li>
-                                                Collectifs : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective }}
-                                                {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'non' } %}
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </li>
-                                {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'oui' and signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'oui' %}
-                                    <li>
-                                        <b>WC et cuisine dans la même pièce :</b>
-                                        {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}
-                                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'oui' } %}
-                                    </li>
-                                {% endif %}
-                            {% endif %}
-                        </ul>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <h3 style="margin-bottom: 0">Informations sur le bailleur</h3>
-                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                            <li>
-                                {% if signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
-                                <b>Dénomination :</b> {{ signalement.denominationProprio }}<br>
-                                {% endif %}
-                                <b>Nom :</b> {{ signalement.nomProprio ?? 'N/R' }}
-                                {% if signalement.prenomProprio %}
-                                - <b>Prénom :</b> {{ signalement.prenomProprio }}
-                                {% endif %}
-                            </li>
-                            <li><b>Adresse :</b>
-                                {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio : 'N/R' }}
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
-        </section>
-        <section>
-            <h3>Description par l'occupant</h3>
-            <text>{{ signalement.details|nl2br }}</text>
-        </section>
-        <section>
-            <table style="width: 100%">
-                <tr>
-                    <td style="width: 50%">
-                        <h3>Informations propriétaire</h3>
-                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                            <li>
-                                <b>Propriétaire averti :</b>
-                                {% if signalement.isProprioAverti %}
-                                    {{ picto_yes|raw }}
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
-                            {% if signalement.isProprioAverti and signalement.informationProcedure %}
-                                <li>
-                                    <b>Moyen d'information du propriétaire :</b>
-                                    {% if signalement.informationProcedure.infoProcedureBailMoyen %}
-                                        {% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
-                                        {{ MoyenContact.label }}
-                                    {% endif %}
-                                </li>
-                                <li>
-                                    <b>Date d'information du propriétaire :</b>
-                                    {% if signalement.informationProcedure.infoProcedureBailDate %}
-                                        {{ signalement.informationProcedure.infoProcedureBailDate }}
-                                    {% endif %}
-                                </li>
-                                <li>
-                                    <b>Réponse du propriétaire :</b>
-                                    {% if signalement.informationProcedure.infoProcedureBailReponse %}
-                                        <br>
-                                        {{ signalement.informationProcedure.infoProcedureBailReponse|nl2br }}
-                                    {% endif %}
-                                </li>
-                                <li>
-                                    <b>Numéro de réclamation :</b>
-                                    {% if signalement.isLogementSocial %}
-                                        {% if signalement.informationProcedure.infoProcedureBailNumero %}
-                                            {{ signalement.informationProcedure.infoProcedureBailNumero|nl2br }}
-                                        {% endif %}
-                                    {% endif %}
-                                </li>
-                            {% endif %}
-                            <li><b>Nom :</b> {{ signalement.nomProprio ?? 'N/R' }}
-                            <li><b>Courriel :</b><a
-                                        href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio ?? 'N/R' }}</a>
-                            </li>
-                            <li><b>Téléphone :</b><a
-                                        href="tel:{{ signalement.telProprio }}">{{ signalement.telProprio ?? 'N/R' }}</a>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <h3 style="margin-bottom: 0">Informations procédure</h3>
-                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                            <li>
-                                <b>Bailleur averti :</b>
-                                {% if signalement.isProprioAverti is null %}
-                                {% elseif signalement.isProprioAverti %}
-                                    {{ picto_yes|raw }}
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
-                            {% if signalement.informationProcedure %}
-                                <li>
-                                    <b>Contact assurance :</b>
-                                        {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
-                                            {{ picto_yes|raw }}
-                                        {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
-                                            {{ picto_no|raw }}
-                                        {% else %}
-                                            {{signalement.informationProcedure.infoProcedureAssuranceContactee(false)}}
-                                        {% endif %}
-                                </li>
-                                <li>
-                                    <b>Réponse assurance :</b>
-                                    {% if signalement.informationProcedure.infoProcedureReponseAssurance %}
-                                        <br>
-                                        {{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
-                                    {% endif %}
-                                </li>
-                                <li>
-                                    <b>Souhaite garder le logement après travaux :</b>
-                                        {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
-                                            {{ picto_no|raw }}
-                                        {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
-                                            {{ picto_yes|raw }}
-                                        {% else %}
-                                            {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
-                                        {% endif %}
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <h3>Informations logement</h3>
-                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                            <li>
-                                <b>Bail en cours :</b>
-                                {% if signalement.isBailEnCours %}
-                                    {{ picto_yes|raw }}
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
-                            {% if signalement.informationComplementaire and  signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
-                                <li>Date d'effet du bail :
-                                    {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail('d/m/Y')}}
-                                </li>
-                            {% endif %}
-                            <li>
-                                <b>Logement vacant :</b>
-                                {% if signalement.isLogementVacant is same as true %}
-                                    {{ picto_yes|raw }}
-                                {% elseif signalement.isLogementVacant is same as false %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
-                            <li>
-                                <b>Logement social :</b>
-                                {% if signalement.isLogementSocial %}
-                                    {{ picto_yes|raw }}
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
-                            <li>
-                                <b>Demande de relogement :</b>
-                                {% if signalement.isRelogement %}
-                                    {{ picto_yes|raw }}
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
-                            <li>
-                                <b>Preavis de départ :</b>
-                                {% set travailleurSocialPreavisDepart = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialPreavisDepart : null %}
-                                {% if travailleurSocialPreavisDepart is same as null %}
-                                    {% if signalement.isPreavisDepart is same as true %}
-                                        {% set travailleurSocialPreavisDepart = 'oui' %}
-                                    {% elseif signalement.isPreavisDepart is same as false %}
-                                        {% set travailleurSocialPreavisDepart = 'non' %}
-                                    {% endif %}
-                                {% endif %}
-                                {% if travailleurSocialPreavisDepart is same as 'oui' %}
-                                    {{ picto_yes|raw }}
-                                {% elseif travailleurSocialPreavisDepart is same as 'non' %}
-                                    {{ picto_no|raw }}
-                                {% elseif travailleurSocialPreavisDepart is same as 'nsp' %}
-                                    Ne sait pas
-                                {% endif %}
-                            </li>
-                            {% if signalement.typeCompositionLogement %}
-                                {% if signalement.typeCompositionLogement.bailDpeBail %}
-                                    <li>Bail :
-                                        {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
-                                            {{ picto_yes|raw }}
-                                        {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
-                                            {{ picto_no|raw }}
-                                        {% else %}
-                                            {{signalement.typeCompositionLogement.bailDpeBail(false)}}
-                                        {% endif %}
-                                    </li>
-                                {% endif %}
-                                {% if signalement.typeCompositionLogement.bailDpeInvariant %}
-                                    <li>Invariant fiscal :
-                                        {{signalement.typeCompositionLogement.bailDpeInvariant}}
-                                    </li>
-                                {% endif %}
-                                {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
-                                    <li>Etat des lieux :
-                                        {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
-                                            {{ picto_yes|raw }}
-                                        {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
-                                            {{ picto_no|raw }}
-                                        {% else %}
-                                            {{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
-                                        {% endif %}
-                                    </li>
-                                {% endif %}
-                            {% endif %}
-                            <li>
-                                <b>DPE :</b>
-                                {% if signalement.typeCompositionLogement %}
-                                    {% if signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' %}
-                                        {{ picto_yes|raw }}
-                                    {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
-                                        {{ picto_no|raw }}
-                                    {% else %}
-                                        {{signalement.typeCompositionLogement.bailDpeDpe(false)}}
-                                    {% endif %}
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
-                            <li>
-                                <b>Classe énergétique :</b> {{ signalement.typeCompositionLogement.bailDpeClasseEnergetique(false) ?? 'N/R' }}
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
-        </section>
-        <section>
-            <h2>Prise en charge partenaire</h2>
-            <table style="width: 100%;text-align: center;" class="border">
-                <tr>
-                    <td style="width: 33%"><b>En attente</b></td>
-                    <td style="width: 34%"><b>Accepté</b></td>
-                    <td style="width: 33%"><b>Refusé</b></td>
-                </tr>
-                {% for affectation in signalement.affectations %}
-                    <tr>
-                        <td>
-                            {% if affectation.statut is same as(0) %}
-                                {{ affectation.partner ? affectation.partner.nom }}
-                                <br>
-                                {{ affectation.createdAt|date('d/m/Y') }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if affectation.statut is same as(1) %}
-                                {{ affectation.partner ? affectation.partner.nom }}
-                                <br>
-                                {{ affectation.answeredAt|date('d/m/Y') }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if affectation.statut is same as(2) %}
-                                {{ affectation.partner ? affectation.partner.nom }}
-                                <br>
-                                {{ affectation.answeredAt|date('d/m/Y') }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </section>
-
-        <section>
-            <h2>Visites</h2>            
-            {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
-                <div class="fr-background-alt--grey fr-p-5v fr-mb-5v">
-                    <div class="fr-grid-row">
-                        <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
-                            Visite #{{loop.index}}
-                            {% if signalement.interventions is not empty or intervention.scheduledAt is not empty %}
-                                du {{ intervention.scheduledAt|date('d/m/Y') }}
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% include 'back/signalement/view/visites/visite-item.html.twig' %}
-                </div>
-            {% endfor %}
-        </section>
-
-    </div>
-
-    <div class="page" style="padding-top: 25px!important;">
-        <section>
-            <h2>Problème(s) signalé(s)</h2>
-            <h3>Criticité du signalement</h3>
-            <div><strong class="fr-text--lg">{{ signalement.score|round(2) }} %</strong></div>
-            {% if signalement.isV2 %}
-                <div>(Score bâtiment : {{ signalement.scoreBatiment|round(2) }} % - Score logement : {{ signalement.scoreLogement|round(2) }} %)</div>
-            {% endif %}
-            {% if signalement.isV2 %}
-                <h4>Désordres logement</h4>
-                {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
-                    {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
-                        {% include 'pdf/partial_desordre.html.twig' %}   
-                    {% endfor %}
-                {% else %}
-                    <i>Aucun désordre signalé dans le logement</i>
-                {% endif %}
-
-                
-                <h4>Désordres bâtiment</h4>
-                {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
-                    {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
-                        {% include 'pdf/partial_desordre.html.twig' %}   
-                    {% endfor %}
-                {% else %}
-                    <i>Aucun désordre signalé dans le bâtiment</i>
-                {% endif %}                
-                {% if signalement.debutDesordres is not null %}
-                <h4>Informations supplémentaires sur les désordres</h4>
-                    <div>
-                        <ul>
-                            <li>Les désordres ont commencé il y a : 
-				            {{ signalement.debutDesordres.label}}
-                            </li>
-                        {% if signalement.hasSeenDesordres is not null %}
-                            <li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
-                        {% endif %}
-                        </ul>
-                    </div>
-                {% endif %}
-            {% else %}
-                <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                    {% for situation,criteres in situations %}
-                        <li>
-                            <h3><b>{{ situation|capitalize }}</b></h3>
-                            <ul style="list-style:none;">
-                                {% for critere,criticite in criteres %}
-                                    <li>{% if criticite.critere.isDanger %}<p class="fr-badge fr-badge--warning">
-                                        danger</p>&nbsp;&nbsp;{% endif %}<b>{{ critere }}</b>
-                                        <ul style="list-style:none;">
-                                            <li class="fr-grid-row fr-grid-row--middle fr-w-100">
-                                                <div class="fr-col-md-2 fr-col-lg-1 fr-col--middle">
-                                                </div>
-                                                <div class="fr-col-md-10 fr-col-lg-11 fr-pl-5v fr-rounded">
-                                                    {{ criticite.label|capitalize }}
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </section>
-    </div>
-
-    {% if signalement.suivis|length %}
-        <div class="page" style="padding-top: 25px!important;">
-            <section>
-                <h2>Suivi(s)</h2>
-                <table class="fr-stripped" style="width: 100%">
-                    {% for suivi in signalement.suivis|reverse %}
-                        <tr>
-                            <td style="padding:.5rem;width: 15%">
-                                {% if suivi.createdBy is defined and suivi.createdBy is not null %}
-                                    <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
-                                    {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
-                                    <br>
-                                    <small>[{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}
-                                        ]</small>
-                                    <br>
-                                {% else %}
-                                    <b> Aucun</b>
-                                {% endif %}
-                                <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
-                            </td>
-                            <td style="padding:.5rem;width:85%">  {{ suivi.description|raw }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-
-            </section>
-        </div>
+<page>
+    <h1 class="text-right">Signalement #{{ signalement.reference }}</h1>
+    <h3 class="text-right">Déposé le {{ signalement.createdAt|format_datetime(locale='fr', timezone=signalement.getTimezone) }}</h3>
+    {% if signalement.isNotOccupant %}
+        <h3 class="text-right">Signalement par un tiers</h3>
+    {% else %}
+        <h3 class="text-right">Signalement par l'occupant</h3>
     {% endif %}
 
-    <section>
-        <div class="page">
-        {% for index, photo in signalement.files|filter(photo => photo.isTypePhoto) %}
-                <div style="page-break-inside: avoid;margin-top: 25px;">
-                    <h2>Photo : {{ photo.title }}</h2>
-                    <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
-                    <small>le {{ photo.date ?? 'N/R' }}</small><br>                    
-                    {% set encodedImage = photo.filename(constant('App\\Service\\ImageManipulationHandler::SUFFIX_RESIZE')) | image64 %}
-                    {% if encodedImage is not null %}                    
-                        <img src="{{ encodedImage }}" style="max-width:100%" id="{{ photo.filename }}" alt="{{ photo.title }}"/>
+    <h3>Situation(s) suspectée(s) à la déclaration usager</h3>
+    {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
+        <small class="fr-badge">{{ qualificationStatusLabel|replace({'Suspicion ': '', ' à vérifier': '', ' avérée': ''}) }}</small>&nbsp;&nbsp;
+    {% endfor %}
+
+    {% if listConcludeProcedures %}
+        <h3>Situation(s) observée(s) après visite</h3>
+        {% for concludeProcedure in listConcludeProcedures %}
+            <small class="fr-badge">{{ concludeProcedure }}</small>&nbsp;&nbsp;
+        {% endfor %}
+    {% endif %}
+
+    <table style="width: 100%">
+        <tr>
+            <td style="width: 50%">
+                <h3>Informations de l'occupant</h3>
+                <b>Nom :</b> {{ signalement.nomOccupant }} - <b>Prénom :</b> {{ signalement.prenomOccupant }}
+                <br>
+                <b>Courriel :</b> <a href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
+                <br>
+                <b>Téléphone :</b> <a href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a>
+                <br>
+                <b>Adresse :</b> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
+                {% if signalement.complementAdresseOccupant %}
+                    <br>
+                    {{signalement.complementAdresseOccupant}}
+                {% endif %}
+                <br>
+                <b>Nb. personnes :</b>
+                {% if signalement.typeCompositionLogement %}
+                    {{ signalement.nbOccupantsLogement }}
+                    {% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+                        <br><strong>- dont nb. enfants : </strong>{{ signalement.typeCompositionLogement.compositionLogementNombreEnfants }}
+                    {% endif %}
+                {% else %}
+                    {{ signalement.nbPersonsDeprecated }} :
+                    {{ signalement.nbAdultes }} {{ signalement.nbAdultes > 1 ? 'adultes' : 'adulte' }}
+                    {% if signalement.nbEnfantsP6 %}
+                        - {{ signalement.nbEnfantsP6 ?? '0' }} enfant(s) de plus de 6 ans
+                    {% endif %}
+                    {% if signalement.nbEnfantsM6 %}
+                        - {{ signalement.nbEnfantsM6 ?? '0' }} enfant(s) de moins de 6 ans
+                    {% endif %}
+                {% endif %}
+                <b>Enfants -6 ans :</b>
+                {% if signalement.typeCompositionLogement %}
+                    {% if signalement.typeCompositionLogement.compositionLogementEnfants is same as 'oui' %}
+                        {{ picto_yes|raw }}
+                    {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
+                        {{ picto_no|raw }}
                     {% else %}
-                        La photo n'existe plus
+                        {{signalement.typeCompositionLogement.compositionLogementEnfants}}
+                    {% endif %}
+                {% else %}
+                    {% if signalement.nbEnfantsM6 > 0 %}
+                        {{ picto_yes|raw }}
+                    {% else %}
+                        {{ picto_no|raw }}
+                    {% endif %}
+                {% endif %}
+                <br>
+                <b>Date d'entrée :</b> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
+                <br>
+                <b>Loyer :</b> {{ signalement.loyer }} €/mois
+                <br>
+                <b>Allocataire :</b>
+                {% if signalement.isAllocataire %}
+                    <small>{{ signalement.isAllocataire }}</small>
+                {% else %}
+                    {{ picto_no|raw }}
+                {% endif %}
+                <br>
+                {% if signalement.isAllocataire %}
+                        <b>N° allocataire :</b> {{ signalement.numAllocataire }}
+                        <br>
+                        <b>Montant allocation :</b> {{ signalement.montantAllocation ?? 'N/R' }} €/mois
+                {% endif %}
+            </td>
+            {% if signalement.isNotOccupant %}
+                <td>
+                    <h3>Informations du déclarant</h3>
+                    <b>Nom :</b> {{ signalement.nomDeclarant }} - <b>Prénom :</b> {{ signalement.prenomDeclarant }}</li>
+                    <br>
+                    <b>Courriel :</b><a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+                    <br>
+                    <b>Téléphone :</b>{{ signalement.telDeclarant }}
+                    <br>
+                    <b>Structure :</b> {{ signalement.structureDeclarant }}
+                    <br>
+                </td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td>
+                <h3>Description du logement</h3>
+                    <b>Logement :</b> {{ signalement.natureLogement }} de {{ signalement.superficie }}m²
+                    <br>
+                    {% if signalement.informationComplementaire %}
+                        <b>Nombre d'étages :</b>{{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages}}
+                        <br>
+                    {% endif %}
+                    {% if signalement.typeCompositionLogement %}
+                        {% if signalement.natureLogement|capitalize is same as 'Autre' %}
+                            <b>Précisions :</b> {{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}
+                            <br>
+                        {% endif %}
+                        <b>Logement :</b> {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
+                        <br>
+                        <b>Hauteur > 2m :</b> {{ signalement.typeCompositionLogement.compositionLogementHauteur(false) }}
+                        <br>
+                        <b>Nombre de pièces à vivre :</b> {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+                        <br>
+                        <b>Etage :</b>
+                        {% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
+                        <br>
+                        <b>Avec fenêtres :</b>
+                        {% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
+                        <br>
+                        <b>Au moins une des pièces à vivre > 9m² :</b>
+                        {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)}}
+                        <br>
+                        <b>Cuisine / coin cuisine :</b>
+                        <br>
+                        <ul>
+                            <li>
+                                Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine }}
+                            </li>
+                            {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' %}
+                                <li>
+                                    Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective }}
+                                </li>
+                            {% endif %}
+                        </ul>                            
+                        <b>SDB (baignoire ou douche) :</b>
+                        <br>
+                        <ul>
+                            <li>
+                                Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain}}
+                            </li>
+                            {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
+                                <li>
+                                    Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective }}
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <br>
+                        <b>WC :</b>
+                        <br>
+                        <ul>
+                            <li>
+                                Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesWc }}
+                            </li>
+                            {% if signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' %}
+                                <li>
+                                    Collectifs : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective }}
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <br>
+                        {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'oui' and signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'oui' %}
+                            <li>
+                                <b>WC et cuisine dans la même pièce :</b>
+                                {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h3>Informations sur le bailleur</h3>
+                {% if signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+                <b>Dénomination :</b> {{ signalement.denominationProprio }}<br>
+                {% endif %}
+                <b>Nom :</b> {{ signalement.nomProprio ?? 'N/R' }}
+                {% if signalement.prenomProprio %}
+                - <b>Prénom :</b> {{ signalement.prenomProprio }}
+                {% endif %}
+                <br>
+                <b>Adresse :</b>
+                {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio : 'N/R' }}
+            </td>
+        </tr>
+    </table>
+    <h3>Description par l'occupant</h3>
+    <div>{{ signalement.details|nl2br }}</div>
+    <table style="width: 100%">
+        <tr>
+            <td style="width: 50%">
+                <h3>Informations propriétaire</h3>
+                <b>Propriétaire averti :</b>
+                {% if signalement.isProprioAverti %}
+                    {{ picto_yes|raw }}
+                {% else %}
+                    {{ picto_no|raw }}
+                {% endif %}
+                <br>
+                {% if signalement.isProprioAverti and signalement.informationProcedure %}
+                    <b>Moyen d'information du propriétaire :</b>
+                    {% if signalement.informationProcedure.infoProcedureBailMoyen %}
+                        {% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
+                        {{ MoyenContact.label }}
+                    {% endif %}
+                    <br>
+                    <b>Date d'information du propriétaire :</b>
+                    {% if signalement.informationProcedure.infoProcedureBailDate %}
+                        {{ signalement.informationProcedure.infoProcedureBailDate }}
+                    {% endif %}
+                    <br>
+                    <b>Réponse du propriétaire :</b>
+                    {% if signalement.informationProcedure.infoProcedureBailReponse %}
+                        <br>
+                        {{ signalement.informationProcedure.infoProcedureBailReponse|nl2br }}
+                    {% endif %}
+                    <br>
+                    <b>Numéro de réclamation :</b>
+                    {% if signalement.isLogementSocial %}
+                        {% if signalement.informationProcedure.infoProcedureBailNumero %}
+                            {{ signalement.informationProcedure.infoProcedureBailNumero|nl2br }}
+                        {% endif %}
+                    {% endif %}
+                    <br>
+                {% endif %}
+                <b>Nom :</b> {{ signalement.nomProprio ?? 'N/R' }}
+                <br>
+                <b>Courriel :</b><a href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio ?? 'N/R' }}</a>
+                <br>
+                <b>Téléphone :</b><a href="tel:{{ signalement.telProprio }}">{{ signalement.telProprio ?? 'N/R' }}</a>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <h3>Informations procédure</h3>
+                <b>Bailleur averti :</b>
+                {% if signalement.isProprioAverti is null %}
+                {% elseif signalement.isProprioAverti %}
+                    {{ picto_yes|raw }}
+                {% else %}
+                    {{ picto_no|raw }}
+                {% endif %}
+                <br>
+                {% if signalement.informationProcedure %}
+                    <b>Contact assurance :</b>
+                        {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
+                            {{ picto_yes|raw }}
+                        {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
+                            {{ picto_no|raw }}
+                        {% else %}
+                            {{signalement.informationProcedure.infoProcedureAssuranceContactee(false)}}
+                        {% endif %}
+                    <br>
+                    <b>Réponse assurance :</b>
+                    {% if signalement.informationProcedure.infoProcedureReponseAssurance %}
+                        <br>
+                        {{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
+                    {% endif %}
+                    <br>
+                    <b>Souhaite garder le logement après travaux :</b>
+                    {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
+                        {{ picto_no|raw }}
+                    {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
+                        {{ picto_yes|raw }}
+                    {% else %}
+                        {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <h3>Informations logement</h3>
+                <b>Bail en cours :</b>
+                {% if signalement.isBailEnCours %}
+                    {{ picto_yes|raw }}
+                {% else %}
+                    {{ picto_no|raw }}
+                {% endif %}
+                <br>
+                {% if signalement.informationComplementaire and  signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
+                    Date d'effet du bail : {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail('d/m/Y')}}
+                    <br>
+                {% endif %}
+                <b>Logement vacant :</b>
+                {% if signalement.isLogementVacant is same as true %}
+                    {{ picto_yes|raw }}
+                {% elseif signalement.isLogementVacant is same as false %}
+                    {{ picto_no|raw }}
+                {% endif %}
+                <br>
+                <b>Logement social :</b>
+                {% if signalement.isLogementSocial %}
+                    {{ picto_yes|raw }}
+                {% else %}
+                    {{ picto_no|raw }}
+                {% endif %}
+                <br>
+                <b>Demande de relogement :</b>
+                {% if signalement.isRelogement %}
+                    {{ picto_yes|raw }}
+                {% else %}
+                    {{ picto_no|raw }}
+                {% endif %}
+                <br>
+                <b>Preavis de départ :</b>
+                {% set travailleurSocialPreavisDepart = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialPreavisDepart : null %}
+                {% if travailleurSocialPreavisDepart is same as null %}
+                    {% if signalement.isPreavisDepart is same as true %}
+                        {% set travailleurSocialPreavisDepart = 'oui' %}
+                    {% elseif signalement.isPreavisDepart is same as false %}
+                        {% set travailleurSocialPreavisDepart = 'non' %}
+                    {% endif %}
+                {% endif %}
+                {% if travailleurSocialPreavisDepart is same as 'oui' %}
+                    {{ picto_yes|raw }}
+                {% elseif travailleurSocialPreavisDepart is same as 'non' %}
+                    {{ picto_no|raw }}
+                {% elseif travailleurSocialPreavisDepart is same as 'nsp' %}
+                    Ne sait pas
+                {% endif %}
+                <br>
+                {% if signalement.typeCompositionLogement %}
+                    {% if signalement.typeCompositionLogement.bailDpeBail %}
+                        Bail :
+                        {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
+                            {{ picto_yes|raw }}
+                        {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
+                            {{ picto_no|raw }}
+                        {% else %}
+                            {{signalement.typeCompositionLogement.bailDpeBail(false)}}
+                        {% endif %}
+                        <br>
+                    {% endif %}
+                    {% if signalement.typeCompositionLogement.bailDpeInvariant %}
+                        Invariant fiscal : {{signalement.typeCompositionLogement.bailDpeInvariant}}
+                        <br>
+                    {% endif %}
+                    {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
+                        Etat des lieux :
+                        {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
+                            {{ picto_yes|raw }}
+                        {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
+                            {{ picto_no|raw }}
+                        {% else %}
+                            {{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
+                        {% endif %}
+                        <br>
+                    {% endif %}
+                {% endif %}
+                <b>DPE :</b>
+                {% if signalement.typeCompositionLogement %}
+                    {% if signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' %}
+                        {{ picto_yes|raw }}
+                    {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
+                        {{ picto_no|raw }}
+                    {% else %}
+                        {{signalement.typeCompositionLogement.bailDpeDpe(false)}}
+                    {% endif %}
+                {% else %}
+                    {{ picto_no|raw }}
+                {% endif %}
+                <br>
+                <b>Classe énergétique :</b> {{ signalement.typeCompositionLogement.bailDpeClasseEnergetique(false) ?? 'N/R' }}
+            </td>
+        </tr>
+    </table>
+    <h2>Prise en charge partenaire</h2>
+    <table style="width: 100%;text-align: center;" class="border">
+        <tr>
+            <td style="width: 33%"><b>En attente</b></td>
+            <td style="width: 34%"><b>Accepté</b></td>
+            <td style="width: 33%"><b>Refusé</b></td>
+        </tr>
+        {% for affectation in signalement.affectations %}
+            <tr>
+                <td>
+                    {% if affectation.statut is same as(0) %}
+                        {{ affectation.partner ? affectation.partner.nom }}
+                        <br>
+                        {{ affectation.createdAt|date('d/m/Y') }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if affectation.statut is same as(1) %}
+                        {{ affectation.partner ? affectation.partner.nom }}
+                        <br>
+                        {{ affectation.answeredAt|date('d/m/Y') }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if affectation.statut is same as(2) %}
+                        {{ affectation.partner ? affectation.partner.nom }}
+                        <br>
+                        {{ affectation.answeredAt|date('d/m/Y') }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Visites</h2>            
+    {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
+        <div>
+            <div>
+                <div>
+                    Visite #{{loop.index}}
+                    {% if signalement.interventions is not empty or intervention.scheduledAt is not empty %}
+                        du {{ intervention.scheduledAt|date('d/m/Y') }}
                     {% endif %}
                 </div>
-        {% endfor %}
+            </div>
+            {% include 'back/signalement/view/visites/visite-item.html.twig' %}
         </div>
-    </section>
+    {% endfor %}
+</page>
 
-{% endblock %}
+<page>
+    <h2>Problème(s) signalé(s)</h2>
+    <h3>Criticité du signalement</h3>
+    <div><strong>{{ signalement.score|round(2) }} %</strong></div>
+    {% if signalement.isV2 %}
+        <div>(Score bâtiment : {{ signalement.scoreBatiment|round(2) }} % - Score logement : {{ signalement.scoreLogement|round(2) }} %)</div>
+    {% endif %}
+    {% if signalement.isV2 %}
+        <h4>Désordres logement</h4>
+        {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
+            {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
+                {% include 'pdf/partial_desordre.html.twig' %}   
+            {% endfor %}
+        {% else %}
+            <i>Aucun désordre signalé dans le logement</i>
+        {% endif %}
+
+        
+        <h4>Désordres bâtiment</h4>
+        {% if situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
+            {% for situation,criteres in situations[enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
+                {% include 'pdf/partial_desordre.html.twig' %}   
+            {% endfor %}
+        {% else %}
+            <i>Aucun désordre signalé dans le bâtiment</i>
+        {% endif %}                
+        {% if signalement.debutDesordres is not null %}
+        <h4>Informations supplémentaires sur les désordres</h4>
+            <div>
+                <ul>
+                    <li>Les désordres ont commencé il y a : 
+                    {{ signalement.debutDesordres.label}}
+                    </li>
+                {% if signalement.hasSeenDesordres is not null %}
+                    <li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
+                {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+    {% else %}
+        {% for situation,criteres in situations %}
+            <h3><b>{{ situation|capitalize }}</b></h3>
+            {% for critere,criticite in criteres %}
+                {% if criticite.critere.isDanger %}
+                    <p class="fr-badge">danger</p>&nbsp;&nbsp;
+                {% endif %}
+                <b>{{ critere }}</b>
+                <div>{{ criticite.label|capitalize }}</div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+</page>
+
+{% if signalement.suivis|length %}
+    <page>
+        <h2>Suivi(s)</h2>
+        <table class="fr-stripped" style="width: 100%">
+            {% for suivi in signalement.suivis|reverse %}
+                <tr>
+                    <td style="padding:.5rem;width: 15%">
+                        {% if suivi.createdBy is defined and suivi.createdBy is not null %}
+                            <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
+                            {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
+                            <br>
+                            <small>[{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}
+                                ]</small>
+                            <br>
+                        {% else %}
+                            <b> Aucun</b>
+                        {% endif %}
+                        <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
+                    </td>
+                    <td style="padding:.5rem;width:85%">  {{ suivi.description|raw }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </page>
+{% endif %}
+
+<page>
+    {% for index, photo in signalement.files|filter(photo => photo.isTypePhoto) %}
+        <div style="page-break-inside: avoid;margin-top: 25px;">
+            <h2>Photo : {{ photo.title }}</h2>
+            <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
+            <small>le {{ photo.date ?? 'N/R' }}</small><br>                    
+            {% set encodedImage = photo.filename(constant('App\\Service\\ImageManipulationHandler::SUFFIX_RESIZE')) | image64 %}
+            {% if encodedImage is not null %}                    
+                <img src="{{ encodedImage }}" style="max-width:100%" id="{{ photo.filename }}" alt="{{ photo.title }}"/>
+            {% else %}
+                La photo n'existe plus
+            {% endif %}
+        </div>
+    {% endfor %}
+</page>
