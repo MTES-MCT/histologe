@@ -64,7 +64,11 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if (SignalementStatus::DRAFT === $signalement->getStatut()) {
+            $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+        } else {
+            $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             if ($request->isXmlHttpRequest()) {
                 return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
