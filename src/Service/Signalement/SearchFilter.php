@@ -25,6 +25,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use function Symfony\Component\String\u;
 
 class SearchFilter
 {
@@ -538,13 +539,15 @@ class SearchFilter
     private function addFilterDate(QueryBuilder $qb, string $columnDbField, array $dates): QueryBuilder
     {
         if (!empty($dates['on'])) {
-            $qb->andWhere($columnDbField.' >= :date_in')->setParameter('date_in', $dates['on']);
+            $paramName = 'date_in_'.u($columnDbField)->snake();
+            $qb->andWhere($columnDbField.' >= :'.$paramName)->setParameter($paramName, $dates['on']);
         }
 
         if (!empty($dates['off'])) {
             $endDate = new \DateTime($dates['off']);
             $endDate->add(new \DateInterval('P1D'));
-            $qb->andWhere($columnDbField.' <= :date_off')->setParameter('date_off', $endDate->format('Y-m-d'));
+            $paramName = 'date_off_'.u($columnDbField)->snake();
+            $qb->andWhere($columnDbField.' <= :'.$paramName)->setParameter($paramName, $endDate->format('Y-m-d'));
         }
 
         return $qb;
