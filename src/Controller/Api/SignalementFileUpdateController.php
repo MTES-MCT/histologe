@@ -111,6 +111,7 @@ class SignalementFileUpdateController extends AbstractController
             $file->setFileType(File::FILE_TYPE_DOCUMENT);
             $file->setDescription(null);
         }
+        $file->setExtension($ext);
         $file->setDocumentType($documentType);
         $this->entityManager->flush();
 

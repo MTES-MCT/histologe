@@ -54,6 +54,12 @@ class File implements EntityHistoryInterface
         'image/png',
         'image/gif',
     ];
+    public const array RESIZABLE_EXTENSION = [
+        'jpeg',
+        'jpg',
+        'png',
+        'gif',
+    ];
     public const array IMAGE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
@@ -88,6 +94,9 @@ class File implements EntityHistoryInterface
 
     #[ORM\Column(length: 32, options: ['comment' => 'Value possible photo or document'])]
     private ?string $fileType = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $extension = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
@@ -218,14 +227,32 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et doit être remplacée par isTypePhoto ou isTypeDocument
+     */
     public function getFileType(): ?string
     {
         return $this->fileType;
     }
 
+    /**
+     * @deprecated  Cette méthode est obsolete et doit être remplacée par isTypePhoto ou isTypeDocument
+     */
     public function setFileType(?string $fileType): self
     {
         $this->fileType = $fileType;
+
+        return $this;
+    }
+
+    public function getExtension(): ?string
+    {
+        return $this->extension;
+    }
+
+    public function setExtension(?string $extension): self
+    {
+        $this->extension = $extension;
 
         return $this;
     }
@@ -343,9 +370,29 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
+    public function isTypePhoto(): bool
+    {
+        if (empty($this->getExtension())) {
+            return self::FILE_TYPE_PHOTO === $this->fileType;
+        }
+
+        return (self::FILE_TYPE_PHOTO === $this->getDocumentType()->mapFileType() || DocumentType::AUTRE === $this->getDocumentType())
+            && \in_array($this->getExtension(), self::RESIZABLE_EXTENSION)
+        ;
+    }
+
+    public function isTypeDocument(): bool
+    {
+        if (empty($this->getExtension())) {
+            return self::FILE_TYPE_DOCUMENT === $this->fileType;
+        }
+
+        return !$this->isTypePhoto();
+    }
+
     public function isSituationPhoto(): bool
     {
-        return $this->fileType === $this::FILE_TYPE_PHOTO
+        return $this->isTypePhoto()
         && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList())
         && null === $this->intervention;
     }
