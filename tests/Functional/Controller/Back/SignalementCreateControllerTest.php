@@ -280,7 +280,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(1, $signalement->getAffectations());
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
+        $this->assertEquals(null, $signalementUsager->getDeclarant());
 
         $this->assertEmailCount(2);
     }
@@ -305,7 +305,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
+        $this->assertEquals(null, $signalementUsager->getDeclarant());
         $this->assertTrue($response['redirect']);
         $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
 
@@ -342,7 +342,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(0, $signalement->getAffectations());
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
+        $this->assertEquals(null, $signalementUsager->getDeclarant());
 
         $this->assertEmailCount(0);
     }
@@ -370,7 +370,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(1, $signalement->getAffectations());
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
+        $this->assertEquals(null, $signalementUsager->getDeclarant());
 
         $this->assertEmailCount(2);
     }
@@ -399,7 +399,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(1, $signalement->getAffectations());
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals($user->getEmail(), $signalementUsager->getDeclarant()->getEmail());
+        $this->assertEquals(null, $signalementUsager->getDeclarant());
 
         $this->assertEmailCount(2);
     }

@@ -400,7 +400,11 @@ class SignalementCreateController extends AbstractController
         if (null === $signalement->getIsLogementSocial()) {
             $errorMsgs[] = 'Vous devez renseigner le champ logement social pour pouvoir soumettre le signalement.';
         }
-        if (ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant() && !$signalement->getIsBailEnCours() && !$signalement->getIsLogementVacant()) {
+        if (
+            ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant()
+            && !$signalement->getIsBailEnCours()
+            && !$signalement->getIsLogementVacant()
+        ) {
             $errorMsgs[] = 'Vous devez renseigner le champ Occupation du logement pour pouvoir soumettre le signalement.';
         }
         if (!count($signalement->getDesordrePrecisions())) {
@@ -416,24 +420,12 @@ class SignalementCreateController extends AbstractController
         $token = $request->request->get('_token');
         $partnerIds = $request->request->get('partner-ids');
         if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
+            if (null === $signalement->getProfileDeclarant()) {
+                $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
+            }
             /** @var User $user */
             $user = $this->getUser();
-            if (!$signalement->getProfileDeclarant()) {
-                $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
-            }
-            if (!$signalement->getMailDeclarant()) {
-                $signalement->setMailDeclarant($user->getEmail());
-            }
-            if (!$signalement->getNomDeclarant()) {
-                $signalement->setNomDeclarant($user->getNom());
-            }
-            if (!$signalement->getPrenomDeclarant()) {
-                $signalement->setPrenomDeclarant($user->getPrenom());
-            }
-            if (!$signalement->getStructureDeclarant()) {
-                $signalement->setStructureDeclarant($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())->getNom());
-            }
-            if (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT])) {
+            if (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
                 if (!$signalement->getMailOccupant()) {
                     $signalement->setMailOccupant($user->getEmail());
                 }

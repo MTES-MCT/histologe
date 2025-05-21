@@ -240,7 +240,7 @@ class SignalementBoManager
 
     public function formCoordonneesManager(FormInterface $form, Signalement $signalement): bool
     {
-        $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarantTiers')->getData());
+        $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarantTiers')->getData()) ?? ProfileDeclarant::LOCATAIRE;
         $signalement->setProfileDeclarant($profileDeclarant);
         $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
 
