@@ -19,6 +19,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class EsaboraSISHService extends AbstractEsaboraService
 {
+    public const string NAME_SI = 'SI-Santé Habitat (SI-SH)';
+
     public function __construct(
         private readonly HttpClientInterface $client,
         private readonly LoggerInterface $logger,

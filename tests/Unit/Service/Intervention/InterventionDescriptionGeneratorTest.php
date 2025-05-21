@@ -6,6 +6,8 @@ use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Event\InterventionCreatedEvent;
 use App\Event\InterventionRescheduledEvent;
+use App\Event\InterventionUpdatedByEsaboraEvent;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
@@ -55,6 +57,42 @@ class InterventionDescriptionGeneratorTest extends TestCase
             InterventionDescriptionGenerator::generate(
                 $intervention,
                 InterventionCreatedEvent::NAME
+            )
+        );
+    }
+
+    public function testVisiteDescriptionOnInterventionUpdated(): void
+    {
+        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'));
+        $intervention = $this->getIntervention(
+            InterventionType::VISITE,
+            $dateInFutur,
+            Intervention::STATUS_PLANNED
+        );
+
+        $this->assertEquals(
+            'La date de visite dans '.EsaboraSISHService::NAME_SI.' a été modifiée ; La nouvelle date est le '.$dateInFutur->format('d/m/Y').'.',
+            InterventionDescriptionGenerator::generate(
+                $intervention,
+                InterventionUpdatedByEsaboraEvent::NAME
+            )
+        );
+    }
+
+    public function testVisiteControleDescriptionOnInterventionUpdated(): void
+    {
+        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'));
+        $intervention = $this->getIntervention(
+            InterventionType::VISITE_CONTROLE,
+            $dateInFutur,
+            Intervention::STATUS_PLANNED
+        );
+
+        $this->assertEquals(
+            'La date de visite de contrôle dans '.EsaboraSISHService::NAME_SI.' a été modifiée ; La nouvelle date est le '.$dateInFutur->format('d/m/Y').'.',
+            InterventionDescriptionGenerator::generate(
+                $intervention,
+                InterventionUpdatedByEsaboraEvent::NAME
             )
         );
     }
