@@ -387,6 +387,8 @@ class SignalementCreateController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         UserManager $userManager,
     ): Response {
+        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $signalementManager->flush();
