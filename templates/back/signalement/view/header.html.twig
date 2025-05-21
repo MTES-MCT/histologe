@@ -133,6 +133,13 @@
         <div class="fr-col-5">
             <div class="fr-mb-4v fr-text--right">
                 Dossier déposé le : {{ signalement.createdAt|date('d/m/Y') }}
+                {% if signalement.createdBy is defined and signalement.createdBy is not null %}
+                     depuis le formulaire pro
+                {% elseif signalement.isImported is same as true %}
+                     par import
+                {% else %}
+                     depuis le formulaire usager
+                {% endif %}
             </div>
 
             <div class="fr-mb-4v fr-text--right">
