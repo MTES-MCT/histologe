@@ -78,6 +78,17 @@ class SignalementDraftCoordonneesType extends AbstractType
         }
 
         $builder
+            ->add('civiliteOccupant', ChoiceType::class, [
+                'label' => 'Civilité',
+                'choices' => [
+                    'Mme' => 'mme',
+                    'Mr' => 'mr',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+            ])
             ->add('nomOccupant', TextType::class, [
                 'label' => 'Nom de famille',
                 'required' => false,
