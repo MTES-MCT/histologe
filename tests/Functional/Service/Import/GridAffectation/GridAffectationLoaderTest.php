@@ -131,7 +131,6 @@ class GridAffectationLoaderTest extends KernelTestCase
             'line 7 : E-mail partenaire déjà existant dans le territoire avec (partenaire-13-01@signal-logement.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
             'line 8 : E-mail manquant pour Margaretta Borer, partenaire ADIL',
             'line 9 : Nom de partenaire manquant',
-            'line 10 : Utilisateur déjà existant avec (user-13-06@signal-logement.fr) dans Bouches-du-Rhône, partenaire : Partenaire 13-06 ESABORA ARS, rôle : Agent',
             'Certains partenaires ont un e-mail en commun ddt-m@signal-logement.fr',
             'Certains utilisateurs ont un e-mail en commun user-ddt@signal-logement.fr',
             'Certains utilisateurs ont un e-mail en commun avec un partenaire ddt-m@signal-logement.fr,user-ddt@signal-logement.fr',

@@ -144,33 +144,6 @@ class GridAffectationLoader
                     if (\count($violations) > 0) {
                         $errors[] = \sprintf('line %d : E-mail incorrect pour un utilisateur : %s', $numLine, $emailUser);
                     }
-
-                    /** @var User $userToCheck */
-                    $userToCheck = $this->userManager->findOneBy(['email' => $emailUser]);
-                    if (!$isModeUpdate
-                        && null !== $userToCheck
-                        && !\in_array('ROLE_USAGER', $userToCheck->getRoles())
-                    ) {
-                        $territories = '';
-                        foreach ($userToCheck->getPartners() as $partner) {
-                            $territories .= $partner->getTerritory()->getName().', ';
-                        }
-                        $territories = \substr($territories, 0, -2);
-                        $partners = '';
-                        foreach ($userToCheck->getPartners() as $partner) {
-                            $partners .= $partner->getNom().', ';
-                        }
-                        $partners = \substr($partners, 0, -2);
-
-                        $errors[] = \sprintf(
-                            'line %d : Utilisateur déjà existant avec (%s) dans %s, partenaire : %s, rôle : %s',
-                            $numLine,
-                            $emailUser,
-                            $territories,
-                            $partners,
-                            $userToCheck->getRoleLabel()
-                        );
-                    }
                     // store user mail to check duplicates
                     if (!empty($item[GridAffectationHeader::USER_EMAIL])) {
                         $mailUsers[] = $item[GridAffectationHeader::USER_EMAIL];
