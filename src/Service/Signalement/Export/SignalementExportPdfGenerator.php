@@ -15,6 +15,7 @@ class SignalementExportPdfGenerator
     {
         $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr', true, 'UTF-8', [15, 15, 15, 15]);
         $html2pdf->writeHTML($content);
+
         return $html2pdf->output('unused.pdf', 'S');
     }
 
