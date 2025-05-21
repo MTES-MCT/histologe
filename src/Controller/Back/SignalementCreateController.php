@@ -21,7 +21,6 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\AutoAssigner;
-use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementBoManager;
 use App\Service\Signalement\SignalementDesordresProcessor;
@@ -387,11 +386,8 @@ class SignalementCreateController extends AbstractController
         AffectationManager $affectationManager,
         EventDispatcherInterface $eventDispatcher,
         UserManager $userManager,
-        CriticiteCalculator $criticiteCalculator,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
-        $signalement->setScore($criticiteCalculator->calculate($signalement));
+        $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $signalementManager->flush();
 

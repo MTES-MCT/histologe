@@ -47,6 +47,12 @@ class SignalementBoManager
         $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData());
         $typeCompositionLogement->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
+        $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
+        $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
+        $signalement->setSituationFoyer($situationFoyer);
+        $signalement->setInformationProcedure($informationProcedure);
+        $signalement->setInformationComplementaire($informationComplementaire);
 
         $fieldAddress = 'adresseCompleteOccupant';
         if ($form->get('adresseCompleteOccupant')->getData()) {

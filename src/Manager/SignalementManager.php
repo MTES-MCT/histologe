@@ -586,6 +586,7 @@ class SignalementManager extends AbstractManager
 
     public function updateDesordresAndScoreWithSuroccupationChanges(
         Signalement $signalement,
+        bool $removeSuroccupationDesordre = true,
     ): void {
         $situationFoyer = $signalement->getSituationFoyer();
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
@@ -611,7 +612,7 @@ class SignalementManager extends AbstractManager
                         }
                     }
                 }
-            } else {
+            } elseif ($removeSuroccupationDesordre) {
                 $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
                     ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
                 );
