@@ -9,6 +9,7 @@ use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
+use App\Service\Mailer\NotificationMailerRegistry;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
@@ -49,7 +50,8 @@ class GridAffectationLoaderTest extends KernelTestCase
             self::getContainer()->get(ManagerInterface::class),
             self::getContainer()->get(ValidatorInterface::class),
             self::getContainer()->get(LoggerInterface::class),
-            $this->entityManager
+            self::getContainer()->get(NotificationMailerRegistry::class),
+            $this->entityManager,
         );
     }
 

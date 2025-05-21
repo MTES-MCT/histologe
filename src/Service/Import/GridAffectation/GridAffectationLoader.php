@@ -13,6 +13,9 @@ use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Utils\TrimHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -60,6 +63,7 @@ class GridAffectationLoader
         private readonly ManagerInterface $manager,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -248,7 +252,7 @@ class GridAffectationLoader
 
                 $email = TrimHelper::safeTrim($item[GridAffectationHeader::USER_EMAIL]);
                 if (!empty($roleLabel) && !empty($email)) {
-                    $user = $userRepository->findAgentByEmail($email);
+                    $user = $userRepository->findOneBy(['email' => $email]);
                     if (null === $user) {
                         ++$countNewUsers;
                         $user = $this->userFactory->createInstanceFrom(
@@ -262,6 +266,28 @@ class GridAffectationLoader
                     } elseif (!$currentPartner = $user->getPartnerInTerritory($territory)) {
                         ++$countUserMultiTerritory;
                         $canAddUserPartner = true;
+                        if ($user->isUsager()) {
+                            $user->setRoles([User::ROLES[$roleLabel]]);
+                            if (!\in_array($partnerType->name, $ignoreNotifPartnerTypes)) {
+                                $this->notificationMailerRegistry->send(
+                                    new NotificationMail(
+                                        type: NotificationMailerType::TYPE_ACCOUNT_ACTIVATION_FROM_BO,
+                                        to: $user->getEmail(),
+                                        user: $user,
+                                    )
+                                );
+                            }
+                        } elseif (!\in_array($partnerType->name, $ignoreNotifPartnerTypes)) {
+                            $this->notificationMailerRegistry->send(
+                                new NotificationMail(
+                                    type: NotificationMailerType::TYPE_ACCOUNT_NEW_TERRITORY,
+                                    to: $user->getEmail(),
+                                    user: $user,
+                                    territory: $partner->getTerritory(),
+                                    params: ['partner_name' => $partner->getNom()]
+                                )
+                            );
+                        }
                     } else {
                         $this->metadata['errors'][] = \sprintf(
                             '%s existe déja sur le territoire %s',
