@@ -579,8 +579,10 @@ class SignalementController extends AbstractController
                 'action' => $this->generateUrl('front_demande_lien_signalement'),
             ]);
 
+            /** @var SignalementUser $signalementUser */
+            $signalementUser = $this->getUser();
             $this->eventDispatcher->dispatch(
-                new SuiviViewedEvent($signalement, $this->getUser()),
+                new SuiviViewedEvent($signalement, $signalementUser),
                 SuiviViewedEvent::NAME
             );
 

@@ -26,6 +26,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
@@ -40,7 +41,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['cp_occupant'], name: 'idx_signalement_cp_occupant')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
-    #[ORM\Id]
+    #[Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
@@ -487,6 +488,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comCloture = null;
+
+    #[ORM\OneToOne(mappedBy: 'signalement', targetEntity: SignalementUsager::class)]
+    private ?SignalementUsager $signalementUsager = null;
 
     public function __construct()
     {
@@ -2748,5 +2752,30 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->comCloture = $comCloture;
 
         return $this;
+    }
+
+    public function getSignalementUsager(): ?SignalementUsager
+    {
+        return $this->signalementUsager;
+    }
+
+    public function getOccupantId(): ?int
+    {
+        return $this->getSignalementUsager()?->getOccupant()?->getId();
+    }
+
+    public function getDeclarantId(): ?int
+    {
+        return $this->getSignalementUsager()?->getDeclarant()?->getId();
+    }
+
+    public function getUsagerIds(): array
+    {
+        return [$this->getOccupantId(), $this->getDeclarantId()];
+    }
+
+    public function getUsagers(): array
+    {
+        return [$this->getSignalementUsager()?->getOccupant(), $this->getSignalementUsager()?->getDeclarant()];
     }
 }

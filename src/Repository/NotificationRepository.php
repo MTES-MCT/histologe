@@ -296,11 +296,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     }
 
     /**
-     * @param string[] $usagerEmails
-     *
      * @return NotificationSuiviUser[]
      */
-    public function getNotificationsFrom(Signalement $signalement, array $usagerEmails): array
+    public function getNotificationsFrom(Signalement $signalement): array
     {
         return array_map(
             fn (array $row) => new NotificationSuiviUser(
@@ -314,9 +312,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
                 ->join('n.user', 'u')
                 ->join('n.suivi', 's')
                 ->andWhere('n.signalement = :signalement')
-                ->andWhere('u.email IN (:emails)')
+                ->andWhere('u.id IN (:usager_ids)')
                 ->setParameter('signalement', $signalement)
-                ->setParameter('emails', $usagerEmails)
+                ->setParameter('usager_ids', $signalement->getUsagerIds())
                 ->orderBy('s.createdAt', 'DESC')
                 ->getQuery()
                 ->getArrayResult()

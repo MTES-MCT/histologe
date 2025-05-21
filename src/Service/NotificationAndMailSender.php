@@ -331,7 +331,7 @@ class NotificationAndMailSender
     public function createInAppUsagersNotifications(Suivi $suivi): void
     {
         $this->signalement = $suivi->getSignalement();
-        $usagers = $this->userRepository->findUsagers($this->signalement);
+        $usagers = $this->signalement->getUsagers();
         $recipients = new ArrayCollection($usagers);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::SUIVI_USAGER, suivi: $suivi);
     }

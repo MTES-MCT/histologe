@@ -529,17 +529,4 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
-
-    /**
-     * @return User[]
-     */
-    public function findUsagers(Signalement $signalement): array
-    {
-        $queryBuilder = $this->createQueryBuilder('u')
-            ->AndWhere('u.email = :mail_declarant OR u.email = :mail_occupant')
-            ->setParameter('mail_declarant', $signalement->getMailDeclarant())
-            ->setParameter('mail_occupant', $signalement->getMailOccupant());
-
-        return $queryBuilder->getQuery()->getResult();
-    }
 }

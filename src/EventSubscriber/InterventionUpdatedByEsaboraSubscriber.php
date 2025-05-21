@@ -43,15 +43,17 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
         ) {
             $this->visiteNotifier->notifyUsagers(
-                $intervention,
-                NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER // TYPE_VISITE_RESCHEDULED_TO_USAGER ou TYPE_VISITE_EDITED_TO_USAGER ?
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER, // TYPE_VISITE_RESCHEDULED_TO_USAGER ou TYPE_VISITE_EDITED_TO_USAGER ?
+                suivi: $suivi,
             );
         }
 
         if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
             $this->visiteNotifier->notifyUsagers(
-                $intervention,
-                NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
+                suivi: $suivi,
             );
         }
 

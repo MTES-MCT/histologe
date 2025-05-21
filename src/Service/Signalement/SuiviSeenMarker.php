@@ -15,8 +15,7 @@ readonly class SuiviSeenMarker
 
     public function markSeenByUsager(Signalement $signalement): void
     {
-        $emails = $signalement->getMailUsagers();
-        $suiviLastUserSeen = $this->getLastSeenSuivi($signalement, $emails);
+        $suiviLastUserSeen = $this->getLastSeenSuivi($signalement);
 
         $lastSeenDate = $suiviLastUserSeen && $suiviLastUserSeen->isSeen ? $suiviLastUserSeen->seenAt : null;
         foreach ($signalement->getSuivis() as $suivi) {
@@ -29,12 +28,9 @@ readonly class SuiviSeenMarker
         }
     }
 
-    /**
-     * @param string[] $emails
-     */
-    private function getLastSeenSuivi(Signalement $signalement, array $emails): ?NotificationSuiviUser
+    private function getLastSeenSuivi(Signalement $signalement): ?NotificationSuiviUser
     {
-        $notificationsSuiviUser = $this->notificationRepository->getNotificationsFrom($signalement, $emails);
+        $notificationsSuiviUser = $this->notificationRepository->getNotificationsFrom($signalement);
         foreach ($notificationsSuiviUser as $notificationSuiviUser) {
             if ($notificationSuiviUser->isSeen) {
                 return $notificationSuiviUser;
