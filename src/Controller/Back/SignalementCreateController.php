@@ -389,7 +389,7 @@ class SignalementCreateController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
 
-        $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement);
+        $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $signalementManager->flush();
 
