@@ -6,11 +6,11 @@ Une solution pour détecter et accélérer la prise en charge du “mal-logement
 
 Cette application est déployé chez Scalingo, hébergé par Outscale.
 
-- Production: [signal-logement.beta.gouv.fr](https://signal-logement.beta.gouv.fr)
+- Production : [signal-logement.beta.gouv.fr](https://signal-logement.beta.gouv.fr)
 
-- Staging: [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
+- Staging : [histologe-staging.incubateur.net](https://histologe-staging.incubateur.net)
 
-- Demo: [histologe-demo.osc-fr1.scalingo.io](https://histologe-demo.osc-fr1.scalingo.io)
+- Demo : [histologe-demo.osc-fr1.scalingo.io](https://histologe-demo.osc-fr1.scalingo.io)
 
 ## Pré-requis
 
