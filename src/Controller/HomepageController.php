@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Dto\DemandeLienSignalement;
+use App\Entity\User;
 use App\Form\DemandeLienSignalementType;
 use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,6 +25,21 @@ class HomepageController extends AbstractController
         #[Autowire(env: 'SITES_FACILES_URL')]
         private readonly string $sitesFacilesUrl,
     ) {
+    }
+
+    #[Route('/test', name: 'test')]
+    public function test(
+        EntityManagerInterface $entityManager,
+    ): Response {
+        for ($i = 0; $i < 10; ++$i) {
+            $user = new User();
+            $user->setEmail(uniqid().'test@example.com');
+            $user->setToken(uniqid().'token');
+            $entityManager->persist($user);
+        }
+        $entityManager->flush();
+
+        return new Response('<html><body>test</body></html>');
     }
 
     #[Route(
