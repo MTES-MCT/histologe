@@ -43,11 +43,11 @@
                     {% endif %}
                 </span>
 
-                <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
-                    {% if signalement.isLogementVacant %}
+                {% if signalement.isLogementVacant %}
+                    <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
                         Logement vacant
-                    {% endif %}
-                </span>
+                    </span>
+                {% endif %}
                 
                 {% for zone in zones %}
                     <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">{{zone.name}}</span>
