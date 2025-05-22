@@ -102,6 +102,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             $message->attach($params['attachContent']['content'], $params['attachContent']['filename']);
         }
         try {
+            // break loading fixtures
             $this->mailer->send($message);
 
             return true;
