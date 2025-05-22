@@ -251,10 +251,12 @@ class SignalementDraftCoordonneesType extends AbstractType
             ])
             ->add('nomAgence', TextType::class, [
                 'label' => 'Nom de famille',
+                'help' => 'Saisissez le nom du ou de la gestionnaire du logement',
                 'required' => false,
             ])
             ->add('prenomAgence', TextType::class, [
                 'label' => 'Prénom',
+                'help' => 'Saisissez le prénom du ou de la gestionnaire du logement',
                 'required' => false,
             ])
             ->add('mailAgence', TextType::class, [
