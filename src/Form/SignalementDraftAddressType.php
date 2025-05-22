@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
@@ -24,17 +25,8 @@ class SignalementDraftAddressType extends AbstractType
         if ($signalement->getBanIdOccupant()) {
             $adresseCompleteOccupant = mb_trim($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
         }
-        $occupationLogement = null;
-        if (true === $signalement->getIsBailEnCours()) {
-            $occupationLogement = 'bail_en_cours';
-        } elseif (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
-            $occupationLogement = 'proprio_occupant';
-        } elseif (true === $signalement->getIsLogementVacant()) {
-            $occupationLogement = 'logement_vacant';
-        }
         $nbEnfantsDansLogement = $signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants();
         $enfantsDansLogementMoinsSixAns = $signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants();
-
         $builder
             ->add('adresseCompleteOccupant', null, [
                 'label' => false,
@@ -89,6 +81,44 @@ class SignalementDraftAddressType extends AbstractType
                     'placeholder' => 'résidence, lieu-dit...',
                 ],
             ])
+            ->add('profileDeclarant', ChoiceType::class, [
+                'label' => 'Déclarant <span class="text-required">*</span>',
+                'label_html' => true,
+                'choices' => [
+                    ProfileDeclarant::TIERS_PARTICULIER->label() => ProfileDeclarant::TIERS_PARTICULIER->value,
+                    ProfileDeclarant::TIERS_PRO->label() => ProfileDeclarant::TIERS_PRO->value,
+                    ProfileDeclarant::SERVICE_SECOURS->label() => ProfileDeclarant::SERVICE_SECOURS->value,
+                    ProfileDeclarant::BAILLEUR->label() => ProfileDeclarant::BAILLEUR->value,
+                    ProfileDeclarant::BAILLEUR_OCCUPANT->label() => ProfileDeclarant::BAILLEUR_OCCUPANT->value,
+                    ProfileDeclarant::LOCATAIRE->label() => ProfileDeclarant::LOCATAIRE->value,
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $signalement->getProfileDeclarant()?->value ?? '',
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Veuillez renseigner le profil du déclarant.',
+                        'groups' => ['bo_step_address'],
+                    ]),
+                ],
+            ])
+            ->add('lienDeclarantOccupant', ChoiceType::class, [
+                'label' => 'Lien avec l\'occupant',
+                'choices' => [
+                    OccupantLink::PROCHE->label() => OccupantLink::PROCHE->value,
+                    OccupantLink::VOISIN->label() => OccupantLink::VOISIN->value,
+                    OccupantLink::AUTRE->label() => OccupantLink::AUTRE->value,
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $signalement->getLienDeclarantOccupant(),
+            ])
             ->add('isLogementSocial', ChoiceType::class, [
                 'label' => 'Logement social <span class="text-required">*</span>',
                 'label_html' => true,
@@ -107,26 +137,18 @@ class SignalementDraftAddressType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('occupationLogement', ChoiceType::class, [
-                'label' => 'Occupation du logement <span class="text-required">*</span>',
-                'label_html' => true,
+            ->add('logementVacant', ChoiceType::class, [
+                'label' => 'S\'agit-il d\'un logement vacant ?',
                 'choices' => [
-                    'Bail en cours' => 'bail_en_cours',
-                    'Propriétaire occupant' => 'proprio_occupant',
-                    'Logement vacant' => 'logement_vacant',
+                    'Oui' => true,
+                    'Non' => false,
                 ],
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => $occupationLogement,
-                'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'Veuillez renseigner l\'occupation du logement.',
-                        'groups' => ['bo_step_address'],
-                    ]),
-                ],
+                'data' => $signalement->getIsLogementVacant(),
             ])
             ->add('nbOccupantsLogement', NumberType::class, [
                 'label' => 'Nombre de personnes occupant le logement',
