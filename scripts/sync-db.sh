@@ -79,14 +79,19 @@ if [ $EXIT_CODE -ne 0 ]; then
     echo ">>> ERROR: Database sync failed!"
 
     echo ">>> Import échoué. Dernières lignes du log :"
-    tail -n 20 mysql_full_output.log
+    grep -Ei 'error|fail|denied|syntax' mysql_full_output.log | tail -n 10 > mysql_filtered_errors.log
     
-    line=$(tail -n 1 mysql_error.log)
-    echo "> mysql log with exec"
-    echo $line
+    if [ -s mysql_filtered_errors.log ]; then
+        echo ">>> Erreurs détectées :"
+        cat mysql_filtered_errors.log
+        ERROR_DETAILS=$(tr '\n' ' ' < mysql_filtered_errors.log | sed 's/"/\\"/g')
+    else
+        echo ">>> Aucune erreur explicite trouvée."
+        ERROR_DETAILS="Aucune erreur explicite trouvée. Dernières lignes : $(tail -n 5 mysql_full_output.log | tr '\n' ' ' | sed 's/"/\\"/g')"
+    fi
 
     # Capture les logs MySQL pour le diagnostic
-    ERROR_MESSAGE="La synchronisation de la bdd a échoué avec le code $EXIT_CODE"
+    ERROR_MESSAGE="La synchronisation de la bdd a échoué avec le code $EXIT_CODE. Détails : $ERROR_DETAILS"
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
     HOSTNAME=$(hostname)
     
