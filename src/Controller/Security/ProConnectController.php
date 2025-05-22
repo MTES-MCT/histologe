@@ -70,6 +70,7 @@ class ProConnectController extends AbstractController
                     $this->entityManager->flush();
                 }
 
+                $user->setIsAuthenticatedViaProConnect(true);
                 $this->security->login(
                     $user,
                     FormLoginAuthenticator::class,
