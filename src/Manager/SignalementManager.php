@@ -20,6 +20,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -905,6 +906,8 @@ class SignalementManager extends AbstractManager
             description: 'Signalement validé',
             type: Suivi::TYPE_AUTO,
             isPublic: true,
+            context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
+            category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             flush: false
         );
         $this->persist($suivi);

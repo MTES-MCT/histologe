@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
@@ -41,6 +42,7 @@ readonly class SignalementClosedSubscriber implements EventSubscriberInterface
             isPublic: '1' == $params['suivi_public'],
             user: $user,
             context: Suivi::CONTEXT_SIGNALEMENT_CLOSED,
+            category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
         );
 
         $signalement->addSuivi($suivi);

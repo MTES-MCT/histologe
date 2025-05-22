@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
@@ -72,6 +73,7 @@ class EsaboraManager
                 description: 'Signalement <b>'.$description.'</b> par '.$affectation->getPartner()->getNom(),
                 type: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? Suivi::TYPE_TECHNICAL : Suivi::TYPE_AUTO,
                 user: $this->adminUser,
+                category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO
             );
         }
     }

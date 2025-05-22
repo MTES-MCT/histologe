@@ -4,10 +4,12 @@ namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Manager\UserManager;
+use App\Repository\SuiviRepository;
 use App\Security\User\SignalementUser;
 use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -170,6 +172,8 @@ class SignalementControllerTest extends WebTestCase
         ]);
         if (SignalementStatus::ACTIVE->value === $status) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'?from='.$emailOccupant);
+            $nbSuiviMessageUsager = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::MESSAGE_USAGER, 'signalement' => $signalement]);
+            $this->assertEquals(1, $nbSuiviMessageUsager);
         } else {
             $this->assertEquals('Vous n\'avez pas les droits pour effectuer cette action.', $crawler->filter('.fr-alert p')->text());
         }
