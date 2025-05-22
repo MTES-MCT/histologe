@@ -70,7 +70,7 @@ function histoCheckVisiteForms (formType) {
         if(selectVisitePartner.value === 'extern') {
           const operatorExternField = visiteForm.querySelector('.visite-external-operator')
           const operatorNames = JSON.parse(document.getElementById('list-pending-visite-external-operator-names').dataset.list)
-          if(operatorNames.includes(operatorExternField.value)) {
+          if(operatorNames.includes(operatorExternField.value) && formType != 'reschedule') {
             selectVisitePartnerError.classList.remove('fr-hidden')
             stopSubmit = true
           }
