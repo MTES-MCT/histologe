@@ -20,6 +20,7 @@ twig:
         sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
         feature_bo_signalement_create: '%env(bool:FEATURE_BO_SIGNALEMENT_CREATE)%'
         feature_email_recap: '%env(bool:FEATURE_EMAIL_RECAP)%'
+        feature_suivi_action: '%env(bool:FEATURE_SUIVI_ACTION)%'
         feature_proconnect: '%env(bool:FEATURE_PROCONNECT)%'
     paths:
         # point this wherever your images live

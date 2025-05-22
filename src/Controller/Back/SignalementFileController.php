@@ -39,7 +39,8 @@ class SignalementFileController extends AbstractController
 
         $message = (new PdfExportMessage())
             ->setSignalementId($signalement->getId())
-            ->setUserEmail($user->getEmail());
+            ->setUserEmail($user->getEmail())
+            ->setIsForUsager();
 
         $messageBus->dispatch($message);
 

@@ -16,10 +16,12 @@
                 <h3 style="text-align: right">Signalement par l'occupant</h3>
             {% endif %}
 
-            <h3 style="text-align: left">Situation(s) suspectée(s) à la déclaration usager</h3>
-            {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
-                {% include '_partials/signalement/qualification.html.twig' %}
-            {% endfor %}
+            {% if isForUsager is same as false %}
+                <h3 style="text-align: left">Situation(s) suspectée(s) à la déclaration usager</h3>
+                {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
+                    {% include '_partials/signalement/qualification.html.twig' %}
+                {% endfor %}                
+            {% endif %}
 
             {% if listConcludeProcedures %}
                 <h3 style="text-align: left">Situation(s) observée(s) après visite</h3>
@@ -471,58 +473,61 @@
                 </tr>
             </table>
         </section>
-        <section>
-            <h2>Prise en charge partenaire</h2>
-            <table style="width: 100%;text-align: center;" class="border">
-                <tr>
-                    <td style="width: 33%"><b>En attente</b></td>
-                    <td style="width: 34%"><b>Accepté</b></td>
-                    <td style="width: 33%"><b>Refusé</b></td>
-                </tr>
-                {% for affectation in signalement.affectations %}
+        
+        {% if isForUsager is same as false %}
+            <section>
+                <h2>Prise en charge partenaire</h2>
+                <table style="width: 100%;text-align: center;" class="border">
                     <tr>
-                        <td>
-                            {% if affectation.statut is same as(0) %}
-                                {{ affectation.partner ? affectation.partner.nom }}
-                                <br>
-                                {{ affectation.createdAt|date('d/m/Y') }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if affectation.statut is same as(1) %}
-                                {{ affectation.partner ? affectation.partner.nom }}
-                                <br>
-                                {{ affectation.answeredAt|date('d/m/Y') }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if affectation.statut is same as(2) %}
-                                {{ affectation.partner ? affectation.partner.nom }}
-                                <br>
-                                {{ affectation.answeredAt|date('d/m/Y') }}
-                            {% endif %}
-                        </td>
+                        <td style="width: 33%"><b>En attente</b></td>
+                        <td style="width: 34%"><b>Accepté</b></td>
+                        <td style="width: 33%"><b>Refusé</b></td>
                     </tr>
-                {% endfor %}
-            </table>
-        </section>
+                    {% for affectation in signalement.affectations %}
+                        <tr>
+                            <td>
+                                {% if affectation.statut is same as(0) %}
+                                    {{ affectation.partner ? affectation.partner.nom }}
+                                    <br>
+                                    {{ affectation.createdAt|date('d/m/Y') }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if affectation.statut is same as(1) %}
+                                    {{ affectation.partner ? affectation.partner.nom }}
+                                    <br>
+                                    {{ affectation.answeredAt|date('d/m/Y') }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if affectation.statut is same as(2) %}
+                                    {{ affectation.partner ? affectation.partner.nom }}
+                                    <br>
+                                    {{ affectation.answeredAt|date('d/m/Y') }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </section>
 
-        <section>
-            <h2>Visites</h2>            
-            {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
-                <div class="fr-background-alt--grey fr-p-5v fr-mb-5v">
-                    <div class="fr-grid-row">
-                        <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
-                            Visite #{{loop.index}}
-                            {% if signalement.interventions is not empty or intervention.scheduledAt is not empty %}
-                                du {{ intervention.scheduledAt|date('d/m/Y') }}
-                            {% endif %}
+            <section>
+                <h2>Visites</h2>            
+                {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
+                    <div class="fr-background-alt--grey fr-p-5v fr-mb-5v">
+                        <div class="fr-grid-row">
+                            <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
+                                Visite #{{loop.index}}
+                                {% if signalement.interventions is not empty or intervention.scheduledAt is not empty %}
+                                    du {{ intervention.scheduledAt|date('d/m/Y') }}
+                                {% endif %}
+                            </div>
                         </div>
+                        {% include 'back/signalement/view/visites/visite-item.html.twig' with { 'isForBO': false } %}
                     </div>
-                    {% include 'back/signalement/view/visites/visite-item.html.twig' %}
-                </div>
-            {% endfor %}
-        </section>
+                {% endfor %}
+            </section>
+        {% endif %}
 
     </div>
 
@@ -600,22 +605,24 @@
                 <h2>Suivi(s)</h2>
                 <table class="fr-stripped" style="width: 100%">
                     {% for suivi in signalement.suivis|reverse %}
-                        <tr>
-                            <td style="padding:.5rem;width: 15%">
-                                {% if suivi.createdBy is defined and suivi.createdBy is not null %}
-                                    <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
-                                    {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
-                                    <br>
-                                    <small>[{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}
-                                        ]</small>
-                                    <br>
-                                {% else %}
-                                    <b> Aucun</b>
-                                {% endif %}
-                                <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
-                            </td>
-                            <td style="padding:.5rem;width:85%">  {{ suivi.description|raw }}</td>
-                        </tr>
+                        {% if (isForUsager and suivi.isPublic) or isForUsager is same as false  %}                            
+                            <tr>
+                                <td style="padding:.5rem;width: 15%">
+                                    {% if suivi.createdBy is defined and suivi.createdBy is not null %}
+                                        <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
+                                        {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
+                                        <br>
+                                        <small>[{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}
+                                            ]</small>
+                                        <br>
+                                    {% else %}
+                                        <b> Aucun</b>
+                                    {% endif %}
+                                    <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
+                                </td>
+                                <td style="padding:.5rem;width:85%">  {{ suivi.description|raw }}</td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </table>
 
@@ -625,11 +632,21 @@
 
     <section>
         <div class="page">
-        {% for index, photo in signalement.files|filter(photo => photo.isTypePhoto) %}
+        {% set sortedPhotos = signalement.files
+            |filter(photo => photo.isTypePhoto)
+            |sort((a, b) =>
+                (a.documentType.name == 'PHOTO_VISITE' ? 1 : 0) <=> (b.documentType.name == 'PHOTO_VISITE' ? 1 : 0)
+                ?: (a.createdAt <=> b.createdAt)
+            )
+        %}
+        {% for photo in sortedPhotos %}
                 <div style="page-break-inside: avoid;margin-top: 25px;">
                     <h2>Photo : {{ photo.title }}</h2>
-                    <small>Ajouté par {{ photo.username ?? 'N/R' }}</small><br>
-                    <small>le {{ photo.date ?? 'N/R' }}</small><br>                    
+                    {% if photo.documentType.name == 'PHOTO_VISITE' %}
+                       <h3>Photo de la visite du {{ photo.intervention is defined and photo.intervention.scheduledAt is defined ? photo.intervention.scheduledAt|date('d/m/Y') : 'N/R'}}</h3>  
+                    {% endif %}                    
+                    <small>Ajoutée par {{ photo.uploadedBy.nomComplet ?? 'N/R' }}</small><br>
+                    <small>le {{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}</small><br>                    
                     {% set encodedImage = photo.filename(constant('App\\Service\\ImageManipulationHandler::SUFFIX_RESIZE')) | image64 %}
                     {% if encodedImage is not null %}                    
                         <img src="{{ encodedImage }}" style="max-width:100%" id="{{ photo.filename }}" alt="{{ photo.title }}"/>

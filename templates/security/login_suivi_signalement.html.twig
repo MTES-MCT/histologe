@@ -4,7 +4,11 @@
 
 {% block body %}
     <main class="fr-container fr-py-5w" id="content">
-        <h1>Suivre mon signalement</h1>
+        {% if app.request.get('_route') == 'show_export_pdf_usager' %}
+            <h1>Accéder à mon export pdf</h1>
+        {% else %}
+            <h1>Suivre mon signalement</h1>
+        {% endif %}
         <div class="fr-notice fr-notice--info fr-mb-5v">
             <div class="fr-container">
                 <div class="fr-notice__body">
@@ -110,11 +114,15 @@
                     </div>
                 </div>
             </fieldset>
-            <input type="hidden" name="from_email" value="{{ fromEmail }}">
+            <input type="hidden" name="from_email" value="{{ fromEmail ?? null }}">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
             <div class="fr-form-group fr-mt-3v">
                 <button class="fr-btn fr-btn--icon-left fr-icon-check-line" aria-label="Accéder au signalement">
-                    Accéder au signalement
+                    {% if app.request.get('_route') == 'show_export_pdf_usager' %}
+                        Accéder au fichier
+                    {% else %}
+                        Accéder au signalement
+                    {% endif %}
                 </button>
             </div>
         </form>
