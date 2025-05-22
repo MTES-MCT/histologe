@@ -82,7 +82,7 @@
 {% if isForBO is defined and isForBO %}
     <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
         {% for index, photo in signalement.files|filter(
-            photo => photo => photo.isTypePhoto
+            photo => photo.isTypePhoto
                     and photo.intervention is not null
                     and photo.intervention.id is same as intervention.id
             ) %}
