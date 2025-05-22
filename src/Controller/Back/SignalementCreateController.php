@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -418,7 +417,7 @@ class SignalementCreateController extends AbstractController
         if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
             /** @var User $user */
             $user = $this->getUser();
-            if ($signalement->isTiersDeclarant()){
+            if ($signalement->isTiersDeclarant()) {
                 if (!$signalement->getMailDeclarant()) {
                     $signalement->setMailDeclarant($user->getEmail());
                 }
