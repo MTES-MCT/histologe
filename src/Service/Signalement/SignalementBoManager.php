@@ -243,15 +243,6 @@ class SignalementBoManager
         return true;
     }
 
-    public function formCoordonneesManager(FormInterface $form, Signalement $signalement): bool
-    {
-        // $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarant')->getData()) ?? ProfileDeclarant::LOCATAIRE;
-        // $signalement->setProfileDeclarant($profileDeclarant);
-        // $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
-
-        return true;
-    }
-
     public function formDesordresManager(FormInterface $form, Signalement $signalement): bool
     {
         $signalement->setDetails($form->get('details')->getData());

@@ -313,7 +313,7 @@ class SignalementCreateController extends AbstractController
         $action = $this->generateUrl('back_signalement_draft_form_coordonnees_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftCoordonneesType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formCoordonneesManager($form, $signalement)) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
