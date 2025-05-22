@@ -33,7 +33,7 @@ class VisiteNotifier
     public function notifyUsagers(
         Intervention $intervention,
         NotificationMailerType $notificationMailerType,
-        ?Suivi $suivi = null,
+        Suivi $suivi,
         ?\DateTimeImmutable $previousDate = null,
     ): void {
         $toRecipients = $intervention->getSignalement()->getMailUsagers();

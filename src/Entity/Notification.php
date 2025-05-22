@@ -193,7 +193,7 @@ class Notification
         return $this->seenAt;
     }
 
-    public function setSeenAt(?\DateTimeImmutable $seenAt): self
+    public function setSeenAt(?\DateTimeImmutable $seenAt): static
     {
         $this->seenAt = $seenAt;
 

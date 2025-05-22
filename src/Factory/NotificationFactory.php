@@ -18,9 +18,13 @@ class NotificationFactory
     ) {
     }
 
-    public function createInstanceFrom(User $user, NotificationType $type, ?Suivi $suivi = null, ?Affectation $affectation = null, ?Signalement $signalement = null): Notification
-    {
-        $waitMailingSummary = $this->featureEmailRecap && $user->getIsMailingActive() && $user->getIsMailingSummary();
+    public function createInstanceFrom(
+        User $user,
+        NotificationType $type,
+        ?Suivi $suivi = null,
+        ?Affectation $affectation = null,
+        ?Signalement $signalement = null,
+    ): Notification {
         if ($suivi) {
             $signalement = $suivi->getSignalement();
         } elseif ($affectation) {
@@ -33,6 +37,14 @@ class NotificationFactory
             ->setAffectation($affectation)
             ->setSignalement($signalement)
             ->setType($type)
-            ->setWaitMailingSummary($waitMailingSummary);
+            ->setWaitMailingSummary($this->shouldWaitMailingSummary($user, $type));
+    }
+
+    private function shouldWaitMailingSummary(User $user, NotificationType $type): bool
+    {
+        return $this->featureEmailRecap
+            && $user->getIsMailingActive()
+            && $user->getIsMailingSummary()
+            && in_array($type, NotificationType::getForAgent());
     }
 }

@@ -18,6 +18,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Notification|null find($id, $lockMode = null, $lockVersion = null)
@@ -83,7 +84,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         return $this->createQueryBuilder('n')
             ->delete()
             ->andWhere('DATE(n.createdAt) <= :created_at')
+            ->andWhere('n.type NOT LIKE :notification_type')
             ->setParameter('created_at', (new \DateTimeImmutable($period))->format('Y-m-d'))
+            ->setParameter('notification_type', NotificationType::SUIVI_USAGER)
             ->getQuery()
             ->execute();
     }
@@ -319,5 +322,31 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
                 ->getQuery()
                 ->getArrayResult()
         );
+    }
+
+    /**
+     * @param NotificationType[] $includedNotificationTypes
+     *
+     * @return Notification[]
+     */
+    public function findUnseenNotificationsBy(
+        Signalement $signalement,
+        UserInterface $user,
+        array $includedNotificationTypes = [],
+    ): array {
+        $qb = $this->createQueryBuilder('n')
+            ->where('n.signalement = :signalement')
+            ->andWhere('n.user = :user')
+            ->andWhere('n.isSeen = :isSeen')
+            ->setParameter('signalement', $signalement)
+            ->setParameter('user', $user)
+            ->setParameter('isSeen', false);
+
+        if (!empty($includedNotificationTypes)) {
+            $qb->andWhere('n.type IN (:includedTypes)')
+                ->setParameter('includedTypes', $includedNotificationTypes);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

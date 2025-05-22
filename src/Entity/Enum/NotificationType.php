@@ -25,4 +25,18 @@ enum NotificationType: string
             self::SUIVI_USAGER->name => self::SUIVI_USAGER->value,
         ];
     }
+
+    public static function getForAgent(): array
+    {
+        return array_filter(NotificationType::cases(), function (NotificationType $notificationType) {
+            return self::SUIVI_USAGER !== $notificationType;
+        });
+    }
+
+    public static function getForUsager(): array
+    {
+        return array_filter(NotificationType::cases(), function (NotificationType $notificationType) {
+            return self::SUIVI_USAGER === $notificationType;
+        });
+    }
 }

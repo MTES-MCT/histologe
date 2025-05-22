@@ -2,11 +2,12 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Notification;
+use App\Entity\Enum\NotificationType;
 use App\Entity\Signalement;
 use App\Event\SignalementViewedEvent;
 use App\Event\SuiviViewedEvent;
 use App\Manager\SignalementManager;
+use App\Repository\NotificationRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Gouv\Ban\AddressService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +20,7 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly AddressService $addressService,
         private readonly SignalementManager $signalementManager,
+        private readonly NotificationRepository $notificationRepository,
     ) {
     }
 
@@ -34,7 +36,11 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
     {
         $signalement = $event->getSignalement();
         $user = $event->getUser();
-        $this->markNotificationsAsSeen($signalement, $user);
+        $this->markNotificationsAsSeen(
+            signalement: $signalement,
+            user: $user,
+            includedNotificationTypes: NotificationType::getForAgent()
+        );
         $this->updateGeolocationDataIfNeeded($signalement);
 
         $this->entityManager->flush();
@@ -44,23 +50,28 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
     {
         $signalement = $event->getSignalement();
         $user = $event->getUser();
-
-        $this->markNotificationsAsSeen($signalement, $user);
+        $this->markNotificationsAsSeen(
+            signalement: $signalement,
+            user: $user,
+            includedNotificationTypes: NotificationType::getForUsager()
+        );
         $this->entityManager->flush();
     }
 
-    private function markNotificationsAsSeen(Signalement $signalement, UserInterface $user): void
-    {
+    private function markNotificationsAsSeen(
+        Signalement $signalement,
+        UserInterface $user,
+        array $includedNotificationTypes = [],
+    ): void {
         if ($user instanceof SignalementUser) {
             $user = $user->getUser();
         }
-        $notifications = $this->entityManager->getRepository(Notification::class)->findBy([
-            'signalement' => $signalement,
-            'user' => $user,
-            'isSeen' => false,
-        ]);
+        $notifications = $this->notificationRepository->findUnseenNotificationsBy(
+            signalement: $signalement,
+            user: $user,
+            includedNotificationTypes: $includedNotificationTypes
+        );
 
-        /** @var Notification $notification */
         foreach ($notifications as $notification) {
             $notification->setIsSeen(true);
             $notification->setSeenAt(new \DateTimeImmutable());

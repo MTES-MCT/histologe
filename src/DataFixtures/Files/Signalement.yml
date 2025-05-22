@@ -66,6 +66,7 @@ signalements:
     statut: "CLOSED"
     motif_cloture: 'NON_DECENCE'
     reference: "2022-2"
+    is_not_occupant: true
     geoloc: "{\"lat\":\"46.3370155\",\"lng\":\"6.060438\"}"
     score: 5.420054200542
     insee_occupant: "01173"
@@ -1503,6 +1504,7 @@ signalements:
     motif_refus: "DOUBLON"
     code_suivi: '0123456784569'
     reference: "2023-21"
+    is_not_occupant: true
     geoloc: "{\"lat\":\"43.3117791\", \"lng\":\"5.3755551\"}"
     created_at: "2023-06-16 16:06:33"
     score: 4
@@ -1741,6 +1743,7 @@ signalements:
     ville_occupant: "MARSEILLE"
     statut: "ARCHIVED"
     reference: "2024-04"
+    is_not_occupant: true
     geoloc: "{\"lat\":\"43.301787\", \"lng\":\"5.364626\"}"
     created_at: "2024-01-01 16:06:33"
     score: 0
