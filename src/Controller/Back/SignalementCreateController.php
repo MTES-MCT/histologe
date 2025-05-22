@@ -418,18 +418,27 @@ class SignalementCreateController extends AbstractController
         if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
             /** @var User $user */
             $user = $this->getUser();
-            if (!$signalement->getMailOccupant()) {
-                $signalement->setMailOccupant($user->getEmail());
-            }
-            if (!$signalement->getNomOccupant()) {
-                $signalement->setNomOccupant($user->getNom());
-            }
-            if (!$signalement->getPrenomOccupant()) {
-                $signalement->setPrenomOccupant($user->getPrenom());
-            }
-            if (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT])) {
+            if ($signalement->isTiersDeclarant()){
+                if (!$signalement->getMailDeclarant()) {
+                    $signalement->setMailDeclarant($user->getEmail());
+                }
+                if (!$signalement->getNomDeclarant()) {
+                    $signalement->setNomDeclarant($user->getNom());
+                }
+                if (!$signalement->getPrenomDeclarant()) {
+                    $signalement->setPrenomDeclarant($user->getPrenom());
+                }
                 $signalement->setIsNotOccupant(false);
             } else {
+                if (!$signalement->getMailOccupant()) {
+                    $signalement->setMailOccupant($user->getEmail());
+                }
+                if (!$signalement->getNomOccupant()) {
+                    $signalement->setNomOccupant($user->getNom());
+                }
+                if (!$signalement->getPrenomOccupant()) {
+                    $signalement->setPrenomOccupant($user->getPrenom());
+                }
                 $signalement->setIsNotOccupant(true);
             }
 
