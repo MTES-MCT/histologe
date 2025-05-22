@@ -181,6 +181,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Assert\Length(max: 50, groups: ['user_partner', 'Default'])]
     private ?string $fonction = null;
 
+    private bool $isAuthenticatedViaProConnect = false;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -780,7 +782,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function isEmailAuthEnabled(): bool
     {
-        return $this->isSuperAdmin();
+        return $this->isSuperAdmin() && !$this->isAuthenticatedViaProConnect;
     }
 
     public function getEmailAuthRecipient(): string
@@ -910,5 +912,15 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->fonction = $fonction;
 
         return $this;
+    }
+
+    public function isAuthenticatedViaProConnect(): bool
+    {
+        return $this->isAuthenticatedViaProConnect;
+    }
+
+    public function setIsAuthenticatedViaProConnect(bool $isAuthenticatedViaProConnect): void
+    {
+        $this->isAuthenticatedViaProConnect = $isAuthenticatedViaProConnect;
     }
 }
