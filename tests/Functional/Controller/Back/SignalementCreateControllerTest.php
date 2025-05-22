@@ -47,7 +47,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
             'signalement_draft_address[isLogementSocial]' => '1',
-            'signalement_draft_address[occupationLogement]' => 'bail_en_cours',
+            'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
         ]);
         $this->client->submit($form);
 
@@ -59,7 +59,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
             'signalement_draft_address[isLogementSocial]' => '1',
-            'signalement_draft_address[occupationLogement]' => 'bail_en_cours',
+            'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
             'signalement_draft_address[forceSave]' => '1',
         ]);
 
@@ -132,7 +132,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '5 Rue Basse 44350 Guérande',
             'signalement_draft_address[isLogementSocial]' => '0',
-            'signalement_draft_address[occupationLogement]' => 'proprio_occupant',
+            'signalement_draft_address[profileDeclarant]' => 'BAILLEUR_OCCUPANT',
             'signalement_draft_address[nbOccupantsLogement]' => '4',
             'signalement_draft_address[nbEnfantsDansLogement]' => '2',
             'signalement_draft_address[enfantsDansLogementMoinsSixAns]' => 'non',
@@ -167,7 +167,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '5 Rue basse 30360 Vézénobres',
             'signalement_draft_address[isLogementSocial]' => '1',
-            'signalement_draft_address[occupationLogement]' => 'bail_en_cours',
+            'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
         ]);
         $this->client->submit($form);
 
@@ -280,7 +280,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(1, $signalement->getAffectations());
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals(null, $signalementUsager->getDeclarant());
+        $this->assertNull($signalementUsager->getDeclarant());
 
         $this->assertEmailCount(2);
     }
@@ -305,7 +305,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals(null, $signalementUsager->getDeclarant());
+        $this->assertNull($signalementUsager->getDeclarant());
         $this->assertTrue($response['redirect']);
         $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
 
@@ -342,7 +342,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(0, $signalement->getAffectations());
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals(null, $signalementUsager->getDeclarant());
+        $this->assertNull($signalementUsager->getDeclarant());
 
         $this->assertEmailCount(0);
     }
@@ -370,7 +370,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(1, $signalement->getAffectations());
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals(null, $signalementUsager->getDeclarant());
+        $this->assertNull($signalementUsager->getDeclarant());
 
         $this->assertEmailCount(2);
     }
@@ -399,7 +399,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(1, $signalement->getAffectations());
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
-        $this->assertEquals(null, $signalementUsager->getDeclarant());
+        $this->assertNull($signalementUsager->getDeclarant());
 
         $this->assertEmailCount(2);
     }

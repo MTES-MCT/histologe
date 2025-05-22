@@ -35,13 +35,11 @@ class SignalementBoManager
 
     public function formAddressManager(FormInterface $form, Signalement $signalement): bool
     {
-        $signalement->setIsBailEnCours('bail_en_cours' === $form->get('occupationLogement')->getData());
-        $signalement->setIsLogementVacant('logement_vacant' === $form->get('occupationLogement')->getData());
-        if ('proprio_occupant' === $form->get('occupationLogement')->getData()) {
-            $signalement->setProfileDeclarant(ProfileDeclarant::BAILLEUR_OCCUPANT);
-        } elseif (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
-            $signalement->setProfileDeclarant(null);
-        }
+        $signalement->setIsLogementVacant('oui' === $form->get('logementVacant')->getData());
+
+        $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarant')->getData());
+        $signalement->setProfileDeclarant($profileDeclarant);
+        $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
         $typeCompositionLogement->setCompositionLogementNombrePersonnes($form->get('nbOccupantsLogement')->getData());
         $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData());
@@ -80,6 +78,13 @@ class SignalementBoManager
             $form->get($fieldAddress)->addError(new FormError('Vous n\'avez pas le droit de créer un signalement sur ce territoire.'));
 
             return false;
+        }
+
+        if (!$signalement->isTiersDeclarant()) {
+            $signalement->setMailDeclarant(null);
+            $signalement->setNomDeclarant(null);
+            $signalement->setPrenomDeclarant(null);
+            $signalement->setStructureDeclarant(null);
         }
 
         $signalement->setStatut(SignalementStatus::DRAFT);
@@ -240,9 +245,9 @@ class SignalementBoManager
 
     public function formCoordonneesManager(FormInterface $form, Signalement $signalement): bool
     {
-        $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarantTiers')->getData()) ?? ProfileDeclarant::LOCATAIRE;
-        $signalement->setProfileDeclarant($profileDeclarant);
-        $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
+        // $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarant')->getData()) ?? ProfileDeclarant::LOCATAIRE;
+        // $signalement->setProfileDeclarant($profileDeclarant);
+        // $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
 
         return true;
     }

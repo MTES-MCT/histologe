@@ -400,12 +400,8 @@ class SignalementCreateController extends AbstractController
         if (null === $signalement->getIsLogementSocial()) {
             $errorMsgs[] = 'Vous devez renseigner le champ logement social pour pouvoir soumettre le signalement.';
         }
-        if (
-            ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant()
-            && !$signalement->getIsBailEnCours()
-            && !$signalement->getIsLogementVacant()
-        ) {
-            $errorMsgs[] = 'Vous devez renseigner le champ Occupation du logement pour pouvoir soumettre le signalement.';
+        if (null === $signalement->getProfileDeclarant()) {
+            $errorMsgs[] = 'Vous devez renseigner le profil du déclarant pour pouvoir soumettre le signalement.';
         }
         if (!count($signalement->getDesordrePrecisions())) {
             $errorMsgs[] = 'Vous devez renseigner au moins un désordre pour pouvoir soumettre le signalement.';
@@ -420,21 +416,19 @@ class SignalementCreateController extends AbstractController
         $token = $request->request->get('_token');
         $partnerIds = $request->request->get('partner-ids');
         if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
-            if (null === $signalement->getProfileDeclarant()) {
-                $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
-            }
             /** @var User $user */
             $user = $this->getUser();
-            if (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
-                if (!$signalement->getMailOccupant()) {
-                    $signalement->setMailOccupant($user->getEmail());
-                }
-                if (!$signalement->getNomOccupant()) {
-                    $signalement->setNomOccupant($user->getNom());
-                }
-                if (!$signalement->getPrenomOccupant()) {
-                    $signalement->setPrenomOccupant($user->getPrenom());
-                }
+            if (!$signalement->getMailOccupant()) {
+                $signalement->setMailOccupant($user->getEmail());
+            }
+            if (!$signalement->getNomOccupant()) {
+                $signalement->setNomOccupant($user->getNom());
+            }
+            if (!$signalement->getPrenomOccupant()) {
+                $signalement->setPrenomOccupant($user->getPrenom());
+            }
+            if (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT])) {
+                $signalement->setIsNotOccupant(false);
             } else {
                 $signalement->setIsNotOccupant(true);
             }

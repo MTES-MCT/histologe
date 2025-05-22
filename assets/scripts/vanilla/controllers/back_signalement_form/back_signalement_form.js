@@ -156,19 +156,8 @@ function initBoFormSignalementSubmit(tabName) {
     })
   })
   switch (tabName) {
-    case 'adresse':
-      initComponentAdress('#signalement_draft_address_adresseCompleteOccupant')
-      const occupationLogementBailleurOccupant = document.querySelector('#signalement_draft_address_occupationLogement_1')
-      const profileBailleurOccupant = document.querySelector('#signalement_draft_coordonnees_profileDeclarantTiers_4')
-    
-      if (profileBailleurOccupant) {
-        if (occupationLogementBailleurOccupant.checked) {
-          profileBailleurOccupant.checked = true
-        } else {
-          profileBailleurOccupant.checked = false
-        }
-        handleChangeOnProfileBailleurOccupant()
-      }
+    case 'adresse':      
+      initBoFormSignalementAdresse()
       break
     case 'logement':
       initBoFormSignalementLogement()
@@ -187,7 +176,7 @@ function initBoFormSignalementSubmit(tabName) {
   }
 }
 
-function initRefreshFromRadio(tabName, radioName, listElementsToEnable, valueToEnable = undefined, listElementsToHide = []) {
+function initRefreshFromRadio(tabName, radioName, listElementsToEnable, valueToEnable = undefined, listElementsToHide = [], tabDestinationName = null) {
   const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
 
   const radioInputs = boFormSignalementTab?.querySelectorAll('#' +radioName+ ' input')
@@ -206,12 +195,19 @@ function initRefreshFromRadio(tabName, radioName, listElementsToEnable, valueToE
       }
     })
 
+    const matchValue = (
+      radioInputValue === 'oui' ||
+      radioInputValue === '1' ||
+      (Array.isArray(valueToEnable) && valueToEnable.includes(radioInputValue)) ||
+      (valueToEnable !== undefined && radioInputValue === valueToEnable)
+    );
+
     listElementsToEnable.forEach((elementSelector) => {
-      refreshElementEnable('enable', tabName, elementSelector, (radioInputValue === 'oui' || radioInputValue === '1' || (valueToEnable !== undefined && radioInputValue === valueToEnable)))
+      refreshElementEnable('enable', tabDestinationName ?? tabName, elementSelector, matchValue);
     })
 
     listElementsToHide.forEach((elementSelector) => {
-      refreshElementEnable('show', tabName, elementSelector, (radioInputValue === 'oui' || radioInputValue === '1' || (valueToEnable !== undefined && radioInputValue === valueToEnable)))
+      refreshElementEnable('show', tabDestinationName ?? tabName, elementSelector, matchValue);
     })
   }
 }
@@ -514,6 +510,61 @@ function initBoFormValidation(){
   }
 }
 
+function initBoFormSignalementAdresse() {
+  initComponentAdress('#signalement_draft_address_adresseCompleteOccupant')
+
+  initRefreshFromRadio(
+    'adresse',
+    'signalement_draft_address_profileDeclarant',
+    [
+      '#signalement_draft_address_lienDeclarantOccupant',
+    ],
+    'TIERS_PARTICULIER'
+  )
+
+  initRefreshFromRadio(
+    'adresse',
+    'signalement_draft_address_profileDeclarant',
+    [
+      '#signalement_draft_address_logementVacant',
+    ],
+    [
+      'TIERS_PARTICULIER',
+      'TIERS_PRO',
+      'SERVICE_SECOURS',
+      'BAILLEUR'
+    ]
+  )
+
+  initRefreshFromRadio(
+    'adresse',
+    'signalement_draft_address_profileDeclarant',
+    [
+      '#signalement_draft_coordonnees_isProTiersDeclarant_0',
+    ],
+    'TIERS_PRO',
+    [],
+    'coordonnees',
+  )
+
+  const boFormSignalementAdresse = document?.querySelector('#bo-form-signalement-adresse')
+  const profileDeclarantInputs = boFormSignalementAdresse?.querySelectorAll('#signalement_draft_address_profileDeclarant input')
+  profileDeclarantInputs.forEach((profileDeclarantInput) => {
+    profileDeclarantInput.addEventListener('click', (event) => {
+      if (event.target.value == 'LOCATAIRE' || event.target.value == 'BAILLEUR_OCCUPANT'){
+        const proTiersStructure = document.querySelector('#signalement_draft_coordonnees_structureDeclarant')
+        const proTiersNom = document.querySelector('#signalement_draft_coordonnees_nomDeclarant')
+        const proTiersPrenom = document.querySelector('#signalement_draft_coordonnees_prenomDeclarant')
+        const proTiersMail = document.querySelector('#signalement_draft_coordonnees_mailDeclarant')
+        proTiersStructure.value = ''
+        proTiersNom.value = ''
+        proTiersPrenom.value = ''
+        proTiersMail.value = ''
+      }
+    })
+  })
+}
+
 function initBoFormSignalementLogement() {
   const boFormSignalementLogement = document?.querySelector('#bo-form-signalement-logement')
   const natureLogementInputs = boFormSignalementLogement?.querySelectorAll('#signalement_draft_logement_natureLogement input')
@@ -698,23 +749,6 @@ function initBoFormSignalementCoordonnees() {
       '#signalement_draft_coordonnees_prenomProprio_help',
     ]
   )
-  initRefreshFromRadio(
-    'coordonnees',
-    'signalement_draft_coordonnees_profileDeclarantTiers',
-    [
-      '#signalement_draft_coordonnees_lienDeclarantOccupant',
-    ],
-    'TIERS_PARTICULIER'
-  )
-  initRefreshFromRadio(
-    'coordonnees',
-    'signalement_draft_coordonnees_profileDeclarantTiers',
-    [
-      '#signalement_draft_coordonnees_isProTiersDeclarant_0',
-    ],
-    'TIERS_PRO'
-  )
-
   const checkIsProTiersDeclarant = document.querySelector('#signalement_draft_coordonnees_isProTiersDeclarant_0')
   checkIsProTiersDeclarant.addEventListener('change', (event) => {
     const proTiersStructure = document.querySelector('#signalement_draft_coordonnees_structureDeclarant')
@@ -734,39 +768,5 @@ function initBoFormSignalementCoordonnees() {
     }
   })
 
-  manageProfileBailleurOccupant()
-
   window.dispatchEvent(new Event('refreshPhoneNumberEvent'))
-}
-
-function manageProfileBailleurOccupant() {
-  const occupationLogementBailleurOccupant = document.querySelector('#signalement_draft_address_occupationLogement_1')
-  const profileBailleurOccupant = document.querySelector('#signalement_draft_coordonnees_profileDeclarantTiers_4')
-  const radioBtnsProfileOccupant = document.querySelectorAll(`input[type="radio"][name="signalement_draft_coordonnees[profileDeclarantTiers]"]`)
-
-  if (occupationLogementBailleurOccupant.checked) {
-    profileBailleurOccupant.checked = true
-  }
-  
-  radioBtnsProfileOccupant.forEach(radio => {
-    radio.addEventListener('change', () => {
-      handleChangeOnProfileBailleurOccupant()
-    })
-  })
-  handleChangeOnProfileBailleurOccupant()
-}
-
-function handleChangeOnProfileBailleurOccupant() {
-  const occupationLogementBailleurOccupant = document.querySelector('#signalement_draft_address_occupationLogement_1')
-  const profileBailleurOccupant = document.querySelector('#signalement_draft_coordonnees_profileDeclarantTiers_4')
-  const warningProfileBailleurOccupant = document.querySelector('#warning_profile_declarant_bailleur_occupant')
-  if (profileBailleurOccupant) {
-    if (profileBailleurOccupant.checked) {
-      occupationLogementBailleurOccupant.checked = true
-      warningProfileBailleurOccupant.classList.remove('fr-hidden')
-    } else {
-      occupationLogementBailleurOccupant.checked = false
-      warningProfileBailleurOccupant.classList.add('fr-hidden')
-    }
-  }
 }
