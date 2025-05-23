@@ -2,8 +2,6 @@
 
 namespace App\Tests\Functional\Command\Cron;
 
-use App\Manager\SignalementDraftManager;
-use App\Repository\SignalementDraftRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
