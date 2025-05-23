@@ -2,7 +2,7 @@
 {% include 'back/signalement_create/tabs/_partial_facultative.html.twig' %}
 
 <div class="fr-alert fr-alert--warning fr-alert--sm fr-mb-5v">
-    <p>Renseigner l'adresse e-mail de la personne occupant le logement ou d'un tiers est recommandé pour un meilleur suivi du dossier.</p>
+    <p> Renseigner l'adresse e-mail de la personne occupant le logement ou d'un tiers est recommandé pour un meilleur suivi du dossier. Si vous ne renseignez pas de coordonnées, l'adresse e-mail de votre compte sera associée au dossier.</p>
 </div>
 
 {% form_theme formCoordonnees 'form/dsfr_theme.html.twig' %}
@@ -90,18 +90,6 @@
             <legend>
                 <h3 class="fr-h5">Tiers</h3>
             </legend>
-            <div class="fr-fieldset__element">
-                {{ form_row(formCoordonnees.profileDeclarantTiers) }}
-            </div>
-            <div id="warning_profile_declarant_bailleur_occupant" class="fr-alert fr-alert--warning fr-alert--sm fr-mt-n2w fr-mb-2w fr-hidden">
-                <p>
-                    <strong>Propriétaire occupant</strong> représente un profil occupant. 
-                    Merci de bien renseigner le nom, prénom et e-mail de l'occupant, dans le cas inverse vos informations seront utilisées.
-                </p>
-            </div>
-            <div class="fr-fieldset__element">
-                {{ form_row(formCoordonnees.lienDeclarantOccupant) }}
-            </div>
             <div class="fr-fieldset__element">
                 {{ form_row(formCoordonnees.isProTiersDeclarant) }}
             </div>

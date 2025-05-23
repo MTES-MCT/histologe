@@ -824,6 +824,7 @@ signalements:
     nom_proprio: "HabitatMarsien"
     type_proprio: "ORGANISME_SOCIETE"
     is_logement_social: 0
+    profile_declarant: "LOCATAIRE"
     civilite_occupant: "mr"
     nom_occupant: "Bécam"
     prenom_occupant: "Jean-Edouard"
@@ -1011,6 +1012,7 @@ signalements:
     nom_proprio: "HabitatMarsien"
     type_proprio: "ORGANISME_SOCIETE"
     is_logement_social: 0
+    profile_declarant: "LOCATAIRE"
     civilite_occupant: "mme"
     nom_occupant: "Colbert"
     prenom_occupant: "Maud"

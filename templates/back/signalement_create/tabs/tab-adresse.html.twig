@@ -55,10 +55,16 @@
                 <h2 class="fr-h4">Occupation du logement</h2>
             </legend>
             <div class="fr-fieldset__element">
+                {{ form_row(form.profileDeclarant) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(form.lienDeclarantOccupant) }}
+            </div>
+            <div class="fr-fieldset__element">
                 {{ form_row(form.isLogementSocial) }}
             </div>
             <div class="fr-fieldset__element">
-                {{ form_row(form.occupationLogement) }}
+                {{ form_row(form.logementVacant) }}
             </div>
             <div class="fr-fieldset__element">
                 {{ form_row(form.nbOccupantsLogement) }}
