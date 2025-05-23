@@ -26,6 +26,9 @@ class SearchCheckboxType extends AbstractType
         return EntityType::class;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['noselectionlabel'] = $options['noselectionlabel'];

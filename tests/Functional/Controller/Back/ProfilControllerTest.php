@@ -716,7 +716,6 @@ class ProfilControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $route);
         $form = $crawler->filter('#notification_email_form')->form();
         $this->client->submit($form);
-
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $this->assertJson(json_encode([
             'code' => Response::HTTP_BAD_REQUEST,

@@ -57,7 +57,7 @@ class UserManagerTest extends KernelTestCase
         );
     }
 
-    public function testTransferActiveUserToAnotherPartner()
+    public function testTransferActiveUserToAnotherPartner(): void
     {
         /** @var User $userNewPartner */
         $userNewPartner = $this->getTransferedUserToPartner('user-01-01@signal-logement.fr', 'Partenaire 01-02');
@@ -68,7 +68,7 @@ class UserManagerTest extends KernelTestCase
         $this->assertEmailHtmlBodyContains($email, ' Cliquez ci-dessous pour vous connecter à votre compte');
     }
 
-    public function testTransferInactiveUserToAnotherPartner()
+    public function testTransferInactiveUserToAnotherPartner(): void
     {
         /** @var User $userNewPartner */
         $userNewPartner = $this->getTransferedUserToPartner('user-13-03@signal-logement.fr', 'Partenaire 13-03');
@@ -93,7 +93,7 @@ class UserManagerTest extends KernelTestCase
         return $userRepository->findOneBy(['email' => $userEmail]);
     }
 
-    public function testGetUserAndTypeForSignalementAndEmail()
+    public function testGetUserAndTypeForSignalementAndEmail(): void
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);

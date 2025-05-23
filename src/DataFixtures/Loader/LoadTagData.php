@@ -24,6 +24,9 @@ class LoadTagData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     private function loadTags(ObjectManager $manager, array $row): void
     {
         $tag = (new Tag())

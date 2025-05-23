@@ -29,7 +29,7 @@ class HookZapierServiceTest extends TestCase
      * @throws TransportExceptionInterface
      * @throws ExceptionInterface
      */
-    public function testPushDossierWithSuccess()
+    public function testPushDossierWithSuccess(): void
     {
         $faker = Factory::create();
         $response = [

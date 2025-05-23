@@ -2,14 +2,21 @@
 
 namespace App\Dto;
 
+use App\Entity\Commune;
+use App\Entity\Epci;
+use App\Entity\Partner;
+use App\Entity\Tag;
 use App\Entity\Territory;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class StatisticsFilters
 {
+    /** @var array<Commune> */
     private ?array $communes;
+    /** @var array<Epci> */
     private ?array $epcis;
     private ?string $statut;
+    /** @var array<Tag> */
     private array $etiquettes;
     private ?string $type;
     private ?\DateTime $dateStart;
@@ -17,8 +24,15 @@ class StatisticsFilters
     private bool $countRefused;
     private bool $countArchived;
     private ?Territory $territory;
+    /** @var ArrayCollection<int, Partner> */
     private ?ArrayCollection $partners;
 
+    /**
+     * @param array<Commune>                $communes
+     * @param array<Epci>                   $epcis
+     * @param array<Tag>                    $etiquettes
+     * @param ArrayCollection<int, Partner> $partners
+     */
     public function __construct(
         ?array $communes,
         ?array $epcis,
@@ -45,11 +59,13 @@ class StatisticsFilters
         $this->partners = $partners;
     }
 
+    /** @return array<Commune> */
     public function getCommunes(): ?array
     {
         return $this->communes;
     }
 
+    /** @param array<Commune> $communes */
     public function setCommunes(array $communes): self
     {
         $this->communes = $communes;
@@ -57,11 +73,13 @@ class StatisticsFilters
         return $this;
     }
 
+    /** @return array<Epci> */
     public function getEpcis(): ?array
     {
         return $this->epcis;
     }
 
+    /** @param array<Epci> $epcis */
     public function setEpcis(array $epcis): self
     {
         $this->epcis = $epcis;
@@ -81,11 +99,13 @@ class StatisticsFilters
         return $this;
     }
 
+    /** @return array<Tag> */
     public function getEtiquettes(): ?array
     {
         return $this->etiquettes;
     }
 
+    /** @param array<Tag> $etiquettes */
     public function setEtiquettes(array $etiquettes): self
     {
         $this->etiquettes = $etiquettes;
@@ -165,11 +185,13 @@ class StatisticsFilters
         return $this;
     }
 
+    /** @return ArrayCollection<int, Partner> */
     public function getPartners(): ?ArrayCollection
     {
         return $this->partners;
     }
 
+    /** @param ArrayCollection<int, Partner> $partners */
     public function setPartners(?ArrayCollection $partners): self
     {
         $this->partners = $partners;

@@ -35,7 +35,7 @@ class CacheInvalidationListenerTest extends TestCase
         );
     }
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $this->assertTrue($this->cacheInvalidationListener->supports(new Signalement()));
         $this->assertTrue($this->cacheInvalidationListener->supports(new Notification()));

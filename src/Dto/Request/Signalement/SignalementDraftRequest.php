@@ -362,6 +362,7 @@ class SignalementDraftRequest
     private ?string $bailDpeDateEmmenagement = null;
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeBail" est incorrect.')]
     private ?string $bailDpeBail = null;
+    /** @var array<mixed> */
     private ?array $bailDpeBailUpload = null;
     #[Assert\Length(max: 12, maxMessage: 'L\'invariant fiscal ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $bailDpeInvariant = null;
@@ -369,6 +370,7 @@ class SignalementDraftRequest
     private ?string $bailDpeEtatDesLieux = null;
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeDpe" est incorrect.')]
     private ?string $bailDpeDpe = null;
+    /** @var array<mixed> */
     private ?array $bailDpeDpeUpload = null;
     #[Assert\Choice(choices: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'], message: 'Le champ "Classe énergétique" est incorrect.')]
     private ?string $bailDpeClasseEnergetique = null;
@@ -509,7 +511,9 @@ class SignalementDraftRequest
         message: 'Le champ "zoneConcerneeConstatationDesordres" est incorrect.',
     )]
     private ?string $zoneConcerneeConstatationDesordres = null;
+    /** @var array<mixed> */
     private array $files = [];
+    /** @var array<mixed> */
     private ?array $categorieDisorders = null;
 
     #[Assert\Callback]
@@ -1356,11 +1360,13 @@ class SignalementDraftRequest
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getBailDpeBailUpload(): ?array
     {
         return $this->bailDpeBailUpload;
     }
 
+    /** @param array<mixed> $bailDpeBailUpload */
     public function setBailDpeBailUpload(?array $bailDpeBailUpload): self
     {
         $this->bailDpeBailUpload = $bailDpeBailUpload;
@@ -1404,11 +1410,13 @@ class SignalementDraftRequest
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getBailDpeDpeUpload(): ?array
     {
         return $this->bailDpeDpeUpload;
     }
 
+    /** @param array<mixed> $bailDpeDpeUpload */
     public function setBailDpeDpeUpload(?array $bailDpeDpeUpload): self
     {
         $this->bailDpeDpeUpload = $bailDpeDpeUpload;
@@ -1881,11 +1889,13 @@ class SignalementDraftRequest
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getFiles(): ?array
     {
         return $this->files;
     }
 
+    /** @param array<mixed> $files */
     public function setFiles(?array $files): self
     {
         $this->files = $files;
@@ -1893,11 +1903,13 @@ class SignalementDraftRequest
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getCategorieDisorders(): ?array
     {
         return $this->categorieDisorders;
     }
 
+    /** @param array<mixed> $categorieDisorders */
     public function setCategorieDisorders(?array $categorieDisorders): self
     {
         $this->categorieDisorders = $categorieDisorders;
@@ -1910,7 +1922,7 @@ class SignalementDraftRequest
         return $this->zoneConcerneeDebutDesordres;
     }
 
-    public function setZoneConcerneeDebutDesordres($zoneConcerneeDebutDesordres): self
+    public function setZoneConcerneeDebutDesordres(?string $zoneConcerneeDebutDesordres): self
     {
         $this->zoneConcerneeDebutDesordres = $zoneConcerneeDebutDesordres;
 
@@ -1922,7 +1934,7 @@ class SignalementDraftRequest
         return $this->zoneConcerneeConstatationDesordres;
     }
 
-    public function setZoneConcerneeConstatationDesordres($zoneConcerneeConstatationDesordres): self
+    public function setZoneConcerneeConstatationDesordres(?string $zoneConcerneeConstatationDesordres): self
     {
         $this->zoneConcerneeConstatationDesordres = $zoneConcerneeConstatationDesordres;
 

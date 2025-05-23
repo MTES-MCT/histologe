@@ -121,6 +121,9 @@ class BackUserController extends AbstractController
         ]);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function handleSearchUser(Request $request, UserRepository $userRepository, int $maxListPagination): array
     {
         /** @var User $user */
