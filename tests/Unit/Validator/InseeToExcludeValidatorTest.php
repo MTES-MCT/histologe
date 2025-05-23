@@ -21,6 +21,8 @@ class InseeToExcludeValidatorTest extends ConstraintValidatorTestCase
 
     /**
      * @dataProvider provideValues
+     *
+     * @param array<mixed> $insee
      */
     public function testValues(array $insee, bool $isValid, ?string $message = null): void
     {

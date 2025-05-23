@@ -39,6 +39,9 @@ class SignalementExportLoaderTest extends TestCase
         $this->assertEquals('2023-01', $spreadsheet->getActiveSheet()->getCell('A2')->getValue());
     }
 
+    /**
+     * @param array<Signalement> $signalements
+     */
     private function getSignalementExportGenerator(array $signalements): \Generator
     {
         foreach ($signalements as $signalement) {
