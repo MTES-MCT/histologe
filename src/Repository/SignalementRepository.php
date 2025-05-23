@@ -1543,17 +1543,27 @@ class SignalementRepository extends ServiceEntityRepository
         ])->fetchAllAssociative();
     }
 
-    public function findOnSameAddress(Signalement $signalement): array
-    {
+    public function findOnSameAddress(
+        Signalement $signalement,
+        array $exclusiveStatuts = [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE],
+        array $excludedStatus = [],
+    ): array {
         $qb = $this->createQueryBuilder('s')
             ->where('s.adresseOccupant = :address')
             ->andWhere('s.cpOccupant = :zipcode')
             ->andWhere('s.villeOccupant = :city')
-            ->andWhere('s.statut IN (:statuts)')
             ->setParameter('address', $signalement->getAdresseOccupant())
             ->setParameter('zipcode', $signalement->getCpOccupant())
-            ->setParameter('city', $signalement->getVilleOccupant())
-            ->setParameter('statuts', [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE]);
+            ->setParameter('city', $signalement->getVilleOccupant());
+
+        if (!empty($exclusiveStatuts)) {
+            $qb->andWhere('s.statut IN (:exclusiveStatuts)')
+                ->setParameter('exclusiveStatuts', $exclusiveStatuts);
+        }
+        if (!empty($excludedStatus)) {
+            $qb->andWhere('s.statut NOT IN (:excludedStatus)')
+                ->setParameter('excludedStatus', $excludedStatus);
+        }
 
         if (null !== $signalement->getId()) {
             $qb->andWhere('s.id != :id')
