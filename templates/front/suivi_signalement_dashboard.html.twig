@@ -71,7 +71,12 @@
 								<p class="fr-tile__detail">{{suiviCategory.suivi.createdAt|date('d/m/Y')}}</p>
 								<div class="fr-tile__start">
 									<p class="fr-badge fr-badge--sm fr-badge--no-icon {{suiviCategory.labelClass}}">{{suiviCategory.label}}</p>           
-								</div>  
+								</div>
+							{% else %}
+							  	<p class="fr-tile__detail">Votre signalement est en cours de validation.</p>            
+								<div class="fr-tile__start">
+									<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info">Validation en cours</p>           
+								</div>
 							{% endif %}  
 						{% endif %}     
 					</div>    
@@ -124,9 +129,9 @@
 						Nous vous mettons à disposition un modèle de courrier à remplir et envoyer à votre bailleur. 
 						Cliquez sur le bouton ci-dessous pour le télécharger.
 					</p>
-					<button class="fr-btn fr-icon-arrow-down-line fr-btn--icon-left">
+					<a href="{{ asset('build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf') }}" download class="fr-btn fr-icon-arrow-down-line fr-btn--icon-left">
 						Télécharger le courrier
-					</button>
+					</a>
 				</div>
 			{% elseif signalement.motifRefus and signalement.motifRefus.name == 'DOUBLON' %}
 				<div class="fr-mb-1w">

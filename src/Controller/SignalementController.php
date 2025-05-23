@@ -55,7 +55,7 @@ class SignalementController extends AbstractController
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         #[Autowire(env: 'FEATURE_SECURE_UUID_URL')]
-        private readonly bool $featureSecureUuidUrl, 
+        private readonly bool $featureSecureUuidUrl,
         #[Autowire(env: 'FEATURE_SUIVI_ACTION')]
         private readonly bool $featureSuiviAction,
     ) {
@@ -603,12 +603,12 @@ class SignalementController extends AbstractController
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
-            /** @var SignalementUser $signalementUser */
-            $signalementUser = $this->getUser();
-            $this->eventDispatcher->dispatch(
-                new SuiviViewedEvent($signalement, $signalementUser),
-                SuiviViewedEvent::NAME
-            );
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+        $this->eventDispatcher->dispatch(
+            new SuiviViewedEvent($signalement, $signalementUser),
+            SuiviViewedEvent::NAME
+        );
 
         return $this->render('front/suivi_signalement.html.twig', [
             'signalement' => $signalement,
