@@ -251,6 +251,7 @@ class SignalementController extends AbstractController
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
             'partnersCanVisite' => $partnerVisite,
+            'visites' => $interventionRepository->getOrderedVisitesForSignalement($signalement),
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'allPhotosOrdered' => $allPhotosOrdered,
             'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),

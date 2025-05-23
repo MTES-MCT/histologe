@@ -4,6 +4,7 @@ namespace App\Messenger\MessageHandler;
 
 use App\Entity\Intervention;
 use App\Messenger\Message\PdfExportMessage;
+use App\Repository\InterventionRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -24,6 +25,7 @@ class PdfExportMessageHandler
         private readonly SignalementExportPdfGenerator $signalementExportPdfGenerator,
         private readonly Environment $twig,
         private readonly SignalementRepository $signalementRepository,
+        private readonly InterventionRepository $interventionRepository,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly SignalementDesordresProcessor $signalementDesordresProcessor,
@@ -60,11 +62,14 @@ class PdfExportMessageHandler
                 return $concludeProcedure->label();
             }, $listConcludeProcedures));
 
+            $visites = $this->interventionRepository->getOrderedVisitesForSignalement($signalement);
+
             $htmlContent = $this->twig->render('pdf/signalement.html.twig', [
                 'signalement' => $signalement,
                 'situations' => $infoDesordres['criticitesArranged'],
                 'listConcludeProcedures' => $listConcludeProcedures,
                 'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
+                'visites' => $visites,
                 'isForUsager' => $pdfExportMessage->isForUsager(),
             ]);
 

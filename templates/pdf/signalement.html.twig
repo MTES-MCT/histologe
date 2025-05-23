@@ -513,12 +513,12 @@
 
             <section>
                 <h2>Visites</h2>            
-                {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
+                {% for intervention in visites %}
                     <div class="fr-background-alt--grey fr-p-5v fr-mb-5v">
                         <div class="fr-grid-row">
                             <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
-                                Visite #{{loop.index}}
-                                {% if signalement.interventions is not empty or intervention.scheduledAt is not empty %}
+                                Visite
+                                {% if visites is not empty or intervention.scheduledAt is not empty %}
                                     du {{ intervention.scheduledAt|date('d/m/Y') }}
                                 {% endif %}
                             </div>
