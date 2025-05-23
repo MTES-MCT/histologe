@@ -45,6 +45,7 @@ class SearchFilter
     public function setRequest(SignalementSearchQuery $request): static
     {
         $this->request = $request;
+
         return $this;
     }
 
