@@ -26,7 +26,7 @@
             <strong>{{ suivi.createdAt|date('d/m/Y') }}</strong>
             <br>
             {% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
-                Suivi automatique
+                Suivi automatique<br>
 
             {% elseif suivi.createdBy is not null %}
                 <div class="fr-hidden" id="tippy_suivi_{{ suivi.id }}">
@@ -63,6 +63,11 @@
                     {{ signalement.isNotOccupant ? 'DECLARANT':'OCCUPANT'}}
                 {% endif %}
             {% endif %}
+            {% if feature_accuse_lecture %}
+                {% if suivi.isPublic and suivi.type is not same as (2) %}
+                    <span class="fr-badge fr-badge--{{ suivi.isSeenByUsager ? 'success fr-background--notif-info' : 'error fr-background--notif-error' }}">{{ suivi.isSeenByUsager ? 'Lu' : 'Non lu' }}</span>
+                {% endif %}
+            {% endif  %}
         </div>
 
         {% if is_granted('ROLE_ADMIN') %}

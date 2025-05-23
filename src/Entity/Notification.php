@@ -9,49 +9,52 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification
 {
-    public const MAX_LIST_PAGINATION = 100;
+    public const int MAX_LIST_PAGINATION = 100;
     public const string EXPIRATION_PERIOD = '- 30 days';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'notifications')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user;
+    private ?User $user = null;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isSeen;
+    private ?bool $isSeen = null;
 
     #[ORM\Column(
         type: 'string',
         enumType: NotificationType::class,
         options: ['comment' => 'Value possible enum NotificationType'])]
-    private NotificationType $type;
+    private ?NotificationType $type = null;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class)]
-    private ?Signalement $signalement;
+    private ?Signalement $signalement = null;
 
     #[ORM\ManyToOne(targetEntity: Suivi::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    private ?Suivi $suivi;
+    private ?Suivi $suivi = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private ?\DateTimeImmutable $createdAt;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(targetEntity: Affectation::class, inversedBy: 'notifications')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
-    private ?Affectation $affectation;
+    private ?Affectation $affectation = null;
 
     #[ORM\Column]
-    private bool $waitMailingSummary;
+    private ?bool $waitMailingSummary = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $mailingSummarySentAt = null;
 
     #[ORM\Column]
-    private bool $deleted;
+    private ?bool $deleted = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $seenAt = null;
 
     public function __construct()
     {
@@ -70,7 +73,7 @@ class Notification
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
@@ -82,7 +85,7 @@ class Notification
         return $this->isSeen;
     }
 
-    public function setIsSeen(bool $isSeen): self
+    public function setIsSeen(bool $isSeen): static
     {
         $this->isSeen = $isSeen;
 
@@ -94,7 +97,7 @@ class Notification
         return $this->type;
     }
 
-    public function setType(NotificationType $type): self
+    public function setType(NotificationType $type): static
     {
         $this->type = $type;
 
@@ -106,7 +109,7 @@ class Notification
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): self
+    public function setSignalement(?Signalement $signalement): static
     {
         $this->signalement = $signalement;
 
@@ -118,7 +121,7 @@ class Notification
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
@@ -130,7 +133,7 @@ class Notification
         return $this->suivi;
     }
 
-    public function setSuivi(?Suivi $suivi): self
+    public function setSuivi(?Suivi $suivi): static
     {
         $this->suivi = $suivi;
 
@@ -142,7 +145,7 @@ class Notification
         return $this->affectation;
     }
 
-    public function setAffectation(?Affectation $affectation): self
+    public function setAffectation(?Affectation $affectation): static
     {
         $this->affectation = $affectation;
 
@@ -181,6 +184,18 @@ class Notification
     public function setDeleted(bool $deleted): static
     {
         $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    public function getSeenAt(): ?\DateTimeImmutable
+    {
+        return $this->seenAt;
+    }
+
+    public function setSeenAt(?\DateTimeImmutable $seenAt): static
+    {
+        $this->seenAt = $seenAt;
 
         return $this;
     }

@@ -488,6 +488,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comCloture = null;
 
+    #[ORM\OneToOne(mappedBy: 'signalement', targetEntity: SignalementUsager::class)]
+    private ?SignalementUsager $signalementUsager = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -1427,6 +1430,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /**
+     * @return Collection<int, Suivi>
+     */
     public function getSuivis(): Collection
     {
         return $this->suivis;
@@ -2745,5 +2751,36 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->comCloture = $comCloture;
 
         return $this;
+    }
+
+    public function getSignalementUsager(): ?SignalementUsager
+    {
+        return $this->signalementUsager;
+    }
+
+    public function getOccupantId(): ?int
+    {
+        return $this->getSignalementUsager()?->getOccupant()?->getId();
+    }
+
+    public function getDeclarantId(): ?int
+    {
+        return $this->getSignalementUsager()?->getDeclarant()?->getId();
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getUsagerIds(): array
+    {
+        return array_filter([$this->getOccupantId(), $this->getDeclarantId()]);
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getUsagers(): array
+    {
+        return array_filter([$this->getSignalementUsager()?->getOccupant(), $this->getSignalementUsager()?->getDeclarant()]);
     }
 }

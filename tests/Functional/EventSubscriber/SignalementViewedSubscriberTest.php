@@ -2,28 +2,45 @@
 
 namespace App\Tests\Functional\EventSubscriber;
 
+use App\Entity\Enum\NotificationType;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Event\SignalementViewedEvent;
+use App\Event\SuiviViewedEvent;
 use App\EventSubscriber\SignalementViewedSubscriber;
 use App\Manager\SignalementManager;
+use App\Manager\UserManager;
+use App\Repository\NotificationRepository;
+use App\Repository\UserRepository;
+use App\Security\User\SignalementUser;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\Gouv\Ban\Response\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class SignalementViewedSubscriberTest extends KernelTestCase
+class SignalementViewedSubscriberTest extends WebTestCase
 {
     private EntityManagerInterface $entityManager;
     private SignalementManager $signalementManager;
+    private ?Signalement $signalement = null;
+    private ?UserRepository $userRepository = null;
+    private AddressService|MockObject|null $addressServiceMock = null;
+    private ?NotificationRepository $notificationRepository = null;
 
     protected function setUp(): void
     {
-        $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        static::createClient();
+        $this->addressServiceMock = $this->createMock(AddressService::class);
+        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
         $this->signalementManager = static::getContainer()->get(SignalementManager::class);
+        $this->signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'uuid' => '00000000-0000-0000-2025-000000000007',
+        ]);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
+
+        $this->notificationRepository = static::getContainer()->get(NotificationRepository::class);
     }
 
     public function testEventSubscription(): void
@@ -33,40 +50,33 @@ class SignalementViewedSubscriberTest extends KernelTestCase
 
     public function testOnSignalementViewed(): void
     {
-        /** @var Signalement $signalement */
-        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
-            'uuid' => '00000000-0000-0000-2023-000000000006',
-        ]);
-
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
         // Empty this data voluntarily to check if the dispatcher handles it.
-        $signalement
+        $this->signalement
             ->setInseeOccupant(null)
             ->setGeoloc([])
             ->setCpOccupant(null);
 
-        /** @var Notification $notification */
-        $notification = $this->entityManager->getRepository(Notification::class)->findOneBy(['signalement' => $signalement]);
-        $isSeenBefore = $notification->getIsSeen();
-        $this->assertFalse($isSeenBefore);
+        $notifications = $this->notificationRepository->findUnseenNotificationsBy($this->signalement, $user, NotificationType::getForAgent());
+        foreach ($notifications as $notification) {
+            $this->assertFalse($notification->getIsSeen());
+            $this->assertTrue(NotificationType::SUIVI_USAGER !== $notification->getType());
+        }
 
-        $user = $notification->getUser();
-        $signalementViewedEvent = new SignalementViewedEvent($signalement, $user);
+        $signalementViewedEvent = new SignalementViewedEvent($this->signalement, $user);
 
         $addressResult = json_decode(file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_item_response_13203.json'), true);
         $address = new Address($addressResult);
-        /** @var MockObject&AddressService $addressServiceMock */
-        $addressServiceMock = $this->createMock(AddressService::class);
-        $this->signalementManager = static::getContainer()->get(SignalementManager::class);
-
-        $addressServiceMock
+        $this->addressServiceMock
             ->expects($this->once())
             ->method('getAddress')
             ->willReturn($address);
 
         $signalementViewedSubscriber = new SignalementViewedSubscriber(
             $this->entityManager,
-            $addressServiceMock,
-            $this->signalementManager
+            $this->addressServiceMock,
+            $this->signalementManager,
+            $this->notificationRepository,
         );
 
         $dispatcher = new EventDispatcher();
@@ -74,12 +84,47 @@ class SignalementViewedSubscriberTest extends KernelTestCase
         $dispatcher->dispatch($signalementViewedEvent, SignalementViewedEvent::NAME);
 
         /** @var Notification $notification */
-        $notification = $this->entityManager->getRepository(Notification::class)->findOneBy(['signalement' => $signalement]);
-        $isSeenAfter = $notification->getIsSeen();
-        $this->assertTrue($isSeenAfter);
+        $notifications = $this->notificationRepository->findUnseenNotificationsBy($this->signalement, $user, NotificationType::getForAgent());
+        foreach ($notifications as $notification) {
+            $this->assertTrue($notification->getIsSeen());
+        }
 
-        $this->assertEquals('13203', $signalement->getInseeOccupant());
-        $this->assertEquals([], $signalement->getGeoloc());
-        $this->assertEquals('13003', $signalement->getCpOccupant());
+        $this->assertEquals('13203', $this->signalement->getInseeOccupant());
+        $this->assertEquals([], $this->signalement->getGeoloc());
+        $this->assertEquals('13003', $this->signalement->getCpOccupant());
+    }
+
+    public function testOnSuiviViewed(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
+        $notifications = $this->notificationRepository->findUnseenNotificationsBy($this->signalement, $user, NotificationType::getForUsager());
+        foreach ($notifications as $notification) {
+            $this->assertFalse($notification->getIsSeen());
+            $this->assertTrue(NotificationType::SUIVI_USAGER === $notification->getType());
+        }
+
+        $signalementViewedSubscriber = new SignalementViewedSubscriber(
+            $this->entityManager,
+            $this->addressServiceMock,
+            $this->signalementManager,
+            $this->notificationRepository,
+        );
+
+        $signalementUser = new SignalementUser(
+            $this->signalement->getCodeSuivi().':'.UserManager::DECLARANT,
+            $this->signalement->getMailDeclarant(),
+            $user
+        );
+
+        $suiviViewedEvent = new SuiviViewedEvent($this->signalement, $signalementUser);
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($signalementViewedSubscriber);
+        $dispatcher->dispatch($suiviViewedEvent, SuiviViewedEvent::NAME);
+
+        $user = $signalementUser->getUser();
+        $notifications = $this->notificationRepository->findUnseenNotificationsBy($this->signalement, $user, NotificationType::getForUsager());
+        foreach ($notifications as $notification) {
+            $this->assertTrue($notification->getIsSeen());
+        }
     }
 }

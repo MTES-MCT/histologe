@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\NotificationSuiviUser;
 use App\Entity\Enum\NotificationType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Notification;
@@ -17,6 +18,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Notification|null find($id, $lockMode = null, $lockVersion = null)
@@ -82,7 +84,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         return $this->createQueryBuilder('n')
             ->delete()
             ->andWhere('DATE(n.createdAt) <= :created_at')
+            ->andWhere('n.type NOT LIKE :notification_type')
             ->setParameter('created_at', (new \DateTimeImmutable($period))->format('Y-m-d'))
+            ->setParameter('notification_type', NotificationType::SUIVI_USAGER)
             ->getQuery()
             ->execute();
     }
@@ -292,5 +296,57 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         }
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @return NotificationSuiviUser[]
+     */
+    public function getNotificationsFrom(Signalement $signalement): array
+    {
+        return array_map(
+            fn (array $row) => new NotificationSuiviUser(
+                (int) $row['suiviId'],
+                (int) $row['userId'],
+                (bool) $row['isSeen'],
+                $row['suiviCreatedAt']
+            ),
+            $this->createQueryBuilder('n')
+                ->select('s.id as suiviId', 'u.id as userId', 'n.isSeen as isSeen', 's.createdAt as suiviCreatedAt')
+                ->join('n.user', 'u')
+                ->join('n.suivi', 's')
+                ->andWhere('n.signalement = :signalement')
+                ->andWhere('u.id IN (:usager_ids)')
+                ->setParameter('signalement', $signalement)
+                ->setParameter('usager_ids', $signalement->getUsagerIds())
+                ->orderBy('s.createdAt', 'DESC')
+                ->getQuery()
+                ->getArrayResult()
+        );
+    }
+
+    /**
+     * @param NotificationType[] $includedNotificationTypes
+     *
+     * @return Notification[]
+     */
+    public function findUnseenNotificationsBy(
+        Signalement $signalement,
+        UserInterface $user,
+        array $includedNotificationTypes = [],
+    ): array {
+        $qb = $this->createQueryBuilder('n')
+            ->where('n.signalement = :signalement')
+            ->andWhere('n.user = :user')
+            ->andWhere('n.isSeen = :isSeen')
+            ->setParameter('signalement', $signalement)
+            ->setParameter('user', $user)
+            ->setParameter('isSeen', false);
+
+        if (!empty($includedNotificationTypes)) {
+            $qb->andWhere('n.type IN (:includedTypes)')
+                ->setParameter('includedTypes', $includedNotificationTypes);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

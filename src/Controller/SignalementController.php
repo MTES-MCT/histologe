@@ -12,6 +12,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Event\SuiviViewedEvent;
 use App\Form\DemandeLienSignalementType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
@@ -34,6 +35,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -50,7 +52,7 @@ class SignalementController extends AbstractController
 {
     public function __construct(
         #[Autowire(env: 'FEATURE_SECURE_UUID_URL')]
-        private readonly bool $featureSecureUuidUrl,
+        private readonly bool $featureSecureUuidUrl, private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -576,6 +578,13 @@ class SignalementController extends AbstractController
             $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
                 'action' => $this->generateUrl('front_demande_lien_signalement'),
             ]);
+
+            /** @var SignalementUser $signalementUser */
+            $signalementUser = $this->getUser();
+            $this->eventDispatcher->dispatch(
+                new SuiviViewedEvent($signalement, $signalementUser),
+                SuiviViewedEvent::NAME
+            );
 
             return $this->render('front/suivi_signalement.html.twig', [
                 'signalement' => $signalement,

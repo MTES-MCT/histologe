@@ -22,6 +22,7 @@ twig:
         feature_email_recap: '%env(bool:FEATURE_EMAIL_RECAP)%'
         feature_suivi_action: '%env(bool:FEATURE_SUIVI_ACTION)%'
         feature_proconnect: '%env(bool:FEATURE_PROCONNECT)%'
+        feature_accuse_lecture: '%env(bool:FEATURE_ACCUSE_LECTURE)%'
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images

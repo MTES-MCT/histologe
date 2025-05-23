@@ -45,15 +45,17 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
         ) {
             $this->visiteNotifier->notifyUsagers(
-                $intervention,
-                NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER,
+                suivi: $suivi,
             );
         }
 
         if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
             $this->visiteNotifier->notifyUsagers(
-                $intervention,
-                NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
+                suivi: $suivi
             );
         }
 

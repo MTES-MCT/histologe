@@ -31,6 +31,26 @@ notifications:
   type: "CLOTURE_SIGNALEMENT"
   signalement: "2025-07"
 -
+  user: "user-partenaire-multi-ter-34-30@signal-logement.fr"
+  type: "SUIVI_USAGER"
+  signalement: "2025-07"
+  suivi: 'Signalement validé'
+-
   user: "admin-territoire-30@signal-logement.fr"
   type: "CLOTURE_SIGNALEMENT"
   signalement: "2025-07"
+-
+  user: "joude.bellingham@uk.com"
+  type: "SUIVI_USAGER"
+  signalement: "2023-15"
+  suivi: 'Signalement validé'
+-
+  user: "joude.bellingham@uk.com"
+  type: "SUIVI_USAGER"
+  signalement: "2023-15"
+  suivi: 'Ceci est le premier suivi de partenaire 13-01'
+-
+  user: "joude.bellingham@uk.com"
+  type: "SUIVI_USAGER"
+  signalement: "2023-15"
+  suivi: 'Ceci est le dernier suivi de partenaire 13-01'
