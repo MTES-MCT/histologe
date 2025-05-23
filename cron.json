@@ -31,7 +31,7 @@
       "command": "45 5 * * * php bin/console app:send-summary-emails"
     },
     {
-      "command": "0 6 */2 * * php bin/console app:remind-pending-drafts-bailleur-prevenu"
+      "command": "0 6 2 * * php bin/console app:remind-pending-drafts-bailleur-prevenu"
     }
   ]
 }
