@@ -488,6 +488,9 @@ trait FixturesHelper
             ->setStatus($status);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getLocataireTypeComposition(bool $transformPiecesAVivre = false): array
     {
         $typeComposition = [

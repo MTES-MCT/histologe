@@ -15,7 +15,7 @@ class AppExtensionTest extends WebTestCase
     /**
      * @dataProvider provideData
      */
-    public function testCustomDateFiler($inputDate, $expectedOutputDate, $format = 'F j, Y H:i', $timezone = null): void
+    public function testCustomDateFiler(\DateTimeImmutable $inputDate, string $expectedOutputDate, ?string $format = 'F j, Y H:i', ?string $timezone = null): void
     {
         self::bootKernel();
         $container = static::getContainer();
@@ -95,7 +95,7 @@ class AppExtensionTest extends WebTestCase
     /**
      * @dataProvider provideDataPhone
      */
-    public function testFormatPhone($inputPhone, $expectedOutputPhone): void
+    public function testFormatPhone(?string $inputPhone, ?string $expectedOutputPhone): void
     {
         self::bootKernel();
         $container = static::getContainer();

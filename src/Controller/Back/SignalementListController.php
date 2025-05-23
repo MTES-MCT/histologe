@@ -42,6 +42,7 @@ class SignalementListController extends AbstractController
                 'isImported' => 'oui',
             ];
         $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
+
         return $this->json(
             $signalements,
             Response::HTTP_OK,
