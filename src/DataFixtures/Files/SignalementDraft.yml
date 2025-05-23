@@ -65,6 +65,11 @@ signalements_draft:
     email_declarant: 'tiers_particulier-01@signal-logement.fr'
     payload: 'tiers_particulier.json'
   -
+    uuid: '00000000-0000-0000-2023-tierspart002'
+    profile_declarant: 'TIERS_PARTICULIER'
+    email_declarant: 'tiers_particulier-02@signal-logement.fr'
+    payload: 'step/info_procedure_bail/tiers_particulier.json'
+  -
     uuid: '00000000-0000-0000-2023-tierpro00001'
     profile_declarant: 'TIERS_PRO'
     email_declarant: 'tiers_pro-01@signal-logement.fr'
