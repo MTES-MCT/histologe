@@ -22,6 +22,7 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\ZoneRepository;
@@ -69,6 +70,7 @@ class SignalementController extends AbstractController
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
         SuiviSeenMarker $suiviSeenMarker,
+        SignalementRepository $signalementRepository,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -223,6 +225,14 @@ class SignalementController extends AbstractController
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $suiviSeenMarker->markSeenByUsager($signalement);
+        $signalementsOnSameAddress = [];
+        if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(
+                $signalement,
+                [],
+                [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
+            );
+        }
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -257,6 +267,7 @@ class SignalementController extends AbstractController
             'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),
             'canSeePartnerAffectation' => $this->isGranted(AffectationVoter::SEE, $signalement),
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
+            'signalementOnSameAddress' => $signalementsOnSameAddress,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);

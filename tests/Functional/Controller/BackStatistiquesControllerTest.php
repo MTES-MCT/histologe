@@ -50,8 +50,8 @@ class BackStatistiquesControllerTest extends WebTestCase
     public function provideRoutesStatistiquesDatas(): \Generator
     {
         yield 'Super Admin' => ['back_statistiques_filter', [], self::USER_SUPER_ADMIN, [
-            ['result' => 52, 'label' => 'count_signalement'],
-            ['result' => 55.5, 'label' => 'average_criticite'],
+            ['result' => 53, 'label' => 'count_signalement'],
+            ['result' => 55.1, 'label' => 'average_criticite'],
         ]];
         yield 'Responsable Territoire' => ['back_statistiques_filter', [], self::USER_ADMIN_TERRITOIRE, [
             ['result' => 26, 'label' => 'count_signalement'],

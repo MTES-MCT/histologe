@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Repository;
 
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
@@ -224,5 +225,27 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $signalements = $signalementRepository->findSignalementsLastSuiviByPartnerOlderThan($territory, 10, 0);
         $this->assertCount(2, $signalements);
+    }
+
+    public function testfindOnSameAddress(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalement = $signalementRepository->findOneBy(['reference' => '2025-09']);
+
+        $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(
+            $signalement,
+            [],
+            [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
+        );
+        $this->assertCount(1, $signalementsOnSameAddress);
+
+        $new = new Signalement();
+        $new->setAdresseOccupant($signalement->getAdresseOccupant());
+        $new->setCpOccupant($signalement->getCpOccupant());
+        $new->setVilleOccupant($signalement->getVilleOccupant());
+
+        $signalementsOnSameAddress = $signalementRepository->findOnSameAddress($new);
+        $this->assertCount(2, $signalementsOnSameAddress);
     }
 }
