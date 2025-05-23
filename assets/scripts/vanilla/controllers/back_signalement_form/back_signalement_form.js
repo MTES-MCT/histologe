@@ -547,6 +547,27 @@ function initBoFormSignalementAdresse() {
     'coordonnees',
   )
 
+  initRefreshFromRadio(
+    'adresse',
+    'signalement_draft_address_profileDeclarant',
+    [
+      '#signalement_draft_coordonnees_structureDeclarant',
+      '#signalement_draft_coordonnees_nomDeclarant',
+      '#signalement_draft_coordonnees_prenomDeclarant',
+      '#signalement_draft_coordonnees_mailDeclarant',
+      '#signalement_draft_coordonnees_telDeclarant_select',
+      '#signalement_draft_coordonnees_telDeclarant_input'
+    ],
+    [
+      'TIERS_PARTICULIER',
+      'TIERS_PRO',
+      'SERVICE_SECOURS',
+      'BAILLEUR'
+    ],
+    [],
+    'coordonnees',
+  )
+
   const boFormSignalementAdresse = document?.querySelector('#bo-form-signalement-adresse')
   const profileDeclarantInputs = boFormSignalementAdresse?.querySelectorAll('#signalement_draft_address_profileDeclarant input')
   profileDeclarantInputs.forEach((profileDeclarantInput) => {

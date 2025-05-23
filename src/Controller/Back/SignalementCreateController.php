@@ -427,7 +427,7 @@ class SignalementCreateController extends AbstractController
                 if (!$signalement->getPrenomDeclarant()) {
                     $signalement->setPrenomDeclarant($user->getPrenom());
                 }
-                $signalement->setIsNotOccupant(false);
+                $signalement->setIsNotOccupant(true);
             } else {
                 if (!$signalement->getMailOccupant()) {
                     $signalement->setMailOccupant($user->getEmail());
@@ -438,7 +438,7 @@ class SignalementCreateController extends AbstractController
                 if (!$signalement->getPrenomOccupant()) {
                     $signalement->setPrenomOccupant($user->getPrenom());
                 }
-                $signalement->setIsNotOccupant(true);
+                $signalement->setIsNotOccupant(false);
             }
 
             $route = 'back_signalement_view';
