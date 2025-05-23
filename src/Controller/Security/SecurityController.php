@@ -170,7 +170,6 @@ class SecurityController extends AbstractController
 
                 return $this->render('security/login_suivi_signalement.html.twig', [
                     'signalement' => $signalement,
-                    'fromEmail' => '', // TODO : à supprimer
                     'error' => $error,
                 ]);
             }

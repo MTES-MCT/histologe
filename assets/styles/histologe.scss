@@ -875,6 +875,43 @@ ul + p {
     }
 }
 
+.title-blue-france {
+    color: var(--text-title-blue-france);
+}
+
+.signalement-card{
+    background: #ececfe;
+    border-radius: 6px;
+    padding: 1rem;
+    color: var(--text-title-blue-france);
+    .info{
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+}
+
+.confetti {
+    width :12px;
+    height: 12px;
+    border-radius: 100%;
+    background-color: var(--text-default-warning);
+    display: inline-block;
+}
+.confetti.active{
+    background-color: var(--text-default-success);
+}
+
+#container-form-demande-lien-signalement.format-vertical{
+    .fr-col-12{
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .submit-btn-container{
+        margin-top: -1rem !important;
+        margin-bottom: 1.5rem;
+    }
+}
+
 .message-box{
     margin-top: 1rem;
     .message-box-message{

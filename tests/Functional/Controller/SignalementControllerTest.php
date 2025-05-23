@@ -119,19 +119,19 @@ class SignalementControllerTest extends WebTestCase
             if (SignalementStatus::ARCHIVED->value === $status) {
                 $this->assertEquals(
                     'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
-                    $crawler->filter('.fr-alert--error p')->text()
+                    $crawler->filter('.fr-tile__detail')->text()
                 );
             } elseif (SignalementStatus::ACTIVE->value === $status) {
-                $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
+                $this->assertEquals('Votre dossier', $crawler->filter('h1')->text());
             } elseif (SignalementStatus::CLOSED->value === $status) {
                 $this->assertEquals(
                     'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.',
-                    $crawler->filter('.fr-alert--error p')->text()
+                    $crawler->filter('.fr-tile__detail')->text()
                 );
             } elseif (SignalementStatus::REFUSED->value === $status) {
                 $this->assertEquals(
-                    'Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.',
-                    $crawler->filter('.fr-alert--error p')->text()
+                    'Signalement refusé',
+                    $crawler->filter('.fr-badge.fr-badge--sm.fr-badge--no-icon.fr-badge--error')->text()
                 );
             }
         }
