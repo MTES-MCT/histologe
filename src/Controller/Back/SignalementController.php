@@ -228,9 +228,9 @@ class SignalementController extends AbstractController
         $signalementsOnSameAddress = [];
         if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(
-                $signalement,
-                [],
-                [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
+                signalement: $signalement,
+                exclusiveStatus: [],
+                excludedStatus: [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
             );
         }
         $twigParams = [
