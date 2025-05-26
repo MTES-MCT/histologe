@@ -97,6 +97,8 @@ class SecurityController extends AbstractController
     )]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        // ICI GIGA PALLIER
+
         $title = 'Connexion';
         if ($this->getUser()) {
             return $this->redirectToRoute('back_dashboard');

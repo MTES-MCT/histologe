@@ -1,62 +1,58 @@
 <?php
 
-namespace App\Service\Gouv\Rnb;
+namespace App\Service\Gouv\Rial;
 
-use App\Service\Gouv\Rnb\Response\RnbBuilding;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class RialService
 {
-    private const string API_URL = 'https://rnb-api.beta.gouv.fr/api/alpha/buildings/';
+    private const string URI_GENERATE_TOKEN = '/token';
+    private const string URI_LOCAUX_BY_ADRESSE = '/locaux/adresseTopographique';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly LoggerInterface $logger,
+        private string $accessToken,
+        #[Autowire(env: 'RIAL_URL')]
+        private readonly string $rialUrl,
+        #[Autowire(env: 'RIAL_KEY')]
+        private readonly string $rialKey,
+        #[Autowire(env: 'RIAL_SECRET')]
+        private readonly string $rialSecret,
     ) {
     }
 
-    private function searchBuildings(?string $rnbId = null, array $queryParams = []): ?array
+    public function generateAccessToken(): string
     {
-        try {
-            $url = self::API_URL;
-            if (null !== $rnbId) {
-                $url .= $rnbId.'/';
-            }
-            if (!empty($queryParams)) {
-                $url .= '?'.http_build_query($queryParams);
-            }
-            $response = $this->httpClient->request('GET', $url);
+        $response = $this->httpClient->request('POST', $this->rialUrl . self::URI_GENERATE_TOKEN, [
+            'headers' => ['Authorization' => 'Basic '.$this->rialKey.':'.$this->rialSecret],
+        ]);
 
-            if (Response::HTTP_OK === $response->getStatusCode()) {
-                return $response->toArray();
-            }
-        } catch (\Throwable $exception) {
-            $this->logger->error($exception->getMessage());
-        }
-
-        return null;
+        $this->accessToken = $response->getContent();
+        return $this->accessToken;
     }
 
-    public function getBuildings(string $cleInteropBan): array
-    {
-        $buildings = [];
-        $results = $this->searchBuildings(queryParams: ['cle_interop_ban' => $cleInteropBan]);
-        if (null !== $results && !empty($results['results'])) {
-            foreach ($results['results'] as $item) {
-                $buildings[] = new RnbBuilding($item);
-            }
-        }
+    public function searchLocauxByAdresse(
+        string $codeDepartementInsee,
+        string $codeCommuneInsee,
+        string $codeVoieTopo,
+        string $numeroVoirie,
+    ): ?array {
+        $params = [
+            'codeDepartementInsee' => $codeDepartementInsee,
+            'codeCommuneInsee' => $codeCommuneInsee,
+            'codeVoieTopo' => $codeVoieTopo,
+            'numeroVoirie' => $numeroVoirie,
+        ];
+        $queryParams = '?'.http_build_query($params);
+        $url = $this->rialUrl . self::URI_LOCAUX_BY_ADRESSE . $queryParams;
+        $response = $this->httpClient->request('GET', $url, [
+            'headers' => ['Authorization' => 'Bearer '.$this->accessToken],
+        ]);
 
-        return $buildings;
-    }
-
-    public function getBuilding(string $rnbId): ?RnbBuilding
-    {
-        $result = $this->searchBuildings(rnbId: $rnbId);
-        if (!empty($result)) {
-            return new RnbBuilding($result);
+        if (Response::HTTP_OK === $response->getStatusCode()) {
+            return $response->toArray();
         }
 
         return null;
