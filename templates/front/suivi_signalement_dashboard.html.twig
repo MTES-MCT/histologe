@@ -31,7 +31,7 @@
 						Statut du dossier
 						<br>
 						<span class="info">
-							<span class="confetti {% if signalement.statut.name == 'ACTIVE' %}active{% endif %}"></span>
+							<span class="confetti {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}active{% endif %}"></span>
 						 	{{ signalement.statutLabel }}
 						</span>
 					</div>
@@ -40,25 +40,25 @@
 
 			<h2 class="title-blue-france">Accès rapide</h2>
 
-			<div class="fr-tile fr-tile--sm fr-tile--horizontal fr-enlarge-link fr-mb-3w" style="height:auto;">
+			<div class="fr-tile fr-tile--sm fr-tile--horizontal fr-enlarge-link fr-mb-3w tile-last-suivi">
 				<div class="fr-tile__body">
 					<div class="fr-tile__content">
-						{% if signalement.statut.name == 'REFUSED' %}
+						{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED %}
 							<p class="fr-tile__detail">Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>            
 							<div class="fr-tile__start">
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement refusé</p>           
 							</div>  
-						{% elseif signalement.statut.name == 'CLOSED' and signalement.hasSuiviUsagePostCloture %}
+						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED and signalement.hasSuiviUsagerPostCloture %}
 							<p class="fr-tile__detail">Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.</p>            
 							<div class="fr-tile__start">
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement fermé</p>           
 							</div> 
-						{% elseif signalement.statut.name == 'CLOSED' and date(signalement.closedAt) < date('-30days') %}
+						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED and date(signalement.closedAt) < date('-30days') %}
 							<p class="fr-tile__detail">Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>            
 							<div class="fr-tile__start">
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement fermé</p>           
 							</div> 
-						{% elseif signalement.statut.name == 'ARCHIVED' %}
+						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %}
 							<p class="fr-tile__detail">Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>            
 							<div class="fr-tile__start">
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement fermé</p>           
@@ -83,8 +83,8 @@
 				</div>    
 				{% if suiviCategory %}
 					<div class="fr-tile__header">        
-						<div class="fr-tile__pictogram" style="width:60px;height:60px;">
-        					<img src="{{ asset('img/picto-dsfr/' ~ suiviCategory.icon) }}" aria-hidden="true" class="fr-artwork" style="width:100%;">
+						<div class="fr-tile__pictogram">
+        					<img src="{{ asset('img/picto-dsfr/' ~ suiviCategory.icon) }}" aria-hidden="true" class="fr-artwork">
 						</div>
 					</div>
 				{% endif %}
@@ -118,8 +118,15 @@
 		<div class="fr-col-12 fr-col-md-6">
 
 			{% if 
-				(signalement.statut.name == 'NEED_VALIDATION' or signalement.statut.name == 'ACTIVE') 
-				and (signalement.profileDeclarant.name != 'BAILLEUR' and signalement.profileDeclarant.name != 'BAILLEUR_OCCUPANT')  
+				(
+				signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION 
+				or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE
+				) 
+			and 
+				(
+				signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR 
+				and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
+				)  
 			%}
 				<div class="fr-callout fr-icon-information-line">
 					<h2 class="fr-callout__title">Prévenez le propriétaire (bailleur)</h2>
@@ -133,7 +140,7 @@
 						Télécharger le courrier
 					</a>
 				</div>
-			{% elseif signalement.motifRefus and signalement.motifRefus.name == 'DOUBLON' %}
+			{% elseif signalement.motifRefus and signalement.motifRefus is same as enum('App\\Entity\\Enum\\MotifRefus').DOUBLON %}
 				<div class="fr-mb-1w">
 					{% include '_partials/_demande-lien-signalement-intro.html.twig' with {motifRefusDoublon: true} %}
 					{% include '_partials/_demande-lien-signalement-container.html.twig' with {formatVertical: true} %}

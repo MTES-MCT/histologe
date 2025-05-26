@@ -2679,7 +2679,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function hasSuiviUsagePostCloture(): bool
+    public function hasSuiviUsagerPostCloture(): bool
     {
         $suiviPostCloture = $this->getSuivis()->filter(function (Suivi $suivi) {
             return Suivi::TYPE_USAGER_POST_CLOTURE === $suivi->getType();

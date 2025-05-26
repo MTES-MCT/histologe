@@ -78,16 +78,16 @@ class SignalementTest extends KernelTestCase
         yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE];
     }
 
-    public function testHasNoSuiviUsagePostCloture(): void
+    public function testHasNoSuiviUsagerPostCloture(): void
     {
         $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
-        $this->assertFalse($signalement->hasSuiviUsagePostCloture());
+        $this->assertFalse($signalement->hasSuiviUsagerPostCloture());
     }
 
-    public function testHasSuiviUsagePostCloture(): void
+    public function testHasSuiviUsagerPostCloture(): void
     {
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-2']);
-        $this->assertTrue($signalement->hasSuiviUsagePostCloture());
+        $this->assertTrue($signalement->hasSuiviUsagerPostCloture());
     }
 }

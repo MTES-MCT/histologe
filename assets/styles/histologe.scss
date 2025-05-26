@@ -897,8 +897,20 @@ ul + p {
     background-color: var(--text-default-warning);
     display: inline-block;
 }
+
 .confetti.active{
     background-color: var(--text-default-success);
+}
+
+.fr-tile.tile-last-suivi {
+    height:auto;
+    .fr-tile__pictogram{
+        width:60px;
+        height:60px;
+        img{
+            width:100%;
+        }
+    }
 }
 
 #container-form-demande-lien-signalement.format-vertical{
