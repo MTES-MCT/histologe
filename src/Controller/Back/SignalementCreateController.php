@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -313,7 +312,7 @@ class SignalementCreateController extends AbstractController
         $action = $this->generateUrl('back_signalement_draft_form_coordonnees_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftCoordonneesType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formCoordonneesManager($form, $signalement)) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
@@ -400,8 +399,8 @@ class SignalementCreateController extends AbstractController
         if (null === $signalement->getIsLogementSocial()) {
             $errorMsgs[] = 'Vous devez renseigner le champ logement social pour pouvoir soumettre le signalement.';
         }
-        if (ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant() && !$signalement->getIsBailEnCours() && !$signalement->getIsLogementVacant()) {
-            $errorMsgs[] = 'Vous devez renseigner le champ Occupation du logement pour pouvoir soumettre le signalement.';
+        if (null === $signalement->getProfileDeclarant()) {
+            $errorMsgs[] = 'Vous devez renseigner le profil du déclarant pour pouvoir soumettre le signalement.';
         }
         if (!count($signalement->getDesordrePrecisions())) {
             $errorMsgs[] = 'Vous devez renseigner au moins un désordre pour pouvoir soumettre le signalement.';
@@ -418,22 +417,18 @@ class SignalementCreateController extends AbstractController
         if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
             /** @var User $user */
             $user = $this->getUser();
-            if (!$signalement->getProfileDeclarant()) {
-                $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
-            }
-            if (!$signalement->getMailDeclarant()) {
-                $signalement->setMailDeclarant($user->getEmail());
-            }
-            if (!$signalement->getNomDeclarant()) {
-                $signalement->setNomDeclarant($user->getNom());
-            }
-            if (!$signalement->getPrenomDeclarant()) {
-                $signalement->setPrenomDeclarant($user->getPrenom());
-            }
-            if (!$signalement->getStructureDeclarant()) {
-                $signalement->setStructureDeclarant($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())->getNom());
-            }
-            if (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT])) {
+            if ($signalement->isTiersDeclarant()) {
+                if (!$signalement->getMailDeclarant()) {
+                    $signalement->setMailDeclarant($user->getEmail());
+                }
+                if (!$signalement->getNomDeclarant()) {
+                    $signalement->setNomDeclarant($user->getNom());
+                }
+                if (!$signalement->getPrenomDeclarant()) {
+                    $signalement->setPrenomDeclarant($user->getPrenom());
+                }
+                $signalement->setIsNotOccupant(true);
+            } else {
                 if (!$signalement->getMailOccupant()) {
                     $signalement->setMailOccupant($user->getEmail());
                 }
@@ -443,8 +438,7 @@ class SignalementCreateController extends AbstractController
                 if (!$signalement->getPrenomOccupant()) {
                     $signalement->setPrenomOccupant($user->getPrenom());
                 }
-            } else {
-                $signalement->setIsNotOccupant(true);
+                $signalement->setIsNotOccupant(false);
             }
 
             $route = 'back_signalement_view';
