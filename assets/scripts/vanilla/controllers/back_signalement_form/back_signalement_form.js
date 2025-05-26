@@ -201,7 +201,6 @@ function initRefreshFromRadio(tabName, radioName, listElementsToEnable, valueToE
       (Array.isArray(valueToEnable) && valueToEnable.includes(radioInputValue)) ||
       (valueToEnable !== undefined && radioInputValue === valueToEnable)
     );
-
     listElementsToEnable.forEach((elementSelector) => {
       refreshElementEnable('enable', tabDestinationName ?? tabName, elementSelector, matchValue);
     })
@@ -215,6 +214,11 @@ function initRefreshFromRadio(tabName, radioName, listElementsToEnable, valueToE
 function refreshElementEnable(action, tabName, elementSelector, isEnabled) {
   const boFormSignalementTab = document?.querySelector('#bo-form-signalement-' + tabName)
   const elementSelected = boFormSignalementTab?.querySelector(elementSelector)
+
+
+  if (!elementSelected) {
+    return;
+  }
 
   if (isEnabled) {
     if (action === 'show') {

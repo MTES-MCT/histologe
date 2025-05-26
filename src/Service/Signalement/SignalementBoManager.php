@@ -35,7 +35,7 @@ class SignalementBoManager
 
     public function formAddressManager(FormInterface $form, Signalement $signalement): bool
     {
-        $signalement->setIsLogementVacant('oui' === $form->get('logementVacant')->getData());
+        $signalement->setIsLogementVacant($form->get('logementVacant')->getData());
 
         $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarant')->getData());
         $signalement->setProfileDeclarant($profileDeclarant);
