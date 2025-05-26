@@ -128,4 +128,4 @@ Le backup utilisé correspond généralement à la dernière sauvegarde complèt
 - [ ] Préparer un mail si les utilisateurs ont été affectés
 
 ## 🧠 Analyse Post-Incident
-- [ ] Consigner l’incident dans un Postmortem (template : [postmortem-template.md](postmortem-template.md))
+- [ ] Consigner l’incident dans un Postmortem (template : [template-postmortem.md](template-postmortem.md))
