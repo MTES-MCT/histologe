@@ -23,11 +23,11 @@ Ce dossier centralise l’ensemble des documents liés à la **gestion des incid
 
 ## 📄 Fiches disponibles
 
-| Nom du fichier                                                 | Description                                    |
-|----------------------------------------------------------------|------------------------------------------------|
-| [`procedure-database-deletion`](./procedure-database-deletion) | Suppression accidentelle de la base de données |
-| [`template-postmortem.md`](./template-postmortem.md)           | Modèle vierge pour rédiger un postmortem       |
-| [`template-procedure.md`](./template-procedure.md)             | Modèle vierge pour une procédure de résolution |
+| Nom du fichier                                                       | Description                                    |
+|----------------------------------------------------------------------|------------------------------------------------|
+| [`procedure-database-deletion.md`](./procedure-database-deletion.md) | Suppression accidentelle de la base de données |
+| [`template-postmortem.md`](./template-postmortem.md)                 | Modèle vierge pour rédiger un postmortem       |
+| [`template-procedure.md`](./template-procedure.md)                   | Modèle vierge pour une procédure de résolution |
 
 > 🆕 **À compléter** : ajoutez ici les nouveaux documents dès leur création.
 

@@ -72,7 +72,7 @@ Aprés avoir identifié la base de données cible et vérifier l'existence de sa
 
 1. **Créer un tunnel SSH sur la base cible**
 ```shell
- scalingo -a histologe-pr4118 db-tunnel SCALINGO_MYSQL_URL
+ scalingo -a [nom-application] db-tunnel SCALINGO_MYSQL_URL
 ```
 
 2. **Restaurer la base**
