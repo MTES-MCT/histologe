@@ -55,6 +55,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 description: SuiviManager::buildDescriptionAnswerAffectation($params),
                 type: Suivi::TYPE_AUTO,
                 user: $user,
+                category: SuiviCategory::AFFECTATION_IS_REFUSED,
             );
         }
 
@@ -65,6 +66,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 type: Suivi::TYPE_AUTO,
                 isPublic: $affectation->getHasNotificationUsagerToCreate(),
                 user: $user,
+                category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
             );
         }
         $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation());

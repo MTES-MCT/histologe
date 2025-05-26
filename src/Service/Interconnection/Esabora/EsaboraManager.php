@@ -247,6 +247,7 @@ class EsaboraManager
             type: Suivi::TYPE_PARTNER,
             user: $this->adminUser,
             context: Suivi::CONTEXT_SCHS,
+            category: SuiviCategory::MESSAGE_ESABORA,
             flush: false,
         );
         $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));

@@ -82,6 +82,7 @@ class SuiviManager extends Manager
                 description: $description.$user->getNomComplet(),
                 type: Suivi::TYPE_AUTO,
                 user: $user,
+                category: SuiviCategory::SIGNALEMENT_EDITED_BO,
             );
         }
     }

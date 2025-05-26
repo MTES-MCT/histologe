@@ -39,7 +39,6 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
                 && $response = $request->get('signalement-validation-response')) {
-            $suiviCategory = null;
             if (isset($response['accept'])) {
                 $suiviContext = Suivi::CONTEXT_SIGNALEMENT_ACCEPTED;
                 $statut = SignalementStatus::ACTIVE;
@@ -57,6 +56,7 @@ class SignalementActionController extends AbstractController
                 }
                 $signalement->setMotifRefus($motifRefus);
                 $description = 'Signalement cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
+                $suiviCategory = SuiviCategory::SIGNALEMENT_IS_REFUSED;
             }
             /** @var User $user */
             $user = $this->getUser();
@@ -107,6 +107,7 @@ class SignalementActionController extends AbstractController
                     type: Suivi::TYPE_PARTNER,
                     isPublic: !empty($payload['notifyUsager']),
                     user: $user,
+                    category: SuiviCategory::MESSAGE_PARTNER,
                 );
             } catch (\Throwable $exception) {
                 $logger->error($exception->getMessage());
@@ -190,6 +191,7 @@ class SignalementActionController extends AbstractController
                 type: Suivi::TYPE_AUTO,
                 isPublic: '1' === $request->get('publicSuivi'),
                 user: $user,
+                category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
             );
             $this->addFlash('success', 'Signalement rouvert avec succès !');
         } else {

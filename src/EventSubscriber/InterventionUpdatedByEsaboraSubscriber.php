@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Manager\SuiviManager;
@@ -37,6 +38,7 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             isPublic: true,
             user: $event->getUser(),
             context: Suivi::CONTEXT_INTERVENTION,
+            category: SuiviCategory::INTERVENTION_IS_RESCHEDULED
         );
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()

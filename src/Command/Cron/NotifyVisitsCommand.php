@@ -2,6 +2,7 @@
 
 namespace App\Command\Cron;
 
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Manager\InterventionManager;
@@ -61,6 +62,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 type: Suivi::TYPE_TECHNICAL,
                 isPublic: true,
                 context: Suivi::CONTEXT_INTERVENTION,
+                category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
             );
 
             $this->visiteNotifier->notifyUsagers(
@@ -114,6 +116,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                     type: Suivi::TYPE_TECHNICAL,
                     isPublic: false,
                     context: Suivi::CONTEXT_INTERVENTION,
+                    category: SuiviCategory::INTERVENTION_IS_REQUIRED,
                 );
 
                 $this->visiteNotifier->notifyAgents(

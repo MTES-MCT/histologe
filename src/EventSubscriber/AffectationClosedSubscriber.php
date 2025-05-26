@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\AffectationClosedEvent;
 use App\Manager\SignalementManager;
@@ -38,6 +39,7 @@ readonly class AffectationClosedSubscriber implements EventSubscriberInterface
             description: SuiviManager::buildDescriptionClotureSignalement($params),
             type: Suivi::TYPE_PARTNER,
             user: $user,
+            category: SuiviCategory::AFFECTATION_IS_CLOSED,
         );
 
         $signalement->addSuivi($suivi);

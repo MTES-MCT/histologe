@@ -19,8 +19,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 )]
 class InitSuiviCategoryCommand extends Command
 {
-    public const string UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE = 'UPDATE suivi SET category = :category WHERE description LIKE :description';
-    public const string UPDATE_SUIVI_CATEGORY_WHERE_CONTEXT_AND_DESCRIPTION_LIKE = 'UPDATE suivi SET category = :category WHERE context = :context AND description LIKE :description';
+    public const string UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE = 'UPDATE suivi SET category = :category WHERE description LIKE :description AND category IS NULL';
+    public const string UPDATE_SUIVI_CATEGORY_WHERE_CONTEXT_AND_DESCRIPTION_LIKE = 'UPDATE suivi SET category = :category WHERE context = :context AND description LIKE :description AND category IS NULL';
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -34,6 +34,13 @@ class InitSuiviCategoryCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $connection = $this->entityManager->getConnection();
+
+        // MESSAGE_USAGER
+        $sql = 'UPDATE suivi SET category = :category WHERE category IS NULL AND type IN ('.Suivi::TYPE_USAGER.','.Suivi::TYPE_USAGER_POST_CLOTURE.')';
+        $stmt = $connection->prepare($sql);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::MESSAGE_USAGER->name]);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie MESSAGE_USAGER', $rowCount));
 
         // ASK_DOCUMENT
         $askDocumentIntro = 'Bonjour,<br><br>';
@@ -54,12 +61,71 @@ class InitSuiviCategoryCommand extends Command
         $rowCount = $result->rowCount();
         $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie ASK_FEEDBACK_SENT', $rowCount));
 
+        // SIGNALEMENT_IS_REFUSED
+        $signalementIsRefusedDescriptionIntro = 'Le signalement a été refusé pour ';
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::SIGNALEMENT_IS_REFUSED->name, 'description' => $signalementIsRefusedDescriptionIntro.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_IS_REFUSED', $rowCount));
+
         // SIGNALEMENT_IS_ACTIVE
         $signalementIsActiveDescription = 'Signalement validé';
         $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
         $result = $stmt->executeQuery(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE->name, 'description' => $signalementIsActiveDescription]);
         $rowCount = $result->rowCount();
         $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_IS_ACTIVE', $rowCount));
+
+        // SIGNALEMENT_IS_CLOSED
+        $signalementIsClosedDescriptionIntro = 'Le signalement a été cloturé pour ';
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_CONTEXT_AND_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::SIGNALEMENT_IS_CLOSED->name, 'description' => $signalementIsClosedDescriptionIntro.'%', 'context' => Suivi::CONTEXT_SIGNALEMENT_CLOSED]);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_IS_CLOSED', $rowCount));
+
+        // SIGNALEMENT_IS_REOPENED
+        $signalementIsReopenedDescriptionIntro = 'Signalement rouvert pour ';
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::SIGNALEMENT_IS_REOPENED->name, 'description' => $signalementIsReopenedDescriptionIntro.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_IS_REOPENED', $rowCount));
+
+        // SIGNALEMENT_EDITED_BO
+        $signalementEditedBoIntro = [
+            'L\'adresse du logement a été modifiée par ',
+            'Les coordonnées du tiers déclarant ont été modifiées par ',
+            'Les coordonnées du foyer ont été modifiées par ',
+            'Les coordonnées du bailleur ont été modifiées par ',
+            'Les coordonnées de l\'agence ont été modifiées par ',
+            'Les informations sur le logement ont été modifiées par ',
+            'La description du logement a été modifiée par ',
+            'La situation du foyer a été modifiée par ',
+            'Les procédures et démarches ont été modifiées par ',
+        ];
+        foreach ($signalementEditedBoIntro as $intro) {
+            $intro = $this->htmlSanitizer->sanitize($intro);
+            $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+            $result = $stmt->executeQuery(['category' => SuiviCategory::SIGNALEMENT_EDITED_BO->name, 'description' => $intro.'%']);
+            $rowCount = $result->rowCount();
+            $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_EDITED_BO ('.$intro.')', $rowCount));
+        }
+
+        // SIGNALEMENT_STATUS_IS_SYNCHRO
+        $signalementStatusIsSynchroIntro = [
+            'Signalement <b>remis en attente via ',
+            'Signalement <b>accepté via ',
+            'Signalement <b>cloturé via ',
+            'Signalement <b>refusé via ',
+            'Le signalement a été accepté par IDOSS',
+            'Le signalement a été clôturé par IDOSS avec le motif suivant : ',
+            'Le signalement a été mis à jour ("',
+        ];
+        foreach ($signalementStatusIsSynchroIntro as $intro) {
+            $intro = $this->htmlSanitizer->sanitize($intro);
+            $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+            $result = $stmt->executeQuery(['category' => SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO->name, 'description' => $intro.'%']);
+            $rowCount = $result->rowCount();
+            $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_STATUS_IS_SYNCHRO ('.$intro.')', $rowCount));
+        }
 
         // AFFECTATION_IS_ACCEPTED
         $affectationIsAcceptedDescription = ' ';
@@ -72,6 +138,28 @@ class InitSuiviCategoryCommand extends Command
         $result = $stmt->executeQuery(['category' => SuiviCategory::AFFECTATION_IS_ACCEPTED->name, 'description' => $affectationIsAcceptedDescription]);
         $rowCount = $result->rowCount();
         $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie AFFECTATION_IS_ACCEPTED', $rowCount));
+
+        // AFFECTATION_IS_REFUSED
+        $affectationIsRefusedDescriptionIntro = 'Le signalement a été refusé avec le motif suivant : ';
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::AFFECTATION_IS_REFUSED->name, 'description' => $affectationIsRefusedDescriptionIntro.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie AFFECTATION_IS_REFUSED', $rowCount));
+
+        // AFFECTATION_IS_CLOSED
+        $affectationIsClosedDescriptionIntro = 'Le signalement a été cloturé pour ';
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::AFFECTATION_IS_CLOSED->name, 'description' => $affectationIsClosedDescriptionIntro.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie AFFECTATION_IS_CLOSED', $rowCount));
+
+        // INTERVENTION_IS_REQUIRED
+        $interventionIsRequiredIntro = 'La réalisation d\'une visite est nécessaire pour caractériser les désordres signalés.';
+        $interventionIsRequiredIntro = $this->htmlSanitizer->sanitize($interventionIsRequiredIntro);
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::INTERVENTION_IS_REQUIRED->name, 'description' => $interventionIsRequiredIntro.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie INTERVENTION_IS_REQUIRED', $rowCount));
 
         // INTERVENTION_IS_PLANNED
         $interventionIsPlannedIntro = 'Visite programmée : une visite du logement situé ';
@@ -87,6 +175,13 @@ class InitSuiviCategoryCommand extends Command
         $rowCount = $result->rowCount();
         $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie INTERVENTION_IS_CANCELED', $rowCount));
 
+        // INTERVENTION_IS_ABORTED
+        $interventionIsAbortedIntro = 'La visite du logement prévue le ';
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_CONTEXT_AND_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::INTERVENTION_IS_ABORTED->name, 'description' => $interventionIsAbortedIntro.'%', 'context' => Suivi::CONTEXT_INTERVENTION]);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie INTERVENTION_IS_ABORTED', $rowCount));
+
         // INTERVENTION_HAS_CONCLUSION
         $interventionHasConclusionIntro = 'Après visite du logement';
         $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_CONTEXT_AND_DESCRIPTION_LIKE);
@@ -94,51 +189,78 @@ class InitSuiviCategoryCommand extends Command
         $rowCount = $result->rowCount();
         $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie INTERVENTION_HAS_CONCLUSION', $rowCount));
 
-        // INTERVENTION_IS_RESCHEDULED
-        $interventionIsRescheduledIntro = 'Changement de date de visite : la visite du logement initialement prévue le ';
+        // INTERVENTION_HAS_CONCLUSION_EDITED
+        $interventionHasConclusionEditedIntro = 'Edition de la conclusion de la visite par ';
         $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_CONTEXT_AND_DESCRIPTION_LIKE);
-        $result = $stmt->executeQuery(['category' => SuiviCategory::INTERVENTION_IS_RESCHEDULED->name, 'description' => $interventionIsRescheduledIntro.'%', 'context' => Suivi::CONTEXT_INTERVENTION]);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED->name, 'description' => $interventionHasConclusionEditedIntro.'%', 'context' => Suivi::CONTEXT_INTERVENTION]);
         $rowCount = $result->rowCount();
-        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie INTERVENTION_IS_RESCHEDULED', $rowCount));
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie INTERVENTION_HAS_CONCLUSION_EDITED', $rowCount));
 
-        // SIGNALEMENT_STATUS_IS_SYNCHRO
-        $signalementStatusIsSynchroIntro = [
-            'Signalement <b>remis en attente via ',
-            'Signalement <b>accepté via ',
-            'Signalement <b>cloturé via ',
-            'Signalement <b>refusé via ',
-            'Le signalement a été accepté par IDOSS',
-            'Le signalement a été clôturé par IDOSS avec le motif suivant : ',
-            'Le signalement a été mis à jour ("',
+        // INTERVENTION_IS_RESCHEDULED
+        $interventionIsRescheduledIntro = [
+            'Changement de date de visite : la visite du logement initialement prévue le ',
+            'La date de visite dans ',
+            'La date de visite de contrôle dans ',
+            'La date de arrêté préfectoral dans ',
         ];
-        foreach ($signalementStatusIsSynchroIntro as $intro) {
-            $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
-            $result = $stmt->executeQuery(['category' => SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO->name, 'description' => $intro.'%']);
+        foreach ($interventionIsRescheduledIntro as $intro) {
+            $intro = $this->htmlSanitizer->sanitize($intro);
+            $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_CONTEXT_AND_DESCRIPTION_LIKE);
+            $result = $stmt->executeQuery(['category' => SuiviCategory::INTERVENTION_IS_RESCHEDULED->name, 'description' => $intro.'%', 'context' => Suivi::CONTEXT_INTERVENTION]);
             $rowCount = $result->rowCount();
-            $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_STATUS_IS_SYNCHRO ('.$intro.')', $rowCount));
+            $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie INTERVENTION_IS_RESCHEDULED ('.$intro.')', $rowCount));
         }
 
-        // SIGNALEMENT_IS_CLOSED
-        $signalementIsClosedDescription = 'Le signalement a été cloturé pour ';
+        // INTERVENTION_PLANNED_REMINDER
+        $interventionReminderIntro = '<strong>Rappel de visite :</strong> la visite du logement situé ';
         $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_CONTEXT_AND_DESCRIPTION_LIKE);
-        $result = $stmt->executeQuery(['category' => SuiviCategory::SIGNALEMENT_IS_CLOSED->name, 'description' => $signalementIsClosedDescription.'%', 'context' => Suivi::CONTEXT_SIGNALEMENT_CLOSED]);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::INTERVENTION_PLANNED_REMINDER->name, 'description' => $interventionReminderIntro.'%', 'context' => Suivi::CONTEXT_INTERVENTION]);
         $rowCount = $result->rowCount();
-        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie SIGNALEMENT_IS_CLOSED', $rowCount));
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie INTERVENTION_PLANNED_REMINDER', $rowCount));
+
+        // DOCUMENT_DELETED_BY_USAGER
+        $descriptionDocumentDeletedByUsagerIntro = 'Document supprimé par l\'usager :<ul><li>';
+        $descriptionDocumentDeletedByUsagerIntro = $this->htmlSanitizer->sanitize($descriptionDocumentDeletedByUsagerIntro);
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::DOCUMENT_DELETED_BY_USAGER->name, 'description' => $descriptionDocumentDeletedByUsagerIntro.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie DOCUMENT_DELETED_BY_USAGER (document)', $rowCount));
+
+        $descriptionPhotoDeletedByUsagerIntro = 'Photo supprimée par l\'usager :<ul><li>';
+        $descriptionPhotoDeletedByUsagerIntro = $this->htmlSanitizer->sanitize($descriptionPhotoDeletedByUsagerIntro);
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::DOCUMENT_DELETED_BY_USAGER->name, 'description' => $descriptionPhotoDeletedByUsagerIntro.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie DOCUMENT_DELETED_BY_USAGER (photo)', $rowCount));
+
+        // DOCUMENT_DELETED_BY_PARTNER
+        $descriptionDocumentDeletedByPartnerContains = ' a supprimé le document suivant :<ul><li>';
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::DOCUMENT_DELETED_BY_PARTNER->name, 'description' => '%'.$descriptionDocumentDeletedByPartnerContains.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie DOCUMENT_DELETED_BY_PARTNER (document)', $rowCount));
+
+        $descriptionPhotoDeletedByPartnerContains = ' a supprimé la photo suivante :<ul><li>';
+        $stmt = $connection->prepare(self::UPDATE_SUIVI_CATEGORY_WHERE_DESCRIPTION_LIKE);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::DOCUMENT_DELETED_BY_PARTNER->name, 'description' => '%'.$descriptionPhotoDeletedByPartnerContains.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie DOCUMENT_DELETED_BY_PARTNER (photo)', $rowCount));
 
         // NEW_DOCUMENT
         $descriptionNewDocumentContains = '<ul><li><a class="fr-link" target="_blank"';
-        $sql = 'UPDATE suivi SET category = :category WHERE category IS NULL AND description LIKE :description';
+        $sql = 'UPDATE suivi SET category = :category WHERE type = :type AND description LIKE :description AND category IS NULL';
         $stmt = $connection->prepare($sql);
-        $result = $stmt->executeQuery(['category' => SuiviCategory::NEW_DOCUMENT->name, 'description' => '%'.$descriptionNewDocumentContains.'%']);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::NEW_DOCUMENT->name, 'type' => Suivi::TYPE_AUTO, 'description' => '%'.$descriptionNewDocumentContains.'%']);
         $rowCount = $result->rowCount();
         $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie NEW_DOCUMENT', $rowCount));
 
-        // MESSAGE_USAGER
-        $sql = 'UPDATE suivi SET category = :category WHERE type IN ('.Suivi::TYPE_USAGER.','.Suivi::TYPE_USAGER_POST_CLOTURE.')';
+        // MESSAGE_PARTNER
+        /*$sql = 'UPDATE suivi SET category = :category WHERE type = :type AND category IS NULL';
         $stmt = $connection->prepare($sql);
-        $result = $stmt->executeQuery(['category' => SuiviCategory::MESSAGE_USAGER->name]);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::MESSAGE_PARTNER->name, 'type' => Suivi::TYPE_PARTNER]);
         $rowCount = $result->rowCount();
-        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie MESSAGE_USAGER', $rowCount));
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie MESSAGE_PARTNER', $rowCount));
+        $this->entityManager->flush();*/
 
         return Command::SUCCESS;
     }

@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\InterventionEditedEvent;
 use App\Manager\SuiviManager;
@@ -56,6 +57,7 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 isPublic: $event->isUsagerNotified(),
                 user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
+                category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
             );
 
             if ($event->isUsagerNotified()) {

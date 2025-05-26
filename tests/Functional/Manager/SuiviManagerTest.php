@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -74,6 +75,7 @@ class SuiviManagerTest extends KernelTestCase
             signalement : $signalement,
             description : SuiviManager::buildDescriptionClotureSignalement($params),
             type : Suivi::TYPE_PARTNER,
+            category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             isPublic : true,
         );
         $signalement->addSuivi($suivi);
@@ -102,7 +104,8 @@ class SuiviManagerTest extends KernelTestCase
         $suivi = $this->suiviManager->createSuivi(
             signalement : $signalement,
             description : $desc,
-            type : Suivi::TYPE_USAGER
+            type : Suivi::TYPE_USAGER,
+            category: SuiviCategory::MESSAGE_USAGER,
         );
         $this->assertEquals($descSanitized, $suivi->getDescription());
     }

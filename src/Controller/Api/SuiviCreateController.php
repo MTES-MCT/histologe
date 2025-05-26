@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Request\SuiviRequest;
 use App\Dto\Api\Response\SuiviResponse;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -148,6 +149,7 @@ class SuiviCreateController extends AbstractController
             type: Suivi::TYPE_PARTNER,
             isPublic: $suiviRequest->notifyUsager,
             user: $user,
+            category: SuiviCategory::MESSAGE_PARTNER
         );
 
         return $this->json(new SuiviResponse($suivi), Response::HTTP_CREATED);
