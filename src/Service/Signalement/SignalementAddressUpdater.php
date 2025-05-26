@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Entity\Signalement;
 use App\Service\Gouv\Ban\AddressService;
+use App\Service\Gouv\Rial\RialService;
 use App\Service\Gouv\Rnb\RnbService;
 
 class SignalementAddressUpdater
@@ -13,6 +14,7 @@ class SignalementAddressUpdater
     public function __construct(
         private readonly AddressService $addressService,
         private readonly RnbService $rnbService,
+        private readonly RialService $rialService,
     ) {
     }
 
@@ -33,8 +35,12 @@ class SignalementAddressUpdater
                     ]);
                 $buildings = $this->rnbService->getBuildings($signalement->getBanIdOccupant());
                 $signalement->setRnbIdOccupant('');
-                if (1 === count($buildings)) {
+                if (1 === \count($buildings)) {
                     $signalement->setRnbIdOccupant($buildings[0]->getRnbId());
+                }
+                $rialResult = $this->rialService->getSingleInvariantByBanId($signalement->getBanIdOccupant());
+                if ($rialResult) {
+                    $signalement->setNumeroInvariant($rialResult);
                 }
             }
 

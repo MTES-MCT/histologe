@@ -8,6 +8,7 @@ use Mock\Esabora\EsaboraSCHSMock;
 use Mock\Esabora\EsaboraSISHMock;
 use Mock\Idoss\IdossMock;
 use Mock\ProConnect\ProConnectMock;
+use Mock\Rial\RialMock;
 use WireMock\Client\WireMock;
 
 class AppMock
@@ -22,6 +23,7 @@ class AppMock
             EsaboraSISHMock::prepareMockForEsabora($wireMock);
             IdossMock::prepareMockForIdoss($wireMock);
             ProConnectMock::prepareAuthorizationMock($wireMock);
+            RialMock::prepare($wireMock);
         } catch (\Throwable $exception) {
             printf('Error message: %s', $exception->getMessage());
         }
