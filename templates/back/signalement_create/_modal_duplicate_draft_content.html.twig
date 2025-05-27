@@ -1,0 +1,9 @@
+{% set lastDuplicate = duplicates|last %}
+<p>
+    Vous avez déjà un brouillon de signalement à cette adresse postale.
+    <br>
+    Il s'agit du brouillon du {{ lastDuplicate.createdAt|date('d/m/Y') }} créé à {{ lastDuplicate.createdAt|date('H:i') }}
+</p>
+<p>
+    Avant de poursuivre la création de ce signalement, nous vous invitons à vérifier qu'il en s'agit pas d'un doublon !
+</p>

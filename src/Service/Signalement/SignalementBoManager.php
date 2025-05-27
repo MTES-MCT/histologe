@@ -94,7 +94,6 @@ class SignalementBoManager
         if (!$signalement->getReference()) {
             $signalement->setReference($this->referenceGenerator->generate($territory));
         }
-
         return true;
     }
 
