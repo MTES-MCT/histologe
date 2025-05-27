@@ -66,7 +66,9 @@
 						{% else %}
 							{% if suiviCategory %}
 								<h3 class="fr-tile__title">
-									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">{{suiviCategory.title}}</a>
+									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}{% if suiviCategory.suivi.id %}#suivi_{{suiviCategory.suivi.id}}{% endif %}">
+										{{suiviCategory.title}}
+									</a>
 								</h3>            
 								<p class="fr-tile__detail">{{suiviCategory.suivi.createdAt|date('d/m/Y')}}</p>
 								<div class="fr-tile__start">

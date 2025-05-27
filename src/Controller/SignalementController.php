@@ -593,11 +593,17 @@ class SignalementController extends AbstractController
 
         if ($this->featureSuiviAction) {
             $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement);
+            $suiviCategory = null;
+            if (!$lastSuiviPublic && SignalementStatus::CLOSED === $signalement->getStatut()) {
+                $suiviCategory = $suiviCategorizerService->getSuiviCategoryFromEnum(SuiviCategory::SIGNALEMENT_IS_CLOSED);
+            } elseif ($lastSuiviPublic) {
+                $suiviCategory = $suiviCategorizerService->getSuiviCategoryFromSuivi($lastSuiviPublic);
+            }
 
             return $this->render('front/suivi_signalement_dashboard.html.twig', [
                 'signalement' => $signalement,
                 'formDemandeLienSignalement' => $formDemandeLienSignalement,
-                'suiviCategory' => $lastSuiviPublic ? $suiviCategorizerService->getSuiviCategory($lastSuiviPublic) : null,
+                'suiviCategory' => $suiviCategory,
             ]);
         }
 
