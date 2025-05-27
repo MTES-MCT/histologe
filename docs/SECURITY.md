@@ -66,5 +66,15 @@ Lorsque l’équipe reçoit un rapport sur une faille de sécurité, elle procè
 - Préparer les correctifs, les merger sur la branche production et les déployer
 - Communiquer par mattermost aux différentes instances connues que le correctif est disponible sur la branche principale
 
+## Procédures de gestion d’incidents
+
+Pour consulter les procédures détaillées de réponse aux incidents techniques  
+(ex. suppression accidentelle de données, privilèges excessifs, etc.),  
+vous pouvez consulter le répertoire suivant :
+
+➡️ [**Procédures de gestion des incidents**](./incident-response/README.md)
+
+
+
 ### Commentaires sur cette politique
 Si vous avez des suggestions sur la façon dont ce processus pourrait être amélioré, veuillez soumettre une demande de téléchargement.
