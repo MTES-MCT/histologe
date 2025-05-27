@@ -108,6 +108,7 @@ function saveCurrentTab(event) {
             const modaleDuplicateOpenLink = document.querySelector('#fr-modal-duplicate-open-duplicates')
             modaleDuplicateContainer.innerHTML = response.duplicateContent
             modaleDuplicateOpenLink.href = response.linkDuplicates
+            modaleDuplicateOpenLink.textContent = response.labelBtnDuplicates
             dsfr(modaleDuplicate).modal.disclose();
           } else {
             const errorAlertStr = '<div class="fr-alert fr-alert--sm fr-alert--error fr-mb-2v" role="alert"><p class="fr-alert__title">Merci de corriger les champs où des erreurs sont signalées.</p></div>'

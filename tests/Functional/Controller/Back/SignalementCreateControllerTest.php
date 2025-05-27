@@ -55,6 +55,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('hasDuplicates', $response);
         $this->assertTrue($response['hasDuplicates']);
+        $this->assertStringContainsString('Voir les signalements', $response['labelBtnDuplicates']);
 
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
@@ -75,6 +76,55 @@ class SignalementCreateControllerTest extends WebTestCase
             'adresseOccupant' => '8 Rue de la tourmentinerie',
             'cpOccupant' => '44850',
             'villeOccupant' => 'Saint-Mars-du-Désert',
+        ], ['createdAt' => 'DESC']);
+        $this->assertCount(2, $signalements);
+        $this->assertEquals($user->getId(), $signalements[0]->getCreatedBy()->getId());
+        $this->assertEquals(SignalementStatus::DRAFT, $signalements[0]->getStatut());
+        $this->assertEquals(44, $signalements[1]->getTerritory()->getZip());
+    }
+
+    public function testCreateWithDoublonDraft()
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-44-02@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $crawler = $this->client->request('GET', '/bo/signalement/brouillon/creer');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('#bo-form-signalement-adresse')->form();
+        $form->setValues([
+            'signalement_draft_address[adresseCompleteOccupant]' => 'Route des Funeries 44850 Le Cellier',
+            'signalement_draft_address[isLogementSocial]' => '1',
+            'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('hasDuplicates', $response);
+        $this->assertTrue($response['hasDuplicates']);
+        $this->assertStringContainsString('Voir mes brouillons', $response['labelBtnDuplicates']);
+        $this->assertStringContainsString('Vous avez déjà un brouillon de signalement à cette adresse postale', $response['duplicateContent']);
+
+        $form->setValues([
+            'signalement_draft_address[adresseCompleteOccupant]' => 'Route des Funeries 44850 Le Cellier',
+            'signalement_draft_address[isLogementSocial]' => '1',
+            'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
+            'signalement_draft_address[forceSave]' => '1',
+        ]);
+
+        $this->client->submit($form);
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalement/brouillon/editer/', $response['url']);
+
+        $signalements = $this->signalementRepository->findBy([
+            'adresseOccupant' => 'Route des Funeries',
+            'cpOccupant' => '44850',
+            'villeOccupant' => 'Le Cellier',
         ], ['createdAt' => 'DESC']);
         $this->assertCount(2, $signalements);
         $this->assertEquals($user->getId(), $signalements[0]->getCreatedBy()->getId());
