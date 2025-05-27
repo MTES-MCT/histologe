@@ -13,15 +13,22 @@
 ## 🗃️ Vérification
 `A compléter`
 
+---
 
 ## 🔁 Restauration ou correction
 `A compléter`
 
+---
+
 ## ✅ Vérifications Post-Restauration ou correction
 `A compléter`
 
+---
+
 ## 📣 Communication
 `A compléter`
+
+---
 
 ## 🧠 Analyse Post-Incident
 `A compléter`
