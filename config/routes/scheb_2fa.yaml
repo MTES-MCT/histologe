@@ -1,9 +1,20 @@
 2fa_login:
     path: /2fa
-    schemes: [https]
+    schemes: [http]
     defaults:
         _controller: "scheb_two_factor.form_controller::form"
 
 2fa_login_check:
     path: /2fa_check
-    schemes: [https]
+    schemes: [http]
+
+when@prod:
+    2fa_login:
+        path: /2fa
+        schemes: [https]
+        defaults:
+            _controller: "scheb_two_factor.form_controller::form"
+
+    2fa_login_check:
+        path: /2fa_check
+        schemes: [https]
