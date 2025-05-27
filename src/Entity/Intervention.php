@@ -40,6 +40,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $scheduledAt = null;
+    private ?\DateTimeImmutable $previousScheduledAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $registeredAt = null;
@@ -392,6 +393,18 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     public function setExternalOperator(?string $externalOperator): static
     {
         $this->externalOperator = $externalOperator;
+
+        return $this;
+    }
+
+    public function getPreviousScheduledAt(): ?\DateTimeImmutable
+    {
+        return $this->previousScheduledAt;
+    }
+
+    public function setPreviousScheduledAt(?\DateTimeImmutable $previousScheduledAt): self
+    {
+        $this->previousScheduledAt = $previousScheduledAt;
 
         return $this;
     }

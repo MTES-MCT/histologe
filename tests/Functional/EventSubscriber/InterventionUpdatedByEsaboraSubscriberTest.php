@@ -45,7 +45,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         $eventDispatcher->addSubscriber($interventionUpdatedByEsaboraSubscriber);
 
         $intervention = $interventions[0];
-
+        $intervention->setPreviousScheduledAt($intervention->getScheduledAt());
         $eventDispatcher->dispatch(
             new InterventionUpdatedByEsaboraEvent($intervention, $user),
             InterventionUpdatedByEsaboraEvent::NAME

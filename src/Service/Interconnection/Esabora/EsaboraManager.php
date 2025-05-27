@@ -326,6 +326,7 @@ class EsaboraManager
             $affectation->getSignalement()->getTimezone()
         );
         if ($intervention->getScheduledAt()?->getTimestamp() !== $scheduledAt->getTimestamp()) {
+            $intervention->setPreviousScheduledAt($intervention->getScheduledAt());
             $intervention->setScheduledAt($scheduledAt);
             $hasChanged = true;
         }
@@ -339,7 +340,6 @@ class EsaboraManager
                 if ($intervention->getExternalOperator() !== $visitePar) {
                     $intervention->setExternalOperator($visitePar);
                     $intervention->setPartner(null);
-                    $hasChanged = true;
                 }
             }
         }
