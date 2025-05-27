@@ -123,7 +123,7 @@ drop-db: ## Drop database
 load-data: ## Load database from dump
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:drop --force --no-interaction || true"
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:database:create --no-interaction"
-	@$(DOCKER_COMP) exec -T signal_logement_mysql mysql -u $(DATABASE_USER) -psignal_logement $(DATABASE_NAME) < $(PATH_DUMP_SQL)
+	@pv $(PATH_DUMP_SQL) | $(DOCKER_COMP) exec -T signal_logement_mysql mysql -u $(DATABASE_USER) -psignal_logement $(DATABASE_NAME)
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(SYMFONY) --env=dev doctrine:migrations:migrate --no-interaction"
 
 migration: ## Generate migration

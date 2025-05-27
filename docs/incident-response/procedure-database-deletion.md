@@ -76,8 +76,10 @@ Aprés avoir identifié la base de données cible et vérifier l'existence de sa
 ```
 
 2. **Restaurer la base**
+
+Ouvrir un nouveau terminal et exécuter la commande suivante :
 ```shell
- mysql -h 127.0.0.1 -P 10000 -u <nom_utilisateur> <nom_base_de_donnees> < dump.sql
+  pv data/dump.sql | mysql -h 127.0.0.1 -P 10000 -u <nom_utilisateur> -p <nom_base_de_donnees>
 ```
 
 Ensuite, vous serez invité à entrer le mot de passe comme ceci :
@@ -118,7 +120,6 @@ Le backup utilisé correspond généralement à la dernière sauvegarde complèt
 - Communiquez cette information de manière transparente aux parties concernées.
 - Mentionnez-la dans le **postmortem** si la perte de données est avérée.
 
-
 ## ✅ Vérifications Post-Restauration
 - [ ] Tests applicatifs (connexion, lecture/écriture)
 - [ ] Vérifier que les utilisateurs peuvent à nouveau se connecter
@@ -128,4 +129,4 @@ Le backup utilisé correspond généralement à la dernière sauvegarde complèt
 - [ ] Préparer un mail si les utilisateurs ont été affectés
 
 ## 🧠 Analyse Post-Incident
-- [ ] Consigner l’incident dans un Postmortem (template : [template-postmortem.md](template-postmortem.md))
+- [ ] Consigner l’incident dans un Postmortem (template : [template postmortem.md](template-postmortem.md))

@@ -93,7 +93,7 @@ Résumé des actions correctives qui ont permis de résoudre l'incident.
 
 - Logs de l’incident : [📎 lien]
 - Screenshots / captures : [📎 lien]
-- Référence à la procédure suivie : `incident-response/remediation-accidental-database-deletion.md`
+- Référence à la procédure suivie : `incident-response/procedure-database-deletion.md`
 
 ---
 
