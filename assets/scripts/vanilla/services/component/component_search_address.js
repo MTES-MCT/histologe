@@ -32,53 +32,58 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
   }
   const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
   const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
+  let addressFetchTimeout = null
   inputAdresse.addEventListener('input', (e) => {
+    clearTimeout(addressFetchTimeout)
     const adresse = e.target.value
-    if (adresse.length > 8) {
-      let query = apiAdresse + adresse
-      const limit = inputAdresse.getAttribute('data-form-limit')
-      if (inputAdresse.getAttribute('data-form-lat')) {
-        query += '&lat=' + inputAdresse.getAttribute('data-form-lat')
-      }
-      if (inputAdresse.getAttribute('data-form-lng')) {
-        query += '&lon=' + inputAdresse.getAttribute('data-form-lng')
-      }
-      fetch(query)
-        .then(response => response.json())
-        .then(json => {
-          addressGroup.innerHTML = ''
-          json.features.forEach((feature) => {
-            if (limit === null || feature.properties.citycode.startsWith(limit)) {
-              const suggestion = document.createElement('div')
-              suggestion.classList.add(
-                'fr-col-12',
-                'fr-p-3v',
-                'fr-text-label--blue-france',
-                'fr-adresse-suggestion'
-              )
-              suggestion.innerHTML = feature.properties.label
-              attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix)
-              addressGroup.appendChild(suggestion)
-            }
+
+    addressFetchTimeout = setTimeout(() => {
+      if (adresse.length > 8) {
+        let query = apiAdresse + adresse
+        const limit = inputAdresse.getAttribute('data-form-limit')
+        if (inputAdresse.getAttribute('data-form-lat')) {
+          query += '&lat=' + inputAdresse.getAttribute('data-form-lat')
+        }
+        if (inputAdresse.getAttribute('data-form-lng')) {
+          query += '&lon=' + inputAdresse.getAttribute('data-form-lng')
+        }
+        fetch(query)
+          .then(response => response.json())
+          .then(json => {
+            addressGroup.innerHTML = ''
+            json.features.forEach((feature) => {
+              if (limit === null || feature.properties.citycode.startsWith(limit)) {
+                const suggestion = document.createElement('div')
+                suggestion.classList.add(
+                  'fr-col-12',
+                  'fr-p-3v',
+                  'fr-text-label--blue-france',
+                  'fr-adresse-suggestion'
+                )
+                suggestion.innerHTML = feature.properties.label
+                attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix)
+                addressGroup.appendChild(suggestion)
+              }
+            })
           })
-        })
-    }
-    if (adresse.length === 0) {
-      addressGroup.innerHTML = ''
-      const idForm = inputAdresse.closest('form').id
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-addresse'+suffix+']')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-addresse'+suffix+']').value = ''
       }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-codepostal'+suffix+']')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-codepostal'+suffix+']').value = ''
+      if (adresse.length === 0) {
+        addressGroup.innerHTML = ''
+        const idForm = inputAdresse.closest('form').id
+        if (document?.querySelector('#' + idForm + ' [data-autocomplete-addresse'+suffix+']')) {
+          document.querySelector('#' + idForm + ' [data-autocomplete-addresse'+suffix+']').value = ''
+        }
+        if (document?.querySelector('#' + idForm + ' [data-autocomplete-codepostal'+suffix+']')) {
+          document.querySelector('#' + idForm + ' [data-autocomplete-codepostal'+suffix+']').value = ''
+        }
+        if (document?.querySelector('#' + idForm + ' [data-autocomplete-ville'+suffix+']')) {
+          document.querySelector('#' + idForm + ' [data-autocomplete-ville'+suffix+']').value = ''
+        }
+        if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee'+suffix+']')) {
+          document.querySelector('#' + idForm + ' [data-autocomplete-insee'+suffix+']').value = ''
+        }
       }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-ville'+suffix+']')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-ville'+suffix+']').value = ''
-      }
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-insee'+suffix+']')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-insee'+suffix+']').value = ''
-      }
-    }
+    }, 200)
   })
 
   inputAdresse.addEventListener('keydown', (e) => {
