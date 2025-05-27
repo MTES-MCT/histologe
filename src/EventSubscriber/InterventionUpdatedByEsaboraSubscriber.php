@@ -44,8 +44,9 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
         ) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
-                notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER, // TYPE_VISITE_RESCHEDULED_TO_USAGER ou TYPE_VISITE_EDITED_TO_USAGER ?
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
                 suivi: $suivi,
+                previousDate: $intervention->getPreviousScheduledAt()
             );
         }
 

@@ -140,6 +140,7 @@ class EsaboraManager
     {
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierVisiteSISH->getVisiteId()]);
         if (null !== $intervention) {
+            $intervention->setPreviousScheduledAt($intervention->getScheduledAt());
             $isVisiteUpdated = $this->updateFromDossierVisite($intervention, $dossierVisiteSISH, $affectation);
             if ($isVisiteUpdated) {
                 $this->eventDispatcher->dispatch(
@@ -339,7 +340,6 @@ class EsaboraManager
                 if ($intervention->getExternalOperator() !== $visitePar) {
                     $intervention->setExternalOperator($visitePar);
                     $intervention->setPartner(null);
-                    $hasChanged = true;
                 }
             }
         }
