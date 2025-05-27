@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Files\ImageVariantProvider;
+use App\Service\Gouv\Rial\RialService;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
@@ -95,9 +96,11 @@ class SecurityController extends AbstractController
         name: 'app_login',
         defaults: ['show_sitemap' => true]
     )]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, RialService $rialService): Response
     {
-        // ICI GIGA PALLIER
+        //$test = $rialService->generateAccessToken();
+        $test = $rialService->searchLocauxByAdresse(57, 463, 1270, 2);
+        dd($test);
 
         $title = 'Connexion';
         if ($this->getUser()) {
