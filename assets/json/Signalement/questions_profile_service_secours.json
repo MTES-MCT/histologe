@@ -448,7 +448,7 @@
                 "action": "goto.save:zone_concernee",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "formStore.data.signalement_concerne_logement_social_service_secours !== 'oui' || formStore.data.info_procedure_bailleur_prevenu === 'nsp' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() >= 3)"
+                  "show": "formStore.data.signalement_concerne_logement_social_service_secours !== 'oui' || formStore.data.info_procedure_bailleur_prevenu === 'nsp' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() >= 2)"
                 }
               },
               {
@@ -458,7 +458,7 @@
                 "action": "goto.save:prevenir_bailleur_info",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "formStore.data.signalement_concerne_logement_social_service_secours === 'oui' && (formStore.data.info_procedure_bailleur_prevenu === 'non' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() < 3))"
+                  "show": "formStore.data.signalement_concerne_logement_social_service_secours === 'oui' && (formStore.data.info_procedure_bailleur_prevenu === 'non' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() < 2))"
                 }
               },
               {
