@@ -140,7 +140,6 @@ class EsaboraManager
     {
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierVisiteSISH->getVisiteId()]);
         if (null !== $intervention) {
-            $intervention->setPreviousScheduledAt($intervention->getScheduledAt());
             $isVisiteUpdated = $this->updateFromDossierVisite($intervention, $dossierVisiteSISH, $affectation);
             if ($isVisiteUpdated) {
                 $this->eventDispatcher->dispatch(
@@ -327,6 +326,7 @@ class EsaboraManager
             $affectation->getSignalement()->getTimezone()
         );
         if ($intervention->getScheduledAt()?->getTimestamp() !== $scheduledAt->getTimestamp()) {
+            $intervention->setPreviousScheduledAt($intervention->getScheduledAt());
             $intervention->setScheduledAt($scheduledAt);
             $hasChanged = true;
         }
