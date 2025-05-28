@@ -10,28 +10,34 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 class RialServiceTest extends TestCase
 {
-    // private const BAN_ID = '30348_0430_00015';
-    // private const RNB_ID = 'FQYN6F6WPEJ8';
+    public const string API_WIREMOCK_URL = 'http://localhost:8082';
+
     private RialService $rialService;
 
     protected function setUp(): void
     {
-        /*
-        $mockResponse = new MockResponse(
-            file_get_contents(__DIR__.'/../../../../files/betagouv/get_api_rnb_buildings_response.json')
-        );
+        /** @var LoggerInterface $logger */
+        $logger = $this->createMock(LoggerInterface::class);
+        $mockResponse = new MockResponse('{"listeIdentifiantsFiscaux": ["2A0049934148"]}');
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $this->rialService = new RialService($mockHttpClient, $this->createMock(LoggerInterface::class));
-        */
+        $this->rialService = new RialService(
+            $mockHttpClient,
+            $logger,
+            self::API_WIREMOCK_URL,
+            'rialKey',
+            'rialSecret',
+        );
     }
 
-    public function testGetLocaux(): void
+    public function testGetNullAccessToken(): void
     {
-        /*
-        $buildings = $this->rialService->getBuildings(self::BAN_ID);
-        $this->assertIsArray($buildings);
-        $this->assertCount(1, $buildings);
-        $this->assertSame(self::RNB_ID, $buildings[0]->getRnbId());
-        */
+        $response = $this->rialService->getAccesssToken();
+        $this->assertNull($response);
+    }
+
+    public function testGetNullLocaux(): void
+    {
+        $response = $this->rialService->searchLocauxByAdresse('2a004_0820_00002');
+        $this->assertNull($response);
     }
 }

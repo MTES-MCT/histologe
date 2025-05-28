@@ -98,8 +98,8 @@ class SecurityController extends AbstractController
     )]
     public function login(AuthenticationUtils $authenticationUtils, RialService $rialService): Response
     {
-        //$test = $rialService->generateAccessToken();
-        $test = $rialService->searchLocauxByAdresse(57, 463, 1270, 2);
+        $rialService->generateAccessToken();
+        $test = $rialService->searchLocauxByAdresse('2A004_1220_00001');
         dd($test);
 
         $title = 'Connexion';
