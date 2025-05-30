@@ -37,6 +37,7 @@ class AffectationManager extends Manager
         int $status,
         ?string $motifRefus = null,
         ?string $message = null,
+        ?bool $dispatchAffectationAnsweredEvent = true,
     ): Affectation {
         $affectation
             ->setStatut($status)
@@ -52,7 +53,9 @@ class AffectationManager extends Manager
         }
 
         $this->save($affectation);
-        $this->dispatchAffectationAnsweredEvent($affectation, $user, $status, $affectation->getMotifRefus(), $message);
+        if ($dispatchAffectationAnsweredEvent) {
+            $this->dispatchAffectationAnsweredEvent($affectation, $user, $status, $affectation->getMotifRefus(), $message);
+        }
 
         return $affectation;
     }

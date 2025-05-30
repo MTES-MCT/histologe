@@ -117,7 +117,12 @@ class EsaboraManager
                 break;
             case EsaboraStatus::ESABORA_REJECTED->value:
                 if (Affectation::STATUS_REFUSED !== $currentStatus) {
-                    $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
+                    $this->affectationManager->updateAffectation(
+                        affectation: $affectation,
+                        user: $user,
+                        status: Affectation::STATUS_REFUSED,
+                        dispatchAffectationAnsweredEvent: false
+                    );
                     $description = \sprintf(
                         'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s',
                         $dossierResponse->getSasCauseRefus()
