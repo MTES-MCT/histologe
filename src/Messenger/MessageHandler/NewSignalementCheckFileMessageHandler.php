@@ -219,9 +219,9 @@ class NewSignalementCheckFileMessageHandler
             signalement: $signalement,
             description: $this->description,
             type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::ASK_DOCUMENT,
             isPublic: true,
             context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
-            category: SuiviCategory::ASK_DOCUMENT,
         );
     }
 }

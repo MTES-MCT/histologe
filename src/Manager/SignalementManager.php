@@ -905,9 +905,9 @@ class SignalementManager extends AbstractManager
             signalement: $signalement,
             description: 'Signalement validé',
             type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             isPublic: true,
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
-            category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             flush: false
         );
         $this->persist($suivi);

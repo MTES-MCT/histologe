@@ -40,10 +40,10 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
                 signalement: $signalement,
                 description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 isPublic: true,
                 user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]),
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
-                category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 flush: false,
             );
             $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');
@@ -86,11 +86,11 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             signalement: $signalement,
             description: $row['description'],
             type: $row['type'],
+            category: $category,
             isPublic: $row['is_public'],
             user: $createdBy,
             createdAt: $createdAt,
             context: $context,
-            category: $category,
             flush: false,
         );
         $manager->persist($suivi);

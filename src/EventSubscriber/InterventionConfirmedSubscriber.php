@@ -70,10 +70,10 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::INTERVENTION_HAS_CONCLUSION,
                 isPublic: $isUsagerNotified,
                 user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
-                category: SuiviCategory::INTERVENTION_HAS_CONCLUSION,
             );
 
             if ($isUsagerNotified) {

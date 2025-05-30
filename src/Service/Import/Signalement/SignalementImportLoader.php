@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -275,6 +276,7 @@ class SignalementImportLoader
                         signalement: $signalement,
                         description: $description,
                         type: Suivi::TYPE_PARTNER,
+                        category: SuiviCategory::MESSAGE_PARTNER,
                         flush: false
                     );
 
