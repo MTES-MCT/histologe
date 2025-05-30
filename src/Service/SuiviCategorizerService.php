@@ -33,7 +33,7 @@ class SuiviCategorizerService
             'title' => 'Nouveaux documents disponibles',
             'icon' => 'document.svg',
         ],
-        SuiviCategory::INTERVENTION_IS_PLANNED->name => [
+        SuiviCategory::INTERVENTION_IS_CREATED->name => [
             'label' => 'Nouveauté',
             'labelClass' => 'fr-badge--success',
             'title' => 'Visite du logement programmée',
