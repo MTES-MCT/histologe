@@ -55,4 +55,18 @@ class SignalementDraftRepository extends ServiceEntityRepository implements Enti
 
         return $queryBuilder->getQuery()->execute();
     }
+
+    public function findPendingBlockedBailLast3Months(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->where('s.status = :status')
+            ->andWhere('s.currentStep = :current_step')
+            ->andWhere('DATE(s.updatedAt) >= :min_updated_at')
+            ->andWhere('s.pendingDraftRemindedAt is NULL')
+            ->setParameter('status', SignalementDraftStatus::EN_COURS)
+            ->setParameter('current_step', 'info_procedure_bail')
+            ->setParameter('min_updated_at', (new \DateTimeImmutable('- 3 months'))->format('Y-m-d'));
+
+        return $queryBuilder->getQuery()->execute();
+    }
 }
