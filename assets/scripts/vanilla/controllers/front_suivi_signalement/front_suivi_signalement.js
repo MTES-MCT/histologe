@@ -123,7 +123,7 @@ if (modalUploadFiles) {
     } else {
       data.append('signalement-add-file[documents][]', file)
     }
-    data.append('email', document.querySelector('#suivi_from_email').value)
+    data.append('email', document.querySelector('#suivi_from_email')?.value) //remove when FEATURE_SUIVI_ACTION is removed
     data.append('_token', addFileToken)
     http.upload.onprogress = (e) => {
       const percentComplete = (e.loaded / e.total) * 100

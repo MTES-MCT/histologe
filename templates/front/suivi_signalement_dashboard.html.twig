@@ -4,39 +4,20 @@
 
 {% block body %}
 
-<main class="fr-container fr-py-5w" id="content">
+<main class="fr-container fr-pb-5w" id="content">
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" aria-current="page">Votre dossier #{{ signalement.reference }}</a></li>
+			</ol>
+		</div>
+	</nav>
 
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-md-6">
 			<h1 class="title-blue-france">Votre dossier</h1>
-
-			<div class="signalement-card fr-mb-3w">
-				<div class="fr-grid-row fr-grid-row--gutters">
-					<div class="fr-col-12 fr-col-md-6">
-						Déclarant
-						<br>
-						<span class="info">{{ signalement.prenomDeclarant }} {{ signalement.nomDeclarant }}</span>
-					</div>
-					<div class="fr-col-12 fr-col-md-6">
-						Référence du dossier
-						<br>
-						<span class="info">#{{ signalement.reference }}</span>
-					</div>
-					<div class="fr-col-12 fr-col-md-6">
-						Personne occupant le logement
-						<br>
-						<span class="info">{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</span>
-					</div>
-					<div class="fr-col-12 fr-col-md-6">
-						Statut du dossier
-						<br>
-						<span class="info">
-							<span class="confetti {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}active{% endif %}"></span>
-						 	{{ signalement.statutLabel }}
-						</span>
-					</div>
-				</div>	
-			</div>
+			{% include 'front/_partials/_suivi_signalement_card.html.twig' with {link: false} %}
 
 			<h2 class="title-blue-france">Accès rapide</h2>
 

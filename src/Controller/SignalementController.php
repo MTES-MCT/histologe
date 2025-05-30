@@ -14,10 +14,12 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SuiviViewedEvent;
 use App\Form\DemandeLienSignalementType;
+use App\Form\MessageUsagerType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
+use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Security\User\SignalementUser;
@@ -30,6 +32,7 @@ use App\Service\Security\FileScanner;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDuplicateChecker;
+use App\Service\Signalement\SuiviSeenMarker;
 use App\Service\SuiviCategorizerService;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -652,17 +655,16 @@ class SignalementController extends AbstractController
         $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
         $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
 
-        if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
-            $currentUser = $security->getUser();
-            if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getUserIdentifier() !== $code) {
-                // get the login error if there is one
-                $error = $authenticationUtils->getLastAuthenticationError();
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
 
-                return $this->render('security/login_suivi_signalement.html.twig', [
-                    'signalement' => $signalement,
-                    'error' => $error,
-                ]);
-            }
+            return $this->render('security/login_suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+                'error' => $error,
+            ]);
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
@@ -685,6 +687,14 @@ class SignalementController extends AbstractController
     public function suiviSignalementMessages(
         string $code,
         SignalementRepository $signalementRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
+        Security $security,
+        AuthenticationUtils $authenticationUtils,
+        Request $request,
+        FileRepository $fileRepository,
+        UploadHandlerService $uploadHandlerService,
+        SuiviManager $suiviManager,
+        SuiviSeenMarker $suiviSeenMarker,
     ): Response {
         if (!$this->featureSuiviAction) {
             throw $this->createNotFoundException();
@@ -695,8 +705,75 @@ class SignalementController extends AbstractController
 
             return $this->render('front/flash-messages.html.twig');
         }
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
 
-        return new Response('<html><body>TODO</body></html>');
+            return $this->render('security/login_suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+                'error' => $error,
+            ]);
+        }
+
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
+        $formMessage = $this->createForm(MessageUsagerType::class);
+        $formMessage->handleRequest($request);
+        if ($this->isGranted('SIGN_USAGER_EDIT', $signalement) && $formMessage->isSubmitted() && $formMessage->isValid()) {
+            $description = nl2br(htmlspecialchars($formMessage->get('description')->getData(), \ENT_QUOTES, 'UTF-8'));
+
+            $docs = $fileRepository->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $currentUser->getUser()]);
+            if (\count($docs)) {
+                $descriptionList = [];
+                foreach ($docs as $doc) {
+                    if ($uploadHandlerService->deleteIfExpiredFile($doc)) {
+                        continue;
+                    }
+                    $doc->setIsTemp(false);
+                    $url = $this->generateUrl('show_file', ['uuid' => $doc->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $descriptionList[] = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$doc->getTitle().'</a></li>';
+                }
+                $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
+            }
+
+            $typeSuivi = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                type: $typeSuivi,
+                isPublic: true,
+                user: $currentUser->getUser(),
+                category: SuiviCategory::MESSAGE_USAGER,
+            );
+
+            $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
+            'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
+            'Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
+            $this->addFlash('success', $messageRetour);
+
+            return $this->redirectToRoute('front_suivi_signalement_messages', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        $demandeLienSignalement = new DemandeLienSignalement();
+        $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
+            'action' => $this->generateUrl('front_demande_lien_signalement'),
+        ]);
+
+        $suiviSeenMarker->markSeenByUsager($signalement);
+
+        $this->eventDispatcher->dispatch(
+            new SuiviViewedEvent($signalement, $currentUser),
+            SuiviViewedEvent::NAME
+        );
+
+        return $this->render('front/suivi_signalement_messages.html.twig', [
+            'signalement' => $signalement,
+            'formMessage' => $formMessage,
+            'formDemandeLienSignalement' => $formDemandeLienSignalement,
+            'infoDesordres' => $infoDesordres,
+        ]);
     }
 
     #[Route('/suivre-mon-signalement/{code}/documents', name: 'front_suivi_signalement_documents', methods: ['GET', 'POST'])]
@@ -746,6 +823,9 @@ class SignalementController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         ValidatorInterface $validator,
     ): Response {
+        if ($this->featureSuiviAction) {
+            throw $this->createNotFoundException();
+        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');

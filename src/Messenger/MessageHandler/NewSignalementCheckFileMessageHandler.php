@@ -20,6 +20,10 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class NewSignalementCheckFileMessageHandler
 {
+    public const string SUIVI_ASK_DOCUMENTS_INTRO = 'Bonjour,<br><br>'
+        .'Vous avez signalé un problème sur un logement.<br>'
+        .'Votre dossier a bien été enregistré par nos services.<br><br>'
+        .'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
     private const array DESORDRES_CATEGORIES_WITH_PHOTOS = [
         'desordres_batiment_proprete',
         'desordres_batiment_nuisibles',
@@ -197,10 +201,7 @@ class NewSignalementCheckFileMessageHandler
 
     private function createSuivi(Signalement $signalement, string $documents, string $desordres): Suivi
     {
-        $this->description = 'Bonjour,<br><br>';
-        $this->description .= 'Vous avez signalé un problème sur un logement.<br>';
-        $this->description .= 'Votre dossier a bien été enregistré par nos services.<br><br>';
-        $this->description .= 'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
+        $this->description = self::SUIVI_ASK_DOCUMENTS_INTRO;
         if (!empty($documents)) {
             $this->description .= '- le ou les documents suivants : '.$documents.'<br>';
         }

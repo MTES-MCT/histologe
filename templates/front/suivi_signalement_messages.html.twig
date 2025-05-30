@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre messagerie du dossier #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+	{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
+{% endif %}
+
+<main class="fr-container fr-pb-5w" id="content">
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Messagerie</a></li>
+			</ol>
+		</div>
+	</nav>
+	<div class="fr-grid-row fr-grid-row--gutters">
+
+		<div class="fr-col-12 fr-col-md-6">
+			<h1 class="title-blue-france">Messagerie</h1>
+			{% include 'front/_partials/_suivi_signalement_card.html.twig' %}
+
+			<h2 class="title-blue-france fr-mb-1w">Envoyer un message</h2>
+			{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+				{% form_theme formMessage 'form/dsfr_theme.html.twig' %}
+				{{ form_start(formMessage, {'attr': {'id': 'form-message-usager'}}) }}
+				{{ form_errors(formMessage) }}
+				<p class="fr-hint-text fr-my-2v">Dix (10) caractères minimum</p>
+				<div class="fr-notice fr-notice--info fr-mb-3w">
+					<div class="fr-container">
+						<div class="fr-notice__body">
+							<p>
+								<span class="fr-notice__title">Attention à vos données ! Merci de ne pas transmettre de données personnelles sur votre votre santé ou celle d'autres personnes !</span>
+							</p>
+							<button title="Masquer le message" name="closeNotice" class="fr-btn--close fr-btn">Masquer le message</button>
+						</div>
+					</div>
+				</div>
+				{{ form_row(formMessage.description) }}
+				{{ form_end(formMessage) }}
+				<div id="uploaded-files-list" class="fr-my-2v"></div>
+				<ul class="fr-btns-group fr-btns-group--icon-left">
+					<li>
+						<button 
+							class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" 
+							type="button" 
+							data-fr-opened="false" 
+							aria-controls="fr-modal-upload-files-usager" 
+							data-file-type="photo"
+							data-accepted-type-mimes="{{ get_accepted_mime_type('photo')}}"
+							data-accepted-extensions="{{ get_accepted_extensions('photo')}}"
+							>
+							Ajouter des photos
+						</button>
+					</li>
+					<li>
+						<button 
+							class="fr-btn fr-btn--secondary fr-icon-add-line open-modal-upload-files-btn" 
+							type="button" 
+							data-fr-opened="false" 
+							aria-controls="fr-modal-upload-files-usager" 
+							data-file-type="document"
+							data-accepted-type-mimes="{{ get_accepted_mime_type('document')}}"
+							data-accepted-extensions="{{ get_accepted_extensions('document')}}"
+							>
+							Ajouter des documents
+						</button>
+					</li>
+					<li>
+						<button class="fr-btn fr-icon-check-line" type="submit" id="form_finish_submit" form="form-message-usager">
+							Envoyer le message
+						</button>
+					</li>
+				</ul>
+			{% else %}
+				{% if signalement.statut.name == 'REFUSED' %}
+					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+						<p>Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>
+					</div>
+				{% elseif signalement.statut.name == 'CLOSED' and signalement.hasSuiviUsagerPostCloture %}
+					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+						<p>Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.</p>
+					</div>
+				{% elseif signalement.statut.name == 'CLOSED' and date(signalement.closedAt) < date('-30days') %}
+					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+						<p>Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>
+					</div>
+				{% elseif signalement.statut.name == 'ARCHIVED' %}
+					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+						<p>Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>
+					</div>
+				{% else %}
+					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+						<p>Vous ne pouvez plus envoyer de messages.</p>
+					</div>
+				{% endif %}
+				{% if signalement.motifRefus and signalement.motifRefus.name == 'DOUBLON' %}
+					<div class="fr-mb-1w">
+						{% include '_partials/_demande-lien-signalement-intro.html.twig' with {motifRefusDoublon: true} %}
+						{% include '_partials/_demande-lien-signalement-container.html.twig' with {formatVertical: true} %}
+					</div>
+				{% endif %}
+			{% endif %}
+		</div>
+
+		<div class="fr-col-12 fr-col-md-6">
+			<h2 class="title-blue-france fr-mb-1w">Suivre les échanges</h2>
+			<div>Votre dossier a bien été enregistré le {{ signalement.createdAt|date('d/m/Y') }}.</div>
+			{% for suivi in signalement.suivis|reverse %}
+				{% set isUnreadMessage = false %}
+			    {% if (suivi.createdBy and suivi.createdBy.partners|length) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
+					{% if suivi.isSeenByUsager %}
+						{% set messageBoxClass = 'message-box--partner' %}
+					{% else %}
+						{% set messageBoxClass = 'message-box--partner message-box--unread' %}
+						{% set isUnreadMessage = true %}
+					{% endif %}
+				{% else %}
+					{% set messageBoxClass = 'message-box--usager' %}
+				{% endif %}
+				<div id="suivi_{{ suivi.id }}" class="message-box {{ messageBoxClass }}">
+					<div>
+						<strong>
+							{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
+								Suivi automatique
+							{% elseif suivi.createdBy is not null %}
+								{% if suivi.createdBy.partners|length %}
+									{{suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A'}}
+								{% else %}
+									{{(suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}
+								{% endif %}					
+							{% else %}
+								{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}					
+							{% endif %}
+							-
+							{{ suivi.createdAt|date('d/m/Y') }}
+						</strong>
+					</div>
+					{% if isUnreadMessage %}
+						<span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--warning fr-mb-1w">Nouveau message</span>
+					{% endif %}
+					<div class="message-box-message">
+						{{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+
+</main>
+{% endblock %}

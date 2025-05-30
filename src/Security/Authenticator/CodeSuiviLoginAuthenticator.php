@@ -24,6 +24,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     use TargetPathTrait;
 
     public const string LOGIN_ROUTE_SUIVI = 'front_suivi_signalement';
+    public const string LOGIN_ROUTE_SUIVI_MESSAGES = 'front_suivi_signalement_messages';
     public const string LOGIN_ROUTE_PROCEDURE = 'front_suivi_procedure';
     public const string LOGIN_ROUTE_EXPORT_PDF = 'show_export_pdf_usager';
 
@@ -133,6 +134,8 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         switch ($request->get('_route')) {
             case self::LOGIN_ROUTE_SUIVI:
                 return $this->urlGenerator->generate(self::LOGIN_ROUTE_SUIVI, ['code' => $codeSuivi]);
+            case self::LOGIN_ROUTE_SUIVI_MESSAGES:
+                return $this->urlGenerator->generate(self::LOGIN_ROUTE_SUIVI_MESSAGES, ['code' => $codeSuivi]);
             case self::LOGIN_ROUTE_EXPORT_PDF:
                 return $this->urlGenerator->generate(self::LOGIN_ROUTE_EXPORT_PDF, ['code' => $codeSuivi]);
             default:
