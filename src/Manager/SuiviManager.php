@@ -40,13 +40,13 @@ class SuiviManager extends Manager
         Signalement $signalement,
         string $description,
         int $type,
+        SuiviCategory $category,
         bool $isPublic = false,
         ?User $user = null,
         ?\DateTimeImmutable $createdAt = null,
         ?string $context = null,
         bool $sendMail = true,
         bool $flush = true,
-        ?SuiviCategory $category = null,
     ): Suivi {
         $suivi = (new Suivi())
             ->setCreatedBy($user)
@@ -81,8 +81,8 @@ class SuiviManager extends Manager
                 signalement: $signalement,
                 description: $description.$user->getNomComplet(),
                 type: Suivi::TYPE_AUTO,
-                user: $user,
                 category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+                user: $user,
             );
         }
     }
@@ -201,9 +201,9 @@ class SuiviManager extends Manager
             signalement: $signalement,
             description: $description,
             type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::NEW_DOCUMENT,
             isPublic: $isVisibleUsager,
             user: $user,
-            category: SuiviCategory::NEW_DOCUMENT,
             flush: false
         );
     }

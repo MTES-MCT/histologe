@@ -60,9 +60,9 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_TECHNICAL,
+                category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
                 isPublic: true,
                 context: Suivi::CONTEXT_INTERVENTION,
-                category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
             );
 
             $this->visiteNotifier->notifyUsagers(
@@ -114,9 +114,9 @@ class NotifyVisitsCommand extends AbstractCronCommand
                     signalement: $affectation->getSignalement(),
                     description: $description,
                     type: Suivi::TYPE_TECHNICAL,
+                    category: SuiviCategory::INTERVENTION_IS_REQUIRED,
                     isPublic: false,
                     context: Suivi::CONTEXT_INTERVENTION,
-                    category: SuiviCategory::INTERVENTION_IS_REQUIRED,
                 );
 
                 $this->visiteNotifier->notifyAgents(

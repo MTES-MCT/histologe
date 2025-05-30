@@ -6,12 +6,14 @@ suivis:
   is_public: 1
   signalement: "2022-8"
   type: 3
+  category: "MESSAGE_PARTNER"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
   description: "Le signalement a été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT."
   is_public: 1
   signalement: "2022-3"
   type: 1
+  category: "SIGNALEMENT_IS_REFUSED"
 -
   created_by: null
   description: "Bonjour, j'ai toujours le problème, quand vais-je avoir une visite ?"
@@ -25,6 +27,7 @@ suivis:
   is_public: 0
   signalement: "2023-6"
   type: 1
+  category: "MESSAGE_PARTNER"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
   description: "Ceci est vieux suivi de partenaire 13-01"
@@ -32,6 +35,7 @@ suivis:
   is_public: 1
   signalement: "2023-13"
   type: 3
+  category: "MESSAGE_PARTNER"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-04-18 17:06:33"
@@ -46,6 +50,7 @@ suivis:
   is_public: 1
   signalement: "2023-15"
   type: 3
+  category: "MESSAGE_PARTNER"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
   description: "Ceci est le dernier suivi de partenaire 13-01"
@@ -53,6 +58,7 @@ suivis:
   is_public: 1
   signalement: "2023-15"
   type: 3
+  category: "MESSAGE_PARTNER"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-03-18 17:06:33"
@@ -73,6 +79,7 @@ suivis:
   is_public: 1
   signalement: "2023-21"
   type: 1
+  category: "SIGNALEMENT_IS_REFUSED"
 -
   created_by: null
   description: "Je ne comprends pas pourquoi mon signalement a été cloturé, j'ai toujours des soucis ! (suivi de type 5 post-cloture)"
@@ -86,12 +93,14 @@ suivis:
   is_public: 1
   signalement: "2024-12"
   type: 3
+  category: "MESSAGE_PARTNER"
 - 
   created_by: api-02@signal-logement.fr
   description: "On avance sur le dossier, est-ce que d'autres action sont en cours ?"
   is_public: 0
   signalement: "2024-12"
   type: 3
+  category: "MESSAGE_PARTNER"
 - 
   created_by: api-02@signal-logement.fr
   description: "Le signalement a été cloturé pour tous les partenaires avec le motif suivant <br /><strong>Refus de visite</strong><br /><strong>Desc. : </strong>bla bla bla<br />"

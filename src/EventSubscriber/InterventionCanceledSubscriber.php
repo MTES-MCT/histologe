@@ -47,10 +47,10 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::INTERVENTION_IS_CANCELED,
                 isPublic: true,
                 user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
-                category: SuiviCategory::INTERVENTION_IS_CANCELED,
             );
 
             $this->visiteNotifier->notifyUsagers(

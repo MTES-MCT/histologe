@@ -67,10 +67,10 @@ class SignalementActionController extends AbstractController
                 signalement: $signalement,
                 description: $description,
                 type : Suivi::TYPE_AUTO,
+                category: $suiviCategory,
                 isPublic: true,
                 sendMail: true,
                 context: $suiviContext,
-                category: $suiviCategory,
             );
 
             $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
@@ -105,9 +105,9 @@ class SignalementActionController extends AbstractController
                     signalement: $signalement,
                     description: $content,
                     type: Suivi::TYPE_PARTNER,
+                    category: SuiviCategory::MESSAGE_PARTNER,
                     isPublic: !empty($payload['notifyUsager']),
                     user: $user,
-                    category: SuiviCategory::MESSAGE_PARTNER,
                 );
             } catch (\Throwable $exception) {
                 $logger->error($exception->getMessage());
@@ -189,9 +189,9 @@ class SignalementActionController extends AbstractController
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 isPublic: '1' === $request->get('publicSuivi'),
                 user: $user,
-                category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
             );
             $this->addFlash('success', 'Signalement rouvert avec succès !');
         } else {

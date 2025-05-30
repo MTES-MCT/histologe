@@ -54,10 +54,10 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
                 isPublic: $event->isUsagerNotified(),
                 user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
-                category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
             );
 
             if ($event->isUsagerNotified()) {

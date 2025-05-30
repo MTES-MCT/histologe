@@ -38,8 +38,8 @@ readonly class AffectationClosedSubscriber implements EventSubscriberInterface
             signalement: $signalement,
             description: SuiviManager::buildDescriptionClotureSignalement($params),
             type: Suivi::TYPE_PARTNER,
-            user: $user,
             category: SuiviCategory::AFFECTATION_IS_CLOSED,
+            user: $user,
         );
 
         $signalement->addSuivi($suivi);

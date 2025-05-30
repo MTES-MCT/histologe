@@ -46,10 +46,10 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::INTERVENTION_IS_ABORTED,
                 isPublic: true,
                 user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
-                category: SuiviCategory::INTERVENTION_IS_ABORTED,
             );
 
             $this->visiteNotifier->notifyUsagers(

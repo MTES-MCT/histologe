@@ -35,10 +35,10 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             signalement: $intervention->getSignalement(),
             description: $description,
             type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
             isPublic: true,
             user: $event->getUser(),
             context: Suivi::CONTEXT_INTERVENTION,
-            category: SuiviCategory::INTERVENTION_IS_RESCHEDULED
         );
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()

@@ -39,10 +39,10 @@ readonly class SignalementClosedSubscriber implements EventSubscriberInterface
             signalement: $signalement,
             description: SuiviManager::buildDescriptionClotureSignalement($params),
             type: Suivi::TYPE_PARTNER,
+            category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             isPublic: '1' == $params['suivi_public'],
             user: $user,
             context: Suivi::CONTEXT_SIGNALEMENT_CLOSED,
-            category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
         );
 
         $signalement->addSuivi($suivi);

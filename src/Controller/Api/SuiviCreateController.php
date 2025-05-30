@@ -147,9 +147,9 @@ class SuiviCreateController extends AbstractController
             signalement: $signalement,
             description: $this->descriptionFilesBuilder->build($signalement, $suiviRequest),
             type: Suivi::TYPE_PARTNER,
+            category: SuiviCategory::MESSAGE_PARTNER,
             isPublic: $suiviRequest->notifyUsager,
             user: $user,
-            category: SuiviCategory::MESSAGE_PARTNER
         );
 
         return $this->json(new SuiviResponse($suivi), Response::HTTP_CREATED);

@@ -524,8 +524,8 @@ class SignalementController extends AbstractController
                 signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_USAGER,
-                isPublic: true,
                 category: SuiviCategory::MESSAGE_USAGER,
+                isPublic: true,
                 user: $user,
             );
 
@@ -796,9 +796,9 @@ class SignalementController extends AbstractController
             signalement: $signalement,
             description: $description,
             type: $typeSuivi,
+            category: SuiviCategory::MESSAGE_USAGER,
             isPublic: true,
             user: $user,
-            category: SuiviCategory::MESSAGE_USAGER,
         );
 
         $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
