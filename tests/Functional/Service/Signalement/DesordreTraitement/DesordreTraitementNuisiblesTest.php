@@ -18,7 +18,7 @@ class DesordreTraitementNuisiblesTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testFindDesordresPrecisionsBy()
+    public function testFindDesordresPrecisionsBy(): void
     {
         /** @var DesordrePrecisionRepository $desordrePrecisionRepository */
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
@@ -28,7 +28,7 @@ class DesordreTraitementNuisiblesTest extends KernelTestCase
             true
         );
 
-        /** @var array $precisions */
+        /** @var array<DesordrePrecision> $precisions */
         $precisions = (new DesordreTraitementNuisibles($desordrePrecisionRepository))->findDesordresPrecisionsBy(
             $payload,
             'desordres_logement_nuisibles_cafards'

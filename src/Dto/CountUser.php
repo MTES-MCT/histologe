@@ -6,6 +6,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 class CountUser
 {
+    /** @var array<string, int> */
     #[Groups(['widget:read'])]
     private ?array $percentage = [];
 
@@ -34,6 +35,9 @@ class CountUser
         return $this->inactive;
     }
 
+    /**
+     * @return array<string, int>|null
+     */
     public function getPercentage(): ?array
     {
         return $this->percentage;

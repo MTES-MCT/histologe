@@ -135,7 +135,7 @@ class UserType extends AbstractType
         ]);
     }
 
-    public function validateTerritory(mixed $value, ExecutionContextInterface $context)
+    public function validateTerritory(mixed $value, ExecutionContextInterface $context): void
     {
         if ($value instanceof User) {
             $user = $value;
@@ -151,7 +151,7 @@ class UserType extends AbstractType
         }
     }
 
-    public function validatePartner(mixed $value, ExecutionContextInterface $context)
+    public function validatePartner(mixed $value, ExecutionContextInterface $context): void
     {
         $form = $context->getRoot();
         $tempPartner = $form->get('tempPartner')->getData();

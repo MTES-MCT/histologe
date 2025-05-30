@@ -16,6 +16,11 @@ class DesordreTraitementProcessor
         $this->desordreTraitements = $desordreTraitements;
     }
 
+    /**
+     * @param array<string, string> $payload
+     *
+     * @return array<DesordrePrecision|null>
+     */
     public function findDesordresPrecisionsBy(DesordreCritere $critere, array $payload): ?array
     {
         $slug = $critere->getSlugCritere();

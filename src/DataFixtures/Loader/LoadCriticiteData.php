@@ -25,6 +25,9 @@ class LoadCriticiteData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     private function loadCriticite(ObjectManager $manager, array $row): void
     {
         $criticite = (new Criticite())

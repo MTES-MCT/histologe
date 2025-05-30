@@ -61,6 +61,8 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     }
 
     /**
+     * @param array<string, mixed> $row
+     *
      * @throws \Exception
      */
     public function loadSuivi(ObjectManager $manager, array $row): void

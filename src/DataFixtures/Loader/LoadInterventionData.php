@@ -41,6 +41,8 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
     }
 
     /**
+     * @param array<string, mixed> $row
+     *
      * @throws \Exception
      */
     private function loadInterventions(ObjectManager $manager, array $row): void
@@ -86,6 +88,9 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
         $manager->persist($intervention);
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function getScheduledAt(array $row): \DateTimeImmutable
     {
         if (isset($row['scheduled_at'])) {

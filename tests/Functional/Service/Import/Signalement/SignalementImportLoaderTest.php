@@ -61,7 +61,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     /**
      * @throws NonUniqueResultException
      */
-    public function testLoadSignalementImport()
+    public function testLoadSignalementImport(): void
     {
         $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], new SuiviCreatedListener());
         $signalementImportLoader = new SignalementImportLoader(
