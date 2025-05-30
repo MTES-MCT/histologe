@@ -385,6 +385,7 @@ class SignalementCreateController extends AbstractController
         AffectationManager $affectationManager,
         EventDispatcherInterface $eventDispatcher,
         UserManager $userManager,
+        FileRepository $fileRepository,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
 
@@ -481,6 +482,7 @@ class SignalementCreateController extends AbstractController
             }
             $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
             $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $fileRepository->updateIsWaitingSuiviForSignalement($signalement);
             $signalementManager->flush();
 
             return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL)]);

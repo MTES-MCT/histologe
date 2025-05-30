@@ -47,8 +47,8 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('civiliteOccupant', ChoiceType::class, [
                 'label' => 'Civilité',
                 'choices' => [
-                    'Mme' => 'mme',
-                    'Mr' => 'mr',
+                    'Madame' => 'mme',
+                    'Monsieur' => 'mr',
                 ],
                 'expanded' => true,
                 'multiple' => false,
