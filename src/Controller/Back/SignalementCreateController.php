@@ -207,6 +207,7 @@ class SignalementCreateController extends AbstractController
         $duplicateContent = '';
         $linkDuplicates = '';
         $duplicates = [];
+        $labelBtnDuplicates = 'Voir les signalements';
         if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formAddressManager($form, $signalement)) {
             if ($form->get('forceSave')->isEmpty() && $duplicates = $signalementRepository->findOnSameAddress($signalement)) {
                 $hasDuplicates = true;
@@ -215,6 +216,18 @@ class SignalementCreateController extends AbstractController
                     'searchTerms' => $signalement->getAdresseOccupant(),
                     'communes[]' => $signalement->getCpOccupant(),
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
+            } elseif (
+                $form->get('forceSave')->isEmpty()
+                && $draftDuplicates = $signalementRepository->findOnSameAddress(
+                    signalement: $signalement,
+                    exclusiveStatus: [SignalementStatus::DRAFT],
+                    exclusiveCreatedBy: $this->getUser(),
+                )
+            ) {
+                $hasDuplicates = true;
+                $duplicateContent = $this->renderView('back/signalement_create/_modal_duplicate_draft_content.html.twig', ['duplicates' => $draftDuplicates]);
+                $linkDuplicates = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
+                $labelBtnDuplicates = 'Voir mes brouillons';
             } else {
                 $this->signalementManager->save($signalement);
                 $entityManager->commit();
@@ -233,7 +246,7 @@ class SignalementCreateController extends AbstractController
 
         $tabContent = $this->renderView('back/signalement_create/tabs/tab-adresse.html.twig', ['form' => $form]);
 
-        return $this->json(['tabContent' => $tabContent, 'hasDuplicates' => $hasDuplicates, 'duplicateContent' => $duplicateContent, 'linkDuplicates' => $linkDuplicates]);
+        return $this->json(['tabContent' => $tabContent, 'hasDuplicates' => $hasDuplicates, 'duplicateContent' => $duplicateContent, 'linkDuplicates' => $linkDuplicates, 'labelBtnDuplicates' => $labelBtnDuplicates]);
     }
 
     #[Route('/bo-form-logement/{uuid:signalement}', name: 'back_signalement_draft_form_logement_edit', methods: ['POST'])]
