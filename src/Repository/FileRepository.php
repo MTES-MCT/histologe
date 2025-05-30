@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
+use App\Entity\Signalement;
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -98,5 +99,17 @@ class FileRepository extends ServiceEntityRepository
             ->setParameter('documentType', DocumentType::EXPORT)
             ->setParameter('limit', $limit)
             ->getQuery()->getResult();
+    }
+
+    public function updateIsWaitingSuiviForSignalement(Signalement $signalement): void
+    {
+        $this->createQueryBuilder('f')
+            ->update()
+            ->set('f.isWaitingSuivi', ':isWaitingSuivi')
+            ->where('f.signalement = :signalement')
+            ->setParameter('isWaitingSuivi', false)
+            ->setParameter('signalement', $signalement)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -2237,10 +2237,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     /**
      * @return Collection<int, File>
      */
-    public function getFiles(): Collection
+    public function getFiles(?bool $isWaitingSuivi = false): Collection
     {
-        return $this->files->filter(function (File $file) {
-            if ($file->isTemp() || $file->isIsWaitingSuivi()) {
+        return $this->files->filter(function (File $file) use ($isWaitingSuivi) {
+            if ($file->isTemp()) {
+                return false;
+            }
+            if ($file->isIsWaitingSuivi() && !$isWaitingSuivi) {
                 return false;
             }
 
