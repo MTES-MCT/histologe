@@ -91,7 +91,7 @@ class NotificationAndMailSender
     }
 
     public function sendDemandeAbandonProcedureToAdminsAndPartners(Suivi $suivi): void
-    {        
+    {
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $territory = $this->signalement->getTerritory();
@@ -112,8 +112,40 @@ class NotificationAndMailSender
     {
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
-        $this->sendMailToUsagers(NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_USAGER);
-        $this->createInAppUsagersNotifications(suivi: $suivi);
+        if ($this->suivi->getCreatedBy()) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_USAGER,
+                    to: $this->suivi->getCreatedBy()->getEmail(),
+                    territory: $this->signalement->getTerritory(),
+                    signalement: $this->signalement,
+                    suivi: $this->suivi,
+                    motif: null,
+                )
+            );
+        }
+
+        if ($this->signalement->isTiersDeclarant()) {
+            $recipients = new ArrayCollection($this->signalement->getMailUsagers());
+            if (!$recipients->isEmpty()) {
+                $recipients->removeElement($this->suivi->getCreatedBy()?->getEmail());
+                foreach ($recipients as $recipient) {
+                    $this->notificationMailerRegistry->send(
+                        new NotificationMail(
+                            type: NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_OTHER_USAGER,
+                            to: $recipient,
+                            territory: $this->signalement->getTerritory(),
+                            signalement: $this->signalement,
+                            suivi: $this->suivi,
+                            motif: null,
+                            params: ['demandeur_abandon' => $this->suivi->getCreatedBy()?->getNomComplet()]
+                        )
+                    );
+                }
+            }
+        }
+
+        $this->createInAppUsagersNotifications(suivi: $suivi); // TODO : laisse ?
     }
 
     public function sendSignalementIsAcceptedToUsager(Suivi $suivi): void

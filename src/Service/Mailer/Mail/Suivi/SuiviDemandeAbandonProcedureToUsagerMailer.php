@@ -15,7 +15,7 @@ class SuiviDemandeAbandonProcedureToUsagerMailer extends AbstractNotificationMai
     public const MAILER_SUBJECT = 'Demande de fermeture du dossier %s sur Signal Logement';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_USAGER;
     protected ?string $mailerButtonText = 'Accéder au signalement';
-    protected ?string $mailerTemplate = 'demande_abandon_procedure_to_usager';//demande_abandon_procedure_to_admin
+    protected ?string $mailerTemplate = 'demande_abandon_procedure_to_usager';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -31,8 +31,14 @@ class SuiviDemandeAbandonProcedureToUsagerMailer extends AbstractNotificationMai
         $signalement = $notificationMail->getSignalement();
 
         return [
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'reference' => $signalement->getReference(),
-            'lien_suivi' => $this->generateLinkSignalementView($signalement->getUuid()),
+            'lien_suivi' => $this->generateLink(
+                'front_suivi_signalement',
+                ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],
+            ),
         ];
     }
 
