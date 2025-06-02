@@ -2,8 +2,8 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Service\NotificationAndMailSender;
@@ -49,8 +49,9 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $suivi->getContext()) {
             if (Suivi::CONTEXT_SIGNALEMENT_CLOSED === $suivi->getContext()) {
                 $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
-            } elseif (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()){
+            } elseif (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
                 $this->notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
+
                 return;
             } else {
                 $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
@@ -64,8 +65,9 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
     private function sendToUsagers(Suivi $suivi): void
     {
         if ($suivi->getSendMail() && $suivi->getIsPublic()) {
-            if (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()){
+            if (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
                 $this->notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
+
                 return;
             }
             switch ($suivi->getContext()) {

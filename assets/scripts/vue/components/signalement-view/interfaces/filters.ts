@@ -23,6 +23,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'enfantsM6', showOptions: true, defaultValue: null },
   { type: 'text', name: 'situation', showOptions: true, defaultValue: null },
   { type: 'text', name: 'relancesUsager', showOptions: false, defaultValue: 'NO_SUIVI_AFTER_3_RELANCES' },
+  { type: 'text', name: 'abandonProcedureUsager', showOptions: false, defaultValue: null },
   { type: 'text', name: 'sansSuiviPeriode', showOptions: false, defaultValue: '30' },
   { type: 'text', name: 'nouveauSuivi', showOptions: false, defaultValue: 'oui' },
   { type: 'text', name: 'showMyAffectationOnly', showOptions: true, defaultValue: null },

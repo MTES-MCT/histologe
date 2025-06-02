@@ -20,12 +20,6 @@ class UsagerCancelProcedureType extends AbstractType
                     'Accord avec le propriétaire' => 'Accord avec le propriétaire',
                     'Autre' => 'Autre',
                 ],
-                // 'choices' => [
-                //     'Le problème est résolu' => 'resolution',
-                //     'Changement de logement' => 'relogement',
-                //     'Accord avec le propriétaire' => 'accord',
-                //     'Autre' => 'autre',
-                // ],
                 'expanded' => true,
                 'multiple' => false,
                 'label' => 'Pour quelle raison voulez-vous arrêter la procédure ?',
@@ -35,8 +29,6 @@ class UsagerCancelProcedureType extends AbstractType
                 'label' => 'Veuillez détailler la raison pour laquelle vous souhaitez arrêter la procédure',
                 'help' => 'Dix (10) caractères minimum',
                 'required' => true,
-                // 'mapped' => false,
-                // 'data' => '',
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Valider ma demande',

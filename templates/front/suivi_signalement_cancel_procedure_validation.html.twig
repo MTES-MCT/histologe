@@ -5,8 +5,15 @@
 {% block body %}
 
 <main class="fr-container fr-py-5w" id="content">
-
-{# TODO : ajouter fil d'ariane #}
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Demander l'arrêt de la procédure</a></li>
+			</ol>
+		</div>
+	</nav>
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-md-8">
 			{% form_theme form 'form/dsfr_theme.html.twig' %}
@@ -72,8 +79,6 @@
 						<br>
 						<span class="info">
 							{{ include('front/_partials/statut_signalement.html.twig') }}
-							{# <span class="confetti {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}active{% endif %}"></span>
-							{{ signalement.statutLabel }} #}
 						</span>
 					</div>
 				</div>	

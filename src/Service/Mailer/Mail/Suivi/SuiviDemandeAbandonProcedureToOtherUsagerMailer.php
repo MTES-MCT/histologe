@@ -10,12 +10,12 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SuiviDemandeAbandonProcedureToAdminMailer extends AbstractNotificationMailer
+class SuiviDemandeAbandonProcedureToOtherUsagerMailer extends AbstractNotificationMailer
 {
     public const MAILER_SUBJECT = 'Demande de fermeture du dossier %s sur Signal Logement';
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_ADMIN;
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_OTHER_USAGER;
     protected ?string $mailerButtonText = 'Accéder au signalement';
-    protected ?string $mailerTemplate = 'demande_abandon_procedure_to_admin';
+    protected ?string $mailerTemplate = 'demande_abandon_procedure_to_other_usager';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -34,8 +34,12 @@ class SuiviDemandeAbandonProcedureToAdminMailer extends AbstractNotificationMail
             'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
             'signalement_cpOccupant' => $signalement->getCpOccupant(),
             'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'demandeur_abandon' => $notificationMail->getParams()['demandeur_abandon'],
             'reference' => $signalement->getReference(),
-            'lien_suivi' => $this->generateLinkSignalementView($signalement->getUuid()),
+            'lien_suivi' => $this->generateLink(
+                'front_suivi_signalement',
+                ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],
+            ),
         ];
     }
 

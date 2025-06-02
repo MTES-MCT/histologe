@@ -85,6 +85,7 @@ class WidgetControllerTest extends WebTestCase
         $totalActive = 0;
         $totalClosed = 0;
         $totalRefused = 0;
+        // TODO ajouter abandon procédure usager
         // counts suivi
         $totalPartner = 0;
         $totalUsager = 0;

@@ -204,6 +204,8 @@ class SignalementListControllerTest extends WebTestCase
         yield 'PARTNER - Sans suivis' => [$partnerUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
         yield 'PARTNER - Suggestion de clotures' => [$partnerUser, '?relances_usager=NO_SUIVI_AFTER_3_RELANCES'];
         yield 'PARTNER - Tous les signalements' => [$partnerUser, '?territoire_id=13'];
+
+        // TODO : ajouter test sur abandonProcedureUsager
     }
 
     /**

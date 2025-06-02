@@ -791,6 +791,7 @@ class SignalementController extends AbstractController
     #[Route('/suivre-mon-signalement/{code}/procedure', name: 'front_suivi_signalement_procedure', methods: ['GET', 'POST'])]
     public function suiviSignalementProcedure(
         string $code,
+        Security $security,
         SignalementRepository $signalementRepository,
     ): Response {
         if (!$this->featureSuiviAction) {
@@ -803,8 +804,12 @@ class SignalementController extends AbstractController
             return $this->render('front/flash-messages.html.twig');
         }
 
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+
         return $this->render('front/suivi_signalement_cancel_procedure_intro.html.twig', [
             'signalement' => $signalement,
+            'usager' => $currentUser->getUser(),
         ]);
     }
 
@@ -827,6 +832,7 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
             return $this->render('front/flash-messages.html.twig');
         }
 
@@ -834,7 +840,6 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
             // TODO : delete when remove FEATURE_SECURE_UUID_URL
             $requestEmail = $request->get('from');
             $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
@@ -863,9 +868,9 @@ class SignalementController extends AbstractController
             //     . 'Raison : ' . $form->get('reason')->getData() . '<br>'
             //     . 'Commentaire : ' . $form->get('details')->getData();
             $description = $user->getNomComplet().' souhaite fermer son dossier sur '
-                . $this->getParameter('platform_name') // TODO
-                . ' pour le motif suivant : ' . $form->get('reason')->getData() . '<br>'
-                . 'Détails du motif d\'arrêt de procédure : ' . $form->get('details')->getData();
+                .$this->getParameter('platform_name') // TODO
+                .' pour le motif suivant : '.$form->get('reason')->getData().'<br>'
+                .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
 
             $suiviManager->createSuivi(
                 signalement: $signalement,
@@ -876,14 +881,13 @@ class SignalementController extends AbstractController
                 user: $user,
             );
 
-
-
             // Une notif est envoyée au RT
             // Un mail est envoyé au RT / l'info est incluse dans les mails récap
             // Un mail de confirmation est envoyée au demandeur (voir plus loin)
             // Si demande faite sur un signalement avec tiers : on envoie un mail à l'autre personne (voir plus loin)
             $signalementManager->save($signalement);
             $this->addFlash('success', 'Votre demande d\'arrêt de procédure a bien été prise en compte. Elle sera examinée par l\'administration.');
+
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
 
