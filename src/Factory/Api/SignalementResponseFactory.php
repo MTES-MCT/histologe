@@ -85,7 +85,9 @@ readonly class SignalementResponseFactory
         $signalementResponse->anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction() ?? $signalement->getAnneeConstruction();
         $signalementResponse->constructionAvant1949 = $signalement->getIsConstructionAvant1949();
         $signalementResponse->nbNiveaux = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages() ?? $signalement->getNbNiveauxLogement();
-        $signalementResponse->etage = EtageType::tryFrom($signalement->getTypeCompositionLogement()?->getTypeLogementAppartementEtage());
+        if (!empty($signalement->getTypeCompositionLogement()?->getTypeLogementAppartementEtage())) {
+            $signalementResponse->etage = EtageType::tryFrom($signalement->getTypeCompositionLogement()?->getTypeLogementAppartementEtage());
+        }
         $signalementResponse->avecFenetres = $signalement->getTypeCompositionLogement()?->getTypeLogementAppartementAvecFenetres();
         $signalementResponse->pieceAVivreSuperieureA9m = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesPieceAVivre9m());
         $signalementResponse->cuisine = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine());
