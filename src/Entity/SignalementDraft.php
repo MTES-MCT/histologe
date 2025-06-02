@@ -51,6 +51,9 @@ class SignalementDraft
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $checksum;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $pendingDraftRemindedAt = null;
+
     private ?SignalementDraftRequest $signalementDraftRequest = null;
 
     public function __construct()
@@ -201,6 +204,18 @@ class SignalementDraft
     public function setChecksum(): self
     {
         $this->checksum = $this->calculateChecksum();
+
+        return $this;
+    }
+
+    public function getPendingDraftRemindedAt(): ?\DateTimeImmutable
+    {
+        return $this->pendingDraftRemindedAt;
+    }
+
+    public function setPendingDraftRemindedAtValue(): self
+    {
+        $this->pendingDraftRemindedAt = new \DateTimeImmutable();
 
         return $this;
     }
