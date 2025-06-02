@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -145,6 +146,7 @@ class SignalementFileController extends AbstractController
                     signalement: $signalement,
                     description: $description,
                     type: Suivi::TYPE_AUTO,
+                    category: SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
                 );
                 $message = $file->isTypeDocument() ? 'Le document a bien été supprimé.' : 'La photo a bien été supprimée.';
                 $this->addFlash('success', $message);

@@ -72,8 +72,8 @@ class EsaboraManager
                 signalement: $signalement,
                 description: 'Signalement <b>'.$description.'</b> par '.$affectation->getPartner()->getNom(),
                 type: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? Suivi::TYPE_TECHNICAL : Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
                 user: $this->adminUser,
-                category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO
             );
         }
     }
@@ -250,6 +250,7 @@ class EsaboraManager
             signalement: $affectation->getSignalement(),
             description: $description,
             type: Suivi::TYPE_PARTNER,
+            category: SuiviCategory::MESSAGE_ESABORA_SCHS,
             user: $this->adminUser,
             context: Suivi::CONTEXT_SCHS,
             flush: false,

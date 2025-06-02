@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -199,6 +200,7 @@ class SignalementFileController extends AbstractController
                         signalement: $signalement,
                         description: $description,
                         type: Suivi::TYPE_AUTO,
+                        category: SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
                     );
                 }
 

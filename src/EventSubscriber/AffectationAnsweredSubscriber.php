@@ -54,6 +54,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 signalement: $signalement,
                 description: SuiviManager::buildDescriptionAnswerAffectation($params),
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::AFFECTATION_IS_REFUSED,
                 user: $user,
             );
         }
@@ -63,6 +64,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.mb_strtoupper($partner->getNom()),
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 isPublic: $affectation->getHasNotificationUsagerToCreate(),
                 user: $user,
             );
@@ -83,9 +85,9 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 signalement: $affectation->getSignalement(),
                 description: $this->parameterBag->get('suivi_message')['first_accepted_affectation'],
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
                 isPublic: true,
                 user: $adminUser,
-                category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
                 context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
             );
         }

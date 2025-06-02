@@ -39,7 +39,6 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
                 && $response = $request->get('signalement-validation-response')) {
-            $suiviCategory = null;
             if (isset($response['accept'])) {
                 $suiviContext = Suivi::CONTEXT_SIGNALEMENT_ACCEPTED;
                 $statut = SignalementStatus::ACTIVE;
@@ -57,6 +56,7 @@ class SignalementActionController extends AbstractController
                 }
                 $signalement->setMotifRefus($motifRefus);
                 $description = 'Signalement cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
+                $suiviCategory = SuiviCategory::SIGNALEMENT_IS_REFUSED;
             }
             /** @var User $user */
             $user = $this->getUser();
@@ -67,10 +67,10 @@ class SignalementActionController extends AbstractController
                 signalement: $signalement,
                 description: $description,
                 type : Suivi::TYPE_AUTO,
+                category: $suiviCategory,
                 isPublic: true,
                 sendMail: true,
                 context: $suiviContext,
-                category: $suiviCategory,
             );
 
             $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
@@ -105,6 +105,7 @@ class SignalementActionController extends AbstractController
                     signalement: $signalement,
                     description: $content,
                     type: Suivi::TYPE_PARTNER,
+                    category: SuiviCategory::MESSAGE_PARTNER,
                     isPublic: !empty($payload['notifyUsager']),
                     user: $user,
                 );
@@ -188,6 +189,7 @@ class SignalementActionController extends AbstractController
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,
                 type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 isPublic: '1' === $request->get('publicSuivi'),
                 user: $user,
             );

@@ -64,7 +64,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         $this->assertEmailCount(2);
         $this->assertEquals(2, $intervention->getSignalement()->getSuivis()->count());
 
-        $nbSuiviInterventionPlanned = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::INTERVENTION_IS_PLANNED, 'signalement' => $intervention->getSignalement()]);
+        $nbSuiviInterventionPlanned = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::INTERVENTION_IS_CREATED, 'signalement' => $intervention->getSignalement()]);
         $this->assertEquals(1, $nbSuiviInterventionPlanned);
         $this->assertStringContainsString('Visite programmée :', $intervention->getSignalement()->getSuivis()->last()->getDescription());
     }
