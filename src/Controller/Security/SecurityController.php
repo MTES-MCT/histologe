@@ -121,8 +121,6 @@ class SecurityController extends AbstractController
         ?Signalement $signalement = null,
     ): Response {
         $request = Request::createFromGlobals();
-        $expectedToken = hash_hmac('sha256', 'suivi_signalement_ext_file_view'.$signalement?->getUuid().$filename, '$secret');
-
         if (
             !$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t'))
             && !$this->isGranted('SIGN_VIEW', $signalement)
