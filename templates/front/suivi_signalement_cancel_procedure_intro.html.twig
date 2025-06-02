@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre dossier #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+<main class="fr-container fr-py-5w" id="content">
+
+{# TODO : ajouter fil d'ariane #}
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-md-8">
+			<h1 class="title-blue-france">Demander l'arrêt de la procédure</h1>
+			<div class="fr-my-3w">
+				Si vous demandez l'arrêt de la procédure, c'est que vous souhaitez <b>fermer votre dossier</b> sur {{ platform.name }}. <br>
+				Une fois votre dossier fermé : <br>
+				<ul>
+					<li>les services compétents ne pourront plus mettre à jour votre dossier ni vous accompagner dans la résolution de votre problème ;</li>
+					<li>vous ne pourrez plus mettre à jour votre dossier</li>
+				</ul>
+				<span><b>Votre demande de fermeture sera envoyée à l'administration pour validation. </b></span><br><br>
+				Voulez-vous continuer ?
+			</div>	
+
+			{# TODO : si tiers texte différent
+			 #}
+
+			 {# Si vous demandez l'arrêt de la procédure, c'est que vous souhaitez fermer ce dossier sur {{ platform.name }}. 
+Une fois le dossier fermé :
+- les services compétents ne pourront plus mettre à jour le dossier ni vous accompagner dans la résolution des problèmes du logement ;
+- vous ne pourrez plus mettre à jour le dossier ;
+- le foyer du logement ne pourra plus consulter ni mettre à jour le dossier.
+
+Votre demande de fermeture sera envoyée à l'administration pour validation. 
+
+Voulez-vous continuer ? #}
+			
+			<ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
+				<li>
+					<a class="fr-btn fr-icon-check-line" href="{{ path('front_suivi_signalement_procedure_validation', {code: signalement.codeSuivi}) }}">
+						Oui, continuer
+					</a>
+				</li>
+				<li>					
+					<a class="fr-btn fr-btn--secondary fr-icon-close-line" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}" >Non, annuler</a>
+				</li>
+			</ul>
+		</div>
+		<div class="fr-hidden-sm fr-unhidden-md fr-col-md-4">
+			<div class="signalement-card fr-mb-3w">
+				<div class="fr-grid-row fr-grid-row--gutters">
+					<div class="fr-col-12">
+						Déclarant
+						<br>
+						<span class="info">{{ signalement.prenomDeclarant }} {{ signalement.nomDeclarant }}</span>
+					</div>
+					<div class="fr-col-12">
+						Personne occupant le logement
+						<br>
+						<span class="info">{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</span>
+					</div>
+					<div class="fr-col-12">
+						Référence du dossier
+						<br>
+						<span class="info">#{{ signalement.reference }}</span>
+					</div>
+					<div class="fr-col-12">
+						Statut du dossier
+						<br>
+						<span class="info">
+							{{ include('front/_partials/statut_signalement.html.twig') }}
+							{# <span class="confetti {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}active{% endif %}"></span>
+							{{ signalement.statutLabel }} #}
+						</span>
+					</div>
+				</div>	
+			</div>
+		</div>
+	</div>
+
+</main>
+{% endblock %}
