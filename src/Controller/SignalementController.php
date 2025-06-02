@@ -828,12 +828,17 @@ class SignalementController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // TODO : empecher si procédure déjà annulée
         $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
 
             return $this->render('front/flash-messages.html.twig');
+        }
+
+        if ($signalement->getIsUsagerAbandonProcedure()) {
+            $this->addFlash('error', 'Une demande d\'arrêt de procédure a déjà été faite pour ce signalement.');
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
 
         $form = $this->createForm(UsagerCancelProcedureType::class);
@@ -864,9 +869,6 @@ class SignalementController extends AbstractController
 
             $signalement->setIsUsagerAbandonProcedure(true);
 
-            // $description = $user->getNomComplet().' ('.$type.') a demandé l\'arrêt de la procédure. <br>'
-            //     . 'Raison : ' . $form->get('reason')->getData() . '<br>'
-            //     . 'Commentaire : ' . $form->get('details')->getData();
             $description = $user->getNomComplet().' souhaite fermer son dossier sur '
                 .$this->getParameter('platform_name') // TODO
                 .' pour le motif suivant : '.$form->get('reason')->getData().'<br>'
@@ -881,10 +883,6 @@ class SignalementController extends AbstractController
                 user: $user,
             );
 
-            // Une notif est envoyée au RT
-            // Un mail est envoyé au RT / l'info est incluse dans les mails récap
-            // Un mail de confirmation est envoyée au demandeur (voir plus loin)
-            // Si demande faite sur un signalement avec tiers : on envoie un mail à l'autre personne (voir plus loin)
             $signalementManager->save($signalement);
             $this->addFlash('success', 'Votre demande d\'arrêt de procédure a bien été prise en compte. Elle sera examinée par l\'administration.');
 
