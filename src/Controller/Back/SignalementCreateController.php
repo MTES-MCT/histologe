@@ -212,7 +212,7 @@ class SignalementCreateController extends AbstractController
             /** @var User $user */
             $user = $this->getUser();
             if (
-                $form->get('forceSave')->isEmpty() 
+                $form->get('forceSave')->isEmpty()
                 && $duplicates = $signalementRepository->findOnSameAddress(
                     $signalement,
                     exclusiveStatus: [SignalementStatus::NEED_VALIDATION],
@@ -224,7 +224,7 @@ class SignalementCreateController extends AbstractController
                 $linkDuplicates = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
                 $labelBtnDuplicates = 'Voir mes brouillons';
             } elseif (
-                $form->get('forceSave')->isEmpty() 
+                $form->get('forceSave')->isEmpty()
                 && $duplicates = $signalementRepository->findOnSameAddress($signalement)
             ) {
                 $hasDuplicates = true;
