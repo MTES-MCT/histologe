@@ -18,6 +18,7 @@ suivis:
   is_public: 1
   signalement: "2022-4"
   type: 2
+  category: "MESSAGE_USAGER"
 -
   created_by: admin-01@signal-logement.fr
   description: "Un petit message de rappel afin d'y revenir plus tard"
@@ -37,6 +38,7 @@ suivis:
   is_public: 0
   signalement: "2023-14"
   type: 4
+  category: "ASK_FEEDBACK_SENT"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
   description: "Ceci est le premier suivi de partenaire 13-01"
@@ -57,12 +59,14 @@ suivis:
   is_public: 0
   signalement: "2023-15"
   type: 4
+  category: "ASK_FEEDBACK_SENT"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-04-18 17:06:33"
   is_public: 0
   signalement: "2023-15"
   type: 4
+  category: "ASK_FEEDBACK_SENT"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
   description: "Signalement Refusé"
@@ -75,6 +79,7 @@ suivis:
   is_public: 1
   signalement: "2022-2"
   type: 5
+  category: "MESSAGE_USAGER"
 - 
   created_by: api-02@signal-logement.fr
   description: "Nous vous confirmons la prise en charge de votre signalement."
@@ -94,3 +99,4 @@ suivis:
   signalement: "2025-07"
   type: 3
   context: signalementClosed
+  category: "SIGNALEMENT_IS_CLOSED"

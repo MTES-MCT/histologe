@@ -4,10 +4,12 @@ namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Manager\UserManager;
+use App\Repository\SuiviRepository;
 use App\Security\User\SignalementUser;
 use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -117,19 +119,19 @@ class SignalementControllerTest extends WebTestCase
             if (SignalementStatus::ARCHIVED->value === $status) {
                 $this->assertEquals(
                     'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
-                    $crawler->filter('.fr-alert--error p')->text()
+                    $crawler->filter('.fr-tile__detail')->text()
                 );
             } elseif (SignalementStatus::ACTIVE->value === $status) {
-                $this->assertEquals('Signalement #2022-1 '.$signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(), $crawler->filter('h1')->eq(2)->text());
+                $this->assertEquals('Votre dossier', $crawler->filter('h1')->text());
             } elseif (SignalementStatus::CLOSED->value === $status) {
                 $this->assertEquals(
                     'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.',
-                    $crawler->filter('.fr-alert--error p')->text()
+                    $crawler->filter('.fr-tile__detail')->text()
                 );
             } elseif (SignalementStatus::REFUSED->value === $status) {
                 $this->assertEquals(
-                    'Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.',
-                    $crawler->filter('.fr-alert--error p')->text()
+                    'Signalement refusé',
+                    $crawler->filter('.fr-badge.fr-badge--sm.fr-badge--no-icon.fr-badge--error')->text()
                 );
             }
         }
@@ -170,6 +172,8 @@ class SignalementControllerTest extends WebTestCase
         ]);
         if (SignalementStatus::ACTIVE->value === $status) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'?from='.$emailOccupant);
+            $nbSuiviMessageUsager = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::MESSAGE_USAGER, 'signalement' => $signalement]);
+            $this->assertEquals(1, $nbSuiviMessageUsager);
         } else {
             $this->assertEquals('Vous n\'avez pas les droits pour effectuer cette action.', $crawler->filter('.fr-alert p')->text());
         }

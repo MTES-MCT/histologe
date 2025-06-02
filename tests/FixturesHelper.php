@@ -177,29 +177,32 @@ trait FixturesHelper
         return (new Affectation())->setSignalement($signalement)->setPartner($partner);
     }
 
-    public function getSuiviPartner(string $description = 'Problèmes de condensation et de moisissures'): Suivi
-    {
+    public function getSuiviPartner(
+        string $description = 'Problèmes de condensation et de moisissures',
+        bool $isPublic = false,
+    ): Suivi {
         return (new Suivi())
             ->setType(Suivi::TYPE_PARTNER)
             ->setDescription($description)
             ->setCreatedAt(new \DateTimeImmutable())
-            ->setCreatedBy($this->getUser([User::ROLE_USER_PARTNER]));
+            ->setCreatedBy($this->getUser([User::ROLE_USER_PARTNER]))
+            ->setIsPublic($isPublic);
     }
 
-    public function getSuiviPartnerList(): array
+    public function getSuiviPartnerList(bool $isPublic = false): array
     {
         return [
             $this
-                ->getSuiviPartner('Problèmes de condensation et de moisissure')
+                ->getSuiviPartner('Problèmes de condensation et de moisissure', $isPublic)
                 ->setSignalement($this->getSignalement($this->getTerritory())),
             $this
-                ->getSuiviPartner('Problèmes d\'humidité dans le logement')
+                ->getSuiviPartner('Problèmes d\'humidité dans le logement', $isPublic)
                 ->setSignalement($this->getSignalement($this->getTerritory())),
             $this
-                ->getSuiviPartner('Absence de chauffage')
+                ->getSuiviPartner('Absence de chauffage', $isPublic)
                 ->setSignalement($this->getSignalement($this->getTerritory())),
             $this
-                ->getSuiviPartner('Ventilation défectueuse')
+                ->getSuiviPartner('Ventilation défectueuse', $isPublic)
                 ->setSignalement($this->getSignalement($this->getTerritory())),
         ];
     }
@@ -457,6 +460,7 @@ trait FixturesHelper
         return (new File())
             ->setFilename('document.pdf')
             ->setTitle('Doc')
+            ->setExtension('pdf')
             ->setFileType(File::FILE_TYPE_DOCUMENT)
             ->setCreatedAt(new \DateTimeImmutable('2022-12-02'));
     }
@@ -466,6 +470,7 @@ trait FixturesHelper
         return (new File())
             ->setFilename('photo.jpg')
             ->setTitle('Photo')
+            ->setExtension('jpg')
             ->setFileType(File::FILE_TYPE_PHOTO)
             ->setCreatedAt(new \DateTimeImmutable('2022-12-02'));
     }

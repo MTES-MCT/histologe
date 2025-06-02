@@ -24,8 +24,7 @@ class FileFactoryTest extends TestCase
         );
         $this->assertEquals('sample-123.jpg', $file->getFilename());
         $this->assertEquals('sample.jpg', $file->getTitle());
-        $this->assertEquals('photo', $file->getFileType());
-        $this->assertEquals(File::FILE_TYPE_PHOTO, $file->getFileType());
+        $this->assertTrue($file->isTypePhoto());
         $this->assertInstanceOf(Signalement::class, $file->getSignalement());
         $this->assertInstanceOf(User::class, $file->getUploadedBy());
         $this->assertInstanceOf(\DateTimeImmutable::class, $file->getCreatedAt());

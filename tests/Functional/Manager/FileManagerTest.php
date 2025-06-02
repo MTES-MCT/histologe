@@ -30,7 +30,8 @@ class FileManagerTest extends KernelTestCase
 
         $this->assertEquals('blank.pdf', $file->getFilename());
         $this->assertEquals('Blank', $file->getTitle());
-        $this->assertEquals('document', $file->getFileType());
+        $this->assertEquals('pdf', $file->getExtension());
+        $this->assertTrue($file->isTypeDocument());
         $this->assertEquals($signalement->getReference(), $file->getSignalement()->getReference());
         $this->assertEquals(DocumentType::AUTRE, $file->getDocumentType());
     }
@@ -48,17 +49,17 @@ class FileManagerTest extends KernelTestCase
         $file = $fileManager->createOrUpdate(
             filename: 'blank.jpg',
             title: 'Blank',
-            type: File::FILE_TYPE_PHOTO,
             signalement: $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']),
             description: $desc,
-            documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
+            documentType: DocumentType::PHOTO_VISITE
         );
 
         $this->assertEquals('blank.jpg', $file->getFilename());
         $this->assertEquals('Blank', $file->getTitle());
-        $this->assertEquals('photo', $file->getFileType());
+        $this->assertEquals('jpg', $file->getExtension());
+        $this->assertTrue($file->isTypePhoto());
         $this->assertEquals($signalement->getReference(), $file->getSignalement()->getReference());
         $this->assertEquals($desc, $file->getDescription());
-        $this->assertEquals(DocumentType::PROCEDURE_RAPPORT_DE_VISITE, $file->getDocumentType());
+        $this->assertEquals(DocumentType::PHOTO_VISITE, $file->getDocumentType());
     }
 }

@@ -109,7 +109,7 @@ class SignalementVoter extends Voter
                 }
                 $datePostCloture = $signalement->getClosedAt()->modify('+ 30days');
                 $today = new \DateTimeImmutable();
-                if ($today < $datePostCloture && !$signalement->hasSuiviUsagePostCloture()) {
+                if ($today < $datePostCloture && !$signalement->hasSuiviUsagerPostCloture()) {
                     return true;
                 }
             } else {

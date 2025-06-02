@@ -10,7 +10,6 @@ use Symfony\Contracts\EventDispatcher\Event;
 class InterventionCreatedEvent extends Event
 {
     public const string NAME = 'intervention.created';
-    public const string UPDATED_BY_ESABORA = 'intervention.updated.esabora';
 
     private ?Suivi $suivi = null;
 

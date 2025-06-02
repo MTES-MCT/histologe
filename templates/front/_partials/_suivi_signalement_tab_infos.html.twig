@@ -1,4 +1,12 @@
 <h2 class="fr-h3 fr-mb-5v">Mes infos</h2>
+{% if feature_suivi_action %}
+	<div class="fr-btns-group fr-btns-group--icon-left">
+		<a href="{{ path('signalement_gen_pdf',{uuid:signalement.uuid}) }}"
+		class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-file-download-line fr-mt-1v ignore-blank-style"
+		title="Télécharger le PDF">Télécharger le dossier
+		</a>
+	</div>
+{% endif %}
 <h4 class="fr-mb-2v">Adresse du logement</h4>
 <div class="fr-mb-4v">
 {{ signalement.adresseOccupant }}
@@ -397,13 +405,13 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 <h4 class="fr-mb-2v">Vos photos</h4>
 <div class="fr-mb-4v">
     	{% include '_partials/_modal_file_delete.html.twig' %}
-	{% if signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile)|length %}
+	{% if signalement.files|filter(photo => photo.isTypePhoto and photo.isUsagerFile)|length %}
 		Les photos que vous avez ajoutées.
 		<br>
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
 			<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-			{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile) %}
+			{% for photo in signalement.files|filter(photo => photo.isTypePhoto and photo.isUsagerFile) %}
 				<div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
 					<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
 						style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
@@ -433,7 +441,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 	{% endif %}
 </div>
 
-{% if signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile is same as(false))|length %}
+{% if signalement.files|filter(photo => photo.isTypePhoto and photo.isUsagerFile is same as(false))|length %}
 	<h4 class="fr-mb-2v">Photos supplémentaires</h4>
 	<div class="fr-mb-4v">
 		Les photos ajoutées à votre dossier par l'administration.
@@ -441,7 +449,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
 		<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-			{% for photo in signalement.files|filter(photo => photo.fileType == 'photo' and photo.isUsagerFile is same as(false)) %}
+			{% for photo in signalement.files|filter(photo => photo.isTypePhoto and photo.isUsagerFile is same as(false)) %}
 				<div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
 					<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
 						style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
@@ -460,10 +468,10 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 
 <h4 class="fr-mb-2v">Documents</h4>
 <div class="fr-mb-4v">
-	{% if signalement.files|filter(doc => doc.fileType == 'document' and doc.isUsagerFile)|length %}
+	{% if signalement.files|filter(doc => doc.isTypeDocument and doc.isUsagerFile)|length %}
 		Cliquez sur le document pour l'ouvrir dans un nouvel onglet.
 		<br>
-		{% for doc in signalement.files|filter(doc => doc.fileType == 'document' and doc.isUsagerFile) %}			
+		{% for doc in signalement.files|filter(doc => doc.isTypeDocument and doc.isUsagerFile) %}			
 			<div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
 				<div class="fr-col-9">
 					<div class="fr-grid-row">

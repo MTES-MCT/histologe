@@ -4,6 +4,7 @@ namespace App\Messenger\MessageHandler;
 
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
@@ -220,6 +221,7 @@ class NewSignalementCheckFileMessageHandler
             type: Suivi::TYPE_AUTO,
             isPublic: true,
             context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
+            category: SuiviCategory::ASK_DOCUMENT,
         );
     }
 }

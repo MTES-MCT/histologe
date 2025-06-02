@@ -7,19 +7,26 @@ use PHPUnit\Framework\TestCase;
 
 class DateParserTest extends TestCase
 {
+    /**
+     * @throws \Exception
+     */
     public function testParseWithDateTimeFormat(): void
     {
         $date = '03/05/2023 10:16';
-        $expected = \DateTimeImmutable::createFromFormat('d/m/Y H:i', $date);
-        $this->assertEquals($expected, DateParser::parse($date));
+        $this->assertEquals(
+            new \DateTimeImmutable('2023-05-03 08:16', new \DateTimeZone('UTC')),
+            DateParser::parse($date, 'Europe/Paris'));
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testParseWithDateFormat(): void
     {
         $date = '04/05/2023';
-        $parsedDate = DateParser::parse($date);
-        $expected = \DateTimeImmutable::createFromFormat('d/m/Y H:i:s', $date.' 00:00:00');
-        $this->assertEquals($expected, $parsedDate);
+        $parsedDate = DateParser::parse($date, 'Europe/Paris');
+        $this->assertEquals(new \DateTimeImmutable('2023-05-04 00:00', new \DateTimeZone('UTC')),
+            $parsedDate);
         $this->assertSame('00:00:00', $parsedDate->format('H:i:s'));
     }
 }

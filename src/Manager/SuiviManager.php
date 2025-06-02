@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -45,6 +46,7 @@ class SuiviManager extends Manager
         ?string $context = null,
         bool $sendMail = true,
         bool $flush = true,
+        ?SuiviCategory $category = null,
     ): Suivi {
         $suivi = (new Suivi())
             ->setCreatedBy($user)
@@ -53,7 +55,8 @@ class SuiviManager extends Manager
             ->setType($type)
             ->setIsPublic($isPublic)
             ->setContext($context)
-            ->setSendMail($sendMail);
+            ->setSendMail($sendMail)
+            ->setCategory($category);
         if (!empty($createdAt)) {
             $suivi->setCreatedAt($createdAt);
         }
@@ -92,8 +95,9 @@ class SuiviManager extends Manager
 
         /** @var ?Intervention $intervention */
         $intervention = null;
+        /** @var File $file */
         foreach ($files as $file) {
-            if (File::FILE_TYPE_PHOTO === $file->getFileType()) {
+            if ($file->isTypePhoto()) {
                 ++$nbPhotos;
             } else {
                 ++$nbDocs;
@@ -198,6 +202,7 @@ class SuiviManager extends Manager
             type: Suivi::TYPE_AUTO,
             isPublic: $isVisibleUsager,
             user: $user,
+            category: SuiviCategory::NEW_DOCUMENT,
             flush: false
         );
     }

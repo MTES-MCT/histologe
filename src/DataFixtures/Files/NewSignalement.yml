@@ -824,6 +824,7 @@ signalements:
     nom_proprio: "HabitatMarsien"
     type_proprio: "ORGANISME_SOCIETE"
     is_logement_social: 0
+    profile_declarant: "LOCATAIRE"
     civilite_occupant: "mr"
     nom_occupant: "Bécam"
     prenom_occupant: "Jean-Edouard"
@@ -1011,6 +1012,7 @@ signalements:
     nom_proprio: "HabitatMarsien"
     type_proprio: "ORGANISME_SOCIETE"
     is_logement_social: 0
+    profile_declarant: "LOCATAIRE"
     civilite_occupant: "mme"
     nom_occupant: "Colbert"
     prenom_occupant: "Maud"
@@ -1048,3 +1050,40 @@ signalements:
       - "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
       - "desordres_batiment_securite_balcons"
       - "desordres_batiment_incendie_odeur_gaz"
+  -     
+    territory: "Gard"
+    uuid: "00000000-0000-0000-2025-000000000009"
+    reference: "2025-09"
+    details: "Les murs sont complétements fissurés et le vent s'engouffre."
+    is_proprio_averti: 1
+    is_allocataire: "0"
+    nature_logement: "maison"
+    superficie: 80
+    loyer: 750
+    date_entree: "2024-12-01"
+    nom_proprio: "LaBouze"
+    type_proprio: "PARTICULIER"
+    is_logement_social: 0
+    civilite_occupant: "mr"
+    nom_occupant: "Assin"
+    prenom_occupant: "Marc"
+    tel_occupant: "+330644556677"
+    phone_number: "+330644556677"
+    mail_occupant: "m.assin@yopmail.com"
+    adresse_occupant: "15 chemin de la route"
+    cp_occupant: "30360"
+    ville_occupant: "Vézénobres"
+    statut: "ACTIVE"
+    geoloc: "[]"
+    insee_occupant: ""
+    nb_pieces_logement: 4
+    nb_occupants_logement: 2
+    score: 35
+    score_logement: 20
+    score_batiment: 15
+    created_from_uuid: '00000000-0000-0000-2025-000000000004'
+    profile_declarant: "LOCATAIRE"
+    type_composition_logement: "[]"
+    situation_foyer: "[]"
+    information_procedure: "[]"
+    information_complementaire: "[]"

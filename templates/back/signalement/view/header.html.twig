@@ -42,6 +42,12 @@
                         Bailleur non-averti
                     {% endif %}
                 </span>
+
+                {% if signalement.isLogementVacant %}
+                    <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
+                        Logement vacant
+                    </span>
+                {% endif %}
                 
                 {% for zone in zones %}
                     <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">{{zone.name}}</span>
@@ -102,23 +108,36 @@
                 {% endif %}
 
                 <div class="fr-mt-3v">
-                    {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
-                        <button 
-                            class="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-icon-france-line" 
-                            data-fr-opened="false" 
-                            aria-controls="fr-modal-localisation"
-                        >
-                            Voir sur la carte
-                        </button>
-                    {% elseif is_granted('SIGN_EDIT', signalement) %}
-                        <button 
-                            class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-map-pin-2-line" 
-                            data-fr-opened="false" 
-                            aria-controls="fr-modal-pick-localisation"
-                        >
-                            Sélectionner le bâtiment sur la carte
-                        </button>
-                    {% endif %}
+                    <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
+                        {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
+                            <li>
+                                <button 
+                                    class="fr-btn fr-icon-france-line" 
+                                    data-fr-opened="false" 
+                                    aria-controls="fr-modal-localisation"
+                                >
+                                    Voir sur la carte
+                                </button>
+                            </li>
+                        {% elseif is_granted('SIGN_EDIT', signalement) %}
+                            <li>
+                                <button 
+                                    class="fr-btn fr-icon-map-pin-2-line" 
+                                    data-fr-opened="false" 
+                                    aria-controls="fr-modal-pick-localisation"
+                                >
+                                    Sélectionner le bâtiment sur la carte
+                                </button>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN_TERRITORY') and signalementOnSameAddress|length > 0 %}
+                            <li>
+                                <a href="{{ path('back_signalements_index', { 'searchTerms': signalement.adresseOccupant, 'communes[]': signalement.cpOccupant }) }}" class="fr-btn fr-icon-alarm-warning-line">
+                                    {{ signalementOnSameAddress|length > 1 ? signalementOnSameAddress|length ~ ' signalements à la même adresse' : signalementOnSameAddress|length ~  ' signalement à la même adresse' }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
             
@@ -133,6 +152,13 @@
         <div class="fr-col-5">
             <div class="fr-mb-4v fr-text--right">
                 Dossier déposé le : {{ signalement.createdAt|date('d/m/Y') }}
+                {% if signalement.createdBy is not null %}
+                     depuis le formulaire pro
+                {% elseif signalement.isImported is same as true %}
+                     par import
+                {% else %}
+                     depuis le formulaire usager
+                {% endif %}
             </div>
 
             <div class="fr-mb-4v fr-text--right">

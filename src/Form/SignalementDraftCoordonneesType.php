@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
@@ -43,41 +42,19 @@ class SignalementDraftCoordonneesType extends AbstractType
         $signalement = $builder->getData();
         $adresseCompleteProprio = mb_trim($signalement->getAdresseProprio().' '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio());
         $adresseCompleteAgence = mb_trim($signalement->getAdresseAgence().' '.$signalement->getCodePostalAgence().' '.$signalement->getVilleAgence());
-        $profilesTiersList = [
-            ProfileDeclarant::TIERS_PARTICULIER,
-            ProfileDeclarant::TIERS_PRO,
-            ProfileDeclarant::SERVICE_SECOURS,
-            ProfileDeclarant::BAILLEUR,
-            ProfileDeclarant::BAILLEUR_OCCUPANT,
-        ];
-        $choicesProfilesTiers = [];
-        foreach ($profilesTiersList as $profileTiers) {
-            $choicesProfilesTiers[$profileTiers->label()] = $profileTiers->value;
-        }
-
-        $isProTiersDeclarantOptions = [
-            'label' => 'Tiers professionnel',
-            'choices' => [
-                'Utiliser mes coordonnées' => '1',
-            ],
-            'help' => 'Cochez cette case pour devenir le tiers déclarant de ce signalement. Vous recevrez alors des mises à jour par e-mail au même titre que l\'occupant du logement.',
-            'expanded' => true,
-            'multiple' => true,
-            'required' => false,
-            'placeholder' => false,
-            'mapped' => false,
-            'attr' => [
-                'data-user-structure' => $nomPartner,
-                'data-user-nom' => $user->getNom(),
-                'data-user-prenom' => $user->getPrenom(),
-                'data-user-mail' => $user->getEmail(),
-            ],
-        ];
-        if (!empty($signalement->getMailDeclarant())) {
-            $isProTiersDeclarantOptions['data'] = [$signalement->getMailDeclarant() == $user->getEmail()];
-        }
 
         $builder
+            ->add('civiliteOccupant', ChoiceType::class, [
+                'label' => 'Civilité',
+                'choices' => [
+                    'Madame' => 'mme',
+                    'Monsieur' => 'mr',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+            ])
             ->add('nomOccupant', TextType::class, [
                 'label' => 'Nom de famille',
                 'required' => false,
@@ -181,32 +158,25 @@ class SignalementDraftCoordonneesType extends AbstractType
                 ],
                 'empty_data' => '',
             ])
-
-            ->add('profileDeclarantTiers', ChoiceType::class, [
-                'label' => 'Type de tiers',
-                'choices' => $choicesProfilesTiers,
-                'expanded' => true,
-                'multiple' => false,
-                'required' => false,
-                'placeholder' => false,
-                'mapped' => false,
-                'data' => in_array($signalement->getProfileDeclarant(), $profilesTiersList) ? $signalement->getProfileDeclarant()->value : '',
-            ])
-            ->add('lienDeclarantOccupant', ChoiceType::class, [
-                'label' => 'Lien avec l\'occupant',
+            ->add('isProTiersDeclarant', ChoiceType::class, [
+                'label' => 'Tiers professionnel',
                 'choices' => [
-                    OccupantLink::PROCHE->label() => OccupantLink::PROCHE->value,
-                    OccupantLink::VOISIN->label() => OccupantLink::VOISIN->value,
-                    OccupantLink::AUTRE->label() => OccupantLink::AUTRE->value,
+                    'Utiliser mes coordonnées' => '1',
                 ],
+                'help' => 'Cochez cette case pour devenir le tiers déclarant de ce signalement. Vous recevrez alors des mises à jour par e-mail au même titre que l\'occupant du logement.',
                 'expanded' => true,
-                'multiple' => false,
+                'multiple' => true,
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => $signalement->getLienDeclarantOccupant(),
+                'attr' => [
+                    'data-user-structure' => $nomPartner,
+                    'data-user-nom' => $user->getNom(),
+                    'data-user-prenom' => $user->getPrenom(),
+                    'data-user-mail' => $user->getEmail(),
+                ],
+                'data' => (!empty($signalement->getMailDeclarant()) && ProfileDeclarant::TIERS_PRO === $signalement->getProfileDeclarant()) ? [$signalement->getMailDeclarant() == $user->getEmail()] : null,
             ])
-            ->add('isProTiersDeclarant', ChoiceType::class, $isProTiersDeclarantOptions)
             ->add('structureDeclarant', TextType::class, [
                 'label' => 'Structure',
                 'required' => false,
@@ -240,10 +210,12 @@ class SignalementDraftCoordonneesType extends AbstractType
             ])
             ->add('nomAgence', TextType::class, [
                 'label' => 'Nom de famille',
+                'help' => 'Saisissez le nom du ou de la gestionnaire du logement',
                 'required' => false,
             ])
             ->add('prenomAgence', TextType::class, [
                 'label' => 'Prénom',
+                'help' => 'Saisissez le prénom du ou de la gestionnaire du logement',
                 'required' => false,
             ])
             ->add('mailAgence', TextType::class, [

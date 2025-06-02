@@ -9,7 +9,7 @@
 			<p>Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>
 		</div>
 	{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED
-		and signalement.hasSuiviUsagePostCloture %}
+		and signalement.hasSuiviUsagerPostCloture %}
 		<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 			<p>Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.</p>
 		</div>

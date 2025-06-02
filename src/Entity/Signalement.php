@@ -488,6 +488,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comCloture = null;
 
+    #[ORM\OneToOne(mappedBy: 'signalement', targetEntity: SignalementUsager::class)]
+    private ?SignalementUsager $signalementUsager = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -1367,6 +1370,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function getStatutLabel(): string
+    {
+        return ucfirst(SignalementStatus::getLabel($this->statut));
+    }
+
     public function getReference(): ?string
     {
         return $this->reference;
@@ -1427,6 +1435,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /**
+     * @return Collection<int, Suivi>
+     */
     public function getSuivis(): Collection
     {
         return $this->suivis;
@@ -2209,7 +2220,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getPhotos(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return 'photo' === $file->getFiletype() && !$file->isTemp() && !$file->isIsWaitingSuivi();
+            return $file->isTypePhoto() && !$file->isTemp() && !$file->isIsWaitingSuivi();
         });
     }
 
@@ -2219,17 +2230,20 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getDocuments(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return 'document' === $file->getFiletype() && !$file->isTemp() && !$file->isIsWaitingSuivi();
+            return $file->isTypeDocument() && !$file->isTemp() && !$file->isIsWaitingSuivi();
         });
     }
 
     /**
      * @return Collection<int, File>
      */
-    public function getFiles(): Collection
+    public function getFiles(?bool $isWaitingSuivi = false): Collection
     {
-        return $this->files->filter(function (File $file) {
-            if ($file->isTemp() || $file->isIsWaitingSuivi()) {
+        return $this->files->filter(function (File $file) use ($isWaitingSuivi) {
+            if ($file->isTemp()) {
+                return false;
+            }
+            if ($file->isIsWaitingSuivi() && !$isWaitingSuivi) {
                 return false;
             }
 
@@ -2668,7 +2682,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function hasSuiviUsagePostCloture(): bool
+    public function hasSuiviUsagerPostCloture(): bool
     {
         $suiviPostCloture = $this->getSuivis()->filter(function (Suivi $suivi) {
             return Suivi::TYPE_USAGER_POST_CLOTURE === $suivi->getType();
@@ -2745,5 +2759,36 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->comCloture = $comCloture;
 
         return $this;
+    }
+
+    public function getSignalementUsager(): ?SignalementUsager
+    {
+        return $this->signalementUsager;
+    }
+
+    public function getOccupantId(): ?int
+    {
+        return $this->getSignalementUsager()?->getOccupant()?->getId();
+    }
+
+    public function getDeclarantId(): ?int
+    {
+        return $this->getSignalementUsager()?->getDeclarant()?->getId();
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getUsagerIds(): array
+    {
+        return array_filter([$this->getOccupantId(), $this->getDeclarantId()]);
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getUsagers(): array
+    {
+        return array_filter([$this->getSignalementUsager()?->getOccupant(), $this->getSignalementUsager()?->getDeclarant()]);
     }
 }

@@ -43,14 +43,14 @@
 </div>
 
 {% if signalement.interventions is empty %}
-    {% include 'back/signalement/view/visites/visite-item.html.twig' %}
+    {% include 'back/signalement/view/visites/visite-item.html.twig' with { 'isForBO': true } %}
 {% else %}
-    {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
+    {% for intervention in visites %}
         <div class="fr-background-alt--grey fr-p-5v fr-mb-5v">
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-col-md-6 fr-h6 fr-mb-3v">
-                    Visite #{{loop.index}}
-                    {% if signalement.interventions is not empty or intervention.scheduledAt is not empty %}
+                    Visite
+                    {% if visites is not empty or intervention.scheduledAt is not empty %}
                         du {{ intervention.scheduledAt|date('d/m/Y') }}
                     {% endif %}
                 </div>
@@ -61,7 +61,7 @@
                     {% include 'back/signalement/view/visites/visites-buttons.html.twig' %}
                 </div>
             </div>
-            {% include 'back/signalement/view/visites/visite-item.html.twig' %}
+            {% include 'back/signalement/view/visites/visite-item.html.twig' with { 'isForBO': true } %}
         </div>
     {% endfor %}
 {% endif %}

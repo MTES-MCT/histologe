@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional\Command\Cron;
 
+use App\Entity\Enum\SuiviCategory;
+use App\Repository\SuiviRepository;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Input\InputOption;
@@ -45,5 +47,8 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $this->assertStringContainsString('1 signalement(s) for which the last suivi is technical', $output);
         $this->assertStringContainsString('6 signalement(s) without suivi public', $output);
         $this->assertEmailCount(11);
+
+        $nbSuiviFeedback = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::ASK_FEEDBACK_SENT]);
+        $this->assertEquals(11, $nbSuiviFeedback);
     }
 }

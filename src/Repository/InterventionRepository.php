@@ -69,6 +69,20 @@ class InterventionRepository extends ServiceEntityRepository
         return $this->getVisitsToNotify(self::NB_DAYS_DELAY_NOTIFICATION_VISIT_PAST);
     }
 
+    public function getOrderedVisitesForSignalement(Signalement $signalement): array
+    {
+        $queryBuilder = $this->createQueryBuilder('i');
+
+        return $queryBuilder
+            ->andWhere('i.type IN (:visiteTypes)')
+            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name])
+            ->andWhere('i.signalement = :signalement')
+            ->setParameter('signalement', $signalement)
+            ->orderBy('i.scheduledAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getPendingVisitesForSignalement(Signalement $signalement): array
     {
         $queryBuilder = $this->createQueryBuilder('i');

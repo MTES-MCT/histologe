@@ -39,7 +39,8 @@ class SignalementFileController extends AbstractController
 
         $message = (new PdfExportMessage())
             ->setSignalementId($signalement->getId())
-            ->setUserEmail($user->getEmail());
+            ->setUserEmail($user->getEmail())
+            ->setIsForUsager();
 
         $messageBus->dispatch($message);
 
@@ -64,7 +65,11 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if (SignalementStatus::DRAFT === $signalement->getStatut()) {
+            $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+        } else {
+            $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             if ($request->isXmlHttpRequest()) {
                 return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
@@ -116,7 +121,11 @@ class SignalementFileController extends AbstractController
         SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if (SignalementStatus::DRAFT === $signalement->getStatut()) {
+            $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+        } else {
+            $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        }
         $fileRepository = $entityManager->getRepository(File::class);
         /** @var User $user */
         $user = $this->getUser();
@@ -178,13 +187,12 @@ class SignalementFileController extends AbstractController
         } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))
         ) {
             $filename = $file->getFilename();
-            $type = $file->getFileType();
             if ($uploadHandlerService->deleteFile($file)) {
                 if (!$this->isGranted('ROLE_ADMIN') && SignalementStatus::CLOSED !== $signalement->getStatut()) {
                     /** @var User $user */
                     $user = $this->getUser();
                     $description = $user->getNomComplet().' a supprimé ';
-                    $description .= File::FILE_TYPE_DOCUMENT === $type ? 'le document suivant :' : 'la photo suivante :';
+                    $description .= $file->isTypeDocument() ? 'le document suivant :' : 'la photo suivante :';
                     $description .= '<ul><li>'.$filename.'</li></ul>';
                     $suiviManager->createSuivi(
                         user: $user,
@@ -195,7 +203,7 @@ class SignalementFileController extends AbstractController
                 }
 
                 if ('1' !== $request->get('is_draft')) {
-                    if (File::FILE_TYPE_DOCUMENT === $type) {
+                    if ($file->isTypeDocument()) {
                         $this->addFlash('success', 'Le document a bien été supprimé.');
                     } else {
                         $this->addFlash('success', 'La photo a bien été supprimée.');
@@ -304,7 +312,7 @@ class SignalementFileController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             return $this->json(['response' => 'success']);
         }
-        if ('document' === $file->getFileType()) {
+        if ($file->isTypeDocument()) {
             $this->addFlash('success', 'Le document a bien été modifié.');
         } else {
             $this->addFlash('success', 'La photo a bien été modifiée.');

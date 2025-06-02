@@ -26,12 +26,22 @@ class FileFactory
         ?bool $isVariantsGenerated = false,
         ?bool $isSuspicious = false,
     ): ?File {
+        $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
         $file = (new File())
             ->setFilename($filename)
             ->setTitle($title)
-            ->setFileType($this->getFileType($filename, $documentType ?? DocumentType::AUTRE))
+            ->setExtension($extension)
             ->setIsWaitingSuivi($isWaitingSuivi)
             ->setIsTemp($isTemp);
+
+        if (null !== $documentType) {
+            $file->setDocumentType($documentType);
+        } else {
+            $file->setDocumentType(DocumentType::AUTRE);
+        }
+
+        $file->setFileType($file->isTypePhoto() ? File::FILE_TYPE_PHOTO : File::FILE_TYPE_DOCUMENT);
+
         if (null !== $signalement) {
             $file->setSignalement($signalement);
         }
@@ -42,12 +52,6 @@ class FileFactory
 
         if (null !== $intervention) {
             $file->setIntervention($intervention);
-        }
-
-        if (null !== $documentType) {
-            $file->setDocumentType($documentType);
-        } else {
-            $file->setDocumentType(DocumentType::AUTRE);
         }
 
         if (null !== $desordreSlug) {
@@ -100,18 +104,5 @@ class FileFactory
             desordreSlug: $desordreSlug,
             description: $fileDescription,
         );
-    }
-
-    private function getFileType(string $filename, DocumentType $documentType)
-    {
-        $ext = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
-        if ((File::FILE_TYPE_PHOTO === $documentType->mapFileType() || DocumentType::AUTRE === $documentType)
-            && \in_array($ext, File::IMAGE_EXTENSION)
-            && 'pdf' !== $ext
-        ) {
-            return File::FILE_TYPE_PHOTO;
-        }
-
-        return File::FILE_TYPE_DOCUMENT;
     }
 }

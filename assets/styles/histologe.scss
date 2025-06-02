@@ -290,6 +290,16 @@ small {
     background-color: var(--background-contrast-orange-terre-battue);
 }
 
+.fr-background--notif-info {
+    background-color: var(--background-action-info);
+    color: var(--text-default-info);
+}
+
+.fr-background--notif-error {
+    background-color: var(--background-contrast-grey);
+    color: var(--text-default-grey);
+}
+
 .leaflet-control-zoom a[href]{
     background: #fff;
 }
@@ -862,6 +872,55 @@ ul + p {
 @media (min-width: 992px) {
     .text-align-right--lg {
         text-align: right;
+    }
+}
+
+.title-blue-france {
+    color: var(--text-title-blue-france);
+}
+
+.signalement-card{
+    background: #ececfe;
+    border-radius: 6px;
+    padding: 1rem;
+    color: var(--text-title-blue-france);
+    .info{
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+}
+
+.confetti {
+    width :12px;
+    height: 12px;
+    border-radius: 100%;
+    background-color: var(--text-default-warning);
+    display: inline-block;
+}
+
+.confetti.active{
+    background-color: var(--text-default-success);
+}
+
+.fr-tile.tile-last-suivi {
+    height:auto;
+    .fr-tile__pictogram{
+        width:60px;
+        height:60px;
+        img{
+            width:100%;
+        }
+    }
+}
+
+#container-form-demande-lien-signalement.format-vertical{
+    .fr-col-12{
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .submit-btn-container{
+        margin-top: -1rem !important;
+        margin-bottom: 1.5rem;
     }
 }
 

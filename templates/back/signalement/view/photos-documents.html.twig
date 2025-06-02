@@ -71,7 +71,7 @@
 {% if 'photo' in filesType and (filesFilter is same as 'situation' or filesFilter is same as 'visite') %}
     <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
         {% for index, photo in signalement.files|filter(
-            photo => photo.fileType == 'photo' and (
+            photo => photo.isTypePhoto and (
                 (filesFilter is same as 'situation' and photo.isSituationPhoto) or
                 (filesFilter is same as 'visite' and photo.intervention is not null and photo.intervention.id is same as interventionId)
             )) %}
@@ -129,7 +129,7 @@
 
 {% if 'document' in filesType %}
 {% for index, doc in signalement.files|filter(
-    doc => doc.fileType == 'document'
+    doc => doc.isTypeDocument
         and (
             (filesFilter is same as 'situation' 
             and doc.documentType.label() in  DocumentType.getOrderedSituationList)

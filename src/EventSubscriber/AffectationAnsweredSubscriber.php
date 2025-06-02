@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\AffectationAnsweredEvent;
 use App\Factory\Interconnection\Idoss\DossierMessageFactory;
@@ -84,6 +85,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 type: Suivi::TYPE_AUTO,
                 isPublic: true,
                 user: $adminUser,
+                category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
                 context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
             );
         }

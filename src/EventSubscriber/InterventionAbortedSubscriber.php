@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
+use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SuiviManager;
@@ -32,6 +33,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
 
     public function onInterventionAborted(Event $event): void
     {
+        /** @var Intervention $intervention */
         $intervention = $event->getSubject();
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
@@ -40,15 +42,19 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
             $description .= ' n\'a pas pu avoir lieu pour le motif suivant :<br>';
             $description .= $intervention->getDetails();
             $suivi = $this->suiviManager->createSuivi(
-                user: $currentUser,
                 signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 isPublic: true,
+                user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
-            $this->visiteNotifier->notifyUsagers($intervention, NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER);
+            $this->visiteNotifier->notifyUsagers(
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER,
+                suivi: $suivi
+            );
 
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\SuiviCategory;
 use App\Repository\SuiviRepository;
 use App\Service\SuiviTransformerService;
 use Doctrine\ORM\Mapping as ORM;
@@ -82,6 +83,16 @@ class Suivi implements EntityHistoryInterface
 
     #[ORM\Column]
     private ?bool $isSanitized = null;
+
+    #[ORM\Column(
+        type: 'string',
+        enumType: SuiviCategory::class,
+        options: ['comment' => 'Value possible enum SuiviCategory'],
+        nullable: true
+    )]
+    private ?SuiviCategory $category = null;
+
+    private ?bool $seenByUsager = null;
 
     public function __construct()
     {
@@ -295,5 +306,30 @@ class Suivi implements EntityHistoryInterface
         $this->isSanitized = $isSanitized;
 
         return $this;
+    }
+
+    public function getCategory(): ?SuiviCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?SuiviCategory $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function setSeenByUsager(bool $seen): void
+    {
+        $this->seenByUsager = $seen;
+    }
+
+    /**
+     * @see templates/back/signalement/view/suivis.html.twig
+     */
+    public function isSeenByUsager(): ?bool
+    {
+        return $this->seenByUsager;
     }
 }

@@ -20,6 +20,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -504,6 +505,14 @@ class SignalementManager extends AbstractManager
             $signalement->setDateEntree(null);
         }
 
+        if ('oui' === $informationsLogementRequest->getLogementVacant()) {
+            $signalement->setIsLogementVacant(true);
+        } elseif ('non' === $informationsLogementRequest->getLogementVacant()) {
+            $signalement->setIsLogementVacant(false);
+        } else {
+            $signalement->setIsLogementVacant(null);
+        }
+
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
@@ -578,6 +587,7 @@ class SignalementManager extends AbstractManager
 
     public function updateDesordresAndScoreWithSuroccupationChanges(
         Signalement $signalement,
+        bool $removeSuroccupationDesordre = true,
     ): void {
         $situationFoyer = $signalement->getSituationFoyer();
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
@@ -603,7 +613,7 @@ class SignalementManager extends AbstractManager
                         }
                     }
                 }
-            } else {
+            } elseif ($removeSuroccupationDesordre) {
                 $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
                     ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_allocataire']
                 );
@@ -896,6 +906,8 @@ class SignalementManager extends AbstractManager
             description: 'Signalement validé',
             type: Suivi::TYPE_AUTO,
             isPublic: true,
+            context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
+            category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             flush: false
         );
         $this->persist($suivi);
