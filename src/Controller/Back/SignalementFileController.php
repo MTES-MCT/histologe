@@ -121,7 +121,11 @@ class SignalementFileController extends AbstractController
         SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if (SignalementStatus::DRAFT === $signalement->getStatut()) {
+            $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
+        } else {
+            $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        }
         $fileRepository = $entityManager->getRepository(File::class);
         /** @var User $user */
         $user = $this->getUser();
