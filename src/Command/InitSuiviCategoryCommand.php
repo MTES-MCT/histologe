@@ -278,6 +278,22 @@ class InitSuiviCategoryCommand extends Command
         $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie MESSAGE_PARTNER', $rowCount));
         $this->entityManager->flush();
 
+        // DEMANDE_ABANDON_PROCEDURE
+        $demandeAbandonProcedureDescription = 'a demandé l&#039;arrêt de la procédure';
+        $sql = 'UPDATE suivi SET category = :category WHERE description LIKE :description AND type IN ('.Suivi::TYPE_USAGER.','.Suivi::TYPE_USAGER_POST_CLOTURE.')';
+        $stmt = $connection->prepare($sql);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::DEMANDE_ABANDON_PROCEDURE->name, 'description' => '%'.$demandeAbandonProcedureDescription.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie DEMANDE_ABANDON_PROCEDURE', $rowCount));
+
+        // DEMANDE_POURSUITE_PROCEDURE
+        $demandePoursuiteProcedureDescription = 'a indiqué vouloir poursuivre la procédure';
+        $sql = 'UPDATE suivi SET category = :category WHERE description LIKE :description AND type IN ('.Suivi::TYPE_USAGER.','.Suivi::TYPE_USAGER_POST_CLOTURE.')';
+        $stmt = $connection->prepare($sql);
+        $result = $stmt->executeQuery(['category' => SuiviCategory::DEMANDE_POURSUITE_PROCEDURE->name, 'description' => '%'.$demandePoursuiteProcedureDescription.'%']);
+        $rowCount = $result->rowCount();
+        $io->success(sprintf('%d lignes ont été mises à jour avec la catégorie DEMANDE_POURSUITE_PROCEDURE', $rowCount));
+
         return Command::SUCCESS;
     }
 }

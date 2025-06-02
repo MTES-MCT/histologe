@@ -90,11 +90,29 @@ class NotificationAndMailSender
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
     }
 
+    public function sendDemandeAbandonProcedureToAdminsAndPartners(Suivi $suivi): void
+    {        
+        $this->suivi = $suivi;
+        $this->signalement = $suivi->getSignalement();
+        $territory = $this->signalement->getTerritory();
+        $adminRecipients = $this->getRecipientsAdmin($territory);
+        $this->sendMail($adminRecipients, NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_ADMIN);
+        $this->createInAppNotifications(recipients: $adminRecipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+    }
+
     public function sendNewSuiviToUsagers(Suivi $suivi): void
     {
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER);
+        $this->createInAppUsagersNotifications(suivi: $suivi);
+    }
+
+    public function sendDemandeAbandonProcedureToUsager(Suivi $suivi): void
+    {
+        $this->suivi = $suivi;
+        $this->signalement = $suivi->getSignalement();
+        $this->sendMailToUsagers(NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_USAGER);
         $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
