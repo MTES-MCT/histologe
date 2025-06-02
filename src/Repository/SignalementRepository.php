@@ -38,7 +38,6 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Signalement|null find($id, $lockMode = null, $lockVersion = null)
@@ -1548,7 +1547,7 @@ class SignalementRepository extends ServiceEntityRepository
         Signalement $signalement,
         array $exclusiveStatus = [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE],
         array $excludedStatus = [],
-        ?UserInterface $exclusiveCreatedBy = null,
+        ?User $createdBy = null,
     ): array {
         $qb = $this->createQueryBuilder('s')
             ->where('s.adresseOccupant = :address')
@@ -1572,9 +1571,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('id', $signalement->getId());
         }
 
-        if (null !== $exclusiveCreatedBy) {
+        if (null !== $createdBy) {
             $qb->andWhere('s.createdBy = :user')
-            ->setParameter('user', $exclusiveCreatedBy);
+            ->setParameter('user', $createdBy);
         }
 
         return $qb->getQuery()->getResult();

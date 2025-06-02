@@ -209,6 +209,8 @@ class SignalementCreateController extends AbstractController
         $duplicates = [];
         $labelBtnDuplicates = 'Voir les signalements';
         if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formAddressManager($form, $signalement)) {
+            /** @var User $user */
+            $user = $this->getUser();
             if ($form->get('forceSave')->isEmpty() && $duplicates = $signalementRepository->findOnSameAddress($signalement)) {
                 $hasDuplicates = true;
                 $duplicateContent = $this->renderView('back/signalement_create/_modal_duplicate_content.html.twig', ['duplicates' => $duplicates]);
@@ -221,7 +223,7 @@ class SignalementCreateController extends AbstractController
                 && $draftDuplicates = $signalementRepository->findOnSameAddress(
                     signalement: $signalement,
                     exclusiveStatus: [SignalementStatus::DRAFT],
-                    exclusiveCreatedBy: $this->getUser(),
+                    createdBy: $user,
                 )
             ) {
                 $hasDuplicates = true;
