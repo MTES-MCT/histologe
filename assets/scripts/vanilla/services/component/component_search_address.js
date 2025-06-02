@@ -32,9 +32,16 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
   }
   const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
   const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
+  let addressAbortController;
   inputAdresse.addEventListener('input', (e) => {
     const adresse = e.target.value
+
+    if (addressAbortController) {
+      addressAbortController.abort();
+    }
+
     if (adresse.length > 8) {
+      addressAbortController = new AbortController();
       let query = apiAdresse + adresse
       const limit = inputAdresse.getAttribute('data-form-limit')
       if (inputAdresse.getAttribute('data-form-lat')) {
@@ -43,7 +50,7 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
       if (inputAdresse.getAttribute('data-form-lng')) {
         query += '&lon=' + inputAdresse.getAttribute('data-form-lng')
       }
-      fetch(query)
+      fetch(query, { signal: addressAbortController.signal })
         .then(response => response.json())
         .then(json => {
           addressGroup.innerHTML = ''
@@ -61,6 +68,12 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
               addressGroup.appendChild(suggestion)
             }
           })
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') {
+            return
+          }
+          console.error('Error:', error)
         })
     }
     if (adresse.length === 0) {
