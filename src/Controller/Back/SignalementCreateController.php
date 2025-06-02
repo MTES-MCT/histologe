@@ -211,7 +211,22 @@ class SignalementCreateController extends AbstractController
         if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formAddressManager($form, $signalement)) {
             /** @var User $user */
             $user = $this->getUser();
-            if ($form->get('forceSave')->isEmpty() && $duplicates = $signalementRepository->findOnSameAddress($signalement)) {
+            if (
+                $form->get('forceSave')->isEmpty() 
+                && $duplicates = $signalementRepository->findOnSameAddress(
+                    $signalement,
+                    exclusiveStatus: [SignalementStatus::NEED_VALIDATION],
+                    createdBy: $user,
+                )
+            ) {
+                $hasDuplicates = true;
+                $duplicateContent = $this->renderView('back/signalement_create/_modal_duplicate_content.html.twig', ['duplicates' => $duplicates]);
+                $linkDuplicates = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
+                $labelBtnDuplicates = 'Voir mes brouillons';
+            } elseif (
+                $form->get('forceSave')->isEmpty() 
+                && $duplicates = $signalementRepository->findOnSameAddress($signalement)
+            ) {
                 $hasDuplicates = true;
                 $duplicateContent = $this->renderView('back/signalement_create/_modal_duplicate_content.html.twig', ['duplicates' => $duplicates]);
                 $linkDuplicates = $this->generateUrl('back_signalements_index', [
