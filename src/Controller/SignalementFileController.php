@@ -8,7 +8,6 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
-use App\Manager\UserManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Security\User\SignalementUser;
@@ -33,11 +32,16 @@ class SignalementFileController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
-        UserManager $userManager,
+        Security $security,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) || !$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
+        }
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        if (!$currentUser || !$currentUser->getUser()) {
+            return $this->json(['response' => 'Vous devez être connecté pour ajouter un fichier'], Response::HTTP_UNAUTHORIZED);
         }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
@@ -47,8 +51,7 @@ class SignalementFileController extends AbstractController
         if (!$signalementFileProcessor->isValid()) {
             return $this->json(['response' => $signalementFileProcessor->getErrorMessages()], Response::HTTP_BAD_REQUEST);
         }
-        $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $request->get('email'));
-        $signalementFileProcessor->addFilesToSignalement(fileList: $fileList, signalement: $signalement, user: $user, isTemp : true);
+        $signalementFileProcessor->addFilesToSignalement(fileList: $fileList, signalement: $signalement, user: $currentUser->getUser(), isTemp : true);
         $entityManager->persist($signalement);
         $entityManager->flush();
 
@@ -61,10 +64,14 @@ class SignalementFileController extends AbstractController
         Request $request,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
+        Security $security,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) || !$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
+        }
+        if (!$security->getUser()) {
+            return $this->json(['response' => 'Vous devez être connecté pour éditer un fichier'], Response::HTTP_UNAUTHORIZED);
         }
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
             return $this->json(['response' => 'Token CSRF invalide, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
@@ -96,8 +103,12 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
         FileRepository $fileRepository,
+        Security $security,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        if (!$security->getUser()) {
+            return $this->json(['response' => 'Vous devez être connecté pour supprimer un fichier'], Response::HTTP_UNAUTHORIZED);
+        }
         $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
         if (!$file) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
@@ -121,7 +132,7 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         SuiviManager $suiviManager,
-        UserManager $userManager,
+        Security $security,
     ): Response {
         $fileId = $request->get('file_id');
         $file = $fileRepository->findOneBy(
@@ -130,9 +141,12 @@ class SignalementFileController extends AbstractController
                 'signalement' => $signalement,
             ]
         );
-        $fromEmail = $request->get('from');
-        $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
         $this->denyAccessUnlessGranted('FRONT_FILE_DELETE', $file);
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        if (!$currentUser || !$currentUser->getUser()) {
+            return $this->json(['response' => 'Vous devez être connecté pour supprimer un fichier'], Response::HTTP_UNAUTHORIZED);
+        }
         if (null === $file) {
             $this->addFlash('error', 'Ce fichier n\'existe plus');
         } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
@@ -142,7 +156,7 @@ class SignalementFileController extends AbstractController
                 $description .= 'par l\'usager :';
                 $description .= '<ul><li>'.$filename.'</li></ul>';
                 $suiviManager->createSuivi(
-                    user: $user,
+                    user: $currentUser->getUser(),
                     signalement: $signalement,
                     description: $description,
                     type: Suivi::TYPE_AUTO,
@@ -159,11 +173,11 @@ class SignalementFileController extends AbstractController
 
         return $this->redirectToRoute(
             'front_suivi_signalement',
-            ['code' => $signalement->getCodeSuivi(), 'from' => $fromEmail]
+            ['code' => $signalement->getCodeSuivi(), 'from' => $currentUser->getEmail()]
         );
     }
 
-    #[Route('/{uuid:signalement}/export-pdf-usager', name: 'signalement_gen_pdf')]
+    #[Route('/{uuid:signalement}/file/export-pdf-usager', name: 'signalement_gen_pdf')]
     public function generatePdfSignalement(
         Signalement $signalement,
         MessageBusInterface $messageBus,
