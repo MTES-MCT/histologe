@@ -33,7 +33,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private PartnerRepository $partnerRepository;
     private NotificationFactory $notificationFactory;
     private Security $security;
-    private bool $featureEmailRecap;
     private NotificationAndMailSender $notificationAndMailSender;
 
     protected function setUp(): void
@@ -46,7 +45,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
         $this->notificationFactory = self::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
-        $this->featureEmailRecap = $kernel->getContainer()->getParameter('feature_email_recap');
 
         $this->notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
@@ -55,7 +53,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            $this->featureEmailRecap,
         );
     }
 
@@ -229,7 +226,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            false
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -272,7 +268,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            false
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);

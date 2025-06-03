@@ -5,13 +5,11 @@ namespace App\Controller\Security;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
-use App\Security\User\SignalementUser;
 use App\Service\Files\ImageVariantProvider;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security as SymfonySecurity;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
@@ -21,12 +19,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 class SecurityController extends AbstractController
 {
+    use TargetPathTrait;
+
     public function __construct(
-        #[Autowire(env: 'FEATURE_SECURE_UUID_URL')]
-        private readonly bool $featureSecureUuidUrl,
         #[Autowire(env: 'FEATURE_SUIVI_ACTION')]
         private readonly bool $featureSuiviAction,
     ) {
@@ -109,6 +108,37 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['title' => $title, 'last_username' => $lastUsername, 'error' => $error]);
     }
 
+    #[Route('/authentification/{code}', name: 'app_login_fo')]
+    public function loginFO(
+        string $code,
+        AuthenticationUtils $authenticationUtils,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        if (!$signalement) {
+            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+            return $this->render('front/flash-messages.html.twig');
+        }
+        if ($this->getUser()) {
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $code]);
+        }
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $targetPath = $this->getTargetPath($request->getSession(), 'code_suivi');
+        $title = 'Suivre mon signalement';
+        if (str_contains($targetPath, '/show-export-pdf-usager/')) {
+            $title = 'Accéder à mon export pdf';
+        }
+
+        return $this->render('security/login_suivi_signalement.html.twig', [
+            'signalement' => $signalement,
+            'error' => $error,
+            'title' => $title,
+        ]);
+    }
+
     /**
      * Use only for exporting pdf signalement and using in old description suivi
      * Use @see FileController::showFile() instead.
@@ -151,44 +181,24 @@ class SecurityController extends AbstractController
         string $filename,
         string $code,
         SignalementRepository $signalementRepository,
-        SymfonySecurity $security,
-        AuthenticationUtils $authenticationUtils,
     ): Response {
-        if ($signalement = $signalementRepository->findOneByCodeForPublic($code, false)) {
-            if (!$this->featureSecureUuidUrl) {// TODO Remove FEATURE_SECURE_UUID_URL
-                throw $this->createAccessDeniedException();
-            }
-            if (!$this->featureSuiviAction) {
-                throw $this->createAccessDeniedException();
-            }
-            /** @var ?SignalementUser $currentUser */
-            $currentUser = $security->getUser();
-            if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser?->getCodeSuivi() !== $code) {
-                // get the login error if there is one
-                $error = $authenticationUtils->getLastAuthenticationError();
+        if (!$this->featureSuiviAction) {
+            throw $this->createAccessDeniedException();
+        }
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
 
-                return $this->render('security/login_suivi_signalement.html.twig', [
-                    'signalement' => $signalement,
-                    'error' => $error,
-                ]);
-            }
+        try {
+            $file = $imageVariantProvider->getFileVariant($filename);
 
-            try {
-                $file = $imageVariantProvider->getFileVariant($filename);
-
-                return new BinaryFileResponse($file);
-            } catch (\Throwable $exception) {
-                $logger->error($exception->getMessage());
-            }
-
-            return new BinaryFileResponse(
-                new File($this->getParameter('images_dir').'image-404.png'),
-            );
+            return new BinaryFileResponse($file);
+        } catch (\Throwable $exception) {
+            $logger->error($exception->getMessage());
         }
 
-        $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
-
-        return $this->render('front/flash-messages.html.twig');
+        return new BinaryFileResponse(
+            new File($this->getParameter('images_dir').'image-404.png'),
+        );
     }
 
     #[Route('/logout', name: 'app_logout')]

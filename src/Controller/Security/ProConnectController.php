@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
@@ -27,12 +26,7 @@ class ProConnectController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly LoggerInterface $logger,
         private readonly Security $security,
-        #[Autowire(env: 'FEATURE_PROCONNECT')]
-        private readonly int $featureProConnect,
     ) {
-        if (!$this->featureProConnect) {
-            throw new \RuntimeException('ProConnect feature is disabled');
-        }
     }
 
     #[Route('/proconnect/login', name: 'app_user_proconnect_login', methods: ['POST'])]

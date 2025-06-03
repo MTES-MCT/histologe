@@ -18,10 +18,7 @@ class NotificationFactoryTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        $kernel = self::bootKernel();
-        $this->notificationFactory = $this->notificationFactory = new NotificationFactory(
-            featureEmailRecap: $kernel->getContainer()->getParameter('feature_email_recap')
-        );
+        $this->notificationFactory = new NotificationFactory();
     }
 
     public function testCreateInstanceNotificationNouveauSuivi(): void

@@ -20,12 +20,6 @@ class SendSummaryEmailsCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
 
-        $isActivated = $kernel->getContainer()->getParameter('feature_email_recap');
-        if (!$isActivated) {
-            $this->assertStringContainsString('Feature "FEATURE_EMAIL_RECAP" is disabled.', $output);
-
-            return;
-        }
         $explodedOutput = explode("\n", $output);
         $lastLine = $explodedOutput[count($explodedOutput) - 3];
         $this->assertStringContainsString(' emails récapitulatifs envoyés.', $lastLine);

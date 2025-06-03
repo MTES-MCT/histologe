@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
-use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -155,7 +154,6 @@ class SignalementFileControllerTest extends WebTestCase
             $this->client->request('POST', $route, [
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$this->signalement->getId()),
                 'file_id' => $file->getId(),
-                'from' => $this->signalement->getMailOccupant(),
             ]);
 
             $this->fail('L\'exception AccessDeniedException n\'a pas été levée.');
@@ -215,7 +213,7 @@ class SignalementFileControllerTest extends WebTestCase
         /** @var User $usager */
         $usager = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
         $signalementUser = new SignalementUser(
-            userIdentifier: $signalement->getCodeSuivi().':'.SignalementUserProvider::OCCUPANT,
+            userIdentifier: $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
             email: $signalement->getMailOccupant(),
             user: $usager
         );

@@ -8,7 +8,6 @@ use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Security\User\SignalementUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -25,7 +24,6 @@ class SignalementVoter extends Voter
     public const string VIEW = 'SIGN_VIEW';
     public const string ADD_VISITE = 'SIGN_ADD_VISITE';
     public const string ADD_ARRETE = 'SIGN_ADD_ARRETE';
-    public const string USAGER_EDIT = 'SIGN_USAGER_EDIT';
     public const string EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SEE_NDE = 'SIGN_SEE_NDE';
 
@@ -47,7 +45,6 @@ class SignalementVoter extends Voter
                 self::REOPEN,
                 self::ADD_VISITE,
                 self::ADD_ARRETE,
-                self::USAGER_EDIT,
                 self::EDIT_NDE,
                 self::SEE_NDE,
                 self::DELETE_DRAFT,
@@ -57,17 +54,10 @@ class SignalementVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $token->getUser();
-        if (!$user || $user instanceof SignalementUser) {
-            if (self::USAGER_EDIT === $attribute && $this->canUsagerEdit($subject)) {
-                return true;
-            }
 
-            return false;
-        }
-
-        if (!$user instanceof User) {
+        if (!$user || !$user instanceof User) {
             return false;
         }
 
@@ -90,34 +80,9 @@ class SignalementVoter extends Voter
             self::DELETE => $this->canDelete($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
-            self::USAGER_EDIT => $this->canUsagerEdit($subject),
             self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
             default => false,
         };
-    }
-
-    private function canUsagerEdit(Signalement $signalement): bool
-    {
-        if (SignalementStatus::ARCHIVED !== $signalement->getStatut()
-            && SignalementStatus::REFUSED !== $signalement->getStatut()
-            && SignalementStatus::DRAFT !== $signalement->getStatut()
-            && SignalementStatus::DRAFT_ARCHIVED !== $signalement->getStatut()
-        ) {
-            if (SignalementStatus::CLOSED === $signalement->getStatut()) {
-                if (!$signalement->getClosedAt()) {
-                    return false;
-                }
-                $datePostCloture = $signalement->getClosedAt()->modify('+ 30days');
-                $today = new \DateTimeImmutable();
-                if ($today < $datePostCloture && !$signalement->hasSuiviUsagerPostCloture()) {
-                    return true;
-                }
-            } else {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private function isAdminOrTerritoryAdmin(Signalement $signalement, User $user): bool

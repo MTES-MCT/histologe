@@ -4,6 +4,7 @@ namespace App\Security\Provider;
 
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Security\User\SignalementUser;
@@ -14,9 +15,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class SignalementUserProvider implements UserProviderInterface
 {
-    public const string OCCUPANT = 'occupant';
-    public const string DECLARANT = 'declarant';
-
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly UserRepository $userRepository,
@@ -29,7 +27,7 @@ class SignalementUserProvider implements UserProviderInterface
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
         [$codeSuivi, $type] = explode(':', $identifier);
-        $signalement = $this->signalementRepository->findOneByCodeForPublic($codeSuivi, false);
+        $signalement = $this->signalementRepository->findOneByCodeForPublic($codeSuivi);
 
         if (!$signalement) {
             throw new UserNotFoundException(sprintf('Signalement avec code "%s" non trouvé.', $identifier));
@@ -69,11 +67,11 @@ class SignalementUserProvider implements UserProviderInterface
      */
     public function getUsagerData(Signalement $signalement, string $type, string $codeSuivi): array
     {
-        if (self::DECLARANT === $type) {
+        if (UserManager::DECLARANT === $type) {
             $user = $this->userRepository->findOneBy(['email' => $signalement->getMailDeclarant()]);
 
             return [
-                'identifier' => $codeSuivi.':'.self::DECLARANT,
+                'identifier' => $codeSuivi.':'.UserManager::DECLARANT,
                 'email' => $signalement->getMailDeclarant(),
                 'user' => $user,
             ];
@@ -81,7 +79,7 @@ class SignalementUserProvider implements UserProviderInterface
         $user = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
 
         return [
-            'identifier' => $codeSuivi.':'.self::OCCUPANT,
+            'identifier' => $codeSuivi.':'.UserManager::OCCUPANT,
             'email' => $signalement->getMailOccupant(),
             'user' => $user,
         ];
