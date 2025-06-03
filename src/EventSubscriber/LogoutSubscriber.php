@@ -7,7 +7,6 @@ use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -21,8 +20,6 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
         private ProConnectContext $proConnectContext,
         private UrlGeneratorInterface $urlGenerator,
         private LoggerInterface $logger,
-        #[Autowire(env: 'FEATURE_PROCONNECT')]
-        private int $featureProConnect,
     ) {
     }
 
@@ -35,10 +32,6 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
 
     public function onLogout(LogoutEvent $event): void
     {
-        if (!$this->featureProConnect) {
-            return;
-        }
-
         $token = $event->getToken();
         /** @var ?User $user */
         $user = $token?->getUser();

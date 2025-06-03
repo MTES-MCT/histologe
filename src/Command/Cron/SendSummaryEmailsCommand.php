@@ -12,7 +12,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -28,8 +27,6 @@ class SendSummaryEmailsCommand extends AbstractCronCommand
         private readonly SummaryMailService $summaryMailService,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
-        #[Autowire(env: 'FEATURE_EMAIL_RECAP')]
-        private readonly bool $featureEmailRecap,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -37,12 +34,6 @@ class SendSummaryEmailsCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
-
-        if (!$this->featureEmailRecap) {
-            $this->io->warning('Feature "FEATURE_EMAIL_RECAP" is disabled.');
-
-            return Command::SUCCESS;
-        }
 
         $users = $this->userRepository->findUserWaitingSummaryEmail();
         $progressBar = $this->io->createProgressBar(\count($users));
