@@ -212,7 +212,10 @@ class EsaboraManager
             $intervention = $this->interventionFactory->createInstanceFrom(
                 affectation: $affectation,
                 type: InterventionType::ARRETE_PREFECTORAL,
-                scheduledAt: DateParser::parse($dossierArreteSISH->getArreteDate()),
+                scheduledAt: DateParser::parse(
+                    $dossierArreteSISH->getArreteDate(),
+                    $affectation->getSignalement()->getTimezone()
+                ),
                 registeredAt: new \DateTimeImmutable(),
                 status: Intervention::STATUS_DONE,
                 providerName: InterfacageType::ESABORA->value,
@@ -368,8 +371,12 @@ class EsaboraManager
             $hasChanged = true;
         }
 
-        $scheduledAt = DateParser::parse($dossierArreteSISH->getArreteDate());
-        if ($intervention->getScheduledAt() != $scheduledAt) {
+        $scheduledAt = DateParser::parse(
+            $dossierArreteSISH->getArreteDate(),
+            $intervention->getSignalement()->getTimezone()
+        );
+        if ($intervention->getScheduledAt()?->getTimestamp() !== $scheduledAt->getTimestamp()) {
+            $intervention->setPreviousScheduledAt($intervention->getScheduledAt());
             $intervention->setScheduledAt($scheduledAt);
             $hasChanged = true;
         }
