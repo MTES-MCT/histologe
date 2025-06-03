@@ -268,6 +268,16 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         $qb->getQuery()->execute();
     }
 
+    public function deleteBySuiviIds(array $suiviIds): void
+    {
+        $qb = $this->createQueryBuilder('n')
+            ->delete()
+            ->where('n.suivi in (:suivis)')
+            ->setParameter('suivis', $suiviIds);
+
+        $qb->getQuery()->execute();
+    }
+
     public function findWaitingSummaryForUser(User $user): array
     {
         return $this->createQueryBuilder('n')
