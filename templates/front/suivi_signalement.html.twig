@@ -5,9 +5,9 @@
 
 {% block body %}
 
-	{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
-		{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
-	{% endif %}
+{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+	{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
+{% endif %}
 
 <main class="fr-container" id="content">
 	<header>
@@ -55,10 +55,10 @@
 							<br>
 							<div class="fr-grid-row fr-mt-4v">
 								<div class="fr-col">
-									<a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi, from:email}) }}">Annuler</a>
+									<a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}">Annuler</a>
 								</div>
 								<div class="fr-col">
-									<a class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right" href="{{ path('front_suivi_procedure',{code:signalement.codeSuivi, from:email, suiviAuto:suiviAuto}) }}&_token={{csrf_token('suivi_procedure')}}">Confirmer</a>
+									<a class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right" href="{{ path('front_suivi_procedure',{code:signalement.codeSuivi, suiviAuto:suiviAuto}) }}&_token={{csrf_token('suivi_procedure')}}">Confirmer</a>
 								</div>
 							</div>
 						</div>

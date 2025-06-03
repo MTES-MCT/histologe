@@ -46,7 +46,7 @@ class SignalementFeedbackUsagerWithoutResponseMailer extends AbstractNotificatio
             'from' => $toRecipient,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient]
+                ['code' => $signalement->getCodeSuivi()]
             ),
         ];
     }

@@ -40,10 +40,8 @@ class SignalementConfirmReceptionMailer extends AbstractNotificationMailer
             'signalement_isProprioAverti' => $signalement->getIsProprioAverti(),
             'attach' => $attachment,
             'lien_suivi' => $this->urlGenerator->generate(
-                'front_suivi_signalement', [
-                    'code' => $signalement->getCodeSuivi(),
-                    'from' => $toRecipient,
-                ],
+                'front_suivi_signalement',
+                ['code' => $signalement->getCodeSuivi()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];

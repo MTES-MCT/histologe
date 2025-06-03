@@ -40,7 +40,7 @@ class SuiviVisiteCanceledToUsagerMailer extends AbstractNotificationMailer
             'intervention_scheduledAt' => $interventionScheduledAt,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],
+                ['code' => $signalement->getCodeSuivi()],
             ),
         ];
     }

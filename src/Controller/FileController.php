@@ -16,7 +16,7 @@ class FileController extends AbstractController
 {
     public const int SIGNATURE_VALIDITY_DURATION = 86400; // 24h
 
-    #[Route('/show/{uuid:file}', name: 'show_file')]
+    #[Route('/show/{uuid:file}', name: 'show_file', defaults: ['_signed' => true])]
     public function showFile(
         File $file,
         Request $request,

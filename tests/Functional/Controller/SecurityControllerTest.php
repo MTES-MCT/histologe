@@ -3,9 +3,9 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\User;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
-use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
 use App\Tests\ApiHelper;
 use App\Tests\SessionHelper;
@@ -111,7 +111,7 @@ class SecurityControllerTest extends WebTestCase
         /** @var User $usager */
         $usager = $userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
         $signalementUser = new SignalementUser(
-            userIdentifier: $signalement->getCodeSuivi().':'.SignalementUserProvider::OCCUPANT,
+            userIdentifier: $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
             email: $signalement->getMailOccupant(),
             user: $usager
         );
@@ -138,13 +138,10 @@ class SecurityControllerTest extends WebTestCase
         $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
         $codeSuivi = $signalement->getCodeSuivi();
 
-        $crawler = $client->request(
+        $client->request(
             'GET',
             '/show-export-pdf-usager/'.$filename.'/'.$codeSuivi.'?folder=_up',
         );
-        /** @var Response $response */
-        $response = $client->getResponse();
-        $this->assertEquals('Accéder à mon export pdf', $crawler->filter('h1')->text());
-        $this->assertTrue($response->isSuccessful());
+        $this->assertResponseRedirects('/authentification/'.$codeSuivi);
     }
 }
