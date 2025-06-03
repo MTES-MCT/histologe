@@ -23,13 +23,14 @@ use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class EsaboraManagerTest extends TestCase
+class EsaboraManagerTest extends KernelTestCase
 {
     use FixturesHelper;
     protected const CREATE_ACTION = 'create';
@@ -50,6 +51,7 @@ class EsaboraManagerTest extends TestCase
     private MockObject|UrlGeneratorInterface $UrlGeneratorInterface;
     private MockObject|FileFactory $fileFactory;
     private MockObject|SignalementQualificationUpdater $signalementQualificationUpdater;
+    private HtmlSanitizerInterface $htmlSanitizerInterface;
 
     protected function setUp(): void
     {
@@ -68,6 +70,7 @@ class EsaboraManagerTest extends TestCase
         $this->UrlGeneratorInterface = $this->createMock(UrlGeneratorInterface::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
         $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
+        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
     }
 
     /**
@@ -125,7 +128,8 @@ class EsaboraManagerTest extends TestCase
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
             $this->fileFactory,
-            $this->signalementQualificationUpdater
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizerInterface
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -206,7 +210,8 @@ class EsaboraManagerTest extends TestCase
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
             $this->fileFactory,
-            $this->signalementQualificationUpdater
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizerInterface
         );
     }
 
@@ -254,7 +259,8 @@ class EsaboraManagerTest extends TestCase
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
             $this->fileFactory,
-            $this->signalementQualificationUpdater
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizerInterface
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -311,7 +317,9 @@ class EsaboraManagerTest extends TestCase
             $this->imageManipulationHandler,
             $this->UrlGeneratorInterface,
             $this->fileFactory,
-            $this->signalementQualificationUpdater);
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizerInterface
+        );
 
         $reflector = new \ReflectionClass($esaboraManager);
         $method = $reflector->getMethod('updateFromDossierVisite');
