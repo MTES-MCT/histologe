@@ -190,8 +190,8 @@ export default defineComponent({
       this.sharedState.nonDecenceSignalements.linkActive = dataWidget.cardSignalementsEnCoursNonDecence?.link
       this.sharedState.noSuiviAfter3Relances.count = dataWidget.cardNoSuiviAfter3Relances?.count
       this.sharedState.noSuiviAfter3Relances.link = dataWidget.cardNoSuiviAfter3Relances?.link
-      this.sharedState.abandonProcedureUsager.count = dataWidget.cardAbandonProcedureUsager?.count
-      this.sharedState.abandonProcedureUsager.link = dataWidget.cardAbandonProcedureUsager?.link      
+      this.sharedState.usagerAbandonProcedure.count = dataWidget.cardUsagerAbandonProcedure?.count
+      this.sharedState.usagerAbandonProcedure.link = dataWidget.cardUsagerAbandonProcedure?.link      
       this.sharedState.partenairesNonNotifiables.count = dataWidget.cardPartenairesNonNotifiables?.count
       this.sharedState.partenairesNonNotifiables.link = dataWidget.cardPartenairesNonNotifiables?.link
       this.sharedState.archivingScheduledUsers.count = dataWidget.cardArchivingScheduledUsers?.count

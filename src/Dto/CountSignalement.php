@@ -19,7 +19,7 @@ class CountSignalement
     #[Groups(['widget:read'])]
     private ?int $affected = null;
     #[Groups(['widget:read'])]
-    private ?int $abandonProcedureUsager = null;
+    private ?int $usagerAbandonProcedure = null;
 
     public function __construct(
         #[Groups(['widget:read'])]
@@ -95,14 +95,14 @@ class CountSignalement
         return $this;
     }
 
-    public function getAbandonProcedureUsager(): ?int
+    public function getUsagerAbandonProcedure(): ?int
     {
-        return $this->abandonProcedureUsager;
+        return $this->usagerAbandonProcedure;
     }
 
-    public function setAbandonProcedureUsager(?int $abandonProcedureUsager): self
+    public function setUsagerAbandonProcedure(?int $usagerAbandonProcedure): self
     {
-        $this->abandonProcedureUsager = $abandonProcedureUsager;
+        $this->usagerAbandonProcedure = $usagerAbandonProcedure;
 
         return $this;
     }

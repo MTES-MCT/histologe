@@ -216,12 +216,10 @@ class SearchFilter
             }
         }
 
-        if (!empty($filters['abandonProcedureUsager'])) {
+        if (!empty($filters['usager_abandon_procedure'])) {
             if ($user->isSuperAdmin() || $user->isTerritoryAdmin()) {
-                $qb->andWhere('s.statut IN (:statuses)')
-                    ->andWhere('s.isUsagerAbandonProcedure  = :isUsagerAbandonProcedure')
-                    ->setParameter('statuses', $filters['statuses'])
-                    ->setParameter('isUsagerAbandonProcedure', $filters['abandonProcedureUsager']);
+                $qb->andWhere('s.isUsagerAbandonProcedure  = :isUsagerAbandonProcedure')
+                    ->setParameter('isUsagerAbandonProcedure', $filters['usager_abandon_procedure']);
             }
         }
 

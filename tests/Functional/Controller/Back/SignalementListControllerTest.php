@@ -81,6 +81,8 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Zones on Territory 34' => [['isImported' => 'oui', 'zones' => [1, 2, 3], 'territoire' => '35'], 1];
         yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 7];
         yield 'Search by dates depot and dates of last suivi' => [['isImported' => 'oui', 'dateDepotDebut' => '2023-01-01', 'dateDepotFin' => '2023-03-31', 'dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-12-31'], 3];
+        yield 'Search by Demande fermeture usager territoire 13' => [['territoire' => '13', 'usagerAbandonProcedure' => '1'], 1];
+        yield 'Search by Demande fermeture usager all' => [['usagerAbandonProcedure' => '1'], 2];
     }
 
     /**
@@ -189,6 +191,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'SUPER_ADMIN - Clotures partenaires' => [$adminUser, '?closed_affectation=ONE_CLOSED'];
         yield 'SUPER_ADMIN - Nouveautés non-décence énergétique' => [$adminUser, '?nde=1&statut=1'];
         yield 'SUPER_ADMIN - Non-décence énergétique en cours' => [$adminUser, '?nde=1&statut=2'];
+        yield 'SUPER_ADMIN - Demande fermeture usager' => [$adminUser, '?usagerAbandonProcedure=1'];
 
         $adminTerritoryUser = 'admin-territoire-13-01@signal-logement.fr';
         yield 'ADMIN_T - Nouveaux signalements' => [$adminTerritoryUser, '?statut='.SignalementStatus::NEED_VALIDATION->value];
@@ -197,6 +200,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'ADMIN_T - Suggestion de clotures' => [$adminTerritoryUser, '?relances_usager=NO_SUIVI_AFTER_3_RELANCES'];
         yield 'ADMIN_T - Clotures partenaires' => [$adminTerritoryUser, '?closed_affectation=ONE_CLOSED'];
         yield 'ADMIN_T - Mes affectations' => [$adminTerritoryUser, '?territoire_id=13'];
+        yield 'ADMIN_T - Demande fermeture usager' => [$adminTerritoryUser, '?usagerAbandonProcedure=1'];
 
         $partnerUser = 'user-13-01@signal-logement.fr';
         yield 'PARTNER - Nouvelles affectations' => [$partnerUser, '?statut=1&territoire_id=13'];
@@ -204,8 +208,6 @@ class SignalementListControllerTest extends WebTestCase
         yield 'PARTNER - Sans suivis' => [$partnerUser, '?sans_suivi_periode='.Suivi::DEFAULT_PERIOD_INACTIVITY];
         yield 'PARTNER - Suggestion de clotures' => [$partnerUser, '?relances_usager=NO_SUIVI_AFTER_3_RELANCES'];
         yield 'PARTNER - Tous les signalements' => [$partnerUser, '?territoire_id=13'];
-
-        // TODO : ajouter test sur abandonProcedureUsager
     }
 
     /**

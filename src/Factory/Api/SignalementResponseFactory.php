@@ -63,7 +63,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->dateCloture = $signalement->getClosedAt()?->format(\DATE_ATOM);
         $signalementResponse->motifCloture = $signalement->getMotifCloture();
         $signalementResponse->motifRefus = $signalement->getMotifRefus();
-        $signalementResponse->abandonProcedureUsager = $signalement->getIsUsagerAbandonProcedure();
+        $signalementResponse->usagerAbandonProcedure = $signalement->getIsUsagerAbandonProcedure();
         $signalementResponse->typeDeclarant = $signalement->getProfileDeclarant();
         $signalementResponse->description = $signalement->getDetails();
 

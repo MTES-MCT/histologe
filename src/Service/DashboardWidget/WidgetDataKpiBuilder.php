@@ -85,7 +85,7 @@ class WidgetDataKpiBuilder
             ->setClosedByAtLeastOnePartner($this->notificationRepository->countAffectationClosedNotSeen($this->user, $this->territories))
             ->setAffected($this->affectationRepository->countAffectationForUser($this->user, $this->territories))
             ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territories))
-            ->setAbandonProcedureUsager($this->signalementRepository->countSignalementAbandonProcedureUsager($this->territories));
+            ->setUsagerAbandonProcedure($this->signalementRepository->countSignalementUsagerAbandonProcedure($this->territories));
 
         if ($this->user->isSuperAdmin() || $this->user->isTerritoryAdmin()) {
             $countSignalementByStatus = $this->signalementRepository->countByStatus(
@@ -237,7 +237,7 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
             ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi())
             ->addWidgetCard('cardNoSuiviAfter3Relances', $this->countSuivi->getNoSuiviAfter3Relances())
-            ->addWidgetCard('cardAbandonProcedureUsager', $this->countSignalement->getAbandonProcedureUsager())
+            ->addWidgetCard('cardUsagerAbandonProcedure', $this->countSignalement->getUsagerAbandonProcedure())
             ->addWidgetCard('cardPartenairesNonNotifiables', $this->countPartner->getNonNotifiables())
             ->addWidgetCard('cardArchivingScheduledUsers', $this->countUser->getArchivingScheduled());
 
