@@ -235,6 +235,17 @@ document.querySelectorAll('button[data-cloture-type]').forEach(button => {
   })
 })
 
+let modalAddSuiviHasBeenOpened = false;
+document?.getElementById('fr-modal-add-suivi')?.addEventListener('dsfr.disclose', (event) => {
+  if(modalAddSuiviHasBeenOpened) {
+    return;
+  }
+  modalAddSuiviHasBeenOpened = true;
+  document.getElementById('signalement-add-suivi-notify-usager').checked = false
+  document.getElementById('signalement-add-suivi-notify-usager').dispatchEvent(new Event('change'))
+  tinymce.get('signalement-add-suivi-content').setContent('');
+})
+
 document?.getElementById('signalement-add-suivi-notify-usager')?.addEventListeners('change', (e) => {
   document.getElementById('signalement-add-suivi-submit').textContent = (e.target.checked) ? 'Envoyer le suivi à l\'usager' : 'Enregistrer le suivi interne'
 })
