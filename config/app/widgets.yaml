@@ -64,12 +64,12 @@ parameters:
           relancesUsager: 'NO_SUIVI_AFTER_3_RELANCES'
           sortBy: 'lastSuiviAt'
           direction: 'DESC'
-      cardAbandonProcedureUsager:
+      cardUsagerAbandonProcedure:
         label: "Demande fermeture usager"
         roles: [ROLE_ADMIN, ROLE_ADMIN_TERRITORY]
         link: 'back_signalements_index'
         params:
-          abandonProcedureUsager: 1
+          usagerAbandonProcedure: 1
           status: 'en_cours'
           sortBy: 'lastSuiviAt'
           direction: 'DESC'

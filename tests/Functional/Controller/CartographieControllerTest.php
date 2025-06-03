@@ -93,7 +93,7 @@ class CartographieControllerTest extends WebTestCase
         yield 'Super Admin by relances usagers' => [self::SUPER_ADMIN, 'bo-filters-relances_usager', ['NO_SUIVI_AFTER_3_RELANCES']];
         yield 'Resp territoire by relances usagers' => [self::ADMIN_TERRITOIRE, 'bo-filters-relances_usager', ['NO_SUIVI_AFTER_3_RELANCES']];
         yield 'Partenaire by relances usagers' => [self::PARTNER, 'bo-filters-relances_usager', ['NO_SUIVI_AFTER_3_RELANCES']];
-        // TODO  // TODO : ajouter test sur abandonProcedureUsager
+        yield 'Partenaire by usager abandon procedure' => [self::PARTNER, 'bo-filters-usager_abandon_procedure', [1]];
         yield 'Super Admin by city' => [self::SUPER_ADMIN, 'bo-filters-cities', ['Marseille']];
         yield 'Resp territoire by city' => [self::ADMIN_TERRITOIRE, 'bo-filters-cities', ['Marseille']];
         yield 'Partenaire by city' => [self::PARTNER, 'bo-filters-cities', ['Marseille']];

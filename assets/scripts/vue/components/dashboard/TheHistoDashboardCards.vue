@@ -101,17 +101,17 @@
       </div>
     </div>
 
-    <div v-if="sharedState.abandonProcedureUsager.count !== null" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+    <div v-if="sharedState.usagerAbandonProcedure.count !== null" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
       <div class="fr-card fr-enlarge-link">
         <div class="fr-card__body">
           <ul class="fr-badges-group">
             <li>
-                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ getBadgeText(sharedState.abandonProcedureUsager.count, 'aucun', 'signalement', 'signalements') }}</p>
+                <p class="fr-badge fr-badge--no-icon fr-badge--info">{{ getBadgeText(sharedState.usagerAbandonProcedure.count, 'aucun', 'signalement', 'signalements') }}</p>
             </li>
           </ul>
           <div class="fr-card__content">
             <h3 class="fr-card__title">
-              <a :href=getSanitizedUrl(sharedState.abandonProcedureUsager.link)>Demande fermeture usager</a>
+              <a :href=getSanitizedUrl(sharedState.usagerAbandonProcedure.link)>Demande fermeture usager</a>
             </h3>
             <p class="fr-card__desc">
               Les signalements qui font l'objet d'une demande de fermeture par l'usager.

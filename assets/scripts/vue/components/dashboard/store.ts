@@ -72,7 +72,7 @@ export const store = {
       count: 0,
       link: undefined
     },
-    abandonProcedureUsager: {
+    usagerAbandonProcedure: {
       count: 0,
       link: undefined
     },
