@@ -33,7 +33,9 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -57,6 +59,8 @@ class EsaboraManager
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly FileFactory $fileFactory,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        private readonly HtmlSanitizerInterface $htmlSanitizer,
     ) {
         $this->adminUser = $this->userManager->getSystemUser();
     }
@@ -362,8 +366,10 @@ class EsaboraManager
     private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH, array $additionalInformation): bool
     {
         $hasChanged = false;
-
-        if ($intervention->getAdditionalInformation() !== $additionalInformation) {
+        $additionalInformationInterventionSorted = $intervention->getAdditionalInformation();
+        ksort($additionalInformationInterventionSorted);
+        ksort($additionalInformation);
+        if ($additionalInformationInterventionSorted !== $additionalInformation) {
             $intervention->setAdditionalInformation($additionalInformation);
             $hasChanged = true;
         }
@@ -374,18 +380,14 @@ class EsaboraManager
             $hasChanged = true;
         }
 
-        $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
-        if ($intervention->getDetails() !== $newDetails) {
-            $intervention->setDetails($newDetails);
-            $hasChanged = true;
-        }
-
         if (Intervention::STATUS_DONE !== $intervention->getStatus()) {
             $intervention->setStatus(Intervention::STATUS_DONE);
             $hasChanged = true;
         }
 
         if ($hasChanged) {
+            $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
+            $intervention->setDetails($this->htmlSanitizer->sanitize($newDetails));
             $this->interventionRepository->save($intervention, true);
         }
 

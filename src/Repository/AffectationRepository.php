@@ -131,6 +131,7 @@ class AffectationRepository extends ServiceEntityRepository
         if (null !== $territory) {
             $qb->andWhere('a.territory = :territory')->setParameter('territory', $territory);
         }
+        $qb->setMaxResults(100);
 
         return $qb->getQuery()->getResult();
     }
