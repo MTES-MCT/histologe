@@ -20,8 +20,7 @@
 			Statut du dossier
 			<br>
 			<span class="info">
-				<span class="confetti {% if signalement.statut.name == 'ACTIVE' %}active{% endif %}"></span>
-				{{ signalement.statutLabel }}
+				{{ include('front/_partials/statut_signalement.html.twig') }}
 			</span>
 		</div>
 		{% if link is not defined or link is same as true %}
