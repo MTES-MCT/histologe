@@ -476,4 +476,14 @@ class SuiviRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    public function deleteBySuiviIds(array $suiviIds): void
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->delete()
+            ->where('s.id in (:suivis)')
+            ->setParameter('suivis', $suiviIds);
+
+        $qb->getQuery()->execute();
+    }
 }
