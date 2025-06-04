@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviDemandeAbandonProcedureToAdminMailer extends AbstractNotificationMailer
 {
-    public const MAILER_SUBJECT = 'Demande de fermeture du dossier %s sur Signal Logement';
+    public const MAILER_SUBJECT = '[%s - %s] Demande de fermeture du dossier par l\'usager';
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_ADMIN;
     protected ?string $mailerButtonText = 'Accéder au signalement';
     protected ?string $mailerTemplate = 'demande_abandon_procedure_to_admin';
@@ -29,8 +29,10 @@ class SuiviDemandeAbandonProcedureToAdminMailer extends AbstractNotificationMail
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
+        $suivi = $notificationMail->getSuivi();
 
         return [
+            'demandeur' => $suivi->getCreatedBy()->getNomComplet(),
             'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
             'signalement_cpOccupant' => $signalement->getCpOccupant(),
             'signalement_villeOccupant' => $signalement->getVilleOccupant(),
@@ -42,9 +44,11 @@ class SuiviDemandeAbandonProcedureToAdminMailer extends AbstractNotificationMail
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
     {
         $signalement = $notificationMail->getSignalement();
+        $suivi = $notificationMail->getSuivi();
         $this->mailerSubject = \sprintf(
             self::MAILER_SUBJECT,
-            $signalement->getReference()
+            $signalement->getReference(),
+            $suivi->getCreatedBy()->getNomComplet(),
         );
     }
 }

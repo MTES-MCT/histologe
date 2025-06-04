@@ -16,6 +16,7 @@ use App\Event\SuiviViewedEvent;
 use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
 use App\Form\UsagerCancelProcedureType;
+use App\Form\UsagerPoursuivreProcedureType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -428,10 +429,31 @@ class SignalementController extends AbstractController
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
 
+        $suiviAuto = $request->get('suiviAuto');
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
 
             return $this->render('front/flash-messages.html.twig');
+        }
+
+        // TODO : route à supprimer quand suppression du feature flipping featureSuiviAction
+        // et mettre à jour le 3è mail de demande de feedback usager pour rediriger vers les bonnes routes
+        if ($this->featureSuiviAction) {
+            if (Suivi::ARRET_PROCEDURE == $suiviAuto) {
+                return $this->redirectToRoute(
+                    'front_suivi_signalement_procedure',
+                    [
+                        'code' => $signalement->getCodeSuivi(),
+                    ]
+                );
+            }
+
+            return $this->redirectToRoute(
+                'front_suivi_signalement_procedure_poursuite',
+                [
+                    'code' => $signalement->getCodeSuivi(),
+                ]
+            );
         }
 
         $requestEmail = $request->get('from');
@@ -450,8 +472,6 @@ class SignalementController extends AbstractController
                 'error' => $error,
             ]);
         }
-
-        $suiviAuto = $request->get('suiviAuto');
 
         /** @var User $userOccupant */
         $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
@@ -793,6 +813,7 @@ class SignalementController extends AbstractController
         string $code,
         Security $security,
         SignalementRepository $signalementRepository,
+        AuthenticationUtils $authenticationUtils,
     ): Response {
         if (!$this->featureSuiviAction) {
             throw $this->createNotFoundException();
@@ -803,9 +824,17 @@ class SignalementController extends AbstractController
 
             return $this->render('front/flash-messages.html.twig');
         }
-
         /** @var SignalementUser $currentUser */
         $currentUser = $security->getUser();
+        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
+
+            return $this->render('security/login_suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+                'error' => $error,
+            ]);
+        }
 
         return $this->render('front/suivi_signalement_cancel_procedure_intro.html.twig', [
             'signalement' => $signalement,
@@ -813,8 +842,8 @@ class SignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/suivre-mon-signalement/{code}/procedure/validation', name: 'front_suivi_signalement_procedure_validation', methods: ['GET', 'POST'])]
-    public function suiviSignalementProcedureValidation(
+    #[Route('/suivre-mon-signalement/{code}/procedure/abandon', name: 'front_suivi_signalement_procedure_abandon', methods: ['GET', 'POST'])]
+    public function suiviSignalementProcedureAbandon(
         Request $request,
         string $code,
         SignalementRepository $signalementRepository,
@@ -836,41 +865,31 @@ class SignalementController extends AbstractController
         }
 
         if ($signalement->getIsUsagerAbandonProcedure()) {
-            $this->addFlash('error', 'Une demande d\'arrêt de procédure a déjà été faite pour ce signalement.');
+            $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté d\'arrêter la procédure.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
 
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
+
+            return $this->render('security/login_suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+                'error' => $error,
+            ]);
+        }
+        $user = $currentUser->getUser();
+
         $form = $this->createForm(UsagerCancelProcedureType::class);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-            // TODO : delete when remove FEATURE_SECURE_UUID_URL
-            $requestEmail = $request->get('from');
-            $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
-            // TODO : get type from auth when remove FEATURE_SECURE_UUID_URL
-            $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
-            $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
-
-            if ($this->featureSecureUuidUrl) { // TODO Remove FEATURE_SECURE_UUID_URL
-                /** @var SignalementUser $currentUser */
-                $currentUser = $security->getUser();
-                if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
-                    // get the login error if there is one
-                    $error = $authenticationUtils->getLastAuthenticationError();
-
-                    return $this->render('security/login_suivi_signalement.html.twig', [
-                        'signalement' => $signalement,
-                        'error' => $error,
-                    ]);
-                }
-                $user = $currentUser->getUser();
-            }
-
             $signalement->setIsUsagerAbandonProcedure(true);
 
             $description = $user->getNomComplet().' souhaite fermer son dossier sur '
-                .$this->getParameter('platform_name') // TODO
+                .$this->getParameter('platform_name')
                 .' pour le motif suivant : '.$form->get('reason')->getData().'<br>'
                 .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
 
@@ -890,6 +909,72 @@ class SignalementController extends AbstractController
         }
 
         return $this->render('front/suivi_signalement_cancel_procedure_validation.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/procedure/poursuite', name: 'front_suivi_signalement_procedure_poursuite', methods: ['GET', 'POST'])]
+    public function suiviSignalementProcedurePoursuite(
+        Request $request,
+        string $code,
+        SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
+        SuiviManager $suiviManager,
+        UserManager $userManager,
+        Security $security,
+        AuthenticationUtils $authenticationUtils,
+    ): Response {
+        if (!$this->featureSuiviAction) {
+            throw $this->createNotFoundException();
+        }
+
+        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
+        if (!$signalement) {
+            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+            return $this->render('front/flash-messages.html.twig');
+        }
+
+        /** @var SignalementUser $currentUser */
+        $currentUser = $security->getUser();
+        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
+
+            return $this->render('security/login_suivi_signalement.html.twig', [
+                'signalement' => $signalement,
+                'error' => $error,
+            ]);
+        }
+        $user = $currentUser->getUser();
+
+        $form = $this->createForm(UsagerPoursuivreProcedureType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $signalement->setIsUsagerAbandonProcedure(false);
+
+            $description = $user->getNomComplet().' a indiqué vouloir poursuivre la procédure sur '
+                .$this->getParameter('platform_name').'<br>'
+                .'Commentaire : '.$form->get('details')->getData();
+
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                type: Suivi::TYPE_USAGER,
+                isPublic: true,
+                category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+                user: $user,
+            );
+
+            $signalementManager->save($signalement);
+            $this->addFlash('success', 'Votre demande de poursuivre la procédure a bien été prise en compte. Elle a été transmise à l\'administration.');
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/suivi_signalement_poursuivre_procedure_validation.html.twig', [
             'signalement' => $signalement,
             'form' => $form->createView(),
         ]);
