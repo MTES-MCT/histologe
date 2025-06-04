@@ -134,6 +134,25 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertArrayHasKey('labelCritere', $desordreCriteres[0]);
     }
 
+    public function testCountSignalementUsagerAbandonProcedure(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalementsUsagerAbandonProcedure = $signalementRepository->countSignalementUsagerAbandonProcedure([]);
+        $this->assertEquals(2, $signalementsUsagerAbandonProcedure);
+    }
+
+    public function testCountSignalementUsagerAbandonProcedure13(): void
+    {
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalementsUsagerAbandonProcedure = $signalementRepository->countSignalementUsagerAbandonProcedure([$territory]);
+        $this->assertEquals(1, $signalementsUsagerAbandonProcedure);
+    }
+
     public function testFindAllArchived(): void
     {
         /** @var SignalementRepository $signalementRepository */

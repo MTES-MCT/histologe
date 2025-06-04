@@ -48,6 +48,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => $status,
+            'isUsagerAbandonProcedure' => 0,
         ]);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -72,7 +73,7 @@ class SignalementControllerTest extends WebTestCase
             ]);
 
             if (SignalementStatus::ACTIVE->value === $status) {
-                $this->assertEquals('Signalement #2022-1 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
+                $this->assertEquals('Signalement #2022-4 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
             } else {
                 $this->assertResponseRedirects(
                     '/suivre-mon-signalement/'.$signalement->getCodeSuivi().'?from='.$signalement->getMailOccupant()
@@ -135,6 +136,80 @@ class SignalementControllerTest extends WebTestCase
                 );
             }
         }
+    }
+
+    public function testSuiviSignalementProcedure(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'statut' => SignalementStatus::ACTIVE,
+            'isUsagerAbandonProcedure' => 0,
+        ]);
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure', [
+            'code' => $codeSuivi = $signalement->getCodeSuivi(),
+        ]);
+
+        $signalementUser = new SignalementUser(
+            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
+            $signalement->getMailOccupant(),
+            $signalement->getSignalementUsager()->getOccupant()
+        );
+
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $crawler = $client->request('POST', $urlSuiviSignalementUserResponse);
+        $this->assertEquals('Demander l\'arrêt de la procédure', $crawler->filter('h1')->text());
+    }
+
+    public function testSuiviSignalementProcedureValidation(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'statut' => SignalementStatus::ACTIVE,
+            'isUsagerAbandonProcedure' => 0,
+        ]);
+        $this->assertFalse($signalement->getIsUsagerAbandonProcedure());
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_validation', [
+            'code' => $codeSuivi = $signalement->getCodeSuivi(),
+        ]);
+
+        $signalementUser = new SignalementUser(
+            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
+            $signalement->getMailOccupant(),
+            $signalement->getSignalementUsager()->getOccupant()
+        );
+
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $reason = 'Changement de logement';
+        $details = 'on a trouvé un meilleur appartement';
+        $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
+            'usager_cancel_procedure' => [
+                'reason' => $reason,
+                'details' => $details,
+                'save' => '',
+                '_token' => $this->generateCsrfToken($client, 'usager_cancel_procedure'),
+            ],
+        ]);
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
+        $this->assertTrue($signalement->getIsUsagerAbandonProcedure());
+        /** @var Suivi $lastSuivi */
+        $lastSuivi = $signalement->getSuivis()->last();
+        $this->assertStringContainsString($signalementUser->getUser()->getNomComplet(), $lastSuivi->getDescription());
+        $this->assertStringContainsString('souhaite fermer son dossier', $lastSuivi->getDescription());
+        $this->assertStringContainsString('pour le motif suivant : '.$reason, $lastSuivi->getDescription());
+        $this->assertStringContainsString('arrêt de procédure : '.$details, $lastSuivi->getDescription());
     }
 
     /**
