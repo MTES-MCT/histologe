@@ -29,6 +29,7 @@ class CountSignalementTest extends TestCase
         ],
             $countSignalement->getPercentage()
         );
+        $this->assertEquals(0, $countSignalement->getUsagerAbandonProcedure());
     }
 
     public function testEmptyCountSignalement(): void
@@ -46,5 +47,6 @@ class CountSignalementTest extends TestCase
         ],
             $countSignalement->getPercentage()
         );
+        $this->assertEquals(0, $countSignalement->getUsagerAbandonProcedure());
     }
 }

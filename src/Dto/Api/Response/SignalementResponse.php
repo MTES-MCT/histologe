@@ -99,7 +99,7 @@ class SignalementResponse
         example: true,
         nullable: true
     )]
-    public ?bool $usagerAbandonProcedure;
+    public ?bool $abandonProcedureUsager;
     #[OA\Property(
         description: 'Type de déclarant ayant déposé le signalement.',
         example: 'LOCATAIRE',
