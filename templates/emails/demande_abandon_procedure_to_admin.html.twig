@@ -2,13 +2,11 @@
 
 {% block body %}
     <p>Bonjour,</p>
-    {# // TODO actualiser avec données Mathilde #}
     <p>
-        La demande de fermeture du dossier {{ reference }} concernant le logement situé 
-        <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong>
-        a bien été enregistrée.
+        L'usager {{demandeur}} a demandé la fermeture du dossier {{ reference }} concernant le logement situé 
+        <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong>.
         <br><br>
-        Pour consulter cette demande, veuillez vous rendre sur votre page de suivi.
+        Rendez-vous sur {{ platform.name }} pour répondre à la demande.
     </p>
 
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="text-align: center">
