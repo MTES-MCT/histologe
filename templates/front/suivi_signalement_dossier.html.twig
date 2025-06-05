@@ -95,7 +95,8 @@
 				{% endfor %}
 			{% endif %}
 
-			<div class="signalement-card text-default-grey fr-mb-3w">
+			<div class="signalement-card text-default-grey fr-mb-3w fr-mt-3w">
+				<h3 class="fr-h5 fr-mb-3v">Commentaire</h3>
 				{{ signalement.details|nl2br }}
 			</div>
 
@@ -456,8 +457,8 @@
 				{% endif %}
 			</ul>
 
-			<h3 class="fr-h5 fr-mb-3v fr-mt-2w">Votre assurance</h3>
 			{% if signalement.informationProcedure %}
+			<h3 class="fr-h5 fr-mb-3v fr-mt-2w">Votre assurance</h3>
 				<ul>
 					<li> 
 						Assurance contactée ? 
