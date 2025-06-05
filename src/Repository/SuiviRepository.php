@@ -7,6 +7,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
@@ -464,14 +465,18 @@ class SuiviRepository extends ServiceEntityRepository
         return $indexed;
     }
 
-    public function findLastPublicSuivi(Signalement $signalement): ?Suivi
+    public function findLastPublicSuivi(Signalement $signalement, ?User $userToExclude = null): ?Suivi
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.signalement = :signalement')
             ->andWhere('s.isPublic = 1')
             ->andWhere('s.deletedBy IS NULL')
-            ->orderBy('s.createdAt', 'DESC')
-            ->setParameter('signalement', $signalement)
+            ->setParameter('signalement', $signalement);
+        if(null !== $userToExclude) {
+            $qb->andWhere('s.createdBy != :userToExclude')
+                ->setParameter('userToExclude', $userToExclude);
+        }
+        $qb->orderBy('s.createdAt', 'DESC')
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
