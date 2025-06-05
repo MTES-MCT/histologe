@@ -132,7 +132,7 @@
                         {% endif %}
                         {% if is_granted('ROLE_ADMIN_TERRITORY') and signalementOnSameAddress|length > 0 %}
                             <li>
-                                <a href="{{ path('back_signalements_index', { 'searchTerms': signalement.adresseOccupant, 'communes[]': signalement.cpOccupant }) }}" class="fr-btn fr-icon-alarm-warning-line">
+                                <a href="{{ path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': signalement.adresseOccupant, 'communes[]': signalement.cpOccupant }) }}" class="fr-btn fr-icon-alarm-warning-line">
                                     {{ signalementOnSameAddress|length > 1 ? signalementOnSameAddress|length ~ ' signalements à la même adresse' : signalementOnSameAddress|length ~  ' signalement à la même adresse' }}
                                 </a>
                             </li>
