@@ -119,4 +119,6 @@ modalEditEmail?.addEventListener('submit', (event) => {
   submitEditEmail(formElement)
 })
 
-showStepOne()
+if(modalCodeInputInput){
+  showStepOne()
+}

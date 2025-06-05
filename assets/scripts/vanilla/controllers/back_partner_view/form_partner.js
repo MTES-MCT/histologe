@@ -194,17 +194,18 @@ if (modalPartnerUserCreate) {
   modalPartnerUserCreate.addEventListener('dsfr.conceal', (event) => {
     fetchRefreshUrl()
   })
-}
-fetchRefreshUrl()
+  fetchRefreshUrl()
 
-function fetchRefreshUrl() {
-  const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create')
-  const refreshUrl = modalPartnerUserCreate.dataset.refreshUrl
-  modalPartnerUserCreate.querySelector('button[type="submit"]').disabled = true
-  fetch(refreshUrl).then(response => {
-    updateModaleFromResponse(response, '#fr-modal-user-create', addEventListenerOnFormUser)
-  })
+  function fetchRefreshUrl() {
+    const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create')
+    const refreshUrl = modalPartnerUserCreate.dataset.refreshUrl
+    modalPartnerUserCreate.querySelector('button[type="submit"]').disabled = true
+    fetch(refreshUrl).then(response => {
+      updateModaleFromResponse(response, '#fr-modal-user-create', addEventListenerOnFormUser)
+    })
+  }
 }
+
 
 function addEventListenerOnFormUser () {
   if (document.querySelector('#user_partner_role')) {
