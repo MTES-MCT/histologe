@@ -118,3 +118,5 @@ modalEditEmail?.addEventListener('submit', (event) => {
   clearErrors()
   submitEditEmail(formElement)
 })
+
+showStepOne()
