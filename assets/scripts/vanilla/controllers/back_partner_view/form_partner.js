@@ -192,13 +192,20 @@ document.querySelectorAll('.btn-edit-partner-user').forEach(swbtn => {
 const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create')
 if (modalPartnerUserCreate) {
   modalPartnerUserCreate.addEventListener('dsfr.conceal', (event) => {
-    const refreshUrl = event.target.dataset.refreshUrl
+    fetchRefreshUrl()
+  })
+  fetchRefreshUrl()
+
+  function fetchRefreshUrl() {
+    const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create')
+    const refreshUrl = modalPartnerUserCreate.dataset.refreshUrl
     modalPartnerUserCreate.querySelector('button[type="submit"]').disabled = true
     fetch(refreshUrl).then(response => {
       updateModaleFromResponse(response, '#fr-modal-user-create', addEventListenerOnFormUser)
     })
-  })
+  }
 }
+
 
 function addEventListenerOnFormUser () {
   if (document.querySelector('#user_partner_role')) {
