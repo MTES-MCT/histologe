@@ -223,7 +223,12 @@ class IdossService
         ];
         $dataparts = [];
         foreach ($files as $file) {
-            $dataparts[] = ['file' => DataPart::fromPath($this->imageManipulationHandler->getFilePath($file))];
+            try {
+                $filePath = $this->imageManipulationHandler->getFilePath($file);
+                $dataparts[] = ['file' => DataPart::fromPath($filePath)];
+            } catch (\Exception $e) {
+                $this->logger->error('IdossService getFilesPayload on signalement uuid "'.$signalement->getUuid().'" and file id "'.$file->getId().'" throw : '.$e->getMessage());
+            }
         }
 
         return array_merge($payload, $dataparts);
