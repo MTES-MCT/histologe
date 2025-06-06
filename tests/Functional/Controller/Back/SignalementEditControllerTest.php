@@ -75,6 +75,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideEditSignalementRoutes
+     *
      * @param array<string> $payload
      */
     public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
@@ -97,6 +98,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideEditSignalementRoutes
+     *
      * @param array<string> $payload
      */
     public function testEditSignalementUnauthorization(string $routeName, array $payload, string $token): void
@@ -114,6 +116,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideEditSignalementRoutes
+     *
      * @param array<string> $payload
      */
     public function testEditSignalementError(string $routeName, array $payload, string $token): void

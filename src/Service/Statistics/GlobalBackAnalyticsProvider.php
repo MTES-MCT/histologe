@@ -3,6 +3,7 @@
 namespace App\Service\Statistics;
 
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,6 +15,11 @@ class GlobalBackAnalyticsProvider
     ) {
     }
 
+    /**
+     * @param ArrayCollection<int, Partner> $partners
+     *
+     * @return array<mixed>
+     */
     public function getData(?Territory $territory, ArrayCollection $partners): array
     {
         $territories = [];
@@ -45,6 +51,9 @@ class GlobalBackAnalyticsProvider
         return $data;
     }
 
+    /**
+     * @param ArrayCollection<int, Partner> $partners
+     */
     private function getCountSignalementData(?Territory $territory, ArrayCollection $partners): int
     {
         return $this->signalementRepository->countAll(
@@ -54,6 +63,9 @@ class GlobalBackAnalyticsProvider
         );
     }
 
+    /**
+     * @param ArrayCollection<int, Partner> $partners
+     */
     private function getAverageCriticiteData(?Territory $territory, ArrayCollection $partners): float
     {
         return round($this->signalementRepository->getAverageCriticite(
@@ -63,6 +75,9 @@ class GlobalBackAnalyticsProvider
         ) * 10) / 10;
     }
 
+    /**
+     * @param ArrayCollection<int, Partner> $partners
+     */
     private function getAverageDaysValidationData(?Territory $territory, ArrayCollection $partners): float
     {
         return round($this->signalementRepository->getAverageDaysValidation(
@@ -72,6 +87,9 @@ class GlobalBackAnalyticsProvider
         ) * 10) / 10;
     }
 
+    /**
+     * @param ArrayCollection<int, Partner> $partners
+     */
     private function getAverageDaysClosureData(?Territory $territory, ArrayCollection $partners): float
     {
         return round($this->signalementRepository->getAverageDaysClosure(

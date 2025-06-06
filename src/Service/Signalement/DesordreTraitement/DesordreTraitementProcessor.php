@@ -3,6 +3,7 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class DesordreTraitementProcessor
