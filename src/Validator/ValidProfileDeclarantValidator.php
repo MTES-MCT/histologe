@@ -9,7 +9,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class ValidProfileDeclarantValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof ValidProfileDeclarant) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ValidProfileDeclarant');

@@ -11,6 +11,7 @@ class BackTerritoryControllerTest extends WebTestCase
 {
     /**
      * @dataProvider provideParamsTerritoryList
+     * @param array<mixed> $params
      */
     public function testTerritoryList(array $params, int $nb): void
     {
@@ -33,7 +34,7 @@ class BackTerritoryControllerTest extends WebTestCase
         }
     }
 
-    public function provideParamsTerritoryList(): iterable
+    public function provideParamsTerritoryList(): \Generator
     {
         yield 'Search without params' => [[], 102];
         yield 'Search with queryName 34' => [['queryName' => '34'], 1];

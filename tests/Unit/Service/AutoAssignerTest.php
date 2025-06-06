@@ -198,6 +198,9 @@ class AutoAssignerTest extends KernelTestCase
         $this->assertcount(1, $signalement->getSuivis());
     }
 
+    /**
+     * @param ?array<string> $expectedPartnerNames
+     */
     private function testHelper(Signalement $signalement, int $expectedCount, ?array $expectedPartnerNames = null): void
     {
         foreach ($signalement->getAffectations() as $affectation) {

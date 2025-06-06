@@ -144,6 +144,9 @@ class GridAffectationLoaderTest extends KernelTestCase
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function provideValidData(): array
     {
         $faker = Factory::create();
@@ -192,6 +195,9 @@ class GridAffectationLoaderTest extends KernelTestCase
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function provideInvalidDataWithDuplicatePartnersAndUsers(): array
     {
         $faker = Factory::create();

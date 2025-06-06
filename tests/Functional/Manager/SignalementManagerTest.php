@@ -298,6 +298,9 @@ class SignalementManagerTest extends WebTestCase
         $this->assertEquals(100, $signalement->getSuperficie());
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getSignalementData(?string $reference = null): array
     {
         $faker = Factory::create('fr_FR');

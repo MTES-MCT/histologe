@@ -15,6 +15,8 @@ class CodeInseeSpecificationTest extends KernelTestCase
 
     /**
      * @dataProvider provideRulesAndSignalement
+     * @param array<string> $inseePartenaire
+     * @param ?array<string> $inseeToExcludeRule
      */
     public function testIsSatisfiedBy(
         ?string $inseeSignalement,

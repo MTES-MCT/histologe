@@ -97,6 +97,8 @@ class BackStatistiquesControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideRoutesStatistiquesDatas
+     * @param array<mixed> $params
+     * @param array<mixed> $expectedResponses
      */
     public function testStatistiquesDatas(string $route, array $params, string $email, array $expectedResponses): void
     {

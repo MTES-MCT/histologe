@@ -361,8 +361,9 @@ class SignalementBuilderTest extends KernelTestCase
 
     /**
      * @throws \ReflectionException
+     * @param array<mixed> $parameters 
      */
-    private function invokeMethod(&$object, $methodName, array $parameters = [])
+    private function invokeMethod(object &$object, string $methodName, array $parameters = []): mixed
     {
         $reflection = new \ReflectionClass($object::class);
         $method = $reflection->getMethod($methodName);

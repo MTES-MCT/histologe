@@ -61,9 +61,9 @@ trait FixturesHelper
 
         $signalement = (new Signalement())
            ->setIsProprioAverti(false)
-           ->setNbAdultes(2)
-           ->setNbEnfantsP6(1)
-           ->setNbEnfantsM6(1)
+           ->setNbAdultes((string) 2)
+           ->setNbEnfantsP6((string) 1)
+           ->setNbEnfantsM6((string) 1)
            ->setTelOccupant($faker->phoneNumber())
            ->setAdresseOccupant('25 rue du test')
            ->setEtageOccupant('2')
@@ -119,7 +119,7 @@ trait FixturesHelper
     /**
      * @return Signalement[]
      */
-    public function getSignalements($count = 1): array
+    public function getSignalements(int $count = 1): array
     {
         $faker = Factory::create('fr_FR');
 
@@ -127,9 +127,9 @@ trait FixturesHelper
         for ($i = 0; $i < $count; ++$i) {
             $signalements[] = (new Signalement())
                 ->setIsProprioAverti(false)
-                ->setNbAdultes(2)
-                ->setNbEnfantsP6(1)
-                ->setNbEnfantsM6(1)
+                ->setNbAdultes((string) 2)
+                ->setNbEnfantsP6((string) 1)
+                ->setNbEnfantsM6((string) 1)
                 ->setTelOccupant($faker->phoneNumber())
                 ->setAdresseOccupant('25 rue de l\'est')
                 ->setEtageOccupant('2')
@@ -189,6 +189,9 @@ trait FixturesHelper
             ->setIsPublic($isPublic);
     }
 
+    /**
+     * @return array<Suivi>
+     */
     public function getSuiviPartnerList(bool $isPublic = false): array
     {
         return [
@@ -207,6 +210,9 @@ trait FixturesHelper
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     public function getAdditionalInformationArrete(): array
     {
         return [
@@ -411,6 +417,9 @@ trait FixturesHelper
         );
     }
 
+    /**
+     * @param array<mixed> $roles
+     */
     public function getUser(array $roles): User
     {
         $user = (new User())
@@ -522,6 +531,9 @@ trait FixturesHelper
         return $typeComposition;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getLocataireSituationFoyer(): array
     {
         return [
@@ -536,6 +548,9 @@ trait FixturesHelper
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getLocataireInformationProcedure(): array
     {
         return [
@@ -554,6 +569,9 @@ trait FixturesHelper
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     public function getLocataireInformationComplementaire(): array
     {
         return [

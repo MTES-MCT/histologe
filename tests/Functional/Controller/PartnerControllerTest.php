@@ -10,6 +10,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use Faker\Factory;
+use Faker\Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -22,7 +23,7 @@ class PartnerControllerTest extends WebTestCase
     private UserRepository $userRepository;
     private PartnerRepository $partnerRepository;
     private RouterInterface $router;
-    private $faker;
+    private Generator $faker;
 
     protected function setUp(): void
     {

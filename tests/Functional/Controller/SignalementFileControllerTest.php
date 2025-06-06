@@ -188,7 +188,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testGeneratePdfSignalement()
+    public function testGeneratePdfSignalement(): void
     {
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000012']);

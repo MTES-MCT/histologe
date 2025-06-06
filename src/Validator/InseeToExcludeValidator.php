@@ -8,7 +8,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class InseeToExcludeValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof InseeToExclude) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\InseeToExclude');

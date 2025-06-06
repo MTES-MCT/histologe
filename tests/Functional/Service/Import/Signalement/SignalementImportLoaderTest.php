@@ -88,6 +88,9 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->assertEquals(10, $signalementImportLoader->getMetadata()['count_signalement']);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(): array
     {
         $faker = Factory::create('fr_FR');

@@ -16,7 +16,7 @@ class IsTerritoryActiveValidator extends ConstraintValidator
     {
     }
 
-    public function validate($obj, Constraint $constraint): void
+    public function validate(mixed $obj, Constraint $constraint): void
     {
         if (!$obj instanceof SignalementDraftRequest) {
             throw new UnexpectedValueException($obj, SignalementDraftRequest::class);
