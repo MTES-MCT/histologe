@@ -88,6 +88,7 @@ export default defineComponent({
         this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
         this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
         this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
+        this.sharedProps.platformName = initElements.dataset.platformName
         if (!reset) {
           handleQueryParameter(this)
         }

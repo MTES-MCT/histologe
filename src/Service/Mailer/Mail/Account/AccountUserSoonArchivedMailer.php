@@ -45,7 +45,6 @@ class AccountUserSoonArchivedMailer extends AbstractNotificationMailer
 
     public function updateButtonTextFromNotification(NotificationMail $notificationMail): void
     {
-
         $this->mailerButtonText = \sprintf(
             $this->mailerButtonText,
             $this->getPlatformName()

@@ -83,7 +83,7 @@ class ProConnectController extends AbstractController
             }
 
             $this->addFlash('warning',
-                'L\'adresse e-mail liée à votre compte ProConnect ne correspond à aucun compte sur la plateforme ' . $this->getParameter('platform_name') . '.'
+                'L\'adresse e-mail liée à votre compte ProConnect ne correspond à aucun compte sur la plateforme '.$this->getParameter('platform_name').'.'
                         .' Merci de contacter votre responsable de territoire.');
             $this->logger->warning('Tentative de connexion ProConnect refusée : aucun utilisateur actif trouvé.', [
                 'email' => $proConnectUser->email,

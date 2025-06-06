@@ -5,7 +5,7 @@
     :data-ajaxurl="sharedProps.ajaxurl"
     >
     <div class="fr-container">
-      <h1>Signal Logement en quelques chiffres</h1>
+      <h1>{{ sharedProps.platformName }} en quelques chiffres</h1>
     </div>
     <div v-if="loadingInit" class="loading fr-m-10w">
       Initialisation des statistiques...
@@ -48,6 +48,7 @@ export default defineComponent({
   created () {
     if (initElements !== null) {
       this.sharedProps.ajaxurl = initElements.dataset.ajaxurl
+      this.sharedProps.platformName = initElements.dataset.platformName
       requests.filter(this.handleRefresh)
     } else {
       alert('Error while loading front statistics')
