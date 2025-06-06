@@ -528,7 +528,9 @@ class SignalementManager extends AbstractManager
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe())
             ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique())
             ->setBailDpeDateEmmenagement($signalement->getDateEntree()?->format('Y-m-d'));
-        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        $signalement
+            ->setTypeCompositionLogement($typeCompositionLogement)
+            ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant());
 
         $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();

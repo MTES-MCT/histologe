@@ -1,0 +1,51 @@
+[{
+    "etatLocal": {
+        "codeEtatLocal": "A",
+        "dateEffetEtatLocal": "1985-01-01",
+        "codeMotifSuppressionLocal": ""
+    },
+    "adresseLocal": {
+        "codeDepartementInsee": "2A",
+        "libelleDepartement": "CORSE SUD",
+        "codeCommuneInsee": "004",
+        "libelleCommune": "AJACCIO",
+        "codeVoieTopo": "0820",
+        "libelleVoie": "RUE XXX XXX",
+        "numeroVoirie": "2",
+        "indiceRepetitionNumeroVoirie": ""
+    },
+    "identifiantCadastral": {
+        "codeDepartementInsee": "2A",
+        "codeCommuneCadastral": "004",
+        "codeCommuneAbsorbee": "",
+        "codeSectionParcelle": "BX",
+        "numeroPlanParcelle": "0100",
+        "numeroBatiment": "A",
+        "numeroEntree": "01",
+        "etage": "00",
+        "numeroPorte": "01002",
+        "nombreNiveaux": "6"
+    },
+    "lotCopropriete": [
+        {
+            "numeroLotCopropriete": "1"
+        }
+    ],
+    "descriptifGeneralLocal": {
+        "identifiantFiscalLocal": "2A0049934XXX",
+        "dateEffetLocal": "2017-06-23",
+        "codeChangementLocal": "CI",
+        "codeNatureLocal": "CB",
+        "codeTypeLocal": "4"
+    },
+    "descriptifLocalProfessionnel": [
+        {
+            "categorieLocalProfessionnel": "MAG1",
+            "surfacePrincipaleLocalProfessionnel": "66",
+            "surfaceInterieureAnnexeLocalProfessionnel": "9",
+            "surfaceExterieureAnnexeLocalProfessionnel": "",
+            "surfaceStationnementCouvertLocalProfessionnel": "",
+            "surfaceStationnementExterieurLocalProfessionnel": ""
+        }
+    ]
+}]

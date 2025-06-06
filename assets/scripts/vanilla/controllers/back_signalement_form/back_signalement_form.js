@@ -582,10 +582,12 @@ function initBoFormSignalementAdresse() {
         const proTiersNom = document.querySelector('#signalement_draft_coordonnees_nomDeclarant')
         const proTiersPrenom = document.querySelector('#signalement_draft_coordonnees_prenomDeclarant')
         const proTiersMail = document.querySelector('#signalement_draft_coordonnees_mailDeclarant')
-        proTiersStructure.value = ''
-        proTiersNom.value = ''
-        proTiersPrenom.value = ''
-        proTiersMail.value = ''
+        if (proTiersStructure) {
+          proTiersStructure.value = ''
+          proTiersNom.value = ''
+          proTiersPrenom.value = ''
+          proTiersMail.value = ''
+        }
       }
     })
   })
