@@ -65,7 +65,6 @@ class LogoutSubscriberTest extends TestCase
             $this->proConnectContext,
             $this->urlGenerator,
             $this->logger,
-            featureProConnect: 1
         );
 
         $subscriber->onLogout($event);
@@ -102,7 +101,6 @@ class LogoutSubscriberTest extends TestCase
             $this->proConnectContext,
             $this->urlGenerator,
             $logger,
-            featureProConnect: 1
         );
 
         $subscriber->onLogout($event);
@@ -145,7 +143,6 @@ class LogoutSubscriberTest extends TestCase
             $this->proConnectContext,
             $this->urlGenerator,
             $this->logger,
-            featureProConnect: 1
         );
 
         $subscriber->onLogout($event);

@@ -4,9 +4,11 @@ namespace App\Security\Authenticator;
 
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -23,10 +25,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public const string LOGIN_ROUTE_SUIVI = 'front_suivi_signalement';
-    public const string LOGIN_ROUTE_SUIVI_MESSAGES = 'front_suivi_signalement_messages';
-    public const string LOGIN_ROUTE_PROCEDURE = 'front_suivi_procedure';
-    public const string LOGIN_ROUTE_EXPORT_PDF = 'show_export_pdf_usager';
+    public const string LOGIN_FO_ROUTE = 'app_login_fo';
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -51,7 +50,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
     {
         $codeSuivi = $request->get('code');
 
-        $signalement = $this->signalementRepository->findOneByCodeForPublic($codeSuivi, false);
+        $signalement = $this->signalementRepository->findOneByCodeForPublic($codeSuivi);
         if (!$signalement) {
             throw new CustomUserMessageAuthenticationException('Code de suivi invalide');
         }
@@ -101,7 +100,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         $testOccupant = false;
         if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
             || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()
-            || 'occupant' === $visitorType
+            || UserManager::OCCUPANT === $visitorType
         ) {
             if (!empty($signalement->getPrenomOccupant()) && !empty($signalement->getNomOccupant())) {
                 $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomOccupant(), 0, 1));
@@ -110,7 +109,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
             }
         }
         $testDeclarant = false;
-        if (!$testOccupant && 'declarant' === $visitorType) {
+        if (!$testOccupant && UserManager::DECLARANT === $visitorType) {
             if (!empty($signalement->getPrenomDeclarant()) && !empty($signalement->getNomDeclarant())) {
                 $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomDeclarant(), 0, 1));
                 $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomDeclarant(), 0, 1));
@@ -124,22 +123,18 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        return null;
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            return new RedirectResponse($targetPath);
+        }
+        $codeSuivi = $request->attributes->get('code');
+
+        return new RedirectResponse($this->urlGenerator->generate('front_suivi_signalement', ['code' => $codeSuivi]));
     }
 
     protected function getLoginUrl(Request $request): string
     {
         $codeSuivi = $request->attributes->get('code');
 
-        switch ($request->get('_route')) {
-            case self::LOGIN_ROUTE_SUIVI:
-                return $this->urlGenerator->generate(self::LOGIN_ROUTE_SUIVI, ['code' => $codeSuivi]);
-            case self::LOGIN_ROUTE_SUIVI_MESSAGES:
-                return $this->urlGenerator->generate(self::LOGIN_ROUTE_SUIVI_MESSAGES, ['code' => $codeSuivi]);
-            case self::LOGIN_ROUTE_EXPORT_PDF:
-                return $this->urlGenerator->generate(self::LOGIN_ROUTE_EXPORT_PDF, ['code' => $codeSuivi]);
-            default:
-                return $this->urlGenerator->generate(self::LOGIN_ROUTE_PROCEDURE, ['code' => $codeSuivi]);
-        }
+        return $this->urlGenerator->generate(self::LOGIN_FO_ROUTE, ['code' => $codeSuivi]);
     }
 }

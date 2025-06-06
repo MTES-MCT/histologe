@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,8 +20,6 @@ class UserPartnerType extends AbstractType
 
     public function __construct(
         private readonly Security $security,
-        #[Autowire(env: 'FEATURE_EMAIL_RECAP')]
-        private readonly bool $featureEmailRecap,
     ) {
         $this->roles = [];
         if ($security->isGranted('ROLE_ADMIN')) {
@@ -99,7 +96,7 @@ class UserPartnerType extends AbstractType
                 'label' => 'Recevoir les e-mails ?',
                 'help' => 'Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.',
             ]);
-        if (!$user->getId() && $this->featureEmailRecap) {
+        if (!$user->getId()) {
             $builder->add('isMailingSummary', ChoiceType::class, [
                 'choices' => [
                     'Un e-mail récapitulatif par jour' => true,

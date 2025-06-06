@@ -21,17 +21,15 @@
     <div class="fr-col-12">
         {{ form_row(formUserPartner.isMailingActive) }}
     </div>
-    {% if feature_email_recap %}
-        <div class="fr-col-12">
-            {{ form_row(formUserPartner.isMailingSummary) }}
-            <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-n3w">
-                <p>
-                    Une fois son compte validé, seul l'agent pourra mettre à jour ses préférences en matière d'e-mail (tous les e-mails ou récapitulatif). 
-                    L'agent ne pourra pas désactiver ses e-mails, seulement un responsable de territoire pourra le faire.
-                </p>
-            </div>
+    <div class="fr-col-12">
+        {{ form_row(formUserPartner.isMailingSummary) }}
+        <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-n3w">
+            <p>
+                Une fois son compte validé, seul l'agent pourra mettre à jour ses préférences en matière d'e-mail (tous les e-mails ou récapitulatif). 
+                L'agent ne pourra pas désactiver ses e-mails, seulement un responsable de territoire pourra le faire.
+            </p>
         </div>
-    {% endif %}
+    </div>
     {% if formUserPartner.hasPermissionAffectation is defined %}
         <div class="fr-col-12">
             <label class="fr-label fr-pb-1w">Droits d'affectation</label>

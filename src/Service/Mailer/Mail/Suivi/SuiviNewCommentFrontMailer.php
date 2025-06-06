@@ -37,7 +37,7 @@ class SuiviNewCommentFrontMailer extends AbstractNotificationMailer
             'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'lien_suivi' => $this->urlGenerator->generate(
                 'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()], // remove 'from' when FEATURE_SECURE_UUID_URL is removed
+                ['code' => $signalement->getCodeSuivi()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];

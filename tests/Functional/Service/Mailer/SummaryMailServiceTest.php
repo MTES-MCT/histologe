@@ -25,7 +25,6 @@ class SummaryMailServiceTest extends KernelTestCase
         $this->summaryMailService = new SummaryMailService(
             $this->notificationRepository,
             $this->notificationMailerRegistry,
-            true
         );
     }
 

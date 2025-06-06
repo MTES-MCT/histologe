@@ -8,16 +8,9 @@ use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class NotificationFactory
 {
-    public function __construct(
-        #[Autowire(env: 'FEATURE_EMAIL_RECAP')]
-        private readonly bool $featureEmailRecap,
-    ) {
-    }
-
     public function createInstanceFrom(
         User $user,
         NotificationType $type,
@@ -42,9 +35,6 @@ class NotificationFactory
 
     private function shouldWaitMailingSummary(User $user, NotificationType $type): bool
     {
-        return $this->featureEmailRecap
-            && $user->getIsMailingActive()
-            && $user->getIsMailingSummary()
-            && in_array($type, NotificationType::getForAgent());
+        return $user->getIsMailingActive() && $user->getIsMailingSummary() && in_array($type, NotificationType::getForAgent());
     }
 }

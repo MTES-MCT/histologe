@@ -30,7 +30,6 @@ class SignalementValidationMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $toRecipient = $notificationMail->getTo();
 
         return [
             'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
@@ -38,10 +37,7 @@ class SignalementValidationMailer extends AbstractNotificationMailer
             'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'lien_suivi' => $this->urlGenerator->generate(
                 'front_suivi_signalement',
-                [
-                    'code' => $signalement->getCodeSuivi(),
-                    'from' => $toRecipient,
-                ],
+                ['code' => $signalement->getCodeSuivi()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'territory_name' => $notificationMail->getTerritory()->getName(),
