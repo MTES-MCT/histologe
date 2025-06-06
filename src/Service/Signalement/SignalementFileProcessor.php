@@ -21,6 +21,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class SignalementFileProcessor
 {
+    /**
+     * @var array<string>
+     */
     private array $errors = [];
     private File $lastFile;
 
@@ -37,6 +40,8 @@ class SignalementFileProcessor
     }
 
     /**
+     * @param array<mixed> $files
+     *
      * @return array<int, array{
      *     file: string,
      *     title: string,
@@ -138,6 +143,11 @@ class SignalementFileProcessor
         return $fileList;
     }
 
+    /**
+     * @param array<mixed> $fileList
+     *
+     * @return array<File>
+     */
     public function addFilesToSignalement(
         array $fileList,
         Signalement $signalement,
@@ -176,6 +186,9 @@ class SignalementFileProcessor
         return empty($this->errors);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getErrors(): array
     {
         return $this->errors;
@@ -186,6 +199,9 @@ class SignalementFileProcessor
         return implode('<br>', $this->errors);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function createFileItem(
         string $filename,
         string $title,

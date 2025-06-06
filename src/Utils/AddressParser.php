@@ -6,6 +6,9 @@ use App\Utils\Enum\ExtensionAdresse;
 
 class AddressParser
 {
+    /**
+     * @return array<mixed>
+     */
     public static function parse(string $address): array
     {
         $number = null;

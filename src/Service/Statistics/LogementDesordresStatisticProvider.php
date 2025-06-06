@@ -12,6 +12,9 @@ class LogementDesordresStatisticProvider
     {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(?Territory $territory, ?int $year): array
     {
         $countPerLogementDesordres = $this->signalementRepository->countByDesordresCriteres(
@@ -23,7 +26,12 @@ class LogementDesordresStatisticProvider
         return $this->createFullArray($countPerLogementDesordres);
     }
 
-    private function createFullArray($countPerLogementDesordres): array
+    /**
+     * @param array<mixed> $countPerLogementDesordres
+     *
+     * @return array<mixed>
+     */
+    private function createFullArray(array $countPerLogementDesordres): array
     {
         $data = self::initLogementDesordresPerValue();
         $i = 0;
@@ -38,6 +46,9 @@ class LogementDesordresStatisticProvider
         return $data;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private static function initLogementDesordresPerValue(): array
     {
         return [

@@ -51,6 +51,9 @@ class EnumExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @param array<mixed> $arrayOfEnum
+     */
     public function joinEnumKeys(array $arrayOfEnum, string $delimiter = ','): string
     {
         $returnString = '';
@@ -71,7 +74,10 @@ class EnumExtension extends AbstractExtension
                 }
             }
 
-            public function __call(string $name, array $arguments)
+            /**
+             * @param list<mixed> $arguments
+             */
+            public function __call(string $name, array $arguments): mixed
             {
                 $enumFQN = \sprintf('%s::%s', $this->enum, $name);
 
