@@ -215,6 +215,14 @@ class SearchFilter
                     ->setParameter('subQuery', $statement->executeQuery($parameters)->fetchFirstColumn());
             }
         }
+
+        if (!empty($filters['usager_abandon_procedure'])) {
+            if ($user->isSuperAdmin() || $user->isTerritoryAdmin()) {
+                $qb->andWhere('s.isUsagerAbandonProcedure  = :isUsagerAbandonProcedure')
+                    ->setParameter('isUsagerAbandonProcedure', $filters['usager_abandon_procedure']);
+            }
+        }
+
         if (!empty($filters['tags'])) {
             $qb->leftJoin('s.tags', 't');
             $qb->andWhere('t.id IN (:tag)')

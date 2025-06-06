@@ -26,6 +26,7 @@ class SignalementVoter extends Voter
     public const string ADD_VISITE = 'SIGN_ADD_VISITE';
     public const string ADD_ARRETE = 'SIGN_ADD_ARRETE';
     public const string USAGER_EDIT = 'SIGN_USAGER_EDIT';
+    public const string USAGER_PROCEDURE = 'SIGN_USAGER_PROCEDURE';
     public const string EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SEE_NDE = 'SIGN_SEE_NDE';
 
@@ -48,6 +49,7 @@ class SignalementVoter extends Voter
                 self::ADD_VISITE,
                 self::ADD_ARRETE,
                 self::USAGER_EDIT,
+                self::USAGER_PROCEDURE,
                 self::EDIT_NDE,
                 self::SEE_NDE,
                 self::DELETE_DRAFT,
@@ -61,6 +63,9 @@ class SignalementVoter extends Voter
         $user = $token->getUser();
         if (!$user || $user instanceof SignalementUser) {
             if (self::USAGER_EDIT === $attribute && $this->canUsagerEdit($subject)) {
+                return true;
+            }
+            if (self::USAGER_PROCEDURE === $attribute && $this->canUsagerProcedure($subject)) {
                 return true;
             }
 
@@ -91,6 +96,7 @@ class SignalementVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             self::USAGER_EDIT => $this->canUsagerEdit($subject),
+            self::USAGER_PROCEDURE => $this->canUsagerProcedure($subject),
             self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
             default => false,
         };
@@ -115,6 +121,17 @@ class SignalementVoter extends Voter
             } else {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    private function canUsagerProcedure(Signalement $signalement): bool
+    {
+        if (SignalementStatus::ACTIVE === $signalement->getStatut()
+            || SignalementStatus::NEED_VALIDATION === $signalement->getStatut()
+        ) {
+            return true;
         }
 
         return false;

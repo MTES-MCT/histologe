@@ -42,6 +42,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             page: 1,
             isImported: 'oui',
             relancesUsager: 'NO_SUIVI_AFTER_3_RELANCES',
+            usagerAbandonProcedure: true,
             nouveauSuivi: 'oui',
             sansSuiviPeriode: 30,
             sortBy: 'reference',
@@ -82,6 +83,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             'relances_usager' => [
                 'NO_SUIVI_AFTER_3_RELANCES',
             ],
+            'usager_abandon_procedure' => true,
             'delays' => 30,
             'nouveau_suivi' => 'oui',
             'page' => 1,

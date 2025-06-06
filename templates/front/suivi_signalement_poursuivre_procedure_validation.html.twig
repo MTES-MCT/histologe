@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre dossier #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+<main class="fr-container fr-py-5w" id="content">
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Poursuivre la procédure</a></li>
+			</ol>
+		</div>
+	</nav>
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-md-8">
+			{% form_theme form 'form/dsfr_theme.html.twig' %}
+			{{ form_start(form, {'attr': {'id': 'form-poursuivre-procedure'}}) }}
+			{{ form_errors(form) }}
+				<h1 class="title-blue-france">Poursuivre la procédure</h1>
+				<div class="fr-my-3w">
+					Vous souhaitez poursuivre la procédure ?<br>
+					Nous allons informer les services de votre réponse.
+					<br>
+					Attention votre choix pourra avoir un impact sur la poursuite de votre dossier.<br><br>
+					{{ form_row(form.details,{}) }}
+				</div>	
+
+				
+				<ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
+					<li>				
+						<button class="fr-btn fr-icon-check-line" type="submit" id="form_finish_submit" form="form-poursuivre-procedure">
+							Valider ma demande
+						</button>
+					</li>
+					<li>					
+						<a class="fr-btn fr-btn--secondary fr-icon-close-line" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}" >Annuler</a>
+					</li>
+				</ul>
+			{{ form_end(form) }}
+		</div>
+		{% include 'front/_partials/_suivi_signalement_card_right.html.twig' %}
+	</div>
+
+</main>
+{% endblock %}
