@@ -103,6 +103,75 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
                 'roles' => 'ROLE_DECLARANT',
             ],
         ];
+        yield 'occupant accentué minuscule' => [
+            (new self())->getMockSignalement(
+                ProfileDeclarant::LOCATAIRE,
+                'Morin',
+                'Édith',
+                '30100',
+                '123456789',
+                'edith.morin@example.com'
+            ),
+            [
+                'code' => '13121312',
+                'visitor-type' => 'occupant',
+                'login-first-letter-prenom' => 'é',
+                'login-first-letter-nom' => 'm',
+                'login-code-postal' => '30100',
+                '_csrf_token' => 'token789',
+            ],
+            [
+                'identifier' => '13121312:occupant',
+                'email' => 'edith.morin@example.com',
+                'roles' => 'ROLE_OCCUPANT',
+            ],
+        ];
+        yield 'occupant accentué majuscule' => [
+            (new self())->getMockSignalement(
+                ProfileDeclarant::LOCATAIRE,
+                'Morin',
+                'Édith',
+                '30100',
+                '123456789',
+                'edith.morin@example.com'
+            ),
+            [
+                'code' => '13121312',
+                'visitor-type' => 'occupant',
+                'login-first-letter-prenom' => 'É',
+                'login-first-letter-nom' => 'M',
+                'login-code-postal' => '30100',
+                '_csrf_token' => 'token789',
+            ],
+            [
+                'identifier' => '13121312:occupant',
+                'email' => 'edith.morin@example.com',
+                'roles' => 'ROLE_OCCUPANT',
+            ],
+        ];
+        yield 'occupant accentué sans accentuation' => [
+            (new self())->getMockSignalement(
+                ProfileDeclarant::LOCATAIRE,
+                'Morin',
+                'Édith',
+                '30100',
+                '123456789',
+                'edith.morin@example.com'
+            ),
+            [
+                'code' => '13121312',
+                'visitor-type' => 'occupant',
+                'login-first-letter-prenom' => 'e',
+                'login-first-letter-nom' => 'm',
+                'login-code-postal' => '30100',
+                '_csrf_token' => 'token789',
+            ],
+            [
+                'identifier' => '13121312:occupant',
+                'email' => 'edith.morin@example.com',
+                'roles' => 'ROLE_OCCUPANT',
+            ],
+        ];
     }
 
     public function testAuthenticateWithInvalidCodeThrowsException()
