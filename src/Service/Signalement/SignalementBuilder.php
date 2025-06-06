@@ -37,6 +37,9 @@ class SignalementBuilder
     private Territory $territory;
     private SignalementDraft $signalementDraft;
     private SignalementDraftRequest $signalementDraftRequest;
+    /**
+     * @var array<string>
+     */
     private array $payload;
 
     public function __construct(
@@ -585,7 +588,7 @@ class SignalementBuilder
             : $this->evalBoolean($this->signalementDraftRequest->getSignalementConcerneLogementSocialAutreTiers());
     }
 
-    private function convertStringToNumber(?string $value, $returnInt = true): float|int|null
+    private function convertStringToNumber(?string $value, bool $returnInt = true): float|int|null
     {
         if (null === $value || '' === $value) {
             return null;

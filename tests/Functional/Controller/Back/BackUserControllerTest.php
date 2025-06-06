@@ -10,6 +10,7 @@ class BackUserControllerTest extends WebTestCase
 {
     /**
      * @dataProvider provideParamsUserList
+     *
      * @param array<mixed> $params
      */
     public function testUserList(array $params, int $nb): void
@@ -48,6 +49,7 @@ class BackUserControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideParamsUserExport
+     *
      * @param array<mixed> $params
      */
     public function testUserExport(array $params, int $nb): void

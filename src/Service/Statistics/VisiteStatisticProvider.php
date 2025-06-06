@@ -11,7 +11,10 @@ class VisiteStatisticProvider
     {
     }
 
-    public function getFilteredData(StatisticsFilters $statisticsFilters)
+    /**
+     * @return array<mixed>
+     */
+    public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
         $countPerVisites = $this->signalementRepository->countByVisiteFiltered($statisticsFilters);
 
@@ -25,6 +28,9 @@ class VisiteStatisticProvider
         return $data;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private static function initPerVisite(): array
     {
         return [

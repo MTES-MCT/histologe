@@ -7,6 +7,7 @@ class DataPropertyArrayFilter
     /**
      * @param array<mixed> $data
      * @param array<mixed> $prefixes
+     *
      * @return array<mixed>
      */
     public static function filterByPrefix(array $data, array $prefixes): array

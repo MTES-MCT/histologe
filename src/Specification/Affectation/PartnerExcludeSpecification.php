@@ -9,6 +9,9 @@ use App\Specification\SpecificationInterface;
 
 class PartnerExcludeSpecification implements SpecificationInterface
 {
+    /**
+     * @param ?array<int> $partnerToExclude
+     */
     public function __construct(private ?array $partnerToExclude)
     {
         $this->partnerToExclude = $partnerToExclude;

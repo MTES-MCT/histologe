@@ -31,6 +31,9 @@ class CriticitePercentStatisticProvider
         return $data;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private static function initPerCriticitePercent(): array
     {
         return [

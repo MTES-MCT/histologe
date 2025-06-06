@@ -20,6 +20,9 @@ class FilteredBackAnalyticsProvider
     ) {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(StatisticsFilters $statisticsFilters): array
     {
         $data = [];
@@ -52,41 +55,65 @@ class FilteredBackAnalyticsProvider
         return $data;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCountSignalementPerMonth(StatisticsFilters $statisticsFilters): array
     {
         return $this->monthStatisticProvider->getFilteredData($statisticsFilters);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCountSignalementPerPartenaire(StatisticsFilters $statisticsFilters): array
     {
         return $this->partenaireStatisticProvider->getFilteredData($statisticsFilters);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCountSignalementPerSituation(StatisticsFilters $statisticsFilters): array
     {
         return $this->situationStatisticProvider->getFilteredData($statisticsFilters);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCountSignalementPerCriticite(StatisticsFilters $statisticsFilters): array
     {
         return $this->criticiteStatisticProvider->getFilteredData($statisticsFilters);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCountSignalementPerStatut(StatisticsFilters $statisticsFilters): array
     {
         return $this->statusStatisticProvider->getFilteredData($statisticsFilters);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCountSignalementPerCriticitePercent(StatisticsFilters $statisticsFilters): array
     {
         return $this->criticitePercentStatisticProvider->getFilteredData($statisticsFilters);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCountSignalementPerVisite(StatisticsFilters $statisticsFilters): array
     {
         return $this->visiteStatisticProvider->getFilteredData($statisticsFilters);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCountSignalementPerMotifCloture(StatisticsFilters $statisticsFilters): array
     {
         return $this->motifClotureStatisticProvider->getFilteredData($statisticsFilters);
