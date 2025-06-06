@@ -472,7 +472,7 @@ class SuiviRepository extends ServiceEntityRepository
             ->andWhere('s.isPublic = 1')
             ->andWhere('s.deletedBy IS NULL')
             ->setParameter('signalement', $signalement);
-        if(null !== $userToExclude) {
+        if (null !== $userToExclude) {
             $qb->andWhere('s.createdBy != :userToExclude')
                 ->setParameter('userToExclude', $userToExclude);
         }
