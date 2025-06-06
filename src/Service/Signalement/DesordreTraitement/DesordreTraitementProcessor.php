@@ -8,8 +8,14 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class DesordreTraitementProcessor
 {
+    /**
+     * @var iterable<string, DesordreTraitementInterface>
+     */
     private iterable $desordreTraitements;
 
+    /**
+     * @param iterable<string, DesordreTraitementInterface> $desordreTraitements
+     */
     public function __construct(
         #[AutowireIterator('desordre_traitement', indexAttribute: 'key')]
         iterable $desordreTraitements,
@@ -18,9 +24,9 @@ class DesordreTraitementProcessor
     }
 
     /**
-     * @param array<string, string> $payload
+     * @param array<string, mixed> $payload
      *
-     * @return array<DesordrePrecision|null>
+     * @return ?array<int, DesordrePrecision>
      */
     public function findDesordresPrecisionsBy(DesordreCritere $critere, array $payload): ?array
     {
@@ -31,11 +37,9 @@ class DesordreTraitementProcessor
 
         if (\array_key_exists($slug, $desordreTraitementsHandlers)) {
             $desordreCritereHandler = $desordreTraitementsHandlers[$slug];
-            if ($desordreCritereHandler) {
-                $desordrePrecisions = $desordreCritereHandler->findDesordresPrecisionsBy($payload, $slug);
+            $desordrePrecisions = $desordreCritereHandler->findDesordresPrecisionsBy($payload, $slug);
 
-                return $desordrePrecisions;
-            }
+            return $desordrePrecisions;
         }
 
         return null;

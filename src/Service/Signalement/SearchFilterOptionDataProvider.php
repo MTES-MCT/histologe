@@ -37,6 +37,8 @@ class SearchFilterOptionDataProvider
     }
 
     /**
+     * @return array<mixed>
+     *
      * @throws InvalidArgumentException
      */
     public function getData(User $user, ?Territory $territory = null): array

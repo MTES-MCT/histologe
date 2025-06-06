@@ -10,8 +10,14 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class InterconnectionBus
 {
+    /**
+     * @var iterable<string, MessageBusInterface>
+     */
     private iterable $dossierMessageFactories;
 
+    /**
+     * @param iterable<string, MessageBusInterface> $dossierMessageFactories
+     */
     public function __construct(
         private readonly MessageBusInterface $messageBus,
         #[AutowireIterator('app.dossier_message_factory')] iterable $dossierMessageFactories,

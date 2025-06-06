@@ -87,6 +87,9 @@ class QualificationStatusService implements RuntimeExtensionInterface
         return QualificationStatus::NDE_AVEREE == $signalementQualification->getStatus() || QualificationStatus::NDE_CHECK == $signalementQualification->getStatus() || QualificationStatus::NDE_OK == $signalementQualification->getStatus();
     }
 
+    /**
+     * @return array<string>
+     */
     public function getList(): array
     {
         return [

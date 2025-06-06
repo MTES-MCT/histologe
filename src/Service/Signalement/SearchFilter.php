@@ -49,6 +49,9 @@ class SearchFilter
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function buildFilters(User $user): array
     {
         /** @var SignalementSearchQuery $signalementSearchQuery */
@@ -87,6 +90,8 @@ class SearchFilter
     }
 
     /**
+     * @param array<mixed> $filters
+     *
      * @throws Exception
      */
     public function applyFilters(QueryBuilder $qb, array $filters, User $user): QueryBuilder
@@ -521,6 +526,9 @@ class SearchFilter
         return $qb;
     }
 
+    /**
+     * @param array<string> $epcis
+     */
     private function addFilterEpci(QueryBuilder $qb, array $epcis): QueryBuilder
     {
         $communes = $this->epciRepository->findCommunesByEpcis($epcis);
@@ -544,6 +552,9 @@ class SearchFilter
         return $qb;
     }
 
+    /**
+     * @param array<string> $dates
+     */
     private function addFilterDate(QueryBuilder $qb, string $columnDbField, array $dates): QueryBuilder
     {
         if (!empty($dates['on'])) {
@@ -568,6 +579,9 @@ class SearchFilter
         return $qb;
     }
 
+    /**
+     * @param array<string> $enfantM6
+     */
     private function addFilterEnfantM6(QueryBuilder $qb, array $enfantM6): QueryBuilder
     {
         if (\in_array('non_renseigne', $enfantM6)) {

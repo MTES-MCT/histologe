@@ -35,6 +35,9 @@ class SignalementExportPdfGenerator
         return $domPdf->output();
     }
 
+    /**
+     * @param ?array<mixed> $options
+     */
     public function generateToTempFolder(
         Signalement $signalement,
         string $content,

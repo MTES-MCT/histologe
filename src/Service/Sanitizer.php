@@ -6,7 +6,7 @@ use App\Entity\User;
 
 class Sanitizer
 {
-    public static function sanitize($text): string
+    public static function sanitize(?string $text): string
     {
         $textSanitized = preg_replace('/<p[^>]*>/', '', $text); // Remove the start <p> or <p attr="">
 

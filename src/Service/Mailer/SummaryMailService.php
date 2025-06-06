@@ -42,6 +42,11 @@ class SummaryMailService
         return 1;
     }
 
+    /**
+     * @param array<mixed> $notifications
+     *
+     * @return array<mixed>
+     */
     private function getEventsForMailingSummaryFromNotifications(array $notifications): array
     {
         $events = [
