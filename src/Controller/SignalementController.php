@@ -632,8 +632,6 @@ class SignalementController extends AbstractController
     public function suiviSignalementDossier(
         string $code,
         SignalementRepository $signalementRepository,
-        Request $request,
-        UserManager $userManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         Security $security,
         AuthenticationUtils $authenticationUtils,
@@ -647,13 +645,6 @@ class SignalementController extends AbstractController
 
             return $this->render('front/flash-messages.html.twig');
         }
-
-        // TODO : delete when remove FEATURE_SECURE_UUID_URL
-        $requestEmail = $request->get('from');
-        $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
-        // TODO : get type from auth when remove FEATURE_SECURE_UUID_URL
-        $user = $userManager->getOrCreateUserForSignalementAndEmail($signalement, $fromEmail);
-        $type = $userManager->getUserTypeForSignalementAndUser($signalement, $user);
 
         /** @var SignalementUser $currentUser */
         $currentUser = $security->getUser();
@@ -674,10 +665,8 @@ class SignalementController extends AbstractController
             'action' => $this->generateUrl('front_demande_lien_signalement'),
         ]);
 
-        return $this->render('front/suivi_signalement.html.twig', [
+        return $this->render('front/suivi_signalement_dossier.html.twig', [
             'signalement' => $signalement,
-            'email' => $fromEmail,
-            'type' => $type,
             'infoDesordres' => $infoDesordres,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
         ]);
