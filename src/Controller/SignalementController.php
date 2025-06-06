@@ -587,6 +587,7 @@ class SignalementController extends AbstractController
                     'error' => $error,
                 ]);
             }
+            $user = $currentUser->getUser();
         }
 
         $demandeLienSignalement = new DemandeLienSignalement();
@@ -595,7 +596,7 @@ class SignalementController extends AbstractController
         ]);
 
         if ($this->featureSuiviAction) {
-            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement);
+            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement, $user);
             $suiviCategory = null;
             if (!$lastSuiviPublic && SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $suiviCategory = $suiviCategorizerService->getSuiviCategoryFromEnum(SuiviCategory::SIGNALEMENT_IS_CLOSED);
