@@ -7,16 +7,26 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AttributeParser
 {
+
+    /**
+     * @template T of object
+     * @param class-string $class
+     * @param non-empty-string $field
+     * @param class-string<T> $constraint
+     * @return list<\ReflectionAttribute<T>>
+     */
     public static function parse(
         string $class,
         string $field,
         string $constraint,
     ): ?array {
         $reflector = new \ReflectionClass($class);
-        /** @var \ReflectionAttribute[] $attributes */
-        $attributes = $reflector->getProperty($field)->getAttributes($constraint);
+        return $reflector->getProperty($field)->getAttributes($constraint);
+        // $reflector = new \ReflectionClass($class);
+        // /** @var \ReflectionAttribute[] $attributes */
+        // $attributes = $reflector->getProperty($field)->getAttributes($constraint);
 
-        return $attributes;
+        // return $attributes;
     }
 
     public static function showLabelAsFacultatif(

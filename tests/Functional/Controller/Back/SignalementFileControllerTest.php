@@ -36,7 +36,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
     }
 
-    public function testAddSuccessFileSignalement()
+    public function testAddSuccessFileSignalement(): void
     {
         $imageFile = new UploadedFile(
             __DIR__.'/../../../files/sample.jpg',
@@ -73,7 +73,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testAddFailureFileSignalement()
+    public function testAddFailureFileSignalement(): void
     {
         $imageFile = new UploadedFile(
             __DIR__.'/../../../files/sample.heic',
@@ -97,7 +97,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testGeneratePdfSignalement()
+    public function testGeneratePdfSignalement(): void
     {
         $this->client->loginUser($this->user);
 

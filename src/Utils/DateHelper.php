@@ -4,7 +4,7 @@ namespace App\Utils;
 
 class DateHelper
 {
-    public static function isValidDate($date, $format = 'Y-m-d H:i:s'): bool
+    public static function isValidDate(string $date, string $format = 'Y-m-d H:i:s'): bool
     {
         $datetime = \DateTimeImmutable::createFromFormat($format, $date);
 

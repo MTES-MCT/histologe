@@ -80,6 +80,9 @@ class SignalementFileUploadControllerTest extends WebTestCase
         yield 'test upload with forbidden' => ['00000000-0000-0000-2022-000000000004', Response::HTTP_FORBIDDEN];
     }
 
+    /**
+     * @param array<UploadedFile> $files
+     */
     private function postRequest(string $uuid, array $files = []): void
     {
         $this->client->request(

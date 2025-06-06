@@ -75,6 +75,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideEditSignalementRoutes
+     * @param array<string> $payload
      */
     public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
     {
@@ -96,6 +97,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideEditSignalementRoutes
+     * @param array<string> $payload
      */
     public function testEditSignalementUnauthorization(string $routeName, array $payload, string $token): void
     {
@@ -112,6 +114,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideEditSignalementRoutes
+     * @param array<string> $payload
      */
     public function testEditSignalementError(string $routeName, array $payload, string $token): void
     {
@@ -126,6 +129,9 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(400, (string) $this->client->getResponse()->getStatusCode());
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPayloadCoordonneesBailleur(string $bailleurName, int $signalementId): array
     {
         return [
@@ -143,6 +149,9 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPayloadCoordonneesFoyer(): array
     {
         return [
@@ -155,6 +164,9 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPayloadInformationLogement(): array
     {
         return [
@@ -174,6 +186,9 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPayloadCompositionLogement(): array
     {
         return [
@@ -197,6 +212,9 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPayloadSituationFoyer(): array
     {
         return [
@@ -214,6 +232,9 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPayloadProcedureDemarches(): array
     {
         return [
@@ -228,6 +249,9 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPayloadAddress(): array
     {
         return [
@@ -246,6 +270,9 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     private function getPayloadCoordonneesTiers(): array
     {
         return [

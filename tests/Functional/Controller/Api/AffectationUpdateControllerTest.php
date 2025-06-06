@@ -34,11 +34,12 @@ class AffectationUpdateControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideValidTransitionData
+     * @param array<mixed> $payload
      */
     public function testValidWorkflow(string $signalementUuid, array $payload, string $statut, int $mailSent): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
-        /** @var Collection $affectations */
+        /** @var Collection<int, Affectation> $affectations */
         $affectations = $signalement->getAffectations();
 
         /** @var Affectation $affectation */
@@ -53,11 +54,14 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** @dataProvider provideUnvalidData */
+    /** 
+     * @dataProvider provideUnvalidData 
+     * @param array<mixed> $payload
+     */
     public function testInvalidWorkflow(string $signalementUuid, array $payload, string $errorMessage, int $httpCodeStatus): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
-        /** @var Collection $affectations */
+        /** @var Collection<int, Affectation> $affectations */
         $affectations = $signalement?->getAffectations();
 
         $affectation = null;
@@ -74,6 +78,9 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
+    /** 
+     * @param array<mixed> $payload
+     */
     private function patchAffectation(?string $affectationUuid, array $payload): void
     {
         if (null === $affectationUuid) {

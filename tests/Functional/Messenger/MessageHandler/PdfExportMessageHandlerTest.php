@@ -44,7 +44,7 @@ class PdfExportMessageHandlerTest extends WebTestCase
         $this->assertEmailAddressContains($email, 'To', 'test@yopmail.com');
     }
 
-    public function testHandleGeneratePdfMessageWithDesordres()
+    public function testHandleGeneratePdfMessageWithDesordres(): void
     {
         self::bootKernel();
 
