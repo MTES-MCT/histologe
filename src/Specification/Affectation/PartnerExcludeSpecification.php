@@ -10,7 +10,7 @@ use App\Specification\SpecificationInterface;
 class PartnerExcludeSpecification implements SpecificationInterface
 {
     /**
-     * @param ?array<int> $partnerToExclude
+     * @param ?array<mixed> $partnerToExclude
      */
     public function __construct(private ?array $partnerToExclude)
     {

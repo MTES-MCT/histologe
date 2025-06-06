@@ -4,8 +4,12 @@ namespace App\Service\Menu;
 
 class MenuItem
 {
+    /** @var array<self> */
     private array $children = [];
 
+    /**
+     * @param array<mixed> $routeParameters
+     */
     public function __construct(
         private readonly string $label = '',
         private readonly string $route = '',
@@ -24,6 +28,9 @@ class MenuItem
         return $this;
     }
 
+    /**
+     * @return array<self>
+     */
     public function getChildren(): array
     {
         return $this->children;
@@ -44,6 +51,9 @@ class MenuItem
         return $this->route;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getRouteParameters(): array
     {
         return $this->routeParameters;

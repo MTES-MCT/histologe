@@ -17,6 +17,9 @@ readonly class SignalementExportLoader
     }
 
     /**
+     * @param ?array<mixed>  $filters
+     * @param ?array<string> $selectedColumns
+     *
      * @throws Exception
      */
     public function load(User $user, ?array $filters, ?array $selectedColumns = null): Spreadsheet
@@ -50,6 +53,13 @@ readonly class SignalementExportLoader
         return $spreadsheet;
     }
 
+    /**
+     * @param array<string> $headers
+     * @param array<string> $keysToRemove
+     * @param array<string> $selectedColumns
+     *
+     * @return array<string>
+     */
     private function getHeadersWithSelectedColumns(array $headers, array &$keysToRemove, array $selectedColumns): array
     {
         $selectableColumns = SignalementExportSelectableColumns::getColumns();
@@ -72,6 +82,9 @@ readonly class SignalementExportLoader
         return $headers;
     }
 
+    /**
+     * @param array<string> $headers
+     */
     private function removeColFromHeaders(string $colName, array &$headers): void
     {
         $indexToUnset = array_search($colName, $headers);
@@ -81,6 +94,8 @@ readonly class SignalementExportLoader
     }
 
     /**
+     * @param ?array<string> $filters
+     *
      * @throws Exception
      */
     private function getDataChunks(User $user, ?array $filters): \Generator
