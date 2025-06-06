@@ -49,7 +49,7 @@
         </div>
         <div class="fr-grid-row fr-mt-3v">
             <div class="fr-col-12">
-                <h3>Mon compte sur Signal Logement</h3>
+                <h3>Mon compte sur {{ platform.name }}</h3>
             </div>
             {% if is_granted('ROLE_ADMIN') %}
                 <div class="fr-col-12">
@@ -162,7 +162,7 @@
             <div>
                 Vos préférences en matière d'e-mails :
                 <br>
-                Activité sur Signal Logement : 
+                Activité sur {{ platform.name }} : 
                 <strong>
                     {% if app.user.isMailingActive %}
                         {{ app.user.isMailingSummary ? 'Récapitulatif quotidien' : 'Tous les e-mails' }}

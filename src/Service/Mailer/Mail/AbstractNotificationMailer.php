@@ -44,6 +44,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         $territory = $notificationMail->getTerritory();
         $this->mailerParams = $this->getMailerParamsFromNotification($notificationMail);
         $this->updateMailerSubjectFromNotification($notificationMail);
+        $this->updateButtonTextFromNotification($notificationMail);
         $params = [
             'template' => $this->mailerTemplate,
             'subject' => $this->mailerSubject,
@@ -171,6 +172,10 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     }
 
     public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+    }
+
+    public function updateButtonTextFromNotification(NotificationMail $notificationMail): void
     {
     }
 

@@ -35,7 +35,7 @@
       <p>
         <span>{{strCountImported}}</span> signalements importés
         <br>
-        Ces données correspondent aux signalements recensés sur les territoires avant le déploiement de la plateforme Signal Logement.
+        Ces données correspondent aux signalements recensés sur les territoires avant le déploiement de la plateforme {{ sharedProps.platformName }}.
       </p>
     </div>
   </div>
@@ -58,7 +58,8 @@ export default defineComponent({
   },
   data () {
     return {
-      sharedState: store.state
+      sharedState: store.state,
+      sharedProps: store.props
     }
   },
   computed: {

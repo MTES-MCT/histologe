@@ -9,6 +9,10 @@
 
 {% block body %}
     <main id="content">
-        <div id="app-front-stats" data-ajaxurl="{{ path('front_statistiques_filter') }}"></div>
+        <div 
+            id="app-front-stats"
+            data-ajaxurl="{{ path('front_statistiques_filter') }}"
+            data-platform-name="{{ platform.name }}"
+        ></div>
     </main>
 {% endblock %}

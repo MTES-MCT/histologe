@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class NotificationSummaryMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_NOTIFICATIONS_SUMMARY;
-    protected ?string $mailerSubject = 'Récapitulatif d\'activité sur Signal Logement';
+    protected ?string $mailerSubject = 'Récapitulatif d\'activité sur %s';
     protected ?string $mailerTemplate = 'notification_summary_email';
 
     public function __construct(
@@ -30,5 +30,13 @@ class NotificationSummaryMailer extends AbstractNotificationMailer
         $events = $notificationMail->getParams();
 
         return ['events' => $events];
+    }
+
+    public function updateMailerSubjectFromNotification(NotificationMail $notificationMail): void
+    {
+        $this->mailerSubject = \sprintf(
+            $this->mailerSubject,
+            $this->getPlatformName()
+        );
     }
 }

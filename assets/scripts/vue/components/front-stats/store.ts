@@ -36,6 +36,7 @@ export const store = {
     }
   },
   props: {
-    ajaxurl: ''
+    ajaxurl: '',
+    platformName: ''
   }
 }

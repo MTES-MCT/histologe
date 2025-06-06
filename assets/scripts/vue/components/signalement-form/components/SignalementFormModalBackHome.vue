@@ -10,7 +10,7 @@
             <div class="fr-modal__content">
               <h1 id="fr-modal-title-modal-back-home" class="fr-modal__title">Retour à l'accueil</h1>
               <p>
-                Attention, en retournant à l'accueil de Signal Logement, vous allez quitter le signalement.
+                Attention, en retournant à l'accueil de {{ formStore.props.platformName }}, vous allez quitter le signalement.
                 <br>
                 Les données saisies seront perdues !
                 <br><br>
@@ -40,9 +40,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import formStore from '../store'
 
 export default defineComponent({
-  name: 'SignalementFormModalBackHome'
+  name: 'SignalementFormModalBackHome',
+  data () {
+    return {
+      formStore
+    }
+  },
 })
 </script>
 

@@ -10,7 +10,7 @@
                             </a>
                         </div>
                         <div class="fr-header__operator">
-                            <img class="fr-responsive-img" src="{{ asset('img/logo-signal-logement-small.original.svg') }}" alt="Logo signal logement" style="max-width:3,0rem;" data-fr-js-ratio="true">
+                            <img class="fr-responsive-img" src="{{ asset('img/logo-signal-logement-small.original.svg') }}" alt="Logo {{ platform.name }}" style="max-width:3,0rem;" data-fr-js-ratio="true">
                         </div>
                         <div class="fr-header__navbar">
                             <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="fr-menu-mobile" id="fr-btn-menu-mobile" title="Menu" data-fr-js-modal-button="true">Menu</button>
@@ -86,7 +86,7 @@
         <div class="fr-container">
             <div class="fr-notice__body">
                 <p class="fr-notice__desc">
-                    <strong>Histologe devient Signal Logement !</strong> Un nouveau nom et un nouveau site pour mieux refléter notre mission : lutter contre le mal logement !
+                    <strong>Histologe devient {{ platform.name }} !</strong> Un nouveau nom et un nouveau site pour mieux refléter notre mission : lutter contre le mal logement !
                 </p>
                 <button class="fr-btn--close fr-btn" title="Masquer le message">
                     Masquer le message
