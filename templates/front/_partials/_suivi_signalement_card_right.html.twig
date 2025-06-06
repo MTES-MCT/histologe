@@ -1,0 +1,28 @@
+<div class="fr-hidden-sm fr-unhidden-md fr-col-md-4">
+	<div class="fr-mb-3w">
+		<div class="signalement-card fr-grid-row fr-grid-row--gutters">
+			<div class="fr-col-12">
+				Déclarant
+				<br>
+				<span class="info">{{ signalement.prenomDeclarant }} {{ signalement.nomDeclarant }}</span>
+			</div>
+			<div class="fr-col-12">
+				Personne occupant le logement
+				<br>
+				<span class="info">{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</span>
+			</div>
+			<div class="fr-col-12">
+				Référence du dossier
+				<br>
+				<span class="info">#{{ signalement.reference }}</span>
+			</div>
+			<div class="fr-col-12">
+				Statut du dossier
+				<br>
+				<span class="info">
+					{{ include('front/_partials/_suivi_signalement_card_status.html.twig') }}
+				</span>
+			</div>
+		</div>	
+	</div>
+</div>

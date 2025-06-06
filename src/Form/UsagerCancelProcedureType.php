@@ -4,9 +4,9 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UsagerCancelProcedureType extends AbstractType
 {
@@ -14,6 +14,7 @@ class UsagerCancelProcedureType extends AbstractType
     {
         $builder
             ->add('reason', ChoiceType::class, [
+                'label' => 'Pour quelle raison voulez-vous arrêter la procédure ?',
                 'choices' => [
                     'Le problème est résolu' => 'Le problème est résolu',
                     'Changement de logement' => 'Changement de logement',
@@ -22,17 +23,27 @@ class UsagerCancelProcedureType extends AbstractType
                 ],
                 'expanded' => true,
                 'multiple' => false,
-                'label' => 'Pour quelle raison voulez-vous arrêter la procédure ?',
-                'required' => true,
+                'required' => false,
+                'placeholder' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Veuillez choisir une raison.',
+                    ]),
+                ],
             ])
             ->add('details', TextareaType::class, [
                 'label' => 'Veuillez détailler la raison pour laquelle vous souhaitez arrêter la procédure',
                 'help' => 'Dix (10) caractères minimum',
-                'required' => true,
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Valider ma demande',
-                'attr' => ['class' => 'fr-btn fr-icon-check-line'],
+                'required' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Veuillez détailler la raison.',
+                    ]),
+                    new Assert\Length([
+                        'min' => 10,
+                        'minMessage' => 'Le message doit contenir au moins {{ limit }} caractères.',
+                    ]),
+                ],
             ]);
     }
 }

@@ -113,12 +113,13 @@
 {% endblock button_attributes %}
 
 {% block choice_widget_expanded %}
+    {% set display_mode = display_mode|default('inline') %}
     <div {{ block('widget_container_attributes') }} class="fr-fieldset fr-mt-1w fr-mb-0">
     {% if not form|length and nochoiceslabel is defined %}
         {{ nochoiceslabel }}
     {% else %}
         {% for child in form %}
-            <div class="fr-fieldset__element {% if 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline{% endif %}">
+            <div class="fr-fieldset__element {% if display_mode == 'inline' and 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline{% elseif display_mode == 'block' and 'radio' in child.vars.block_prefixes %}fr-border--light fr-p-2w fr-mx-2w {% endif %}">
                 <div class="{% if 'radio' in child.vars.block_prefixes %}fr-radio-group{% else %}fr-checkbox-group{% endif %}">
                     {{form_widget(child)}}
                     {{form_label(child, null, {translation_domain: choice_translation_domain})}}

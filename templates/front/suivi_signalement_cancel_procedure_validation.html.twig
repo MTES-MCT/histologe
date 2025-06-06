@@ -17,34 +17,30 @@
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-md-8">
 			{% form_theme form 'form/dsfr_theme.html.twig' %}
-			{{ form_start(form) }}
+			{{ form_start(form, {'attr': {'id': 'form-cancel-procedure'}}) }}
 			{{ form_errors(form) }}
 				<h1 class="title-blue-france">Demander l'arrêt de la procédure</h1>
 				<div class="fr-my-3w">
 					Expliquez pourquoi vous souhaitez arrêter la procédure puis envoyez votre demande à l'administration.<br>
-					<fieldset class="fr-fieldset" aria-labelledby="reason-legend">
+					<fieldset class="fr-fieldset {% if form.reason.vars.errors|length > 0 %}fr-fieldset--error{% endif %}" aria-labelledby="reason-legend">
 						<legend class="fr-fieldset__legend fr-fieldset__legend--regular" id="reason-legend">
 							{{ form_label(form.reason) }}
 						</legend>
 
-						{% for choice in form.reason %}
-							<div class="fr-fieldset__element fr-border--light fr-p-2w">
-								<div class="fr-radio-group">
-									{{ form_widget(choice) }}
-									{{ form_label(choice) }}
-								</div>
-							</div>
-						{% endfor %}
+						{{ form_widget(form.reason, {display_mode: 'block'}) }}
 
 						{{ form_errors(form.reason) }}
 					</fieldset>
+					
 					{{ form_row(form.details,{}) }}
 				</div>	
 
 				
 				<ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
-					<li>
-						{{ form_row(form.save,{}) }}
+					<li>				
+						<button class="fr-btn fr-icon-check-line" type="submit" id="form_finish_submit" form="form-cancel-procedure">
+							Valider ma demande
+						</button>
 					</li>
 					<li>					
 						<a class="fr-btn fr-btn--secondary fr-icon-close-line" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}" >Annuler</a>
@@ -52,34 +48,7 @@
 				</ul>
 			{{ form_end(form) }}
 		</div>
-		<div class="fr-hidden-sm fr-unhidden-md fr-col-md-4">
-			<div class="signalement-card fr-mb-3w">
-				<div class="fr-grid-row fr-grid-row--gutters">
-					<div class="fr-col-12">
-						Déclarant
-						<br>
-						<span class="info">{{ signalement.prenomDeclarant }} {{ signalement.nomDeclarant }}</span>
-					</div>
-					<div class="fr-col-12">
-						Personne occupant le logement
-						<br>
-						<span class="info">{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</span>
-					</div>
-					<div class="fr-col-12">
-						Référence du dossier
-						<br>
-						<span class="info">#{{ signalement.reference }}</span>
-					</div>
-					<div class="fr-col-12">
-						Statut du dossier
-						<br>
-						<span class="info">
-							{{ include('front/_partials/statut_signalement.html.twig') }}
-						</span>
-					</div>
-				</div>	
-			</div>
-		</div>
+		{% include 'front/_partials/_suivi_signalement_card_right.html.twig' %}
 	</div>
 
 </main>
