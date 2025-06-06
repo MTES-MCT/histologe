@@ -3,9 +3,9 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UsagerPoursuivreProcedureType extends AbstractType
 {
@@ -16,10 +16,15 @@ class UsagerPoursuivreProcedureType extends AbstractType
                 'label' => 'Souhaitez-vous apporter des précisons à votre demande ?',
                 'help' => 'Dix (10) caractères minimum',
                 'required' => false,
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Valider ma demande',
-                'attr' => ['class' => 'fr-btn fr-icon-check-line'],
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Veuillez détailler la raison.',
+                    ]),
+                    new Assert\Length([
+                        'min' => 10,
+                        'minMessage' => 'Le message doit contenir au moins {{ limit }} caractères.',
+                    ]),
+                ],
             ]);
     }
 }

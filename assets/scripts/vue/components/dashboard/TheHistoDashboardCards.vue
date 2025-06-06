@@ -101,6 +101,7 @@
       </div>
     </div>
 
+    <!-- TODO : supprimer le if avec suppression du feature flipping featureSuiviAction -->
     <div v-if="sharedState.usagerAbandonProcedure.count !== null" class="fr-col-12 fr-col-md-6 fr-col-lg-4">
       <div class="fr-card fr-enlarge-link">
         <div class="fr-card__body">

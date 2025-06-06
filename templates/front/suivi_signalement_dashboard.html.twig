@@ -89,7 +89,7 @@
 						Gérer les documents / photos
 					</a>
 				</li>
-				{% if signalement.isUsagerAbandonProcedure is not same as true %}
+				{% if signalement.isUsagerAbandonProcedure is not same as true and is_granted('SIGN_USAGER_EDIT', signalement) %}
 					<li>
 						<a href="{{ path('front_suivi_signalement_procedure', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-close-circle-line fr-btn--secondary" >
 							Arrêter la procédure

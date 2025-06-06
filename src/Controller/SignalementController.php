@@ -436,7 +436,8 @@ class SignalementController extends AbstractController
             return $this->render('front/flash-messages.html.twig');
         }
 
-        // TODO : route à supprimer quand suppression du feature flipping featureSuiviAction
+        // TODO : route à supprimer quelques semaines/mois après la suppression du feature flipping featureSuiviAction
+        // pour ne pas avoir des liens cassés dans les anciens mails
         // et mettre à jour le 3è mail de demande de feedback usager pour rediriger vers les bonnes routes
         if ($this->featureSuiviAction) {
             if (Suivi::ARRET_PROCEDURE == $suiviAuto) {
@@ -456,6 +457,7 @@ class SignalementController extends AbstractController
             );
         }
 
+        // TODO à supprimer avec la suppression du feature flipping featureSuiviAction
         $requestEmail = $request->get('from');
         $fromEmail = \is_array($requestEmail) ? array_pop($requestEmail) : $requestEmail;
 
@@ -824,6 +826,11 @@ class SignalementController extends AbstractController
 
             return $this->render('front/flash-messages.html.twig');
         }
+        if (!$this->isGranted('SIGN_USAGER_PROCEDURE', $signalement)) {
+            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+
+            return $this->render('front/flash-messages.html.twig');
+        }
         /** @var SignalementUser $currentUser */
         $currentUser = $security->getUser();
         if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
@@ -868,6 +875,11 @@ class SignalementController extends AbstractController
             $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté d\'arrêter la procédure.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+        if (!$this->isGranted('SIGN_USAGER_PROCEDURE', $signalement)) {
+            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+
+            return $this->render('front/flash-messages.html.twig');
         }
 
         /** @var SignalementUser $currentUser */
@@ -932,6 +944,11 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
         if (!$signalement) {
             $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+
+            return $this->render('front/flash-messages.html.twig');
+        }
+        if (!$this->isGranted('SIGN_USAGER_PROCEDURE', $signalement)) {
+            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->render('front/flash-messages.html.twig');
         }

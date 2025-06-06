@@ -206,7 +206,6 @@ class SignalementControllerTest extends WebTestCase
             'usager_cancel_procedure' => [
                 'reason' => $reason,
                 'details' => $details,
-                'save' => '',
                 '_token' => $this->generateCsrfToken($client, 'usager_cancel_procedure'),
             ],
         ]);
@@ -252,7 +251,6 @@ class SignalementControllerTest extends WebTestCase
         $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
             'usager_poursuivre_procedure' => [
                 'details' => $details,
-                'save' => '',
                 '_token' => $this->generateCsrfToken($client, 'usager_poursuivre_procedure'),
             ],
         ]);
