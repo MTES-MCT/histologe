@@ -7,21 +7,24 @@ use App\Repository\TerritoryRepository;
 
 class ZipcodeProvider
 {
-    private const CORSE_DU_SUD_CODE_DEPARTMENT_2A = '2A';
-    private const HAUTE_CORSE_CODE_DEPARTMENT_2B = '2B';
-    public const RHONE_CODE_DEPARTMENT_69 = '69';
-    public const METROPOLE_LYON_CODE_DEPARTMENT_69A = '69A';
-    private const GUADELOUPE_CODE_DEPARTMENT_971 = '971';
-    private const MARTINIQUE_CODE_DEPARTMENT_972 = '972';
-    private const GUYANE_CODE_DEPARTMENT_973 = '973';
-    private const LA_REUNION_CODE_DEPARTMENT_974 = '974';
-    private const ST_PIERRE_ET_MIQUELON_CODE_DEPARTMENT_975 = '975';
-    private const MAYOTTE_CODE_DEPARTMENT_976 = '976';
-    private const SAINT_BARTHELEMY_CODE_DEPARTMENT_977 = '977';
-    private const SAINT_MARTIN_CODE_DEPARTMENT_978 = '978';
-    private const WALLIS_ET_FUTUNA_CODE_DEPARTMENT_986 = '986';
-    private const POLYNESIE_FRANCAISE_CODE_DEPARTMENT_987 = '987';
-    private const NOUVELLE_CALEDONIE_CODE_DEPARTMENT_988 = '988';
+    private const string CORSE_DU_SUD_CODE_DEPARTMENT_2A = '2A';
+    private const string HAUTE_CORSE_CODE_DEPARTMENT_2B = '2B';
+    public const string RHONE_CODE_DEPARTMENT_69 = '69';
+    public const string METROPOLE_LYON_CODE_DEPARTMENT_69A = '69A';
+    private const string GUADELOUPE_CODE_DEPARTMENT_971 = '971';
+    private const string MARTINIQUE_CODE_DEPARTMENT_972 = '972';
+    private const string GUYANE_CODE_DEPARTMENT_973 = '973';
+    private const string LA_REUNION_CODE_DEPARTMENT_974 = '974';
+    private const string ST_PIERRE_ET_MIQUELON_CODE_DEPARTMENT_975 = '975';
+    private const string MAYOTTE_CODE_DEPARTMENT_976 = '976';
+    private const string SAINT_BARTHELEMY_CODE_DEPARTMENT_977 = '977';
+    private const string SAINT_MARTIN_CODE_DEPARTMENT_978 = '978';
+    private const string WALLIS_ET_FUTUNA_CODE_DEPARTMENT_986 = '986';
+    private const string POLYNESIE_FRANCAISE_CODE_DEPARTMENT_987 = '987';
+    private const string NOUVELLE_CALEDONIE_CODE_DEPARTMENT_988 = '988';
+    /**
+     * @var array<Territory>
+     */
     private array $territories = [];
 
     public function __construct(private readonly TerritoryRepository $territoryRepository)
@@ -29,7 +32,7 @@ class ZipcodeProvider
         $this->territories = $this->territoryRepository->findAllIndexedByZip();
     }
 
-    public function getTerritoryByInseeCode(string $inseeCode, $forceReload = false): ?Territory
+    public function getTerritoryByInseeCode(string $inseeCode, bool $forceReload = false): ?Territory
     {
         if ($forceReload) {
             $this->territories = $this->territoryRepository->findAllIndexedByZip();

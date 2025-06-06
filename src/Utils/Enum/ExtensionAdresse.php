@@ -19,7 +19,7 @@ enum ExtensionAdresse
     case OCTIES;
     case NONIES;
     case DECIES;
-    
+
     /**
      * @return list<string>
      */

@@ -360,8 +360,9 @@ class SignalementBuilderTest extends KernelTestCase
     }
 
     /**
+     * @param array<mixed> $parameters
+     *
      * @throws \ReflectionException
-     * @param array<mixed> $parameters 
      */
     private function invokeMethod(object &$object, string $methodName, array $parameters = []): mixed
     {

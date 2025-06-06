@@ -4,6 +4,9 @@ namespace App\Service;
 
 class UrlHelper
 {
+    /**
+     * @param array<mixed> $params
+     */
     public static function arrayToQueryString(array $params): string
     {
         $query = '';

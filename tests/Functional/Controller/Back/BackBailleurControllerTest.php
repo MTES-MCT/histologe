@@ -25,6 +25,7 @@ class BackBailleurControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideParamsBailleurList
+     *
      * @param array<mixed> $params
      */
     public function testBailleurList(array $params, int $nb): void

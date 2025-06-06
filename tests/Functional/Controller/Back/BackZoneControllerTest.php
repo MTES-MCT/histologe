@@ -14,6 +14,7 @@ class BackZoneControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideParamsZoneList
+     *
      * @param array<mixed> $params
      */
     public function testZoneList(array $params, int $nb): void

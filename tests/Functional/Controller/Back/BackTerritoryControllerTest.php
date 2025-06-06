@@ -11,6 +11,7 @@ class BackTerritoryControllerTest extends WebTestCase
 {
     /**
      * @dataProvider provideParamsTerritoryList
+     *
      * @param array<mixed> $params
      */
     public function testTerritoryList(array $params, int $nb): void

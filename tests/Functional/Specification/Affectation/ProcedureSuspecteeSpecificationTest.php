@@ -14,8 +14,9 @@ class ProcedureSuspecteeSpecificationTest extends KernelTestCase
 {
     /**
      * @dataProvider provideRulesAndSignalement
+     *
      * @param ?array<Qualification> $proceduresSuspectees
-     * @param array<string> $qualificationsSignalement
+     * @param array<string>         $qualificationsSignalement
      */
     public function testIsSatisfiedBy(?array $proceduresSuspectees, array $qualificationsSignalement, bool $isSatisfied): void
     {

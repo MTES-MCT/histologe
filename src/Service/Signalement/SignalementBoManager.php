@@ -293,7 +293,7 @@ class SignalementBoManager
         return true;
     }
 
-    private function extractCritere($fieldName)
+    private function extractCritere(string $fieldName): ?string
     {
         // Expression régulière pour capturer la partie "desordres_*_nuisibles_autres"
         if (preg_match('/precisions_\d+_(desordres_[a-z_]+_nuisibles_autres)_details_type_nuisibles/', $fieldName, $matches)) {

@@ -34,6 +34,7 @@ class AffectationUpdateControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideValidTransitionData
+     *
      * @param array<mixed> $payload
      */
     public function testValidWorkflow(string $signalementUuid, array $payload, string $statut, int $mailSent): void
@@ -54,8 +55,9 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** 
-     * @dataProvider provideUnvalidData 
+    /**
+     * @dataProvider provideUnvalidData
+     *
      * @param array<mixed> $payload
      */
     public function testInvalidWorkflow(string $signalementUuid, array $payload, string $errorMessage, int $httpCodeStatus): void
@@ -78,7 +80,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** 
+    /**
      * @param array<mixed> $payload
      */
     private function patchAffectation(?string $affectationUuid, array $payload): void

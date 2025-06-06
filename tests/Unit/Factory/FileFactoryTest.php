@@ -33,6 +33,7 @@ class FileFactoryTest extends TestCase
 
     /**
      * @dataProvider provideFileItem
+     *
      * @param array<string> $dataItem
      */
     public function testCreateFromArray(

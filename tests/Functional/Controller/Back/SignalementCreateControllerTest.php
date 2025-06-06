@@ -135,7 +135,7 @@ class SignalementCreateControllerTest extends WebTestCase
     /**
      * @dataProvider provideCanEditSignalementData
      */
-    public function testCanEditSignalement(string $userEmail, string $signalementUuid, int $expectedStatusCode): void 
+    public function testCanEditSignalement(string $userEmail, string $signalementUuid, int $expectedStatusCode): void
     {
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
         $this->client->loginUser($user);

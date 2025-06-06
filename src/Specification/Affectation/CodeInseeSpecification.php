@@ -9,6 +9,10 @@ use App\Specification\SpecificationInterface;
 
 class CodeInseeSpecification implements SpecificationInterface
 {
+    /**
+     * @param string|array<string> $inseeToInclude
+     * @param ?array<string>       $inseeToExclude
+     */
     public function __construct(private string|array $inseeToInclude, private ?array $inseeToExclude)
     {
         if ('' !== $inseeToInclude) {

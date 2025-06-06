@@ -35,6 +35,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
 
     /**
      * @dataProvider provideSuccessfulAuthenticationCases
+     *
      * @param array<string> $requestData
      * @param array<string> $expectedUserData
      */

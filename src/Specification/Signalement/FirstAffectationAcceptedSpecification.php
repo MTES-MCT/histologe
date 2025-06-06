@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Repository\SuiviRepository;
 use Doctrine\Common\Collections\Collection;
 
@@ -42,6 +43,11 @@ readonly class FirstAffectationAcceptedSpecification
         );
     }
 
+    /**
+     * @param Collection<int, Affectation>  $affectationAccepted,
+     * @param Collection<int, Intervention> $interventions,
+     * @param array<Suivi>                  $suiviAffectationAccepted,
+     */
     private function canWriteSuiviMessage(
         Signalement $signalement,
         Affectation $affectation,

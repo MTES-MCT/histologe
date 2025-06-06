@@ -20,6 +20,7 @@ class SignalementListControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideNewFilterSearch
+     *
      * @param array<string> $filter
      */
     public function testFilterSignalements(array $filter, int $results): void
@@ -252,6 +253,7 @@ class SignalementListControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideFilterSearchMultiTerritorAdminPartner
+     *
      * @param array<string> $filter
      */
     public function testFilterSignalementsMultiTerritorAdminPartner(array $filter, int $results): void

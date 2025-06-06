@@ -30,8 +30,9 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->client->loginUser($user, 'api');
     }
 
-    /** 
-     * @dataProvider provideDataForNotification 
+    /**
+     * @dataProvider provideDataForNotification
+     *
      * @param array<mixed> $payload
      */
     public function testCreateVisiteWithNotification(string $type, array $payload, int $nbMailSent): void
@@ -61,8 +62,9 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** 
+    /**
      * @dataProvider provideDataForPendingVisite
+     *
      * @param array<mixed> $payload
      */
     public function testCreateVisiteWithPendingVisiteWithErrors(array $payload): void
@@ -82,8 +84,9 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** 
+    /**
      * @dataProvider provideDataForPendingVisite
+     *
      * @param array<mixed> $payload
      */
     public function testCreateVisiteWithPendingVisite(array $payload): void
@@ -103,9 +106,10 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** 
+    /**
      * @dataProvider provideDataErrorPayload
-     * @param array<mixed> $payload
+     *
+     * @param array<mixed>  $payload
      * @param array<string> $fieldsErrors
      */
     public function testCreateVisiteWithPayloadErrors(array $payload, array $fieldsErrors, string $errorMessage): void
