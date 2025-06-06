@@ -74,6 +74,7 @@ class SignalementListControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideQueryParameters
+     * @param array<string> $queryParameters
      */
     public function testGetSignalementListWithErrorsFilter(array $queryParameters, int $countErrors): void
     {

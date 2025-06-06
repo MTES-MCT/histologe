@@ -40,7 +40,7 @@ class SignalementExportLoaderTest extends TestCase
     }
 
     /**
-     * @param array<Signalement> $signalements
+     * @param array<SignalementExport> $signalements
      */
     private function getSignalementExportGenerator(array $signalements): \Generator
     {

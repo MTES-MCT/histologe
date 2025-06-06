@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Service\Signalement\DesordreTraitement;
 
 use App\Entity\DesordreCategorie;
 use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use App\Service\Signalement\DesordreTraitement\DesordreLogementHumidite;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementNuisibles;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;

@@ -20,7 +20,7 @@ class HistoryEntryControllerTest extends WebTestCase
         $this->router = self::getContainer()->get(RouterInterface::class);
     }
 
-    public function testAccessDeniedForNonAdminTerritoryRole()
+    public function testAccessDeniedForNonAdminTerritoryRole(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -32,7 +32,7 @@ class HistoryEntryControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testListHistoryAffectationWithValidSignalementId()
+    public function testListHistoryAffectationWithValidSignalementId(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -52,7 +52,7 @@ class HistoryEntryControllerTest extends WebTestCase
         $this->assertArrayHasKey('Partenaire 13-01', $response['historyEntries']);
     }
 
-    public function testListHistoryAffectationWithoutSignalementId()
+    public function testListHistoryAffectationWithoutSignalementId(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
