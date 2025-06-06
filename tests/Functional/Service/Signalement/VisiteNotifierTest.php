@@ -40,7 +40,7 @@ class VisiteNotifierTest extends KernelTestCase
         $this->signalementRepository = $entityManager->getRepository(Signalement::class);
     }
 
-    public function testNotifyVisiteToConclude()
+    public function testNotifyVisiteToConclude(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
         /** @var Intervention $intervention * */
@@ -50,7 +50,7 @@ class VisiteNotifierTest extends KernelTestCase
         $this->assertEquals($nbNotified, 6);
     }
 
-    public function testNotifyVisiteToConclude69()
+    public function testNotifyVisiteToConclude69(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000003']);
         /** @var Intervention $intervention * */

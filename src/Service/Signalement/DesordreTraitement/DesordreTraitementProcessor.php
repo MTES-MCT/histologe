@@ -3,12 +3,19 @@
 namespace App\Service\Signalement\DesordreTraitement;
 
 use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class DesordreTraitementProcessor
 {
+    /**
+     * @var iterable<string, DesordreTraitementInterface>
+     */
     private iterable $desordreTraitements;
 
+    /**
+     * @param iterable<string, DesordreTraitementInterface> $desordreTraitements
+     */
     public function __construct(
         #[AutowireIterator('desordre_traitement', indexAttribute: 'key')]
         iterable $desordreTraitements,
@@ -16,6 +23,11 @@ class DesordreTraitementProcessor
         $this->desordreTraitements = $desordreTraitements;
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return ?array<int, DesordrePrecision>
+     */
     public function findDesordresPrecisionsBy(DesordreCritere $critere, array $payload): ?array
     {
         $slug = $critere->getSlugCritere();
@@ -25,11 +37,9 @@ class DesordreTraitementProcessor
 
         if (\array_key_exists($slug, $desordreTraitementsHandlers)) {
             $desordreCritereHandler = $desordreTraitementsHandlers[$slug];
-            if ($desordreCritereHandler) {
-                $desordrePrecisions = $desordreCritereHandler->findDesordresPrecisionsBy($payload, $slug);
+            $desordrePrecisions = $desordreCritereHandler->findDesordresPrecisionsBy($payload, $slug);
 
-                return $desordrePrecisions;
-            }
+            return $desordrePrecisions;
         }
 
         return null;

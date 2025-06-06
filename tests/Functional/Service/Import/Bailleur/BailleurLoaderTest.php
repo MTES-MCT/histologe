@@ -31,6 +31,9 @@ class BailleurLoaderTest extends KernelTestCase
         $this->assertStringContainsString('Le territoire n\'existe pas.', $metadata['errors'][1]);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getData(): array
     {
         return [

@@ -22,12 +22,15 @@ class SignalementQualification
     #[ORM\Column(type: 'string', enumType: Qualification::class)]
     private ?Qualification $qualification = null;
 
+    /** @var array<Criticite> $criticites */
     #[ORM\Column(nullable: true)]
     private ?array $criticites = [];
 
+    /** @var array<mixed> $desordrePrecisionIds */
     #[ORM\Column(nullable: true)]
     private ?array $desordrePrecisionIds = [];
 
+    /** @var array<mixed> $details */
     #[ORM\Column(nullable: true)]
     private array $details = [];
 
@@ -72,11 +75,13 @@ class SignalementQualification
             && (QualificationStatus::NDE_AVEREE == $this->status || QualificationStatus::NDE_CHECK == $this->status);
     }
 
+    /** @return array<Criticite> */
     public function getCriticites(): array
     {
         return $this->criticites;
     }
 
+    /** @param array<Criticite> $criticites */
     public function setCriticites(?array $criticites): self
     {
         $this->criticites = $criticites;
@@ -84,11 +89,13 @@ class SignalementQualification
         return $this;
     }
 
+    /** @return array<int> */
     public function getDesordrePrecisionIds(): ?array
     {
         return $this->desordrePrecisionIds;
     }
 
+    /** @param array<int> $desordrePrecisionIds */
     public function setDesordrePrecisionIds(?array $desordrePrecisionIds): self
     {
         $this->desordrePrecisionIds = $desordrePrecisionIds;
@@ -108,11 +115,13 @@ class SignalementQualification
         return false;
     }
 
+    /** @return array<mixed> */
     public function getDetails(): array
     {
         return $this->details;
     }
 
+    /** @param array<mixed> $details */
     public function setDetails(?array $details): self
     {
         $this->details = $details;

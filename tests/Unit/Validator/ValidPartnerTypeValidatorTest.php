@@ -8,6 +8,9 @@ use App\Validator\ValidPartnerTypeValidator;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
+/**
+ * @extends ConstraintValidatorTestCase<ValidPartnerTypeValidator>
+ */
 class ValidPartnerTypeValidatorTest extends ConstraintValidatorTestCase
 {
     protected function createValidator(): ConstraintValidatorInterface

@@ -17,6 +17,8 @@ class BackSignalementQualificationControllerTest extends WebTestCase
 {
     /**
      * @dataProvider provideDataNDE
+     *
+     * @param array<mixed> $payload
      */
     public function testSubmitQualificationNDE(
         array $payload,

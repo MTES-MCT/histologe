@@ -81,7 +81,7 @@ class CsvParserTest extends KernelTestCase
         unlink($this->projectDir.self::FILEPATH);
     }
 
-    public function createRandomCSV($filepath, $line = 10): void
+    public function createRandomCSV(string $filepath, int $line = 10): void
     {
         $faker = Factory::create();
         $list = [

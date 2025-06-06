@@ -12,6 +12,9 @@ class ListTerritoryStatisticProvider
     {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(?User $user = null): array
     {
         $data = [];

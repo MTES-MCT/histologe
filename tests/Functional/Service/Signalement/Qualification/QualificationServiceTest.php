@@ -29,6 +29,9 @@ class QualificationServiceTest extends KernelTestCase
 
     /**
      * @dataProvider provideScoreAndCriticite
+     *
+     * @param array<string>        $listCriticites
+     * @param array<Qualification> $qualificationsToCheck
      */
     public function testInitQualification(int $score, array $listCriticites, array $qualificationsToCheck): void
     {
@@ -97,6 +100,10 @@ class QualificationServiceTest extends KernelTestCase
 
     /**
      * @dataProvider provideScoreAndDesordresPrecisions
+     *
+     * @param array<string>              $listDesordrePrecision
+     * @param array<Qualification>       $qualificationsToCheck
+     * @param array<QualificationStatus> $qualificationsStatusToCheck
      */
     public function testInitQualificationNewSignalements(
         int $score,
@@ -117,7 +124,7 @@ class QualificationServiceTest extends KernelTestCase
             $signalement->removeDesordrePrecision($desordrePrecision);
         }
         $signalement->setScore($score);
-        $signalement->getTypeCompositionLogement()->setDesordresLogementChauffageDetailsDpeConsoFinale($consoFinale);
+        $signalement->getTypeCompositionLogement()->setDesordresLogementChauffageDetailsDpeConsoFinale((string) $consoFinale);
 
         $signalement->getInformationProcedure()->setInfoProcedureAssuranceContactee($isAssuranceContactee);
 

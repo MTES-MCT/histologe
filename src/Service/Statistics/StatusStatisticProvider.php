@@ -13,6 +13,9 @@ class StatusStatisticProvider
     {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
         $countPerSituations = $this->signalementRepository->countByStatusFiltered($statisticsFilters);
@@ -20,6 +23,9 @@ class StatusStatisticProvider
         return $this->createFullArray($countPerSituations);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(?Territory $territory, ?int $year): array
     {
         $territories = [];
@@ -36,7 +42,12 @@ class StatusStatisticProvider
         return $this->createFullArray($countPerStatuses);
     }
 
-    private function createFullArray($countPerStatuses): array
+    /**
+     * @param array<mixed> $countPerStatuses
+     *
+     * @return array<mixed>
+     */
+    private function createFullArray(array $countPerStatuses): array
     {
         $data = [];
         foreach ($countPerStatuses as $countPerStatus) {
@@ -50,7 +61,12 @@ class StatusStatisticProvider
         return $data;
     }
 
-    private static function initStatutByValue($statusResult): bool|array
+    /**
+     * @param array<mixed> $statusResult
+     *
+     * @return bool|array<mixed>
+     */
+    private static function initStatutByValue(array $statusResult): bool|array
     {
         switch ($statusResult['statut']->value) {
             case SignalementStatus::REFUSED->value:

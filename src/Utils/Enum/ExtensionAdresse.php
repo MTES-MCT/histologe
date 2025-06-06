@@ -20,6 +20,9 @@ enum ExtensionAdresse
     case NONIES;
     case DECIES;
 
+    /**
+     * @return list<string>
+     */
     public static function toArray(): array
     {
         return array_map(fn ($case) => $case->name, self::cases());

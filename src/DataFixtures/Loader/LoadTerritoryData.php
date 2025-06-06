@@ -23,6 +23,9 @@ class LoadTerritoryData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function loadTerritories(ObjectManager $manager, array $row): void
     {
         $territory = (new Territory())

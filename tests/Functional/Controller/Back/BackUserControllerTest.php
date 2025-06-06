@@ -10,6 +10,8 @@ class BackUserControllerTest extends WebTestCase
 {
     /**
      * @dataProvider provideParamsUserList
+     *
+     * @param array<mixed> $params
      */
     public function testUserList(array $params, int $nb): void
     {
@@ -32,7 +34,7 @@ class BackUserControllerTest extends WebTestCase
         }
     }
 
-    public function provideParamsUserList(): iterable
+    public function provideParamsUserList(): \Generator
     {
         yield 'Search without params' => [[], 67];
         yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 22];
@@ -47,6 +49,8 @@ class BackUserControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideParamsUserExport
+     *
+     * @param array<mixed> $params
      */
     public function testUserExport(array $params, int $nb): void
     {
@@ -65,7 +69,7 @@ class BackUserControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Exporter la liste des '.$nb.' utilisateurs');
     }
 
-    public function provideParamsUserExport(): iterable
+    public function provideParamsUserExport(): \Generator
     {
         yield 'Search without params' => [[], 15];
         yield 'Search with queryUser user' => [['queryUser' => 'user'], 10];

@@ -24,6 +24,9 @@ class LoadBailleurData extends Fixture implements OrderedFixtureInterface
         }
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function loadBailleurs(ObjectManager $manager, array $row): void
     {
         /** @var Territory $territory */

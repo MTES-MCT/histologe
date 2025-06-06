@@ -27,6 +27,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class AutoAssigner
 {
     private int $countAffectations;
+    /** @var array<string> */
     private array $affectedPartnersNames = [];
 
     public function __construct(
@@ -40,7 +41,10 @@ class AutoAssigner
     ) {
     }
 
-    public function assign(Signalement $signalement, $simulation = false): array
+    /**
+     * @return array<int, Partner>
+     */
+    public function assign(Signalement $signalement, bool $simulation = false): array
     {
         $this->countAffectations = 0;
         $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(function (AutoAffectationRule $autoAffectationRule) {
@@ -96,6 +100,9 @@ class AutoAssigner
         return $assignablePartners;
     }
 
+    /**
+     * @param array<Partner> $assignablePartners
+     */
     private function assignPartners(Signalement $signalement, ?User $adminUser, array $assignablePartners): void
     {
         /** @var Partner $partner */
@@ -121,6 +128,9 @@ class AutoAssigner
         return $this->countAffectations;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getAffectedPartnerNames(): array
     {
         return $this->affectedPartnersNames;

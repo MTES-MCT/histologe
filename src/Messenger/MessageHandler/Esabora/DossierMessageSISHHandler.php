@@ -11,8 +11,14 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 final class DossierMessageSISHHandler
 {
+    /**
+     * @var iterable<string, DossierSISHHandlerInterface>
+     */
     private iterable $dossierSISHHandlers;
 
+    /**
+     * @param iterable<string, DossierSISHHandlerInterface> $dossierSISHHandlers
+     */
     public function __construct(
         #[AutowireIterator(
             'app.dossier_sish_handler',

@@ -82,6 +82,8 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
     /**
      * @dataProvider provideTestCases
+     *
+     * @param array<string, mixed> $option
      */
     public function testExecuteCommandWith(string $providerMethod, array $option): void
     {
@@ -122,7 +124,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
     private function createMockSignalementRepository(
         MockObject $signalementRepository,
         int $countSignalements = 0,
-        $method = 'findSignalementsSplittedCreatedBefore',
+        string $method = 'findSignalementsSplittedCreatedBefore',
     ): MockObject|SignalementRepository {
         $signalementRepository
             ->expects($this->once())

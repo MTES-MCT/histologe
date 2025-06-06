@@ -13,11 +13,17 @@ class SignalementExportPdfGenerator
         $this->pdf->setTimeout(300);
     }
 
+    /**
+     * @param ?array<mixed> $options
+     */
     public function generate(string $content, ?array $options = null): string
     {
         return $this->pdf->getOutputFromHtml($content, $options ?? []);
     }
 
+    /**
+     * @param ?array<mixed> $options
+     */
     public function generateToTempFolder(
         Signalement $signalement,
         string $content,

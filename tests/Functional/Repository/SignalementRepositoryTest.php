@@ -185,6 +185,8 @@ class SignalementRepositoryTest extends KernelTestCase
 
     /**
      * @dataProvider provideSearchWithGeoData
+     *
+     * @param array<mixed> $options
      */
     public function testfindAllWithGeoData(string $email, array $options, int $nbResult): void
     {

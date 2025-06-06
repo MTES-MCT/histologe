@@ -59,6 +59,7 @@ class Affectation implements EntityHistoryInterface
     #[ORM\Column(type: 'string', nullable: true, enumType: MotifCloture::class)]
     private ?MotifCloture $motifCloture = null;
 
+    /** @var Collection<int, Notification> $notifications */
     #[ORM\OneToMany(mappedBy: 'affectation', targetEntity: Notification::class, cascade: ['remove'])]
     private Collection $notifications;
 
@@ -196,7 +197,7 @@ class Affectation implements EntityHistoryInterface
     }
 
     /**
-     * @return Collection|Notification[]
+     * @return Collection<int, Notification>
      */
     public function getNotifications(): Collection
     {
@@ -286,6 +287,7 @@ class Affectation implements EntityHistoryInterface
         $this->motifCloture = null;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

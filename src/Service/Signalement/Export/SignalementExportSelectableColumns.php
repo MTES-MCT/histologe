@@ -4,7 +4,10 @@ namespace App\Service\Signalement\Export;
 
 class SignalementExportSelectableColumns
 {
-    private const SELECTABLE_COLS = [
+    /**
+     * @var array<mixed> SELECTABLE_COLS
+     */
+    private const array SELECTABLE_COLS = [
         'TEL_SEC' => ['name' => 'Téléphone sec.', 'description' => 'Numéro de téléphone secondaire de l\'occupant du logement', 'export' => 'telephoneOccupantBis'],
         'INSEE' => ['name' => 'Code INSEE', 'description' => 'Le code INSEE de la commune du signalement', 'export' => 'inseeOccupant'],
         'ETAGE' => ['name' => 'Étage', 'description' => 'L\'étage du logement', 'export' => 'etageOccupant'],
@@ -46,6 +49,9 @@ class SignalementExportSelectableColumns
         'DEBUT_DESORDRES' => ['name' => 'Début des désordres', 'description' => 'Début des désordres', 'export' => 'debutDesordres'],
     ];
 
+    /**
+     * @return array<mixed>
+     */
     public static function getColumns(): array
     {
         return self::SELECTABLE_COLS;

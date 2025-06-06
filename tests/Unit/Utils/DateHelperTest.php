@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class DateHelperTest extends TestCase
 {
     /** @dataProvider provideDates */
-    public function testIsValidDate($date, $format, $expected): void
+    public function testIsValidDate(?string $date, string $format, bool $expected): void
     {
         $result = DateHelper::isValidDate($date, $format);
         $this->assertSame($expected, $result);

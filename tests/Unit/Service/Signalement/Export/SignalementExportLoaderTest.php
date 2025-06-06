@@ -15,7 +15,7 @@ class SignalementExportLoaderTest extends TestCase
 {
     use UserHelper;
 
-    public function testLoad()
+    public function testLoad(): void
     {
         /** @var MockObject|SignalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);
@@ -39,6 +39,9 @@ class SignalementExportLoaderTest extends TestCase
         $this->assertEquals('2023-01', $spreadsheet->getActiveSheet()->getCell('A2')->getValue());
     }
 
+    /**
+     * @param array<SignalementExport> $signalements
+     */
     private function getSignalementExportGenerator(array $signalements): \Generator
     {
         foreach ($signalements as $signalement) {

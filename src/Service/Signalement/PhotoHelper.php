@@ -8,6 +8,9 @@ use App\Entity\Signalement;
 
 class PhotoHelper
 {
+    /**
+     * @return ?array<File>
+     */
     public static function getPhotosBySlug(Signalement $signalement, string $desordrePrecisionSlug): ?array
     {
         $photos = $signalement->getPhotos()->filter(function (File $file) use ($desordrePrecisionSlug) {
@@ -18,6 +21,9 @@ class PhotoHelper
         return $photos->toArray();
     }
 
+    /**
+     * @return ?array<File>
+     */
     public static function getSortedPhotos(Signalement $signalement): ?array
     {
         $photoList = $signalement->getPhotos()->toArray();

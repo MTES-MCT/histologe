@@ -234,6 +234,8 @@ class VisiteUploadDocumentsController extends AbstractController
     }
 
     /**
+     * @return array<mixed>
+     *
      * @throws \Throwable
      */
     private function uploadDocumentsVisite(

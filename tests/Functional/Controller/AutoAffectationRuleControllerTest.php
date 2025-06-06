@@ -32,7 +32,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->client->loginUser($user);
     }
 
-    public function testAutoAffectationRulesSuccessfullyDisplay()
+    public function testAutoAffectationRulesSuccessfullyDisplay(): void
     {
         $route = $this->router->generate('back_auto_affectation_rule_index');
         $this->client->request('GET', $route);
@@ -87,7 +87,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/auto-affectation/');
     }
 
-    public function testDeleteAutoAffectationRule()
+    public function testDeleteAutoAffectationRule(): void
     {
         /** @var AutoAffectationRule $autoAffectationRule */
         $autoAffectationRule = $this->autoAffectationRuleRepository->findOneBy(['territory' => self::DEPT_93_ID]);
@@ -106,7 +106,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->assertEquals(AutoAffectationRule::STATUS_ARCHIVED, $autoAffectationRule->getStatus());
     }
 
-    public function testReactiveAutoAffectationRule()
+    public function testReactiveAutoAffectationRule(): void
     {
         /** @var AutoAffectationRule $autoAffectationRule */
         $autoAffectationRule = $this->autoAffectationRuleRepository->findOneBy(['territory' => 45]);

@@ -27,42 +27,49 @@ class Territory implements EntityHistoryInterface
     #[Groups(['widget-settings:read', 'widget:read'])]
     private ?string $name = null;
 
+    /** @var Collection<int, Partner> $partners */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Partner::class)]
     private Collection $partners;
 
+    /** @var Collection<int, Commune> $communes */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Commune::class)]
     private Collection $communes;
 
+    /** @var Collection<int, Signalement> $signalements */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Signalement::class)]
     private Collection $signalements;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
 
+    /** @var Collection<int, Affectation> $affectations */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Affectation::class)]
     private Collection $affectations;
 
+    /** @var array<mixed> $bbox */
     #[ORM\Column(type: 'json')]
     private array $bbox = [];
 
+    /** @var Collection<int, Tag> $tags */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Tag::class, orphanRemoval: true)]
     private Collection $tags;
 
+    /** @var array<mixed> $authorizedCodesInsee */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $authorizedCodesInsee = [];
 
+    /** @var Collection<int, BailleurTerritory> $bailleurTerritories */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: BailleurTerritory::class)]
     private Collection $bailleurTerritories;
 
+    /** @var Collection<int, AutoAffectationRule> $autoAffectationRules */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: AutoAffectationRule::class, orphanRemoval: true)]
     private Collection $autoAffectationRules;
 
     #[ORM\Column(length: 128)]
     private string $timezone;
 
-    /**
-     * @var Collection<int, Zone>
-     */
+    /** @var Collection<int, Zone> $zones */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Zone::class, orphanRemoval: true)]
     private Collection $zones;
 
@@ -223,11 +230,13 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getBbox(): ?array
     {
         return $this->bbox;
     }
 
+    /** @param array<mixed> $bbox */
     public function setBbox(array $bbox): self
     {
         $this->bbox = $bbox;
@@ -270,11 +279,13 @@ class Territory implements EntityHistoryInterface
         return $this->name;
     }
 
+    /** @return array<string|int, mixed> */
     public function getAuthorizedCodesInsee(): ?array
     {
         return $this->authorizedCodesInsee;
     }
 
+    /** @param array<string|int, mixed> $authorizedCodesInsee */
     public function setAuthorizedCodesInsee(?array $authorizedCodesInsee): self
     {
         $this->authorizedCodesInsee = $authorizedCodesInsee;
@@ -354,6 +365,7 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
