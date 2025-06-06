@@ -11,7 +11,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementExportFiltersDisplay
 {
-    private const FILTERS_LABELS = [
+    /** @var array<string> FILTERS_LABELS */
+    private const array FILTERS_LABELS = [
         'isImported' => 'Signalement importés',
         'territories' => 'Territoires',
         'partners' => 'Partenaires',
@@ -40,7 +41,8 @@ class SignalementExportFiltersDisplay
         'motifCloture' => 'Motif de clôture',
     ];
 
-    private const STATUS_AFFECTATION = [
+    /** @var array<string> STATUS_AFFECTATION */
+    private const array STATUS_AFFECTATION = [
         'accepte' => 'Acceptée',
         'en_attente' => 'En attente',
         'refuse' => 'Refusée',
@@ -48,29 +50,34 @@ class SignalementExportFiltersDisplay
         'cloture_tous_partenaire' => 'Clôturée par tous les partenaires',
     ];
 
-    private const SITUATION_LIST = [
+    /** @var array<string> SITUATION_LIST */
+    private const array SITUATION_LIST = [
         'attente_relogement' => 'Attente de relogement',
         'bail_en_cours' => 'Bail en cours',
         'preavis_de_depart' => 'Préavis de départ',
     ];
 
-    private const CLOSED_AFFECTATION_LIST = [
+    /** @var array<string> CLOSED_AFFECTATION_LIST */
+    private const array CLOSED_AFFECTATION_LIST = [
         'ONE_CLOSED' => 'Fermé chez au moins un partenaire',
     ];
 
-    private const HOUSE_TYPES_LIST = [
+    /** @var array<string> HOUSE_TYPES_LIST */
+    private const array HOUSE_TYPES_LIST = [
         '1' => 'public',
         '0' => 'privee',
         'non_renseigne' => 'non renseigné',
     ];
 
-    private const CHILDREN_LIST = [
+    /** @var array<string> CHILDREN_LIST */
+    private const array CHILDREN_LIST = [
         '1' => 'oui',
         '0' => 'non',
         'non_renseigne' => 'non renseigné',
     ];
 
-    private const ALLOCS_LIST = [
+    /** @var array<string> ALLOCS_LIST */
+    private const array ALLOCS_LIST = [
         '1, caf, msa' => 'oui',
         '0' => 'non',
     ];
@@ -83,6 +90,11 @@ class SignalementExportFiltersDisplay
     ) {
     }
 
+    /**
+     * @param array<mixed> $filters
+     *
+     * @return array<string>
+     */
     public function filtersToText(array $filters): array
     {
         unset($filters['page']);
