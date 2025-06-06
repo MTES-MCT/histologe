@@ -28,6 +28,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     /**
      * @dataProvider provideRoutes
+     * @param array<mixed> $parameters
      */
     public function testMaintenanceRedirect(string $routeName, array $parameters = []): void
     {

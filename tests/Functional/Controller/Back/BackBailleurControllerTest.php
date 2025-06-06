@@ -5,13 +5,14 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\BailleurRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class BackBailleurControllerTest extends WebTestCase
 {
     use SessionHelper;
-    private $client;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
@@ -24,6 +25,7 @@ class BackBailleurControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideParamsBailleurList
+     * @param array<mixed> $params
      */
     public function testBailleurList(array $params, int $nb): void
     {
@@ -40,7 +42,7 @@ class BackBailleurControllerTest extends WebTestCase
         }
     }
 
-    public function provideParamsBailleurList(): iterable
+    public function provideParamsBailleurList(): \Generator
     {
         yield 'Search without params' => [[], 67];
         yield 'Search with queryName Habitat' => [['queryName' => 'Habitat'], 28];
