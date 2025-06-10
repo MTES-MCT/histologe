@@ -14,19 +14,24 @@ class SignalementExportPdfGenerator
 
     public function generate(string $content): string
     {
-        $tmp = dump(sys_get_temp_dir());
+        $tmp = $this->parameterBag->get('uploads_tmp_dir');
+        if (str_ends_with($tmp, '/')) {
+            $tmp = substr($tmp, 0, -1);
+        }
 
         $domPdf = new Dompdf([
-            'logOutputFile' => '',
             'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
             'fontDir' => $tmp,
             'fontCache' => $tmp,
             'tempDir' => $tmp,
             'chroot' => $tmp,
         ]);
+
         $domPdf->loadHtml($content);
         $domPdf->setPaper('A4', 'portrait');
         $domPdf->render();
+
         return $domPdf->output();
     }
 

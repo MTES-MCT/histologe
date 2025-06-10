@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Entity\UserPartner;
 use App\EventListener\UserCreatedListener;
 use App\Factory\UserFactory;
+use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Service\Sanitizer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -32,6 +33,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
         private readonly ParameterBagInterface $parameterBag,
         private readonly UserFactory $userFactory,
         private readonly UserCreatedListener $userCreatedListener,
+        private readonly UserManager $userManager,
     ) {
     }
 
@@ -62,12 +64,15 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
     private function loadUsers(ObjectManager $manager, array $row): void
     {
         $faker = Factory::create();
+        $statut = UserStatus::from($row['statut']);
         $user = (new User())
             ->setRoles(json_decode($row['roles'], true))
-            ->setStatut(UserStatus::from($row['statut']))
+            ->setStatut($statut)
             ->setIsMailingActive($row['is_mailing_active'] ?? false)
             ->setPrenom($faker->firstName())
             ->setNom($faker->lastName());
+
+        $this->userManager->loadUserTokenForUser($user, false);
 
         if (isset($row['has_permission_affectation'])) {
             $user->setHasPermissionAffectation($row['has_permission_affectation']);
