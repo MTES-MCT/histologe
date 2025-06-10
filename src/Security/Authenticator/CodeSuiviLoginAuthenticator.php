@@ -18,6 +18,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use function Symfony\Component\String\u;
 
 class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -57,8 +58,8 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         $visitorType = $request->request->get('visitor-type');
-        $firstLetterPrenom = mb_strtoupper($request->request->get('login-first-letter-prenom'));
-        $firstLetterNom = mb_strtoupper($request->request->get('login-first-letter-nom'));
+        $firstLetterPrenom = $request->request->get('login-first-letter-prenom');
+        $firstLetterNom = $request->request->get('login-first-letter-nom');
         $codePostal = $request->request->get('login-code-postal');
 
         if (ProfileDeclarant::LOCATAIRE !== $signalement->getProfileDeclarant()
@@ -98,22 +99,25 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         string $inputCodePostal,
         ?string $visitorType,
     ): void {
+        $inputFirstLetterPrenom = u($inputFirstLetterPrenom)->ascii()->upper()->toString();
+        $inputFirstLetterNom = u($inputFirstLetterNom)->ascii()->upper()->toString();
+
         $testOccupant = false;
         if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
             || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()
             || 'occupant' === $visitorType
         ) {
             if (!empty($signalement->getPrenomOccupant()) && !empty($signalement->getNomOccupant())) {
-                $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomOccupant(), 0, 1));
-                $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomOccupant(), 0, 1));
+                $firstLetterPrenomToCheck = u(mb_substr($signalement->getPrenomOccupant(), 0, 1))->ascii()->upper()->toString();
+                $firstLetterNomToCheck = u(mb_substr($signalement->getNomOccupant(), 0, 1))->ascii()->upper()->toString();
                 $testOccupant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
             }
         }
         $testDeclarant = false;
         if (!$testOccupant && 'declarant' === $visitorType) {
             if (!empty($signalement->getPrenomDeclarant()) && !empty($signalement->getNomDeclarant())) {
-                $firstLetterPrenomToCheck = mb_strtoupper(substr($signalement->getPrenomDeclarant(), 0, 1));
-                $firstLetterNomToCheck = mb_strtoupper(substr($signalement->getNomDeclarant(), 0, 1));
+                $firstLetterPrenomToCheck = u(mb_substr($signalement->getPrenomDeclarant(), 0, 1))->ascii()->upper()->toString();
+                $firstLetterNomToCheck = u(mb_substr($signalement->getNomDeclarant(), 0, 1))->ascii()->upper()->toString();
                 $testDeclarant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
             }
         }
