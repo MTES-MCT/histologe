@@ -21,6 +21,7 @@ use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBoManager;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
@@ -416,6 +417,8 @@ class SignalementCreateController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         UserManager $userManager,
         FileRepository $fileRepository,
+        ReferenceGenerator $referenceGenerator,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
 
@@ -446,6 +449,8 @@ class SignalementCreateController extends AbstractController
         $token = $request->request->get('_token');
         $partnerIds = $request->request->get('partner-ids');
         if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
+            $entityManager->beginTransaction();
+
             /** @var User $user */
             $user = $this->getUser();
             if ($signalement->isTiersDeclarant()) {
@@ -510,10 +515,12 @@ class SignalementCreateController extends AbstractController
                 $route = 'back_signalement_drafts';
                 $params = [];
             }
+            $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
             $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
             $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
             $fileRepository->updateIsWaitingSuiviForSignalement($signalement);
             $signalementManager->flush();
+            $entityManager->commit();
 
             return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL)]);
         }

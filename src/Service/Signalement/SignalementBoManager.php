@@ -92,7 +92,7 @@ class SignalementBoManager
         $signalement->setTerritory($territory);
         $signalement->setIsCguAccepted(true);
         if (!$signalement->getReference()) {
-            $signalement->setReference($this->referenceGenerator->generate($territory));
+            $signalement->setReference($this->referenceGenerator->generate($territory, false));
         }
 
         return true;
