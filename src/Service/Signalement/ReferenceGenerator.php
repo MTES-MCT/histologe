@@ -17,10 +17,15 @@ class ReferenceGenerator
      * @throws TransactionRequiredException
      * @throws NonUniqueResultException
      */
-    public function generate(Territory $territory): string
+    public function generate(Territory $territory, bool $isDefinitive = true): string
     {
-        $result = $this->signalementRepository->findLastReferenceByTerritory($territory);
         $todayYear = (new \DateTime())->format('Y');
+
+        if (!$isDefinitive) {
+            return $todayYear.'-TEMPORAIRE';
+        }
+
+        $result = $this->signalementRepository->findLastReferenceByTerritory($territory);
         if (!empty($result)) {
             list($year, $id) = explode('-', $result['reference']);
 
@@ -33,8 +38,7 @@ class ReferenceGenerator
 
             return $year.'-'.$id;
         }
-        $year = (new \DateTime())->format('Y');
 
-        return $year.'-'. 1;
+        return $todayYear.'-'. 1;
     }
 }
