@@ -50,7 +50,6 @@ readonly class TypeCompositionLogementFactory
             compositionLogementEnfants: $data['composition_logement_enfants'] ?? null,
             typeLogementCommoditesPieceAVivre9m: $data['type_logement_commodites_piece_a_vivre_9m'] ?? null,
             bailDpeBail: $data['bail_dpe_bail'] ?? null,
-            bailDpeInvariant: $data['bail_dpe_invariant'] ?? null,
             bailDpeDpe: $data['bail_dpe_dpe'] ?? null,
             bailDpeClasseEnergetique: $data['bail_dpe_classe_energetique'] ?? null,
             bailDpeEtatDesLieux: $data['bail_dpe_etat_des_lieux'] ?? null,

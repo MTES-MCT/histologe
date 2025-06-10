@@ -59,6 +59,7 @@ class RialService
 
                 return $this->accessToken;
             }
+            $this->logger->warning(\sprintf('Rial API access token failed (status %s)', $response->getStatusCode()));
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -123,6 +124,7 @@ class RialService
 
                 return $responseArray['listeIdentifiantsFiscaux'];
             }
+            $this->logger->warning(\sprintf('Rial API search by BAN id failed for: %s (status %s)', $url, $response->getStatusCode()));
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -151,6 +153,7 @@ class RialService
 
                 return $responseArray[0];
             }
+            $this->logger->warning(\sprintf('Rial API search by invariant failed for: %s (status %s)', $url, $response->getStatusCode()));
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }

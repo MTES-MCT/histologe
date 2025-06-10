@@ -50,7 +50,6 @@
   "type_logement_nature": "appartement",
   "uuidSignalementDraft": "00000000-0000-0000-2023-locataire001",
   "bail_dpe_etat_des_lieux": "oui",
-  "bail_dpe_invariant": "abcd12ef34",
   "adresse_logement_adresse": "33 Rue des phoceens 13002 Marseille",
   "coordonnees_bailleur_nom": "13 HABITAT",
   "coordonnees_bailleur_prenom": "Sandrine",

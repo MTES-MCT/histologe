@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Files\ImageVariantProvider;
-use App\Service\Gouv\Rial\RialService;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
@@ -96,7 +95,7 @@ class SecurityController extends AbstractController
         name: 'app_login',
         defaults: ['show_sitemap' => true]
     )]
-    public function login(AuthenticationUtils $authenticationUtils, RialService $rialService): Response
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
         $title = 'Connexion';
         if ($this->getUser()) {

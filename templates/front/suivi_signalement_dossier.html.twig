@@ -346,9 +346,9 @@
 							{{signalement.typeCompositionLogement.bailDpeBail(false)}}
 						</li>
 					{% endif %}
-					{% if signalement.typeCompositionLogement.bailDpeInvariant %}
+					{% if signalement.numeroInvariant %}
 						<li>Invariant fiscal :
-							{{signalement.typeCompositionLogement.bailDpeInvariant}}
+							{{signalement.numeroInvariant}}
 						</li>
 					{% endif %}
 					{% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
