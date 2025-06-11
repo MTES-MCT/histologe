@@ -6,6 +6,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -123,5 +124,21 @@ class FileRepository extends ServiceEntityRepository
             ->setParameter('signalement', $signalement)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @return array<int, File>
+     */
+    public function findTmpForSignalementAndUserIndexedById(Signalement $signalement, User $user): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.signalement = :signalement')
+            ->andWhere('f.isTemp = true')
+            ->andWhere('f.uploadedBy = :user')
+            ->setParameter('signalement', $signalement)
+            ->setParameter('user', $user)
+            ->indexBy('f', 'f.id')
+            ->getQuery()
+            ->getResult();
     }
 }

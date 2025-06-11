@@ -625,7 +625,7 @@ class SignalementController extends AbstractController
         if ($this->isGranted('SIGN_USAGER_EDIT', $signalement) && $formMessage->isSubmitted() && $formMessage->isValid()) {
             $description = nl2br(htmlspecialchars($formMessage->get('description')->getData(), \ENT_QUOTES, 'UTF-8'));
 
-            $docs = $fileRepository->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $signalementUser->getUser()]);
+            $docs = $fileRepository->findTmpForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
             $filesToAttach = [];
             if (\count($docs)) {
                 foreach ($docs as $doc) {
@@ -680,14 +680,59 @@ class SignalementController extends AbstractController
     public function suiviSignalementDocuments(
         string $code,
         SignalementRepository $signalementRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
+        FileRepository $fileRepository,
+        SuiviManager $suiviManager,
+        Request $request,
     ): Response {
         if (!$this->featureSuiviAction) {
             throw $this->createNotFoundException();
         }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
 
-        return new Response('<html><body>TODO</body></html>');
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
+        $form = null;
+        if ($this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
+            $form = $this->createFormBuilder(null, ['allow_extra_fields' => true])->getForm();
+            $form->handleRequest($request);
+            if ($form->isSubmitted()) {
+                if ($form->isValid()) {
+                    $docs = $fileRepository->findTmpForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
+                    $filesToAttach = [];
+                    foreach ($form->getExtraData()['file'] as $fileId) {
+                        if (isset($docs[$fileId])) {
+                            $docs[$fileId]->setIsTemp(false);
+                            $filesToAttach[] = $docs[$fileId];
+                        }
+                    }
+                    if ($filesToAttach) {
+                        $suiviManager->createSuivi(
+                            signalement: $signalement,
+                            description: '',
+                            type: Suivi::TYPE_USAGER,
+                            category: SuiviCategory::MESSAGE_USAGER,
+                            isPublic: true,
+                            user: $signalementUser->getUser(),
+                            files: $filesToAttach
+                        );
+                        $this->addFlash('success', 'Vos documents ont bien été enregistrés.');
+                    }
+
+                    return $this->redirectToRoute('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
+                }
+                $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement des documents.');
+            }
+        }
+
+        return $this->render('front/suivi_signalement_documents.html.twig', [
+            'signalement' => $signalement,
+            'infoDesordres' => $infoDesordres,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/suivre-mon-signalement/{code}/procedure', name: 'front_suivi_signalement_procedure', methods: ['GET', 'POST'])]

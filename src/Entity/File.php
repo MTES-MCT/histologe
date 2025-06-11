@@ -360,6 +360,16 @@ class File implements EntityHistoryInterface
         return $this->isTypeImage() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
     }
 
+    public function isSituationDocument(): bool
+    {
+        return $this->isTypeDocument() && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList()) && null === $this->intervention;
+    }
+
+    public function isProcedureDocument(): bool
+    {
+        return $this->isTypeDocument() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
+    }
+
     public function isTemp(): ?bool
     {
         return $this->isTemp;

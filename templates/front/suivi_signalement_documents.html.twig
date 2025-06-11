@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre documents et photos du dossier #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+    {% include '_partials/_modal_file_delete.html.twig' %}
+	{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
+{% endif %}
+
+<main class="fr-container fr-pb-5w" id="content">
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Documents et photos</a></li>
+			</ol>
+		</div>
+	</nav>
+	<div class="fr-grid-row fr-grid-row--gutters">
+
+		<div class="fr-col-12 fr-col-md-6">
+			<h1 class="title-blue-france">Les documents et photos du dossier</h1>
+			{% include 'front/_partials/_suivi_signalement_card.html.twig' %}
+
+			{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+				<ul class="fr-btns-group fr-btns-group--icon-left">
+					<li>
+						<button 
+							class="fr-btn fr-icon-add-line" 
+							type="button" 
+							data-fr-opened="false" 
+							aria-controls="fr-modal-upload-files-usager" 
+							>
+							Ajouter des documents
+						</button>
+					</li>
+				</ul>
+				{{ form(form, { 'attr': {'id': 'uploaded-file-form', 'class': 'fr-hidden', } } ) }}
+			{% else %}
+				<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
+					<p>Vous ne pouvez plus envoyer de documents.</p>
+				</div>
+			{% endif %}
+		</div>
+
+		<div class="fr-col-12 fr-col-md-6">
+			<h2 class="title-blue-france fr-mb-1w">Les photos et documents du dossier</h2>
+			{% set photos = signalement.files|filter(photo => photo.isSituationImage) %}
+			{% set documents = signalement.files|filter(photo => photo.isSituationDocument) %}
+			{% if photos is empty and documents is empty %}
+				Aucun document ou photo disponible
+			{% endif %}
+			{% if photos is not empty %}
+				<p>
+					Cliquez sur une photo pour l'afficher dans un nouvel onglet.
+				</p>
+				<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+					{% for photo in photos %}
+						<div class="fr-col-6 fr-col-md-4 fr-rounded signalement-file-item">
+							<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
+								style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
+								>
+								<a  href="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'resize'})) }}" target="_blank" rel="noopener"
+									class="fr-btn fr-btn--sm fr-icon-eye-line" 
+									data-id={{ photo.id }} 
+									title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
+								></a>
+								{% if is_granted('FRONT_FILE_DELETE', photo) %}
+									<button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
+										id="file_delete_{{ photo.id }}" 
+										title="Supprimer la photo {{ photo.filename }}"
+										aria-controls="fr-modal-delete-file"
+										data-fr-opened="false" 
+										data-filename="{{ photo.filename }}" 
+										data-file-id="{{ photo.id}}"                     
+									></button>
+								{% endif %}
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+			{% if documents is not empty %}
+				<p>
+					Cliquez sur le document pour l'ouvrir dans un nouvel onglet.
+				</p>
+				<div class="fr-grid-row fr-grid-row--gutters">
+				{% for doc in documents %}			
+					<div class="fr-col-12 fr-background-alt--grey fr-mb-2w">
+						<div class="fr-grid-row">
+							<div class="fr-col-6">
+								<span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
+							</div>
+							<div class="fr-col-6 fr-text--right">
+								<small>{{ doc.createdAt is defined ? doc.createdAt|date('d/m/Y') : 'N/R' }}</small>
+							</div>
+							<div class="fr-col-12 fr-p-2v">
+								{% if doc.isSuspicious %}
+									<i><strong>{{ doc.title }}</strong> a été désactivé par mesure de sécurité.
+										Une analyse par notre équipe de support est nécéssaire. Merci de votre compréhension.
+									</i>
+								{% else %}
+									<i><strong>{{ doc.title }}</strong></i>
+								{% endif %}
+							</div>
+							<div class="fr-col-12">
+								{% if not doc.isSuspicious %}
+									<a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
+									class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-eye-fill img-box"
+									title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
+									target="_blank"
+									rel="noopener">
+										Afficher
+									</a>
+								{% endif %}
+								{% if is_granted('FRONT_FILE_DELETE', doc) %}
+									<button class="fr-btn fr-btn--sm fr-btn--icon-left fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
+										id="file_delete_{{ doc.id }}" 
+										title="Supprimer le document {{ doc.filename }}"
+										aria-controls="fr-modal-delete-file"
+										data-fr-opened="false" 
+										data-filename="{{ doc.filename }}" 
+										data-file-id="{{ doc.id}}"                     
+									>
+										Supprimer
+									</button>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+</main>
+{% endblock %}
