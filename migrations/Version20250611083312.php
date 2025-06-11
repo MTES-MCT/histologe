@@ -7,16 +7,16 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20250408132851 extends AbstractMigration
+final class Version20250611083312 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'remove territory from admin partner';
+        return 'Reset Doctrine Migrations';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql('UPDATE partner SET territory_id = NULL WHERE id = 1');
+        $this->addSql('DELETE FROM doctrine_migration_versions');
     }
 
     public function down(Schema $schema): void
