@@ -826,7 +826,7 @@ class SignalementController extends AbstractController
 
             return $this->render('front/flash-messages.html.twig');
         }
-        if (!$this->isGranted('SIGN_USAGER_PROCEDURE', $signalement)) {
+        if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->render('front/flash-messages.html.twig');
@@ -876,7 +876,7 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        if (!$this->isGranted('SIGN_USAGER_PROCEDURE', $signalement)) {
+        if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->render('front/flash-messages.html.twig');
@@ -947,7 +947,12 @@ class SignalementController extends AbstractController
 
             return $this->render('front/flash-messages.html.twig');
         }
-        if (!$this->isGranted('SIGN_USAGER_PROCEDURE', $signalement)) {
+        if (false === $signalement->getIsUsagerAbandonProcedure()) {
+            $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté de poursuivre la procédure.');
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+        if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->render('front/flash-messages.html.twig');

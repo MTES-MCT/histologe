@@ -201,6 +201,7 @@ signalements:
     cp_occupant: "13008"
     ville_occupant: "Marseille"
     statut: "ACTIVE"
+    usager_abandon_procedure: 0
     reference: "2022-5"
     geoloc: "{\"lat\":\"43.2909138\",\"lng\":\"5.3719882\"}"
     score: 100

@@ -48,7 +48,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => $status,
-            'isUsagerAbandonProcedure' => 0,
+            'isUsagerAbandonProcedure' => null,
         ]);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -228,9 +228,9 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => SignalementStatus::ACTIVE,
-            'isUsagerAbandonProcedure' => 0,
+            'isUsagerAbandonProcedure' => null,
         ]);
-        $this->assertFalse($signalement->getIsUsagerAbandonProcedure());
+        $this->assertNull($signalement->getIsUsagerAbandonProcedure());
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate(

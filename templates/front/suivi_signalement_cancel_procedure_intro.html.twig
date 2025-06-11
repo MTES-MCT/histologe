@@ -18,8 +18,8 @@
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-md-8">		
 			<h1 class="title-blue-france">Demander l'arrêt de la procédure</h1>
-			{% if usager.email == signalement.mailDeclarant %}
-				<div class="fr-my-3w">
+			<div class="fr-my-3w">
+				{% if usager.email == signalement.mailDeclarant %}
 					Si vous demandez l'arrêt de la procédure, c'est que vous souhaitez <b>fermer ce dossier</b> sur {{ platform.name }}. <br>
 					Une fois le dossier fermé : <br>
 					<ul>
@@ -27,21 +27,17 @@
 						<li>vous ne pourrez plus mettre à jour le dossier ;</li>
 						<li>le foyer du logement ne pourra plus consulter ni mettre à jour le dossier.</li>
 					</ul>
-					<span><b>Votre demande de fermeture sera envoyée à l'administration pour validation. </b></span><br><br>
-					Voulez-vous continuer ?
-				</div>	
-			{% else %}
-				<div class="fr-my-3w">
+				{% else %}
 					Si vous demandez l'arrêt de la procédure, c'est que vous souhaitez <b>fermer votre dossier</b> sur {{ platform.name }}. <br>
 					Une fois votre dossier fermé : <br>
 					<ul>
 						<li>les services compétents ne pourront plus mettre à jour votre dossier ni vous accompagner dans la résolution de votre problème ;</li>
 						<li>vous ne pourrez plus mettre à jour votre dossier</li>
 					</ul>
-					<span><b>Votre demande de fermeture sera envoyée à l'administration pour validation. </b></span><br><br>
-					Voulez-vous continuer ?
-				</div>
-			{% endif %}		
+				{% endif %}	
+				<span><b>Votre demande de fermeture sera envoyée à l'administration pour validation. </b></span><br><br>
+				Voulez-vous continuer ?
+			</div>		
 	
 			<ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
 				<li>

@@ -25,6 +25,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class WidgetDataKpiBuilder
@@ -50,6 +51,8 @@ class WidgetDataKpiBuilder
         private readonly PartnerRepository $partnerRepository,
         private readonly ParameterBagInterface $parameterBag,
         private readonly Security $security,
+        #[Autowire(env: 'FEATURE_SUIVI_ACTION')]
+        private readonly bool $featureSuiviAction,
     ) {
     }
 
@@ -84,9 +87,10 @@ class WidgetDataKpiBuilder
         $this->countSignalement
             ->setClosedByAtLeastOnePartner($this->notificationRepository->countAffectationClosedNotSeen($this->user, $this->territories))
             ->setAffected($this->affectationRepository->countAffectationForUser($this->user, $this->territories))
-            ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territories))
-            ->setUsagerAbandonProcedure($this->signalementRepository->countSignalementUsagerAbandonProcedure($this->territories));
-
+            ->setClosedAllPartnersRecently($this->notificationRepository->countSignalementClosedNotSeen($this->user, $this->territories));
+        if ($this->featureSuiviAction) {
+            $this->countSignalement->setUsagerAbandonProcedure($this->signalementRepository->countSignalementUsagerAbandonProcedure($this->territories));
+        }
         if ($this->user->isSuperAdmin() || $this->user->isTerritoryAdmin()) {
             $countSignalementByStatus = $this->signalementRepository->countByStatus(
                 territories: $this->territories,
@@ -237,9 +241,12 @@ class WidgetDataKpiBuilder
             ->addWidgetCard('cardNouveauxSuivis', $this->countSuivi->getSignalementNewSuivi())
             ->addWidgetCard('cardSansSuivi', $this->countSuivi->getSignalementNoSuivi())
             ->addWidgetCard('cardNoSuiviAfter3Relances', $this->countSuivi->getNoSuiviAfter3Relances())
-            ->addWidgetCard('cardUsagerAbandonProcedure', $this->countSignalement->getUsagerAbandonProcedure())
             ->addWidgetCard('cardPartenairesNonNotifiables', $this->countPartner->getNonNotifiables())
             ->addWidgetCard('cardArchivingScheduledUsers', $this->countUser->getArchivingScheduled());
+
+        if ($this->featureSuiviAction) {
+            $this->addWidgetCard('cardUsagerAbandonProcedure', $this->countSignalement->getUsagerAbandonProcedure());
+        }
 
         return new WidgetDataKpi(
             $this->widgetCards,
