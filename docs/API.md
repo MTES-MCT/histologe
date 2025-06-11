@@ -16,3 +16,6 @@ Sous réserve d'acceptation par nos services, et afin de vous permettre de faire
 Ces deux accès sont liés à une entité Partenaire par le biais de laquelle les appels seront faits.
 
 Dans un second temps, nous créerons un accès API à la plateforme de production, également lié à une entité Partenaire définie ensemble.
+
+### Limitations
+Les appels sont limités à 60 requêtes par minutes et par IP
