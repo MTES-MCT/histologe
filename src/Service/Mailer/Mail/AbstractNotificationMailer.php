@@ -23,6 +23,9 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     protected ?string $mailerButtonText = null;
     protected ?string $mailerTemplate = null;
     protected ?string $tagHeader = null;
+    /**
+     * @var array<mixed>
+     */
     protected array $mailerParams = [];
     private ?FailedEmailManager $failedEmailManager = null;
 
@@ -113,6 +116,9 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         return false;
     }
 
+    /**
+     * @param array<mixed> $params
+     */
     private function logAndSaveFailedEmail(
         NotificationEmail $message,
         NotificationMail $notificationMail,
@@ -157,11 +163,17 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         );
     }
 
+    /**
+     * @param array<mixed> $params
+     */
     public function generateLink(string $route, array $params): string
     {
         return $this->parameterBag->get('host_url').$this->urlGenerator->generate($route, $params);
     }
 
+    /**
+     * @param array<mixed> $params
+     */
     public function generateAbsoluteLink(string $route, array $params): string
     {
         return $this->urlGenerator->generate(
@@ -179,8 +191,14 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     {
     }
 
+    /**
+     * @return array<mixed>
+     */
     abstract public function getMailerParamsFromNotification(NotificationMail $notificationMail): array;
 
+    /**
+     * @param array<mixed> $params
+     */
     private function renderMailContentWithParams(
         array $params,
         ?Territory $territory,

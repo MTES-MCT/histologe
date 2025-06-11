@@ -71,6 +71,9 @@ class SearchZone
         $this->orderType = $orderType;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getUrlParams(): array
     {
         $params = $this->getUrlParamsBase();

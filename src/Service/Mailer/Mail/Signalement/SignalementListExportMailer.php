@@ -28,6 +28,9 @@ class SignalementListExportMailer extends AbstractNotificationMailer
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $url = $this->generateLink('show_file', ['uuid' => $notificationMail->getParams()['file_uuid']]);

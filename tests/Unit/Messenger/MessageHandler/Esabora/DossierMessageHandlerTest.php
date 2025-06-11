@@ -74,7 +74,7 @@ class DossierMessageHandlerTest extends TestCase
             ->method('flagAsSynchronized')
             ->with($dossierMessageSISH);
 
-        $handler = new DossierMessageSISHHandler([$dossierSISHHandlerMock], $affectationManagerMock);
+        $handler = new DossierMessageSISHHandler(['handler' => $dossierSISHHandlerMock], $affectationManagerMock);
         $handler($dossierMessageSISH);
     }
 }
