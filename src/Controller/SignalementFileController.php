@@ -33,7 +33,7 @@ class SignalementFileController extends AbstractController
         SignalementFileProcessor $signalementFileProcessor,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
-        if ($request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
         /** @var SignalementUser $signalementUser */

@@ -520,7 +520,7 @@ class SignalementController extends AbstractController
         ]);
 
         if ($this->featureSuiviAction) {
-            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement, $user);
+            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement, $signalementUser->getUser());
             $suiviCategory = null;
             if (!$lastSuiviPublic && SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $suiviCategory = $suiviCategorizerService->getSuiviCategoryFromEnum(SuiviCategory::SIGNALEMENT_IS_CLOSED);
@@ -656,6 +656,7 @@ class SignalementController extends AbstractController
     public function suiviSignalementDocuments(
         string $code,
         SignalementRepository $signalementRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         if (!$this->featureSuiviAction) {
             throw $this->createNotFoundException();
@@ -663,7 +664,12 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
 
-        return new Response('<html><body>TODO</body></html>');
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
+        return $this->render('front/suivi_signalement_documents.html.twig', [
+            'signalement' => $signalement,
+            'infoDesordres' => $infoDesordres,
+        ]);
     }
 
     #[Route('/suivre-mon-signalement/{code}/procedure', name: 'front_suivi_signalement_procedure', methods: ['GET', 'POST'])]
