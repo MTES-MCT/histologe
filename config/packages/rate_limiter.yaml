@@ -16,3 +16,7 @@ framework:
             policy: 'fixed_window'
             limit: '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%'
             interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
+        api_limiter: 
+            policy: 'fixed_window'
+            limit: '%env(int:API_LIMITER_LIMIT)%'
+            interval: '%env(API_LIMITER_INTERVAL)%'
