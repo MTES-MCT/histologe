@@ -34,7 +34,8 @@ class WidgetLoaderCollectionTest extends TestCase
             ->method('load');
 
         $widgetLoaderCollection = new WidgetLoaderCollection([
-            $dataKpiWidgetLoader, $esaboraEventWidgetLoader,
+            'Loader1' => $dataKpiWidgetLoader,
+            'Loader2' => $esaboraEventWidgetLoader,
         ]);
 
         $widgetLoaderCollection->load($widget);

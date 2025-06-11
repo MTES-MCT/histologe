@@ -11,6 +11,10 @@ use App\Entity\User;
 
 class NotificationMail
 {
+    /**
+     * @param string|array<string> $to
+     * @param array<string>        $params
+     */
     public function __construct(
         private readonly NotificationMailerType $type,
         private readonly array|string $to,
@@ -44,11 +48,17 @@ class NotificationMail
         return $this->type->name;
     }
 
+    /**
+     * @return string|array<string>
+     */
     public function getTo(): array|string
     {
         return $this->to;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getParams(): array
     {
         return $this->params;
@@ -59,6 +69,9 @@ class NotificationMail
         return $this->territory;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getEmails(): array
     {
         return \is_array($this->to) ? $this->to : [$this->to];
