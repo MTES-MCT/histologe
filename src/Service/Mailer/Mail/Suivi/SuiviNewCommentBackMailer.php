@@ -27,17 +27,21 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
         $suivi = $notificationMail->getSuivi();
+        $suiviCreator = null;
         if ($suivi && $suivi->getCreatedBy()) {
             $suiviCreator = $suivi->getCreatedBy()->getNomComplet();
             $partner = $suivi->getCreatedBy()->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             if ($partner) {
                 $suiviCreator .= ' ('.$partner->getNom().')';
             }
-        } else {
+        } elseif ($signalement->getPrenomDeclarant()) {
             $suiviCreator = $signalement->getPrenomDeclarant().' '.$signalement->getNomDeclarant();
         }
 
