@@ -1,0 +1,30 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour {{ prenomDeclarant }},</p>
+    <p>
+        Vous avez entamé une démarche sur la plateforme {{ platform.name }} le {{ dateCreated }},
+        concernant des désordres rencontrés dans un logement social situé {{ adresseComplete }}.
+        <br>
+        Si votre bailleur ne vous a pas apporté de réponse suite à votre demande officielle,
+        vous pouvez maintenant poursuivre votre signalement sur le site Signal Logement. 
+    </p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ link|raw }}" target="_blank" rel="noopener">{{ btntext }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ link|raw }}">cliquez ici</a></p>
+{% endblock %}
