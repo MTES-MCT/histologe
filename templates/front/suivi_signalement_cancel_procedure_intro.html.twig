@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre dossier #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+<main class="fr-container fr-py-5w" id="content">
+
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Demander l'arrêt de la procédure</a></li>
+			</ol>
+		</div>
+	</nav>
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-md-8">		
+			<h1 class="title-blue-france">Demander l'arrêt de la procédure</h1>
+			<div class="fr-my-3w">
+				{% if usager.email == signalement.mailDeclarant %}
+					Si vous demandez l'arrêt de la procédure, c'est que vous souhaitez <b>fermer ce dossier</b> sur {{ platform.name }}. <br>
+					Une fois le dossier fermé : <br>
+					<ul>
+						<li>les services compétents ne pourront plus mettre à jour le dossier ni vous accompagner dans la résolution des problèmes du logement ;</li>
+						<li>vous ne pourrez plus mettre à jour le dossier ;</li>
+						<li>le foyer du logement ne pourra plus consulter ni mettre à jour le dossier.</li>
+					</ul>
+				{% else %}
+					Si vous demandez l'arrêt de la procédure, c'est que vous souhaitez <b>fermer votre dossier</b> sur {{ platform.name }}. <br>
+					Une fois votre dossier fermé : <br>
+					<ul>
+						<li>les services compétents ne pourront plus mettre à jour votre dossier ni vous accompagner dans la résolution de votre problème ;</li>
+						<li>vous ne pourrez plus mettre à jour votre dossier</li>
+					</ul>
+				{% endif %}	
+				<span><b>Votre demande de fermeture sera envoyée à l'administration pour validation. </b></span><br><br>
+				Voulez-vous continuer ?
+			</div>		
+	
+			<ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
+				<li>
+					<a class="fr-btn fr-icon-check-line" href="{{ path('front_suivi_signalement_procedure_abandon', {code: signalement.codeSuivi}) }}">
+						Oui, continuer
+					</a>
+				</li>
+				<li>					
+					<a class="fr-btn fr-btn--secondary fr-icon-close-line" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}" >Non, annuler</a>
+				</li>
+			</ul>
+		</div>
+		{% include 'front/_partials/_suivi_signalement_card_right.html.twig' %}
+	</div>
+
+</main>
+{% endblock %}

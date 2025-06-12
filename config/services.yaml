@@ -50,6 +50,7 @@ parameters:
     send_error_email_token: '%env(SEND_ERROR_EMAIL_TOKEN)%'
     feature_banner_histologe: '%env(bool:FEATURE_BANNER_HISTOLOGE)%'
     feature_secure_uuid_url: '%env(bool:FEATURE_SECURE_UUID_URL)%'
+    feature_suivi_action: '%env(bool:FEATURE_SUIVI_ACTION)%'
     feature_email_recap: '%env(bool:FEATURE_EMAIL_RECAP)%'
     proconnect_scheme_protocol: '%env(resolve:PROCONNECT_SCHEME_PROTOCOL)%'
     proconnect_domain: '%env(resolve:PROCONNECT_DOMAIN)%'

@@ -133,7 +133,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     ? new \DateTimeImmutable($row['created_at'])
                     : (new \DateTimeImmutable())->modify('-15 days')
             )
-            ->setIsUsagerAbandonProcedure(0);
+            ->setIsUsagerAbandonProcedure($row['usager_abandon_procedure'] ?? null);
         if (isset($row['is_not_occupant'])) {
             $linkChoices = OccupantLink::getLabelList();
             $signalement
@@ -365,7 +365,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     ? new \DateTimeImmutable($row['created_at'])
                     : (new \DateTimeImmutable())->modify('-15 days')
             )
-            ->setIsUsagerAbandonProcedure(0)
+            ->setIsUsagerAbandonProcedure($row['usager_abandon_procedure'] ?? null)
             ->setNbPiecesLogement($row['nb_pieces_logement']);
 
         if (isset($row['created_from_uuid'])) {

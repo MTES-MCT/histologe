@@ -90,6 +90,10 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     return 'Pas de suivi après 3 relances'
   }
 
+  if (key === 'usagerAbandonProcedure') {
+    return 'Demande fermeture usager'
+  }
+
   if (key === 'nouveauSuivi') {
     return 'Nouveaux suivis partenaires et usagers'
   }

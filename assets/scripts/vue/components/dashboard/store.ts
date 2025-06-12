@@ -72,6 +72,10 @@ export const store = {
       count: 0,
       link: undefined
     },
+    usagerAbandonProcedure: {
+      count: 0,
+      link: undefined
+    },
     suivis: {
       countMoyen: 0,
       countByPartner: 0,

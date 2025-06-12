@@ -1,0 +1,7 @@
+{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE and signalement.isUsagerAbandonProcedure %}
+    <span class="confetti"></span>
+    Demande de fermeture enregistrée
+{% else %}
+    <span class="confetti {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}active{% endif %}"></span>
+    {{ signalement.statutLabel }}
+{% endif %}

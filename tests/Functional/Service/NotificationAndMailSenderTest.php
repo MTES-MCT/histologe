@@ -199,6 +199,95 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertEquals($expectedNotificationIds, $newNotificationIds);
     }
 
+    public function testSendNDemandeAbandonProcedureToUsager(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-4',
+        ]);
+
+        /** @var User $occupant */
+        $occupant = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => $signalement->getMailOccupant(),
+        ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($occupant)
+        ->setSignalement($signalement)
+        ->setDescription('test description')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setIsPublic(true);
+
+        $this->entityManager->persist($suivi);
+
+        $expectedAdress = [$signalement->getMailOccupant(), $signalement->getMailDeclarant()];
+
+        $notificationAndMailSender = new NotificationAndMailSender(
+            $this->entityManager,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->notificationFactory,
+            $this->notificationMailerRegistry,
+            $this->security,
+            false
+        );
+
+        $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
+
+        $this->assertEmailCount(2);
+        $i = 0;
+        foreach ($expectedAdress as $adressMail) {
+            $email = $this->getMailerMessage($i);
+            $this->assertEmailAddressContains($email, 'To', $adressMail);
+            ++$i;
+        }
+        // le mail envoyé au tiers contient le nom de l'occupant
+        $this->assertEmailHtmlBodyContains($email, $occupant->getNomComplet());
+    }
+
+    public function testSendDemandeAbandonProcedureToAdminsAndPartners(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-4',
+        ]);
+
+        /** @var User $occupant */
+        $occupant = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => $signalement->getMailOccupant(),
+        ]);
+        /** @var User $respTerritoire */
+        $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
+        ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($occupant)
+        ->setSignalement($signalement)
+        ->setDescription('test description')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setIsPublic(true);
+
+        $this->entityManager->persist($suivi);
+
+        $notificationAndMailSender = new NotificationAndMailSender(
+            $this->entityManager,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->notificationFactory,
+            $this->notificationMailerRegistry,
+            $this->security,
+            false
+        );
+
+        $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
+
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage(0);
+        $this->assertEmailAddressContains($email, 'To', 'ne-pas-repondre@signal-logement.beta.gouv.fr');
+        $this->assertEmailAddressContains($email, 'Bcc', $respTerritoire->getEmail());
+    }
+
     public function testSendNewSuiviToUsagersProfilTiers(): void
     {
         /** @var Signalement $signalement */

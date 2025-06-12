@@ -80,6 +80,7 @@ class SignalementSearchQuery
         private readonly ?string $isImported = null,
         #[Assert\Choice(['NO_SUIVI_AFTER_3_RELANCES'])]
         private readonly ?string $relancesUsager = null,
+        private readonly ?bool $usagerAbandonProcedure = false,
         #[Assert\Choice(['oui'])]
         private readonly ?string $nouveauSuivi = null,
         private readonly ?int $sansSuiviPeriode = null,
@@ -243,6 +244,11 @@ class SignalementSearchQuery
         return $this->relancesUsager;
     }
 
+    public function getUsagerAbandonProcedure(): ?bool
+    {
+        return $this->usagerAbandonProcedure;
+    }
+
     public function getNouveauSuivi(): ?string
     {
         return $this->nouveauSuivi;
@@ -348,6 +354,7 @@ class SignalementSearchQuery
         };
 
         $filters['relances_usager'] = [$this->getRelancesUsager()];
+        $filters['usager_abandon_procedure'] = $this->getUsagerAbandonProcedure();
         $filters['delays'] = $this->getSansSuiviPeriode();
         $filters['nouveau_suivi'] = $this->getNouveauSuivi();
         $filters['bailleurSocial'] = $this->getBailleurSocial();

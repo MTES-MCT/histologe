@@ -1143,6 +1143,22 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function countSignalementUsagerAbandonProcedure(array $territories): ?int
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)')
+            ->where('s.statut IN (:statutList)')
+            ->andWhere('s.isUsagerAbandonProcedure = 1')
+            ->setParameter('statutList', [SignalementStatus::ACTIVE]);
+
+        if (\count($territories)) {
+            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
+        }
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function findAllByIds(array $ids): array
     {
         return $this->createQueryBuilder('s')

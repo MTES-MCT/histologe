@@ -31,6 +31,7 @@ signalements:
     origine_signalement: "Guichet Unique"
     type_energie_logement: "Electrique"
     mail_declarant: "admin-partenaire-13-01@signal-logement.fr"
+    usager_abandon_procedure: 1
     tags:
       - "Urgent"
     situations:
@@ -200,6 +201,7 @@ signalements:
     cp_occupant: "13008"
     ville_occupant: "Marseille"
     statut: "ACTIVE"
+    usager_abandon_procedure: 0
     reference: "2022-5"
     geoloc: "{\"lat\":\"43.2909138\",\"lng\":\"5.3719882\"}"
     score: 100
@@ -691,6 +693,7 @@ signalements:
     insee_occupant: "69001"
     type_energie_logement: "Electrique"
     origine_signalement: "Guichet Unique"
+    usager_abandon_procedure: 1
     situation_occupant: "1"
     nb_pieces_logement: 3
     nb_chambres_logement: 2
