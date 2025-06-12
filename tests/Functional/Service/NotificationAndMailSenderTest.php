@@ -226,7 +226,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            false
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
@@ -274,7 +273,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            false
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);

@@ -24,7 +24,6 @@ class SignalementVoter extends Voter
     public const string VIEW = 'SIGN_VIEW';
     public const string ADD_VISITE = 'SIGN_ADD_VISITE';
     public const string ADD_ARRETE = 'SIGN_ADD_ARRETE';
-    public const string USAGER_EDIT_PROCEDURE = 'SIGN_USAGER_EDIT_PROCEDURE';
     public const string EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SEE_NDE = 'SIGN_SEE_NDE';
 
@@ -46,7 +45,6 @@ class SignalementVoter extends Voter
                 self::REOPEN,
                 self::ADD_VISITE,
                 self::ADD_ARRETE,
-                self::USAGER_EDIT_PROCEDURE,
                 self::EDIT_NDE,
                 self::SEE_NDE,
                 self::DELETE_DRAFT,
@@ -58,9 +56,6 @@ class SignalementVoter extends Voter
     {
         /** @var User|null $user */
         $user = $token->getUser();
-            if (self::USAGER_EDIT_PROCEDURE === $attribute && $this->canUsagerEditProcedure($subject)) {
-                return true;
-            }
 
         if (!$user || !$user instanceof User) {
             return false;
@@ -85,21 +80,9 @@ class SignalementVoter extends Voter
             self::DELETE => $this->canDelete($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
-            self::USAGER_EDIT_PROCEDURE => $this->canUsagerEditProcedure($subject),
             self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
             default => false,
         };
-    }
-
-    private function canUsagerEditProcedure(Signalement $signalement): bool
-    {
-        if (SignalementStatus::ACTIVE === $signalement->getStatut()
-            || SignalementStatus::NEED_VALIDATION === $signalement->getStatut()
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     private function isAdminOrTerritoryAdmin(Signalement $signalement, User $user): bool

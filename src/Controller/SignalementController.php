@@ -419,7 +419,7 @@ class SignalementController extends AbstractController
         HtmlSanitizerInterface $htmlSanitizer,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         if (SignalementStatus::ARCHIVED === $signalement->getStatut()) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
 
@@ -450,8 +450,6 @@ class SignalementController extends AbstractController
                 ]
             );
         }
-
-
 
         $user = $signalementUser->getUser();
         $type = $signalementUser->getType();
@@ -540,6 +538,7 @@ class SignalementController extends AbstractController
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
+        $user = $signalementUser->getUser();
 
         $demandeLienSignalement = new DemandeLienSignalement();
         $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
@@ -696,39 +695,24 @@ class SignalementController extends AbstractController
     #[Route('/suivre-mon-signalement/{code}/procedure', name: 'front_suivi_signalement_procedure', methods: ['GET', 'POST'])]
     public function suiviSignalementProcedure(
         string $code,
-        Security $security,
         SignalementRepository $signalementRepository,
-        AuthenticationUtils $authenticationUtils,
     ): Response {
         if (!$this->featureSuiviAction) {
             throw $this->createNotFoundException();
         }
-        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
-        if (!$signalement) {
-            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
-
-            return $this->render('front/flash-messages.html.twig');
-        }
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
-            return $this->render('front/flash-messages.html.twig');
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        /** @var SignalementUser $currentUser */
-        $currentUser = $security->getUser();
-        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
-            // get the login error if there is one
-            $error = $authenticationUtils->getLastAuthenticationError();
-
-            return $this->render('security/login_suivi_signalement.html.twig', [
-                'signalement' => $signalement,
-                'error' => $error,
-            ]);
-        }
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
 
         return $this->render('front/suivi_signalement_cancel_procedure_intro.html.twig', [
             'signalement' => $signalement,
-            'usager' => $currentUser->getUser(),
+            'usager' => $signalementUser->getUser(),
         ]);
     }
 
@@ -739,21 +723,12 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
-        UserManager $userManager,
-        Security $security,
-        AuthenticationUtils $authenticationUtils,
     ): Response {
         if (!$this->featureSuiviAction) {
             throw $this->createNotFoundException();
         }
-
-        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
-        if (!$signalement) {
-            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
-
-            return $this->render('front/flash-messages.html.twig');
-        }
-
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         if ($signalement->getIsUsagerAbandonProcedure()) {
             $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté d\'arrêter la procédure.');
 
@@ -762,21 +737,11 @@ class SignalementController extends AbstractController
         if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
-            return $this->render('front/flash-messages.html.twig');
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-
-        /** @var SignalementUser $currentUser */
-        $currentUser = $security->getUser();
-        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
-            // get the login error if there is one
-            $error = $authenticationUtils->getLastAuthenticationError();
-
-            return $this->render('security/login_suivi_signalement.html.twig', [
-                'signalement' => $signalement,
-                'error' => $error,
-            ]);
-        }
-        $user = $currentUser->getUser();
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+        $user = $signalementUser->getUser();
 
         $form = $this->createForm(UsagerCancelProcedureType::class);
         $form->handleRequest($request);
@@ -816,20 +781,12 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
-        UserManager $userManager,
-        Security $security,
-        AuthenticationUtils $authenticationUtils,
     ): Response {
         if (!$this->featureSuiviAction) {
             throw $this->createNotFoundException();
         }
-
-        $signalement = $signalementRepository->findOneByCodeForPublic($code, false);
-        if (!$signalement) {
-            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
-
-            return $this->render('front/flash-messages.html.twig');
-        }
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         if (false === $signalement->getIsUsagerAbandonProcedure()) {
             $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté de poursuivre la procédure.');
 
@@ -838,21 +795,12 @@ class SignalementController extends AbstractController
         if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
-            return $this->render('front/flash-messages.html.twig');
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
 
-        /** @var SignalementUser $currentUser */
-        $currentUser = $security->getUser();
-        if (!$security->isGranted('ROLE_SUIVI_SIGNALEMENT') || $currentUser->getCodeSuivi() !== $code) {
-            // get the login error if there is one
-            $error = $authenticationUtils->getLastAuthenticationError();
-
-            return $this->render('security/login_suivi_signalement.html.twig', [
-                'signalement' => $signalement,
-                'error' => $error,
-            ]);
-        }
-        $user = $currentUser->getUser();
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+        $user = $signalementUser->getUser();
 
         $form = $this->createForm(UsagerPoursuivreProcedureType::class);
         $form->handleRequest($request);
@@ -899,10 +847,11 @@ class SignalementController extends AbstractController
             throw $this->createNotFoundException();
         }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
-            return $this->render('front/flash-messages.html.twig');
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
         if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide');

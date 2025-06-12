@@ -13,10 +13,11 @@ class SignalementFoVoter extends Voter
 {
     public const string SIGN_USAGER_VIEW = 'SIGN_USAGER_VIEW';
     public const string SIGN_USAGER_EDIT = 'SIGN_USAGER_EDIT';
+    public const string SIGN_USAGER_EDIT_PROCEDURE = 'SIGN_USAGER_EDIT_PROCEDURE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::SIGN_USAGER_EDIT, self::SIGN_USAGER_VIEW]) && ($subject instanceof Signalement);
+        return \in_array($attribute, [self::SIGN_USAGER_EDIT, self::SIGN_USAGER_VIEW, self::SIGN_USAGER_EDIT_PROCEDURE]) && ($subject instanceof Signalement);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -31,6 +32,7 @@ class SignalementFoVoter extends Voter
         return match ($attribute) {
             self::SIGN_USAGER_VIEW => $this->canUsagerView($subject, $user),
             self::SIGN_USAGER_EDIT => $this->canUsagerEdit($subject, $user),
+            self::SIGN_USAGER_EDIT_PROCEDURE => $this->canUsagerEditProcedure($subject),
             default => false,
         };
     }
@@ -57,6 +59,17 @@ class SignalementFoVoter extends Voter
             if ($today < $datePostCloture && !$signalement->hasSuiviUsagerPostCloture()) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    private function canUsagerEditProcedure(Signalement $signalement): bool
+    {
+        if (SignalementStatus::ACTIVE === $signalement->getStatut()
+            || SignalementStatus::NEED_VALIDATION === $signalement->getStatut()
+        ) {
+            return true;
         }
 
         return false;
