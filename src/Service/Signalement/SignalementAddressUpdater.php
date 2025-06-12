@@ -40,7 +40,7 @@ class SignalementAddressUpdater
                 }
                 $rialResult = $this->rialService->getSingleInvariantByBanId($signalement->getBanIdOccupant());
                 if ($rialResult) {
-                    $signalement->setNumeroInvariant($rialResult);
+                    $signalement->setNumeroInvariantRial($rialResult);
                 }
             }
 

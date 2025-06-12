@@ -119,8 +119,13 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 					</li>
 				{% endif %}
 				{% if signalement.numeroInvariant %}
-					<li>Invariant fiscal :
+					<li>Invariant fiscal (saisie) :
 						{{signalement.numeroInvariant}}
+					</li>
+				{% endif %}
+				{% if signalement.numeroInvariantRial %}
+					<li>Invariant fiscal (automatique) :
+						{{signalement.numeroInvariantRial}}
 					</li>
 				{% endif %}
 				{% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}

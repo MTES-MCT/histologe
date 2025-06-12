@@ -16,12 +16,12 @@ class RialService
     private const string URI_LOCAUX_BY_ADRESSE = '/rial/v1/locaux/adressetopographique';
 
     /**
-    * @var array<string>
-    * AP : appartement
-    * MA : maison
-    * MP : maison partagée (maison ou appartement dont l’emprise est à cheval sur 2 communes)
-    * ME : maison exceptionnelle d'habitation
-    */
+     * @var array<string>
+     *                    AP : appartement
+     *                    MA : maison
+     *                    MP : maison partagée (maison ou appartement dont l’emprise est à cheval sur 2 communes)
+     *                    ME : maison exceptionnelle d'habitation
+     */
     private const array CODES_NATURES_ACCEPTED = ['AP', 'MA', 'MP', 'ME'];
 
     private string $accessToken;
@@ -104,6 +104,7 @@ class RialService
 
     /**
      * In sandbox env: Only available cities are Aulnay sous bois, Ajaccio and Pointe à Pitre.
+     *
      * @return ?array<mixed>
      */
     public function searchLocauxByBanId(string $banId): ?array
