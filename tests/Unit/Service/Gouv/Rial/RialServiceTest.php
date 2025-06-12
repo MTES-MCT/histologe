@@ -15,7 +15,7 @@ class RialServiceTest extends TestCase
     public function testGetAccessToken(): void
     {
         $rialService = $this->getRialService(__DIR__.'/../../../../../tools/wiremock/src/Resources/Rial/token.json');
-        $response = $rialService->getAccesssToken();
+        $response = $rialService->getAccessToken();
         $this->assertEquals('fake-access-token', $response);
     }
 

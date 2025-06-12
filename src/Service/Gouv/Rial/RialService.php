@@ -15,6 +15,13 @@ class RialService
     private const string URI_LOCAL_BY_ID = '/rial/v1/locaux/%s';
     private const string URI_LOCAUX_BY_ADRESSE = '/rial/v1/locaux/adressetopographique';
 
+    /**
+    * @var array<string>
+    * AP : appartement
+    * MA : maison
+    * MP : maison partagée (maison ou appartement dont l’emprise est à cheval sur 2 communes)
+    * ME : maison exceptionnelle d'habitation
+    */
     private const array CODES_NATURES_ACCEPTED = ['AP', 'MA', 'MP', 'ME'];
 
     private string $accessToken;
@@ -36,7 +43,7 @@ class RialService
         $this->accessToken = $accessToken;
     }
 
-    public function getAccesssToken(): ?string
+    public function getAccessToken(): ?string
     {
         if (!empty($this->accessToken)) {
             return $this->accessToken;
@@ -96,11 +103,12 @@ class RialService
     }
 
     /**
-     * Only available cities in sandbox are Aulnay sous bois, Ajaccio and Pointe à Pitre.
+     * In sandbox env: Only available cities are Aulnay sous bois, Ajaccio and Pointe à Pitre.
+     * @return ?array<mixed>
      */
     public function searchLocauxByBanId(string $banId): ?array
     {
-        $accessToken = $this->getAccesssToken();
+        $accessToken = $this->getAccessToken();
         if (empty($accessToken)) {
             return null;
         }
@@ -132,9 +140,12 @@ class RialService
         return null;
     }
 
+    /**
+     * @return ?array<mixed>
+     */
     public function searchLocalByIdFiscal(string $identifiantFiscal): ?array
     {
-        $accessToken = $this->getAccesssToken();
+        $accessToken = $this->getAccessToken();
         if (empty($accessToken)) {
             return null;
         }
