@@ -172,6 +172,9 @@ class EsaboraSCHSService extends AbstractEsaboraService
         return new DossierEventFilesSCHSResponse($response);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function preparePayloadPushDossier(DossierMessageSCHS $dossierMessage, bool $encodeDocuments = true): array
     {
         $piecesJointes = [];

@@ -22,6 +22,9 @@ class DossierStateSISHResponse implements DossierResponseInterface
     private ?int $statusCode = null;
     private ?string $errorReason = null;
 
+    /**
+     * @param array<mixed> $response
+     */
     public function __construct(array $response, ?int $statusCode)
     {
         if (!empty($response)) {
