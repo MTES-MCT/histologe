@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
+use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -18,6 +20,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class SignalementDraftAddressType extends AbstractType
 {
+    public function __construct(
+        private readonly Security $security,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $signalement = $builder->getData();
@@ -27,6 +34,22 @@ class SignalementDraftAddressType extends AbstractType
         }
         $nbEnfantsDansLogement = $signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants();
         $enfantsDansLogementMoinsSixAns = $signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants();
+
+        /** @var User $user */
+        $user = $this->security->getUser();
+        if ($user->isSuperAdmin()) {
+            $territories = [];
+        } else {
+            $territories = $user->getPartnersTerritories();
+        }
+        if (1 === \count($territories)) {
+            $territory = $user->getFirstTerritory();
+            $builder->add('filterSearchAddressTerritory', HiddenType::class, [
+                'mapped' => false,
+                'data' => $territory->getZip(),
+            ]);
+        }
+
         $builder
             ->add('adresseCompleteOccupant', null, [
                 'label' => false,

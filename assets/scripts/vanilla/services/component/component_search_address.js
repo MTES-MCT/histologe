@@ -31,6 +31,9 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
     suffix = '-' + inputAdresse.dataset.suffix
   }
   const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector)
+  const fieldFilterAddress = document?.querySelector('#signalement_draft_address_filterSearchAddressTerritory')
+  const zipFilterAddress = fieldFilterAddress ? fieldFilterAddress.value : ''
+
   const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
   let addressAbortController;
   inputAdresse.addEventListener('input', (e) => {
@@ -42,7 +45,7 @@ export function attacheAutocompleteAddressEvent (inputAdresse) {
 
     if (adresse.length > 8) {
       addressAbortController = new AbortController();
-      let query = apiAdresse + adresse
+      let query = apiAdresse + adresse + ' ' + zipFilterAddress
       const limit = inputAdresse.getAttribute('data-form-limit')
       if (inputAdresse.getAttribute('data-form-lat')) {
         query += '&lat=' + inputAdresse.getAttribute('data-form-lat')
