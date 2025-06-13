@@ -5,11 +5,11 @@ namespace App\Controller;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
-use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
+use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -25,15 +25,17 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/signalement')]
 class SignalementFileController extends AbstractController
 {
-    #[Route('/{uuid:signalement}/file/add', name: 'signalement_add_file')]
+    #[Route('/{code}/file/add', name: 'signalement_add_file')]
     public function addFileSignalement(
-        Signalement $signalement,
+        string $code,
         Request $request,
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
+        SignalementRepository $signalementRepository,
     ): JsonResponse {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
-        if ($request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
         /** @var SignalementUser $signalementUser */
@@ -53,13 +55,15 @@ class SignalementFileController extends AbstractController
         return $this->json(['response' => $signalementFileProcessor->getLastFile()->getId()]);
     }
 
-    #[Route('/{uuid:signalement}/file/edit', name: 'signalement_edit_file')]
+    #[Route('/{code}/file/edit', name: 'signalement_edit_file')]
     public function editFileSignalement(
-        Signalement $signalement,
+        string $code,
         Request $request,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
+        SignalementRepository $signalementRepository,
     ): JsonResponse {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
@@ -87,14 +91,16 @@ class SignalementFileController extends AbstractController
         return $this->json(['response' => 'success']);
     }
 
-    #[Route('/{uuid:signalement}/file/delete-tmp', name: 'signalement_delete_tmpfile', methods: ['DELETE'])]
+    #[Route('/{code}/file/delete-tmp', name: 'signalement_delete_tmpfile', methods: ['DELETE'])]
     public function deleteTmpFile(
-        Signalement $signalement,
+        string $code,
         Request $request,
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
         FileRepository $fileRepository,
+        SignalementRepository $signalementRepository,
     ): JsonResponse {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
         $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
@@ -113,14 +119,16 @@ class SignalementFileController extends AbstractController
     /**
      * @throws FilesystemException
      */
-    #[Route('/{uuid:signalement}/file/delete', name: 'signalement_delete_file')]
+    #[Route('/{code}/file/delete', name: 'signalement_delete_file')]
     public function deleteFileSignalement(
-        Signalement $signalement,
+        string $code,
         Request $request,
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         SuiviManager $suiviManager,
+        SignalementRepository $signalementRepository,
     ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -156,11 +164,13 @@ class SignalementFileController extends AbstractController
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 
-    #[Route('/{uuid:signalement}/file/export-pdf-usager', name: 'signalement_gen_pdf')]
+    #[Route('/{code}/file/export-pdf-usager', name: 'signalement_gen_pdf')]
     public function generatePdfSignalement(
-        Signalement $signalement,
+        string $code,
         MessageBusInterface $messageBus,
+        SignalementRepository $signalementRepository,
     ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();

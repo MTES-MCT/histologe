@@ -19,7 +19,7 @@ trait UserHelper
             return new SignalementUser(
                 userIdentifier: $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
                 email: $signalement->getMailDeclarant(),
-                user: $signalement->getSignalementUsager()->getDeclarant(),
+                user: $signalement->getSignalementUsager()->getOccupant(),
             );
         }
 

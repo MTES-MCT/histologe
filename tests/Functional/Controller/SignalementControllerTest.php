@@ -8,7 +8,6 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
-use App\Manager\UserManager;
 use App\Repository\SuiviRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
@@ -51,7 +50,7 @@ class SignalementControllerTest extends WebTestCase
             'statut' => $status,
             'isUsagerAbandonProcedure' => null,
         ]);
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::OCCUPANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
@@ -62,12 +61,12 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $urlSuiviProcedureUser);
 
-        if (SignalementStatus::ACTIVE->value === $status) {
-            $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/procedure');
-        } elseif (in_array($status, [SignalementStatus::DRAFT->value, SignalementStatus::DRAFT_ARCHIVED->value])) {
+        if (in_array($status, [SignalementStatus::DRAFT->value, SignalementStatus::DRAFT_ARCHIVED->value])) {
             $this->assertResponseRedirects('/authentification/'.$signalement->getCodeSuivi());
-        } else {
+        } elseif (SignalementStatus::ARCHIVED->value === $status) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi());
+        } else {
+            $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/procedure');
         }
     }
 
@@ -88,7 +87,7 @@ class SignalementControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUser = $router->generate('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
 
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::OCCUPANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
 
@@ -127,7 +126,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure', ['code' => $signalement->getCodeSuivi()]);
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::OCCUPANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         $crawler = $client->request('POST', $urlSuiviSignalementUserResponse);
@@ -149,7 +148,7 @@ class SignalementControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_abandon', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::OCCUPANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         $reason = 'Changement de logement';
@@ -187,7 +186,7 @@ class SignalementControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_poursuite', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::OCCUPANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         $details = 'on veut vraiment vivre mieux';
@@ -223,7 +222,7 @@ class SignalementControllerTest extends WebTestCase
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_messages', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
-        $signalementUser = $this->getSignalementUser($signalement, UserManager::OCCUPANT);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
