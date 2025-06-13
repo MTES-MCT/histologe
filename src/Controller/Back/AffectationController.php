@@ -7,7 +7,6 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
-use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Security\Voter\AffectationVoter;
@@ -29,7 +28,6 @@ class AffectationController extends AbstractController
         private readonly SignalementManager $signalementManager,
         private readonly AffectationManager $affectationManager,
         private readonly PartnerRepository $partnerRepository,
-        private readonly InterconnectionBus $interconnectionBus,
     ) {
     }
 
@@ -45,6 +43,7 @@ class AffectationController extends AbstractController
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted(AffectationVoter::TOGGLE, $signalement);
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
+            $unnotifiedPartners = [];
             $data = $request->get('signalement-affectation');
             if (isset($data['partners'])) {
                 /** @var User $user */
@@ -65,8 +64,9 @@ class AffectationController extends AbstractController
                         $user
                     );
                     if ($affectation instanceof Affectation) {
-                        $this->affectationManager->persist($affectation);
-                        $this->interconnectionBus->dispatch($affectation);
+                        if (!$partner->receiveEmailNotifications()) {
+                            $unnotifiedPartners[] = $partner;
+                        }
                     }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
@@ -75,7 +75,12 @@ class AffectationController extends AbstractController
                 $this->affectationManager->removeAffectationsFrom($signalement);
             }
             $this->affectationManager->flush();
-            $this->addFlash('success', 'Les affectations ont bien été effectuées.');
+            $successMessage = 'Les affectations ont bien été effectuées.';
+            if (!empty($unnotifiedPartners)) {
+                $successMessage .= '<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : ';
+                $successMessage .= implode(', ', array_map(fn ($partner) => $partner->getNom(), $unnotifiedPartners));
+            }
+            $this->addFlash('success success-raw', $successMessage);
 
             return $this->json(['status' => 'success']);
         }
@@ -106,6 +111,29 @@ class AffectationController extends AbstractController
         }
 
         return $this->json(['status' => 'denied'], 400);
+    }
+
+    #[Route('/affectation/{affectation}/reinit', name: 'back_signalement_affectation_reinit', methods: ['POST'])]
+    public function reinitAffectation(
+        Affectation $affectation,
+        Request $request,
+    ): RedirectResponse {
+        $this->denyAccessUnlessGranted(AffectationVoter::AFFECTATION_REINIT, $affectation);
+        if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), $request->get('_token'))) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $this->affectationManager->remove($affectation);
+            $this->affectationManager->createAffectation(
+                $affectation->getSignalement(),
+                $affectation->getPartner(),
+                $user,
+            );
+            $this->affectationManager->flush();
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide, merci de réessayer.');
+        }
+
+        return new RedirectResponse($this->generateUrl('back_signalement_view', ['uuid' => $affectation->getSignalement()->getUuid()]));
     }
 
     #[Route(

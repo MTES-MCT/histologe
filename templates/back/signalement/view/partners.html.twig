@@ -66,15 +66,29 @@
                                 {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
                                     <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
                                 {% endif %}
+                                {% if not partnerAffectation.partner.receiveEmailNotifications %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm">Notif. e-mail désactivées</span>
+                                {% endif %}
                             </div>
-                            {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
-                                <div class="fr-col-2 fr-text--right">
+                            <div class="fr-col-2 fr-text--right">
+                                {% if is_granted('AFFECTATION_REINIT', partnerAffectation) %}
+                                    <button 
+                                        title="Réaffecter le partenaire" 
+                                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-refresh-line open-modal-reinit-affectation"
+                                        data-fr-opened="false" 
+                                        aria-controls="fr-modal-reinit-affectation"
+                                        data-partner-nom="{{ partnerAffectation.partner.nom }}"
+                                        data-action="{{ path('back_signalement_affectation_reinit', {affectation: partnerAffectation.id}) }}"
+                                        >
+                                    </button>
+                                {% endif %}
+                                {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
                                     <button title="Désaffecter le partenaire"
                                             data-delete="{{ path('back_signalement_remove_partner',{uuid:signalement.uuid,affectation:partnerAffectation.id}) }}"
                                             data-token="{{ csrf_token('signalement_remove_partner_'~signalement.id) }}"
                                             class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line partner-row-delete"></button>
-                                </div>
-                            {% endif %}
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
