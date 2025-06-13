@@ -362,6 +362,8 @@ class EsaboraManager
     }
 
     /**
+     * @param array<mixed> $additionalInformation
+     *
      * @throws \Exception
      */
     private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH, array $additionalInformation): bool

@@ -21,6 +21,9 @@ class DossierVisiteSISH
     private ?string $visiteType = null;
     private ?string $visitePar = null;
 
+    /**
+     * @param array<mixed> $item
+     */
     public function __construct(array $item)
     {
         if (!empty($item)) {

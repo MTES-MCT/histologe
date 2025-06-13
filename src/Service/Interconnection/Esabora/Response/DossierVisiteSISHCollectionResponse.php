@@ -14,6 +14,9 @@ class DossierVisiteSISHCollectionResponse implements DossierCollectionResponseIn
     /** @var DossierVisiteSISH[] */
     private array $collection = [];
 
+    /**
+     * @param array<mixed> $response
+     */
     public function __construct(array $response, int $statusCode)
     {
         if (!empty($response)) {
