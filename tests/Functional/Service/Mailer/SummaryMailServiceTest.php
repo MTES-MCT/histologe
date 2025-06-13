@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Functional\Service\Mailer;
+namespace App\Tests\Functional\Service\Mailer;
 
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
