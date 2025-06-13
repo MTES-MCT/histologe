@@ -79,14 +79,10 @@ class RialService
         $listLocaux = $this->searchLocauxByBanId($banId);
         if (empty($listLocaux)) {
             return null;
-
-        // Single result: direct return
-        } elseif (1 === \count($listLocaux)) {
-            return $listLocaux[0];
         }
-        $result = null;
 
         // Multiple results: check if only one "habitation principale"
+        $result = null;
         foreach ($listLocaux as $localId) {
             $infoLocal = $this->searchLocalByIdFiscal($localId);
             if (!empty($infoLocal) && in_array($infoLocal['descriptifGeneralLocal']['codeNatureLocal'], self::CODES_NATURES_ACCEPTED)) {
