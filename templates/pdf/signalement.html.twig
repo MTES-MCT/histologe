@@ -434,16 +434,6 @@
                                         {% endif %}
                                     </li>
                                 {% endif %}
-                                {% if signalement.numeroInvariant %}
-                                    <li>Invariant fiscal (saisie) :
-                                        {{signalement.numeroInvariant}}
-                                    </li>
-                                {% endif %}
-                                {% if signalement.numeroInvariantRial %}
-                                    <li>Invariant fiscal (automatique) :
-                                        {{signalement.numeroInvariantRial}}
-                                    </li>
-                                {% endif %}
                                 {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
                                     <li>Etat des lieux :
                                         {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
@@ -455,6 +445,16 @@
                                         {% endif %}
                                     </li>
                                 {% endif %}
+                            {% endif %}
+                            {% if signalement.numeroInvariant %}
+                                <li>Invariant fiscal saisi par l'usager :
+                                    {{signalement.numeroInvariant}}
+                                </li>
+                            {% endif %}
+                            {% if signalement.numeroInvariantRial %}
+                                <li>Invariant fiscal récupéré (base DGFIP) :
+                                    {{signalement.numeroInvariantRial}}
+                                </li>
                             {% endif %}
                             <li>
                                 <b>DPE :</b>

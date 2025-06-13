@@ -346,16 +346,6 @@
 							{{signalement.typeCompositionLogement.bailDpeBail(false)}}
 						</li>
 					{% endif %}
-					{% if signalement.numeroInvariant %}
-						<li>Invariant fiscal (saisie) :
-							{{signalement.numeroInvariant}}
-						</li>
-					{% endif %}
-					{% if signalement.numeroInvariantRial %}
-						<li>Invariant fiscal (automatique) :
-							{{signalement.numeroInvariantRial}}
-						</li>
-					{% endif %}
 					{% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
 						<li>Etat des lieux :
 							{{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
@@ -371,6 +361,11 @@
 							{{signalement.typeCompositionLogement.bailDpeClasseEnergetique}}
 						</li>
 					{% endif %}
+				{% endif %}
+				{% if signalement.numeroInvariant %}
+					<li>Invariant fiscal :
+						{{signalement.numeroInvariant}}
+					</li>
 				{% endif %}
 				{% if signalement.loyer %}
 					<li>Montant du loyer :

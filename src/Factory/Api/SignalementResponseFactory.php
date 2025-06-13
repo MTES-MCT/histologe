@@ -118,7 +118,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->logementVacant = $signalement->getIsLogementVacant();
         $signalementResponse->bailEnCours = $signalement->getIsBailEnCours();
         $signalementResponse->bailExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeBail());
-        $signalementResponse->invariantFiscal = !empty($signalement->getNumeroInvariant()) ? $signalement->getNumeroInvariant() : $signalement->getNumeroInvariantRial();
+        $signalementResponse->invariantFiscal = !empty($signalement->getNumeroInvariantRial()) ? $signalement->getNumeroInvariantRial() : $signalement->getNumeroInvariant();
         $signalementResponse->etatDesLieuxExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeEtatDesLieux());
         $signalementResponse->preavisDepartTransmis = $signalement->getisPreavisDepart();
         $signalementResponse->demandeRelogementEffectuee = $signalement->getIsRelogement();

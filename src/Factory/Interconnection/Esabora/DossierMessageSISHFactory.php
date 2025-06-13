@@ -67,10 +67,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ? substr($signalement->getVilleOccupant(), 0, 60)
             : null;
         $numeroInvariant = null;
-        if (!empty($signalement->getNumeroInvariant())) {
-            $numeroInvariant = substr($signalement->getNumeroInvariant(), 0, 12);
-        } elseif (!empty($signalement->getNumeroInvariantRial())) {
+        if (!empty($signalement->getNumeroInvariantRial())) {
             $numeroInvariant = substr($signalement->getNumeroInvariantRial(), 0, 12);
+        } elseif (!empty($signalement->getNumeroInvariant())) {
+            $numeroInvariant = substr($signalement->getNumeroInvariant(), 0, 12);
         }
         $typeEnergieLogement = $signalement->getTypeEnergieLogement()
             ? substr($signalement->getTypeEnergieLogement(), 0, 30)

@@ -118,16 +118,6 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 						{{signalement.typeCompositionLogement.bailDpeBail(false)}}
 					</li>
 				{% endif %}
-				{% if signalement.numeroInvariant %}
-					<li>Invariant fiscal (saisie) :
-						{{signalement.numeroInvariant}}
-					</li>
-				{% endif %}
-				{% if signalement.numeroInvariantRial %}
-					<li>Invariant fiscal (automatique) :
-						{{signalement.numeroInvariantRial}}
-					</li>
-				{% endif %}
 				{% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
 					<li>Etat des lieux :
 						{{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
@@ -143,6 +133,11 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 						{{signalement.typeCompositionLogement.bailDpeClasseEnergetique}}
 					</li>
 				{% endif %}
+			{% endif %}
+			{% if signalement.numeroInvariant %}
+				<li>Invariant fiscal :
+					{{signalement.numeroInvariant}}
+				</li>
 			{% endif %}
 			{% if signalement.loyer %}
 				<li>Montant du loyer :
