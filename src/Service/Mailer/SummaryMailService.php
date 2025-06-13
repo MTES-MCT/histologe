@@ -5,21 +5,18 @@ namespace App\Service\Mailer;
 use App\Entity\Enum\NotificationType;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class SummaryMailService
 {
     public function __construct(
         private readonly NotificationRepository $notificationRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        #[Autowire(env: 'FEATURE_EMAIL_RECAP')]
-        private readonly bool $featureEmailRecap,
     ) {
     }
 
     public function sendSummaryEmailIfNeeded(User $user): int
     {
-        $isNotifiable = $this->featureEmailRecap && $user->getIsMailingActive() && $user->getIsMailingSummary();
+        $isNotifiable = $user->getIsMailingActive() && $user->getIsMailingSummary();
         $notifications = $this->notificationRepository->findWaitingSummaryForUser($user);
         if (!$isNotifiable) {
             $this->notificationRepository->massUpdate($notifications, ['waitMailingSummary' => false]);

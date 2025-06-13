@@ -41,7 +41,7 @@ class SuiviVisiteFutureReminderToUsagerMailer extends AbstractNotificationMailer
             'partner_name' => $partnerName,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],
+                ['code' => $signalement->getCodeSuivi()],
             ),
         ];
     }

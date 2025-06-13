@@ -36,7 +36,7 @@ class SignalementUserProviderTest extends TestCase
         $mockUser = $this->createMock(User::class);
         $this->signalementRepository
             ->method('findOneByCodeForPublic')
-            ->with('12345678', false)
+            ->with('12345678')
             ->willReturn($signalement);
 
         $this->userRepository
@@ -95,7 +95,7 @@ class SignalementUserProviderTest extends TestCase
 
         $this->signalementRepository
             ->method('findOneByCodeForPublic')
-            ->with('12345678', false)
+            ->with('12345678')
             ->willReturn($signalement);
 
         $this->userRepository

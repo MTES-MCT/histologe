@@ -91,14 +91,14 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             ),
             [
                 'code' => '87654321',
-                'visitor-type' => 'declarant',
+                'visitor-type' => 'déclarant',
                 'login-first-letter-prenom' => 'N',
                 'login-first-letter-nom' => 'D',
                 'login-code-postal' => '75020',
                 '_csrf_token' => 'token456',
             ],
             [
-                'identifier' => '87654321:declarant',
+                'identifier' => '87654321:déclarant',
                 'email' => 'nadia.durand@example.com',
                 'roles' => 'ROLE_DECLARANT',
             ],

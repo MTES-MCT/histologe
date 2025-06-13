@@ -10,11 +10,11 @@ use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
-use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use App\Tests\SessionHelper;
+use App\Tests\UserHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -24,7 +24,7 @@ use Symfony\Component\Routing\RouterInterface;
 class SignalementFileControllerTest extends WebTestCase
 {
     use SessionHelper;
-
+    use UserHelper;
     private ?KernelBrowser $client = null;
     private ?Signalement $signalement = null;
     private ?SignalementUser $signalementUser = null;
@@ -39,13 +39,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         /* @var Signalement $signalement */
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
-
-        $this->signalementUser = new SignalementUser(
-            $this->signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-            $this->signalement->getMailOccupant(),
-            $this->signalement->getSignalementUsager()->getOccupant()
-        );
-
+        $this->signalementUser = $this->getSignalementUser($this->signalement);
         /* @var RouterInterface $router */
         $this->router = self::getContainer()->get(RouterInterface::class);
     }
@@ -93,7 +87,7 @@ class SignalementFileControllerTest extends WebTestCase
 
         self::getContainer()->set(SignalementFileProcessor::class, $signalementFileProcessor);
 
-        $route = $this->router->generate('signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
+        $route = $this->router->generate('signalement_add_file', ['code' => $this->signalement->getCodeSuivi()]);
         $this->client->request('POST', $route,
             [
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
@@ -124,7 +118,7 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->client->loginUser($this->signalementUser, 'code_suivi');
 
-        $route = $this->router->generate('signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
+        $route = $this->router->generate('signalement_add_file', ['code' => $this->signalement->getCodeSuivi()]);
         $this->client->request(
             'POST',
             $route,
@@ -148,14 +142,13 @@ class SignalementFileControllerTest extends WebTestCase
     public function testDeleteFileAccessDeniedSignalement()
     {
         $this->client->catchExceptions(false);
-        $route = $this->router->generate('signalement_delete_file', ['uuid' => $this->signalement->getUuid()]);
+        $route = $this->router->generate('signalement_delete_file', ['code' => $this->signalement->getCodeSuivi()]);
         /** @var File $file */
         $file = $this->signalement->getFiles()->first();
         try {
             $this->client->request('POST', $route, [
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$this->signalement->getId()),
                 'file_id' => $file->getId(),
-                'from' => $this->signalement->getMailOccupant(),
             ]);
 
             $this->fail('L\'exception AccessDeniedException n\'a pas été levée.');
@@ -169,7 +162,7 @@ class SignalementFileControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
 
-        $route = $this->router->generate('signalement_delete_file', ['uuid' => '00000000-0000-0000-2023-000000000027']);
+        $route = $this->router->generate('signalement_delete_file', ['code' => $signalement->getCodeSuivi()]);
         /** @var File $file */
         $file = $signalement->getFiles()->last();
 
@@ -209,13 +202,13 @@ class SignalementFileControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000012']);
 
-        $route = $this->router->generate('signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('signalement_gen_pdf', ['code' => $signalement->getCodeSuivi()]);
 
         // on logue l'occupant du signalement
         /** @var User $usager */
         $usager = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
         $signalementUser = new SignalementUser(
-            userIdentifier: $signalement->getCodeSuivi().':'.SignalementUserProvider::OCCUPANT,
+            userIdentifier: $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
             email: $signalement->getMailOccupant(),
             user: $usager
         );

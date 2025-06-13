@@ -5,11 +5,11 @@
     data-file-type="document"
     data-has-changes="false"
     data-validated="false"
-    data-add-file-route="{{ path('signalement_add_file',{uuid:signalement.uuid}) }}"
+    data-add-file-route="{{ path('signalement_add_file',{code:signalement.codeSuivi}) }}"
     data-add-file-token="{{ csrf_token('signalement_add_file_'~signalement.id) }}"
-    data-edit-file-route="{{ path('signalement_edit_file',{uuid:signalement.uuid}) }}"
+    data-edit-file-route="{{ path('signalement_edit_file',{code:signalement.codeSuivi}) }}"
     data-edit-file-token="{{ csrf_token('signalement_edit_file_'~signalement.id) }}"
-    data-delete-tmp-file-route="{{ path('signalement_delete_tmpfile',{uuid:signalement.uuid}) }}"
+    data-delete-tmp-file-route="{{ path('signalement_delete_tmpfile',{code:signalement.codeSuivi}) }}"
     >
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">

@@ -8,10 +8,9 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
-use App\Manager\UserManager;
 use App\Repository\SuiviRepository;
-use App\Security\User\SignalementUser;
 use App\Tests\SessionHelper;
+use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +19,7 @@ use Symfony\Component\Routing\RouterInterface;
 class SignalementControllerTest extends WebTestCase
 {
     use SessionHelper;
+    use UserHelper;
 
     protected function setUp(): void
     {
@@ -50,40 +50,23 @@ class SignalementControllerTest extends WebTestCase
             'statut' => $status,
             'isUsagerAbandonProcedure' => null,
         ]);
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviProcedureUser = $router->generate('front_suivi_procedure', [
             'code' => $signalement->getCodeSuivi(),
-        ]).'?from='.$signalement->getMailOccupant().'&suiviAuto='.Suivi::ARRET_PROCEDURE;
+        ]).'?suiviAuto='.Suivi::ARRET_PROCEDURE;
 
-        $crawler = $client->request('GET', $urlSuiviProcedureUser);
+        $client->request('GET', $urlSuiviProcedureUser);
 
-        if (SignalementStatus::ARCHIVED->value === $status || SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
-            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-            $this->assertEquals('Le lien utilisé est expiré ou invalide.', $crawler->filter('div.fr-alert p')->text());
+        if (in_array($status, [SignalementStatus::DRAFT->value, SignalementStatus::DRAFT_ARCHIVED->value])) {
+            $this->assertResponseRedirects('/authentification/'.$signalement->getCodeSuivi());
+        } elseif (SignalementStatus::ARCHIVED->value === $status) {
+            $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi());
         } else {
-            if (self::$kernel->getContainer()->getParameter('feature_suivi_action')) {
-                $this->assertResponseRedirects(
-                    '/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/procedure'
-                );
-            } else {
-                $this->assertEquals('Suivre mon signalement', $crawler->filter('h1')->text());
-
-                $crawler = $client->request('POST', $urlSuiviProcedureUser, [
-                    '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
-                    'visitor-type' => 'declarant',
-                    'login-first-letter-prenom' => !empty($signalement->getPrenomDeclarant()) ? $signalement->getPrenomDeclarant()[0] : $signalement->getPrenomOccupant()[0],
-                    'login-first-letter-nom' => !empty($signalement->getNomDeclarant()) ? $signalement->getNomDeclarant()[0] : $signalement->getNomOccupant()[0],
-                    'login-code-postal' => $signalement->getCpOccupant(),
-                ]);
-                if (SignalementStatus::ACTIVE->value === $status) {
-                    $this->assertEquals('Signalement #2022-4 '.ucwords($signalement->getPrenomOccupant().' '.$signalement->getNomOccupant()), $crawler->filter('h1')->eq(2)->text());
-                } else {
-                    $this->assertResponseRedirects(
-                        '/suivre-mon-signalement/'.$signalement->getCodeSuivi().'?from='.$signalement->getMailOccupant()
-                    );
-                }
-            }
+            $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/procedure');
         }
     }
 
@@ -102,44 +85,31 @@ class SignalementControllerTest extends WebTestCase
         ]);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $urlSuiviSignalementUser = $router->generate('front_suivi_signalement', [
-            'code' => $signalement->getCodeSuivi(),
-        ]).'?from='.$signalement->getMailOccupant();
+        $urlSuiviSignalementUser = $router->generate('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
 
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
 
-        if (SignalementStatus::DRAFT->value === $status || SignalementStatus::DRAFT_ARCHIVED->value === $status) {
-            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-            $this->assertEquals('Le lien utilisé est invalide, vérifiez votre saisie.', $crawler->filter('div.fr-alert p')->text());
+        if (SignalementStatus::ARCHIVED->value === $status) {
+            $this->assertEquals(
+                'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
+                $crawler->filter('.fr-tile__detail')->text()
+            );
+        } elseif (SignalementStatus::ACTIVE->value === $status) {
+            $this->assertEquals('Votre dossier', $crawler->filter('h1')->text());
+        } elseif (SignalementStatus::CLOSED->value === $status) {
+            $this->assertEquals(
+                'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.',
+                $crawler->filter('.fr-tile__detail')->text()
+            );
+        } elseif (SignalementStatus::REFUSED->value === $status) {
+            $this->assertEquals(
+                'Signalement refusé',
+                $crawler->filter('.fr-badge.fr-badge--sm.fr-badge--no-icon.fr-badge--error')->text()
+            );
         } else {
-            $this->assertEquals('Suivre mon signalement', $crawler->filter('h1')->text());
-
-            $crawler = $client->request('POST', $urlSuiviSignalementUser, [
-                '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
-                'visitor-type' => 'declarant',
-                'login-first-letter-prenom' => !empty($signalement->getPrenomDeclarant()) ? $signalement->getPrenomDeclarant()[0] : $signalement->getPrenomOccupant()[0],
-                'login-first-letter-nom' => !empty($signalement->getNomDeclarant()) ? $signalement->getNomDeclarant()[0] : $signalement->getNomOccupant()[0],
-                'login-code-postal' => $signalement->getCpOccupant(),
-            ]);
-
-            if (SignalementStatus::ARCHIVED->value === $status) {
-                $this->assertEquals(
-                    'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
-                    $crawler->filter('.fr-tile__detail')->text()
-                );
-            } elseif (SignalementStatus::ACTIVE->value === $status) {
-                $this->assertEquals('Votre dossier', $crawler->filter('h1')->text());
-            } elseif (SignalementStatus::CLOSED->value === $status) {
-                $this->assertEquals(
-                    'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.',
-                    $crawler->filter('.fr-tile__detail')->text()
-                );
-            } elseif (SignalementStatus::REFUSED->value === $status) {
-                $this->assertEquals(
-                    'Signalement refusé',
-                    $crawler->filter('.fr-badge.fr-badge--sm.fr-badge--no-icon.fr-badge--error')->text()
-                );
-            }
+            $this->assertResponseRedirects('/authentification/'.$signalement->getCodeSuivi());
         }
     }
 
@@ -155,18 +125,8 @@ class SignalementControllerTest extends WebTestCase
         ]);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $urlSuiviSignalementUserResponse = $router->generate(
-            'front_suivi_signalement_procedure',
-            [
-                'code' => $codeSuivi = $signalement->getCodeSuivi(),
-            ]);
-
-        $signalementUser = new SignalementUser(
-            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-            $signalement->getMailOccupant(),
-            $signalement->getSignalementUsager()->getOccupant()
-        );
-
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure', ['code' => $signalement->getCodeSuivi()]);
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         $crawler = $client->request('POST', $urlSuiviSignalementUserResponse);
@@ -186,23 +146,14 @@ class SignalementControllerTest extends WebTestCase
         $this->assertFalse($signalement->getIsUsagerAbandonProcedure());
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $urlSuiviSignalementUserResponse = $router->generate(
-            'front_suivi_signalement_procedure_abandon',
-            [
-                'code' => $codeSuivi = $signalement->getCodeSuivi(),
-            ]);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_abandon', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
-        $signalementUser = new SignalementUser(
-            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-            $signalement->getMailOccupant(),
-            $signalement->getSignalementUsager()->getOccupant()
-        );
-
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         $reason = 'Changement de logement';
         $details = 'on a trouvé un meilleur appartement';
-        $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
+        $client->request('POST', $urlSuiviSignalementUserResponse, [
             'usager_cancel_procedure' => [
                 'reason' => $reason,
                 'details' => $details,
@@ -233,22 +184,13 @@ class SignalementControllerTest extends WebTestCase
         $this->assertNull($signalement->getIsUsagerAbandonProcedure());
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $urlSuiviSignalementUserResponse = $router->generate(
-            'front_suivi_signalement_procedure_poursuite',
-            [
-                'code' => $codeSuivi = $signalement->getCodeSuivi(),
-            ]);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_poursuite', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
-        $signalementUser = new SignalementUser(
-            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-            $signalement->getMailOccupant(),
-            $signalement->getSignalementUsager()->getOccupant()
-        );
-
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         $details = 'on veut vraiment vivre mieux';
-        $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
+        $client->request('POST', $urlSuiviSignalementUserResponse, [
             'usager_poursuivre_procedure' => [
                 'details' => $details,
                 '_token' => $this->generateCsrfToken($client, 'usager_poursuivre_procedure'),
@@ -278,16 +220,9 @@ class SignalementControllerTest extends WebTestCase
         ]);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_messages', [
-            'code' => $codeSuivi = $signalement->getCodeSuivi(),
-        ]);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_messages', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
-        $signalementUser = new SignalementUser(
-            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-            $signalement->getMailOccupant(),
-            $signalement->getSignalementUsager()->getOccupant()
-        );
-
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
         $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
@@ -307,7 +242,7 @@ class SignalementControllerTest extends WebTestCase
         } elseif (SignalementStatus::CLOSED->value === $status) {
             $this->assertEquals('Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.', $crawler->filter('.fr-alert p')->text());
         } else {
-            $this->assertEquals('Le lien utilisé est invalide, vérifiez votre saisie.', $crawler->filter('.fr-alert p')->text());
+            $this->assertResponseRedirects('/authentification/'.$signalement->getCodeSuivi());
         }
     }
 

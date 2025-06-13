@@ -5,18 +5,17 @@ namespace App\Controller;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
-use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
+use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,23 +25,21 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/signalement')]
 class SignalementFileController extends AbstractController
 {
-    #[Route('/{uuid:signalement}/file/add', name: 'signalement_add_file')]
+    #[Route('/{code}/file/add', name: 'signalement_add_file')]
     public function addFileSignalement(
-        Signalement $signalement,
+        string $code,
         Request $request,
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
-        Security $security,
+        SignalementRepository $signalementRepository,
     ): JsonResponse {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) || !$request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
-        /** @var SignalementUser $currentUser */
-        $currentUser = $security->getUser();
-        if (!$currentUser || !$currentUser->getUser()) {
-            return $this->json(['response' => 'Vous devez être connecté pour ajouter un fichier'], Response::HTTP_UNAUTHORIZED);
-        }
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
         }
@@ -51,27 +48,25 @@ class SignalementFileController extends AbstractController
         if (!$signalementFileProcessor->isValid()) {
             return $this->json(['response' => $signalementFileProcessor->getErrorMessages()], Response::HTTP_BAD_REQUEST);
         }
-        $signalementFileProcessor->addFilesToSignalement(fileList: $fileList, signalement: $signalement, user: $currentUser->getUser(), isTemp : true);
+        $signalementFileProcessor->addFilesToSignalement(fileList: $fileList, signalement: $signalement, user: $signalementUser->getUser(), isTemp : true);
         $entityManager->persist($signalement);
         $entityManager->flush();
 
         return $this->json(['response' => $signalementFileProcessor->getLastFile()->getId()]);
     }
 
-    #[Route('/{uuid:signalement}/file/edit', name: 'signalement_edit_file')]
+    #[Route('/{code}/file/edit', name: 'signalement_edit_file')]
     public function editFileSignalement(
-        Signalement $signalement,
+        string $code,
         Request $request,
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
-        Security $security,
+        SignalementRepository $signalementRepository,
     ): JsonResponse {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) || !$request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
-        }
-        if (!$security->getUser()) {
-            return $this->json(['response' => 'Vous devez être connecté pour éditer un fichier'], Response::HTTP_UNAUTHORIZED);
         }
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
             return $this->json(['response' => 'Token CSRF invalide, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
@@ -96,19 +91,18 @@ class SignalementFileController extends AbstractController
         return $this->json(['response' => 'success']);
     }
 
-    #[Route('/{uuid:signalement}/file/delete-tmp', name: 'signalement_delete_tmpfile', methods: ['DELETE'])]
+    #[Route('/{code}/file/delete-tmp', name: 'signalement_delete_tmpfile', methods: ['DELETE'])]
     public function deleteTmpFile(
-        Signalement $signalement,
+        string $code,
         Request $request,
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
         FileRepository $fileRepository,
-        Security $security,
+        SignalementRepository $signalementRepository,
     ): JsonResponse {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
-        if (!$security->getUser()) {
-            return $this->json(['response' => 'Vous devez être connecté pour supprimer un fichier'], Response::HTTP_UNAUTHORIZED);
-        }
+
         $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
         if (!$file) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
@@ -125,28 +119,24 @@ class SignalementFileController extends AbstractController
     /**
      * @throws FilesystemException
      */
-    #[Route('/{uuid:signalement}/file/delete', name: 'signalement_delete_file')]
+    #[Route('/{code}/file/delete', name: 'signalement_delete_file')]
     public function deleteFileSignalement(
-        Signalement $signalement,
+        string $code,
         Request $request,
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         SuiviManager $suiviManager,
-        Security $security,
+        SignalementRepository $signalementRepository,
     ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
         $fileId = $request->get('file_id');
-        $file = $fileRepository->findOneBy(
-            [
-                'id' => $fileId,
-                'signalement' => $signalement,
-            ]
-        );
+        $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
         $this->denyAccessUnlessGranted('FRONT_FILE_DELETE', $file);
-        /** @var SignalementUser $currentUser */
-        $currentUser = $security->getUser();
-        if (!$currentUser || !$currentUser->getUser()) {
-            return $this->json(['response' => 'Vous devez être connecté pour supprimer un fichier'], Response::HTTP_UNAUTHORIZED);
-        }
+
         if (null === $file) {
             $this->addFlash('error', 'Ce fichier n\'existe plus');
         } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
@@ -156,7 +146,7 @@ class SignalementFileController extends AbstractController
                 $description .= 'par l\'usager :';
                 $description .= '<ul><li>'.$filename.'</li></ul>';
                 $suiviManager->createSuivi(
-                    user: $currentUser->getUser(),
+                    user: $signalementUser->getUser(),
                     signalement: $signalement,
                     description: $description,
                     type: Suivi::TYPE_AUTO,
@@ -171,27 +161,23 @@ class SignalementFileController extends AbstractController
             $this->addFlash('error', 'Token CSRF invalide, veuillez rechargez la page');
         }
 
-        return $this->redirectToRoute(
-            'front_suivi_signalement',
-            ['code' => $signalement->getCodeSuivi(), 'from' => $currentUser->getEmail()]
-        );
+        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 
-    #[Route('/{uuid:signalement}/file/export-pdf-usager', name: 'signalement_gen_pdf')]
+    #[Route('/{code}/file/export-pdf-usager', name: 'signalement_gen_pdf')]
     public function generatePdfSignalement(
-        Signalement $signalement,
+        string $code,
         MessageBusInterface $messageBus,
-        Security $security,
+        SignalementRepository $signalementRepository,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
-
-        /** @var SignalementUser $currentUser */
-        $currentUser = $security->getUser();
-        // TODO Remove  with FEATURE_SECURE_UUID_URL
-        if (!$currentUser instanceof SignalementUser || null === $currentUser->getEmail()) {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+        if (null === $signalementUser->getEmail()) {
             $this->addFlash('error', 'Il n\'y a pas d\'adresse e-mail à laquelle vous envoyer le signalement au format PDF.');
         } else {
-            $usagerEmail = $currentUser->getEmail();
+            $usagerEmail = $signalementUser->getEmail();
 
             $message = (new PdfExportMessage())
                 ->setSignalementId($signalement->getId())
@@ -209,9 +195,6 @@ class SignalementFileController extends AbstractController
             );
         }
 
-        return $this->redirectToRoute(
-            'front_suivi_signalement',
-            ['code' => $signalement->getCodeSuivi(), 'from' => $usagerEmail ?? '']
-        );
+        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 }

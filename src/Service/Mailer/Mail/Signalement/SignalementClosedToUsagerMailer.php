@@ -31,13 +31,12 @@ class SignalementClosedToUsagerMailer extends AbstractNotificationMailer
     {
         $signalement = $notificationMail->getSignalement();
         $territory = $notificationMail->getTerritory();
-        $toRecipient = $notificationMail->getTo();
 
         return [
             'motif_cloture' => $signalement->getMotifCloture()->label(),
             'link' => $this->generateLink(
                 'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $toRecipient]
+                ['code' => $signalement->getCodeSuivi()]
             ),
             'territory_name' => $territory->getName(),
         ];

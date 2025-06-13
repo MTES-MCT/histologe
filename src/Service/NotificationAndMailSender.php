@@ -20,7 +20,6 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class NotificationAndMailSender
 {
@@ -35,8 +34,6 @@ class NotificationAndMailSender
         private readonly NotificationFactory $notificationFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly Security $security,
-        #[Autowire(env: 'FEATURE_EMAIL_RECAP')]
-        private readonly bool $featureEmailRecap,
     ) {
         $this->suivi = null;
     }
@@ -222,9 +219,6 @@ class NotificationAndMailSender
         ?Affectation $affectation = null,
         ?Signalement $signalement = null,
     ): void {
-        if (!$this->featureEmailRecap && !in_array($type, [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT])) {
-            return;
-        }
         if (NotificationType::NOUVEAU_SUIVI === $type) {
             if (Suivi::DESCRIPTION_SIGNALEMENT_VALIDE === $this->suivi->getDescription()) {
                 return;
@@ -350,7 +344,7 @@ class NotificationAndMailSender
                 if (!$recipientUserOrPartner->getIsMailingActive()) {
                     continue;
                 }
-                if ($this->featureEmailRecap && $recipientUserOrPartner->getIsMailingSummary()) {
+                if ($recipientUserOrPartner->getIsMailingSummary()) {
                     continue;
                 }
             }
