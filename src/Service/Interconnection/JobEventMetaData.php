@@ -7,7 +7,7 @@ use App\Entity\Enum\PartnerType;
 readonly class JobEventMetaData
 {
     /**
-     * @param ?array<mixed>
+     * @param ?array<mixed> $payload
      */
     public function __construct(
         private string $service,

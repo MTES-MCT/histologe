@@ -14,6 +14,9 @@ class DossierEventsSCHSCollectionResponse
     /** @var DossierEventSCHS[] */
     private array $collection = [];
 
+    /**
+     * @param array<mixed> $response
+     */
     public function __construct(array $response, int $statusCode)
     {
         if (!empty($response)) {
@@ -52,6 +55,9 @@ class DossierEventsSCHSCollectionResponse
         return $this->documentTypeName;
     }
 
+    /**
+     * @return array<DossierEventSCHS>
+     */
     public function getCollection(): array
     {
         return $this->collection;

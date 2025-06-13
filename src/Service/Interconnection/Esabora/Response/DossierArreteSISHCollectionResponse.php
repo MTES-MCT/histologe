@@ -14,6 +14,9 @@ class DossierArreteSISHCollectionResponse implements DossierCollectionResponseIn
     /** @var DossierArreteSISH[] */
     private array $collection = [];
 
+    /**
+     * @param array<mixed> $response
+     */
     public function __construct(array $response, int $statusCode)
     {
         if (!empty($response)) {

@@ -3,6 +3,7 @@
 namespace App\Service\Interconnection\Idoss;
 
 use App\Entity\Affectation;
+use App\Entity\File;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -129,6 +130,9 @@ class IdossService
         return $this->processRequestAndSaveJobEvent(partner: $partner, url: $url, jobAction: $jobAction, requestMethod: 'GET');
     }
 
+    /**
+     * @param array<mixed> $payload
+     */
     private function processRequestAndSaveJobEvent(
         Partner $partner,
         string $url,
@@ -165,6 +169,9 @@ class IdossService
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getDossierPayload(DossierMessage $dossierMessage): array
     {
         $payload = [
@@ -213,6 +220,10 @@ class IdossService
     }
 
     /**
+     * @param array<File> $files
+     *
+     * @return array<mixed>
+     *
      * @throws FilesystemException
      */
     private function getFilesPayload(Signalement $signalement, array $files): array
@@ -261,8 +272,16 @@ class IdossService
         throw new \Exception('Token not found : '.$response->getContent(throw: false));
     }
 
-    private function request(string $url, array $payload, ?string $token = null, $requestMethod = 'POST', $contentType = 'application/json'): ResponseInterface
-    {
+    /**
+     * @param array<mixed> $payload
+     */
+    private function request(
+        string $url,
+        array $payload,
+        ?string $token = null,
+        string $requestMethod = 'POST',
+        string $contentType = 'application/json',
+    ): ResponseInterface {
         if (str_contains($this->params->get('host_url'), 'localhost')) {
             if (!str_contains($url, 'signal_logement_wiremock')) {
                 throw new \LogicException('url must contain "signal_logement_wiremock" when on localhost.');

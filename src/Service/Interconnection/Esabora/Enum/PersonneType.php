@@ -11,6 +11,9 @@ enum PersonneType: string
     case SCI = 'I';
     case SYNDIC = 'Y';
 
+    /**
+     * @return array<mixed>
+     */
     public static function toArray(): array
     {
         return array_map(fn ($case) => $case->value, self::cases());
