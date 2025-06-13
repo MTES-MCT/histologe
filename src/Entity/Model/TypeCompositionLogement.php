@@ -31,7 +31,6 @@ class TypeCompositionLogement
         private ?string $compositionLogementEnfants = null,
         private ?string $typeLogementCommoditesPieceAVivre9m = null,
         private ?string $bailDpeBail = null,
-        private ?string $bailDpeInvariant = null,
         private ?string $bailDpeDpe = null,
         private ?string $bailDpeClasseEnergetique = null,
         private ?string $bailDpeEtatDesLieux = null,
@@ -332,18 +331,6 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getBailDpeInvariant(): ?string
-    {
-        return $this->bailDpeInvariant;
-    }
-
-    public function setBailDpeInvariant(?string $bailDpeInvariant): self
-    {
-        $this->bailDpeInvariant = $bailDpeInvariant;
-
-        return $this;
-    }
-
     public function getBailDpeDpe(bool $raw = true): ?string
     {
         return (!$raw && 'nsp' === $this->bailDpeDpe) ? 'Ne sait pas' : $this->bailDpeDpe;
@@ -479,7 +466,6 @@ class TypeCompositionLogement
             'composition_logement_nombre_enfants' => $this->compositionLogementNombreEnfants,
             'composition_logement_enfants' => $this->compositionLogementEnfants,
             'bail_dpe_bail' => $this->bailDpeBail,
-            'bail_dpe_invariant' => $this->bailDpeInvariant,
             'bail_dpe_dpe' => $this->bailDpeDpe,
             'bail_dpe_classe_energetique' => $this->bailDpeClasseEnergetique,
             'bail_dpe_etat_des_lieux' => $this->bailDpeEtatDesLieux,

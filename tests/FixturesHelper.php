@@ -490,11 +490,10 @@ trait FixturesHelper
 
     public function getLocataireTypeComposition(bool $transformPiecesAVivre = false): array
     {
-        $typeCompostion = [
+        $typeComposition = [
             'bail_dpe_dpe' => 'oui',
             'bail_dpe_classe_energetique' => 'G',
             'bail_dpe_bail' => 'oui',
-            'bail_dpe_invariant' => 'abcd12ef34',
             'type_logement_rdc' => 'non',
             'type_logement_nature' => 'appartement',
             'bail_dpe_etat_des_lieux' => 'oui',
@@ -517,7 +516,7 @@ trait FixturesHelper
             'desordres_logement_chauffage_details_dpe_annee' => 'post2023',
         ];
 
-        return $typeCompostion;
+        return $typeComposition;
     }
 
     public function getLocataireSituationFoyer(): array

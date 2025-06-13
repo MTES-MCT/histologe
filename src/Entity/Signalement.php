@@ -373,6 +373,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $numeroInvariant = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $numeroInvariantRial = null;
+
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $nbPiecesLogement = null;
 
@@ -1846,6 +1849,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setNumeroInvariant(?string $numeroInvariant): self
     {
         $this->numeroInvariant = $numeroInvariant;
+
+        return $this;
+    }
+
+    public function getNumeroInvariantRial(): ?string
+    {
+        return $this->numeroInvariantRial;
+    }
+
+    public function setNumeroInvariantRial(?string $numeroInvariantRial): self
+    {
+        $this->numeroInvariantRial = $numeroInvariantRial;
 
         return $this;
     }

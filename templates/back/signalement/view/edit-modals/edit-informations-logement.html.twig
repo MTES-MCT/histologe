@@ -133,7 +133,7 @@
                             </div>
 
                             <div class="fr-input-group">
-                                {% set bailDpeInvariant = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeInvariant : null %}
+                                {% set bailDpeInvariant = signalement.numeroInvariant %}
                                 <label class="fr-label" for="informationLogementBailDpeInvariant">Invariant fiscal (facultatif)</label>
                                 <input class="fr-input" type="text" id="informationLogementBailDpeInvariant" name="bailDpeInvariant"  maxlength="12" value="{{ bailDpeInvariant }}">
                             </div>
