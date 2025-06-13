@@ -7,8 +7,14 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class NotificationMailerRegistry
 {
+    /**
+     * @var iterable<string, NotificationMailerInterface>
+     */
     private iterable $notificationMailers;
 
+    /**
+     * @param iterable<string, NotificationMailerInterface> $notificationMailers
+     */
     public function __construct(
         #[AutowireIterator('app.notification_mailer')] iterable $notificationMailers,
     ) {

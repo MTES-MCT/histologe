@@ -16,6 +16,7 @@ class FailedEmail
     #[ORM\Column(type: 'string', length: 50)]
     private string $type;
 
+    /** @var array<mixed> $toEmail */
     #[ORM\Column(type: 'json')]
     private array $toEmail;
 
@@ -31,6 +32,7 @@ class FailedEmail
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $subject;
 
+    /** @var array<mixed> $context */
     #[ORM\Column(type: 'json')]
     private array $context = [];
 
@@ -84,11 +86,13 @@ class FailedEmail
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getToEmail(): array
     {
         return $this->toEmail;
     }
 
+    /** @param array<mixed> $toEmail */
     public function setToEmail(array $toEmail): static
     {
         $this->toEmail = $toEmail;
@@ -144,11 +148,13 @@ class FailedEmail
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getContext(): array
     {
         return $this->context;
     }
 
+    /** @param array<mixed> $context */
     public function setContext(array $context): static
     {
         $this->context = $context;

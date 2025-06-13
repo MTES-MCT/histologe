@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class TerritoryTest extends TestCase
 {
-    public function testTerritoryIsStringable()
+    public function testTerritoryIsStringable(): void
     {
         $territory = (new Territory())
             ->setName('Ain')

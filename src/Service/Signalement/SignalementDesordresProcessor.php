@@ -11,6 +11,9 @@ class SignalementDesordresProcessor
     ) {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function process(
         Signalement $signalement,
     ): array {
@@ -55,6 +58,9 @@ class SignalementDesordresProcessor
         ];
     }
 
+    /**
+     * @param array<mixed> $photos
+     */
     private function addPhotoBySlug(
         array &$photos,
         Signalement $signalement,
@@ -71,6 +77,9 @@ class SignalementDesordresProcessor
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function processDesordresByZone(
         Signalement $signalement,
     ): array {

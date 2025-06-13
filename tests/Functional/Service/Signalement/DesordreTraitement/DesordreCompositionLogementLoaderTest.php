@@ -22,7 +22,7 @@ class DesordreCompositionLogementLoaderTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testDefineDesordresLinkedToComposition()
+    public function testDefineDesordresLinkedToComposition(): void
     {
         /** @var DesordrePrecisionRepository $desordrePrecisionRepository */
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);

@@ -20,7 +20,7 @@ class CriticiteCalculatorTest extends KernelTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
     }
 
-    public function testCalculateScoreOnOldSignalement()
+    public function testCalculateScoreOnOldSignalement(): void
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->find(1);
@@ -31,7 +31,7 @@ class CriticiteCalculatorTest extends KernelTestCase
         $this->assertEquals(3.16, round($newScore, 2));
     }
 
-    public function testCalculateFromNewFormulaire()
+    public function testCalculateFromNewFormulaire(): void
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         /** @var Signalement $signalement */

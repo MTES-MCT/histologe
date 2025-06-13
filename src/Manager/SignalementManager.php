@@ -895,7 +895,7 @@ class SignalementManager extends AbstractManager
         }
     }
 
-    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser)
+    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser): void
     {
         $signalement->setStatut(SignalementStatus::ACTIVE);
         $signalement->setValidatedAt(new \DateTimeImmutable());

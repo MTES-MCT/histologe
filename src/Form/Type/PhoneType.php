@@ -38,6 +38,9 @@ class PhoneType extends AbstractType
         return TelType::class;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['countryCodes'] = $options['countryCodes'];

@@ -23,6 +23,9 @@ class DossierArreteSISH
     private ?string $arreteMLDate = null;
     private ?string $arreteMLNumero = null;
 
+    /**
+     * @param array<mixed> $item
+     */
     public function __construct(array $item)
     {
         if (!empty($item)) {

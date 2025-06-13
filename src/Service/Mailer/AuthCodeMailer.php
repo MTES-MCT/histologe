@@ -10,7 +10,7 @@ use Symfony\Component\Mime\Email;
 
 class AuthCodeMailer implements AuthCodeMailerInterface
 {
-    private $mailer;
+    private MailerInterface $mailer;
     protected ?string $subject = 'Code de vérification';
     protected ?string $text = 'Votre code de vérification est : %authCode%';
 

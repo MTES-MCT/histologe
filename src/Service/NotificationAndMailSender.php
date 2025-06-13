@@ -269,6 +269,9 @@ class NotificationAndMailSender
         }
     }
 
+    /**
+     * @param ArrayCollection<int, mixed> $recipients
+     */
     private function sendMail(ArrayCollection $recipients, ?NotificationMailerType $mailType): void
     {
         if (!$recipients->isEmpty() && $mailType) {
@@ -289,6 +292,9 @@ class NotificationAndMailSender
         }
     }
 
+    /**
+     * @return ArrayCollection<int, User>
+     */
     private function getRecipientsAdmin(?Territory $territory): ArrayCollection
     {
         $recipients = new ArrayCollection();
@@ -302,6 +308,9 @@ class NotificationAndMailSender
         return $recipients;
     }
 
+    /**
+     * @return ArrayCollection<int, mixed>
+     */
     private function getRecipientsPartners(bool $isFilteredAffectationStatus): ArrayCollection
     {
         $partnerRecipientsMail = new ArrayCollection();
@@ -319,6 +328,9 @@ class NotificationAndMailSender
         return $partnerRecipientsMail;
     }
 
+    /**
+     * @return ArrayCollection<int, mixed>
+     */
     private function getRecipientsPartner(Partner $partner): ArrayCollection
     {
         $recipients = new ArrayCollection();
@@ -335,6 +347,11 @@ class NotificationAndMailSender
         return $recipients;
     }
 
+    /**
+     * @param ArrayCollection<int, mixed> $recipients
+     *
+     * @return array<int, string>
+     */
     private function getRecipientsFilteredEmail(ArrayCollection $recipients): array
     {
         $copyRecipients = clone $recipients;

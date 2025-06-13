@@ -38,7 +38,10 @@ class NotificationMailerRegistryTest extends TestCase
             ->with($notification)
             ->willReturn(true);
 
-        $notificationMailers = new \ArrayIterator([$notificationMailer1, $notificationMailer2]);
+        $notificationMailers = new \ArrayIterator([
+            'TYPE_CRON1' => $notificationMailer1,
+            'TYPE_CRON2' => $notificationMailer2,
+        ]);
         $notificationMailerRegistry = new NotificationMailerRegistry($notificationMailers);
 
         $this->assertTrue($notificationMailerRegistry->send($notification));

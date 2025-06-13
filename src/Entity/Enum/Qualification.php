@@ -29,6 +29,7 @@ enum Qualification: string
     case DANGER = 'DANGER';
     case SUROCCUPATION = 'SUROCCUPATION';
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [
@@ -55,7 +56,7 @@ enum Qualification: string
         ];
     }
 
-    private static function getKeyFromLabel(string $label): string|int|false
+    private static function getKeyFromLabel(string $label): string|false
     {
         $label = mb_trim($label);
         $label = str_contains($label, 'Péril') ? self::MISE_EN_SECURITE_PERIL->label() : $label;
@@ -63,6 +64,7 @@ enum Qualification: string
         return array_search($label, self::getLabelList());
     }
 
+    /** @return array<Qualification> */
     public static function getProcedureSuspecteeList(): array
     {
         return [

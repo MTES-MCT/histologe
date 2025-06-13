@@ -83,6 +83,9 @@ readonly class UserExportLoader
         return $spreadsheet;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public static function getColumnForUser(User $user): array
     {
         $columnsList = self::COLUMNS_LIST;

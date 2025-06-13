@@ -202,7 +202,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         return $content;
     }
 
-    public function signUrl(string $url)
+    public function signUrl(string $url): string
     {
         return $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
     }

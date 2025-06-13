@@ -12,6 +12,7 @@ enum ProprioType: string
         return self::getLabelList()[$this->name];
     }
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [

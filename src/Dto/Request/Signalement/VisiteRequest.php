@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class VisiteRequest
 {
     /**
+     * @param array<mixed> $concludeProcedure
+     *
      * @throws \Exception
      */
     public function __construct(
@@ -32,7 +34,7 @@ class VisiteRequest
     }
 
     #[Assert\Callback]
-    public function validate(ExecutionContextInterface $context, $payload)
+    public function validate(ExecutionContextInterface $context, mixed $payload): void
     {
         if (null === $this->idPartner && empty(trim((string) $this->externalOperator))) {
             $context->buildViolation('Le nom de l\'opérateur externe est requis')->atPath('externalOperator')->addViolation();
@@ -95,6 +97,7 @@ class VisiteRequest
         return $this->details;
     }
 
+    /** @return array<mixed> */
     public function getConcludeProcedure(): ?array
     {
         return $this->concludeProcedure;
