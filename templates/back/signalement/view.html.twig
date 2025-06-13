@@ -34,9 +34,8 @@
         {% include '_partials/_modal_edit_nde.html.twig' %}
     {% endif %}
     {% if is_granted('SIGN_EDIT', signalement) %}
-        {% include '_partials/_modal_upload_files.html.twig' with {
-            'context': 'form-bo-edit'
-        } %}
+        {% include '_partials/_modal_upload_files.html.twig' with {'context': 'form-bo-edit'} %}
+        {% include '_partials/_modal_reinit_affectation.html.twig' %}
     {% endif %}
     {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
         {% include '_partials/_modal_localisation.html.twig' %}

@@ -2,7 +2,6 @@
 
 namespace App\Service\Signalement;
 
-use App\Entity\Affectation;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -10,7 +9,6 @@ use App\Entity\User;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
-use App\Messenger\InterconnectionBus;
 use App\Repository\PartnerRepository;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Affectation\CodeInseeSpecification;
@@ -34,7 +32,6 @@ class AutoAssigner
         private AffectationManager $affectationManager,
         private UserManager $userManager,
         private ParameterBagInterface $parameterBag,
-        private InterconnectionBus $interconnectionBus,
         private PartnerRepository $partnerRepository,
         private LoggerInterface $logger,
     ) {
@@ -108,10 +105,6 @@ class AutoAssigner
             $signalement->addAffectation($affectation);
             ++$this->countAffectations;
             $this->affectedPartnersNames[] = $partner->getNom();
-            if ($affectation instanceof Affectation) {
-                $this->affectationManager->persist($affectation);
-                $this->interconnectionBus->dispatch($affectation);
-            }
         }
         $this->affectationManager->flush();
     }

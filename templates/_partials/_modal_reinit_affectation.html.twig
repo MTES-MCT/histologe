@@ -1,0 +1,32 @@
+<dialog aria-labelledby="fr-modal-reinit-affectation-title" id="fr-modal-reinit-affectation" class="fr-modal" >
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                       <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-reinit-affectation">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 class="fr-modal__title">Réaffecter le partenaire <span class="partner-nom"></span></h1>  
+                        <p>Voulez-vous vraiment réaffecter ce partenaire ?</p>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <form id="fr-modal-reinit-affectation-form" action="" method="POST">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('reinit_affectation_'~signalement.uuid) }}">
+                                    <button class="fr-btn fr-icon-check-line">Valider</button>
+                                </form>
+                            </li>
+                            <li>
+                                <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-reinit-affectation">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
