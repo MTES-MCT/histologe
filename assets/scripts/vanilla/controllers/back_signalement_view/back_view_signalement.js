@@ -11,6 +11,13 @@ if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   }
 }
 
+document.querySelectorAll('.open-modal-reinit-affectation').forEach((button) => {
+  button.addEventListener('click', (e) => {
+    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent = e.target.dataset.partnerNom
+    document.querySelector('form#fr-modal-reinit-affectation-form').action = e.target.dataset.action
+  })
+})
+
 /* global histoPhotoIds */
 
 document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {

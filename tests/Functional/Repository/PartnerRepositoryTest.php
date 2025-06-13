@@ -194,6 +194,18 @@ class PartnerRepositoryTest extends KernelTestCase
         $this->assertGreaterThan(1, $partnersQueryBuilder->getQuery()->getResult());
     }
 
+    public function testCountPartnerNonNotifiables(): void
+    {
+        $count = $this->partnerRepository->countPartnerNonNotifiables([]);
+        $this->assertEquals(1, $count->getNonNotifiables());
+
+        $count = $this->partnerRepository->countPartnerNonNotifiables([13]);
+        $this->assertEquals(1, $count->getNonNotifiables());
+
+        $count = $this->partnerRepository->countPartnerNonNotifiables([1]);
+        $this->assertEquals(0, $count->getNonNotifiables());
+    }
+
     protected function tearDown(): void
     {
         $this->entityManager->close();

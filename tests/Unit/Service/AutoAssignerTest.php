@@ -11,7 +11,6 @@ use App\Entity\SignalementQualification;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
-use App\Messenger\InterconnectionBus;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\AutoAssigner;
@@ -209,8 +208,6 @@ class AutoAssignerTest extends KernelTestCase
         $userManager = $this->createMock(UserManager::class);
         /** @var ParameterBagInterface|MockObject $parameterBag */
         $parameterBag = $this->createMock(ParameterBagInterface::class);
-        /** @var InterconnectionBus|MockObject $esaboraBus */
-        $esaboraBus = $this->createMock(InterconnectionBus::class);
         /** @var LoggerInterface $logger */
         $logger = $this->createMock(LoggerInterface::class);
         $autoAssigner = new AutoAssigner(
@@ -218,7 +215,6 @@ class AutoAssignerTest extends KernelTestCase
             $this->affectationManager,
             $userManager,
             $parameterBag,
-            $esaboraBus,
             $this->partnerRepository,
             $logger,
         );

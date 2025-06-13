@@ -135,33 +135,25 @@ class PartnerRepository extends ServiceEntityRepository
     public function countPartnerNonNotifiables(array $territories): CountPartner
     {
         $queryBuilder = $this->createQueryBuilder('p')
-            ->select('COUNT(DISTINCT p.id) as count')
-            ->leftJoin('p.userPartners', 'up')
-            ->leftJoin('up.user', 'u');
+        ->select('p.id');
 
         // Filtre sur les partenaires non notifiables
-        $expr = $queryBuilder->expr();
-        $queryBuilder
-            ->where('(p.email IS NULL OR p.email = \'\' OR p.emailNotifiable = 0)')
-            ->andWhere('p.isArchive = 0')
-            ->andWhere(
-                $expr->orX(
-                    'up.id IS NULL', // Aucun utilisateur lié
-                    $expr->not(
-                        $expr->exists(
-                            $this->createQueryBuilder('p2')
-                                ->select('1')
-                                ->leftJoin('p2.userPartners', 'up2')
-                                ->leftJoin('up2.user', 'u2')
-                                ->where('p2.id = p.id')
-                                ->andWhere('u2.email IS NOT NULL') // L'utilisateur a un email
-                                ->andWhere('u2.statut = 1') // L'utilisateur est actif
-                                ->andWhere('u2.isMailingActive = 1') // Accepte les emails
-                                ->getDQL()
-                        )
-                    )
-                )
-            );
+        $queryBuilder->addSelect(
+            '(CASE
+                WHEN (p.email IS NOT NULL AND p.email != \'\' AND p.emailNotifiable = 1) THEN 1
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM '.UserPartner::class.' up2
+                    JOIN up2.user u2
+                    WHERE up2.partner = p
+                    AND u2.email IS NOT NULL
+                    AND u2.statut LIKE \''.UserStatus::ACTIVE->value.'\'
+                    AND u2.isMailingActive = 1
+                ) THEN 1
+                ELSE 0
+            END) AS isNotifiable'
+        );
+        $queryBuilder->andHaving('isNotifiable = 0');
 
         // Filtrer par territoires si précisé
         if (!empty($territories)) {
@@ -170,7 +162,7 @@ class PartnerRepository extends ServiceEntityRepository
                 ->setParameter('territories', $territories);
         }
         try {
-            $count = $queryBuilder->getQuery()->getSingleScalarResult();
+            $count = count($queryBuilder->getQuery()->getSingleColumnResult());
         } catch (NonUniqueResultException) {
             $count = 0;
         }

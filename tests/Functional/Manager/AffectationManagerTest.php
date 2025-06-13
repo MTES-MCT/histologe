@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Manager\AffectationManager;
 use App\Manager\HistoryEntryManager;
 use App\Manager\SuiviManager;
+use App\Messenger\InterconnectionBus;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -23,6 +24,7 @@ class AffectationManagerTest extends KernelTestCase
     private HistoryEntryManager $historyEntryManager;
     private AffectationManager $affectationManager;
     private EventDispatcherInterface $eventDispatcher;
+    private InterconnectionBus $interconnectionBus;
 
     protected function setUp(): void
     {
@@ -32,12 +34,14 @@ class AffectationManagerTest extends KernelTestCase
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
         $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
+        $this->interconnectionBus = self::getContainer()->get(InterconnectionBus::class);
         $this->affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,
             $this->logger,
             $this->historyEntryManager,
             $this->eventDispatcher,
+            $this->interconnectionBus,
             Affectation::class,
         );
     }
