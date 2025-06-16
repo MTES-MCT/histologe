@@ -129,13 +129,14 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8082/token",
+					"raw": "http://localhost:8082/proconnect/token",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8082",
 					"path": [
+						"proconnect",
 						"token"
 					]
 				}
