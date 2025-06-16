@@ -6,6 +6,7 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\TerritoryRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,6 +23,7 @@ class SignalementDraftAddressType extends AbstractType
 {
     public function __construct(
         private readonly Security $security,
+        private readonly TerritoryRepository $territoryRepository,
     ) {
     }
 
@@ -38,15 +40,27 @@ class SignalementDraftAddressType extends AbstractType
         /** @var User $user */
         $user = $this->security->getUser();
         if ($user->isSuperAdmin()) {
-            $territories = [];
+            $territories = $this->territoryRepository->findAllList();
         } else {
             $territories = $user->getPartnersTerritories();
         }
+
+        $territory = $user->getFirstTerritory();
         if (1 === \count($territories)) {
-            $territory = $user->getFirstTerritory();
             $builder->add('filterSearchAddressTerritory', HiddenType::class, [
                 'mapped' => false,
-                'data' => $territory->getZip(),
+                'data' => $territory->getZip().'|'.$territory->getName(),
+            ]);
+        } else {
+            $choicesTerritories = [];
+            foreach ($territories as $territory) {
+                $choicesTerritories[$territory->getZip().' - '.$territory->getName()] = $territory->getZip().'|'.$territory->getName();
+            }
+            $builder->add('filterSearchAddressTerritory', ChoiceType::class, [
+                'mapped' => false,
+                'choices' => $choicesTerritories,
+                'label' => 'Territoire',
+                'data' => $user->isSuperAdmin() ? '' : $territory->getZip().'|'.$territory->getName(),
             ]);
         }
 
