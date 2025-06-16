@@ -6,10 +6,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\User;
-use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
-use App\Repository\UserRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -30,13 +27,11 @@ class SignalementFileControllerTest extends WebTestCase
     private ?SignalementUser $signalementUser = null;
     private RouterInterface $router;
     private SignalementRepository $signalementRepository;
-    private UserRepository $userRepository;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
         /* @var Signalement $signalement */
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
         $this->signalementUser = $this->getSignalementUser($this->signalement);
@@ -173,11 +168,7 @@ class SignalementFileControllerTest extends WebTestCase
 
         self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
 
-        $signalementUser = new SignalementUser(
-            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-            $signalement->getMailOccupant(),
-            $signalement->getSignalementUsager()->getOccupant()
-        );
+        $signalementUser = $this->getSignalementUser($signalement);
         $this->client->loginUser($signalementUser, 'code_suivi');
 
         $this->client->request('POST', $route, [
@@ -204,14 +195,7 @@ class SignalementFileControllerTest extends WebTestCase
 
         $route = $this->router->generate('signalement_gen_pdf', ['code' => $signalement->getCodeSuivi()]);
 
-        // on logue l'occupant du signalement
-        /** @var User $usager */
-        $usager = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
-        $signalementUser = new SignalementUser(
-            userIdentifier: $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-            email: $signalement->getMailOccupant(),
-            user: $usager
-        );
+        $signalementUser = $this->getSignalementUser($signalement);
         $this->client->loginUser($signalementUser, 'code_suivi');
 
         $this->client->request(
