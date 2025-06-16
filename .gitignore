@@ -41,3 +41,5 @@ tmp/*
 src/DataFixtures/Images/sample-target.png
 /metabase-data/
 metabase-data/*
+/test-results/
+/tests/e2e/test-results/

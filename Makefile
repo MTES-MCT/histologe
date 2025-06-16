@@ -196,7 +196,7 @@ test-coverage: ## Generate phpunit coverage report in html
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "XDEBUG_MODE=coverage $(PHPUNIT) --coverage-html coverage -d memory_limit=-1"
 
 test-e2e: ## Run E2E tests
-	@$(NPX) playwright test
+	@cd tests/e2e/ ; $(NPX) playwright test
 
 open-test-e2e: ## Open Playwright
 	@$(NPX) playwright open
