@@ -48,14 +48,12 @@ class SignalementFeedbackUsagerThirdMailer extends AbstractNotificationMailer
             $linkPoursuivre = $this->generateLink(
                 'front_suivi_procedure', [
                     'code' => $signalement->getCodeSuivi(),
-                    'from' => $toRecipient,
                     'suiviAuto' => Suivi::POURSUIVRE_PROCEDURE,
                 ]
             );
             $linkArreter = $this->generateLink(
                 'front_suivi_procedure', [
                     'code' => $signalement->getCodeSuivi(),
-                    'from' => $toRecipient,
                     'suiviAuto' => Suivi::ARRET_PROCEDURE,
                 ]
             );

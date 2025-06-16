@@ -37,7 +37,7 @@ class SuiviVisiteCanceledMailer extends AbstractNotificationMailer
             'intervention_scheduledAt' => $interventionScheduledAt,
             'lien_suivi' => $this->urlGenerator->generate(
                 'front_suivi_signalement',
-                ['code' => $signalement->getCodeSuivi(), 'from' => $notificationMail->getTo()],
+                ['code' => $signalement->getCodeSuivi()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
         ];

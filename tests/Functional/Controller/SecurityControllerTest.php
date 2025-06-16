@@ -2,13 +2,11 @@
 
 namespace App\Tests\Functional\Controller;
 
-use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
-use App\Security\Provider\SignalementUserProvider;
-use App\Security\User\SignalementUser;
 use App\Tests\ApiHelper;
 use App\Tests\SessionHelper;
+use App\Tests\UserHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +15,7 @@ class SecurityControllerTest extends WebTestCase
 {
     use ApiHelper;
     use SessionHelper;
+    use UserHelper;
 
     /** @dataProvider provideJsonLogin  */
     public function testJsonLogin(?int $status = null, ?string $email = null, ?string $password = null): void
@@ -105,19 +104,10 @@ class SecurityControllerTest extends WebTestCase
         $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
         $codeSuivi = $signalement->getCodeSuivi();
 
-        /** @var UserRepository $userRepository */
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        // on logue l'occupant du signalement
-        /** @var User $usager */
-        $usager = $userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
-        $signalementUser = new SignalementUser(
-            userIdentifier: $signalement->getCodeSuivi().':'.SignalementUserProvider::OCCUPANT,
-            email: $signalement->getMailOccupant(),
-            user: $usager
-        );
+        $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
-        $crawler = $client->request(
+        $client->request(
             'GET',
             '/show-export-pdf-usager/'.$filename.'/'.$codeSuivi.'?folder=_up',
         );
@@ -138,13 +128,10 @@ class SecurityControllerTest extends WebTestCase
         $signalement = $signalementRepository->findOneBy(['uuid' => $uuid]);
         $codeSuivi = $signalement->getCodeSuivi();
 
-        $crawler = $client->request(
+        $client->request(
             'GET',
             '/show-export-pdf-usager/'.$filename.'/'.$codeSuivi.'?folder=_up',
         );
-        /** @var Response $response */
-        $response = $client->getResponse();
-        $this->assertEquals('Accéder à mon export pdf', $crawler->filter('h1')->text());
-        $this->assertTrue($response->isSuccessful());
+        $this->assertResponseRedirects('/authentification/'.$codeSuivi);
     }
 }

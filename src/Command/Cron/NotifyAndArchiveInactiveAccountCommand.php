@@ -17,7 +17,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -35,8 +34,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
-        #[Autowire(env: 'FEATURE_ARCHIVE_INACTIVE_ACCOUNT')]
-        private readonly bool $featureArchiveInactiveAccount,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -54,11 +51,6 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         $this->io = new SymfonyStyle($input, $output);
         $message = '';
         $nbScheduled = 0;
-        if (!$this->featureArchiveInactiveAccount) {
-            $this->io->warning('Feature "FEATURE_ARCHIVE_INACTIVE_ACCOUNT" is disabled.');
-
-            return Command::SUCCESS;
-        }
 
         if ('15' === $this->clock->now()->format('d') || $input->getOption('force')) {
             $nbScheduled = $this->scheduleArchivingAndSendRtNotification();

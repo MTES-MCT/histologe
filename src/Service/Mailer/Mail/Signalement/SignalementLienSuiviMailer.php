@@ -34,7 +34,7 @@ class SignalementLienSuiviMailer extends AbstractNotificationMailer
             'signalement_villeOccupant' => $notificationMail->getSignalement()->getVilleOccupant(),
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
-                ['code' => $notificationMail->getSignalement()->getCodeSuivi(), 'from' => $notificationMail->getTo()]
+                ['code' => $notificationMail->getSignalement()->getCodeSuivi()]
             ),
         ];
     }

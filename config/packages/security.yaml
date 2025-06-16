@@ -36,7 +36,7 @@ security:
                 max_attempts: 5 # '%env(int:FORMS_SUBMIT_LIMITER_LIMIT)%' doesnt work here: fails to cast str to int
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
         code_suivi:
-            pattern: ^/(suivre-mon-signalement|suivre-ma-procedure|logout-suivi|show-export-pdf-usager|signalement/[^/]+/file/)
+            pattern: ^/(authentification|logout-suivi|suivre-mon-signalement|suivre-ma-procedure|show-export-pdf-usager|signalement/[^/]+/file/)
             stateless: false
             provider: app_signalement_user_provider
             custom_authenticator: App\Security\Authenticator\CodeSuiviLoginAuthenticator
@@ -90,6 +90,11 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_API_USER }
         - { path: ^/bo, roles: ROLE_USER_PARTNER }
+        # FO authentication
+        - { path: ^/suivre-mon-signalement/, roles: ROLE_SUIVI_SIGNALEMENT }
+        - { path: ^/suivre-ma-procedure/, roles: ROLE_SUIVI_SIGNALEMENT }
+        - { path: ^/show-export-pdf-usager/, roles: ROLE_SUIVI_SIGNALEMENT }
+        - { path: ^/signalement/[^/]+/file/, roles: ROLE_SUIVI_SIGNALEMENT }
 
 
 when@prod:

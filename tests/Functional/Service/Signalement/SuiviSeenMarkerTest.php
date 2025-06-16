@@ -4,17 +4,17 @@ namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\User;
 use App\Event\SuiviViewedEvent;
-use App\Manager\UserManager;
 use App\Repository\NotificationRepository;
-use App\Security\User\SignalementUser;
 use App\Service\Signalement\SuiviSeenMarker;
+use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SuiviSeenMarkerTest extends KernelTestCase
 {
+    use UserHelper;
+
     public function testMarkSeenByUsagerMarksOnlyPublicSuivis(): void
     {
         self::bootKernel();
@@ -23,13 +23,8 @@ class SuiviSeenMarkerTest extends KernelTestCase
 
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'joude.bellingham@uk.com']);
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000015']);
-        $signalementUser = new SignalementUser(
-            $signalement->getCodeSuivi().':'.UserManager::OCCUPANT,
-            $signalement->getMailOccupant(),
-            $user
-        );
+        $signalementUser = $this->getSignalementUser($signalement);
 
         $eventDispatcher->dispatch(
             new SuiviViewedEvent($signalement, $signalementUser),

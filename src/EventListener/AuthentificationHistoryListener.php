@@ -49,7 +49,7 @@ class AuthentificationHistoryListener
         }
         try {
             if ($user instanceof SignalementUser) {
-                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi(), false);
+                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi());
             }
             $historyEntry = $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
@@ -63,7 +63,7 @@ class AuthentificationHistoryListener
             return;
         } catch (\Throwable $exception) {
             if ($user instanceof SignalementUser) {
-                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi(), false);
+                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi());
                 $this->logger->error(\sprintf(
                     'Failed to create login history entry (%s) on signalement : %d',
                     $exception->getMessage(),

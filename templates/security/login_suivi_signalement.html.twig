@@ -4,11 +4,7 @@
 
 {% block body %}
     <main class="fr-container fr-py-5w" id="content">
-        {% if app.request.get('_route') == 'show_export_pdf_usager' %}
-            <h1>Accéder à mon export pdf</h1>
-        {% else %}
-            <h1>Suivre mon signalement</h1>
-        {% endif %}
+        <h1>{{ title }}</h1>
         <div class="fr-notice fr-notice--info fr-mb-5v">
             <div class="fr-container">
                 <div class="fr-notice__body">
@@ -43,7 +39,7 @@
                     </legend>
                     <div class="fr-fieldset__element">
                         <div class="fr-radio-group">
-                            <input type="radio" id="radio-visitor-type-occupant" name="visitor-type" value="occupant">
+                            <input type="radio" id="radio-visitor-type-occupant" name="visitor-type" value="{{constant('App\\Manager\\UserManager::OCCUPANT')}}">
                             <label class="fr-label" for="radio-visitor-type-occupant">
                                 La personne qui vit dans le logement (occupant)
                             </label>
@@ -51,7 +47,7 @@
                     </div>
                     <div class="fr-fieldset__element">
                         <div class="fr-radio-group">
-                            <input type="radio" id="radio-visitor-type-declarant" name="visitor-type" value="declarant">
+                            <input type="radio" id="radio-visitor-type-declarant" name="visitor-type" value="{{constant('App\\Manager\\UserManager::DECLARANT')}}">
                             <label class="fr-label" for="radio-visitor-type-declarant">
                                 La personne qui a déposé le signalement (tiers déclarant)
                             </label>
