@@ -52,15 +52,18 @@ class SignalementDraftAddressType extends AbstractType
                 'data' => $territory->getZip().'|'.$territory->getName(),
             ]);
         } else {
+            if (!empty($signalement)) {
+                $territory = $signalement->getTerritory();
+            }
             $choicesTerritories = [];
-            foreach ($territories as $territory) {
-                $choicesTerritories[$territory->getZip().' - '.$territory->getName()] = $territory->getZip().'|'.$territory->getName();
+            foreach ($territories as $territoryItem) {
+                $choicesTerritories[$territoryItem->getZip().' - '.$territoryItem->getName()] = $territoryItem->getZip().'|'.$territoryItem->getName();
             }
             $builder->add('filterSearchAddressTerritory', ChoiceType::class, [
                 'mapped' => false,
                 'choices' => $choicesTerritories,
                 'label' => 'Territoire',
-                'data' => $user->isSuperAdmin() ? '' : $territory->getZip().'|'.$territory->getName(),
+                'data' => $territory ? $territory->getZip().'|'.$territory->getName() : '',
             ]);
         }
 
