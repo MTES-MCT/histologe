@@ -155,6 +155,8 @@ class PartnerRepository extends ServiceEntityRepository
         );
         $queryBuilder->andHaving('isNotifiable = 0');
 
+        $queryBuilder->andWhere('p.isArchive = 0');
+
         // Filtrer par territoires si précisé
         if (!empty($territories)) {
             $queryBuilder
