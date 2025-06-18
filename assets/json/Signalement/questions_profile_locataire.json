@@ -225,6 +225,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "signalement_concerne_finish_later",
+                "customCss": "fr-btn--secondary",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "coordonnees_bailleur_previous",
                 "action": "goto:vos_coordonnees_occupant",
