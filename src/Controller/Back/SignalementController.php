@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\DuplicateAddresseDetection;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
@@ -19,6 +20,7 @@ use App\Repository\CriticiteRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\DuplicateAddresseDetectionRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
@@ -71,6 +73,7 @@ class SignalementController extends AbstractController
         CritereRepository $critereRepository,
         SuiviSeenMarker $suiviSeenMarker,
         SignalementRepository $signalementRepository,
+        DuplicateAddresseDetectionRepository $duplicateAddresseDetectionRepository,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -232,6 +235,23 @@ class SignalementController extends AbstractController
                 exclusiveStatus: [],
                 excludedStatus: [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
             );
+            $existingDuplicateAddresses = $duplicateAddresseDetectionRepository->findOneBy([
+                'address' => $signalement->getAdresseOccupant(),
+                'zip' => $signalement->getCpOccupant(),
+                'city' => $signalement->getVilleOccupant(),
+            ]);
+            if (!$existingDuplicateAddresses) {
+                $duplicateAddresses = (new DuplicateAddresseDetection())
+                    ->setAddress($signalement->getAdresseOccupant())
+                    ->setZip($signalement->getCpOccupant())
+                    ->setCity($signalement->getVilleOccupant())
+                    ->setNbDuplication(count($signalementsOnSameAddress) + 1)
+                    ->setTerritory($signalement->getTerritory());
+                $signalementManager->save($duplicateAddresses);
+            } elseif ($existingDuplicateAddresses->getNbDuplication() < count($signalementsOnSameAddress)) {
+                $existingDuplicateAddresses->setNbDuplication(count($signalementsOnSameAddress) + 1);
+                $signalementManager->save($existingDuplicateAddresses);
+            }
         }
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',

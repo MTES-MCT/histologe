@@ -1,0 +1,56 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Liste des doublons d'adresses{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Doublons d\'adresses',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-mb-0">Liste des doublons d'adresses</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-col-12 fr-py-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(duplicateAddresses|length, 'doublon trouvé', 'doublons trouvés') }}</h2>
+    </section>
+    
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">Adresse</th>
+            <th scope="col">Nombre de signalement</th>
+            <th scope="col">Territoires</th>
+            <th scope="col">Actions</th>
+        {% endset %}
+        
+        {% set tableBody %}
+            {% for duplicateAddress in duplicateAddresses %}
+                <tr class="signalement-row">
+                    <td>{{ duplicateAddress.address }}</td>
+                    <td>{{ duplicateAddress.nbDuplication }}</td>
+                    <td>{{ duplicateAddress.territory.zip }} {{ duplicateAddress.territory.name }}</td>
+                    <td class="fr-text--right fr-ws-nowrap">
+                        <a href="{{ path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': duplicateAddress.address, 'communes[]': duplicateAddress.city }) }}" class="fr-btn fr-icon-align-justify" title="Voir les signalements">
+                            Voir les signalements
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des doublons d\'adresses', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+    </section>
+              
+
+{% endblock %}
