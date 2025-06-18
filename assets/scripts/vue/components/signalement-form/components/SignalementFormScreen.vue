@@ -128,6 +128,8 @@ export default defineComponent({
         await this.showScreenBySlug(param, param2, type.includes('save'), type.includes('checkloc'))
       } else if (type.includes('resolve')) {
         this.navigateToDisorderScreen(param, param2, type.includes('save'))
+      } else if (type.includes('finish')) {
+        this.finishLater(type.includes('save'))
       }
     },
     showComponentBySlug (slug:string, slugButton:string) {
@@ -150,42 +152,48 @@ export default defineComponent({
         (componentToToggle as HTMLButtonElement).disabled = (isVisible !== '1')
       }
     },
+    validateAndFocusFirstError (): boolean {
+      if (this.components && this.components.body) {
+        this.validateComponents(this.components.body)
+        if (Object.keys(formStore.validationErrors).length > 0) {
+          this.$nextTick(() => {
+            // Tableau contenant toutes les classes d'erreur possibles
+            const errorClasses = [
+              'signalement-form-roomlist-error',
+              'fr-fieldset--error',
+              'fr-input--error',
+              'fr-select--error',
+              'fr-checkbox-group--error',
+              'fr-input-group--error',
+              'custom-file-input-error'
+            ]
+            // Construire dynamiquement le sélecteur pour toutes les classes d'erreur
+            const selectors = errorClasses.map(errorClass => `.${errorClass}`).join(', ')
+
+            // Sélectionner tous les éléments correspondant aux classes d'erreur pour tester
+            const ancestorsWithError = document.querySelectorAll(selectors)
+            if (ancestorsWithError.length > 0) {
+              // Sélectionner le premier input ou textarea dans le premier élément trouvé
+              const firstAncestorWithError = ancestorsWithError[0]
+              const inputElement = firstAncestorWithError.querySelector('input, textarea') as HTMLElement
+              // Si un élément input/textarea est trouvé, mettre le focus dessus
+              if (inputElement) {
+                inputElement.focus()
+                inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              }
+            }
+          })
+          return true
+        }
+      }
+      return false
+    },
     async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean, isCheckLocation:boolean) {
       formStore.validationErrors = {}
 
       if (isSaveAndCheck || isCheckLocation) {
-        if (this.components && this.components.body) {
-          this.validateComponents(this.components.body)
-          if (Object.keys(formStore.validationErrors).length > 0) {
-            this.$nextTick(() => {
-              // Tableau contenant toutes les classes d'erreur possibles
-              const errorClasses = [
-                'signalement-form-roomlist-error',
-                'fr-fieldset--error',
-                'fr-input--error',
-                'fr-select--error',
-                'fr-checkbox-group--error',
-                'fr-input-group--error',
-                'custom-file-input-error'
-              ]
-              // Construire dynamiquement le sélecteur pour toutes les classes d'erreur
-              const selectors = errorClasses.map(errorClass => `.${errorClass}`).join(', ')
-
-              // Sélectionner tous les éléments correspondant aux classes d'erreur pour tester
-              const ancestorsWithError = document.querySelectorAll(selectors)
-              if (ancestorsWithError.length > 0) {
-                // Sélectionner le premier input ou textarea dans le premier élément trouvé
-                const firstAncestorWithError = ancestorsWithError[0]
-                const inputElement = firstAncestorWithError.querySelector('input, textarea') as HTMLElement
-                // Si un élément input/textarea est trouvé, mettre le focus dessus
-                if (inputElement) {
-                  inputElement.focus()
-                  inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                }
-              }
-            })
-            return
-          }
+        if (this.validateAndFocusFirstError()) {
+          return
         }
       }
 
@@ -212,6 +220,19 @@ export default defineComponent({
 
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
+    },
+    async finishLater (isSaveAndCheck:boolean) {
+      formStore.validationErrors = {}
+
+      if (isSaveAndCheck) {
+        if (this.validateAndFocusFirstError()) {
+          return
+        }
+      }
+      requests.saveSignalementDraft(this.sendMailDraft)
+    },
+    sendMailDraft () {
+      requests.sendMailContinueFromDraft(this.gotoHomepage)
     },
     gotoHomepage () {
       window.location.href = '/'
