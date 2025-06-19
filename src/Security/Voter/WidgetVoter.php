@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Service\DashboardWidget\Widget;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class WidgetVoter extends Voter
@@ -22,11 +23,16 @@ class WidgetVoter extends Voter
             && ($subject instanceof Widget || !$subject);
     }
 
-    public function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    /**
+     * @param Widget $subject
+     */
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) {
+            $vote?->addReason('L\'utilisateur n\'est pas authentifié');
+
             return false;
         }
 

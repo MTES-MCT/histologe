@@ -29,13 +29,13 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 )]
 class SlugifyDocumentSignalementCommand extends Command
 {
-    public const PREFIX_FILENAME_STORAGE_MAPPING = 'mapping_doc_signalement_';
-    public const PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED = 'mapping_doc_signalement_slugged_';
-    public const PREFIX_FILENAME_STORAGE_SIGNALEMENT = 'signalement_';
-    public const PREFIX_FILENAME_STORAGE_SIGNALEMENT_SLUGGED = 'signalement_slugged_';
-    public const BASE_DIRECTORY_CSV = 'csv/';
-    public const IMPORT_SIGNALEMENT_COLUMN_PHOTOS = 'ref des photos';
-    public const IMPORT_SIGNALEMENT_COLUMN_DOCUMENTS = 'ref des documents';
+    public const string PREFIX_FILENAME_STORAGE_MAPPING = 'mapping_doc_signalement_';
+    public const string PREFIX_FILENAME_STORAGE_MAPPING_SLUGGED = 'mapping_doc_signalement_slugged_';
+    public const string PREFIX_FILENAME_STORAGE_SIGNALEMENT = 'signalement_';
+    public const string PREFIX_FILENAME_STORAGE_SIGNALEMENT_SLUGGED = 'signalement_slugged_';
+    public const string BASE_DIRECTORY_CSV = 'csv/';
+    public const string IMPORT_SIGNALEMENT_COLUMN_PHOTOS = 'ref des photos';
+    public const string IMPORT_SIGNALEMENT_COLUMN_DOCUMENTS = 'ref des documents';
 
     private ?Territory $territory = null;
     private bool $isMappingFile;

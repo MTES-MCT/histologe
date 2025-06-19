@@ -9,6 +9,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\UserStatus;
 use App\Repository\PartnerRepository;
+use App\Utils\TrimHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -137,7 +138,7 @@ class Partner implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function setId($id): self
+    public function setId($id): static
     {
         $this->id = $id;
 
@@ -149,9 +150,9 @@ class Partner implements EntityHistoryInterface
         return $this->nom;
     }
 
-    public function setNom(string $nom): self
+    public function setNom(string $nom): static
     {
-        $this->nom = $nom;
+        $this->nom = TrimHelper::safeTrim($nom);
 
         return $this;
     }
@@ -201,7 +202,7 @@ class Partner implements EntityHistoryInterface
         return $this->isArchive;
     }
 
-    public function setIsArchive(bool $isArchive): self
+    public function setIsArchive(bool $isArchive): static
     {
         $this->isArchive = $isArchive;
 
@@ -213,7 +214,7 @@ class Partner implements EntityHistoryInterface
         return $this->insee;
     }
 
-    public function setInsee(array $insee): self
+    public function setInsee(array $insee): static
     {
         $this->insee = $insee;
 
@@ -228,7 +229,7 @@ class Partner implements EntityHistoryInterface
         return $this->affectations;
     }
 
-    public function removeAffectation(Affectation $affectation): self
+    public function removeAffectation(Affectation $affectation): static
     {
         if ($this->affectations->removeElement($affectation)) {
             // set the owning side to null (unless already changed)
@@ -245,7 +246,7 @@ class Partner implements EntityHistoryInterface
         return $this->email;
     }
 
-    public function setEmail(?string $email): self
+    public function setEmail(?string $email): static
     {
         $this->email = !empty($email) ? mb_strtolower($email) : null;
 
@@ -286,7 +287,7 @@ class Partner implements EntityHistoryInterface
         return $this->esaboraUrl;
     }
 
-    public function setEsaboraUrl(?string $esaboraUrl): self
+    public function setEsaboraUrl(?string $esaboraUrl): static
     {
         $this->esaboraUrl = $esaboraUrl;
 
@@ -298,7 +299,7 @@ class Partner implements EntityHistoryInterface
         return $this->esaboraToken;
     }
 
-    public function setEsaboraToken(?string $esaboraToken): self
+    public function setEsaboraToken(?string $esaboraToken): static
     {
         $this->esaboraToken = $esaboraToken;
 
@@ -310,7 +311,7 @@ class Partner implements EntityHistoryInterface
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): self
+    public function setTerritory(?Territory $territory): static
     {
         $this->territory = $territory;
 
@@ -330,7 +331,7 @@ class Partner implements EntityHistoryInterface
         return $this->type;
     }
 
-    public function setType(PartnerType $type): self
+    public function setType(PartnerType $type): static
     {
         $this->type = $type;
 
@@ -347,7 +348,7 @@ class Partner implements EntityHistoryInterface
         return $this->competence;
     }
 
-    public function setCompetence(?array $competence): self
+    public function setCompetence(?array $competence): static
     {
         $this->competence = $competence;
 
@@ -364,7 +365,7 @@ class Partner implements EntityHistoryInterface
         return $this->isEsaboraActive;
     }
 
-    public function setIsEsaboraActive(?bool $isEsaboraActive): self
+    public function setIsEsaboraActive(?bool $isEsaboraActive): static
     {
         $this->isEsaboraActive = $isEsaboraActive;
 
@@ -417,7 +418,7 @@ class Partner implements EntityHistoryInterface
         return $this->isIdossActive;
     }
 
-    public function setIsIdossActive(bool $isIdossActive): self
+    public function setIsIdossActive(bool $isIdossActive): static
     {
         $this->isIdossActive = $isIdossActive;
 
@@ -433,7 +434,7 @@ class Partner implements EntityHistoryInterface
         return $this->idossUrl;
     }
 
-    public function setIdossUrl(?string $idossUrl): self
+    public function setIdossUrl(?string $idossUrl): static
     {
         $this->idossUrl = $idossUrl;
 
@@ -445,7 +446,7 @@ class Partner implements EntityHistoryInterface
         return $this->idossToken;
     }
 
-    public function setIdossToken(?string $idossToken): self
+    public function setIdossToken(?string $idossToken): static
     {
         $this->idossToken = $idossToken;
 
@@ -457,7 +458,7 @@ class Partner implements EntityHistoryInterface
         return $this->idossTokenExpirationDate;
     }
 
-    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): self
+    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): static
     {
         $this->idossTokenExpirationDate = $idossTokenExpirationDate;
 
@@ -522,7 +523,7 @@ class Partner implements EntityHistoryInterface
         return $this->bailleur;
     }
 
-    public function setBailleur(?Bailleur $bailleur): self
+    public function setBailleur(?Bailleur $bailleur): static
     {
         $this->bailleur = $bailleur;
 

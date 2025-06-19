@@ -99,10 +99,10 @@ class SignalementDraftAddressType extends AbstractType
                 'mapped' => false,
                 'data' => $signalement->getProfileDeclarant()?->value ?? '',
                 'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'Veuillez renseigner le profil du déclarant.',
-                        'groups' => ['bo_step_address'],
-                    ]),
+                    new Assert\NotBlank(
+                        message: 'Veuillez renseigner le profil du déclarant.',
+                        groups: ['bo_step_address'],
+                    ),
                 ],
             ])
             ->add('lienDeclarantOccupant', ChoiceType::class, [
@@ -131,10 +131,10 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'constraints' => [
-                    new Assert\NotNull([
-                        'message' => 'Veuillez renseigner si il s\'agit d\'un logement social.',
-                        'groups' => ['bo_step_address'],
-                    ]),
+                    new Assert\NotNull(
+                        message: 'Veuillez renseigner si il s\'agit d\'un logement social.',
+                        groups: ['bo_step_address'],
+                    ),
                 ],
             ])
             ->add('logementVacant', ChoiceType::class, [
@@ -155,11 +155,11 @@ class SignalementDraftAddressType extends AbstractType
                 'help' => 'Format attendu : saisir un nombre entier',
                 'required' => false,
                 'constraints' => [
-                    new Assert\Regex([
-                        'pattern' => '/^\d+$/',
-                        'message' => 'Veuillez saisir un nombre entier.',
-                        'groups' => ['bo_step_address'],
-                    ]),
+                    new Assert\Regex(
+                        pattern: '/^\d+$/',
+                        message: 'Veuillez saisir un nombre entier.',
+                        groups : ['bo_step_address'],
+                    ),
                 ],
             ])
             ->add('nbEnfantsDansLogement', NumberType::class, [
@@ -169,11 +169,11 @@ class SignalementDraftAddressType extends AbstractType
                 'mapped' => false,
                 'data' => $nbEnfantsDansLogement,
                 'constraints' => [
-                    new Assert\Regex([
-                        'pattern' => '/^\d+$/',
-                        'message' => 'Veuillez saisir un nombre entier.',
-                        'groups' => ['bo_step_address'],
-                    ]),
+                    new Assert\Regex(
+                        pattern: '/^\d+$/',
+                        message: 'Veuillez saisir un nombre entier.',
+                        groups: ['bo_step_address'],
+                    ),
                 ],
             ])
             ->add('enfantsDansLogementMoinsSixAns', ChoiceType::class, [

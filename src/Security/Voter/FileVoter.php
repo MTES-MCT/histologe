@@ -7,20 +7,24 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\File;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class FileVoter extends Voter
 {
-    public const DELETE = 'FILE_DELETE';
-    public const EDIT = 'FILE_EDIT';
-    public const FRONT_DELETE = 'FRONT_FILE_DELETE';
+    public const string DELETE = 'FILE_DELETE';
+    public const string EDIT = 'FILE_EDIT';
+    public const string FRONT_DELETE = 'FRONT_FILE_DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
         return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE]) && $subject instanceof File;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    /**
+     * @param File $subject
+     */
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         if (self::FRONT_DELETE === $attribute) {
             return $this->canFrontDelete($subject);
@@ -29,6 +33,8 @@ class FileVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) {
+            $vote?->addReason('L\'utilisateur n\'est pas authentifié');
+
             return false;
         }
 

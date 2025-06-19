@@ -26,10 +26,10 @@ class PostalCodeSearchType extends AbstractType
                 'label' => 'Votre code postal',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Regex([
-                        'pattern' => '/^[0-9]{5}$/',
-                        'message' => 'Le code postal doit être composé de 5 chiffres.',
-                    ]),
+                    new Assert\Regex(
+                        pattern: '/^[0-9]{5}$/',
+                        message: 'Le code postal doit être composé de 5 chiffres.',
+                    ),
                 ],
             ])
         ;

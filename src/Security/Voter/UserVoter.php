@@ -6,6 +6,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
@@ -28,20 +29,29 @@ class UserVoter extends Voter
             && $subject instanceof User;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    /**
+     * @param User $subject
+     */
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) {
+            $vote?->addReason('L\'utilisateur n\'est pas authentifié');
+
             return false;
         }
         if ($subject->getAnonymizedAt()) {
+            $vote?->addReason('L’utilisateur a été anonymisé.');
+
             return false;
         }
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
         if ($subject->isSuperAdmin() || $subject->isApiUser()) {
+            $vote?->addReason('Action non autorisée sur un super administrateur ou un utilisateur API.');
+
             return false;
         }
 

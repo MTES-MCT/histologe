@@ -8,7 +8,7 @@ class AdresseOccupantRequest implements RequestInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de saisir une adresse.')]
-        #[Assert\Length(min: 6, minMessage: 'L\'adresse n\'est pas au bon format.', max: 100, maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.')]
+        #[Assert\Length(min: 6, max: 100, minMessage: 'L\'adresse n\'est pas au bon format.', maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.')]
         #[Assert\Regex('/.*[^0-9].*/')]
         private readonly ?string $adresse = null,
         #[Assert\NotBlank(message: 'Merci de saisir un code postal.')]
