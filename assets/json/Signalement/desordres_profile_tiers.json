@@ -45,7 +45,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "ecran_intermediaire_les_desordres_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -309,7 +309,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_proprete_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -384,7 +384,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_eau_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -470,7 +470,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_isolation_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -540,7 +540,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_maintenance_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -662,7 +662,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_nuisibles_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -900,7 +900,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_securite_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -959,7 +959,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_incendie_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1068,7 +1068,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_accessibilite_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1127,7 +1127,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_batiment_bruit_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1433,7 +1433,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_eau_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1559,7 +1559,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_aeration_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1735,7 +1735,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_chauffage_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -2023,7 +2023,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_humidite_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -2212,7 +2212,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_securite_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -2343,7 +2343,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_electricite_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -2579,7 +2579,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_nuisibles_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -2656,7 +2656,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_bruit_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -2739,7 +2739,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_lumiere_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -2790,7 +2790,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_logement_proprete_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -2900,7 +2900,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "desordres_precisions_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
