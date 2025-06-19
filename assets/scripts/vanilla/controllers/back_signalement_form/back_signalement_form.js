@@ -1,4 +1,3 @@
-import { attacheAutocompleteAddressEvent } from '../../services/component/component_search_address'
 import { initSearchAndSelectBadges } from '../../services/component/component_search_and_select_badges'
 
 let boFormSignalementCurrentTabIsDirty = false
@@ -442,8 +441,6 @@ function initBoFormSignalementDesordres() {
 
 function initComponentAdress(id) {
   const addressInput = document.querySelector(id)
-  attacheAutocompleteAddressEvent(addressInput)
-
   const addressInputParent = addressInput.parentElement.parentElement.parentElement
   const manualAddressSwitcher = addressInputParent?.querySelector('.bo-signalement-manual-address-switcher')
   const manualAddressContainer = addressInputParent?.querySelector('.bo-form-signalement-manual-address-container')
