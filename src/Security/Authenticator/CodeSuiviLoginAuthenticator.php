@@ -8,6 +8,7 @@ use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +33,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SignalementRepository $signalementRepository,
         private readonly SignalementUserProvider $signalementUserProvider,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -127,6 +129,13 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $token->getUser();
+        $user = $signalementUser->getUser();
+        if ($user) {
+            $user->setLastLoginAt(new \DateTimeImmutable());
+            $this->entityManager->flush();
+        }
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
