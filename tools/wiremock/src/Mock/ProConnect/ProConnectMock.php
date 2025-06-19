@@ -31,7 +31,7 @@ class ProConnectMock
         ));
 
         $wireMock->stubFor(
-            WireMock::post(WireMock::urlMatching('/token'))
+            WireMock::post(WireMock::urlMatching('/proconnect/token'))
                 ->withHeader('Content-Type', WireMock::containing('application/x-www-form-urlencoded'))
                 ->willReturn(
                     WireMock::aResponse()

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Service\Gouv\Rnb;
+namespace App\Tests\Unit\Service\Gouv\Rial\Request;
 
 use App\Service\Gouv\Rial\Request\RialSearchLocauxParams;
 use PHPUnit\Framework\TestCase;

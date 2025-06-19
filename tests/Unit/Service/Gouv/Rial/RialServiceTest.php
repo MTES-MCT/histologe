@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Service\Gouv\Rnb;
+namespace App\Tests\Unit\Service\Gouv\Rial;
 
 use App\Service\Gouv\Rial\RialService;
 use PHPUnit\Framework\TestCase;
