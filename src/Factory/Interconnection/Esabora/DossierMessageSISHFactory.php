@@ -172,7 +172,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                 ->setTelephone($tel);
         }
 
-        if (PersonneType::PROPRIETAIRE === $personneType && !empty($signalement->getNomProprio())) {
+        if (PersonneType::PROPRIETAIRE === $personneType
+            && (!empty($signalement->getNomProprio()) || !empty($signalement->getDenominationProprio()))
+        ) {
             $tel = $signalement->getTelProprioDecoded(true)
                 ? substr($signalement->getTelProprioDecoded(true), 0, 20)
                 : null;
@@ -180,11 +182,17 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $prenom = $signalement->getPrenomProprio()
                 ? substr($signalement->getPrenomProprio(), 0, 30)
                 : null;
+            $nom = $signalement->getNomProprio()
+                ? substr($signalement->getNomProprio(), 0, 60)
+                : null;
+            if (empty($nom) && !empty($signalement->getDenominationProprio())) {
+                $nom = substr($signalement->getDenominationProprio(), 0, 60);
+            }
 
             $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();
             $dossierMessageSISHPersonne
                 ->setType(PersonneType::PROPRIETAIRE->value)
-                ->setNom(substr($signalement->getNomProprio(), 0, 60))
+                ->setNom($nom)
                 ->setAdresse($signalement->getAdresseProprio())
                 ->setEmail($signalement->getMailProprio())
                 ->setTelephone($tel);
