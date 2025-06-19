@@ -10,9 +10,15 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 class WidgetDataKpi
 {
+    /**
+     * @var array<string, WidgetCard>
+     */
+    private readonly array $widgetCards;
+    /**
+     * @param array<string, WidgetCard> $widgetCards
+     */
     public function __construct(
-        #[Groups(['widget:read'])]
-        private readonly array $widgetCards,
+        array $widgetCards,
         #[Groups(['widget:read'])]
         private readonly CountSignalement $countSignalement,
         #[Groups(['widget:read'])]
@@ -22,8 +28,12 @@ class WidgetDataKpi
         #[Groups(['widget:read'])]
         private readonly CountPartner $countPartner,
     ) {
+        $this->widgetCards = $widgetCards;
     }
 
+    /**
+     * @return array<string, WidgetCard>
+     */
     public function getWidgetCards(): array
     {
         return $this->widgetCards;

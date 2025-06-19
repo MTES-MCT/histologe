@@ -6,6 +6,9 @@ use App\Service\Gouv\ProConnect\Model\JWK;
 
 class JWKSResponse
 {
+    /**
+     * @var JWK[]
+     */
     private array $keys;
 
     public function __construct(string $data)
@@ -14,6 +17,9 @@ class JWKSResponse
         $this->keys = array_map(fn ($key) => new JWK($key), $keys['keys']);
     }
 
+    /**
+     * @return JWK[]
+     */
     public function getKeys(): array
     {
         return $this->keys;

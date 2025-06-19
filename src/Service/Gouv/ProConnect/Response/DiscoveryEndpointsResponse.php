@@ -10,6 +10,9 @@ class DiscoveryEndpointsResponse
     public ?string $endSessionEndpoint = null;
     public ?string $jwksUri = null;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data)
     {
         $this->authorizationEndpoint = $data['authorization_endpoint'] ?? null;

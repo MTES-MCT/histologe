@@ -10,6 +10,9 @@ abstract class AbstractWidgetLoader implements WidgetLoaderInterface
 {
     protected ?string $widgetType = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected ?array $widgetParameter = null;
 
     public function __construct(

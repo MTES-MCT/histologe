@@ -17,27 +17,60 @@ class WidgetSettings
     private ?string $roleLabel = null;
     #[Groups('widget-settings:read')]
     private ?string $canSeeNDE = null;
+    /**
+     * @var array<int, int> $partnerIds
+     */
     #[Groups('widget-settings:read')]
     private array $partnerIds = [];
+    /**
+     * @var array<int, mixed> $territories
+     */
     #[Groups('widget-settings:read')]
     private array $territories = [];
+    /**
+     * @var array<int, mixed>
+     */
     #[Groups('widget-settings:read')]
     private array $partners = [];
+    /**
+     * @var array<int, mixed>
+     */
     #[Groups('widget-settings:read')]
     private array $communes = [];
+    /**
+     * @var array<int, mixed>
+     */
     #[Groups('widget-settings:read')]
     private array $epcis = [];
+    /**
+     * @var array<int, mixed>
+     */
     #[Groups('widget-settings:read')]
     private array $tags = [];
+    /**
+     * @var array<int, mixed>
+     */
     #[Groups('widget-settings:read')]
     private array $zones = [];
     #[Groups('widget-settings:read')]
     private ?bool $hasSignalementImported = false;
     #[Groups('widget-settings:read')]
     private ?bool $isMultiTerritoire = false;
+    /**
+     * @var array<int, mixed>
+     */
     #[Groups('widget-settings:read')]
     private array $bailleursSociaux = [];
 
+    /**
+     * @param array<int, mixed> $territories
+     * @param array<int, mixed> $partners
+     * @param array<int, mixed> $communes
+     * @param array<int, mixed> $epcis
+     * @param array<int, mixed> $tags
+     * @param array<int, mixed> $zones
+     * @param array<int, mixed> $bailleursSociaux
+     */
     public function __construct(
         User $user,
         array $territories,
@@ -88,6 +121,9 @@ class WidgetSettings
         return $this->canSeeNDE;
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function getPartnerIds(): array
     {
         return $this->partnerIds;
@@ -98,31 +134,49 @@ class WidgetSettings
         return $this->roleLabel;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getTerritories(): array
     {
         return $this->territories;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getPartners(): array
     {
         return $this->partners;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getCommunes(): array
     {
         return $this->communes;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getEpcis(): array
     {
         return $this->epcis;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getTags(): array
     {
         return $this->tags;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getZones(): array
     {
         return $this->zones;
@@ -138,6 +192,9 @@ class WidgetSettings
         return $this->isMultiTerritoire;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getBailleursSociaux(): array
     {
         return $this->bailleursSociaux;
