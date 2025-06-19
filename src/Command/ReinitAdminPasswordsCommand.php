@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Enum\UserStatus;
+use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
@@ -24,13 +25,13 @@ class ReinitAdminPasswordsCommand extends Command
 {
     private SymfonyStyle $io;
 
-    public const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const string ROLE_ADMIN = 'ROLE_ADMIN';
 
     public function __construct(
-        private UserManager $userManager,
-        private ValidatorInterface $validator,
-        private UserRepository $userRepository,
-        private NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly UserManager $userManager,
+        private readonly ValidatorInterface $validator,
+        private readonly UserRepository $userRepository,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
     ) {
         parent::__construct();
     }

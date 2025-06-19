@@ -13,17 +13,17 @@ use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Workflow\Event\Event;
+use Symfony\Component\Workflow\Event\TransitionEvent;
 
 class InterventionConfirmedSubscriber implements EventSubscriberInterface
 {
-    public const NAME = 'workflow.intervention_planning.transition.confirm';
+    public const string NAME = 'workflow.intervention_planning.transition.confirm';
 
     public function __construct(
-        private Security $security,
-        private VisiteNotifier $visiteNotifier,
-        private SuiviManager $suiviManager,
-        private UrlGeneratorInterface $urlGenerator,
+        private readonly Security $security,
+        private readonly VisiteNotifier $visiteNotifier,
+        private readonly SuiviManager $suiviManager,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -34,7 +34,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onInterventionConfirmed(Event $event): void
+    public function onInterventionConfirmed(TransitionEvent $event): void
     {
         /** @var Intervention $intervention */
         $intervention = $event->getSubject();

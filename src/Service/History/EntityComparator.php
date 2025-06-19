@@ -4,6 +4,7 @@ namespace App\Service\History;
 
 class EntityComparator
 {
+    /** @var string[] */
     private const array FIELDS_TO_TRUNCATE = [
         'password',
         'token',

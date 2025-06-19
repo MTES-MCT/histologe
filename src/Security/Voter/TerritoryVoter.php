@@ -6,6 +6,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class TerritoryVoter extends Voter
@@ -13,7 +14,7 @@ class TerritoryVoter extends Voter
     public const string GET_DOCUMENT = 'GET_DOCUMENT';
     public const string GET_BAILLEURS_LIST = 'GET_BAILLEURS_LIST';
 
-    public function __construct(private Security $security)
+    public function __construct(private readonly Security $security)
     {
     }
 
@@ -22,11 +23,16 @@ class TerritoryVoter extends Voter
         return \in_array($attribute, [self::GET_DOCUMENT, self::GET_BAILLEURS_LIST]) && ($subject instanceof Territory);
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    /**
+     * @param Territory $subject
+     */
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) {
+            $vote?->addReason('L\'utilisateur n\'est pas authentifié');
+
             return false;
         }
 

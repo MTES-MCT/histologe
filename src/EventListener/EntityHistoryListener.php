@@ -22,6 +22,7 @@ class EntityHistoryListener
 {
     private UnitOfWork $uow;
 
+    /** @var string[] */
     public const array FIELDS_TO_IGNORE = [
         'lastLoginAt',
         'updatedAt',

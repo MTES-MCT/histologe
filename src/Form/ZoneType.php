@@ -91,10 +91,10 @@ class ZoneType extends AbstractType
             'label' => 'Type de zone',
         ]);
         $fileConstraints = [
-            new Assert\File([
-                'mimeTypes' => ['text/csv', 'text/plain'],
-                'mimeTypesMessage' => 'Le fichier doit être au format CSV',
-            ]),
+            new Assert\File(
+                mimeTypes: ['text/csv', 'text/plain'],
+                mimeTypesMessage: 'Le fichier doit être au format CSV',
+            ),
         ];
         $modeleUrl = $this->package->getUrl('/build/files/zone_modele.csv');
         $builder->add('file', FileType::class, [

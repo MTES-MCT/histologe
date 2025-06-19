@@ -10,12 +10,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CriticiteRepository::class)]
 class Criticite
 {
-    public const SCORE_MAX = 3;
-    public const ETAT_MOYEN = 'moyen';
-    public const ETAT_GRAVE = 'grave';
-    public const ETAT_TRES_GRAVE = 'très grave';
+    public const int SCORE_MAX = 3;
+    public const string ETAT_MOYEN = 'moyen';
+    public const string ETAT_GRAVE = 'grave';
+    public const string ETAT_TRES_GRAVE = 'très grave';
 
-    public const ETAT_LABEL = [
+    /** @var array<string, int> */
+    public const array ETAT_LABEL = [
         'etat moyen' => 1,
         'mauvais état' => 2,
         'très mauvais état' => 3,

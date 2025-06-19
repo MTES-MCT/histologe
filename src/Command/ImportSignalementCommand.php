@@ -25,12 +25,12 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class ImportSignalementCommand extends Command
 {
     public function __construct(
-        private CsvParser $csvParser,
-        private ParameterBagInterface $parameterBag,
-        private EntityManagerInterface $entityManager,
-        private FilesystemOperator $fileStorage,
-        private UploadHandlerService $uploadHandlerService,
-        private SignalementImportLoader $signalementImportLoader,
+        private readonly CsvParser $csvParser,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FilesystemOperator $fileStorage,
+        private readonly UploadHandlerService $uploadHandlerService,
+        private readonly SignalementImportLoader $signalementImportLoader,
     ) {
         parent::__construct();
     }

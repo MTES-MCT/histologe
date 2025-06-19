@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Service\Import\Bailleur\BailleurLoader;
 use App\Service\Import\CsvParser;
 use App\Service\UploadHandlerService;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,15 +21,18 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class ImportBailleurCommand extends Command
 {
     public function __construct(
-        private CsvParser $csvParser,
-        private BailleurLoader $bailleurLoader,
-        private UploadHandlerService $uploadHandlerService,
-        private FilesystemOperator $fileStorage,
-        private ParameterBagInterface $parameterBag,
+        private readonly CsvParser $csvParser,
+        private readonly BailleurLoader $bailleurLoader,
+        private readonly UploadHandlerService $uploadHandlerService,
+        private readonly FilesystemOperator $fileStorage,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct();
     }
 
+    /**
+     * @throws FilesystemException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

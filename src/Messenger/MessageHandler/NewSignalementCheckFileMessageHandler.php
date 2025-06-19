@@ -24,6 +24,7 @@ class NewSignalementCheckFileMessageHandler
         .'Vous avez signalé un problème sur un logement.<br>'
         .'Votre dossier a bien été enregistré par nos services.<br><br>'
         .'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
+    /** @var string[] */
     private const array DESORDRES_CATEGORIES_WITH_PHOTOS = [
         'desordres_batiment_proprete',
         'desordres_batiment_nuisibles',
@@ -34,7 +35,7 @@ class NewSignalementCheckFileMessageHandler
         'desordres_logement_nuisibles',
         'desordres_logement_securite',
     ];
-
+    /** @var string[] */
     private const array DESORDRES_CRITERES_WITH_PHOTOS = [
         'desordres_logement_chauffage_details_chauffage_dangereux',
         'desordres_logement_electricite_installation_dangereuse',
@@ -44,12 +45,12 @@ class NewSignalementCheckFileMessageHandler
     public ?string $description;
 
     public function __construct(
-        private SignalementRepository $signalementRepository,
-        private UserRepository $userRepository,
-        private DesordreCritereRepository $desordreCritereRepository,
-        private LoggerInterface $logger,
-        private SuiviManager $suiviManager,
-        private ParameterBagInterface $parameterBag,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly UserRepository $userRepository,
+        private readonly DesordreCritereRepository $desordreCritereRepository,
+        private readonly LoggerInterface $logger,
+        private readonly SuiviManager $suiviManager,
+        private readonly ParameterBagInterface $parameterBag,
         protected Security $security,
     ) {
     }
@@ -87,7 +88,7 @@ class NewSignalementCheckFileMessageHandler
 
         $this->logger->info('NewSignalementCheckFileMessage handled successfully', [
             'signalementId' => $newSignalementCheckFileMessage->getSignalementId(),
-            'suiviId' => $this->suivi ? $this->suivi->getId() : null,
+            'suiviId' => $this->suivi?->getId(),
         ]);
     }
 

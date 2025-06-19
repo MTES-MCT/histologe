@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CritereRepository::class)]
 class Critere
 {
-    public const TYPE_BATIMENT = 1;
-    public const TYPE_LOGEMENT = 2;
+    public const int TYPE_BATIMENT = 1;
+    public const int TYPE_LOGEMENT = 2;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

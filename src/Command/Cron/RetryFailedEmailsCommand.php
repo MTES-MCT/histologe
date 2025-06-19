@@ -22,6 +22,7 @@ use Symfony\Component\Mime\Address;
 )]
 class RetryFailedEmailsCommand extends AbstractCronCommand
 {
+    /** @var string[] */
     public const array ERRORS_TO_IGNORE = [
         'Unable to send an email: email is not valid in to (code 400).',
         'An email must have a "To", "Cc", or "Bcc" header.',

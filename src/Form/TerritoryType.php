@@ -51,13 +51,13 @@ class TerritoryType extends AbstractType
             'label' => $labelGrilleFile,
             'help' => 'Grille de visite du territoire au format PDF',
             'constraints' => [
-                new Assert\File([
-                    'mimeTypes' => [
+                new Assert\File(
+                    mimeTypes: [
                         'application/pdf',
                         'application/x-pdf',
                     ],
-                    'mimeTypesMessage' => 'Veuillez télécharger un fichier PDF valide',
-                ]),
+                    mimeTypesMessage: 'Veuillez télécharger un fichier PDF valide',
+                ),
             ],
         ]);
         if ($territory->getGrilleVisiteFilename()) {

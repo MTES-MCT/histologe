@@ -9,7 +9,7 @@ use Doctrine\DBAL\Types\Type;
 
 class SituationFoyerType extends Type
 {
-    public const NAME = 'situation_foyer';
+    public const string NAME = 'situation_foyer';
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {

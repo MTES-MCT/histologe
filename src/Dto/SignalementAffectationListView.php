@@ -10,9 +10,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[Groups(['signalements:read'])]
 class SignalementAffectationListView
 {
-    public const SEPARATOR_CONCAT = '||';
-    public const SEPARATOR_GROUP_CONCAT = ';';
-    public const MAX_LIST_PAGINATION = 30;
+    public const string SEPARATOR_CONCAT = '||';
+    public const string SEPARATOR_GROUP_CONCAT = ';';
+    public const int MAX_LIST_PAGINATION = 30;
 
     private ?array $qualificationsStatusesLabels = null;
 

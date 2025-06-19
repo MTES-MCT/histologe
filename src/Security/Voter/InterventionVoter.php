@@ -8,6 +8,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class InterventionVoter extends Voter
@@ -19,11 +20,13 @@ class InterventionVoter extends Voter
         return \in_array($attribute, [self::EDIT_VISITE]) && ($subject instanceof Intervention);
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) {
+            $vote?->addReason('L\'utilisateur n\'est pas authentifié');
+
             return false;
         }
 

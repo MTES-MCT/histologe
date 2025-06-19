@@ -9,7 +9,7 @@ use Doctrine\DBAL\Types\Type;
 
 class InformationComplementaireType extends Type
 {
-    public const NAME = 'information_complementaire';
+    public const string NAME = 'information_complementaire';
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {

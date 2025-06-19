@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Security\User\SignalementUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SignalementFoVoter extends Voter
@@ -20,12 +21,14 @@ class SignalementFoVoter extends Voter
         return \in_array($attribute, [self::SIGN_USAGER_EDIT, self::SIGN_USAGER_VIEW, self::SIGN_USAGER_EDIT_PROCEDURE]) && ($subject instanceof Signalement);
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User|null $user */
         $user = $token->getUser();
 
-        if (!$user || !$user instanceof SignalementUser) {
+        if (!$user instanceof SignalementUser) {
+            $vote?->addReason('L\'usager n\'est pas authentifié');
+
             return false;
         }
 

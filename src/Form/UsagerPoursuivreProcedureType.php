@@ -17,10 +17,10 @@ class UsagerPoursuivreProcedureType extends AbstractType
                 'help' => 'Dix (10) caractères minimum',
                 'required' => false,
                 'constraints' => [
-                    new Assert\Length([
-                        'min' => 10,
-                        'minMessage' => 'Le message doit contenir au moins {{ limit }} caractères.',
-                    ]),
+                    new Assert\Length(
+                        min: 10,
+                        minMessage: 'Le message doit contenir au moins {{ limit }} caractères.',
+                    ),
                 ],
             ]);
     }

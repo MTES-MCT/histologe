@@ -20,10 +20,10 @@ class MessageUsagerType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length([
-                        'min' => 10,
-                        'minMessage' => 'Le message doit contenir au moins {{ limit }} caractères.',
-                    ]),
+                    new Assert\Length(
+                        min: 10,
+                        minMessage: 'Le message doit contenir au moins {{ limit }} caractères.',
+                    ),
                 ],
             ]);
     }

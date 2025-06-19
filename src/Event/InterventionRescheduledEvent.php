@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class InterventionRescheduledEvent extends Event
 {
-    public const NAME = 'intervention.rescheduled';
+    public const string NAME = 'intervention.rescheduled';
 
     public function __construct(
         private Intervention $intervention,

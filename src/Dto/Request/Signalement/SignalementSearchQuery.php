@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SignalementSearchQuery
 {
-    public const MAX_LIST_PAGINATION = 25;
+    public const int MAX_LIST_PAGINATION = 25;
 
     public function __construct(
         private readonly ?string $territoire = null,
