@@ -19,6 +19,7 @@ class AffectationVoter extends Voter
     public const string REOPEN = 'AFFECTATION_REOPEN';
     public const string UPDATE_STATUT = 'AFFECTATION_UPDATE_STATUS';
 
+    /** @var array<int, array<int>> */
     private const array VALID_WORKFLOW_STATUT = [
         Affectation::STATUS_WAIT => [Affectation::STATUS_ACCEPTED, Affectation::STATUS_REFUSED],
         Affectation::STATUS_ACCEPTED => [Affectation::STATUS_CLOSED],

@@ -23,6 +23,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 readonly class SignalementResponseFactory
 {
+    /** @var PersonneType[] */
     public const array PERSONNE_TYPES = [
         PersonneType::OCCUPANT,
         PersonneType::DECLARANT,

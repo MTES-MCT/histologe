@@ -12,9 +12,13 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class SignalementDraftRequest
 {
     use DateNaissanceValidatorTrait;
+    /** @var string[] */
     public const array PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe', 'desordres_logement_chauffage_details_dpe'];
+    /** @var string[] */
     public const array PREFIX_PROPERTIES_SITUATION_FOYER = ['logement_social', 'travailleur_social'];
+    /** @var string[] */
     public const array PREFIX_PROPERTIES_INFORMATION_PROCEDURE = ['info_procedure', 'utilisation_service'];
+    /** @var string[] */
     public const array PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE = ['informations_complementaires'];
 
     public const string PATTERN_PHONE_KEY = '/.*(_tel|_tel_secondaire)$/';

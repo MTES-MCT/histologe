@@ -19,7 +19,10 @@ class FixEmailAddressesCommand extends Command
 {
     private SymfonyStyle $io;
 
+    /** @var string[] */
     private const array FIELDS = ['mailOccupant', 'mailDeclarant', 'mailProprio'];
+
+    /** @var string[] */
     private const array EMAILS_TO_INCONNU = [
         'Non communiqué',
         '?',
@@ -32,6 +35,8 @@ class FixEmailAddressesCommand extends Command
         'test@fr',
         'x@x.xx',
     ];
+
+    /** @var array<string, string> */
     private const array STRINGS_TO_REPLACE = [
         ',com' => '.com',
         ',fr' => '.fr',

@@ -20,6 +20,7 @@ class SignalementExportFactory
     public const string OUI = 'Oui';
     public const string NON = 'Non';
     public const string NON_RENSEIGNE = 'Non renseigné';
+    /** @var array<string|int> */
     public const array ALLOCATAIRE = ['CAF', 'MSA', 'oui', 1];
     public const string DATE_FORMAT = 'd/m/Y';
 

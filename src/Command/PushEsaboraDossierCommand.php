@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 )]
 class PushEsaboraDossierCommand extends Command
 {
+    /** @var string[] */
     public const array TERRITORY_NOT_ALLOWED = ['13', '06'];
 
     public function __construct(

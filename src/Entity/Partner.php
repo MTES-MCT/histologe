@@ -31,7 +31,9 @@ class Partner implements EntityHistoryInterface
     use TimestampableTrait;
 
     public const string DEFAULT_PARTNER = 'Administrateurs Signal-logement';
+    /** @var int[] */
     public const array OILHI_TERRITORY_ZIP_ALLOWED = [62, 55]; // Should be replaced by OILHI_CODE_INSEE_ALLOWED
+    /** @var int[] */
     public const array OILHI_CODE_INSEE_ALLOWED = [62091, 55502, 55029, 55545]; // for testing production
 
     #[ORM\Id]
