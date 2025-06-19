@@ -8,6 +8,11 @@
     </div>
     <h1 v-if="formStore.currentScreen?.slug === 'introduction'" >{{ variablesReplacer.replace(label) }}</h1>
     <h2 v-else-if="label !== ''">{{ label }}</h2>
+    <SignalementFormWarning
+      v-if="errorMessage !== ''"
+      id="fr-modal-already-exists-warning"
+      :label="errorMessage"
+    ></SignalementFormWarning>
     <div v-html="variablesReplacer.replace(description)"></div>
     <div v-if="components != undefined">
       <template v-if="formStore.shouldAddFieldset(formStore.currentScreen?.components?.body)">
@@ -47,11 +52,13 @@ import { variablesReplacer } from './../services/variableReplacer'
 import { componentValidator } from './../services/componentValidator'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
 import SignalementFormComponentGenerator from './SignalementFormComponentGenerator.vue'
+import SignalementFormWarning from './SignalementFormWarning.vue'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
   components: {
-    SignalementFormComponentGenerator
+    SignalementFormComponentGenerator,
+    SignalementFormWarning
   },
   props: {
     label: String,
@@ -64,6 +71,7 @@ export default defineComponent({
   data () {
     return {
       formStore,
+      errorMessage: '',
       requests,
       variablesReplacer,
       componentValidator,
@@ -221,7 +229,7 @@ export default defineComponent({
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
     },
-    async finishLater (isSaveAndCheck:boolean) {
+    finishLater (isSaveAndCheck:boolean) {
       formStore.validationErrors = {}
 
       if (isSaveAndCheck) {
@@ -229,10 +237,25 @@ export default defineComponent({
           return
         }
       }
-      requests.saveSignalementDraft(this.sendMailDraft)
+      requests.saveSignalementDraft(this.sendMailContinueFromDraft)
     },
-    sendMailDraft () {
-      requests.sendMailContinueFromDraft(this.gotoHomepage)
+    sendMailContinueFromDraft (requestResponse: any) {
+      if (requestResponse && requestResponse.success === true) {
+        this.errorMessage = ''
+        requests.sendMailContinueFromDraft(this.redirectToDraftMailScreen)
+      } else if (requestResponse && requestResponse.success === false) {
+        this.errorMessage = requestResponse.message
+      }
+    },
+    redirectToDraftMailScreen (requestResponse: any) {
+      if (requestResponse && requestResponse.success === true) {
+        this.errorMessage = ''
+        if (this.changeEvent !== undefined) {
+          this.changeEvent('draft_mail', false)
+        }
+      } else if (requestResponse && requestResponse.success === false) {
+        this.errorMessage = requestResponse.message
+      }
     },
     gotoHomepage () {
       window.location.href = '/'

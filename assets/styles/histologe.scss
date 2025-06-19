@@ -95,20 +95,53 @@ pre {
             }
         }
     }
+    .button-group-responsive-inverted > div {
+        display: flex;
+        flex-direction: column;
+    }
+    .button-group-responsive-inverted .signalement-form-button[id*="next"],
+    .button-group-responsive-inverted .signalement-form-link[id*="next"] {
+        order: 1;
+    }
+    .button-group-responsive-inverted .signalement-form-button[id*="previous"],
+    .button-group-responsive-inverted .signalement-form-link[id*="previous"] {
+        order: 2;
+    }
+    .button-group-responsive-inverted .signalement-form-button[id*="finish_later"],
+    .button-group-responsive-inverted .signalement-form-link[id*="finish_later"] {
+        order: 3;
+    }
 }
 
 @media (min-width: 48em) {
     .button-group-responsive-inverted {
-        > div {
-            display: flex;
-            justify-content: right;
-            flex-direction: row-reverse;
+        width: 100%;
+    }
+    .button-group-responsive-inverted > div {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row-reverse;
+        justify-content: flex-end; /* par défaut : tous à droite */
+        gap: 0.5rem;
+        width: 100%;
+    }
 
-            .signalement-form-button, .signalement-form-link {
-                display: inline-flex;
-                margin-left: 0.25rem;
-            }
-        }
+    /* Tous les boutons */
+    .button-group-responsive-inverted .signalement-form-button,
+    .button-group-responsive-inverted .signalement-form-link {
+        display: inline-flex;
+    }
+
+    /* Bouton Précédent à gauche */
+    .button-group-responsive-inverted .signalement-form-button[id*="previous"],
+    .button-group-responsive-inverted .signalement-form-link[id*="previous"] {
+        margin-right: auto;
+    }
+
+    /* Les autres ont une petite marge entre eux */
+    .button-group-responsive-inverted .signalement-form-button:not([id*="previous"]),
+    .button-group-responsive-inverted .signalement-form-link:not([id*="previous"]) {
+        margin-left: 0.25rem;
     }
 }
 
