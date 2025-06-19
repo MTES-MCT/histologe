@@ -309,8 +309,8 @@ class NotificationAndMailSender
     {
         $partnerRecipientsMail = new ArrayCollection();
         foreach ($this->signalement->getAffectations() as $affectation) {
-            if (!$isFilteredAffectationStatus || AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
-                    || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+            if (!$isFilteredAffectationStatus || AffectationStatus::WAIT->value === $affectation->getStatut()
+                    || AffectationStatus::ACCEPTED->value === $affectation->getStatut()) {
                 $partner = $this->partnerRepository->getWithUserPartners($affectation->getPartner());
                 $partnerRecipientsMailItem = $this->getRecipientsPartner($partner);
                 $partnerRecipientsMail = new ArrayCollection(

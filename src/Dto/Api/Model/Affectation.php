@@ -2,7 +2,7 @@
 
 namespace App\Dto\Api\Model;
 
-use App\Entity\Enum\AffectationNewStatus;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use OpenApi\Attributes as OA;
@@ -23,7 +23,7 @@ class Affectation
         description: 'Le statut d\'affectation',
         example: 'FERME'
     )]
-    public AffectationNewStatus $statut;
+    public AffectationStatus $statut;
 
     #[OA\Property(
         description: 'Date d\'affectation du signalement au partenaire.<br>Exemple : `2025-01-05T15:30:15+00:00`',

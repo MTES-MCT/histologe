@@ -2,19 +2,23 @@
 
 namespace App\Entity\Enum;
 
-enum AffectationStatus: int
+use App\Entity\Behaviour\EnumTrait;
+
+enum AffectationStatus: string
 {
-    case STATUS_WAIT = 0;
-    case STATUS_ACCEPTED = 1;
-    case STATUS_REFUSED = 2;
-    case STATUS_CLOSED = 3;
+    use EnumTrait;
+
+    case WAIT = 'NOUVEAU';
+    case ACCEPTED = 'EN_COURS';
+    case REFUSED = 'REFUSE';
+    case CLOSED = 'FERME';
 
     public function mapSignalementStatus(): SignalementStatus
     {
         return match ($this) {
-            self::STATUS_WAIT => SignalementStatus::NEED_VALIDATION,
-            self::STATUS_ACCEPTED => SignalementStatus::ACTIVE,
-            self::STATUS_CLOSED, self::STATUS_REFUSED => SignalementStatus::CLOSED,
+            self::WAIT => SignalementStatus::NEED_VALIDATION,
+            self::ACCEPTED => SignalementStatus::ACTIVE,
+            self::CLOSED, self::REFUSED => SignalementStatus::CLOSED,
         };
     }
 
@@ -26,31 +30,20 @@ enum AffectationStatus: int
     public static function getLabel(self $value): string
     {
         return match ($value) {
-            self::STATUS_WAIT => 'nouveau',
-            self::STATUS_ACCEPTED => 'en cours',
-            self::STATUS_CLOSED => 'fermé',
-            self::STATUS_REFUSED => 'refusé',
+            self::WAIT => 'nouveau',
+            self::ACCEPTED => 'en cours',
+            self::CLOSED => 'fermé',
+            self::REFUSED => 'refusé',
         };
     }
 
     public static function mapFilterStatus(string $label): int
     {
         return match ($label) {
-            'en_attente' => AffectationStatus::STATUS_WAIT->value,
-            'accepte' => AffectationStatus::STATUS_ACCEPTED->value,
-            'refuse' => AffectationStatus::STATUS_REFUSED->value,
+            'en_attente' => AffectationStatus::WAIT->value,
+            'accepte' => AffectationStatus::ACCEPTED->value,
+            'refuse' => AffectationStatus::REFUSED->value,
             default => throw new \UnexpectedValueException('Unexpected affectation status : '.$label),
-        };
-    }
-
-    public static function mapNewStatus(?int $codeStatus): AffectationNewStatus
-    {
-        return match ($codeStatus) {
-            0 => AffectationNewStatus::NOUVEAU,
-            1 => AffectationNewStatus::EN_COURS,
-            2 => AffectationNewStatus::REFUSE,
-            3 => AffectationNewStatus::FERME,
-            default => throw new \UnexpectedValueException('Unexpected affectation status : '.$codeStatus),
         };
     }
 }

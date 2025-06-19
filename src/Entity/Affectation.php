@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
@@ -41,8 +42,8 @@ class Affectation implements EntityHistoryInterface
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'integer')]
-    private ?int $statut = null;
+    #[ORM\Column(type: 'string', enumType: AffectationStatus::class)]
+    private ?AffectationStatus $statut = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isSynchronized = false;
@@ -67,12 +68,12 @@ class Affectation implements EntityHistoryInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?Territory $territory;
 
-    private ?int $nextStatut = null;
+    private ?AffectationStatus $nextStatut = null;
     private ?bool $hasNotificationUsagerToCreate = null;
 
     public function __construct()
     {
-        $this->statut = self::STATUS_WAIT;
+        $this->statut = AffectationStatus::WAIT;
         $this->createdAt = new \DateTimeImmutable();
         $this->notifications = new ArrayCollection();
         $this->uuid = Uuid::v4();
@@ -136,12 +137,12 @@ class Affectation implements EntityHistoryInterface
         return $this;
     }
 
-    public function getStatut(): ?int
+    public function getStatut(): ?AffectationStatus
     {
         return $this->statut;
     }
 
-    public function setStatut(int $statut): static
+    public function setStatut(AffectationStatus $statut): static
     {
         $this->statut = $statut;
 
@@ -253,20 +254,20 @@ class Affectation implements EntityHistoryInterface
     public function getAffectationLabel(): string
     {
         return match ($this->getStatut()) {
-            self::STATUS_WAIT => 'En attente...',
-            self::STATUS_ACCEPTED => 'Accepté',
-            self::STATUS_REFUSED => 'Refusé',
-            self::STATUS_CLOSED => 'Cloturé',
-            default => 'Unexpected affectation status : '.$this->getStatut(),
+            AffectationStatus::WAIT => 'En attente...',
+            AffectationStatus::ACCEPTED => 'Accepté',
+            AffectationStatus::REFUSED => 'Refusé',
+            AffectationStatus::CLOSED => 'Cloturé',
+            default => 'Unexpected affectation status',
         };
     }
 
-    public function getNextStatut(): ?int
+    public function getNextStatut(): ?AffectationStatus
     {
         return $this->nextStatut;
     }
 
-    public function setNextStatut(int $nextStatut): void
+    public function setNextStatut(AffectationStatus $nextStatut): void
     {
         $this->nextStatut = $nextStatut;
     }

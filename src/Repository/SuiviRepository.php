@@ -93,8 +93,8 @@ class SuiviRepository extends ServiceEntityRepository
         }
         if (!empty($partnersIds)) {
             $parameters['partners'] = implode(',', $partnersIds);
-            $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
-            $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
+            $parameters['status_wait'] = AffectationStatus::WAIT->value;
+            $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
         }
 
         $sql = 'SELECT COUNT(*) as count_signalement
@@ -140,8 +140,8 @@ class SuiviRepository extends ServiceEntityRepository
 
         if (!empty($partnersIds)) {
             $parameters['partners'] = implode(',', $partnersIds);
-            $parameters['status_wait'] = AffectationStatus::STATUS_WAIT->value;
-            $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
+            $parameters['status_wait'] = AffectationStatus::WAIT->value;
+            $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
         }
         $sql = $this->getSignalementsQuery($territories, $partnersIds);
         $statement = $connection->prepare($sql);

@@ -50,7 +50,7 @@ class AffectationUpdateControllerTest extends WebTestCase
 
         $this->patchAffectation($affectation->getUuid(), $payload);
         $this->assertResponseIsSuccessful();
-        $this->assertEquals($statut, AffectationStatus::mapNewStatus($affectation->getStatut())->value);
+        $this->assertEquals($statut, $affectation->getStatut()->value);
         $this->assertEmailCount($mailSent);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }

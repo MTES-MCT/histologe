@@ -3,6 +3,7 @@
 namespace App\Service\Interconnection\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
@@ -97,34 +98,34 @@ class EsaboraManager
 
         switch ($esaboraStatus) {
             case EsaboraStatus::ESABORA_WAIT->value:
-                if (Affectation::STATUS_WAIT !== $currentStatus) {
-                    $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_WAIT);
+                if (AffectationStatus::WAIT !== $currentStatus) {
+                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::WAIT);
                     $description = 'remis en attente via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
                 if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
-                    $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_ACCEPTED);
+                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED);
                     $description = 'accepté via '.$dossierResponse->getNameSI();
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
-                    $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_CLOSED);
+                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED);
                     $description = 'cloturé via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_REFUSED->value:
-                if (Affectation::STATUS_REFUSED !== $currentStatus) {
-                    $this->affectationManager->updateAffectation($affectation, $user, Affectation::STATUS_REFUSED);
+                if (AffectationStatus::REFUSED !== $currentStatus) {
+                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::REFUSED);
                     $description = 'refusé via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_REJECTED->value:
-                if (Affectation::STATUS_REFUSED !== $currentStatus) {
+                if (AffectationStatus::REFUSED !== $currentStatus) {
                     $this->affectationManager->updateAffectation(
                         affectation: $affectation,
                         user: $user,
-                        status: Affectation::STATUS_REFUSED,
+                        status: AffectationStatus::REFUSED,
                         dispatchAffectationAnsweredEvent: false
                     );
                     $description = \sprintf(
@@ -397,15 +398,15 @@ class EsaboraManager
         return $hasChanged;
     }
 
-    private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
+    private function shouldBeAcceptedViaEsabora(string $esaboraDossierStatus, AffectationStatus $currentStatus): bool
     {
         return EsaboraStatus::ESABORA_IN_PROGRESS->value === $esaboraDossierStatus
-            && Affectation::STATUS_ACCEPTED !== $currentStatus;
+            && AffectationStatus::ACCEPTED !== $currentStatus;
     }
 
-    private function shouldBeClosedViaEsabora(string $esaboraDossierStatus, int $currentStatus): bool
+    private function shouldBeClosedViaEsabora(string $esaboraDossierStatus, AffectationStatus $currentStatus): bool
     {
         return EsaboraStatus::ESABORA_CLOSED->value === $esaboraDossierStatus
-            && Affectation::STATUS_CLOSED !== $currentStatus;
+            && AffectationStatus::CLOSED !== $currentStatus;
     }
 }

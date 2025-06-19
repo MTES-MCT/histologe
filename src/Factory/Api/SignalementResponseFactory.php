@@ -70,7 +70,7 @@ readonly class SignalementResponseFactory
 
         $signalementResponse->affectation = new AffectationModel();
         $signalementResponse->affectation->uuid = $affectation->getUuid();
-        $signalementResponse->affectation->statut = AffectationStatus::mapNewStatus($affectation->getStatut());
+        $signalementResponse->affectation->statut = $affectation->getStatut();
         $signalementResponse->affectation->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
         $signalementResponse->affectation->dateAcceptation = $affectation->getAnsweredAt()?->format(\DATE_ATOM);
         $signalementResponse->affectation->motifCloture = $affectation->getMotifCloture();

@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -168,7 +169,7 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), $request->get('_token')) && $response = $request->get('signalement-action')) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
-                $affectationRepository->updateStatusBySignalement(Affectation::STATUS_WAIT, $signalement);
+                $affectationRepository->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
             } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $this->addFlash('error', 'Seul un responsable de territoire peut réouvrir un signalement fermé !');
@@ -179,7 +180,7 @@ class SignalementActionController extends AbstractController
                 $reopenFor = mb_strtoupper($partner->getNom());
                 foreach ($partner->getAffectations() as $affectation) {
                     if ($affectation->getSignalement()->getId() === $signalement->getId()) {
-                        $affectation->setStatut(Affectation::STATUS_WAIT);
+                        $affectation->setStatut(AffectationStatus::WAIT);
                         break;
                     }
                 }
