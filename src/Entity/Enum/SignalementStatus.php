@@ -16,12 +16,12 @@ enum SignalementStatus: string
     case REFUSED = 'REFUSED';
     case DRAFT_ARCHIVED = 'DRAFT_ARCHIVED';
 
-    public function mapAffectationStatus(): int
+    public function mapAffectationStatus(): string
     {
         return match ($this) {
-            self::DRAFT, self::NEED_VALIDATION => AffectationStatus::STATUS_WAIT->value,
-            self::ACTIVE => AffectationStatus::STATUS_ACCEPTED->value,
-            self::CLOSED, self::REFUSED, self::ARCHIVED, self::DRAFT_ARCHIVED => AffectationStatus::STATUS_CLOSED->value,
+            self::DRAFT, self::NEED_VALIDATION => AffectationStatus::WAIT->value,
+            self::ACTIVE => AffectationStatus::ACCEPTED->value,
+            self::CLOSED, self::REFUSED, self::ARCHIVED, self::DRAFT_ARCHIVED => AffectationStatus::CLOSED->value,
         };
     }
 

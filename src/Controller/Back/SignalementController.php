@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
@@ -99,17 +100,17 @@ class SignalementController extends AbstractController
             return $affectation->getPartner() === $partner;
         })->first()) {
             switch ($affectation->getStatut()) {
-                case Affectation::STATUS_ACCEPTED:
+                case AffectationStatus::ACCEPTED:
                     $isAffectationAccepted = true;
                     break;
-                case Affectation::STATUS_REFUSED:
+                case AffectationStatus::REFUSED:
                     $isAffectationRefused = true;
                     $canCancelRefusedAffectation = $this->isGranted(AffectationVoter::ANSWER, $affectation);
                     break;
-                case Affectation::STATUS_CLOSED:
+                case AffectationStatus::CLOSED:
                     $isClosedForMe = true;
                     break;
-                case Affectation::STATUS_WAIT:
+                case AffectationStatus::WAIT:
                     $canAnswerAffectation = $this->isGranted(AffectationVoter::ANSWER, $affectation);
                     break;
             }
@@ -289,7 +290,7 @@ class SignalementController extends AbstractController
         ) {
             $signalement->setStatut(SignalementStatus::ARCHIVED);
             $notificationRepository->deleteBySignalement($signalement);
-            $affectationRepository->deleteByStatusAndSignalement(Affectation::STATUS_WAIT, $signalement);
+            $affectationRepository->deleteByStatusAndSignalement(AffectationStatus::WAIT, $signalement);
             $doctrine->getManager()->flush();
             $response = [
                 'status' => Response::HTTP_OK,

@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Partner;
@@ -34,7 +35,7 @@ class AffectationManager extends Manager
     public function updateAffectation(
         Affectation $affectation,
         User $user,
-        int $status,
+        AffectationStatus $status,
         ?string $motifRefus = null,
         ?string $message = null,
         ?bool $dispatchAffectationAnsweredEvent = true,
@@ -48,7 +49,7 @@ class AffectationManager extends Manager
             $affectation->setMotifRefus(MotifRefus::tryFrom($motifRefus));
         }
 
-        if (Affectation::STATUS_WAIT === $status || Affectation::STATUS_ACCEPTED === $status) {
+        if (AffectationStatus::WAIT === $status || AffectationStatus::ACCEPTED === $status) {
             $affectation->clearMotifs();
         }
 
@@ -102,7 +103,7 @@ class AffectationManager extends Manager
         bool $flush = false): Affectation
     {
         $affectation
-            ->setStatut(Affectation::STATUS_CLOSED)
+            ->setStatut(AffectationStatus::CLOSED)
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setMotifCloture($motif)
             ->setAnsweredBy($user);
@@ -168,7 +169,7 @@ class AffectationManager extends Manager
     private function dispatchAffectationAnsweredEvent(
         Affectation $affectation,
         User $user,
-        int $status,
+        AffectationStatus $status,
         ?MotifRefus $motifRefus = null,
         ?string $message = null,
     ): void {

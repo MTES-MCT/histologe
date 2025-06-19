@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -2023,10 +2024,10 @@ class AffectationToPartnerCommand extends Command
             if (!$signalement->getSynchroData(IdossService::TYPE_SERVICE)) {
                 throw new \Exception('Signalement not synchronized '.$signalement->getReference());
             }
-            if (Affectation::STATUS_WAIT !== $existingAffectation->getStatut()) {
+            if (AffectationStatus::WAIT !== $existingAffectation->getStatut()) {
                 continue;
             }
-            $existingAffectation->setStatut(Affectation::STATUS_ACCEPTED);
+            $existingAffectation->setStatut(AffectationStatus::ACCEPTED);
             ++$count;
             if (0 === $count % self::BATCH_SIZE) {
                 $this->entityManager->flush();

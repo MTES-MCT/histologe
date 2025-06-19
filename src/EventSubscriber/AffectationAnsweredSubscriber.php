@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\AffectationAnsweredEvent;
@@ -44,7 +45,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
         $user = $event->getUser();
-        if (Affectation::STATUS_REFUSED == $status) {
+        if (AffectationStatus::REFUSED == $status) {
             $signalement = $affectation->getSignalement();
             $params = [
                 'suivi' => $event->getMessage(),
@@ -59,7 +60,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
             );
         }
 
-        if (Affectation::STATUS_WAIT == $status && !empty($affectation->getHasNotificationUsagerToCreate())) {
+        if (AffectationStatus::WAIT == $status && !empty($affectation->getHasNotificationUsagerToCreate())) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.mb_strtoupper($partner->getNom()),

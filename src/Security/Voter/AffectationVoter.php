@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -19,10 +20,10 @@ class AffectationVoter extends Voter
     public const string UPDATE_STATUT = 'AFFECTATION_UPDATE_STATUS';
 
     private const array VALID_WORKFLOW_STATUT = [
-        Affectation::STATUS_WAIT => [Affectation::STATUS_ACCEPTED, Affectation::STATUS_REFUSED],
-        Affectation::STATUS_ACCEPTED => [Affectation::STATUS_CLOSED],
-        Affectation::STATUS_REFUSED => [Affectation::STATUS_ACCEPTED],
-        Affectation::STATUS_CLOSED => [Affectation::STATUS_WAIT],
+        AffectationStatus::WAIT->value => [AffectationStatus::ACCEPTED->value, AffectationStatus::REFUSED->value],
+        AffectationStatus::ACCEPTED->value => [AffectationStatus::CLOSED->value],
+        AffectationStatus::REFUSED->value => [AffectationStatus::ACCEPTED->value],
+        AffectationStatus::CLOSED->value => [AffectationStatus::WAIT->value],
     ];
 
     protected function supports(string $attribute, $subject): bool
@@ -77,12 +78,12 @@ class AffectationVoter extends Voter
 
     private function canClose(Affectation $affectation, User $user): bool
     {
-        return $this->canAnswer($affectation, $user) && Affectation::STATUS_ACCEPTED === $affectation->getStatut();
+        return $this->canAnswer($affectation, $user) && AffectationStatus::ACCEPTED === $affectation->getStatut();
     }
 
     private function canReopen(Affectation $affectation, User $user): bool
     {
-        return $this->canAnswer($affectation, $user) && Affectation::STATUS_CLOSED === $affectation->getStatut();
+        return $this->canAnswer($affectation, $user) && AffectationStatus::CLOSED === $affectation->getStatut();
     }
 
     private function canUpdateStatut(Affectation $affectation, User $user): bool

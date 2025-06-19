@@ -29,8 +29,8 @@ class SecurityApiExceptionListener
                 self::ACCESS_DENIED => 'Vous n\'avez pas l\'autorisation d\'accéder à cette ressource.',
                 self::TRANSITION_STATUT_DENIED => sprintf(
                     'Cette transition n\'est pas valide (%s --> %s).',
-                    AffectationStatus::mapNewStatus($affectation?->getStatut())->value,
-                    AffectationStatus::mapNewStatus($affectation?->getNextStatut())->value
+                    $affectation?->getStatut()->value,
+                    $affectation?->getNextStatut()->value
                 ),
                 default => 'Une erreur inconnue est survenue.',
             };
