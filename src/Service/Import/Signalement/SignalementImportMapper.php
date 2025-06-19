@@ -19,6 +19,9 @@ class SignalementImportMapper
     private const STATUT_CSV_OUVERTURE = 'ouverture';
     private const STATUT_CSV_FERMETURE = 'fermeture';
 
+    /**
+     * @return array<string, string|int>
+     */
     public function getMapping(): array
     {
         return [
@@ -120,6 +123,11 @@ class SignalementImportMapper
         ];
     }
 
+    /**
+     * @param array<int, string> $columns
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function map(array $columns, array $data): array
     {
         $dataMapped = [];
