@@ -226,8 +226,8 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Finir plus tard",
-                "slug": "signalement_concerne_finish_later",
-                "customCss": "fr-btn--secondary",
+                "slug": "coordonnees_bailleur_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
                 "action": "finish.save:/"
               },
               {
