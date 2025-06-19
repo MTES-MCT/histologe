@@ -6,15 +6,22 @@ class CsvWriter
 {
     private mixed $fileResource;
 
+    /**
+     * @var array<int, string>
+     */
+    private array $header = [];
+    /**
+     * @var array<string, int|string>
+     */
+    private array $options = [
+        'first_line' => 1,
+        'delimiter' => ',',
+        'enclosure' => '"',
+        'escape' => '\\',
+    ];
+
     public function __construct(
         private string $filepath,
-        private array $header = [],
-        private array $options = [
-            'first_line' => 1,
-            'delimiter' => ',',
-            'enclosure' => '"',
-            'escape' => '\\',
-        ],
     ) {
         if (file_exists($this->filepath)) {
             unlink($this->filepath);
@@ -25,6 +32,9 @@ class CsvWriter
         }
     }
 
+    /**
+     * @param array<int, string> $row
+     */
     public function writeRow(array $row): void
     {
         $this->fileResource = fopen($this->filepath, 'a');
@@ -37,11 +47,17 @@ class CsvWriter
         );
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getHeader(): array
     {
         return array_filter($this->header);
     }
 
+    /**
+     * @return array<string, int|string>
+     */
     public function getOptions(): array
     {
         return $this->options;

@@ -4,16 +4,26 @@ namespace App\Service\Import;
 
 class CsvParser
 {
-    public function __construct(
-        private array $options = [
-            'first_line' => 1,
-            'delimiter' => ',',
-            'enclosure' => '"',
-            'escape' => '\\',
-        ],
-    ) {
+    /**
+     * @var array<string, int|string>
+     */
+    private array $options;
+
+    /**
+     * @param array<string, int|string> $options
+     */
+    public function __construct(array $options = [
+        'first_line' => 1,
+        'delimiter' => ',',
+        'enclosure' => '"',
+        'escape' => '\\',
+    ]) {
+        $this->options = $options;
     }
 
+    /**
+     * @return array<int, array<int, string>>
+     */
     public function parse(string $filepath): array
     {
         $rows = [];
@@ -39,6 +49,9 @@ class CsvParser
         return $rows;
     }
 
+    /**
+     * @return array<int, array<string, string>>
+     */
     public function parseAsDict(string $filepath): array
     {
         $content = $this->getContent($filepath);
@@ -54,6 +67,9 @@ class CsvParser
         return $dataList;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getHeaders(string $filepath): array
     {
         $rows = explode("\n", file_get_contents($filepath));
@@ -68,6 +84,9 @@ class CsvParser
         return array_map('trim', $headers);
     }
 
+    /**
+     * @return array{headers: array<int, string>, rows: array<int, string>}
+     */
     public function getContent(string $filepath): array
     {
         $rows = explode("\n", file_get_contents($filepath));
@@ -85,6 +104,9 @@ class CsvParser
         ];
     }
 
+    /**
+     * @return array<string, int|string>
+     */
     public function getOptions(): array
     {
         return $this->options;

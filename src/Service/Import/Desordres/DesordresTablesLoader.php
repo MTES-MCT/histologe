@@ -18,6 +18,14 @@ class DesordresTablesLoader
 {
     private const FLUSH_COUNT = 200;
 
+    /**
+     * @var array{
+     *   count_desordre_categorie_created: int,
+     *   count_desordre_critere_created: int,
+     *   count_desordre_precision_created: int,
+     *   count_desordre_precision_updated: int,
+     * }
+     */
     private array $metadata = [
         'count_desordre_categorie_created' => 0,
         'count_desordre_critere_created' => 0,
@@ -35,6 +43,7 @@ class DesordresTablesLoader
     }
 
     /**
+     * @param array<int, array<string, mixed>> $data
      * @throws NonUniqueResultException
      * @throws \Exception
      */
@@ -69,6 +78,14 @@ class DesordresTablesLoader
         }
     }
 
+    /**
+     * @return array{
+     *   count_desordre_categorie_created: int,
+     *   count_desordre_critere_created: int,
+     *   count_desordre_precision_created: int,
+     *   count_desordre_precision_updated: int,
+     * }
+     */
     public function getMetadata(): array
     {
         return $this->metadata;
@@ -85,6 +102,9 @@ class DesordresTablesLoader
         return $desordreCategorie;
     }
 
+    /**
+     * @param array<string, mixed> $item
+     */
     private function createDesordreCritere(array $item, DesordreCategorie $desordreCategorie): DesordreCritere
     {
         $desordreCritere = $this->desordreCritereManager->findOneBy(
@@ -104,6 +124,9 @@ class DesordresTablesLoader
         return $this->desordreCritereManager->createOrUpdate($item[DesordresTablesHeader::CRITERE_SLUG], $data);
     }
 
+    /**
+     * @param array<string, mixed> $item
+     */
     private function createDesordrePrecision(array $item, DesordreCritere $desordreCritere): DesordrePrecision
     {
         $slugPrecision = '' !== $item[DesordresTablesHeader::PRECISION_SLUG] ?
