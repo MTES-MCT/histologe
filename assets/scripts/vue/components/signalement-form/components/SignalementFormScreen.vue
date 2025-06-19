@@ -9,9 +9,9 @@
     <h1 v-if="formStore.currentScreen?.slug === 'introduction'" >{{ variablesReplacer.replace(label) }}</h1>
     <h2 v-else-if="label !== ''">{{ label }}</h2>
     <SignalementFormWarning
-      v-if="errorMessage !== ''"
-      id="fr-modal-already-exists-warning"
-      :label="errorMessage"
+      v-if="formStore.data.errorMessage !== ''"
+      id="form-screen-warning"
+      :label="formStore.data.errorMessage"
     ></SignalementFormWarning>
     <div v-html="variablesReplacer.replace(description)"></div>
     <div v-if="components != undefined">
@@ -71,7 +71,6 @@ export default defineComponent({
   data () {
     return {
       formStore,
-      errorMessage: '',
       requests,
       variablesReplacer,
       componentValidator,
@@ -197,6 +196,7 @@ export default defineComponent({
       return false
     },
     async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean, isCheckLocation:boolean) {
+      formStore.data.errorMessage = ''
       formStore.validationErrors = {}
 
       if (isSaveAndCheck || isCheckLocation) {
@@ -240,21 +240,23 @@ export default defineComponent({
       requests.saveSignalementDraft(this.sendMailContinueFromDraft)
     },
     sendMailContinueFromDraft (requestResponse: any) {
-      if (requestResponse && requestResponse.success === true) {
-        this.errorMessage = ''
+      formStore.data.errorMessage = ''
+      if (requestResponse && requestResponse.uuid) {
         requests.sendMailContinueFromDraft(this.redirectToDraftMailScreen)
       } else if (requestResponse && requestResponse.success === false) {
-        this.errorMessage = requestResponse.message
+          for (const index in requestResponse.violations) {
+            formStore.data.errorMessage += requestResponse.violations[index].title + '\n'
+          }
       }
     },
     redirectToDraftMailScreen (requestResponse: any) {
-      if (requestResponse && requestResponse.success === true) {
-        this.errorMessage = ''
+      formStore.data.errorMessage = ''
+      if (requestResponse && requestResponse.success === true ) {
         if (this.changeEvent !== undefined) {
           this.changeEvent('draft_mail', false)
         }
-      } else if (requestResponse && requestResponse.success === false) {
-        this.errorMessage = requestResponse.message
+      } else if (requestResponse && requestResponse.success === false || requestResponse.response.data.success === false) {
+        formStore.data.errorMessage = requestResponse.response.data.message ?? requestResponse.message
       }
     },
     gotoHomepage () {

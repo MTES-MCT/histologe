@@ -57,6 +57,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "ecran_intermediaire_les_desordres_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "ecran_intermediaire_les_desordres_previous_autre",
                 "action": "goto:travailleur_social",
@@ -321,6 +328,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_proprete_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_batiment_proprete_previous",
                 "action": "resolve:findPreviousScreen",
@@ -393,6 +407,13 @@
                 "slug": "desordres_batiment_eau_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_eau_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -482,6 +503,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_isolation_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_batiment_isolation_previous",
                 "action": "resolve:findPreviousScreen",
@@ -549,6 +577,13 @@
                 "slug": "desordres_batiment_maintenance_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_maintenance_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -671,6 +706,13 @@
                 "slug": "desordres_batiment_nuisibles_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_nuisibles_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -912,6 +954,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_securite_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_batiment_securite_previous",
                 "action": "resolve:findPreviousScreen",
@@ -968,6 +1017,13 @@
                 "slug": "desordres_batiment_incendie_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_incendie_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1080,6 +1136,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_accessibilite_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_batiment_accessibilite_previous",
                 "action": "resolve:findPreviousScreen",
@@ -1136,6 +1199,13 @@
                 "slug": "desordres_batiment_bruit_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_batiment_bruit_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1445,6 +1515,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_eau_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_logement_eau_previous",
                 "action": "resolve:findPreviousScreen",
@@ -1568,6 +1645,13 @@
                 "slug": "desordres_logement_aeration_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_aeration_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1744,6 +1828,13 @@
                 "slug": "desordres_logement_chauffage_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_chauffage_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2035,6 +2126,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_humidite_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_logement_humidite_previous",
                 "action": "resolve:findPreviousScreen",
@@ -2224,6 +2322,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_securite_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_logement_securite_previous",
                 "action": "resolve:findPreviousScreen",
@@ -2352,6 +2457,13 @@
                 "slug": "desordres_logement_electricite_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_electricite_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2591,6 +2703,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_nuisibles_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_logement_nuisibles_previous",
                 "action": "resolve:findPreviousScreen",
@@ -2665,6 +2784,13 @@
                 "slug": "desordres_logement_bruit_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_bruit_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2751,6 +2877,13 @@
               },
               {
                 "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_lumiere_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "desordres_logement_lumiere_previous",
                 "action": "resolve:findPreviousScreen",
@@ -2799,6 +2932,13 @@
                 "slug": "desordres_logement_proprete_next",
                 "action": "resolve.save:findNextScreen",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_logement_proprete_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2909,6 +3049,13 @@
                 "slug": "desordres_precisions_next",
                 "action": "goto.save:desordres_renseignes",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "desordres_precisions_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
