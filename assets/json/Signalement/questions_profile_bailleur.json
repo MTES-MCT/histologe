@@ -81,7 +81,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "vos_coordonnees_tiers_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -170,7 +170,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "coordonnees_occupant_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -297,7 +297,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "zone_concernee_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -337,7 +337,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "ecran_intermediaire_type_composition_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -494,7 +494,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "type_logement_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -598,7 +598,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "composition_logement_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -835,7 +835,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "type_logement_commodites_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -920,7 +920,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "composition_logement_personnes_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1170,7 +1170,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "bail_dpe_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1208,7 +1208,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "ecran_intermediaire_situation_occupant_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1329,7 +1329,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "logement_social_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1436,7 +1436,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "travailleur_social_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1476,7 +1476,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "ecran_intermediaire_procedure_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1563,7 +1563,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "info_procedure_assurance_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1634,7 +1634,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "utilisation_service_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1827,7 +1827,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "informations_complementaires_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
@@ -1867,7 +1867,7 @@
         {
           "type": "SignalementFormSubscreen",
           "slug": "validation_signalement_footer",
-          "customCss": "button-group-responsive-inverted",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
               {
