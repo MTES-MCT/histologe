@@ -15,6 +15,7 @@ use App\Form\SignalementDraftSituationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
+use App\Messenger\InterconnectionBus;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -419,6 +420,7 @@ class SignalementCreateController extends AbstractController
         FileRepository $fileRepository,
         ReferenceGenerator $referenceGenerator,
         EntityManagerInterface $entityManager,
+        InterconnectionBus $interconnectionBus,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
 
@@ -500,6 +502,7 @@ class SignalementCreateController extends AbstractController
                         $affectation = $affectationManager->createAffectationFrom($signalement, $partners[$partnerId], $user);
                         $signalement->addAffectation($affectation);
                         $affectationManager->persist($affectation);
+                        $interconnectionBus->dispatch($affectation);
                     }
                 }
                 $signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $user);
