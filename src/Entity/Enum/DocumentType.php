@@ -5,7 +5,7 @@ namespace App\Entity\Enum;
 use App\Entity\Behaviour\EnumTrait;
 use App\Entity\File;
 
-enum DocumentType: String
+enum DocumentType: string
 {
     use EnumTrait;
 
