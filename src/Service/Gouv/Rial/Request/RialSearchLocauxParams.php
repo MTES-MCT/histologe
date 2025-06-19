@@ -4,6 +4,9 @@ namespace App\Service\Gouv\Rial\Request;
 
 class RialSearchLocauxParams
 {
+    /**
+     * @return array<string, int|string|null>|null
+     */
     public static function getFromBanId(string $banId): ?array
     {
         $banExploded = explode('_', $banId);

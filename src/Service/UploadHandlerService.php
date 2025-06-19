@@ -19,7 +19,9 @@ class UploadHandlerService
 {
     public const int MAX_FILESIZE = 10 * 1024 * 1024;
 
-    /** @var array<mixed> */
+    /**
+     * @var array<mixed>
+     */
     private array $file = [];
 
     public function __construct(

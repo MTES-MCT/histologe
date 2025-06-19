@@ -45,6 +45,9 @@ class ApiLogger
         $this->logger->info('API Request '.$method.' '.$pathInfo.' ('.$requestId.')', $data);
     }
 
+    /**
+     * @return array<int, array<string, string|int|null>>
+     */
     private function extractUploadedFiles(Request $request): array
     {
         $uploadedFiles = [];
@@ -63,6 +66,10 @@ class ApiLogger
         return $uploadedFiles;
     }
 
+    /**
+     * @param array<string, mixed>|null $data
+     * @return array<string, mixed>|null
+     */
     private function sanitizeSensitiveData(?array $data): ?array
     {
         if (null === $data) {

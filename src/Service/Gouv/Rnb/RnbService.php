@@ -17,6 +17,10 @@ class RnbService
     ) {
     }
 
+    /**
+     * @param array<string, string> $queryParams
+     * @return array<string, mixed>|null
+     */
     private function searchBuildings(?string $rnbId = null, array $queryParams = []): ?array
     {
         try {
@@ -39,6 +43,9 @@ class RnbService
         return null;
     }
 
+    /**
+     * @return array<RnbBuilding>
+     */
     public function getBuildings(string $cleInteropBan): array
     {
         $buildings = [];

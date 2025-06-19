@@ -12,6 +12,9 @@ class OAuth2TokenResponse
     public ?string $scope = null;
     public ?string $tokenType = null;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data)
     {
         $this->accessToken = $data['access_token'] ?? null;
