@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class SignalementCreatedEvent extends Event
 {
-    public const NAME = 'signalement.created';
+    public const string NAME = 'signalement.created';
 
     public function __construct(private Signalement $signalement)
     {

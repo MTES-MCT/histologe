@@ -4,7 +4,7 @@ namespace App\Dto;
 
 class SignalementExport
 {
-    public const SEPARATOR_GROUP_CONCAT = '|';
+    public const string SEPARATOR_GROUP_CONCAT = '|';
 
     public function __construct(
         public ?string $reference = null,

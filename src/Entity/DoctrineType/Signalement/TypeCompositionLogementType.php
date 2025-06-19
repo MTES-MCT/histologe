@@ -9,7 +9,7 @@ use Doctrine\DBAL\Types\Type;
 
 class TypeCompositionLogementType extends Type
 {
-    public const NAME = 'type_composition_logement';
+    public const string NAME = 'type_composition_logement';
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {

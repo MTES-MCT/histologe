@@ -25,7 +25,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchUserType extends AbstractType
 {
-    private const PERMISSION_CHOICES = [
+    /** @var array<string, string> */
+    private const array PERMISSION_CHOICES = [
         'Oui' => 'Oui',
         'Non' => 'Non',
     ];

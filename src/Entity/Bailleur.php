@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity(repositoryClass: BailleurRepository::class)]
 class Bailleur
 {
-    public const BAILLEUR_RADIE = '[Radié(e)]';
+    public const string BAILLEUR_RADIE = '[Radié(e)]';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
