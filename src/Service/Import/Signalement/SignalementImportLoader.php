@@ -47,6 +47,14 @@ class SignalementImportLoader
         'Vie commune et voisinage',
     ];
 
+    /**
+     * @var array{
+     *   count_signalement: int,
+     *   partners_not_found: array<string, int>,
+     *   motif_cloture_not_found: array<string, int>,
+     *   files_not_found: array<string, string>,
+     * }
+     */
     private array $metadata = [
         'count_signalement' => 0,
         'partners_not_found' => [],
@@ -75,6 +83,8 @@ class SignalementImportLoader
     }
 
     /**
+     * @param array<int, array<string, mixed>> $data
+     * @param array<int, string> $headers
      * @throws NonUniqueResultException
      * @throws \Exception
      */
@@ -142,11 +152,22 @@ class SignalementImportLoader
         }
     }
 
+    /**
+     * @return array{
+     *   count_signalement: int,
+     *   partners_not_found: array<string, int>,
+     *   motif_cloture_not_found: array<string, int>,
+     *   files_not_found: array<string, string>,
+     * }
+     */
     public function getMetadata(): array
     {
         return $this->metadata;
     }
 
+    /**
+     * @param array<string, mixed> $dataMapped
+     */
     private function loadTags(Signalement $signalement, Territory $territory, array $dataMapped): Signalement
     {
         if (isset($dataMapped['tags']) && !empty($dataMapped['tags'])) {
@@ -157,6 +178,10 @@ class SignalementImportLoader
         return $signalement;
     }
 
+    /**
+     * @param array<string, mixed> $dataMapped
+     * @return ArrayCollection<int, Affectation>
+     */
     private function loadAffectation(Signalement $signalement, Territory $territory, array $dataMapped): ArrayCollection
     {
         $affectationCollection = new ArrayCollection();
@@ -209,7 +234,7 @@ class SignalementImportLoader
     }
 
     /**
-     * @throws NonUniqueResultException
+     * @param array<string, mixed> $dataMapped
      */
     private function loadSignalementSituation(
         Signalement $signalement,
@@ -253,7 +278,8 @@ class SignalementImportLoader
     }
 
     /**
-     * @throws \Exception
+     * @param array<string, mixed> $dataMapped
+     * @return ArrayCollection<int, Suivi>
      */
     private function loadSuivi(Signalement $signalement, array $dataMapped): ArrayCollection
     {
@@ -292,6 +318,9 @@ class SignalementImportLoader
         return $suiviCollection;
     }
 
+    /**
+     * @param array<string, mixed> $dataMapped
+     */
     private function loadFiles(Signalement $signalement, string $colName, array $dataMapped): void
     {
         if (empty($dataMapped[$colName])) {
