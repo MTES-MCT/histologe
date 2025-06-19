@@ -58,8 +58,9 @@ class SignalementVoter extends Voter
         /** @var User|null $user */
         $user = $token->getUser();
 
-        if (!$user || !$user instanceof User) {
-            $vote?->addReason('L\'utilisateur n\'est pas authentifié');
+        if (!$user instanceof User) {
+            $vote?->addReason('L\'utilisateur n\'est pas authentifié.');
+
             return false;
         }
 
