@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\AffectationStatus;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Tests\ApiHelper;

@@ -75,7 +75,7 @@ class VisiteNotifier
             if ($notifyOtherAffectedPartners) {
                 $listAffected = $this->signalementManager->findUsersAffectedToSignalement(
                     $intervention->getSignalement(),
-                    AffectationStatus::STATUS_ACCEPTED,
+                    AffectationStatus::ACCEPTED,
                     $intervention->getPartner()
                 );
                 $listUsersToNotify = array_unique(array_merge($listUsersToNotify, $listAffected), \SORT_REGULAR);

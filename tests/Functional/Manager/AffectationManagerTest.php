@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -85,7 +86,7 @@ class AffectationManagerTest extends KernelTestCase
     {
         $affectationRepository = $this->managerRegistry->getRepository(Affectation::class);
         /** @var Affectation $affectationAccepted */
-        $affectationAccepted = $affectationRepository->findOneBy(['statut' => Affectation::STATUS_ACCEPTED]);
+        $affectationAccepted = $affectationRepository->findOneBy(['statut' => AffectationStatus::ACCEPTED]);
         /** @var User $user */
         $user = $this->managerRegistry->getRepository(User::class)->findOneBy(
             ['email' => $affectationAccepted->getPartner()->getUsers()->first()->getEmail()]
@@ -98,7 +99,7 @@ class AffectationManagerTest extends KernelTestCase
             true
         );
 
-        $this->assertEquals(Affectation::STATUS_CLOSED, $affectationClosed->getStatut());
+        $this->assertEquals(AffectationStatus::CLOSED, $affectationClosed->getStatut());
         $this->assertEquals($user, $affectationClosed->getAnsweredBy());
         $this->assertInstanceOf(\DateTimeInterface::class, $affectationClosed->getAnsweredAt());
         $this->assertTrue(str_contains($affectationClosed->getMotifCloture()->label(), 'Non décence'));

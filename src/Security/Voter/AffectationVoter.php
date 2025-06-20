@@ -105,8 +105,8 @@ class AffectationVoter extends Voter
     {
         $newStatut = $affectation->getNextStatut();
         $previousStatut = $affectation->getStatut();
-        $canUpdateStatut = isset(self::VALID_WORKFLOW_STATUT[$previousStatut])
-            && in_array($newStatut, self::VALID_WORKFLOW_STATUT[$previousStatut], true);
+        $canUpdateStatut = isset(self::VALID_WORKFLOW_STATUT[$previousStatut->value])
+            && in_array($newStatut->value, self::VALID_WORKFLOW_STATUT[$previousStatut->value], true);
 
         return $this->canAnswer($affectation, $user) && $canUpdateStatut;
     }

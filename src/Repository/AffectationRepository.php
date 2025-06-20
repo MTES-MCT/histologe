@@ -251,7 +251,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
             ->where('a.statut = :statusAffectation')
-            ->setParameter('statusAffectation', Affectation::STATUS_ACCEPTED)
+            ->setParameter('statusAffectation', AffectationStatus::ACCEPTED->value)
             ->andWhere('s.statut = :statusSignalement')
             ->setParameter('statusSignalement', SignalementStatus::ACTIVE->value)
             ->andWhere('p.competence LIKE :qualification')

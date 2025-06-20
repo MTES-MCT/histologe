@@ -3,6 +3,7 @@
 namespace App\Factory\Interconnection\Idoss;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\Interconnection\Idoss\IdossService;
 
@@ -10,7 +11,7 @@ class DossierMessageFactory
 {
     public function supports(Affectation $affectation): bool
     {
-        if (Affectation::STATUS_ACCEPTED !== $affectation->getStatut()) {
+        if (AffectationStatus::ACCEPTED !== $affectation->getStatut()) {
             return false;
         }
         if (!$affectation->getPartner()->canSyncWithIdoss()) {

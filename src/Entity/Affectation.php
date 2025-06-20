@@ -16,10 +16,6 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
 class Affectation implements EntityHistoryInterface
 {
-    public const int STATUS_WAIT = 0;
-    public const int STATUS_ACCEPTED = 1;
-    public const int STATUS_REFUSED = 2;
-    public const int STATUS_CLOSED = 3;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

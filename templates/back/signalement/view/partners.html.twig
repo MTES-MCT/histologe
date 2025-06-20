@@ -30,19 +30,19 @@
                             <div class="fr-col-12 fr-col-lg-7">
                                 {{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}
                                 <br>
-                                {% if partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
+                                {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
                                     <span class="fr-hint-text">
                                         Cloturé le {{ partnerAffectation.answeredAt|date('d/m/Y') }}
                                         <br>
                                         {{ partnerAffectation.answeredBy ? 'par ' ~ partnerAffectation.answeredBy.nomComplet }}
                                     </span>
-                                {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
                                     <span class="fr-hint-text">
                                         Accepté le {{ partnerAffectation.answeredAt|date('d/m/Y') }}
                                         <br>
                                         {{ partnerAffectation.answeredBy ? 'par ' ~ partnerAffectation.answeredBy.nomComplet }}
                                     </span>
-                                {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
                                     <span class="fr-hint-text">
                                         Refusé le {{ partnerAffectation.answeredAt|date('d/m/Y') }}
                                         <br>
@@ -57,13 +57,13 @@
                                 {% endif %}
                             </div>
                             <div class="fr-col-10 fr-col-lg-3">
-                                {% if partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_WAIT') %}
+                                {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
                                     <span class="fr-badge fr-badge--info fr-badge--sm">En attente</span>
-                                {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
                                     <span class="fr-badge fr-badge--success fr-badge--sm">Acceptée</span>
-                                {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
                                     <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">Refusée</span>
-                                {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
+                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
                                     <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
                                 {% endif %}
                                 {% if not partnerAffectation.partner.receiveEmailNotifications %}
@@ -102,13 +102,13 @@
     <div class="fr-my-3w">
         <h3 class="fr-h5">Partenaires impliqués</h3>
         {% for partnerAffectation in signalement.affectations %}
-            {% if partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_WAIT') %}
+            {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
                 <span class="fr-badge fr-badge--info fr-badge--sm">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_ACCEPTED') %}
+            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
                 <span class="fr-badge fr-badge--success fr-badge--sm">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_REFUSED') %}
+            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
                 <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif partnerAffectation.statut is same as constant('App\\Entity\\Affectation::STATUS_CLOSED') %}
+            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
                 <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
             {% endif %}
         {% endfor %}

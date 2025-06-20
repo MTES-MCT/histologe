@@ -37,7 +37,17 @@ enum AffectationStatus: string
         };
     }
 
-    public static function mapFilterStatus(string $label): int
+    public static function getLabelList(): array
+    {
+        return [
+            self::WAIT->name => 'nouveau',
+            self::ACCEPTED->name => 'en cours',
+            self::CLOSED->name => 'fermé',
+            self::REFUSED->name => 'refusé',
+        ];
+    }
+
+    public static function mapFilterStatus(string $label): string
     {
         return match ($label) {
             'en_attente' => AffectationStatus::WAIT->value,

@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -49,7 +50,7 @@ class SuiviVoter extends Voter
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
-            return $affectation->getPartner()->getId() === $partner->getId() && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
+            return $affectation->getPartner()->getId() === $partner->getId() && AffectationStatus::ACCEPTED == $affectation->getStatut();
         })->count() > 0;
     }
 }

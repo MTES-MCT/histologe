@@ -45,7 +45,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         $affectation = (new Affectation())
             ->setSignalement($this->signalementRepository->findOneBy(['reference' => $row['signalement']]))
             ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
-            ->setStatut($row['statut'])
+            ->setStatut(AffectationStatus::tryFrom($row['statut']))
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAffectedBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))

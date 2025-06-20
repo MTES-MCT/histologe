@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType as EnumPartnerType;

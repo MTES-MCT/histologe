@@ -3,7 +3,6 @@
 namespace App\Dto\Api\Response;
 
 use App\Dto\Api\Model\Affectation;
-use App\Entity\Enum\AffectationStatus;
 
 class AffectationResponse extends Affectation
 {

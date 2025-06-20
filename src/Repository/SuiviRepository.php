@@ -358,7 +358,7 @@ class SuiviRepository extends ServiceEntityRepository
         }
         if (null !== $partners && !$partners->isEmpty()) {
             $parameters['partners'] = $partners;
-            $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
+            $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
         }
 
         $sql = 'SELECT COUNT(*) as count_signalement

@@ -6,7 +6,6 @@ use App\Dto\CountPartner;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
-use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;

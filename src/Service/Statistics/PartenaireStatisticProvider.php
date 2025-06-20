@@ -3,7 +3,6 @@
 namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
-use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Repository\AffectationRepository;
 
