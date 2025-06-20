@@ -7,9 +7,11 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
+use App\Form\AddSuiviType;
 use App\Form\ClotureType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
@@ -35,7 +37,6 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,7 +58,6 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         AffectationManager $affectationManager,
         EventDispatcherInterface $eventDispatcher,
-        ParameterBagInterface $parameterBag,
         SignalementQualificationRepository $signalementQualificationRepository,
         CriticiteRepository $criticiteRepository,
         AffectationRepository $affectationRepository,
@@ -120,6 +120,10 @@ class SignalementController extends AbstractController
                                             && !$isClosedForMe
                                             && SignalementStatus::NEED_VALIDATION === $signalement->getStatut();
         $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
+
+        $newSuivi = (new Suivi())->setSignalement($signalement);
+        $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
+        $addSuiviForm = $this->createForm(AddSuiviType::class, $newSuivi, ['action' => $addSuiviRoute]);
 
         $clotureForm = $this->createForm(ClotureType::class);
         $clotureForm->handleRequest($request);
@@ -194,8 +198,6 @@ class SignalementController extends AbstractController
 
         $partners = $signalementManager->findAllPartners($signalement);
 
-        $files = $parameterBag->get('files');
-
         $canEditNDE = $this->isGranted('SIGN_EDIT_NDE', $signalement);
         $listQualificationStatusesLabelsCheck = [];
         if (null !== $signalement->getSignalementQualifications()) {
@@ -252,11 +254,11 @@ class SignalementController extends AbstractController
             'isDanger' => $infoDesordres['isDanger'],
             'signalement' => $signalement,
             'partners' => $partners,
-            'clotureForm' => $clotureForm->createView(),
+            'clotureForm' => $clotureForm,
+            'addSuiviForm' => $addSuiviForm,
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
-            'files' => $files,
             'canEditNDE' => $canEditNDE,
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
