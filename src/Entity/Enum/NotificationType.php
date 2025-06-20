@@ -14,6 +14,7 @@ enum NotificationType: string
     case CLOTURE_PARTENAIRE = 'CLOTURE_PARTENAIRE';
     case SUIVI_USAGER = 'SUIVI_USAGER';
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [
@@ -26,6 +27,9 @@ enum NotificationType: string
         ];
     }
 
+    /**
+     * @return array<NotificationType>
+     */
     public static function getForAgent(): array
     {
         return array_filter(NotificationType::cases(), function (NotificationType $notificationType) {
@@ -33,6 +37,9 @@ enum NotificationType: string
         });
     }
 
+    /**
+     * @return array<NotificationType>
+     */
     public static function getForUsager(): array
     {
         return array_filter(NotificationType::cases(), function (NotificationType $notificationType) {

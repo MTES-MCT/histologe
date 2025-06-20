@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Commune;
 use App\Entity\Epci;
 use App\Repository\CommuneRepository;
 use App\Repository\EpciRepository;
@@ -27,7 +28,9 @@ class LoadEpciCommand extends Command
 {
     public const string API_EPCI_ALL_URL = 'https://geo.api.gouv.fr/epcis?fields=nom';
     public const string API_EPCI_COMMUNE_URL = 'https://geo.api.gouv.fr/epcis/%d/communes?fields=nom,codesPostaux';
+    /** @var array<Epci> */
     private array $epcis = [];
+    /** @var array<Commune> */
     private array $communes = [];
 
     public function __construct(

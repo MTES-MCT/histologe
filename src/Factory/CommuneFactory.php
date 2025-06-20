@@ -17,7 +17,7 @@ class CommuneFactory
         ?string $codePostal = null,
         ?string $codeInsee = null,
         bool $isZonePermisLouer = false,
-    ) {
+    ): Commune {
         return (new Commune())
             ->setTerritory($territory)
             ->setNom($nom)

@@ -20,7 +20,10 @@ class LoadSituationData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
-    private function loadSituations(ObjectManager $manager, array $row)
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function loadSituations(ObjectManager $manager, array $row): void
     {
         $situation = (new Situation())
             ->setLabel($row['label'])

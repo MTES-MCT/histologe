@@ -39,7 +39,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->router = self::getContainer()->get(RouterInterface::class);
     }
 
-    public function testAddSuccessFileSignalement()
+    public function testAddSuccessFileSignalement(): void
     {
         $imageFile = new UploadedFile(
             __DIR__.'/../../files/sample.jpg',
@@ -101,7 +101,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testAddFailureFileSignalement()
+    public function testAddFailureFileSignalement(): void
     {
         $imageFile = new UploadedFile(
             __DIR__.'/../../files/sample.heic',
@@ -134,7 +134,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertStringContainsString('Le fichier a une extension heic mais est au format', $this->client->getResponse()->getContent());
     }
 
-    public function testDeleteFileAccessDeniedSignalement()
+    public function testDeleteFileAccessDeniedSignalement(): void
     {
         $this->client->catchExceptions(false);
         $route = $this->router->generate('signalement_delete_file', ['code' => $this->signalement->getCodeSuivi()]);
@@ -152,7 +152,7 @@ class SignalementFileControllerTest extends WebTestCase
         }
     }
 
-    public function testDeleteFileSuccessSignalement()
+    public function testDeleteFileSuccessSignalement(): void
     {
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
@@ -188,7 +188,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testGeneratePdfSignalement()
+    public function testGeneratePdfSignalement(): void
     {
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000012']);

@@ -11,6 +11,9 @@ class SignalementUser implements UserInterface
 {
     private string $codeSuivi;
     private string $type;
+    /**
+     * @var array<string>
+     */
     private array $roles = [];
 
     public function __construct(

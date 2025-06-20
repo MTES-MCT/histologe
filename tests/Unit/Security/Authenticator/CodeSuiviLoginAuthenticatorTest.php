@@ -35,6 +35,9 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
 
     /**
      * @dataProvider provideSuccessfulAuthenticationCases
+     *
+     * @param array<string> $requestData
+     * @param array<string> $expectedUserData
      */
     public function testAuthenticateSuccess(
         Signalement $signalement,
@@ -178,7 +181,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         ];
     }
 
-    public function testAuthenticateWithInvalidCodeThrowsException()
+    public function testAuthenticateWithInvalidCodeThrowsException(): void
     {
         $this->expectException(CustomUserMessageAuthenticationException::class);
         $this->expectExceptionMessage('Code de suivi invalide');
@@ -194,7 +197,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $authenticator->authenticate($request);
     }
 
-    public function testAuthenticateWithWrongInitialsThrowsException()
+    public function testAuthenticateWithWrongInitialsThrowsException(): void
     {
         $this->expectException(CustomUserMessageAuthenticationException::class);
         $this->expectExceptionMessage('Informations incorrectes');
@@ -220,7 +223,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $authenticator->authenticate($request);
     }
 
-    public function testAuthenticateWithMissingVisitorTypeThrowsException()
+    public function testAuthenticateWithMissingVisitorTypeThrowsException(): void
     {
         $this->expectException(CustomUserMessageAuthenticationException::class);
         $this->expectExceptionMessage('Merci de sélectionner si vous occupez le logement ou si vous avez fait la déclaration.');

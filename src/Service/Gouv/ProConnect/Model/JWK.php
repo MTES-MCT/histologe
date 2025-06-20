@@ -20,6 +20,9 @@ class JWK
     public ?string $n = null;
     public ?string $e = null;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data)
     {
         $this->kty = $data['kty'] ?? null;
@@ -30,6 +33,9 @@ class JWK
         $this->e = $data['e'] ?? null;
     }
 
+    /**
+     * @return array<string, string|null>
+     */
     public function toArray(): array
     {
         return [

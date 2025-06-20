@@ -22,6 +22,11 @@ class EpciRepository extends ServiceEntityRepository
         parent::__construct($registry, Epci::class);
     }
 
+    /**
+     * @param array<int, string> $epciCodes
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function findCommunesByEpcis(array $epciCodes): array
     {
         $queryBuilder = $this->createQueryBuilder('e')
@@ -33,6 +38,9 @@ class EpciRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getArrayResult();
     }
 
+    /**
+     * @return array<int, Epci>
+     */
     public function findAllByTerritory(Territory $territory): array
     {
         $queryBuilder = $this->createQueryBuilder('e')

@@ -11,6 +11,7 @@ use App\Entity\Affectation;
 use App\Entity\Commune;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
@@ -66,6 +67,11 @@ class SignalementRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function findAllWithGeoData(User $user, array $options, int $offset): array
     {
         $firstResult = $offset;
@@ -146,6 +152,13 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @param array<int, Territory>                $territories
+     * @param ArrayCollection<int, Partner>        $partners
+     * @param array<int, QualificationStatus>|null $qualificationStatuses
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function countByStatus(array $territories, ?ArrayCollection $partners, ?int $year = null, bool $removeImported = false, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -233,6 +246,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByTerritory(bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -252,6 +268,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByMonth(?Territory $territory, ?int $year, bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -284,6 +303,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countBySituation(?Territory $territory, ?int $year, bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -312,6 +334,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countCritereByZone(?Territory $territory, ?int $year): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -339,6 +364,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getSingleResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByDesordresCriteres(
         ?Territory $territory,
         ?int $year,
@@ -373,6 +401,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByMotifCloture(?Territory $territory, ?int $year, bool $removeImported = false): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -431,6 +462,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function findSignalementAffectationListPaginator(
         User $user,
         array $options,
@@ -447,6 +481,9 @@ class SignalementRepository extends ServiceEntityRepository
         return new Paginator($qb, true);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function findSignalementAffectationQueryBuilder(
         User $user,
         array $options,
@@ -554,6 +591,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<string, mixed> $options
+     *
      * @throws Exception
      */
     public function findSignalementAffectationIterable(User $user, array $options): \Generator
@@ -624,16 +663,25 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->toIterable();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>|int|string
+     */
     public function findCities(User $user, ?Territory $territory = null): array|int|string
     {
         return $this->findCommunes($user, $territory, 's.villeOccupant', 'city');
     }
 
+    /**
+     * @return array<int, array<string, mixed>>|int|string
+     */
     public function findZipcodes(User $user, ?Territory $territory = null): array|int|string
     {
         return $this->findCommunes($user, $territory, 's.cpOccupant', 'zipcode');
     }
 
+    /**
+     * @return array<int, array<string, mixed>>|int|string
+     */
     public function findCommunes(
         User $user,
         ?Territory $territory = null,
@@ -665,7 +713,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findOneByCodeForPublic($code): ?Signalement
+    public function findOneByCodeForPublic(string $code): ?Signalement
     {
         $qb = $this->createQueryBuilder('s')
             ->andWhere('s.codeSuivi = :code')
@@ -679,6 +727,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<string, string>|null
+     *
      * @throws TransactionRequiredException
      * @throws NonUniqueResultException
      */
@@ -783,6 +833,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByMonthFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -813,6 +866,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countBySituationFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -828,6 +884,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByCriticiteFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -843,6 +902,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByStatusFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -858,6 +920,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByCriticitePercentFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -876,6 +941,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByVisiteFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -896,6 +964,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByMotifClotureFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -1048,6 +1119,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, array<string, mixed>>
+     *
      * @throws Exception
      */
     public function countSignalementTerritory(): array
@@ -1076,6 +1149,11 @@ class SignalementRepository extends ServiceEntityRepository
         ])->fetchAllAssociative();
     }
 
+    /**
+     * @param array<int, int> $territories
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function countSignalementAcceptedNoSuivi(array $territories): array
     {
         $subquery = $this->_em->createQueryBuilder()
@@ -1106,6 +1184,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, int> $territories
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      * @throws QueryException
@@ -1138,6 +1218,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param array<int, Territory> $territories
+     */
     public function countSignalementUsagerAbandonProcedure(array $territories): ?int
     {
         $qb = $this->createQueryBuilder('s');
@@ -1154,6 +1237,11 @@ class SignalementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @param array<int, int> $ids
+     *
+     * @return array<int, Signalement>
+     */
     public function findAllByIds(array $ids): array
     {
         return $this->createQueryBuilder('s')
@@ -1163,6 +1251,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, Signalement>
+     */
     public function findWithNoGeolocalisation(?Territory $territory = null): array
     {
         $qb = $this->createQueryBuilder('s')
@@ -1210,6 +1301,9 @@ class SignalementRepository extends ServiceEntityRepository
         return null;
     }
 
+    /**
+     * @return array<int, Signalement>
+     */
     public function findAllForEmailAndAddress(
         ?string $email,
         ?string $address,
@@ -1251,6 +1345,11 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param array<int, string> $needles
+     *
+     * @return array<int, Signalement>
+     */
     public function findByEmailContainStrings(array $needles, string $field, bool $strict = false): array
     {
         if (empty($needles)) {
@@ -1267,6 +1366,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<int, Signalement>
+     */
     public function findSignalementsWithFilesToUploadOnIdoss(Partner $partner): array
     {
         $qb = $this->createQueryBuilder('s')
@@ -1357,6 +1459,9 @@ class SignalementRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder->getQuery(), false);
     }
 
+    /**
+     * @return array<int, Signalement>
+     */
     public function findNullBanId(): array
     {
         return $this->createQueryBuilder('s')
@@ -1366,6 +1471,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, Signalement>
+     */
     public function findLogementSocialWithoutBailleurLink(): array
     {
         return $this->createQueryBuilder('s')
@@ -1376,7 +1484,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findSynchroIdoss($status): array
+    /**
+     * @return array<int, Signalement>
+     */
+    public function findSynchroIdoss(string $status): array
     {
         return $this->createQueryBuilder('s')
             ->select('s.id', 's.uuid', 's.reference', 'j.action', 'j.response', 'j.createdAt', 'j.codeStatus', 'j.partnerId')
@@ -1393,6 +1504,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, Signalement>
+     */
     public function findSignalementsBetweenDates(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -1406,6 +1520,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, Signalement>
+     */
     public function findSignalementsSplittedCreatedBefore(int $split, Territory $territory): array
     {
         $qb = $this->createQueryBuilder('s')
@@ -1449,6 +1566,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, Signalement>
+     *
      * @throws \DateMalformedStringException
      */
     public function findAllForApi(User $user, SignalementListQueryParams $signalementListQueryParams): array
@@ -1491,6 +1610,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('partners', $partners);
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function findSignalementsLastSuiviWithSuiviAuto(Territory $territory, int $limit): array
     {
         $connexion = $this->getEntityManager()->getConnection();
@@ -1524,6 +1646,9 @@ class SignalementRepository extends ServiceEntityRepository
         ])->fetchAllAssociative();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function findSignalementsLastSuiviByPartnerOlderThan(Territory $territory, int $limit, int $nbDays): array
     {
         $connexion = $this->getEntityManager()->getConnection();
@@ -1554,6 +1679,12 @@ class SignalementRepository extends ServiceEntityRepository
         ])->fetchAllAssociative();
     }
 
+    /**
+     * @param array<int, SignalementStatus> $exclusiveStatus
+     * @param array<int, SignalementStatus> $excludedStatus
+     *
+     * @return array<int, Signalement>
+     */
     public function findOnSameAddress(
         Signalement $signalement,
         array $exclusiveStatus = [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE],

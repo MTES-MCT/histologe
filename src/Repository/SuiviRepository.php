@@ -33,6 +33,8 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, Territory> $territories
+     *
      * @throws Exception
      */
     public function getAverageSuivi(array $territories): float
@@ -64,6 +66,9 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, Territory> $territories
+     * @param array<int, int>       $partnersIds
+     *
      * @throws Exception
      */
     public function countSignalementNoSuiviSince(
@@ -103,6 +108,10 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, int> $partnersIds
+     *
+     * @return array<int, int|string>
+     *
      * @throws Exception
      */
     public function findSignalementNoSuiviSince(
@@ -141,6 +150,8 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, Territory> $territories
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -162,6 +173,8 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, Territory> $territories
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -183,6 +196,10 @@ class SuiviRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @param array<int, Territory> $territories
+     * @param array<int, int>|null  $partnersIds
+     */
     private function getSignalementsQuery(
         array $territories,
         ?array $partnersIds = null,
@@ -211,6 +228,9 @@ class SuiviRepository extends ServiceEntityRepository
                 ORDER BY last_posted_at';
     }
 
+    /**
+     * @return array<int, int|string>
+     */
     public function findSignalementsLastSuiviPublic(
         int $period = Suivi::DEFAULT_PERIOD_RELANCE,
     ): array {
@@ -248,6 +268,9 @@ class SuiviRepository extends ServiceEntityRepository
         return $statement->executeQuery($parameters)->fetchFirstColumn();
     }
 
+    /**
+     * @return array<int, int|string>
+     */
     public function findSignalementsLastSuiviTechnical(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
@@ -283,6 +306,9 @@ class SuiviRepository extends ServiceEntityRepository
         return $statement->executeQuery($parameters)->fetchFirstColumn();
     }
 
+    /**
+     * @return array<int, int|string>
+     */
     public function findSignalementsForThirdRelance(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
@@ -307,6 +333,8 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, Territory> $territories
+     *
      * @throws Exception
      */
     public function countSignalementNoSuiviAfter3Relances(
@@ -347,6 +375,9 @@ class SuiviRepository extends ServiceEntityRepository
         return (int) $statement->executeQuery($parameters)->fetchOne();
     }
 
+    /**
+     * @param array<int, Territory> $territories
+     */
     public function getSignalementsLastSuivisTechnicalsQuery(
         bool $excludeUsagerAbandonProcedure = true,
         int $dayPeriod = 0,
@@ -405,7 +436,7 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Suivi[]
+     * @return array<int, Suivi>
      */
     public function findSuiviByDescription(Signalement $signalement, string $description): array
     {
@@ -419,7 +450,7 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Suivi[]
+     * @return array<int, Suivi>
      */
     public function findSuivisByContext(Signalement $signalement, string $context): array
     {
@@ -434,6 +465,8 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, Suivi>
+     *
      * @throws NonUniqueResultException
      */
     public function findAllSuiviBy(Signalement $signalement, int $typeSuivi): array
@@ -448,6 +481,9 @@ class SuiviRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<string, Suivi>
+     */
     public function findExistingEventsForSCHS(): array
     {
         $qb = $this->createQueryBuilder('s')
@@ -482,6 +518,9 @@ class SuiviRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param array<int, int> $suiviIds
+     */
     public function deleteBySuiviIds(array $suiviIds): void
     {
         $qb = $this->createQueryBuilder('s')

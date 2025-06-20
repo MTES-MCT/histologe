@@ -30,7 +30,11 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->client->loginUser($user, 'api');
     }
 
-    /** @dataProvider provideDataForNotification */
+    /**
+     * @dataProvider provideDataForNotification
+     *
+     * @param array<mixed> $payload
+     */
     public function testCreateVisiteWithNotification(string $type, array $payload, int $nbMailSent): void
     {
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
@@ -58,7 +62,11 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** @dataProvider provideDataForPendingVisite */
+    /**
+     * @dataProvider provideDataForPendingVisite
+     *
+     * @param array<mixed> $payload
+     */
     public function testCreateVisiteWithPendingVisiteWithErrors(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
@@ -76,7 +84,11 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** @dataProvider provideDataForPendingVisite */
+    /**
+     * @dataProvider provideDataForPendingVisite
+     *
+     * @param array<mixed> $payload
+     */
     public function testCreateVisiteWithPendingVisite(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
@@ -94,7 +106,12 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** @dataProvider  provideDataErrorPayload */
+    /**
+     * @dataProvider provideDataErrorPayload
+     *
+     * @param array<mixed>  $payload
+     * @param array<string> $fieldsErrors
+     */
     public function testCreateVisiteWithPayloadErrors(array $payload, array $fieldsErrors, string $errorMessage): void
     {
         $this->client->request(

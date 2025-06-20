@@ -9,6 +9,9 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class HistoryEntryBuffer
 {
+    /**
+     * @var array<string, HistoryEntry>
+     */
     private array $pendingHistoryEntries = [];
 
     public function __construct(
@@ -26,6 +29,9 @@ class HistoryEntryBuffer
         $this->pendingHistoryEntries[$key] = $entry;
     }
 
+    /**
+     * @param array<string, mixed> $changes
+     */
     public function update(string $key, array $changes): void
     {
         $oldChanges = $this->pendingHistoryEntries[$key]->getChanges();
@@ -40,7 +46,7 @@ class HistoryEntryBuffer
         // for prevent flushing invalid entities
         $this->entityManager->clear();
         foreach ($this->pendingHistoryEntries as $entry) {
-            if (!$entry->getEntityId() && $entry->getEntity()?->getId()) {
+            if (!$entry->getEntityId() && $entry->getEntity()->getId()) {
                 $entry->setEntityId($entry->getEntity()->getId());
             }
             if ($entry->getSignalement() && !$this->entityManager->contains($entry->getSignalement())) {

@@ -12,6 +12,9 @@ class BatimentDesordresStatisticProvider
     {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(?Territory $territory, ?int $year): array
     {
         $countPerBatimentDesordres = $this->signalementRepository->countByDesordresCriteres(
@@ -23,7 +26,12 @@ class BatimentDesordresStatisticProvider
         return $this->createFullArray($countPerBatimentDesordres);
     }
 
-    private function createFullArray($countPerBatimentDesordres): array
+    /**
+     * @param array<mixed> $countPerBatimentDesordres
+     *
+     * @return array<mixed>
+     */
+    private function createFullArray(array $countPerBatimentDesordres): array
     {
         $data = self::initBatimentDesordresPerValue();
         $i = 0;
@@ -38,6 +46,9 @@ class BatimentDesordresStatisticProvider
         return $data;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private static function initBatimentDesordresPerValue(): array
     {
         return [

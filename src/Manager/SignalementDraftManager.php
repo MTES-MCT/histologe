@@ -36,6 +36,9 @@ class SignalementDraftManager extends AbstractManager
         parent::__construct($managerRegistry, $entityName);
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public function create(
         SignalementDraftRequest $signalementDraftRequest,
         array $payload,
@@ -46,6 +49,11 @@ class SignalementDraftManager extends AbstractManager
         return $signalementDraft->getUuid();
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return array<string, mixed>|null
+     */
     public function update(
         SignalementDraft $signalementDraft,
         SignalementDraftRequest $signalementDraftRequest,

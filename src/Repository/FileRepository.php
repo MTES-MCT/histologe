@@ -43,7 +43,10 @@ class FileRepository extends ServiceEntityRepository
         }
     }
 
-    public function getPhotosWihoutVariants(?Territory $territory = null)
+    /**
+     * @return array<int, File>
+     */
+    public function getPhotosWihoutVariants(?Territory $territory = null): array
     {
         $qb = $this->createQueryBuilder('f')
             ->select('f')
@@ -58,6 +61,9 @@ class FileRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<int, File>
+     */
     public function findWithOriginalAndVariants(\DateTimeInterface $limit, int $max): array
     {
         return $this->initQueryWithOriginalAndVariants($limit)->select('f')->setMaxResults($max)->getQuery()->getResult();
@@ -68,6 +74,9 @@ class FileRepository extends ServiceEntityRepository
         return $this->initQueryWithOriginalAndVariants($limit)->select('count(f)')->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @param array<int, int> $ids
+     */
     public function updateWithOriginalAndVariants(array $ids): void
     {
         if (!empty($ids)) {
@@ -91,6 +100,9 @@ class FileRepository extends ServiceEntityRepository
             ->setParameter('limit', $limit);
     }
 
+    /**
+     * @return array<int, File>
+     */
     public function findExportsOlderThan(\DateTimeInterface $limit): array
     {
         return $this->createQueryBuilder('f')

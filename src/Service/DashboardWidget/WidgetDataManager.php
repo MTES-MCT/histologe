@@ -23,13 +23,21 @@ class WidgetDataManager implements WidgetDataManagerInterface
     ) {
     }
 
+    /**
+     * @param array<int, mixed>         $territories
+     * @param array<string, mixed>|null $params
+     *
+     * @return array<mixed>
+     */
     public function countSignalementAcceptedNoSuivi(array $territories, ?array $params = null): array
     {
         return $this->signalementRepository->countSignalementAcceptedNoSuivi($territories);
     }
 
     /**
-     * @throws Exception
+     * @param array<string, mixed>|null $params
+     *
+     * @return array<mixed>
      */
     public function countSignalementsByTerritory(?array $params = null): array
     {
@@ -43,6 +51,12 @@ class WidgetDataManager implements WidgetDataManagerInterface
         }, $countSignalementTerritoryList);
     }
 
+    /**
+     * @param array<int, mixed>         $territories
+     * @param array<string, mixed>|null $params
+     *
+     * @return array<mixed>
+     */
     public function countAffectationPartner(array $territories, ?array $params = null): array
     {
         $countAffectationPartnerList = $this->affectationRepository->countAffectationPartner($territories);
@@ -56,8 +70,10 @@ class WidgetDataManager implements WidgetDataManagerInterface
     }
 
     /**
-     * @throws \DateMalformedStringException
-     * @throws \DateInvalidTimeZoneException
+     * @param array<string, mixed> $params
+     * @param array<int, mixed>    $territories
+     *
+     * @return array<mixed>
      */
     public function findLastJobEventByInterfacageType(string $type, array $params, array $territories): array
     {
@@ -78,6 +94,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
     }
 
     /**
+     * @param array<int, mixed>         $territories
+     * @param array<string, mixed>|null $params
+     *
      * @throws QueryException
      * @throws NonUniqueResultException
      * @throws NoResultException

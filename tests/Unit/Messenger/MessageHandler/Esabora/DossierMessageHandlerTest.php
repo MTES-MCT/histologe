@@ -57,7 +57,7 @@ class DossierMessageHandlerTest extends TestCase
         $dossierMessageHandler($dossierMessage);
     }
 
-    public function testProcessDossierMessageSISH()
+    public function testProcessDossierMessageSISH(): void
     {
         $dossierMessageSISH = new DossierMessageSISH();
 
@@ -74,7 +74,7 @@ class DossierMessageHandlerTest extends TestCase
             ->method('flagAsSynchronized')
             ->with($dossierMessageSISH);
 
-        $handler = new DossierMessageSISHHandler([$dossierSISHHandlerMock], $affectationManagerMock);
+        $handler = new DossierMessageSISHHandler(['handler' => $dossierSISHHandlerMock], $affectationManagerMock);
         $handler($dossierMessageSISH);
     }
 }

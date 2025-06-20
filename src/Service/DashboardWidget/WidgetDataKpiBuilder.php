@@ -10,6 +10,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
 use App\Repository\NotificationRepository;
@@ -34,11 +35,19 @@ class WidgetDataKpiBuilder
     private ?CountSuivi $countSuivi = null;
     private ?CountUser $countUser = null;
     private ?CountPartner $countPartner = null;
+    /**
+     * @var array<int, mixed>
+     */
     private array $territories = [];
     private ?User $user = null;
+    /**
+     * @var array<string, mixed>
+     */
     private array $parameters;
 
-    /** @var WidgetCard[] */
+    /**
+     * @var array<string, WidgetCard>
+     */
     private array $widgetCards = [];
 
     public function __construct(
@@ -66,6 +75,9 @@ class WidgetDataKpiBuilder
         return $this;
     }
 
+    /**
+     * @param array<int, mixed> $territories
+     */
     public function setTerritories(array $territories): self
     {
         $this->territories = $territories;
@@ -174,6 +186,9 @@ class WidgetDataKpiBuilder
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $linkParameters
+     */
     public function addWidgetCard(string $key, ?int $count = null, array $linkParameters = []): self
     {
         if ($this->canAddCard($key)) {
@@ -257,6 +272,9 @@ class WidgetDataKpiBuilder
         );
     }
 
+    /**
+     * @return Collection<int, Partner>|null
+     */
     private function getPartnersFromUser(User $user): ?Collection
     {
         return 1 === \count(array_diff([User::ROLE_USER_PARTNER, User::ROLE_ADMIN_PARTNER], $user->getRoles())) ? $user->getPartners() : null;

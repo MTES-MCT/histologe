@@ -9,6 +9,9 @@ use App\Service\Signalement\SignalementDraftHelper;
 
 class SignalementDraftFactory
 {
+    /**
+     * @param array<string, mixed> $payload
+     */
     public function createInstanceFrom(
         SignalementDraftRequest $signalementDraftRequest,
         array $payload,

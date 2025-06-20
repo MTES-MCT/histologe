@@ -20,8 +20,10 @@ class SignalementListControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideNewFilterSearch
+     *
+     * @param array<string> $filter
      */
-    public function testFilterSignalements(array $filter, int $results)
+    public function testFilterSignalements(array $filter, int $results): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -123,7 +125,7 @@ class SignalementListControllerTest extends WebTestCase
         }
     }
 
-    public function testDisplaySignalementMDLRoleAdminTerritory()
+    public function testDisplaySignalementMDLRoleAdminTerritory(): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -142,7 +144,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals(2, $content['pagination']['total_items']);
     }
 
-    public function testDisplaySignalementCORRoleAdminTerritory()
+    public function testDisplaySignalementCORRoleAdminTerritory(): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -251,8 +253,10 @@ class SignalementListControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideFilterSearchMultiTerritorAdminPartner
+     *
+     * @param array<string> $filter
      */
-    public function testFilterSignalementsMultiTerritorAdminPartner(array $filter, int $results)
+    public function testFilterSignalementsMultiTerritorAdminPartner(array $filter, int $results): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */

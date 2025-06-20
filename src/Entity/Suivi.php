@@ -78,6 +78,7 @@ class Suivi implements EntityHistoryInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?User $deletedBy = null;
 
+    /** @var array<mixed> $originalData */
     #[ORM\Column(nullable: true)]
     private ?array $originalData = null;
 
@@ -169,7 +170,7 @@ class Suivi implements EntityHistoryInterface
         return 'OCCUPANT : '.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
-    public function getDescription($transformHtml = true): ?string
+    public function getDescription(bool $transformHtml = true): ?string
     {
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
@@ -279,11 +280,13 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getOriginalData(): ?array
     {
         return $this->originalData;
     }
 
+    /** @param array<mixed> $originalData */
     public function setOriginalData(?array $originalData): static
     {
         $this->originalData = $originalData;
@@ -291,6 +294,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

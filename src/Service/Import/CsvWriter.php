@@ -6,6 +6,10 @@ class CsvWriter
 {
     private mixed $fileResource;
 
+    /**
+     * @param array<int, string>        $header
+     * @param array<string, int|string> $options
+     */
     public function __construct(
         private string $filepath,
         private array $header = [],
@@ -25,6 +29,9 @@ class CsvWriter
         }
     }
 
+    /**
+     * @param array<int|string, string|int|null> $row
+     */
     public function writeRow(array $row): void
     {
         $this->fileResource = fopen($this->filepath, 'a');
@@ -37,11 +44,17 @@ class CsvWriter
         );
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getHeader(): array
     {
         return array_filter($this->header);
     }
 
+    /**
+     * @return array<string, int|string>
+     */
     public function getOptions(): array
     {
         return $this->options;

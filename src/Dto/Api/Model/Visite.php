@@ -59,6 +59,7 @@ class Visite
     )]
     public ?string $details;
 
+    /** @var array<string> $conclusions */
     #[OA\Property(
         description: 'Conclusions ou observations spécifiques liées à l\'intervention.',
         type: 'array',
@@ -83,6 +84,7 @@ class Visite
     )]
     public ?bool $proprietairePresent;
 
+    /** @var array<mixed> $files */
     #[OA\Property(
         description: 'Liste des fichiers joints au signalement.',
         type: 'array',

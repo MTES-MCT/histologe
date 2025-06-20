@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class FilesUploadRequest implements RequestInterface
 {
+    /** @var array<mixed> $files */
     #[Assert\All([
         new Assert\Type(type: UploadedFile::class, message: 'Chaque élément doit être un fichier valide.'),
         new Assert\File(

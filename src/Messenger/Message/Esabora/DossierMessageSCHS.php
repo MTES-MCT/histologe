@@ -3,7 +3,6 @@
 namespace App\Messenger\Message\Esabora;
 
 use App\Entity\Enum\PartnerType;
-use App\Entity\File;
 use App\Messenger\Message\DossierMessageInterface;
 
 final class DossierMessageSCHS implements DossierMessageInterface
@@ -51,7 +50,9 @@ final class DossierMessageSCHS implements DossierMessageInterface
     private ?string $dossierCommentaire = null;
 
     private ?string $piecesJointesObservation = null;
-
+    /**
+     * @var array<int, mixed>
+     */
     private array $piecesJointes = [];
 
     public function getPartnerId(): ?int
@@ -283,13 +284,16 @@ final class DossierMessageSCHS implements DossierMessageInterface
     }
 
     /**
-     * @return File[]
+     * @return array<int, mixed>
      */
     public function getPiecesJointes(): array
     {
         return $this->piecesJointes;
     }
 
+    /**
+     * @param array<int, mixed> $piecesJointes
+     */
     public function setPiecesJointes(array $piecesJointes): self
     {
         $this->piecesJointes = $piecesJointes;

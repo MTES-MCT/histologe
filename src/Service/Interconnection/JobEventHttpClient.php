@@ -29,6 +29,8 @@ class JobEventHttpClient implements HttpClientInterface
     }
 
     /**
+     * @param array<mixed> $options
+     *
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
@@ -113,7 +115,12 @@ class JobEventHttpClient implements HttpClientInterface
         return $this->httpClient->stream($responses, $timeout);
     }
 
-    private function filterPayload($payload): array
+    /**
+     * @param array<mixed> $payload
+     *
+     * @return array<mixed>
+     */
+    private function filterPayload(array $payload): array
     {
         if (!isset($payload['fieldList'])) {
             return $payload;
@@ -126,7 +133,10 @@ class JobEventHttpClient implements HttpClientInterface
         return array_values($payload);
     }
 
-    private function filterResponse($response): array
+    /**
+     * @return array<mixed>
+     */
+    private function filterResponse(string $response): array
     {
         if (empty($response)) {
             return [];

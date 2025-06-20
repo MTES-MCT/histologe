@@ -44,6 +44,9 @@ class InterventionRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return array<int, Intervention>
+     */
     public function getVisitsToNotify(int $delay): array
     {
         $queryBuilder = $this->createQueryBuilder('i');
@@ -59,16 +62,25 @@ class InterventionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, Intervention>
+     */
     public function getFutureVisits(): array
     {
         return $this->getVisitsToNotify(self::NB_DAYS_DELAY_NOTIFICATION_VISIT_FUTURE);
     }
 
+    /**
+     * @return array<int, Intervention>
+     */
     public function getPastVisits(): array
     {
         return $this->getVisitsToNotify(self::NB_DAYS_DELAY_NOTIFICATION_VISIT_PAST);
     }
 
+    /**
+     * @return array<int, Intervention>
+     */
     public function getOrderedVisitesForSignalement(Signalement $signalement): array
     {
         $queryBuilder = $this->createQueryBuilder('i');
@@ -83,6 +95,9 @@ class InterventionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, Intervention>
+     */
     public function getPendingVisitesForSignalement(Signalement $signalement): array
     {
         $queryBuilder = $this->createQueryBuilder('i');

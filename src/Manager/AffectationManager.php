@@ -121,6 +121,10 @@ class AffectationManager extends Manager
         return $affectation;
     }
 
+    /**
+     * @param array<int, mixed> $postedPartner
+     * @param array<int, int>   $partnersIdToRemove
+     */
     public function removeAffectationsFrom(
         Signalement $signalement,
         array $postedPartner = [],

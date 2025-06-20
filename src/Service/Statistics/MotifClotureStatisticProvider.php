@@ -12,6 +12,9 @@ class MotifClotureStatisticProvider
     {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
         $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($statisticsFilters);
@@ -19,6 +22,9 @@ class MotifClotureStatisticProvider
         return $this->createFullArray($countPerMotifsCloture);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(
         ?Territory $territory,
         ?int $year,
@@ -33,7 +39,12 @@ class MotifClotureStatisticProvider
         return $this->createArrayBar($countPerMotifsCloture);
     }
 
-    private function createArrayBar($countPerMotifsCloture): array
+    /**
+     * @param array<mixed> $countPerMotifsCloture
+     *
+     * @return array<mixed>
+     */
+    private function createArrayBar(array $countPerMotifsCloture): array
     {
         $data = [];
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
@@ -43,7 +54,12 @@ class MotifClotureStatisticProvider
         return $data;
     }
 
-    private function createFullArray($countPerMotifsCloture): array
+    /**
+     * @param array<mixed> $countPerMotifsCloture
+     *
+     * @return array<mixed>
+     */
+    private function createFullArray(array $countPerMotifsCloture): array
     {
         $data = self::initMotifPerValue();
         foreach ($countPerMotifsCloture as $countPerMotifCloture) {
@@ -55,6 +71,9 @@ class MotifClotureStatisticProvider
         return $data;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private static function initMotifPerValue(): array
     {
         return [

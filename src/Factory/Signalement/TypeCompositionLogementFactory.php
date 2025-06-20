@@ -13,7 +13,10 @@ readonly class TypeCompositionLogementFactory
     {
     }
 
-    public function createFromSignalementDraftPayload(array $payload)
+    /**
+     * @param array<string, mixed> $payload
+     */
+    public function createFromSignalementDraftPayload(array $payload): TypeCompositionLogement
     {
         $data = DataPropertyArrayFilter::filterByPrefix(
             $payload,
@@ -23,6 +26,9 @@ readonly class TypeCompositionLogementFactory
         return $this->serializer->deserialize(json_encode($data), TypeCompositionLogement::class, 'json');
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function createFromArray(array $data): TypeCompositionLogement
     {
         return new TypeCompositionLogement(

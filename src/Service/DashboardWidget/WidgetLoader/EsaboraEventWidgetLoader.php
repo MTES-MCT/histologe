@@ -37,6 +37,9 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
         $widget->setData($data);
     }
 
+    /**
+     * @param array<string, mixed> $event
+     */
     private function normalizeErrorMessage(array $event): string
     {
         if (!isset($event['response'])) {
@@ -70,6 +73,11 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
         return 'SAS Etat : '.$response['sasEtat'].' ('.$response['statusCode'].')';
     }
 
+    /**
+     * @param array<int, array{error: string, fieldName: string}> $messages
+     *
+     * @return string
+     */
     private function normalizeErrorList(array $messages)
     {
         $html = '';

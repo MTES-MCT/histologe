@@ -209,7 +209,7 @@ class SignalementActionControllerTest extends WebTestCase
     /**
      * @dataProvider provideSignalementToSetRnbId
      */
-    public function testsetRnbId($uuid, $isGeolocUpdated): void
+    public function testsetRnbId(string $uuid, bool $isGeolocUpdated): void
     {
         $buildingData = json_decode(file_get_contents(__DIR__.'/../../../files/betagouv/get_api_rnb_buildings_response.json'), true);
         $building = new RnbBuilding($buildingData['results'][0]);

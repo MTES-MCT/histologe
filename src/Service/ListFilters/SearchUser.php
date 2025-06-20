@@ -4,6 +4,7 @@ namespace App\Service\ListFilters;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\UserStatus;
+use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
@@ -19,6 +20,7 @@ class SearchUser
     private User $user;
     private ?string $queryUser = null;
     private ?Territory $territory = null;
+    /** @var Collection<int, Partner> */
     private Collection $partners;
     private ?PartnerType $partnerType = null;
     private ?string $statut = null;
@@ -60,11 +62,17 @@ class SearchUser
         $this->territory = $territory;
     }
 
+    /**
+     * @return Collection<int, Partner>
+     */
     public function getPartners(): Collection
     {
         return $this->partners;
     }
 
+    /**
+     * @param Collection<int, Partner> $partners
+     */
     public function setPartners(Collection $partners): void
     {
         $this->partners = $partners;
@@ -120,6 +128,9 @@ class SearchUser
         $this->orderType = $orderType;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getUrlParams(): array
     {
         $params = $this->getUrlParamsBase();
@@ -130,6 +141,9 @@ class SearchUser
         return $params;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFiltersToText(): array
     {
         $filters = [];

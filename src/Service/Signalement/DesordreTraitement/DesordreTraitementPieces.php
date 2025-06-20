@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement\DesordreTraitement;
 
+use App\Entity\DesordrePrecision;
 use App\Repository\DesordrePrecisionRepository;
 
 class DesordreTraitementPieces implements DesordreTraitementInterface
@@ -13,6 +14,11 @@ class DesordreTraitementPieces implements DesordreTraitementInterface
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return array<int, DesordrePrecision>
+     */
     public function findDesordresPrecisionsBy(array $payload, string $slug, string $suffixe = ''): array
     {
         $precisions = [];

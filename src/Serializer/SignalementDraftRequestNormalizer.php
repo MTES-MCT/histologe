@@ -25,10 +25,14 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     public function __construct(
         /** @var ObjectNormalizer $objectNormalizer */
         #[Autowire(service: 'serializer.normalizer.object')]
-        private readonly NormalizerInterface $objectNormalizer,
+        private readonly NormalizerInterface&DenormalizerInterface $objectNormalizer,
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $context
+     */
     public function denormalize($data, $type, $format = null, array $context = []): mixed
     {
         $transformedData = [];
@@ -70,6 +74,11 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
     }
 
     /**
+     * @param SignalementDraft     $object
+     * @param array<string, mixed> $context
+     *
+     * @return array<string, mixed>|string|int|float|bool|\ArrayObject|null
+     *
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
@@ -86,6 +95,10 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         return $this->objectNormalizer->normalize($signalementDraft, $format, $context);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $context
+     */
     public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         return \in_array($type, [
@@ -102,11 +115,17 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         ]);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof SignalementDraft;
     }
 
+    /**
+     * @return array<class-string, bool>
+     */
     public function getSupportedTypes(?string $format): array
     {
         return [

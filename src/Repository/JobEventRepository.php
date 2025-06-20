@@ -10,8 +10,6 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -30,7 +28,9 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @param array<int, int> $territories
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function findLastJobEventByInterfacageType(
         string $type,
@@ -57,9 +57,12 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         return $qb->getQuery()->getArrayResult();
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function findLastEsaboraJobByPartner(
         Partner $partner,
-    ): array {
+    ): ?array {
         return $this->createQueryBuilder('j')
             ->select('MAX(j.createdAt) AS last_event')
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
@@ -70,6 +73,9 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             ->getOneOrNullResult();
     }
 
+    /**
+     * @return array<int, JobEvent>|null
+     */
     public function findFailedEsaboraDossierByPartnerTypeByAction(
         PartnerType $partnerType,
         string $action,
@@ -114,8 +120,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     }
 
     /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
+     * @return array<string, int>
      */
     public function getReportEsaboraAction(string ...$actions): array
     {
@@ -134,6 +139,9 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         return $qb->getQuery()->getSingleResult();
     }
 
+    /**
+     * @return array<int, Affectation>
+     */
     public function findFailedJobEvents(string $service, string $action): array
     {
         $qb = $this->createQueryBuilder('j');

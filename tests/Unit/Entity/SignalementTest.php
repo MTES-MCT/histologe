@@ -59,7 +59,7 @@ class SignalementTest extends KernelTestCase
     }
 
     /** @dataProvider provideProfile */
-    public function testSetProfileDeclarantFromDraft(ProfileDeclarant $profileDeclarant)
+    public function testSetProfileDeclarantFromDraft(ProfileDeclarant $profileDeclarant): void
     {
         $signalement = new Signalement();
         $signalement->setCreatedFrom(new SignalementDraft());

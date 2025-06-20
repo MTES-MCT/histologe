@@ -21,7 +21,7 @@ class ContactFormHandler
         string $message,
         string $organisme,
         string $objet,
-    ) {
+    ): void {
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CONTACT_FORM,

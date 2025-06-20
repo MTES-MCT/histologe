@@ -31,14 +31,14 @@ class TagVoter extends Voter
         }
 
         return match ($attribute) {
-            self::CREATE => $this->canCreate($subject, $user),
+            self::CREATE => $this->canCreate($user),
             self::EDIT => $this->canEdit($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             default => false,
         };
     }
 
-    private function canCreate($subject, User $user): bool
+    private function canCreate(User $user): bool
     {
         return $user->isTerritoryAdmin();
     }
@@ -50,6 +50,6 @@ class TagVoter extends Voter
 
     private function canDelete(Tag $tag, User $user): bool
     {
-        return $this->canCreate($tag, $user) && $user->hasPartnerInTerritory($tag->getTerritory());
+        return $this->canCreate($user) && $user->hasPartnerInTerritory($tag->getTerritory());
     }
 }

@@ -35,6 +35,10 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
     ) {
     }
 
+    /**
+     * @param array<mixed> $payload
+     * @param array<mixed> $requestOptions
+     */
     protected function request(
         string $url,
         string $token,
@@ -66,6 +70,9 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
 
     abstract public function getStateDossier(Affectation $affectation, string $uuidSignalement): DossierResponseInterface;
 
+    /**
+     * @return array<mixed>
+     */
     public function prepareInterventionPayload(string $uuidSignalement, string $serviceName): array
     {
         return [
@@ -95,6 +102,9 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
             && null === $dossierResponse->getErrorReason();
     }
 
+    /**
+     * @param array<mixed> $payload
+     */
     protected function getTaskPath(array $payload): ?string
     {
         if (empty($payload)) {

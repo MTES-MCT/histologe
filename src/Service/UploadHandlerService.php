@@ -17,8 +17,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadHandlerService
 {
-    public const MAX_FILESIZE = 10 * 1024 * 1024;
+    public const int MAX_FILESIZE = 10 * 1024 * 1024;
 
+    /**
+     * @var array<mixed>
+     */
     private array $file = [];
 
     public function __construct(
@@ -31,6 +34,8 @@ class UploadHandlerService
     }
 
     /**
+     * @return self|array<mixed>
+     *
      * @throws MaxUploadSizeExceededException
      * @throws EmptyFileException
      * @throws FilesystemException
@@ -303,7 +308,7 @@ class UploadHandlerService
         return null;
     }
 
-    public function createTmpFileFromBucket($from, $to): void
+    public function createTmpFileFromBucket(string $from, string $to): void
     {
         $resourceBucket = $this->fileStorage->read($from);
         $resourceFileSyStem = fopen($to, 'w');
@@ -340,6 +345,9 @@ class UploadHandlerService
         return false;
     }
 
+    /**
+     * @return ?array<mixed>
+     */
     public function setKey(string $key): ?array
     {
         $this->file['key'] = $key;
@@ -347,6 +355,9 @@ class UploadHandlerService
         return $this->file;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFile(): array
     {
         return $this->file;

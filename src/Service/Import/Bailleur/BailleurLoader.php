@@ -3,6 +3,7 @@
 namespace App\Service\Import\Bailleur;
 
 use App\Entity\Bailleur;
+use App\Entity\Territory;
 use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Signalement\ZipcodeProvider;
@@ -12,9 +13,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class BailleurLoader
 {
+    /**
+     * @var array<string, Territory>
+     */
     private array $territories = [];
+    /**
+     * @var array<string, Bailleur>
+     */
     private array $bailleurs = [];
-
+    /**
+     * @var array{new_bailleurs: int, updated_bailleurs: int, deleted_bailleurs: int, errors: string[]}
+     */
     private array $metadata = [
         'new_bailleurs' => 0,
         'updated_bailleurs' => 0,
@@ -29,6 +38,9 @@ class BailleurLoader
     ) {
     }
 
+    /**
+     * @param array<int, array<string, string>> $data
+     */
     public function load(array $data, ?OutputInterface $output = null): void
     {
         $this->initData();
@@ -100,6 +112,9 @@ class BailleurLoader
         $this->entityManager->flush();
     }
 
+    /**
+     * @return array{new_bailleurs: int, updated_bailleurs: int, deleted_bailleurs: int, errors: string[]}
+     */
     public function getMetadata(): array
     {
         return $this->metadata;

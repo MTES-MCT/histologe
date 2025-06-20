@@ -21,6 +21,9 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
         return $partner->canSyncWithEsabora();
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     protected function buildPiecesJointes(Signalement $signalement): array
     {
         $piecesJointes = [];

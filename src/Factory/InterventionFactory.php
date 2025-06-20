@@ -4,10 +4,15 @@ namespace App\Factory;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Intervention;
 
 class InterventionFactory
 {
+    /**
+     * @param array<mixed>|null         $additionalInformation
+     * @param array<ProcedureType>|null $concludeProcedures
+     */
     public function createInstanceFrom(
         Affectation $affectation,
         InterventionType $type,
