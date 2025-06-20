@@ -73,7 +73,7 @@ class BackUserControllerTest extends WebTestCase
     {
         yield 'Search without params' => [[], 15];
         yield 'Search with queryUser user' => [['queryUser' => 'user'], 10];
-        yield 'Search with partner 6 and 7' => [['partners' => [2]], 5];
+        yield 'Search with partner 2' => [['partners' => [2]], 5];
         yield 'Search with status ACTIVE' => [['statut' => 'ACTIVE'], 11];
         yield 'Search with role ROLE_USER_PARTNER' => [['role' => 'ROLE_USER_PARTNER'], 10];
         yield 'Search with role ROLE_USER_PARTNER and status ACTIVE' => [['role' => 'ROLE_USER_PARTNER', 'statut' => 'ACTIVE'], 6];

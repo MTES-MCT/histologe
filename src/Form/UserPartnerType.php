@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserPartnerType extends AbstractType
 {
+    /**
+     * @var array<string, string>
+     */
     private array $roles;
 
     public function __construct(

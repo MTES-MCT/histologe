@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Territory;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\ListFilters\SearchArchivedUser;
@@ -79,7 +80,7 @@ class SearchArchivedUserType extends AbstractType
         $builder->add('page', HiddenType::class);
     }
 
-    private function addPartnersField(FormInterface $builder, $territory): void
+    private function addPartnersField(FormInterface $builder, ?Territory $territory): void
     {
         $partners = $territory ? $this->partnerRepository->findBy(['territory' => $territory]) : $this->partnerRepository->findAll();
         $choicesPartners = [

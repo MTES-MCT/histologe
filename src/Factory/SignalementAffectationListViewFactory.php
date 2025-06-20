@@ -17,6 +17,9 @@ class SignalementAffectationListViewFactory
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function createInstanceFrom(User $user, array $data): SignalementAffectationListView
     {
         $signalement = SignalementAffectationHelper::getSignalementFromDataForVoter($data);

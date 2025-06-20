@@ -224,6 +224,9 @@ class SignalementDraftDesordresType extends AbstractType
         ]);
     }
 
+    /**
+     * @return array<string, DesordrePrecision>
+     */
     private function getPrecisionsChoices(DesordreCritere $critere): array
     {
         $choices = [];
