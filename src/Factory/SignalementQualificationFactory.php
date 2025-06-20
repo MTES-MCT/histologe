@@ -16,6 +16,10 @@ class SignalementQualificationFactory
     ) {
     }
 
+    /**
+     * @param array<int, mixed> $listCriticiteIds
+     * @param array<int, mixed> $listDesordrePrecisionsIds
+     */
     public function createInstanceFrom(
         Qualification $qualification,
         QualificationStatus $qualificationStatus,
@@ -37,6 +41,9 @@ class SignalementQualificationFactory
         return $signalementQualification;
     }
 
+    /**
+     * @param array<int, mixed> $listNDECriticites
+     */
     public function createNDEInstanceFrom(
         Signalement $signalement,
         array $listNDECriticites = [],

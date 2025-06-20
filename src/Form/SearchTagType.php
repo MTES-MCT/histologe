@@ -17,6 +17,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SearchTagType extends AbstractType
 {
     private bool $isAdmin = false;
+    /**
+     * @var array<string, string>
+     */
     private array $roleChoices = [];
 
     public function __construct(

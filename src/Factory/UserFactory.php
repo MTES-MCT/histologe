@@ -27,6 +27,9 @@ class UserFactory
             ->setHasPermissionAffectation($hasPermissionAffectation);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function createInstanceFromArray(array $data): User
     {
         return $this->createInstanceFrom(

@@ -100,7 +100,10 @@ class PartnerPerimetreType extends AbstractType
         ]);
     }
 
-    public function validateInseeInTerritory($codesInsee, ExecutionContextInterface $context): void
+    /**
+     * @param array<int, string> $codesInsee
+     */
+    public function validateInseeInTerritory(array $codesInsee, ExecutionContextInterface $context): void
     {
         $partner = $context->getObject()->getParent()->getData();
         $territory = $partner->getTerritory();

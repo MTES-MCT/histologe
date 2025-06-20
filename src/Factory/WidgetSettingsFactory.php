@@ -38,6 +38,11 @@ class WidgetSettingsFactory
         );
     }
 
+    /**
+     * @param array<string, mixed> $filterOptionData
+     *
+     * @return array<int, string>
+     */
     private function getCommunesAndZipCodes(array $filterOptionData): array
     {
         $suggestionsCommuneZipCode = [...$filterOptionData['cities'], ...$filterOptionData['zipcodes']];

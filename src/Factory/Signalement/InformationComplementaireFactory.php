@@ -13,6 +13,9 @@ class InformationComplementaireFactory
     {
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public function createFromSignalementDraftPayload(array $payload): InformationComplementaire
     {
         $data = DataPropertyArrayFilter::filterByPrefix(
@@ -23,6 +26,9 @@ class InformationComplementaireFactory
         return $this->serializer->deserialize(json_encode($data), InformationComplementaire::class, 'json');
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function createFromArray(array $data): InformationComplementaire
     {
         return new InformationComplementaire(

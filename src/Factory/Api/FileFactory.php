@@ -33,6 +33,11 @@ readonly class FileFactory
         return $file;
     }
 
+    /**
+     * @param array<FileEntity> $files
+     *
+     * @return array<File>
+     */
     public function createFromArray(array $files): array
     {
         $fileList = [];
