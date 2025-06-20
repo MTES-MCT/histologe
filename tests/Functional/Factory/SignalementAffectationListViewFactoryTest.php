@@ -57,7 +57,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'lastSuiviBy' => $faker->name(),
             'lastSuiviIsPublic' => false,
             'profileDeclarant' => ProfileDeclarant::LOCATAIRE,
-            'rawAffectations' => 'Partenaire 13-02||1;Partenaire 13-03||1;Partenaire 13-04||1',
+            'rawAffectations' => 'Partenaire 13-02||EN_COURS;Partenaire 13-03||EN_COURS;Partenaire 13-04||EN_COURS',
             'qualifications' => 'NON_DECENCE_ENERGETIQUE',
             'qualificationsStatuses' => 'NDE_AVEREE',
             'conclusionsProcedure' => $procedures,
@@ -67,15 +67,15 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $expectedAffectations = [
             'Partenaire 13-02' => [
                 'partner' => 'Partenaire 13-02',
-                'statut' => 1,
+                'statut' => 'EN_COURS',
             ],
             'Partenaire 13-03' => [
                 'partner' => 'Partenaire 13-03',
-                'statut' => 1,
+                'statut' => 'EN_COURS',
             ],
             'Partenaire 13-04' => [
                 'partner' => 'Partenaire 13-04',
-                'statut' => 1,
+                'statut' => 'EN_COURS',
             ],
         ];
 

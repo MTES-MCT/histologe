@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Specification\Signalement;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Intervention;
 use App\Repository\SignalementRepository;
@@ -35,7 +36,7 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
             ->setTerritory($user->getFirstTerritory())
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setAnsweredBy($user)
-            ->setStatut(Affectation::STATUS_ACCEPTED);
+            ->setStatut(AffectationStatus::ACCEPTED);
 
         $signalement->addAffectation($affectation);
 
@@ -63,7 +64,7 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
             ->setTerritory($user->getFirstTerritory())
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setAnsweredBy($user)
-            ->setStatut(Affectation::STATUS_ACCEPTED);
+            ->setStatut(AffectationStatus::ACCEPTED);
 
         $signalement
             ->addAffectation($affectation)

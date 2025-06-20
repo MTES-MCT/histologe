@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -140,7 +141,7 @@ class SignalementVoter extends Voter
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
-            return $affectation->getPartner()->getId() === $partner?->getId() && Affectation::STATUS_ACCEPTED === $affectation->getStatut();
+            return $affectation->getPartner()->getId() === $partner?->getId() && AffectationStatus::ACCEPTED === $affectation->getStatut();
         })->count() > 0;
     }
 
@@ -190,7 +191,7 @@ class SignalementVoter extends Voter
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId()
                 && \in_array(Qualification::VISITES, $partner->getCompetence())
-                && Affectation::STATUS_ACCEPTED == $affectation->getStatut();
+                && AffectationStatus::ACCEPTED == $affectation->getStatut();
         })->count() > 0;
     }
 

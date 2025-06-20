@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;

@@ -3,7 +3,6 @@
 namespace App\EventListener;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\AffectationStatus;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;

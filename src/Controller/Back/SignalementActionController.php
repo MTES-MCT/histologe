@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\SignalementStatus;

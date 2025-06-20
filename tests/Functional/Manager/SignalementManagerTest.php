@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Manager;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -144,7 +145,7 @@ class SignalementManagerTest extends WebTestCase
 
         $signalementHasAllAffectationsClosed = $signalementClosed->getAffectations()
             ->forAll(function (int $index, Affectation $affectation) {
-                return Affectation::STATUS_CLOSED === $affectation->getStatut()
+                return AffectationStatus::CLOSED === $affectation->getStatut()
                 && str_contains($affectation->getMotifCloture()->label(), 'Travaux faits ou en cours'); // TODO ??
             });
 

@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Repository;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Repository\AffectationRepository;
@@ -56,8 +57,8 @@ class AffectationRepositoryTest extends KernelTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000004']);
-        $affectationRepository->updateStatusBySignalement(Affectation::STATUS_WAIT, $signalement);
-        $affectations = $affectationRepository->findBy(['signalement' => $signalement, 'statut' => Affectation::STATUS_WAIT]);
+        $affectationRepository->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
+        $affectations = $affectationRepository->findBy(['signalement' => $signalement, 'statut' => AffectationStatus::WAIT]);
         $this->assertCount(2, $affectations);
     }
 }
