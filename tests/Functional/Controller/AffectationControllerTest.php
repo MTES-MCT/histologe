@@ -198,6 +198,40 @@ class AffectationControllerTest extends WebTestCase
         }
     }
 
+    public function testToggleAffectationOnUnnotifiedPartners()
+    {
+        $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
+        $this->client->loginUser($user);
+
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy([
+            'reference' => self::SIGNALEMENT_REFERENCE,
+        ]);
+
+        $routeSignalementView = $this->router->generate('back_signalement_view', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+
+        $crawler = $this->client->request('GET', $routeSignalementView);
+        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+
+        $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+
+        $this->client->request('POST', $routeAffectationResponse, [
+            'signalement-affectation' => [
+                'partners' => [3, 10], // 10 is not notified
+            ],
+            '_token' => $token,
+        ]);
+        $this->assertEmailCount(1);
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success success-raw'));
+        $successMessages = $flashBag->get('success success-raw');
+        $this->assertEquals('Les affectations ont bien été effectuées.<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : Partenaire 13-09 Non Notifiable', $successMessages[0]);
+    }
+
     public function testToggleAffectationWithRoleUserPartner()
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);

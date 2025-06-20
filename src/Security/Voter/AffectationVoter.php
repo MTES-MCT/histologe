@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -17,6 +18,12 @@ class AffectationVoter extends Voter
     public const string CLOSE = 'AFFECTATION_CLOSE';
     public const string REOPEN = 'AFFECTATION_REOPEN';
     public const string UPDATE_STATUT = 'AFFECTATION_UPDATE_STATUS';
+    public const string AFFECTATION_REINIT = 'AFFECTATION_REINIT';
+
+    public function __construct(
+        private Security $security,
+    ) {
+    }
 
     private const array VALID_WORKFLOW_STATUT = [
         Affectation::STATUS_WAIT => [Affectation::STATUS_ACCEPTED, Affectation::STATUS_REFUSED],
@@ -27,7 +34,7 @@ class AffectationVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::SEE, self::TOGGLE, self::ANSWER, self::CLOSE, self::REOPEN, self::UPDATE_STATUT])
+        return \in_array($attribute, [self::SEE, self::TOGGLE, self::ANSWER, self::CLOSE, self::REOPEN, self::UPDATE_STATUT, self::AFFECTATION_REINIT], true)
             && ($subject instanceof Affectation || $subject instanceof Signalement);
     }
 
@@ -46,6 +53,7 @@ class AffectationVoter extends Voter
             self::CLOSE => $this->canClose($subject, $user),
             self::REOPEN => $this->canReopen($subject, $user),
             self::UPDATE_STATUT => $this->canUpdateStatut($subject, $user),
+            self::AFFECTATION_REINIT => $this->canReinit($subject, $user),
             default => false,
         };
     }
@@ -93,5 +101,23 @@ class AffectationVoter extends Voter
             && in_array($newStatut, self::VALID_WORKFLOW_STATUT[$previousStatut], true);
 
         return $this->canAnswer($affectation, $user) && $canUpdateStatut;
+    }
+
+    private function canReinit(Affectation $affectation, User $user): bool
+    {
+        if (!in_array($affectation->getStatut(), [Affectation::STATUS_CLOSED, Affectation::STATUS_REFUSED])) {
+            return false;
+        }
+        if (SignalementStatus::ACTIVE !== $affectation->getSignalement()->getStatut()) {
+            return false;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($affectation->getSignalement()->getTerritory())) {
+            return true;
+        }
+
+        return false;
     }
 }
