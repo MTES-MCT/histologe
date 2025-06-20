@@ -112,8 +112,6 @@ class PartnerType extends AbstractType
                 'label' => 'Compétences (facultatif)',
                 'noselectionlabel' => 'Sélectionner une ou plusieurs compétences',
                 'nochoiceslabel' => 'Aucune compétence disponible',
-                'multiple' => true,
-                'expanded' => false,
                 'help' => 'Choisissez une ou plusieurs compétences parmi la liste ci-dessous.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',

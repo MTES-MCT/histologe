@@ -1,4 +1,4 @@
-const radioButtons = document.querySelectorAll('input[name="cloture[publicSuivi]"]')
+const radioButtons = document.querySelectorAll('input[name="cloture[isPublic]"]')
 const cloturePublicOui = document.querySelector('#warning_cloture_public_oui')
 const cloturePublicNon = document.querySelector('#warning_cloture_public_non')
 radioButtons.forEach(radioButton => {

@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Manager;
 
 use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
+use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
@@ -129,11 +130,11 @@ class SignalementManagerTest extends WebTestCase
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalementActive = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
 
-        $signalementClosed = $this->signalementManager->closeSignalementForAllPartners(
-            $signalementActive,
-            MotifCloture::tryFrom('TRAVAUX_FAITS_OU_EN_COURS'),
-            'Tous les problèmes ont été résolus en moins de 15 ans',
-        );
+        $signalementAffectationClose = (new SignalementAffectationClose())
+            ->setSignalement($signalementActive)
+            ->setMotifCloture(MotifCloture::tryFrom('TRAVAUX_FAITS_OU_EN_COURS'))
+            ->setDescription('Tous les problèmes ont été résolus en moins de 15 ans');
+        $signalementClosed = $this->signalementManager->closeSignalementForAllPartners($signalementAffectationClose);
 
         $this->assertEquals($signalementActive->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');
         $this->assertEquals($signalementClosed->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');

@@ -28,7 +28,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EsaboraManagerTest extends KernelTestCase
 {
@@ -48,7 +47,6 @@ class EsaboraManagerTest extends KernelTestCase
     private MockObject|FileScanner $fileScanner;
     private MockObject|UploadHandlerService $uploadHander;
     private MockObject|ImageManipulationHandler $imageManipulationHandler;
-    private MockObject|UrlGeneratorInterface $UrlGeneratorInterface;
     private MockObject|FileFactory $fileFactory;
     private MockObject|SignalementQualificationUpdater $signalementQualificationUpdater;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
@@ -67,7 +65,6 @@ class EsaboraManagerTest extends KernelTestCase
         $this->fileScanner = $this->createMock(FileScanner::class);
         $this->uploadHander = $this->createMock(UploadHandlerService::class);
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
-        $this->UrlGeneratorInterface = $this->createMock(UrlGeneratorInterface::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
         $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
@@ -126,7 +123,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileScanner,
             $this->uploadHander,
             $this->imageManipulationHandler,
-            $this->UrlGeneratorInterface,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizerInterface
@@ -208,7 +204,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileScanner,
             $this->uploadHander,
             $this->imageManipulationHandler,
-            $this->UrlGeneratorInterface,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizerInterface
@@ -257,7 +252,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileScanner,
             $this->uploadHander,
             $this->imageManipulationHandler,
-            $this->UrlGeneratorInterface,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizerInterface
@@ -315,7 +309,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileScanner,
             $this->uploadHander,
             $this->imageManipulationHandler,
-            $this->UrlGeneratorInterface,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizerInterface

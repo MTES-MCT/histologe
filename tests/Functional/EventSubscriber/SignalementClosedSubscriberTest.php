@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\EventSubscriber;
 
+use App\Dto\SignalementAffectationClose;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\NotificationType;
 use App\Entity\Enum\UserStatus;
@@ -10,7 +11,6 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\EventSubscriber\SignalementClosedSubscriber;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
@@ -52,33 +52,27 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $securityMock = $this->createMock(Security::class);
         $securityMock->expects($this->once())->method('getUser')->willReturn($user);
 
-        $signalementManager = static::getContainer()->get(SignalementManager::class);
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         $signalementClosedSubscriber = new SignalementClosedSubscriber(
-            $signalementManager,
             $suiviManager,
             $securityMock
         );
 
-        $signalementClosedEvent = new SignalementClosedEvent(
-            $signalementClosed,
-            [
-                'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
-                'motif_cloture' => MotifCloture::tryFrom('NON_DECENCE'),
-                'suivi_public' => '1',
-                'subject' => 'tous les partenaires',
-                'closed_for' => 'all',
-            ]
-        );
+        $signalementAffectationClose = (new SignalementAffectationClose())
+            ->setSignalement($signalementClosed)
+            ->setType('all')
+            ->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit.')
+            ->setMotifCloture(MotifCloture::tryFrom('NON_DECENCE'))
+            ->setSubject('tous les partenaires');
+        $signalementClosedEvent = new SignalementClosedEvent($signalementAffectationClose);
         $signalementClosed->setMotifCloture(MotifCloture::tryFrom('NON_DECENCE'));
 
         $dispatcher = new EventDispatcher();
         $dispatcher->addSubscriber($signalementClosedSubscriber);
         $event = $dispatcher->dispatch($signalementClosedEvent, SignalementClosedEvent::NAME);
 
-        $this->assertInstanceOf(Signalement::class, $event->getSignalement());
-        $this->assertIsArray($event->getParams());
+        $this->assertInstanceOf(Signalement::class, $event->getSignalementAffectationClose()->getSignalement());
         $this->assertEmailCount(2);
         /** @var NotificationEmail $clotureMail */
         $clotureMail = $this->getMailerMessages()[0];
