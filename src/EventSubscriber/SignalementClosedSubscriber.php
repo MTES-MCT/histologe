@@ -6,7 +6,6 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -14,7 +13,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 readonly class SignalementClosedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private SignalementManager $signalementManager,
         private SuiviManager $suiviManager,
         private Security $security,
     ) {
@@ -29,24 +27,28 @@ readonly class SignalementClosedSubscriber implements EventSubscriberInterface
 
     public function onSignalementClosed(SignalementClosedEvent $event): void
     {
-        $signalement = $event->getSignalement();
-        $params = $event->getParams();
+        $signalementAffectationClose = $event->getSignalementAffectationClose();
+        $signalement = $signalementAffectationClose->getSignalement();
         /** @var User $user */
         $user = $this->security->getUser();
         $signalement->setClosedBy($user);
 
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
-            description: SuiviManager::buildDescriptionClotureSignalement($params),
+            description: SuiviManager::buildDescriptionClotureSignalement(
+                [
+                    'subject' => $signalementAffectationClose->getSubject(),
+                    'motif_cloture' => $signalementAffectationClose->getMotifCloture(),
+                    'motif_suivi' => $signalementAffectationClose->getDescription(),
+                ]
+            ),
             type: Suivi::TYPE_PARTNER,
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
-            isPublic: '1' == $params['suivi_public'],
+            isPublic: $signalementAffectationClose->isPublic(),
             user: $user,
             context: Suivi::CONTEXT_SIGNALEMENT_CLOSED,
+            files: $signalementAffectationClose->getFiles(),
         );
-
         $signalement->addSuivi($suivi);
-
-        $this->signalementManager->save($signalement);
     }
 }

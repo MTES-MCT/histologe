@@ -11,6 +11,7 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
+use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
 use App\Event\InterventionUpdatedByEsaboraEvent;
@@ -38,7 +39,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EsaboraManager
 {
@@ -57,7 +57,6 @@ class EsaboraManager
         private readonly FileScanner $fileScanner,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ImageManipulationHandler $imageManipulationHandler,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly FileFactory $fileFactory,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
@@ -311,16 +310,9 @@ class EsaboraManager
             isVariantsGenerated: $variantsGenerated,
         );
         $this->entityManager->persist($file);
-        $urlDocument = $this->urlGenerator->generate(
-            'show_file',
-            ['uuid' => $file->getUuid()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
-        $linkToFile = '<br /><a class="fr-link" target="_blank" rel="noopener" href="'
-            .$urlDocument.'">'
-            .$file->getTitle()
-            .'</a>';
-        $suivi->setDescription($suivi->getDescription().$linkToFile);
+        $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());
+        $this->entityManager->persist($suiviFile);
+        $suivi->addSuiviFile($suiviFile);
 
         return true;
     }

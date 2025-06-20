@@ -10,14 +10,12 @@ use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 readonly class InterventionEditedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private VisiteNotifier $visiteNotifier,
         private SuiviManager $suiviManager,
-        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -38,18 +36,6 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
             $description .= 'Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
 
-            if (!$intervention->getFiles()->isEmpty()) {
-                $description .= '<br>Rapport de visite : ';
-
-                $urlDocument = $this->urlGenerator->generate(
-                    'show_file',
-                    ['uuid' => $intervention->getFiles()->first()->getUuid()],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                );
-
-                $description .= '<a href="'.$urlDocument.'" title="Afficher le document" rel="noopener" target="_blank">Afficher le document</a>';
-            }
-
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
@@ -58,6 +44,7 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 isPublic: $event->isUsagerNotified(),
                 user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
+                files: $intervention->getFiles(),
             );
 
             if ($event->isUsagerNotified()) {

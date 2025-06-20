@@ -10,12 +10,13 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Form\AddSuiviType;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
+use App\Service\FormHelper;
 use App\Service\Gouv\Rnb\RnbService;
-use App\Service\Sanitizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -89,25 +90,27 @@ class SignalementActionController extends AbstractController
         LoggerInterface $logger,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
-        $payload = $request->getPayload()->all();
-        if ($this->isCsrfTokenValid('signalement_add_suivi_'.$signalement->getId(), $payload['_token'])) {
-            $content = Sanitizer::sanitize($payload['content']);
-            if (mb_strlen($content) < 10) {
-                $errors = ['content' => ['errors' => ['Le contenu du suivi doit faire au moins 10 caractères !']]];
-                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
+        $suivi = (new Suivi())->setSignalement($signalement);
+        $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(AddSuiviType::class, $suivi, ['action' => $addSuiviRoute]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
-                return $this->json($response, $response['code']);
-            }
+            return $this->json($response, $response['code']);
+        }
+        if ($form->isSubmitted()) {
             try {
                 /** @var User $user */
                 $user = $this->getUser();
                 $suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: $content,
+                    description: $suivi->getDescription(),
                     type: Suivi::TYPE_PARTNER,
                     category: SuiviCategory::MESSAGE_PARTNER,
-                    isPublic: !empty($payload['notifyUsager']),
+                    isPublic: $suivi->getIsPublic(),
                     user: $user,
+                    files: $form->get('files')->getData(),
                 );
             } catch (\Throwable $exception) {
                 $logger->error($exception->getMessage());
@@ -118,12 +121,11 @@ class SignalementActionController extends AbstractController
             }
             $response = ['code' => Response::HTTP_OK];
             $this->addFlash('success', 'Suivi publié avec succès !');
-        } else {
-            $errors = ['main' => ['errors' => ['Une erreur de jeton est survenue lors de la publication. veuillez recharger la page et réessayer.']]];
-            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
+
+            return $this->json($response, $response['code']);
         }
 
-        return $this->json($response, $response['code']);
+        return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
     }
 
     #[Route('/{uuid:signalement}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
