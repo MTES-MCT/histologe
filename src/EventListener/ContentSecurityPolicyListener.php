@@ -71,18 +71,24 @@ readonly class ContentSecurityPolicyListener
         }
     }
 
+    /**
+     * @param array<string> $directive
+     */
     private function formatCspDirective(array $directive): string
     {
         return implode(' ', $directive);
     }
 
+    /**
+     * @param array<string, string> $directives
+     */
     private function buildCspHeader(array $directives): string
     {
         $csp = '';
 
         foreach ($directives as $directive => $values) {
             if (!empty($values)) {
-                $csp .= "$directive $values; ";
+                $csp .= $directive.' '.$values.'; ';
             }
         }
 

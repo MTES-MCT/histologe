@@ -9,6 +9,9 @@ class SignalementClosedEvent extends Event
 {
     public const string NAME = 'signalement.closed';
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public function __construct(private readonly Signalement $signalement, private readonly array $params)
     {
     }
@@ -18,6 +21,9 @@ class SignalementClosedEvent extends Event
         return $this->signalement;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getParams(): array
     {
         return $this->params;

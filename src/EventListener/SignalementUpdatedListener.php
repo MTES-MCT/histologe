@@ -10,7 +10,7 @@ use Doctrine\ORM\Events;
 #[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: Signalement::class)]
 class SignalementUpdatedListener
 {
-    private $updateOccurred = false;
+    private bool $updateOccurred = false;
 
     public function postUpdate(Signalement $signalement, PostUpdateEventArgs $event): void
     {

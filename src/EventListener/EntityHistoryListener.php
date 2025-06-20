@@ -22,6 +22,9 @@ class EntityHistoryListener
 {
     private UnitOfWork $uow;
 
+    /**
+     * @var array<string>
+     */
     public const array FIELDS_TO_IGNORE = [
         'lastLoginAt',
         'updatedAt',
@@ -40,7 +43,7 @@ class EntityHistoryListener
     ) {
     }
 
-    public function onFlush(OnFlushEventArgs $eventArgs)
+    public function onFlush(OnFlushEventArgs $eventArgs): void
     {
         if (!$this->historyTrackingEnable) {
             return;
@@ -142,6 +145,9 @@ class EntityHistoryListener
         }
     }
 
+    /**
+     * @param array<string, mixed> $changes
+     */
     public function saveEntityHistory(
         HistoryEntryEvent $event,
         EntityHistoryInterface $entity,
@@ -165,6 +171,11 @@ class EntityHistoryListener
         }
     }
 
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
     private function sortKey(array $data): array
     {
         ksort($data);

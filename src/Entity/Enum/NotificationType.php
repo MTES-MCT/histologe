@@ -27,6 +27,9 @@ enum NotificationType: string
         ];
     }
 
+    /**
+     * @return array<NotificationType>
+     */
     public static function getForAgent(): array
     {
         return array_filter(NotificationType::cases(), function (NotificationType $notificationType) {
@@ -34,6 +37,9 @@ enum NotificationType: string
         });
     }
 
+    /**
+     * @return array<NotificationType>
+     */
     public static function getForUsager(): array
     {
         return array_filter(NotificationType::cases(), function (NotificationType $notificationType) {

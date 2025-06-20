@@ -30,7 +30,7 @@ class CsvWriter
     }
 
     /**
-     * @param array<int, string> $row
+     * @param array<int|string, string|int|null> $row
      */
     public function writeRow(array $row): void
     {

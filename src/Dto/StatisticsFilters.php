@@ -2,7 +2,6 @@
 
 namespace App\Dto;
 
-use App\Entity\Commune;
 use App\Entity\Epci;
 use App\Entity\Partner;
 use App\Entity\Tag;
@@ -11,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class StatisticsFilters
 {
-    /** @var array<Commune> */
+    /** @var array<string>|null */
     private ?array $communes;
     /** @var array<Epci> */
     private ?array $epcis;
@@ -30,7 +29,7 @@ class StatisticsFilters
     /**
      * @param array<string>                 $communes
      * @param array<Epci>                   $epcis
-     * @param array<Tag>                    $etiquettes
+     * @param array<Tag|int>                $etiquettes
      * @param ArrayCollection<int, Partner> $partners
      */
     public function __construct(
@@ -59,7 +58,7 @@ class StatisticsFilters
         $this->partners = $partners;
     }
 
-    /** @return array<string> */
+    /** @return array<string>|null */
     public function getCommunes(): ?array
     {
         return $this->communes;
@@ -99,13 +98,13 @@ class StatisticsFilters
         return $this;
     }
 
-    /** @return array<Tag> */
+    /** @return array<Tag|int> */
     public function getEtiquettes(): ?array
     {
         return $this->etiquettes;
     }
 
-    /** @param array<Tag> $etiquettes */
+    /** @param array<Tag|int> $etiquettes */
     public function setEtiquettes(array $etiquettes): self
     {
         $this->etiquettes = $etiquettes;
