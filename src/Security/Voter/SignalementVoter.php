@@ -69,11 +69,10 @@ class SignalementVoter extends Voter
         }
 
         if (in_array($attribute, [self::EDIT_NDE, self::SEE_NDE])) {
-            return match ($attribute) {
-                self::EDIT_NDE => $this->canEditNDE($subject, $user),
-                self::SEE_NDE => $this->canSeeNde($subject, $user),
-                default => false,
-            };
+            if ($attribute === self::EDIT_NDE) {
+                return $this->canEditNDE($subject, $user);
+            }
+            return $this->canSeeNde($subject, $user);
         }
 
         return match ($attribute) {
