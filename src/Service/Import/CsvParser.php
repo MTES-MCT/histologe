@@ -17,7 +17,8 @@ class CsvParser
         'delimiter' => ',',
         'enclosure' => '"',
         'escape' => '\\',
-    ]) {
+    ])
+    {
         $this->options = $options;
     }
 

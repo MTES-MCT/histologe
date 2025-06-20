@@ -44,6 +44,7 @@ class DesordresTablesLoader
 
     /**
      * @param array<int, array<string, mixed>> $data
+     *
      * @throws NonUniqueResultException
      * @throws \Exception
      */

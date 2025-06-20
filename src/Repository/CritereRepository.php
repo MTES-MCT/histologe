@@ -25,7 +25,7 @@ class CritereRepository extends ServiceEntityRepository
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function getMaxScore()
+    public function getMaxScore(): int
     {
         return $this->createQueryBuilder('c')
             ->select('SUM(c.coef)')
@@ -34,7 +34,10 @@ class CritereRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function findAllList()
+    /**
+     * @return array<int, Critere>
+     */
+    public function findAllList(): array
     {
         return $this->createQueryBuilder('c')
             ->where('c.isArchive != 1')

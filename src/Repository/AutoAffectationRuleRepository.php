@@ -52,6 +52,9 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder->getQuery(), false);
     }
 
+    /**
+     * @return array<int, AutoAffectationRule>
+     */
     public function findForPartner(Partner $partner): array
     {
         $territory = $partner->getTerritory();

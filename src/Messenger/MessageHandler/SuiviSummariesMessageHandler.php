@@ -93,7 +93,7 @@ class SuiviSummariesMessageHandler
                 break;
         }
 
-        /** @var array $signalementResult */
+        /** @var array<string, mixed> $signalementResult */
         foreach ($list as $signalementResult) {
             $cleanLastSuiviDescription = HtmlCleaner::clean($signalementResult['dernier_suivi_description']);
             if (!empty($signalementResult['dernier_suivi_created_by'])) {
@@ -163,6 +163,9 @@ class SuiviSummariesMessageHandler
         return $content->choices[0]->message->content;
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getAlbertMessage(string $message, string $role = 'user'): array
     {
         return ['role' => $role, 'content' => $message];

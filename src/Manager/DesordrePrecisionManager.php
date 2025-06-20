@@ -16,14 +16,14 @@ class DesordrePrecisionManager extends AbstractManager
     }
 
     /**
-     * @param array $data The array representing the DesordrePrecision.
-     *                    - 'label' (string): The title of the DesordrePrecision.
-     *                    - 'desordreCritere' (DesordreCritere): DesordreCritere linked
-     *                    - 'coef' (string): The coef of the DesordrePrecision
-     *                    - 'danger' (string): 'Oui' if is_danger.
-     *                    - 'suroccupation' (string): 'Oui' if is_suroccupation.
-     *                    - 'insalubrite' (string): 'Oui' if is_insalubrite.
-     *                    - 'procedure' (string): The List of Qualification .
+     * @param array<string, mixed> $data The array representing the DesordrePrecision.
+     *                                   - 'label' (string): The title of the DesordrePrecision.
+     *                                   - 'desordreCritere' (DesordreCritere): DesordreCritere linked
+     *                                   - 'coef' (string): The coef of the DesordrePrecision
+     *                                   - 'danger' (string): 'Oui' if is_danger.
+     *                                   - 'suroccupation' (string): 'Oui' if is_suroccupation.
+     *                                   - 'insalubrite' (string): 'Oui' if is_insalubrite.
+     *                                   - 'procedure' (string): The List of Qualification .
      */
     public function createOrUpdate(string $slug, array $data): DesordrePrecision
     {

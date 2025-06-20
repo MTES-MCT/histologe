@@ -17,7 +17,6 @@ use App\Service\ListFilters\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -130,7 +129,7 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws NonUniqueResultException
+     * @param array<int, Territory> $territories
      */
     public function countPartnerNonNotifiables(array $territories): CountPartner
     {
@@ -173,9 +172,9 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws QueryException
+     * @return array<string, Partner>
      */
-    public function findAllList(?Territory $territory = null, ?User $user = null)
+    public function findAllList(?Territory $territory = null, ?User $user = null): array
     {
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1')
@@ -192,7 +191,10 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findAllWithoutTerritory()
+    /**
+     * @return array<string, Partner>
+     */
+    public function findAllWithoutTerritory(): array
     {
         $qb = $this->createQueryBuilder('p')
             ->where('p.isArchive != 1')
@@ -249,6 +251,8 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, array<string, int|string>>
+     *
      * @throws Exception
      */
     public function findByLocalization(Signalement $signalement, bool $affected = true): array
@@ -264,9 +268,11 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, Partner>
+     *
      * @throws Exception
      */
-    public function findPartnersByLocalization(Signalement $signalement, $addAffectedPartner = false): array
+    public function findPartnersByLocalization(Signalement $signalement, bool $addAffectedPartner = false): array
     {
         $queryData = $this->buildLocalizationQuery($signalement, false); // Always use $affected = false
 
@@ -289,6 +295,8 @@ class PartnerRepository extends ServiceEntityRepository
 
     /**
      * Builds the SQL query and parameters for localization search.
+     *
+     * @return array<int|string, mixed>
      *
      * @throws Exception
      */
@@ -359,6 +367,9 @@ class PartnerRepository extends ServiceEntityRepository
         ];
     }
 
+    /**
+     * @return array<string, Partner>
+     */
     public function findPartnersWithQualification(Qualification $qualification, ?Territory $territory)
     {
         $qb = $this->createQueryBuilder('p');

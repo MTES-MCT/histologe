@@ -8,6 +8,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -50,7 +51,13 @@ class AffectationRepository extends ServiceEntityRepository
         }
     }
 
-    public function countByStatusForUser($user, array $territories, ?Qualification $qualification = null, ?array $qualificationStatuses = null)
+    /**
+     * @param array<int, int>                 $territories
+     * @param array<int, QualificationStatus> $qualificationStatuses
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function countByStatusForUser(User $user, array $territories, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
     {
         $qb = $this->createQueryBuilder('a')
             ->select('COUNT(a.signalement) as count')
@@ -83,6 +90,9 @@ class AffectationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function countByPartenaireFiltered(StatisticsFilters $statisticsFilters): array
     {
         $qb = $this->createQueryBuilder('a');
@@ -99,7 +109,7 @@ class AffectationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array[]
+     * @return array<int, array<string, mixed>>
      */
     public function findAffectationSubscribedToEsabora(
         PartnerType $partnerType,
@@ -135,6 +145,11 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param array<int, int> $territories
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function countAffectationPartner(array $territories): array
     {
         $qb = $this->createQueryBuilder('a');
@@ -155,6 +170,9 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param array<int, int> $territories
+     */
     public function countAffectationForUser(User $user, array $territories): int
     {
         $qb = $this->createQueryBuilder('a');
@@ -171,6 +189,8 @@ class AffectationRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int, int> $territories
+     *
      * @throws NonUniqueResultException
      */
     public function countSignalementForUser(User $user, array $territories): CountSignalement
@@ -204,7 +224,10 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function findAffectationWithQualification(Qualification $qualification, Signalement $signalement)
+    /**
+     * @return array<int, Affectation>
+     */
+    public function findAffectationWithQualification(Qualification $qualification, Signalement $signalement): array
     {
         $qb = $this->createQueryBuilder('a');
         $qb->select('p.id, p.nom')
@@ -217,6 +240,9 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<int, Affectation>
+     */
     public function findAcceptedAffectationsFromVisitesPartner(): array
     {
         $qb = $this->createQueryBuilder('a');

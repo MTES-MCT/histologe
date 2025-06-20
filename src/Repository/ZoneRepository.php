@@ -56,6 +56,9 @@ class ZoneRepository extends ServiceEntityRepository
         return new Paginator($qb->getQuery());
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function findSignalementsByZone(Zone $zone): array
     {
         $conn = $this->getEntityManager()->getConnection();
@@ -78,6 +81,9 @@ class ZoneRepository extends ServiceEntityRepository
         return $list;
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function findZonesBySignalement(Signalement $signalement): array
     {
         $conn = $this->getEntityManager()->getConnection();
@@ -94,6 +100,9 @@ class ZoneRepository extends ServiceEntityRepository
         return $resultSet->fetchAllAssociative();
     }
 
+    /**
+     * @return array<int, Zone>
+     */
     public function findForUserAndTerritory(User $user, ?Territory $territory): array
     {
         $qb = $this->createQueryBuilder('z');

@@ -27,9 +27,11 @@ class TerritoryRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, Territory>
+     *
      * @throws QueryException
      */
-    public function findAllList()
+    public function findAllList(): array
     {
         $qb = $this->createQueryBuilder('t')
             ->where('t.isActive = 1');
@@ -39,6 +41,9 @@ class TerritoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<string, Territory>
+     */
     public function findAllIndexedByZip(): array
     {
         $qb = $this->createQueryBuilder('t');
@@ -61,6 +66,9 @@ class TerritoryRepository extends ServiceEntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @return array<int, Territory>
+     */
     public function findAllWithAutoAffectationRules(): array
     {
         $qb = $this->createQueryBuilder('t')

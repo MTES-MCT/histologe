@@ -124,8 +124,9 @@ class SignalementImportMapper
     }
 
     /**
-     * @param array<int, string> $columns
+     * @param array<int, string>   $columns
      * @param array<string, mixed> $data
+     *
      * @return array<string, mixed>
      */
     public function map(array $columns, array $data): array

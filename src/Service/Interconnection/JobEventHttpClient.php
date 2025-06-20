@@ -117,6 +117,7 @@ class JobEventHttpClient implements HttpClientInterface
 
     /**
      * @param array<mixed> $payload
+     *
      * @return array<mixed>
      */
     private function filterPayload(array $payload): array

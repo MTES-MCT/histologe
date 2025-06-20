@@ -4,6 +4,7 @@ namespace App\Messenger\Message\Oilhi;
 
 use App\Entity\Enum\PartnerType;
 use App\Messenger\Message\DossierMessageInterface;
+use App\Service\Interconnection\Oilhi\Model\Desordre;
 
 final class DossierMessage implements DossierMessageInterface
 {
@@ -37,6 +38,9 @@ final class DossierMessage implements DossierMessageInterface
     private ?string $rapportVisite = null;
     private ?string $dateVisite = null;
     private ?string $operateurVisite = null;
+    /**
+     * @var array<int, Desordre>
+     */
     private array $desordres = [];
     private ?int $nbOccupants = null;
 
@@ -405,11 +409,17 @@ final class DossierMessage implements DossierMessageInterface
         return $this;
     }
 
+    /**
+     * @return array<int, Desordre>
+     */
     public function getDesordres(): array
     {
         return $this->desordres;
     }
 
+    /**
+     * @param array<int, Desordre> $desordres
+     */
     public function setDesordres(array $desordres): self
     {
         $this->desordres = $desordres;

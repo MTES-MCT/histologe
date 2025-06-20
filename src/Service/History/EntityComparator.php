@@ -39,12 +39,9 @@ class EntityComparator
     }
 
     /**
-     * @param array<mixed> $oldValue
-     * @param array<mixed> $newValue
-     * @param string $field
      * @return array<mixed>
      */
-    public function compareValues($oldValue, $newValue, $field): array
+    public function compareValues(mixed $oldValue, mixed $newValue, string $field): array
     {
         $changes = [];
         if (is_array($oldValue) && is_array($newValue)) {
@@ -82,6 +79,7 @@ class EntityComparator
 
     /**
      * @param object $entity
+     *
      * @return array<string, mixed>
      */
     public function getEntityPropertiesAndValueNormalized($entity): array

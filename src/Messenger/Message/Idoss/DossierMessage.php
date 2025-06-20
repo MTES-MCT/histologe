@@ -9,9 +9,9 @@ use App\Utils\AddressParser;
 
 final class DossierMessage implements DossierMessageInterface
 {
-    private const DEPT_BOUCHES_DU_RHONE = '13';
-    private const CODE_INSEE_BASSIN_VIE_MARSEILLE = '13055';
-    private const DESCRIPTION_MAX_LENGTH = 250;
+    private const string DEPT_BOUCHES_DU_RHONE = '13';
+    private const string CODE_INSEE_BASSIN_VIE_MARSEILLE = '13055';
+    private const int DESCRIPTION_MAX_LENGTH = 250;
     private int $signalementId;
     private int $partnerId;
     private ?PartnerType $partnerType;
@@ -19,10 +19,19 @@ final class DossierMessage implements DossierMessageInterface
     private ?string $signalementUuid;
     private string $reference;
     private string $dateDepotSignalement;
+    /**
+     * @var array<string, ?string>
+     */
     private array $declarant;
+    /**
+     * @var array<string, mixed>
+     */
     private array $occupant;
     private ?string $adresse1;
     private ?string $adresse2;
+    /**
+     * @var array<string, ?string>
+     */
     private array $proprietaire;
     private string $descriptionProblemes;
     private ?string $numAllocataire;
@@ -33,6 +42,9 @@ final class DossierMessage implements DossierMessageInterface
     private string $construitAv1949 = 'ne sait pas';
     private ?int $nbrPieceLogement;
     private ?int $nbrEtages;
+    /**
+     * @var array<string, mixed>
+     */
     private array $etapes = [];
 
     public function __construct(Affectation $affectation)
@@ -154,11 +166,17 @@ final class DossierMessage implements DossierMessageInterface
         return $this->dateDepotSignalement;
     }
 
+    /**
+     * @return array<string, ?string>
+     */
     public function getDeclarant(): array
     {
         return $this->declarant;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOccupant(): array
     {
         return $this->occupant;
@@ -174,6 +192,9 @@ final class DossierMessage implements DossierMessageInterface
         return $this->adresse2;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getProprietaire(): array
     {
         return $this->proprietaire;
@@ -224,6 +245,9 @@ final class DossierMessage implements DossierMessageInterface
         return $this->nbrEtages;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getEtape(): array
     {
         return $this->etapes;

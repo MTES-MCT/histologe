@@ -22,6 +22,9 @@ class FailedEmailRepository extends ServiceEntityRepository
         parent::__construct($registry, FailedEmail::class);
     }
 
+    /**
+     * @return array<int, FailedEmail>
+     */
     public function findEmailToResend(): array
     {
         $startAt = new \DateTimeImmutable(RetryFailedEmailsCommand::START_AT_YEAR.'-01-01 00:00:00');

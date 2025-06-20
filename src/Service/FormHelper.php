@@ -9,8 +9,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class FormHelper
 {
     /**
-     * @param FormInterface $form
      * @param bool $recursive
+     *
      * @return array<string, mixed>
      */
     public static function getErrorsFromForm(FormInterface $form, $recursive = false): array
@@ -37,9 +37,8 @@ class FormHelper
     }
 
     /**
-     * @param ValidatorInterface $validator
-     * @param RequestInterface $request
      * @param array<string> $validationGroups
+     *
      * @return array<string, mixed>
      */
     public static function getErrorsFromRequest(

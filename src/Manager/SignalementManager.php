@@ -83,6 +83,9 @@ class SignalementManager extends AbstractManager
         parent::__construct($managerRegistry, $entityName);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function createOrUpdate(Territory $territory, array $data, bool $isImported = false): ?Signalement
     {
         /** @var Signalement|null $signalement */
@@ -103,6 +106,9 @@ class SignalementManager extends AbstractManager
         return $signalement;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(Signalement $signalement, array $data): Signalement
     {
         if (empty($data['statut'])) {
@@ -201,6 +207,8 @@ class SignalementManager extends AbstractManager
     }
 
     /**
+     * @return array<string, mixed>
+     *
      * @throws Exception
      */
     public function findAllPartners(Signalement $signalement): array
@@ -216,6 +224,9 @@ class SignalementManager extends AbstractManager
         return $partners;
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function findPartners(Signalement $signalement): array
     {
         $affectation = $signalement->getAffectations()->map(
@@ -243,6 +254,9 @@ class SignalementManager extends AbstractManager
         return $signalement;
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findUsersAffectedToSignalement(
         Signalement $signalement,
         AffectationStatus $statusAffectation,
@@ -843,6 +857,11 @@ class SignalementManager extends AbstractManager
         );
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array<string, mixed>|int
+     */
     public function findSignalementAffectationList(User $user, array $options, bool $count = false): array|int
     {
         $maxListPagination = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
@@ -879,6 +898,8 @@ class SignalementManager extends AbstractManager
     }
 
     /**
+     * @param array<string, mixed>|null $options
+     *
      * @throws Exception
      */
     public function findSignalementAffectationIterable(
