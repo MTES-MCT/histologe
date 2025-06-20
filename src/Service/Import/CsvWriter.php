@@ -7,21 +7,18 @@ class CsvWriter
     private mixed $fileResource;
 
     /**
-     * @var array<int, string>
+     * @param array<int, string>        $header
+     * @param array<string, int|string> $options
      */
-    private array $header = [];
-    /**
-     * @var array<string, int|string>
-     */
-    private array $options = [
-        'first_line' => 1,
-        'delimiter' => ',',
-        'enclosure' => '"',
-        'escape' => '\\',
-    ];
-
     public function __construct(
         private string $filepath,
+        private array $header = [],
+        private array $options = [
+            'first_line' => 1,
+            'delimiter' => ',',
+            'enclosure' => '"',
+            'escape' => '\\',
+        ],
     ) {
         if (file_exists($this->filepath)) {
             unlink($this->filepath);

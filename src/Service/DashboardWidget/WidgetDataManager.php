@@ -24,8 +24,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
     }
 
     /**
-     * @param array<int, mixed> $territories
+     * @param array<int, mixed>         $territories
      * @param array<string, mixed>|null $params
+     *
      * @return array<mixed>
      */
     public function countSignalementAcceptedNoSuivi(array $territories, ?array $params = null): array
@@ -35,6 +36,7 @@ class WidgetDataManager implements WidgetDataManagerInterface
 
     /**
      * @param array<string, mixed>|null $params
+     *
      * @return array<mixed>
      */
     public function countSignalementsByTerritory(?array $params = null): array
@@ -50,8 +52,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
     }
 
     /**
-     * @param array<int, mixed> $territories
+     * @param array<int, mixed>         $territories
      * @param array<string, mixed>|null $params
+     *
      * @return array<mixed>
      */
     public function countAffectationPartner(array $territories, ?array $params = null): array
@@ -68,7 +71,8 @@ class WidgetDataManager implements WidgetDataManagerInterface
 
     /**
      * @param array<string, mixed> $params
-     * @param array<int, mixed> $territories
+     * @param array<int, mixed>    $territories
+     *
      * @return array<mixed>
      */
     public function findLastJobEventByInterfacageType(string $type, array $params, array $territories): array
@@ -90,9 +94,9 @@ class WidgetDataManager implements WidgetDataManagerInterface
     }
 
     /**
-     * @param array<int, mixed> $territories
+     * @param array<int, mixed>         $territories
      * @param array<string, mixed>|null $params
-     * @return WidgetDataKpi
+     *
      * @throws QueryException
      * @throws NonUniqueResultException
      * @throws NoResultException

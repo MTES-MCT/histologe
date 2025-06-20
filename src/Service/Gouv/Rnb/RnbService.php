@@ -19,6 +19,7 @@ class RnbService
 
     /**
      * @param array<string, string> $queryParams
+     *
      * @return array<string, mixed>|null
      */
     private function searchBuildings(?string $rnbId = null, array $queryParams = []): ?array

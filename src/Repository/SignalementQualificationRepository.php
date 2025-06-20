@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
+use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -40,7 +42,12 @@ class SignalementQualificationRepository extends ServiceEntityRepository
         }
     }
 
-    public function findSignalementsByQualification(Qualification $qualification, ?array $statuses = null, ?bool $isPostVisite = null)
+    /**
+     * @param array<int, QualificationStatus>|null $statuses
+     *
+     * @return array<int, Signalement>
+     */
+    public function findSignalementsByQualification(Qualification $qualification, ?array $statuses = null, ?bool $isPostVisite = null): array
     {
         $queryBuilder = $this->createQueryBuilder('sq')
             ->select('s.id')

@@ -68,6 +68,7 @@ class ApiLogger
 
     /**
      * @param array<string, mixed>|null $data
+     *
      * @return array<string, mixed>|null
      */
     private function sanitizeSensitiveData(?array $data): ?array

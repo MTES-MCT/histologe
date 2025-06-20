@@ -39,7 +39,6 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
 
     /**
      * @param array<string, mixed> $event
-     * @return string
      */
     private function normalizeErrorMessage(array $event): string
     {
@@ -76,6 +75,7 @@ class EsaboraEventWidgetLoader extends AbstractWidgetLoader
 
     /**
      * @param array<int, array{error: string, fieldName: string}> $messages
+     *
      * @return string
      */
     private function normalizeErrorList(array $messages)

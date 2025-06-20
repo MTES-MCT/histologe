@@ -84,7 +84,8 @@ class SignalementImportLoader
 
     /**
      * @param array<int, array<string, mixed>> $data
-     * @param array<int, string> $headers
+     * @param array<int, string>               $headers
+     *
      * @throws NonUniqueResultException
      * @throws \Exception
      */
@@ -180,6 +181,7 @@ class SignalementImportLoader
 
     /**
      * @param array<string, mixed> $dataMapped
+     *
      * @return ArrayCollection<int, Affectation>
      */
     private function loadAffectation(Signalement $signalement, Territory $territory, array $dataMapped): ArrayCollection
@@ -279,6 +281,7 @@ class SignalementImportLoader
 
     /**
      * @param array<string, mixed> $dataMapped
+     *
      * @return ArrayCollection<int, Suivi>
      */
     private function loadSuivi(Signalement $signalement, array $dataMapped): ArrayCollection

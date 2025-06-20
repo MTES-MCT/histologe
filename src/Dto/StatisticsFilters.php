@@ -28,7 +28,7 @@ class StatisticsFilters
     private ?ArrayCollection $partners;
 
     /**
-     * @param array<Commune>                $communes
+     * @param array<string>                 $communes
      * @param array<Epci>                   $epcis
      * @param array<Tag>                    $etiquettes
      * @param ArrayCollection<int, Partner> $partners
@@ -59,13 +59,13 @@ class StatisticsFilters
         $this->partners = $partners;
     }
 
-    /** @return array<Commune> */
+    /** @return array<string> */
     public function getCommunes(): ?array
     {
         return $this->communes;
     }
 
-    /** @param array<Commune> $communes */
+    /** @param array<string> $communes */
     public function setCommunes(array $communes): self
     {
         $this->communes = $communes;

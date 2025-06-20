@@ -296,7 +296,7 @@ class NotificationAndMailSender
         $users = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory);
 
         foreach ($users as $user) {
-            $recipients[] = $user;
+            $recipients->add($user);
         }
 
         return $recipients;

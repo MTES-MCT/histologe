@@ -2,6 +2,7 @@
 
 namespace App\Service\DashboardWidget;
 
+use App\Entity\Territory;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 class Widget
@@ -10,17 +11,16 @@ class Widget
     private mixed $data = null;
 
     /**
-     * @var array<int, mixed>
+     * @param array<int, Territory>     $territories
+     * @param array<string, mixed>|null $parameters
      */
-    private array $territories = [];
-    /**
-     * @var array<string, mixed>|null
-     */
-    private ?array $parameters = null;
-
     public function __construct(
         #[Groups(['widget:read'])]
         private ?string $type = null,
+        #[Groups(['widget:read'])]
+        private array $territories = [],
+        #[Groups(['widget:read'])]
+        private ?array $parameters = null,
     ) {
     }
 
@@ -37,7 +37,7 @@ class Widget
     }
 
     /**
-     * @return array<int, mixed>
+     * @return array<int, Territory>
      */
     public function getTerritories(): array
     {
@@ -45,7 +45,7 @@ class Widget
     }
 
     /**
-     * @param array<int, mixed> $territories
+     * @param array<int, Territory> $territories
      */
     public function setTerritories(array $territories): self
     {

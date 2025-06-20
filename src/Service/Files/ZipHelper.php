@@ -14,8 +14,6 @@ class ZipHelper
     }
 
     /**
-     * @param string $base64
-     * @return string
      * @throws \Exception
      */
     public function getZipFromBase64(string $base64): string
@@ -31,8 +29,8 @@ class ZipHelper
     }
 
     /**
-     * @param string $zipPath
      * @return array<string, string>
+     *
      * @throws \Exception
      */
     public function extractZipFiles(string $zipPath): array

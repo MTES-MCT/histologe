@@ -273,7 +273,6 @@ class WidgetDataKpiBuilder
     }
 
     /**
-     * @param User $user
      * @return Collection<int, Partner>|null
      */
     private function getPartnersFromUser(User $user): ?Collection

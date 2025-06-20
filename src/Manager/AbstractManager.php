@@ -11,7 +11,7 @@ abstract class AbstractManager implements ManagerInterface
     {
     }
 
-    public function save($entity, bool $flush = true): void
+    public function save(object $entity, bool $flush = true): void
     {
         $this->managerRegistry->getManager()->persist($entity);
         if ($flush) {
@@ -19,7 +19,7 @@ abstract class AbstractManager implements ManagerInterface
         }
     }
 
-    public function remove($entity, bool $flush = true): void
+    public function remove(object $entity, bool $flush = true): void
     {
         $this->managerRegistry->getManager()->remove($entity);
         if ($flush) {
@@ -27,7 +27,7 @@ abstract class AbstractManager implements ManagerInterface
         }
     }
 
-    public function persist($entity): void
+    public function persist(object $entity): void
     {
         $this->save($entity, false);
     }
@@ -37,28 +37,42 @@ abstract class AbstractManager implements ManagerInterface
         $this->managerRegistry->getManager()->flush();
     }
 
-    public function find($id)
+    /**
+     * @param int|string $id
+     */
+    public function find($id): ?object
     {
         return $this->getRepository()->find($id);
     }
 
-    public function findOneBy(array $criteria)
+    /**
+     * @param array<string, mixed> $criteria
+     */
+    public function findOneBy(array $criteria): ?object
     {
         return $this->getRepository()->findOneBy($criteria);
     }
 
-    public function findBy(array $criteria)
+    /**
+     * @param array<string, mixed> $criteria
+     *
+     * @return array<int, object>
+     */
+    public function findBy(array $criteria): array
     {
         return $this->getRepository()->findBy($criteria);
     }
 
-    public function findAll()
+    /**
+     * @return array<int, object>
+     */
+    public function findAll(): array
     {
         return $this->getRepository()->findAll();
     }
 
     public function getRepository(): ObjectRepository
     {
-        return $this->managerRegistry->getRepository($this->entityName);
+        return $this->managerRegistry->getRepository($this->entityName); // @phpstan-ignore-line
     }
 }

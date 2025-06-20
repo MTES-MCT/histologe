@@ -46,6 +46,8 @@ class HistoryEntryManager extends AbstractManager
     }
 
     /**
+     * @param array<string, mixed> $changes
+     *
      * @throws ExceptionInterface
      */
     public function create(
@@ -74,6 +76,9 @@ class HistoryEntryManager extends AbstractManager
         return $this->requestStack->getCurrentRequest()?->getPathInfo() ?? $this->commandContext->getCommandName();
     }
 
+    /**
+     * @return array<string, array<array<string, string>>>
+     */
     public function getAffectationHistory(Signalement $signalement): array
     {
         $affectationHistoryEntries = $this->getHistoryEntries(
@@ -117,6 +122,9 @@ class HistoryEntryManager extends AbstractManager
         );
     }
 
+    /**
+     * @return array<HistoryEntry>
+     */
     private function getHistoryEntries(int $signalementId, string $entityClass, ?HistoryEntryEvent $event = null): array
     {
         $criteria = ['entityName' => str_replace($this->historyEntryFactory::ENTITY_PROXY_PREFIX, '', $entityClass)];
@@ -130,6 +138,10 @@ class HistoryEntryManager extends AbstractManager
         return $this->historyEntryRepository->findBy($criteria, ['entityId' => 'ASC', 'createdAt' => 'ASC']);
     }
 
+    /**
+     * @param array<string, array<array<string, string>>> $formattedHistory
+     * @param array<HistoryEntry>                         $entries
+     */
     private function formatEntries(array &$formattedHistory, array $entries, string $type, ?Signalement $signalement = null): void
     {
         /** @var HistoryEntry $entry */

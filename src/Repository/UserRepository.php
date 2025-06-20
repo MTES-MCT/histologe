@@ -61,6 +61,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    /**
+     * @return array<int, User>|null
+     */
     public function findActiveAdmins(): ?array
     {
         $queryBuilder = $this->createQueryBuilder('u');
@@ -74,6 +77,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    /**
+     * @return array<int, User>|null
+     */
     public function findActiveAdminsAndTerritoryAdmins(?Territory $territory): ?array
     {
         $queryBuilder = $this->createQueryBuilder('u');
@@ -106,6 +112,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
+    /**
+     * @return array<int, User>|null
+     */
     public function findAnonymizedUsers(): ?array
     {
         $queryBuilder = $this->createQueryBuilder('u');
@@ -129,6 +138,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findActiveTerritoryAdmins(int $territoryId, ?string $inseeOccupant = null): array
     {
         $queryBuilder = $this->createQueryBuilder('u')
@@ -155,6 +167,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $queryBuilder->getQuery()->getResult();
     }
 
+    /**
+     * @return array<int, array<string, int|string>>
+     */
     public function findInactiveWithNbAffectationPending(): array
     {
         $connection = $this->getEntityManager()->getConnection();
@@ -262,6 +277,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * @param array<int, Territory> $territories
+     *
      * @throws NonUniqueResultException
      */
     public function countUserByStatus(array $territories, ?User $user = null): CountUser
@@ -293,6 +310,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findExpiredUsagers(string $limitConservation = '5 years'): array
     {
         $dateLimit = new \DateTimeImmutable('-'.$limitConservation);
@@ -318,6 +338,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->execute();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findExpiredUsers(): array
     {
         $qb = $this->getQueryBuilerForinactiveUsersSince('2 years');
@@ -327,6 +350,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->execute();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findInactiveUsers(): array
     {
         $qb = $this->getQueryBuilerForinactiveUsersSince('1 year');
@@ -356,6 +382,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb;
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findUsersToArchive(): array
     {
         $qb = $this->createQueryBuilder('u')
@@ -366,6 +395,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->execute();
     }
 
+    /**
+     * @param array<int, Territory> $territories
+     *
+     * @return array<int, User>|int
+     */
     public function findUsersPendingToArchive(User $user, array $territories = [], bool $count = false): array|int
     {
         $qb = $this->createQueryBuilder('u')
@@ -399,7 +433,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return new Paginator($qb->getQuery());
     }
 
-    public function findFiltered(SearchUser $searchUser, $execute = true): QueryBuilder|array
+    /**
+     * @return QueryBuilder|array<int, User>
+     */
+    public function findFiltered(SearchUser $searchUser, bool $execute = true): QueryBuilder|array
     {
         $qb = $this->createQueryBuilder('u');
         $qb->select('u', 'up', 'p', 't')
@@ -461,7 +498,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb;
     }
 
-    public function findAgentByEmail(string $email, ?UserStatus $userStatus = null, $acceptRoleApi = true): ?User
+    public function findAgentByEmail(string $email, ?UserStatus $userStatus = null, bool $acceptRoleApi = true): ?User
     {
         $queryBuilder = $this->createQueryBuilder('u')
             ->andWhere('u.email = :email')
@@ -483,6 +520,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findUsersAffectedToSignalement(Signalement $signalement, ?Partner $partnerToExclude = null): array
     {
         $queryBuilder = $this->createQueryBuilder('u')
@@ -503,6 +543,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $queryBuilder->getQuery()->getResult();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findUserWaitingSummaryEmail(): array
     {
         $queryBuilder = $this->createQueryBuilder('u')

@@ -26,6 +26,9 @@ class BailleurRepository extends ServiceEntityRepository
         parent::__construct($registry, Bailleur::class);
     }
 
+    /**
+     * @return array<int, Bailleur>
+     */
     public function findBailleursByTerritory(User $user, ?Territory $territory): array
     {
         $queryBuilder = $this
@@ -57,6 +60,9 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
+    /**
+     * @return array<int, Bailleur>
+     */
     public function findBailleursBy(string $name, Territory $territory): array
     {
         $terms = explode(' ', mb_trim($name));
@@ -97,6 +103,9 @@ class BailleurRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @return array<string, Bailleur>
+     */
     public function findBailleursIndexedByName(?bool $raisonSociale = false): array
     {
         $list = $this->createQueryBuilder('b')

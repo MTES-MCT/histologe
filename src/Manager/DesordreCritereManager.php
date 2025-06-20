@@ -14,12 +14,12 @@ class DesordreCritereManager extends AbstractManager
     }
 
     /**
-     * @param array $data The array representing the DesordreCritere.
-     *                    - 'slugCategorie' (string): The "front slug" value of the Categorie.
-     *                    - 'labelCategorie' (string): The title of the Categorie.
-     *                    - 'zoneCategorie' (string): The zone of the Categorie/Critere.
-     *                    - 'labelCritere' (string): The title of the Critere.
-     *                    - 'desordreCategorie' (DesordreCategorie): DesordreCategorie
+     * @param array<string, mixed> $data The array representing the DesordreCritere.
+     *                                   - 'slugCategorie' (string): The "front slug" value of the Categorie.
+     *                                   - 'labelCategorie' (string): The title of the Categorie.
+     *                                   - 'zoneCategorie' (string): The zone of the Categorie/Critere.
+     *                                   - 'labelCritere' (string): The title of the Critere.
+     *                                   - 'desordreCategorie' (DesordreCategorie): DesordreCategorie
      */
     public function createOrUpdate(string $slug, array $data): DesordreCritere
     {
@@ -43,6 +43,12 @@ class DesordreCritereManager extends AbstractManager
         return $desordreCritere;
     }
 
+    /**
+     * @param array<string, mixed> $filteredDataOfDraft
+     * @param array<int, mixed>    $availableCritereSlugs
+     *
+     * @return array<string, mixed>
+     */
     public function getCriteresSlugsInDraft(array $filteredDataOfDraft, array $availableCritereSlugs): array
     {
         $criteresSlugs = array_filter($filteredDataOfDraft, function ($value, $slug) use ($availableCritereSlugs) {
