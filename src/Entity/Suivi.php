@@ -7,6 +7,8 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\SuiviCategory;
 use App\Repository\SuiviRepository;
 use App\Service\SuiviTransformerService;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SuiviRepository::class)]
@@ -94,11 +96,18 @@ class Suivi implements EntityHistoryInterface
 
     private ?bool $seenByUsager = null;
 
+    /**
+     * @var Collection<int, SuiviFile>
+     */
+    #[ORM\OneToMany(mappedBy: 'Suivi', targetEntity: SuiviFile::class, orphanRemoval: true)]
+    private Collection $suiviFiles;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->isPublic = false;
         $this->isSanitized = true;
+        $this->suiviFiles = new ArrayCollection();
     }
 
     public function setSuiviTransformerService(SuiviTransformerService $suiviTransformerService): void
@@ -188,7 +197,7 @@ class Suivi implements EntityHistoryInterface
         return $description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -331,5 +340,35 @@ class Suivi implements EntityHistoryInterface
     public function isSeenByUsager(): ?bool
     {
         return $this->seenByUsager;
+    }
+
+    /**
+     * @return Collection<int, SuiviFile>
+     */
+    public function getSuiviFiles(): Collection
+    {
+        return $this->suiviFiles;
+    }
+
+    public function addSuiviFile(SuiviFile $suiviFile): static
+    {
+        if (!$this->suiviFiles->contains($suiviFile)) {
+            $this->suiviFiles->add($suiviFile);
+            $suiviFile->setSuivi($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSuiviFile(SuiviFile $suiviFile): static
+    {
+        if ($this->suiviFiles->removeElement($suiviFile)) {
+            // set the owning side to null (unless already changed)
+            if ($suiviFile->getSuivi() === $this) {
+                $suiviFile->setSuivi(null);
+            }
+        }
+
+        return $this;
     }
 }

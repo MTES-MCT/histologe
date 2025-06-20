@@ -25,6 +25,7 @@ class FileFactory
         ?\DateTimeImmutable $scannedAt = null,
         ?bool $isVariantsGenerated = false,
         ?bool $isSuspicious = false,
+        ?bool $isStandalone = false,
     ): ?File {
         $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
         $file = (new File())
@@ -72,6 +73,10 @@ class FileFactory
 
         if (null !== $isSuspicious) {
             $file->setIsSuspicious($isSuspicious);
+        }
+
+        if (null !== $isStandalone) {
+            $file->setIsStandalone($isStandalone);
         }
 
         return $file;
