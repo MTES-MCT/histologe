@@ -58,6 +58,9 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
         $this->entityManager->flush();
     }
 
+    /**
+     * @param array<NotificationType> $includedNotificationTypes
+     */
     private function markNotificationsAsSeen(
         Signalement $signalement,
         UserInterface $user,

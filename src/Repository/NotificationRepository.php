@@ -228,7 +228,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     }
 
     /**
-     * @param array<int, int> $ids
+     * @param array<int, int|string> $ids
      */
     public function markUserNotificationsAsSeen(User $user, array $ids = []): void
     {
@@ -251,7 +251,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     }
 
     /**
-     * @param array<int, int> $ids
+     * @param array<int, int|string> $ids
      */
     public function deleteUserNotifications(User $user, array $ids = []): void
     {

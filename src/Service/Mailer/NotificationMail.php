@@ -13,7 +13,7 @@ class NotificationMail
 {
     /**
      * @param string|array<string> $to
-     * @param array<string>        $params
+     * @param array<mixed>         $params
      */
     public function __construct(
         private readonly NotificationMailerType $type,
