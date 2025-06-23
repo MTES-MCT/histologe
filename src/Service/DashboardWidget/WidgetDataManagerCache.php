@@ -129,14 +129,17 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     }
 
     /**
+     * @param array<int, mixed> $territories
+     *
      * @throws InvalidArgumentException
      */
-    public function invalidateCacheForUser(): void
+    public function invalidateCacheForUser(array $territories): void
     {
         /** @var User $user */
         $user = $this->security->getUser();
+        $territoriesKey = implode('-', array_keys($territories));
         $key = 'countDataKpi'
-            .'-'.$this->commonKey
+            .'-'.$this->commonKey.$territoriesKey
             .'-id-'.$user->getId();
 
         try {

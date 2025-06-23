@@ -52,13 +52,13 @@ class NotificationController extends AbstractController
         if ($request->get('selected_notifications')) {
             if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('csrf_token'))) {
                 $notificationRepository->markUserNotificationsAsSeen($user, explode(',', $request->get('selected_notifications')));
-                $widgetDataManagerCache->invalidateCacheForUser();
+                $widgetDataManagerCache->invalidateCacheForUser($user->getPartnersTerritories());
                 $this->addFlash('success', 'Les notifications sélectionnées ont été marquées comme lues.');
             }
         } else {
             if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('mark_as_read'))) {
                 $notificationRepository->markUserNotificationsAsSeen($user);
-                $widgetDataManagerCache->invalidateCacheForUser();
+                $widgetDataManagerCache->invalidateCacheForUser($user->getPartnersTerritories());
                 $this->addFlash('success', 'Toutes les notifications ont été marquées comme lues.');
             }
         }
@@ -77,7 +77,7 @@ class NotificationController extends AbstractController
         if ($request->get('selected_notifications')) {
             if ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->get('csrf_token'))) {
                 $notificationRepository->deleteUserNotifications($user, explode(',', $request->get('selected_notifications')));
-                $widgetDataManagerCache->invalidateCacheForUser();
+                $widgetDataManagerCache->invalidateCacheForUser($user->getPartnersTerritories());
                 $this->addFlash('success', 'Les notifications sélectionnées ont été supprimées.');
             }
         } else {
@@ -86,7 +86,7 @@ class NotificationController extends AbstractController
                 $request->get('delete_all_notifications')
             )) {
                 $notificationRepository->deleteUserNotifications($user);
-                $widgetDataManagerCache->invalidateCacheForUser();
+                $widgetDataManagerCache->invalidateCacheForUser($user->getPartnersTerritories());
                 $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
             }
         }
@@ -110,7 +110,7 @@ class NotificationController extends AbstractController
         if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), $request->get('_token'))) {
             $em->remove($notification);
             $em->flush();
-            $widgetDataManagerCache->invalidateCacheForUser();
+            $widgetDataManagerCache->invalidateCacheForUser($user->getPartnersTerritories());
             $this->addFlash('success', 'Notification supprimée avec succès');
         } else {
             $this->addFlash('error', 'Erreur lors de la suppression de la notification.');
