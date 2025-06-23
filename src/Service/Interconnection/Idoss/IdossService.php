@@ -2,8 +2,8 @@
 
 namespace App\Service\Interconnection\Idoss;
 
-use App\Entity\File;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\File;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;

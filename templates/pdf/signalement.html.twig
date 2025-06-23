@@ -491,21 +491,21 @@
                     {% for affectation in signalement.affectations %}
                         <tr>
                             <td>
-                                {% if affectation.statut is same as(0) %}
+                                {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
                                     {{ affectation.partner ? affectation.partner.nom }}
                                     <br>
                                     {{ affectation.createdAt|date('d/m/Y') }}
                                 {% endif %}
                             </td>
                             <td>
-                                {% if affectation.statut is same as(1) %}
+                                {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
                                     {{ affectation.partner ? affectation.partner.nom }}
                                     <br>
                                     {{ affectation.answeredAt|date('d/m/Y') }}
                                 {% endif %}
                             </td>
                             <td>
-                                {% if affectation.statut is same as(2) %}
+                                {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
                                     {{ affectation.partner ? affectation.partner.nom }}
                                     <br>
                                     {{ affectation.answeredAt|date('d/m/Y') }}
