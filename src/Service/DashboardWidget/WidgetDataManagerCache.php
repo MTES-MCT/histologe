@@ -144,6 +144,16 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
 
         try {
             $this->dashboardCache->delete($key);
+
+            // Si plusieurs territoires, supprimer aussi le cache pour chaque territoire individuellement
+            if (count($territories) > 1) {
+                foreach (array_keys($territories) as $territoryKey) {
+                    $singleKey = 'countDataKpi'
+                        .'-'.$this->commonKey.$territoryKey
+                        .'-id-'.$user->getId();
+                    $this->dashboardCache->delete($singleKey);
+                }
+            }
         } catch (InvalidArgumentException $exception) {
             $this->logger->error(\sprintf('Invalidate cache failed %s', $exception->getMessage()));
         }
