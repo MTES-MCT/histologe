@@ -50,7 +50,10 @@
                                     and photo.desordreSlug is not same as null %}
                                 {{ signalement.getDesordreLabel(photo.desordreSlug) }}
                             {% elseif photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_VISITE %}
-                                {{ photo.documentType.label() }} du {{ photo.intervention.scheduledAt|date('d/m/Y') }} par {{ photo.intervention.partner.nom}}
+                                {{ photo.documentType.label() }}
+                                {% if photo.intervention %}
+                                    du {{ photo.intervention.scheduledAt|date('d/m/Y') }} par {{ photo.intervention.partner.nom}}
+                                {% endif %}
                             {% else %}
                                 {{ photo.documentType.label() }}
                             {% endif %}
