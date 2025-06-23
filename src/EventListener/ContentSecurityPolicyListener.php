@@ -62,6 +62,7 @@ readonly class ContentSecurityPolicyListener
             'form-action' => $this->formatCspDirective($cspParameters['form-action'] ?? []),
             'frame-ancestors' => $this->formatCspDirective($cspParameters['frame-ancestors'] ?? []),
             'media-src' => $this->formatCspDirective($cspParameters['media-src'] ?? []),
+            'report-uri' => $this->formatCspDirective($cspParameters['report-uri'] ?? []),
         ];
 
         $csp = $this->buildCspHeader($cspDirectives);

@@ -70,3 +70,5 @@ parameters:
     worker-src:
       - "'self'"
       - "blob:"
+    report-uri:
+      - "/csp-report"
