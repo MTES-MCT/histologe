@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
 use App\Event\AffectationClosedEvent;
 use App\Event\AffectationCreatedEvent;
+use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\AffectationRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,6 +27,7 @@ class AffectationManager extends Manager
         protected LoggerInterface $logger,
         protected HistoryEntryManager $historyEntryManager,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly InterconnectionBus $interconnectionBus,
         string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -83,13 +85,24 @@ class AffectationManager extends Manager
             return false;
         }
 
+        return $this->createAffectation($signalement, $partner, $user);
+    }
+
+    public function createAffectation(
+        Signalement $signalement,
+        Partner $partner,
+        ?User $user = null,
+    ): Affectation {
         $affectation = (new Affectation())
             ->setSignalement($signalement)
             ->setPartner($partner)
             ->setAffectedBy($user ?? null)
-            ->setTerritory($partner->getTerritory());
+            ->setTerritory($signalement->getTerritory());
 
         $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
+
+        $this->persist($affectation);
+        $this->interconnectionBus->dispatch($affectation);
 
         return $affectation;
     }

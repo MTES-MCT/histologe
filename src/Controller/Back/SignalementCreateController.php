@@ -499,10 +499,8 @@ class SignalementCreateController extends AbstractController
                 $partnersList = explode(',', $partnerIds);
                 foreach ($partnersList as $partnerId) {
                     if (isset($partners[$partnerId])) {
-                        $affectation = $affectationManager->createAffectationFrom($signalement, $partners[$partnerId], $user);
+                        $affectation = $affectationManager->createAffectation($signalement, $partners[$partnerId], $user);
                         $signalement->addAffectation($affectation);
-                        $affectationManager->persist($affectation);
-                        $interconnectionBus->dispatch($affectation);
                     }
                 }
                 $signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $user);
