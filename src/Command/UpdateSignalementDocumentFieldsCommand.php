@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 )]
 class UpdateSignalementDocumentFieldsCommand extends Command
 {
-    private const BATCH_SIZE = 200;
+    private const int BATCH_SIZE = 200;
 
     public function __construct(
         private readonly TerritoryManager $territoryManager,

@@ -44,6 +44,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public const string ANONYMIZED_PRENOM = 'Utilisateur';
     public const string ANONYMIZED_NOM = 'Anonymisé';
 
+    /** @var array<string, string> */
     public const array ROLES = [
         'Usager' => 'ROLE_USAGER',
         'Agent' => 'ROLE_USER_PARTNER',

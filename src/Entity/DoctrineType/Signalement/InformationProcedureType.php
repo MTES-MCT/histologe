@@ -9,7 +9,7 @@ use Doctrine\DBAL\Types\Type;
 
 class InformationProcedureType extends Type
 {
-    public const NAME = 'information_procedure';
+    public const string NAME = 'information_procedure';
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {

@@ -30,7 +30,7 @@ class HistoryEntryManager extends AbstractManager
 {
     use DoctrineListenerRemoverTrait;
 
-    public const FORMAT_DATE_TIME = 'Y-m-d H:i:s';
+    public const string FORMAT_DATE_TIME = 'Y-m-d H:i:s';
 
     public function __construct(
         private readonly HistoryEntryFactory $historyEntryFactory,

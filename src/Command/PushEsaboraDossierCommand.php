@@ -21,14 +21,15 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 )]
 class PushEsaboraDossierCommand extends Command
 {
-    public const TERRITORY_NOT_ALLOWED = ['13', '06'];
+    /** @var string[] */
+    public const array TERRITORY_NOT_ALLOWED = ['13', '06'];
 
     public function __construct(
-        private AffectationRepository $affectationRepository,
-        private TerritoryRepository $territoryRepository,
-        private InterconnectionBus $esaboraBus,
+        private readonly AffectationRepository $affectationRepository,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly InterconnectionBus $esaboraBus,
         #[Autowire(param: 'kernel.environment')]
-        private string $env,
+        private readonly string $env,
     ) {
         parent::__construct();
     }

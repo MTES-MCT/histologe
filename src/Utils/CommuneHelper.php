@@ -4,7 +4,8 @@ namespace App\Utils;
 
 class CommuneHelper
 {
-    private const MARSEILLE_ARRONDISSEMENTS = [
+    /** @var string[] */
+    private const array MARSEILLE_ARRONDISSEMENTS = [
         'Marseille 1er Arrondissement',
         'Marseille 2e Arrondissement',
         'Marseille 3e Arrondissement',
@@ -23,7 +24,8 @@ class CommuneHelper
         'Marseille 16e Arrondissement',
     ];
 
-    private const LYON_ARRONDISSEMENTS = [
+    /** @var string[] */
+    private const array LYON_ARRONDISSEMENTS = [
         'Lyon 1er Arrondissement',
         'Lyon 2e Arrondissement',
         'Lyon 3e Arrondissement',
@@ -35,7 +37,8 @@ class CommuneHelper
         'Lyon 9e Arrondissement',
     ];
 
-    private const PARIS_ARRONDISSEMENTS = [
+    /** @var string[] */
+    private const array PARIS_ARRONDISSEMENTS = [
         'Paris 1er Arrondissement',
         'Paris 2e Arrondissement',
         'Paris 3e Arrondissement',
@@ -58,7 +61,8 @@ class CommuneHelper
         'Paris 20e Arrondissement',
     ];
 
-    public const COMMUNES_ARRONDISSEMENTS = [
+    /** @var array<string, array<string>> */
+    public const array COMMUNES_ARRONDISSEMENTS = [
         'Marseille' => self::MARSEILLE_ARRONDISSEMENTS,
         'Lyon' => self::LYON_ARRONDISSEMENTS,
         'Paris' => self::PARIS_ARRONDISSEMENTS,

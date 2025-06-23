@@ -1589,22 +1589,4 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
-
-    public function trimFields(): void
-    {
-        $connection = $this->getEntityManager()->getConnection();
-        // Replace unbreakable spaces, and then trim
-        $sql = 'UPDATE signalement SET
-            mail_occupant = TRIM(REPLACE(mail_occupant, UNHEX("C2A0"), " ")),
-            prenom_occupant = TRIM(REPLACE(prenom_occupant, UNHEX("C2A0"), " ")),
-            nom_occupant = TRIM(REPLACE(nom_occupant, UNHEX("C2A0"), " ")),
-            mail_declarant = TRIM(REPLACE(mail_declarant, UNHEX("C2A0"), " ")),
-            prenom_declarant = TRIM(REPLACE(prenom_declarant, UNHEX("C2A0"), " ")),
-            nom_declarant = TRIM(REPLACE(nom_declarant, UNHEX("C2A0"), " ")),
-            mail_proprio = TRIM(REPLACE(mail_proprio, UNHEX("C2A0"), " ")),
-            prenom_proprio = TRIM(REPLACE(prenom_proprio, UNHEX("C2A0"), " ")),
-            nom_proprio = TRIM(REPLACE(nom_proprio, UNHEX("C2A0"), " "))';
-
-        $connection->prepare($sql)->executeStatement();
-    }
 }

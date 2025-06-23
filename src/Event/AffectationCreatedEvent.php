@@ -7,7 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class AffectationCreatedEvent extends Event
 {
-    public const NAME = 'affectation.created';
+    public const string NAME = 'affectation.created';
 
     public function __construct(private Affectation $affectation)
     {

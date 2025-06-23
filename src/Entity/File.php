@@ -19,6 +19,7 @@ class File implements EntityHistoryInterface
     public const string FILE_TYPE_PHOTO = 'photo';
     public const string INPUT_NAME_PHOTOS = 'photos';
     public const string INPUT_NAME_DOCUMENTS = 'documents';
+    /** @var string[] */
     public const array DOCUMENT_MIME_TYPES = [
         'image/jpeg',
         'image/png',
@@ -34,6 +35,7 @@ class File implements EntityHistoryInterface
         'message/rfc822',
         'application/vnd.ms-outlook',
     ];
+    /** @var string[] */
     public const array DOCUMENT_EXTENSION = [
         'jpeg',
         'jpg',
@@ -49,23 +51,27 @@ class File implements EntityHistoryInterface
         'eml',
         'msg',
     ];
+    /** @var string[] */
     public const array RESIZABLE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
         'image/gif',
     ];
+    /** @var string[] */
     public const array RESIZABLE_EXTENSION = [
         'jpeg',
         'jpg',
         'png',
         'gif',
     ];
+    /** @var string[] */
     public const array IMAGE_MIME_TYPES = [
         'image/jpeg',
         'image/png',
         'image/gif',
         'application/pdf',
     ];
+    /** @var string[] */
     public const array IMAGE_EXTENSION = [
         'jpeg',
         'jpg',

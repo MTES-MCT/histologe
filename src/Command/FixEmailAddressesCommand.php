@@ -19,8 +19,11 @@ class FixEmailAddressesCommand extends Command
 {
     private SymfonyStyle $io;
 
-    private const FIELDS = ['mailOccupant', 'mailDeclarant', 'mailProprio'];
-    private const EMAILS_TO_INCONNU = [
+    /** @var string[] */
+    private const array FIELDS = ['mailOccupant', 'mailDeclarant', 'mailProprio'];
+
+    /** @var string[] */
+    private const array EMAILS_TO_INCONNU = [
         'Non communiqué',
         '?',
         '??',
@@ -32,7 +35,9 @@ class FixEmailAddressesCommand extends Command
         'test@fr',
         'x@x.xx',
     ];
-    private const STRINGS_TO_REPLACE = [
+
+    /** @var array<string, string> */
+    private const array STRINGS_TO_REPLACE = [
         ',com' => '.com',
         ',fr' => '.fr',
         ',net' => '.net',
@@ -40,11 +45,11 @@ class FixEmailAddressesCommand extends Command
         '?fr' => '.fr',
         '?net' => '.net',
     ];
-    public const EMAIL_HISTOLOGE_INCONNU = 'inconnu@signal-logement.fr';
+    public const string EMAIL_HISTOLOGE_INCONNU = 'inconnu@signal-logement.fr';
 
     public function __construct(
-        private SignalementRepository $signalementRepository,
-        private SignalementManager $signalementManager,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly SignalementManager $signalementManager,
     ) {
         parent::__construct();
     }

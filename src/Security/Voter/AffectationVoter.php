@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AffectationVoter extends Voter
@@ -25,6 +26,7 @@ class AffectationVoter extends Voter
     ) {
     }
 
+    /** @var array<int, array<int>> */
     private const array VALID_WORKFLOW_STATUT = [
         Affectation::STATUS_WAIT => [Affectation::STATUS_ACCEPTED, Affectation::STATUS_REFUSED],
         Affectation::STATUS_ACCEPTED => [Affectation::STATUS_CLOSED],
@@ -38,11 +40,16 @@ class AffectationVoter extends Voter
             && ($subject instanceof Affectation || $subject instanceof Signalement);
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    /**
+     * @param Signalement|Affectation $subject
+     */
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
+            $vote?->addReason('L\'utilisateur n\'a pas les droits suffisants dans le territoire demandé.');
+
             return false;
         }
 

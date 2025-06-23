@@ -26,9 +26,9 @@ class UsagerCancelProcedureType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'Veuillez choisir une raison.',
-                    ]),
+                    new Assert\NotBlank(
+                        message: 'Veuillez choisir une raison.',
+                    ),
                 ],
             ])
             ->add('details', TextareaType::class, [
@@ -36,13 +36,13 @@ class UsagerCancelProcedureType extends AbstractType
                 'help' => 'Dix (10) caractères minimum',
                 'required' => false,
                 'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'Veuillez détailler la raison.',
-                    ]),
-                    new Assert\Length([
-                        'min' => 10,
-                        'minMessage' => 'Le message doit contenir au moins {{ limit }} caractères.',
-                    ]),
+                    new Assert\NotBlank(
+                        message: 'Veuillez détailler la raison.',
+                    ),
+                    new Assert\Length(
+                        min: 10,
+                        minMessage : 'Le message doit contenir au moins {{ limit }} caractères.',
+                    ),
                 ],
             ]);
     }

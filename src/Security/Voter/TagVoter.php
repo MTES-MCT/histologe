@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Tag;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class TagVoter extends Voter
@@ -19,11 +20,16 @@ class TagVoter extends Voter
             && ($subject instanceof Tag || !$subject);
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    /**
+     * @param Tag $subject
+     */
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) {
+            $vote?->addReason('L\'utilisateur n\'est pas authentifié');
+
             return false;
         }
         if ($user->isSuperAdmin()) {
@@ -31,14 +37,14 @@ class TagVoter extends Voter
         }
 
         return match ($attribute) {
-            self::CREATE => $this->canCreate($subject, $user),
+            self::CREATE => $this->canCreate($user),
             self::EDIT => $this->canEdit($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             default => false,
         };
     }
 
-    private function canCreate($subject, User $user): bool
+    private function canCreate(User $user): bool
     {
         return $user->isTerritoryAdmin();
     }
@@ -50,6 +56,6 @@ class TagVoter extends Voter
 
     private function canDelete(Tag $tag, User $user): bool
     {
-        return $this->canCreate($tag, $user) && $user->hasPartnerInTerritory($tag->getTerritory());
+        return $this->canCreate($user) && $user->hasPartnerInTerritory($tag->getTerritory());
     }
 }
