@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class CommuneHelperTest extends TestCase
 {
-    public function testGetCommuneFromArrondissement()
+    public function testGetCommuneFromArrondissement(): void
     {
         $this->assertEquals('Marseille', CommuneHelper::getCommuneFromArrondissement('Marseille'));
         $this->assertEquals('Marseille', CommuneHelper::getCommuneFromArrondissement('Marseille 1er Arrondissement'));

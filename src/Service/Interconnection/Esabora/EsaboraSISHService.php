@@ -188,6 +188,9 @@ class EsaboraSISHService extends AbstractEsaboraService
         );
     }
 
+    /**
+     * @param array<mixed> $payload
+     */
     private function getDossierPushResponse(
         string $url,
         string $token,
@@ -221,6 +224,9 @@ class EsaboraSISHService extends AbstractEsaboraService
         return new DossierPushSISHResponse(['message' => $exception->getMessage()], $statusCode);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function preparePayloadPushAdresse(DossierMessageSISH $dossierMessageSISH): array
     {
         return [
@@ -264,6 +270,8 @@ class EsaboraSISHService extends AbstractEsaboraService
     }
 
     /**
+     * @return array<mixed>
+     *
      * @throws \IntlException
      */
     private function preparePayloadPushDossier(
@@ -467,6 +475,9 @@ class EsaboraSISHService extends AbstractEsaboraService
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function preparePayloadPushPersonne(
         DossierMessageSISH $dossierMessageSISH,
         DossierMessageSISHPersonne $dossierMessageSISHPersonne,

@@ -35,7 +35,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->router = static::getContainer()->get(RouterInterface::class);
     }
 
-    public function testCreateWithDoublon()
+    public function testCreateWithDoublon(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -83,7 +83,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(44, $signalements[1]->getTerritory()->getZip());
     }
 
-    public function testCreateWithDoublonDraft()
+    public function testCreateWithDoublonDraft(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-44-02@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -135,7 +135,7 @@ class SignalementCreateControllerTest extends WebTestCase
     /**
      * @dataProvider provideCanEditSignalementData
      */
-    public function testCanEditSignalement($userEmail, $signalementUuid, $expectedStatusCode)
+    public function testCanEditSignalement(string $userEmail, string $signalementUuid, int $expectedStatusCode): void
     {
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
         $this->client->loginUser($user);
@@ -144,7 +144,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame($expectedStatusCode);
     }
 
-    public function provideCanEditSignalementData()
+    public function provideCanEditSignalementData(): \Generator
     {
         yield 'edit NEED_VALIDATION signalement' => [
             'userEmail' => 'admin-01@signal-logement.fr',
@@ -174,7 +174,7 @@ class SignalementCreateControllerTest extends WebTestCase
         return $crawler;
     }
 
-    public function testEditAddress()
+    public function testEditAddress(): void
     {
         $crawler = $this->getCrawler();
 
@@ -209,7 +209,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('non', $signalement->getTypeCompositionLogement()->getCompositionLogementEnfants());
     }
 
-    public function testEditAddressOnOtherTerritory()
+    public function testEditAddressOnOtherTerritory(): void
     {
         $crawler = $this->getCrawler();
 
@@ -227,7 +227,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertStringContainsString('pas le droit de créer un signalement sur ce territoire.', $response['tabContent']);
     }
 
-    public function testEditLogement()
+    public function testEditLogement(): void
     {
         $crawler = $this->getCrawler();
 
@@ -253,7 +253,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('oui', $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine());
     }
 
-    public function testEditSituation()
+    public function testEditSituation(): void
     {
         $crawler = $this->getCrawler();
 
@@ -281,7 +281,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('1', $signalement->getIsAllocataire());
     }
 
-    public function testEditCoordonnees()
+    public function testEditCoordonnees(): void
     {
         $crawler = $this->getCrawler();
 
@@ -307,7 +307,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('Arnaque & cie', $signalement->getDenominationAgence());
     }
 
-    public function testValidationSignalementWithAutoAffectationWithRT()
+    public function testValidationSignalementWithAutoAffectationWithRT(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -335,7 +335,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEmailCount(2);
     }
 
-    public function testValidationSignalementWithManualAffectationWithRT()
+    public function testValidationSignalementWithManualAffectationWithRT(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -367,7 +367,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEmailCount(4);
     }
 
-    public function testValidationSignalementWithManualAffectationWithAgent()
+    public function testValidationSignalementWithManualAffectationWithAgent(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-44-02@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -397,7 +397,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEmailCount(0);
     }
 
-    public function testValidationSignalementWithAutoAffectationWithAgentAffected()
+    public function testValidationSignalementWithAutoAffectationWithAgentAffected(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-44-02@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -425,7 +425,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEmailCount(2);
     }
 
-    public function testValidationSignalementWithAutoAffectationWithAgentNotAffected()
+    public function testValidationSignalementWithAutoAffectationWithAgentNotAffected(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-44-04@signal-logement.fr']);
         $this->client->loginUser($user);

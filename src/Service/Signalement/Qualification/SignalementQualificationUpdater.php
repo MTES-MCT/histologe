@@ -244,6 +244,9 @@ class SignalementQualificationUpdater
         $signalement->addSignalementQualification($signalementQualification);
     }
 
+    /**
+     * @param array<mixed> $desordrePrecisionsQualifications
+     */
     private function addQualificationScore0To10(
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
@@ -281,6 +284,9 @@ class SignalementQualificationUpdater
         }
     }
 
+    /**
+     * @param array<mixed> $desordrePrecisionsQualifications
+     */
     private function addQualificationScore11To30(
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
@@ -315,6 +321,9 @@ class SignalementQualificationUpdater
         }
     }
 
+    /**
+     * @param array<mixed> $desordrePrecisionsQualifications
+     */
     private function addQualificationScore31To50(
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
@@ -340,6 +349,9 @@ class SignalementQualificationUpdater
         );
     }
 
+    /**
+     * @param array<mixed> $desordrePrecisionsQualifications
+     */
     private function addQualificationScore51AndAbove(
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
@@ -372,6 +384,9 @@ class SignalementQualificationUpdater
         );
     }
 
+    /**
+     * @param array<mixed> $linkedDesordrePrecisions
+     */
     private function createNDEQualification(
         Signalement $signalement,
         array $linkedDesordrePrecisions = [],
@@ -410,6 +425,9 @@ class SignalementQualificationUpdater
         return $signalementQualification;
     }
 
+    /**
+     * @return array<int>
+     */
     private function getLinkedDesordrePrecisions(Signalement $signalement, Qualification $qualification): array
     {
         $associatedDesordrePrecisions = [];
@@ -448,6 +466,9 @@ class SignalementQualificationUpdater
         }
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getCriticitesNde(
         Signalement $signalement,
     ): array {
@@ -508,6 +529,9 @@ class SignalementQualificationUpdater
         }
     }
 
+    /**
+     * @return array<int>
+     */
     private function getCriticitesDanger(
         Signalement $signalement,
     ): array {
@@ -556,6 +580,9 @@ class SignalementQualificationUpdater
         }
     }
 
+    /**
+     * @return array<int>
+     */
     private function getPrecisionsSuroccupation(
         Signalement $signalement,
     ): array {
@@ -570,6 +597,9 @@ class SignalementQualificationUpdater
         return $listPrecisionsSuroccupation;
     }
 
+    /**
+     * @param ?array<ProcedureType> $procedureTypes
+     */
     public function updateQualificationFromVisiteProcedureList(Signalement $signalement, ?array $procedureTypes): void
     {
         if ($procedureTypes) {

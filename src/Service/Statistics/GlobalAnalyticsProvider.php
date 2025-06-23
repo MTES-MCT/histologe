@@ -14,6 +14,9 @@ class GlobalAnalyticsProvider
     ) {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(): array
     {
         $data = [];

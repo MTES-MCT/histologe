@@ -14,12 +14,16 @@ class DossierEventSCHS
     private ?string $documentTypeName = null;
     private ?int $eventId = null;
     private ?string $sasReference = null;
+    /** @var array<mixed> */
     private array $originalData = [];
     private ?string $date = null;
     private ?string $presentation = null;
     private ?string $documents = null;
     private ?string $libelle = null;
 
+    /**
+     * @param array<mixed> $event
+     */
     public function __construct(array $event)
     {
         if (!empty($event)) {
@@ -43,6 +47,9 @@ class DossierEventSCHS
         return $this->sasReference;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getOriginalData(): array
     {
         return $this->originalData;

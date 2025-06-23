@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class InactiveUserExportMessageHandlerTest extends WebTestCase
 {
-    public function testHandleGenerateListXlsxForRT()
+    public function testHandleGenerateListXlsxForRT(): void
     {
         self::bootKernel();
         $container = static::getContainer();

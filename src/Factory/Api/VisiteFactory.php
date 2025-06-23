@@ -22,7 +22,7 @@ readonly class VisiteFactory
         $visite->statut = $intervention->getStatus();
         $visite->partner = $intervention->getPartner() ? new Partner($intervention->getPartner()) : null;
         $visite->details = $intervention->getDetails();
-        $visite->conclusions = $intervention->getConcludeProcedure() ?? [];
+        $visite->conclusions = $intervention->getConcludeProcedure() ?? []; // @phpstan-ignore-line
         $visite->occupantPresent = $intervention->isOccupantPresent();
         $visite->proprietairePresent = $intervention->isProprietairePresent();
         $signalement = $intervention->getSignalement();

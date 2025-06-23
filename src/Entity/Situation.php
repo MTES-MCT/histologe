@@ -13,34 +13,36 @@ class Situation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $label;
+    private string $label;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $menuLabel;
+    private string $menuLabel;
 
+    /** @var Collection<int, Critere> $criteres */
     #[ORM\OneToMany(mappedBy: 'situation', targetEntity: Critere::class, orphanRemoval: true)]
-    private $criteres;
+    private Collection $criteres;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $modifiedAt;
+    private ?\DateTimeImmutable $modifiedAt;
 
     #[ORM\Column(type: 'boolean')]
-    private $isActive;
+    private bool $isActive;
 
+    /** @var Collection<int, Signalement> $signalements */
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'situations')]
-    private $signalements;
+    private Collection $signalements;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    private $icon;
+    private ?string $icon;
 
     #[ORM\Column(type: 'boolean')]
-    private $isArchive;
+    private bool $isArchive;
 
     public function __construct()
     {
@@ -79,7 +81,7 @@ class Situation
     }
 
     /**
-     * @return Collection|Critere[]
+     * @return Collection<int, Critere>
      */
     public function getCriteres(): Collection
     {
@@ -145,7 +147,7 @@ class Situation
     }
 
     /**
-     * @return Collection|Signalement[]
+     * @return Collection<int, Signalement>
      */
     public function getSignalements(): Collection
     {

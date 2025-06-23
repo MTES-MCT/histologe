@@ -18,7 +18,7 @@ class UserCreatedListener
     ) {
     }
 
-    public function postPersist(PostPersistEventArgs $args)
+    public function postPersist(PostPersistEventArgs $args): void
     {
         $entity = $args->getObject();
 

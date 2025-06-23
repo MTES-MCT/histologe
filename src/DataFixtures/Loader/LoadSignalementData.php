@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures\Loader;
 
-use App\Entity\Criticite;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
@@ -78,6 +77,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     }
 
     /**
+     * @param array<string, mixed> $row
+     *
      * @throws \Exception
      */
     private function loadSignalements(ObjectManager $manager, array $row): void
@@ -112,7 +113,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setAdresseProprio($faker->address())
             ->setIsCguAccepted(true)
             ->setIsAllocataire($row['is_allocataire'] ?? null)
-            ->setNumAllocataire($faker->randomNumber(6))
+            ->setNumAllocataire((string) $faker->randomNumber(6))
             ->setStatut(SignalementStatus::from($row['statut']))
             ->setScore($row['score'])
             ->setReference($row['reference'])
@@ -137,7 +138,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (isset($row['is_not_occupant'])) {
             $linkChoices = OccupantLink::getLabelList();
             $signalement
-                ->setIsNotOccupant($row['is_not_occupant'])
+                ->setIsNotOccupant((bool) $row['is_not_occupant'])
                 ->setNomDeclarant($row['nom_declarant'] ?? $faker->lastName())
                 ->setPrenomDeclarant($row['prenom_declarant'] ?? $faker->firstName())
                 ->setTelDeclarant($row['tel_declarant'] ?? $phoneNumber)
@@ -145,7 +146,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setStructureDeclarant($faker->company())
                 ->setLienDeclarantOccupant($linkChoices[array_rand($linkChoices)]);
         } else {
-            $signalement->setIsNotOccupant(0);
+            $signalement->setIsNotOccupant(false);
         }
 
         if (isset($row['nature_logement_autre_precision'])) {
@@ -311,6 +312,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     }
 
     /**
+     * @param array<string, mixed> $row
+     *
      * @throws \Exception
      */
     private function loadNewSignalements(ObjectManager $manager, array $row): void
@@ -344,7 +347,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setAdresseProprio($faker->address())
             ->setIsCguAccepted(true)
             ->setIsAllocataire($row['is_allocataire'] ?? null)
-            ->setNumAllocataire($faker->randomNumber(6))
+            ->setNumAllocataire((string) $faker->randomNumber(6))
             ->setStatut(SignalementStatus::from($row['statut']))
             ->setScore($row['score'] ?? 0)
             ->setScoreBatiment($row['score_batiment'] ?? 0)
@@ -393,7 +396,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (isset($row['is_not_occupant'])) {
             $linkChoices = OccupantLink::getLabelList();
             $signalement
-                ->setIsNotOccupant($row['is_not_occupant'])
+                ->setIsNotOccupant((bool) $row['is_not_occupant'])
                 ->setNomDeclarant($row['nom_declarant'] ?? $faker->lastName())
                 ->setPrenomDeclarant($row['prenom_declarant'] ?? $faker->firstName())
                 ->setTelDeclarant($row['tel_declarant'] ?? $phoneNumber)
@@ -496,6 +499,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     private function buildSignalementQualification(
         Signalement $signalement,
         array $row,
@@ -505,9 +511,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $signalementQualification = (new SignalementQualification())
             ->setSignalement($signalement)
             ->setQualification(Qualification::from($qualificationLabel))
-            ->setCriticites($signalement->getCriticites()->map(function (Criticite $criticite) {
-                return $criticite->getId();
-            })->toArray());
+            ->setCriticites($signalement->getCriticites()->toArray());
         if (Qualification::NON_DECENCE_ENERGETIQUE->name == $qualificationLabel) {
             $qualificationDetails = [];
             $qualificationDetails['consommation_energie'] = $faker->numberBetween(450, 700);

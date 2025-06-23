@@ -15,6 +15,7 @@ enum MoyenContact: string
     case AUTRE = 'AUTRE';
     case NSP = 'NSP';
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [

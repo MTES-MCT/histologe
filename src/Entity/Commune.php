@@ -14,22 +14,22 @@ class Commune
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'communes')]
-    private $territory;
+    private ?Territory $territory = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $nom;
+    private ?string $nom = null;
 
     #[ORM\Column(type: 'string', length: 10)]
-    private $codePostal;
+    private ?string $codePostal = null;
 
     #[ORM\Column(type: 'string', length: 10)]
-    private $codeInsee;
+    private ?string $codeInsee = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isZonePermisLouer;
+    private ?bool $isZonePermisLouer = null;
 
     #[ORM\ManyToOne(inversedBy: 'communes', cascade: ['persist'])]
     private ?Epci $epci = null;

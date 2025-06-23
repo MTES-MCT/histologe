@@ -20,10 +20,15 @@ class SignalementExportFactory
     public const string OUI = 'Oui';
     public const string NON = 'Non';
     public const string NON_RENSEIGNE = 'Non renseigné';
-    /** @var array<string|int> */
+    /**
+     * @var array<int, int|string>
+     */
     public const array ALLOCATAIRE = ['CAF', 'MSA', 'oui', 1];
     public const string DATE_FORMAT = 'd/m/Y';
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function createInstanceFrom(User $user, array $data): SignalementExport
     {
         $createdAt = $data['createdAt'] instanceof \DateTimeImmutable
@@ -137,6 +142,9 @@ class SignalementExportFactory
         );
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function mapData(array $data, string $keyColumn): ?string
     {
         $value = null;

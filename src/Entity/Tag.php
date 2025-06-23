@@ -26,6 +26,7 @@ class Tag implements EntityHistoryInterface
     #[Groups(['widget-settings:read'])]
     private ?int $id = null;
 
+    /** @var Collection<int, Signalement> */
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'tags')]
     private Collection $signalements;
 
@@ -54,7 +55,7 @@ class Tag implements EntityHistoryInterface
     }
 
     /**
-     * @return Collection|Signalement[]
+     * @return Collection<int, Signalement>
      */
     public function getSignalements(): Collection
     {
@@ -113,6 +114,7 @@ class Tag implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

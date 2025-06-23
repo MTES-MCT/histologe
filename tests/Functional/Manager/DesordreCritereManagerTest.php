@@ -27,7 +27,7 @@ class DesordreCritereManagerTest extends KernelTestCase
         );
     }
 
-    public function testCreateOrUpdateDesordreCritere()
+    public function testCreateOrUpdateDesordreCritere(): void
     {
         $desordreCategorie = new DesordreCategorie();
         $desordreCategorie->setLabel('Décoration intérieure et bon goût');

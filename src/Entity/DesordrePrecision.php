@@ -34,6 +34,7 @@ class DesordrePrecision
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $label = null;
 
+    /** @var array<mixed> $qualification */
     #[ORM\Column]
     private array $qualification = [];
 
@@ -44,6 +45,7 @@ class DesordrePrecision
     #[ORM\Column(length: 255)]
     private ?string $desordrePrecisionSlug = null;
 
+    /** @var Collection<int, Signalement> $signalement */
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'desordrePrecisions')]
     private Collection $signalement;
 
@@ -117,11 +119,13 @@ class DesordrePrecision
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getQualification(): array
     {
         return $this->qualification;
     }
 
+    /** @param array<mixed>  $qualification*/
     public function setQualification(array $qualification): self
     {
         $this->qualification = $qualification;

@@ -8,6 +8,9 @@ class RnbBuilding
     private ?float $lat = null;
     private ?float $lng = null;
 
+    /**
+     * @param array<string, mixed> $building
+     */
     public function __construct(?array $building = null)
     {
         $this->rnbId = $building['rnb_id'];

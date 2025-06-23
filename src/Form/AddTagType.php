@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddTagType extends AbstractType
 {
-    private $isAdmin = false;
+    private bool $isAdmin = false;
 
     public function __construct(
         private readonly Security $security,
@@ -22,6 +22,9 @@ class AddTagType extends AbstractType
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

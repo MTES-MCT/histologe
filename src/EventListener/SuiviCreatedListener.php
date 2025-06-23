@@ -32,7 +32,7 @@ class SuiviCreatedListener
         }
     }
 
-    public function supports($entity): bool
+    public function supports(object $entity): bool
     {
         return $entity instanceof Suivi;
     }

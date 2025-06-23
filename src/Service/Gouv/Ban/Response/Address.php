@@ -14,6 +14,9 @@ class Address
     private ?string $longitude = null;
     private ?string $latitude = null;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(?array $data = null)
     {
         if (null !== $data && !empty($data['features'][0]['properties'])) {
@@ -79,6 +82,9 @@ class Address
         return $this->label;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getGeoloc(): array
     {
         return [

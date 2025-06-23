@@ -83,6 +83,9 @@ class SearchPartner
         $this->isNotNotifiable = $isNotNotifiable;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getUrlParams(): array
     {
         $params = $this->getUrlParamsBase();
@@ -93,6 +96,9 @@ class SearchPartner
         return $params;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFiltersToText(): array
     {
         $filters = [];

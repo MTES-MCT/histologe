@@ -11,6 +11,8 @@ class ProConnectUser
     public string $email;
 
     /**
+     * @param array<string, mixed> $data
+     *
      * @throws \Exception
      */
     public function __construct(array $data)

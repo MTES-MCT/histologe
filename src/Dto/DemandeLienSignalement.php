@@ -21,8 +21,11 @@ class DemandeLienSignalement
 
     private ?string $ville = null;
 
+    /**
+     * @param ?array<mixed> $payload
+     */
     #[Assert\Callback]
-    public function validate(ExecutionContextInterface $context, $payload)
+    public function validate(ExecutionContextInterface $context, ?array $payload): void
     {
         if (empty(trim((string) $this->adresse)) || empty(trim((string) $this->codePostal)) || empty(trim((string) $this->ville))) {
             $context->buildViolation('Vous devez sélectionner une adresse dans la liste des propositions')

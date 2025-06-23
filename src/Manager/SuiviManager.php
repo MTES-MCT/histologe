@@ -87,6 +87,9 @@ class SuiviManager extends Manager
         }
     }
 
+    /**
+     * @param array<int, File> $files
+     */
     public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files): Suivi
     {
         $nbDocs = 0;
@@ -208,7 +211,10 @@ class SuiviManager extends Manager
         );
     }
 
-    public static function buildDescriptionClotureSignalement($params): string
+    /**
+     * @param array<string, mixed> $params
+     */
+    public static function buildDescriptionClotureSignalement(array $params): string
     {
         $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
 
@@ -220,6 +226,9 @@ class SuiviManager extends Manager
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public static function buildDescriptionAnswerAffectation(array $params): string
     {
         $description = '';

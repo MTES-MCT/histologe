@@ -7,6 +7,9 @@ use App\Validator\PartnerToExcludeValidator;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
+/**
+ * @extends ConstraintValidatorTestCase<PartnerToExcludeValidator>
+ */
 class PartnerToExcludeValidatorTest extends ConstraintValidatorTestCase
 {
     private const ERROR = 'La valeur "{{ value }}" n\'est pas valide. Elle doit être une liste d\'Id partenaires séparés par des virgules ou vide.';
@@ -18,6 +21,8 @@ class PartnerToExcludeValidatorTest extends ConstraintValidatorTestCase
 
     /**
      * @dataProvider provideValues
+     *
+     * @param array<mixed> $insee
      */
     public function testValues(array $insee, bool $isValid, ?string $message = null): void
     {

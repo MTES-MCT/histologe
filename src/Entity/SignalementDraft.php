@@ -36,6 +36,7 @@ class SignalementDraft
     #[ORM\Column(length: 255)]
     private ?string $addressComplete = null;
 
+    /** @var array<mixed> $payload */
     #[ORM\Column(type: 'json')]
     private ?array $payload = [];
 
@@ -45,11 +46,12 @@ class SignalementDraft
     #[ORM\Column(type: 'string', nullable: true, enumType: SignalementDraftStatus::class)]
     private ?SignalementDraftStatus $status = null;
 
+    /** @var Collection<int, Signalement> $signalements */
     #[ORM\OneToMany(mappedBy: 'createdFrom', targetEntity: Signalement::class)]
     private Collection $signalements;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $checksum;
+    private ?string $checksum;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $pendingDraftRemindedAt = null;
@@ -118,11 +120,13 @@ class SignalementDraft
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getPayload(): ?array
     {
         return $this->payload;
     }
 
+    /** @param array<mixed> $payload */
     public function setPayload(array $payload): self
     {
         $this->payload = $payload;

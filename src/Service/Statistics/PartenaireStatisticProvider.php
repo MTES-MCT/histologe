@@ -12,7 +12,10 @@ class PartenaireStatisticProvider
     {
     }
 
-    public function getFilteredData(StatisticsFilters $statisticsFilters)
+    /**
+     * @return array<mixed>
+     */
+    public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
         $countPerPartenaires = $this->affectationRepository->countByPartenaireFiltered($statisticsFilters);
 

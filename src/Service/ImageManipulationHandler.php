@@ -155,6 +155,9 @@ class ImageManipulationHandler
         return $newPath;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function getVariantNames(string $filename): array
     {
         $pathInfo = pathinfo($filename);

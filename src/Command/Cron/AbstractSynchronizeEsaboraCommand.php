@@ -96,6 +96,9 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         $this->notify($partnerType, $countSyncSuccess, $countSyncFailed);
     }
 
+    /**
+     * @return array{criterionName: string, criterionValueList: string[]}
+     */
     protected function getMessage(Affectation $affectation, string $criterionName): array
     {
         return [

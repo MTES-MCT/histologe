@@ -24,6 +24,7 @@ class Partner
         example: 'ADIL'
     )]
     public PartnerType $type;
+    /** @var array<Qualification> $competences */
     #[OA\Property(
         description: 'Liste des compétences associées au partenaire.',
         type: 'array',

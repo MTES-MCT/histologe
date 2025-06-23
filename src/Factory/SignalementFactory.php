@@ -9,6 +9,9 @@ use App\Entity\Territory;
 
 class SignalementFactory
 {
+    /**
+     * @param array<string, mixed> $data
+     */
     public function createInstanceFrom(Territory $territory, array $data, bool $isImported = false): Signalement
     {
         if (empty($data['statut'])) {

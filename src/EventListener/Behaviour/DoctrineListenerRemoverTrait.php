@@ -15,6 +15,9 @@ trait DoctrineListenerRemoverTrait
         }
     }
 
+    /**
+     * @param array<int, string> $events
+     */
     public function removeListeners(EventManager $eventManager, string $listenerClass, array $events): void
     {
         foreach ($events as $event) {

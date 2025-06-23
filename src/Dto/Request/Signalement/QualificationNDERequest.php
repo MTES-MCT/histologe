@@ -47,6 +47,9 @@ class QualificationNDERequest
         return $this->classeEnergetique;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getDetails(): ?array
     {
         return [

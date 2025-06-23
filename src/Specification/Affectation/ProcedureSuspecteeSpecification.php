@@ -2,6 +2,7 @@
 
 namespace App\Specification\Affectation;
 
+use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Specification\Context\PartnerSignalementContext;
@@ -10,6 +11,9 @@ use App\Specification\SpecificationInterface;
 
 class ProcedureSuspecteeSpecification implements SpecificationInterface
 {
+    /**
+     * @param ?array<Qualification> $proceduresSuspectees
+     */
     public function __construct(private ?array $proceduresSuspectees)
     {
         $this->proceduresSuspectees = $proceduresSuspectees;

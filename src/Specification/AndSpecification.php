@@ -6,6 +6,7 @@ use App\Specification\Context\SpecificationContextInterface;
 
 class AndSpecification implements SpecificationInterface
 {
+    /** @var list<SpecificationInterface> */
     private array $specifications;
 
     public function __construct(SpecificationInterface ...$specifications)

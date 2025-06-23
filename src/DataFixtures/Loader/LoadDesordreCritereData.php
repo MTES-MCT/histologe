@@ -27,7 +27,10 @@ class LoadDesordreCritereData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
-    private function loadSituations(ObjectManager $manager, array $row)
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function loadSituations(ObjectManager $manager, array $row): void
     {
         $desordreCritere = (new DesordreCritere())
             ->setSlugCategorie($row['slug_categorie'])

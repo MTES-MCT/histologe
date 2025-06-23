@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserPartnerType extends AbstractType
 {
+    /**
+     * @var array<string, string>
+     */
     private array $roles;
 
     public function __construct(
@@ -33,6 +36,9 @@ class UserPartnerType extends AbstractType
         $this->roles['Agent'] = 'ROLE_USER_PARTNER';
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $user = $builder->getData();

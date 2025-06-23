@@ -68,6 +68,10 @@ class HookZapierService
 
     /**
      * Utile pour le traitement interne, mais inutile à l'enregistrement dans Airtable.
+     *
+     * @param array<mixed> $payload
+     *
+     * @return array<mixed>
      */
     private function removeUselessFields(array $payload): array
     {
@@ -77,6 +81,9 @@ class HookZapierService
         return $payload;
     }
 
+    /**
+     * @param array<mixed> $payload
+     */
     private function getMetaData(DossierMessageInterface $dossierMessage, array $payload): JobEventMetaData
     {
         return new JobEventMetaData(

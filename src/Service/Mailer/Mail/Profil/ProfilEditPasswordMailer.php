@@ -25,6 +25,9 @@ class ProfilEditPasswordMailer extends AbstractNotificationMailer
         parent::__construct($this->mailer, $this->parameterBag, $this->logger, $this->urlGenerator);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $link = $this->generateLink('back_dashboard', []);

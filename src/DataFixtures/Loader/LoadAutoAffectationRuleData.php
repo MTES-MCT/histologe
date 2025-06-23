@@ -27,6 +27,9 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function loadAutoAffectationRule(ObjectManager $manager, array $row): void
     {
         $affectation = (new AutoAffectationRule())

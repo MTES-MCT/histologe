@@ -4,7 +4,6 @@ namespace App\Messenger\Message\Esabora;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\SISHDossierType;
-use App\Entity\File;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Service\Interconnection\Esabora\Enum\PersonneType;
 use App\Service\Interconnection\Esabora\Model\DossierMessageSISHPersonne;
@@ -71,8 +70,14 @@ final class DossierMessageSISH implements DossierMessageInterface
     private ?string $signalementDetails = null;
     private ?string $signalementProblemes = null;
     private ?string $piecesJointesObservation = null;
+    /**
+     * @var array<int, mixed>
+     */
     private array $piecesJointesDocuments = [];
     private ?int $sasDossierId = null;
+    /**
+     * @var array<int, DossierMessageSISHPersonne>|null
+     */
     private ?array $personnes = null;
 
     public function __construct()
@@ -794,13 +799,16 @@ final class DossierMessageSISH implements DossierMessageInterface
     }
 
     /**
-     * @return File[]
+     * @return array<int, mixed>
      */
     public function getPiecesJointesDocuments(): array
     {
         return $this->piecesJointesDocuments;
     }
 
+    /**
+     * @param array<int, mixed> $piecesJointesDocuments
+     */
     public function setPiecesJointesDocuments(array $piecesJointesDocuments): self
     {
         $this->piecesJointesDocuments = $piecesJointesDocuments;
@@ -820,11 +828,17 @@ final class DossierMessageSISH implements DossierMessageInterface
         return $this;
     }
 
+    /**
+     * @return array<int, DossierMessageSISHPersonne>|null
+     */
     public function getPersonnes(): ?array
     {
         return $this->personnes;
     }
 
+    /**
+     * @param array<int, DossierMessageSISHPersonne>|null $personnes
+     */
     public function setPersonnes(?array $personnes): self
     {
         /** @var DossierMessageSISHPersonne $personne */

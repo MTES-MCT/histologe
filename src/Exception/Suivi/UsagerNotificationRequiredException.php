@@ -6,6 +6,9 @@ class UsagerNotificationRequiredException extends \Exception
 {
     private mixed $value;
 
+    /**
+     * @var array<array<string, string>>
+     */
     private array $errors;
 
     public function __construct(
@@ -28,6 +31,9 @@ class UsagerNotificationRequiredException extends \Exception
         return $this->value;
     }
 
+    /**
+     * @return array<array<string, string>>
+     */
     public function getErrors(): array
     {
         return $this->errors;

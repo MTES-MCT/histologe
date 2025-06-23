@@ -11,6 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ClotureType extends AbstractType
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

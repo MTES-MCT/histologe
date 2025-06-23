@@ -13,6 +13,9 @@ class SituationFoyerFactory
     {
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public function createFromSignalementDraftPayload(array $payload): SituationFoyer
     {
         $data = DataPropertyArrayFilter::filterByPrefix(
@@ -23,6 +26,9 @@ class SituationFoyerFactory
         return $this->serializer->deserialize(json_encode($data), SituationFoyer::class, 'json');
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function createFromArray(array $data): SituationFoyer
     {
         return new SituationFoyer(

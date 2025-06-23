@@ -11,7 +11,7 @@ class CguControllerTest extends WebTestCase
 {
     use SessionHelper;
 
-    public function testValidateCGU()
+    public function testValidateCGU(): void
     {
         $client = static::createClient();
         /** @var UserRepository $userRepository */

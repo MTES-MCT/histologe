@@ -58,10 +58,12 @@ class AutoAffectationRule implements EntityHistoryInterface
     #[AppAssert\InseeToInclude()]
     private string $inseeToInclude;
 
+    /** @var array<string> $inseeToExclude */
     #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of code insee'])]
     #[AppAssert\InseeToExclude()]
     private ?array $inseeToExclude = null;
 
+    /** @var array<string> $partnerToExclude */
     #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of partner ids'])]
     #[AppAssert\PartnerToExclude()]
     private ?array $partnerToExclude = null;
@@ -80,6 +82,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         message: 'Choisissez une option valide: all, non, oui, caf, msa ou nsp')]
     private string $allocataire;
 
+    /** @var array<Qualification> $proceduresSuspectees */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
     private array $proceduresSuspectees = [];
 
@@ -155,11 +158,13 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<string> */
     public function getInseeToExclude(): ?array
     {
         return $this->inseeToExclude;
     }
 
+    /** @param array<string> $inseeToExclude */
     public function setInseeToExclude(?array $inseeToExclude): self
     {
         $this->inseeToExclude = $inseeToExclude;
@@ -167,11 +172,13 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<string> */
     public function getPartnerToExclude(): ?array
     {
         return $this->partnerToExclude;
     }
 
+    /** @param array<string> $partnerToExclude */
     public function setPartnerToExclude(?array $partnerToExclude): self
     {
         $this->partnerToExclude = $partnerToExclude;
@@ -203,11 +210,13 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
+    /** @return array<Qualification> */
     public function getProceduresSuspectees(): ?array
     {
         return $this->proceduresSuspectees;
     }
 
+    /** @param array<Qualification> $proceduresSuspectees */
     public function setProceduresSuspectees(?array $proceduresSuspectees): self
     {
         $this->proceduresSuspectees = $proceduresSuspectees;
@@ -310,6 +319,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $description;
     }
 
+    /** @return array<mixed> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

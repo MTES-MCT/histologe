@@ -111,7 +111,7 @@ class SignalementManagerTest extends WebTestCase
         $client->loginUser($user);
     }
 
-    public function testFindAllPartnersAffectedAndNotAffectedBySignalementLocalization()
+    public function testFindAllPartnersAffectedAndNotAffectedBySignalementLocalization(): void
     {
         $signalement = $this->signalementManager->findOneBy(['territory' => self::TERRITORY_13]);
         $partners = $this->signalementManager->findAllPartners($signalement);
@@ -123,7 +123,7 @@ class SignalementManagerTest extends WebTestCase
         $this->assertCount(7, $partners['not_affected'], 'Seven partners should not be affected');
     }
 
-    public function testCloseSignalementForAllPartners()
+    public function testCloseSignalementForAllPartners(): void
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalementActive = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
@@ -298,6 +298,9 @@ class SignalementManagerTest extends WebTestCase
         $this->assertEquals(100, $signalement->getSuperficie());
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getSignalementData(?string $reference = null): array
     {
         $faker = Factory::create('fr_FR');

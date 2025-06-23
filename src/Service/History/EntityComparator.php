@@ -16,7 +16,7 @@ class EntityComparator
     /**
      * @throws \ReflectionException
      */
-    public function processValue($value): mixed
+    public function processValue(mixed $value): mixed
     {
         if (is_object($value)) {
             $reflection = new \ReflectionClass($value);
@@ -39,9 +39,9 @@ class EntityComparator
     }
 
     /**
-     * @throws \ReflectionException
+     * @return array<mixed>
      */
-    public function compareValues($oldValue, $newValue, $field): array
+    public function compareValues(mixed $oldValue, mixed $newValue, string $field): array
     {
         $changes = [];
         if (is_array($oldValue) && is_array($newValue)) {
@@ -78,7 +78,9 @@ class EntityComparator
     }
 
     /**
-     * @throws \ReflectionException
+     * @param object $entity
+     *
+     * @return array<string, mixed>
      */
     public function getEntityPropertiesAndValueNormalized($entity): array
     {

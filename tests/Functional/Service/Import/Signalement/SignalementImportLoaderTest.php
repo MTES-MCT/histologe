@@ -61,7 +61,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     /**
      * @throws NonUniqueResultException
      */
-    public function testLoadSignalementImport()
+    public function testLoadSignalementImport(): void
     {
         $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], new SuiviCreatedListener());
         $signalementImportLoader = new SignalementImportLoader(
@@ -88,6 +88,9 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->assertEquals(10, $signalementImportLoader->getMetadata()['count_signalement']);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(): array
     {
         $faker = Factory::create('fr_FR');

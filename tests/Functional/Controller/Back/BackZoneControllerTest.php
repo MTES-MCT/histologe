@@ -14,6 +14,8 @@ class BackZoneControllerTest extends WebTestCase
 
     /**
      * @dataProvider provideParamsZoneList
+     *
+     * @param array<mixed> $params
      */
     public function testZoneList(array $params, int $nb): void
     {
@@ -32,7 +34,7 @@ class BackZoneControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2', $nb.' zone');
     }
 
-    public function provideParamsZoneList(): iterable
+    public function provideParamsZoneList(): \Generator
     {
         yield 'Search without params' => [[], 3];
         yield 'Search with queryName agde' => [['queryName' => 'agde'], 1];

@@ -19,7 +19,7 @@ class EntityComparatorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testProcessValueWithPrimitive()
+    public function testProcessValueWithPrimitive(): void
     {
         $value = 'test';
         $result = $this->entityComparator->processValue($value);
@@ -30,7 +30,7 @@ class EntityComparatorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testProcessValueWithObjectHavingGetId()
+    public function testProcessValueWithObjectHavingGetId(): void
     {
         $mock = $this->createMock(EntityHistoryInterface::class);
         $mock->method('getId')->willReturn(123);
@@ -43,7 +43,7 @@ class EntityComparatorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testProcessValueWithObjectHavingToArray()
+    public function testProcessValueWithObjectHavingToArray(): void
     {
         $mock = $this->createMock(SituationFoyer::class);
         $mock->method('toArray')->willReturn(['key' => 'value']);
@@ -56,7 +56,7 @@ class EntityComparatorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testProcessValueWithDateTime()
+    public function testProcessValueWithDateTime(): void
     {
         $date = new \DateTime('2023-01-01 12:34:56');
         $result = $this->entityComparator->processValue($date);
@@ -67,7 +67,7 @@ class EntityComparatorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testCompareValuesPrimitives()
+    public function testCompareValuesPrimitives(): void
     {
         $result = $this->entityComparator->compareValues('old', 'new', 'field');
 
@@ -77,7 +77,7 @@ class EntityComparatorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testCompareValuesSamePrimitives()
+    public function testCompareValuesSamePrimitives(): void
     {
         $result = $this->entityComparator->compareValues('same', 'same', 'field');
 
@@ -87,7 +87,7 @@ class EntityComparatorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testCompareValuesArrays()
+    public function testCompareValuesArrays(): void
     {
         $oldArray = ['key' => 'oldValue'];
         $newArray = ['key' => 'newValue'];
@@ -100,7 +100,7 @@ class EntityComparatorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testCompareValuesIgnoredField()
+    public function testCompareValuesIgnoredField(): void
     {
         $result = $this->entityComparator->compareValues('oldValue', 'newValue', 'password');
 

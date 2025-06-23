@@ -10,6 +10,9 @@ class WidgetCardFactory
     {
     }
 
+    /**
+     * @param array<string, mixed>|null $parameters
+     */
     public function createInstance(
         string $label,
         ?int $count = null,

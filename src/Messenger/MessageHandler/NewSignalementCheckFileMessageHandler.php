@@ -24,7 +24,9 @@ class NewSignalementCheckFileMessageHandler
         .'Vous avez signalé un problème sur un logement.<br>'
         .'Votre dossier a bien été enregistré par nos services.<br><br>'
         .'Afin de nous aider à traiter au mieux votre dossier, veuillez nous fournir :<br>';
-    /** @var string[] */
+    /**
+     * @var array<int, string>
+     */
     private const array DESORDRES_CATEGORIES_WITH_PHOTOS = [
         'desordres_batiment_proprete',
         'desordres_batiment_nuisibles',
@@ -35,7 +37,10 @@ class NewSignalementCheckFileMessageHandler
         'desordres_logement_nuisibles',
         'desordres_logement_securite',
     ];
-    /** @var string[] */
+
+    /**
+     * @var array<int, string>
+     */
     private const array DESORDRES_CRITERES_WITH_PHOTOS = [
         'desordres_logement_chauffage_details_chauffage_dangereux',
         'desordres_logement_electricite_installation_dangereuse',

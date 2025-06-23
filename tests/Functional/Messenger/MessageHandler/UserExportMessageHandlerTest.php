@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class UserExportMessageHandlerTest extends WebTestCase
 {
-    public function testHandleGenerateListCsvForSA()
+    public function testHandleGenerateListCsvForSA(): void
     {
         self::bootKernel();
         $container = static::getContainer();
@@ -40,7 +40,7 @@ class UserExportMessageHandlerTest extends WebTestCase
         $this->assertEmailAddressContains($email, 'To', $userEmail);
     }
 
-    public function testHandleGenerateListXlsxForRT()
+    public function testHandleGenerateListXlsxForRT(): void
     {
         self::bootKernel();
         $container = static::getContainer();

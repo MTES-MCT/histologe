@@ -19,6 +19,9 @@ class TerritoryType extends AbstractType
     {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $territory = $builder->getData();

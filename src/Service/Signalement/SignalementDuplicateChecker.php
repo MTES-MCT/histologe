@@ -17,6 +17,9 @@ class SignalementDuplicateChecker
     ) {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function check(SignalementDraftRequest $signalementDraftRequest): array
     {
         $isTiersDeclarant = SignalementDraftHelper::isTiersDeclarant($signalementDraftRequest);

@@ -34,6 +34,11 @@ class BailleurController extends AbstractController
         return $this->json($bailleurs);
     }
 
+    /**
+     * @param array<Bailleur> $bailleurs
+     *
+     * @return ArrayCollection<int, Bailleur>
+     */
     private function sanitizeBailleurs(array $bailleurs, string $name): ArrayCollection
     {
         return (new ArrayCollection($bailleurs))
@@ -51,7 +56,7 @@ class BailleurController extends AbstractController
             ->map(fn ($bailleurItem) => $bailleurItem->setName($this->sanitizeName($bailleurItem->getName())));
     }
 
-    private function sanitizeName($name): string
+    private function sanitizeName(string $name): string
     {
         return mb_trim(str_replace(Bailleur::BAILLEUR_RADIE, '', $name));
     }

@@ -16,44 +16,44 @@ class Critere
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $label;
+    private ?string $label = null;
 
     #[ORM\Column(type: 'text')]
-    private $description;
+    private ?string $description = null;
 
     #[ORM\ManyToOne(targetEntity: Situation::class, inversedBy: 'criteres')]
     #[ORM\JoinColumn(nullable: false)]
-    private $situation;
+    private ?Situation $situation = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private $createdAt;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private $modifiedAt;
+    private ?\DateTimeImmutable $modifiedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'critere', targetEntity: Criticite::class, orphanRemoval: true)]
-    private $criticites;
+    private Collection $criticites;
 
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'criteres')]
-    private $signalements;
+    private Collection $signalements;
 
     #[ORM\Column(type: 'boolean')]
-    private $isArchive;
+    private ?bool $isArchive = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isDanger;
+    private ?bool $isDanger = null;
 
     #[ORM\Column(type: 'integer')]
-    private $coef;
+    private ?int $coef = null;
 
     #[ORM\Column(type: 'integer')]
-    private $newCoef;
+    private ?int $newCoef = null;
 
     #[ORM\Column(type: 'integer')]
-    private $type;
+    private ?int $type = null;
 
     public function __construct()
     {
@@ -128,7 +128,7 @@ class Critere
     }
 
     /**
-     * @return Collection|Criticite[]
+     * @return Collection<int, Criticite>
      */
     public function getCriticites(): Collection
     {
@@ -158,7 +158,7 @@ class Critere
     }
 
     /**
-     * @return Collection|Signalement[]
+     * @return Collection<int, Signalement>
      */
     public function getSignalements(): Collection
     {

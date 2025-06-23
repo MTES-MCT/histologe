@@ -60,6 +60,9 @@ class SearchTag
         $this->orderType = $orderType;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getUrlParams(): array
     {
         $params = $this->getUrlParamsBase();
@@ -70,6 +73,9 @@ class SearchTag
         return $params;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFiltersToText(): array
     {
         $filters = [];

@@ -18,6 +18,9 @@ class AddressService
     ) {
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function searchAddress(string $query): ?array
     {
         try {

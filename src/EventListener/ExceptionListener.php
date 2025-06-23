@@ -17,7 +17,9 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 readonly class ExceptionListener
 {
-    /** @var string[] */
+    /**
+     * @var array<class-string>
+     */
     private const array IGNORED_EXCEPTIONS = [
         MethodNotAllowedException::class,
         NotFoundHttpException::class,

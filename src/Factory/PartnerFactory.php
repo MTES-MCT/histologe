@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -36,7 +37,11 @@ class PartnerFactory
         return $partner;
     }
 
-    // build default competences according to partner type
+    /**
+     * build default competences according to partner type.
+     *
+     * @return array<Qualification>|null
+     */
     public function buildCompetences(PartnerType $type): ?array
     {
         $types = $this->parameterBag->get('competence_per_type');

@@ -30,6 +30,7 @@ class SuiviRequest implements RequestInterface, RequestFileInterface
     )]
     public bool $notifyUsager = false;
 
+    /** @var array<mixed> $files */
     #[OA\Property(
         description: 'Tableau contenant une liste d\'UUID des fichiers associés au signalement.',
         type: 'array',
@@ -44,6 +45,9 @@ class SuiviRequest implements RequestInterface, RequestFileInterface
         return $this->description ?? null;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFiles(): array
     {
         return $this->files;

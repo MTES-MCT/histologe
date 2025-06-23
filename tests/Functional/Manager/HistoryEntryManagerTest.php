@@ -58,7 +58,7 @@ class HistoryEntryManagerTest extends WebTestCase
         );
     }
 
-    public function testCreateHistoryEntry()
+    public function testCreateHistoryEntry(): void
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -73,7 +73,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->assertEquals(HistoryEntryEvent::LOGIN, $historyEntry->getEvent());
     }
 
-    public function testCreateAffectationHistoryEntry()
+    public function testCreateAffectationHistoryEntry(): void
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -93,7 +93,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->assertEquals($affectation->getAffectedBy()->getFullname(), $historyEntry->getUser()->getFullName());
     }
 
-    public function testUpdateAffectationHistoryEntry()
+    public function testUpdateAffectationHistoryEntry(): void
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -120,7 +120,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->assertEquals(Affectation::STATUS_ACCEPTED, $historyEntry->getChanges()['statut']['new']);
     }
 
-    public function testDeleteAffectationHistoryEntry()
+    public function testDeleteAffectationHistoryEntry(): void
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -139,7 +139,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->assertEquals($affectation->getId(), $historyEntry->getEntityId());
     }
 
-    public function testGetAffectationHistory()
+    public function testGetAffectationHistory(): void
     {
         /** @var Signalement $signalement */
         $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
@@ -152,7 +152,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->assertNotEmpty($historyEntries);
     }
 
-    public function testGetAffectationHistoryWithAffectation()
+    public function testGetAffectationHistoryWithAffectation(): void
     {
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);

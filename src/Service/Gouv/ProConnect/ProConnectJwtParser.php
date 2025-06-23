@@ -8,6 +8,9 @@ use Lcobucci\JWT\Token\Plain;
 
 class ProConnectJwtParser
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function parse(string $jwt): array
     {
         /** @var Plain $token */

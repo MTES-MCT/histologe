@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Service\Signalement\DesordreTraitement;
 
 use App\Entity\DesordreCategorie;
 use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use App\Service\Signalement\DesordreTraitement\DesordreLogementHumidite;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementNuisibles;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
@@ -11,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class DesordreTraitementProcessorTest extends TestCase
 {
-    public function testFindDesordresPrecisionsBy()
+    public function testFindDesordresPrecisionsBy(): void
     {
         $desordreCategorie = new DesordreCategorie();
         $desordreCategorie->setLabel('test');
@@ -51,7 +52,7 @@ class DesordreTraitementProcessorTest extends TestCase
         );
     }
 
-    public function testProcessKO()
+    public function testProcessKO(): void
     {
         $desordreCategorie = new DesordreCategorie();
         $desordreCategorie->setLabel('test');
@@ -84,7 +85,7 @@ class DesordreTraitementProcessorTest extends TestCase
             'desordres_logement_humidite' => $desordreLogementHumidite,
         ]);
 
-        /** @var array $precisions */
+        /** @var array<DesordrePrecision> $precisions */
         $precisions = $desordreTraitementProcessor->findDesordresPrecisionsBy(
             $desordreCritere,
             $payload

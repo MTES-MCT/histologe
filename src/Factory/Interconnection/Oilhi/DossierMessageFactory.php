@@ -94,10 +94,10 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
     }
 
     /**
-     * @return array Un tableau associatif contenant les informations de l'intervention.
-     *               - 'date_visite': La date de la visite au format 'Y-m-d'.
-     *               - 'operateur_visite': Le nom du partenaire opérateur de la visite.
-     *               - 'rapport_visite': L'URL du rapport de visite avec le jeton CSRF.
+     * @return array<string, ?string> Un tableau associatif contenant les informations de l'intervention.
+     *                                - 'date_visite': La date de la visite au format 'Y-m-d'.
+     *                                - 'operateur_visite': Le nom du partenaire opérateur de la visite.
+     *                                - 'rapport_visite': L'URL du rapport de visite avec le jeton CSRF.
      */
     private function buildInterventionData(Signalement $signalement): ?array
     {

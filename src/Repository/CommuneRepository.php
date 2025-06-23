@@ -36,6 +36,9 @@ class CommuneRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function findEpciByCommuneTerritory(?Territory $territory = null, ?User $user = null): array
     {
         $qb = $this->createQueryBuilder('c')

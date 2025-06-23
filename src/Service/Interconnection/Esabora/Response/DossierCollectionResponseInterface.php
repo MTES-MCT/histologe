@@ -10,5 +10,8 @@ interface DossierCollectionResponseInterface
 
     public function getErrorReason(): ?string;
 
+    /**
+     * @return array<mixed>
+     */
     public function getCollection(): array;
 }

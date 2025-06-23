@@ -12,6 +12,8 @@ class PartnerExcludeSpecificationTest extends KernelTestCase
 {
     /**
      * @dataProvider provideRulesAndSignalement
+     *
+     * @param ?array<int> $partnerExcluded
      */
     public function testIsSatisfiedBy(?array $partnerExcluded, bool $isSatisfied): void
     {

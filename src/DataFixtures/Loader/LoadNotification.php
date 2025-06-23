@@ -35,6 +35,9 @@ class LoadNotification extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     private function loadNotification(ObjectManager $manager, array $row): void
     {
         $user = $this->userRepository->findOneBy(['email' => $row['user']]);

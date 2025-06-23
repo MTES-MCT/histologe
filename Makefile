@@ -149,7 +149,10 @@ composer: ## Install composer dependencies
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer install --working-dir=tools/wiremock  --no-interaction --optimize-autoloader
 
 require: ## Symfony require
-	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer require
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer require $(ARGS)
+
+update: ## Symfony require
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer update $(ARGS)
 
 npm-install: ## Install the dependencies in the local node_modules folder
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(NPM) install
@@ -202,7 +205,7 @@ open-test-e2e: ## Open Playwright
 	@$(NPX) playwright open
 
 stan: ## Run PHPStan
-	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer stan
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer stan $(FILE) 
 
 cs-check: ## Check source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer cs-check

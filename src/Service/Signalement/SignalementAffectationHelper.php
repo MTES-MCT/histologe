@@ -11,6 +11,9 @@ use App\Entity\User;
 
 class SignalementAffectationHelper
 {
+    /**
+     * @param array<mixed> $data
+     */
     public static function getStatusLabelFrom(User $user, array $data): string
     {
         $affectations = self::parseAffectations($data['rawAffectations']);
@@ -34,6 +37,11 @@ class SignalementAffectationHelper
         return $affectationStatusLabel;
     }
 
+    /**
+     * @param array<mixed> $data
+     *
+     * @return array<mixed>
+     */
     public static function getStatusAndAffectationFrom(User $user, array $data): array
     {
         $affectations = self::parseAffectations($data['rawAffectations']);
@@ -57,6 +65,11 @@ class SignalementAffectationHelper
         return [$signalementStatus, $affectations];
     }
 
+    /**
+     * @param array<mixed> $data
+     *
+     * @return ?array<mixed>
+     */
     public static function getQualificationFrom(array $data): ?array
     {
         if (null !== $data['qualifications']) {
@@ -66,6 +79,11 @@ class SignalementAffectationHelper
         return null;
     }
 
+    /**
+     * @param array<mixed> $data
+     *
+     * @return ?array<mixed>
+     */
     public static function getQualificationStatusesFrom(array $data): ?array
     {
         if (null !== $data['qualificationsStatuses']) {
@@ -75,6 +93,9 @@ class SignalementAffectationHelper
         return null;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private static function parseAffectations(?string $rawAffectations): array
     {
         if (empty($rawAffectations)) {
@@ -100,6 +121,9 @@ class SignalementAffectationHelper
         return $affectations;
     }
 
+    /**
+     * @return ?array<mixed>
+     */
     public static function parseConclusionProcedure(?string $rawConclusionProcedure): ?array
     {
         if (empty($rawConclusionProcedure)) {
@@ -114,6 +138,9 @@ class SignalementAffectationHelper
         }, $lastProcedures);
     }
 
+    /**
+     * @param array<mixed> $data
+     */
     public static function getSignalementFromDataForVoter(array $data): Signalement
     {
         $signalement = new Signalement();

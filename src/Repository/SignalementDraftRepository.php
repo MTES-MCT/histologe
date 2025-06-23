@@ -56,6 +56,9 @@ class SignalementDraftRepository extends ServiceEntityRepository implements Enti
         return $queryBuilder->getQuery()->execute();
     }
 
+    /**
+     * @return array<int, SignalementDraft>
+     */
     public function findPendingBlockedBailLast3Months(): array
     {
         $queryBuilder = $this->createQueryBuilder('s')

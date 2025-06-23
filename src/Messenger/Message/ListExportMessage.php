@@ -6,7 +6,13 @@ class ListExportMessage
 {
     private int $userId;
     private string $format;
+    /**
+     * @var array<string, mixed>
+     */
     private array $filters;
+    /**
+     * @var array<int, string>
+     */
     private array $selectedColumns;
 
     public function getUserId(): int
@@ -33,11 +39,17 @@ class ListExportMessage
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getFilters(): array
     {
         return $this->filters;
     }
 
+    /**
+     * @param array<string, mixed> $filters
+     */
     public function setFilters(array $filters): self
     {
         $this->filters = $filters;
@@ -45,11 +57,17 @@ class ListExportMessage
         return $this;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getSelectedColumns(): array
     {
         return $this->selectedColumns;
     }
 
+    /**
+     * @param array<int, string> $selectedColumns
+     */
     public function setSelectedColumns(array $selectedColumns): self
     {
         $this->selectedColumns = $selectedColumns;

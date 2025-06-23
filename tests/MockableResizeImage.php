@@ -7,7 +7,7 @@ use Psr\Http\Message\StreamInterface;
 
 class MockableResizeImage extends Image
 {
-    public function resize($width, $height, $callback = null): Image
+    public function resize(int $width, int $height, ?callable $callback = null): Image
     {
         return static::resize($width, $height, $callback);
     }

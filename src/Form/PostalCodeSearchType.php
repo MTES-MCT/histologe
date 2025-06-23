@@ -10,6 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class PostalCodeSearchType extends AbstractType
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

@@ -12,6 +12,9 @@ enum UserStatus: string
     case ACTIVE = 'ACTIVE';
     case ARCHIVE = 'ARCHIVE';
 
+    /**
+     * @return array<string, string>
+     */
     public static function getLabelList(): array
     {
         return [

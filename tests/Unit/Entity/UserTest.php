@@ -24,7 +24,7 @@ class UserTest extends KernelTestCase
     /**
      * @dataProvider provideInvalidPassword
      */
-    public function testPasswordValidationError(string $expectedResult, string $password)
+    public function testPasswordValidationError(string $expectedResult, string $password): void
     {
         /** @var ValidatorInterface $validator */
         $validator = static::getContainer()->get(ValidatorInterface::class);
@@ -39,7 +39,7 @@ class UserTest extends KernelTestCase
         $this->assertStringContainsString($expectedResult, $errorsAsString);
     }
 
-    public function testPasswordValidationSuccess()
+    public function testPasswordValidationSuccess(): void
     {
         /** @var ValidatorInterface $validator */
         $validator = static::getContainer()->get(ValidatorInterface::class);
@@ -52,7 +52,7 @@ class UserTest extends KernelTestCase
         $this->assertCount(0, $errors);
     }
 
-    public function testUserAnonymization()
+    public function testUserAnonymization(): void
     {
         $user = $this->getUser([User::ROLE_ADMIN_TERRITORY]);
         $user->anonymize();

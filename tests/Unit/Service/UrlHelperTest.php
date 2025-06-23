@@ -9,6 +9,8 @@ class UrlHelperTest extends TestCase
 {
     /**
      * @dataProvider provideDataToQueryString
+     *
+     * @param array<array<mixed>> $origin
      */
     public function testArrayToQueryString(array $origin, string $result): void
     {

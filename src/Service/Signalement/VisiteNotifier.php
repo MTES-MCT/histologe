@@ -96,7 +96,7 @@ class VisiteNotifier
         Suivi $suivi,
         ?NotificationMailerType $notificationMailerType,
         ?Affectation $affectation = null,
-    ) {
+    ): void {
         if ($notificationMailerType) {
             if ($user->getIsMailingActive()) {
                 $this->notificationMailerRegistry->send(

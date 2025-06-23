@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SearchArchivedPartnerType extends AbstractType
 {
     private bool $isAdmin = false;
+    /**
+     * @var array<string, string>
+     */
     private array $roleChoices = [];
 
     public function __construct(
@@ -31,6 +34,9 @@ class SearchArchivedPartnerType extends AbstractType
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('queryArchivedPartner', SearchType::class, [

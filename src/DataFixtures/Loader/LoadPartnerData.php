@@ -32,6 +32,9 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function loadPartner(ObjectManager $manager, array $row): void
     {
         $partner = (new Partner())

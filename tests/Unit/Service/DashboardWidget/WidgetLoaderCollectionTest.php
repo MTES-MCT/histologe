@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class WidgetLoaderCollectionTest extends TestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
         $widget = new Widget(WidgetType::WIDGET_TYPE_DATA_KPI);
         $dataKpiWidgetLoader = $this->createMock(WidgetLoaderInterface::class);
@@ -34,7 +34,8 @@ class WidgetLoaderCollectionTest extends TestCase
             ->method('load');
 
         $widgetLoaderCollection = new WidgetLoaderCollection([
-            $dataKpiWidgetLoader, $esaboraEventWidgetLoader,
+            'Loader1' => $dataKpiWidgetLoader,
+            'Loader2' => $esaboraEventWidgetLoader,
         ]);
 
         $widgetLoaderCollection->load($widget);

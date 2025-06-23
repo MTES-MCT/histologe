@@ -23,6 +23,7 @@ class HistoryEntry
     #[ORM\Column(length: 255)]
     private ?string $entityName = null;
 
+    /** @var array<mixed> $changes */
     #[ORM\Column(nullable: true)]
     private ?array $changes = null;
 
@@ -119,11 +120,13 @@ class HistoryEntry
         return $this;
     }
 
+    /** @return array<mixed> */
     public function getChanges(): ?array
     {
         return $this->changes;
     }
 
+    /** @param array<mixed> $changes */
     public function setChanges(?array $changes): self
     {
         $this->changes = $changes;

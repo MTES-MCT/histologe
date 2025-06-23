@@ -43,6 +43,7 @@ class SlugifyDocumentSignalementCommand extends Command
     private ?string $directoryPath = null;
     private ?string $sourceFile = null;
     private ?string $destinationFile = null;
+    /** @var array<string> */
     private ?array $errors = [];
 
     public function __construct(
@@ -154,7 +155,10 @@ class SlugifyDocumentSignalementCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function makeSlugForMappingFile(CsvWriter $csvWriter, $filename, int $index, $row): int
+    /**
+     * @param array<mixed> $row
+     */
+    private function makeSlugForMappingFile(CsvWriter $csvWriter, string $filename, int $index, array $row): int
     {
         $filenameSlugged = !empty($filename) ? $this->getSluggedFile($filename, $index) : null;
         if (!empty($filenameSlugged)) {
@@ -176,7 +180,10 @@ class SlugifyDocumentSignalementCommand extends Command
         return 0;
     }
 
-    private function makeSlugsForSignalementFile(string $colName, $index, $row): ?string
+    /**
+     * @param array<mixed> $row
+     */
+    private function makeSlugsForSignalementFile(string $colName, int $index, $row): ?string
     {
         $fileListSlugged = [];
         $fileList = explode('|', $row[$colName]);

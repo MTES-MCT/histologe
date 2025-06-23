@@ -32,8 +32,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class PartnerType extends AbstractType
 {
-    private $isAdmin = false;
-    private $isAdminTerritory = false;
+    private bool $isAdmin = false;
+    private bool $isAdminTerritory = false;
 
     public function __construct(
         private readonly UserRepository $userRepository,
@@ -48,6 +48,9 @@ class PartnerType extends AbstractType
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $territory = false;
@@ -190,7 +193,7 @@ class PartnerType extends AbstractType
         $this->addBailleurSocialField($form, $territory?->getZip(), $data);
     }
 
-    private function addBailleurSocialField(FormBuilderInterface|FormInterface $builder, ?string $territoryZip = null, $data = null): void
+    private function addBailleurSocialField(FormBuilderInterface|FormInterface $builder, ?string $territoryZip = null, mixed $data = null): void
     {
         if (null === $territoryZip) {
             if ($data instanceof Partner && null !== $data->getTerritory()) {
@@ -223,7 +226,7 @@ class PartnerType extends AbstractType
         ]);
     }
 
-    public function validateEmailIsUnique(mixed $value, ExecutionContextInterface $context)
+    public function validateEmailIsUnique(mixed $value, ExecutionContextInterface $context): void
     {
         if ($value instanceof Partner) {
             $partner = $value;

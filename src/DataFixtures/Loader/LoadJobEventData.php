@@ -30,6 +30,9 @@ class LoadJobEventData extends Fixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public function loadJobEvent(ObjectManager $manager, array $row): void
     {
         /** @var Partner $partner */

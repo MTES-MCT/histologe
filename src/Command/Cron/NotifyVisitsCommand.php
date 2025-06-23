@@ -5,6 +5,7 @@ namespace App\Command\Cron;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
@@ -150,6 +151,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
         return Command::SUCCESS;
     }
 
+    /** @return array<User> */
     private function getPastVisiteReminderUsers(Intervention $intervention): array
     {
         $usersToNotify = [];

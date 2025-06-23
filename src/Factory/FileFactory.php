@@ -78,11 +78,11 @@ class FileFactory
     }
 
     /**
-     * @param array $file The array representing the file.
-     *                    - 'slug' (string): The slug value.
-     *                    - 'file' (string): The file path.
-     *                    - 'titre' (string): The title of the file.
-     *                    - 'description' (string): The description of the file.
+     * @param array<string, mixed> $file The array representing the file.
+     *                                   - 'slug' (string): The slug value.
+     *                                   - 'file' (string): The file path.
+     *                                   - 'titre' (string): The title of the file.
+     *                                   - 'description' (string): The description of the file.
      */
     public function createFromFileArray(
         array $file,

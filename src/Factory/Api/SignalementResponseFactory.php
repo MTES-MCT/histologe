@@ -290,6 +290,9 @@ readonly class SignalementResponseFactory
         return null;
     }
 
+    /**
+     * @return array<Desordre>
+     */
     private function buildDesordres(Signalement $signalement): array
     {
         $desordres = [];

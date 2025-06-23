@@ -75,6 +75,9 @@ class VisiteUploadDocumentsControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
+    /**
+     * @param array<UploadedFile> $files
+     */
     private function postRequest(string $uuid, array $files = [], ?string $typeDocumentVisite = null): false|string
     {
         $this->client->request(

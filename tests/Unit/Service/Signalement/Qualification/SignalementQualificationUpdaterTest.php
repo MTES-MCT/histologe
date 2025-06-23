@@ -20,7 +20,7 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testUpdateFromProcedureInsalubrite()
+    public function testUpdateFromProcedureInsalubrite(): void
     {
         $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
         $entityManager = $this->createMock(EntityManagerInterface::class);
@@ -40,7 +40,7 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
         $this->assertEquals(\count($signalement->getSignalementQualifications()), 1);
     }
 
-    public function testUpdateFromProcedureAutre()
+    public function testUpdateFromProcedureAutre(): void
     {
         $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
         $entityManager = $this->createMock(EntityManagerInterface::class);

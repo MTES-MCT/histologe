@@ -7,12 +7,12 @@ use PHPUnit\Framework\TestCase;
 
 class JsonTest extends TestCase
 {
-    public function testEncodeWithNullValue()
+    public function testEncodeWithNullValue(): void
     {
         $this->assertNull(Json::encode(null));
     }
 
-    public function testEncodeWIthNotNullValue()
+    public function testEncodeWIthNotNullValue(): void
     {
         $this->assertEquals('{"message":"Hi"}', Json::encode(['message' => 'Hi']));
     }

@@ -24,6 +24,9 @@ trait SearchQueryTrait
         $this->page = $page;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getUrlParams(): array
     {
         $params = [];

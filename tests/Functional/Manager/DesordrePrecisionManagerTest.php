@@ -30,7 +30,7 @@ class DesordrePrecisionManagerTest extends KernelTestCase
         );
     }
 
-    public function testCreateOrUpdateDesordrePrecision()
+    public function testCreateOrUpdateDesordrePrecision(): void
     {
         $desordreCategorie = new DesordreCategorie();
         $desordreCategorie->setLabel('Décoration intérieure et bon goût');

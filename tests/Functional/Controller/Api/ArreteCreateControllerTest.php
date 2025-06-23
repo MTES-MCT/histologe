@@ -27,7 +27,11 @@ class ArreteCreateControllerTest extends WebTestCase
         $this->client->loginUser($user, 'api');
     }
 
-    /** @dataProvider providePayloadSuccess */
+    /**
+     * @dataProvider providePayloadSuccess
+     *
+     * @param array<mixed> $payload
+     */
     public function testCreateArreteSuccess(string $type, array $payload): void
     {
         $this->client->request(
@@ -53,7 +57,11 @@ class ArreteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /** @dataProvider providePayloadFailure */
+    /**
+     * @dataProvider providePayloadFailure
+     *
+     * @param array<mixed> $payload
+     */
     public function testCreateArreteFailed(array $payload): void
     {
         $this->client->request(

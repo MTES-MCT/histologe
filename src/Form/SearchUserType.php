@@ -32,6 +32,9 @@ class SearchUserType extends AbstractType
     ];
 
     private bool $isAdmin = false;
+    /**
+     * @var array<string, string>
+     */
     private array $roleChoices = [];
 
     public function __construct(
@@ -47,6 +50,9 @@ class SearchUserType extends AbstractType
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('queryUser', SearchType::class, [
@@ -126,7 +132,7 @@ class SearchUserType extends AbstractType
         $builder->add('page', HiddenType::class);
     }
 
-    private function addPartnersField(FormInterface $builder, $territory, $partnerType): void
+    private function addPartnersField(FormInterface $builder, string|Territory|null $territory, mixed $partnerType): void
     {
         $builder->add('partners', SearchCheckboxType::class, [
             'class' => Partner::class,
@@ -150,7 +156,7 @@ class SearchUserType extends AbstractType
         ]);
     }
 
-    private function desactivePartnerType(FormInterface $builder, $partners): void
+    private function desactivePartnerType(FormInterface $builder, mixed $partners): void
     {
         $options = [
             'class' => PartnerType::class,

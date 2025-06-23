@@ -92,6 +92,8 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     }
 
     /**
+     * @param array<int, int> $territories
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -122,6 +124,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         return $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function findSignalementNewSuivi(User $user, ?Territory $territory): array
     {
         $qb = $this->createQueryBuilder('n')
@@ -154,6 +159,8 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     }
 
     /**
+     * @param array<int, int> $territories
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -186,6 +193,8 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     }
 
     /**
+     * @param array<int, int> $territories
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -218,6 +227,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         return $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @param array<int, int|string> $ids
+     */
     public function markUserNotificationsAsSeen(User $user, array $ids = []): void
     {
         $qb = $this->createQueryBuilder('n')
@@ -238,6 +250,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         $qb->getQuery()->execute();
     }
 
+    /**
+     * @param array<int, int|string> $ids
+     */
     public function deleteUserNotifications(User $user, array $ids = []): void
     {
         $qb = $this->createQueryBuilder('n')
@@ -268,6 +283,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         $qb->getQuery()->execute();
     }
 
+    /**
+     * @param array<int, int> $suiviIds
+     */
     public function deleteBySuiviIds(array $suiviIds): void
     {
         $qb = $this->createQueryBuilder('n')
@@ -278,6 +296,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         $qb->getQuery()->execute();
     }
 
+    /**
+     * @return array<int, Notification>
+     */
     public function findWaitingSummaryForUser(User $user): array
     {
         return $this->createQueryBuilder('n')
@@ -292,6 +313,10 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->getResult();
     }
 
+    /**
+     * @param array<int, Notification> $notifications
+     * @param array<string, mixed>     $data
+     */
     public function massUpdate(array $notifications, array $data): void
     {
         $qb = $this->createQueryBuilder('n')

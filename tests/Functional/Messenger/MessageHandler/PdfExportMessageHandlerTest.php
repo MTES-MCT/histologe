@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class PdfExportMessageHandlerTest extends WebTestCase
 {
-    public function testHandleGeneratePdfMessage()
+    public function testHandleGeneratePdfMessage(): void
     {
         self::bootKernel();
 
@@ -44,7 +44,7 @@ class PdfExportMessageHandlerTest extends WebTestCase
         $this->assertEmailAddressContains($email, 'To', 'test@yopmail.com');
     }
 
-    public function testHandleGeneratePdfMessageWithDesordres()
+    public function testHandleGeneratePdfMessageWithDesordres(): void
     {
         self::bootKernel();
 

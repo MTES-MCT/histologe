@@ -1,5 +1,5 @@
 parameters:
-	level: 5
+	level: 6
 	paths:
 		- src
 		- tests
@@ -7,6 +7,7 @@ parameters:
 		- .php-cs-fixer.dist.php
 		- tools
 	treatPhpDocTypesAsCertain: false
+	checkGenericClassInNonGenericObjectType: false
 	bootstrapFiles:
 		- tools/wiremock/src/Mock/AppMock.php
 	ignoreErrors:

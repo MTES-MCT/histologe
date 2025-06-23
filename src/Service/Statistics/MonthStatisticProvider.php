@@ -8,12 +8,18 @@ use App\Repository\SignalementRepository;
 
 class MonthStatisticProvider
 {
-    private const MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    /**
+     * @var array<string> MONTH_NAMES
+     */
+    private const array MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
     public function __construct(private SignalementRepository $signalementRepository)
     {
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
         $countPerMonths = $this->signalementRepository->countByMonthFiltered($statisticsFilters);
@@ -21,6 +27,9 @@ class MonthStatisticProvider
         return $this->createFullArray($countPerMonths);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getData(?Territory $territory, ?int $year): array
     {
         $countPerMonths = $this->signalementRepository->countByMonth($territory, $year, true);
@@ -28,7 +37,12 @@ class MonthStatisticProvider
         return $this->createFullArray($countPerMonths);
     }
 
-    private function createFullArray($countPerMonths): array
+    /**
+     * @param array<mixed> $countPerMonths
+     *
+     * @return array<mixed>
+     */
+    private function createFullArray(array $countPerMonths): array
     {
         $monthsWithResults = [];
         foreach ($countPerMonths as $countPerMonth) {
@@ -49,7 +63,10 @@ class MonthStatisticProvider
         return $data;
     }
 
-    private function fillBlankMonths(&$data, $previousMonth, $currentMonth)
+    /**
+     * @param array<mixed> $data
+     */
+    private function fillBlankMonths(array &$data, ?\DateTime $previousMonth, \DateTime $currentMonth): void
     {
         if (null !== $previousMonth) {
             $shouldBeMonth = $previousMonth->format('m') + 1;

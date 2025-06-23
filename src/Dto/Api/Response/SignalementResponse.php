@@ -558,6 +558,7 @@ class SignalementResponse
         example: '2020-10-10'
     )]
     public ?string $dateEffetBail;
+    /** @var list<mixed> $desordres */
     #[OA\Property(
         description: "Liste des désordres associés au logement signalant les problèmes affectant la qualité, la sécurité ou les conditions d'habitabilité.<br>
         Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement ou batiment. <br>
@@ -628,6 +629,7 @@ class SignalementResponse
             ],
         ]
     )]
+    /** @var array<mixed> */
     public array $desordres = [];
     #[OA\Property(
         description: "Score calculé sur la base des informations fournies par l'utilisateur. <br>
@@ -674,6 +676,7 @@ class SignalementResponse
     )]
     public ?bool $desordresConstates = null;
 
+    /** @var list<mixed> $tags */
     #[OA\Property(
         description: "Les étiquettes permettent de caractériser ou organiser les signalements.<br>
         Exemple : `['Urgent', 'Commission du 12/09 ', 'Péril']`
@@ -682,8 +685,10 @@ class SignalementResponse
         items: new OA\Items(type: 'string'),
         example: ['Urgent', 'Commission du 12/09 ', 'Péril']
     )]
+    /** @var array<mixed> */
     public array $tags = [];
 
+    /** @var list<mixed> $qualifications */
     #[OA\Property(
         description: 'Liste des qualifications calculées en fonction du score et des procédures associées.<br>
         **Du score à la pré-qualification :**<br>
@@ -732,7 +737,10 @@ class SignalementResponse
             'DANGER',
         ]
     )]
+    /** @var array<mixed> */
     public array $qualifications = [];
+
+    /** @var list<mixed> $suivis */
     #[OA\Property(
         description: 'Liste des suivis associés au signalement. Chaque suivi comprend des informations concernant son ID, sa date de création, sa description, son statut public/privé, son type et son auteur.',
         type: 'array',
@@ -752,7 +760,10 @@ class SignalementResponse
             ],
         ]
     )]
+    /** @var array<mixed> */
     public array $suivis = [];
+
+    /** @var list<mixed> $visites */
     #[OA\Property(
         description: 'Liste des visites ou arrêtés du logement effectués dans le cadre du traitement du dossier.',
         type: 'array',
@@ -780,7 +791,9 @@ class SignalementResponse
             ],
         ]
     )]
+    /** @var array<mixed> */
     public array $visites = [];
+    /** @var list<mixed> $files */
     #[OA\Property(
         description: 'Liste des fichiers joints au signalement.',
         type: 'array',
@@ -798,8 +811,10 @@ class SignalementResponse
             ],
         ]
     )]
+    /** @var array<mixed> */
     public array $files = [];
 
+    /** @var list<mixed> $personnes */
     #[OA\Property(
         description: 'Liste des personnes associées (occupant, déclarant, propriétaire), contenant des informations personnelles, leurs liens avec l’occupant, ainsi que leurs coordonnées.',
         type: 'array',
@@ -864,6 +879,7 @@ class SignalementResponse
             ],
         ]
     )]
+    /** @var array<mixed> */
     public array $personnes = [];
     #[OA\Property(
         description: 'Correspond au nom du département',

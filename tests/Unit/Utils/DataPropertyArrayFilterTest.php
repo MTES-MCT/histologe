@@ -13,6 +13,9 @@ class DataPropertyArrayFilterTest extends TestCase
 
     /**
      * @dataProvider provideData
+     *
+     * @param array<string> $prefixes
+     * @param array<string> $filteredDataExpected
      */
     public function testFilterByPrefix(array $prefixes, array $filteredDataExpected): void
     {

@@ -18,6 +18,7 @@ enum ZoneType: string
     case EPCI = 'EPCI';
     case AUTRE = 'AUTRE';
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [

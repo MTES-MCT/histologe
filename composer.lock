@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.343.14",
+            "version": "3.346.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8bb5b542b28c4538b44de4335396e77bf9fbedf6"
+                "reference": "27401e70b1b01114e4e228861933eb7b78630be7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8bb5b542b28c4538b44de4335396e77bf9fbedf6",
-                "reference": "8bb5b542b28c4538b44de4335396e77bf9fbedf6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/27401e70b1b01114e4e228861933eb7b78630be7",
+                "reference": "27401e70b1b01114e4e228861933eb7b78630be7",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.343.14"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.346.1"
             },
-            "time": "2025-05-19T18:02:45+00:00"
+            "time": "2025-06-19T18:05:45+00:00"
         },
         {
             "name": "beberlei/doctrineextensions",
@@ -404,28 +404,36 @@
         },
         {
             "name": "composer/pcre",
-            "version": "3.1.4",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/pcre.git",
-                "reference": "04229f163664973f68f38f6f73d917799168ef24"
+                "reference": "b2bed4734f0cc156ee1fe9c0da2550420d99a21e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/pcre/zipball/04229f163664973f68f38f6f73d917799168ef24",
-                "reference": "04229f163664973f68f38f6f73d917799168ef24",
+                "url": "https://api.github.com/repos/composer/pcre/zipball/b2bed4734f0cc156ee1fe9c0da2550420d99a21e",
+                "reference": "b2bed4734f0cc156ee1fe9c0da2550420d99a21e",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0"
             },
+            "conflict": {
+                "phpstan/phpstan": "<1.11.10"
+            },
             "require-dev": {
-                "phpstan/phpstan": "^1.3",
-                "phpstan/phpstan-strict-rules": "^1.1",
-                "symfony/phpunit-bridge": "^5"
+                "phpstan/phpstan": "^1.12 || ^2",
+                "phpstan/phpstan-strict-rules": "^1 || ^2",
+                "phpunit/phpunit": "^8 || ^9"
             },
             "type": "library",
             "extra": {
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
+                },
                 "branch-alias": {
                     "dev-main": "3.x-dev"
                 }
@@ -455,7 +463,7 @@
             ],
             "support": {
                 "issues": "https://github.com/composer/pcre/issues",
-                "source": "https://github.com/composer/pcre/tree/3.1.4"
+                "source": "https://github.com/composer/pcre/tree/3.3.2"
             },
             "funding": [
                 {
@@ -471,7 +479,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-05-27T13:40:54+00:00"
+            "time": "2024-11-12T16:29:46+00:00"
         },
         {
             "name": "cron/cron",
@@ -1029,16 +1037,16 @@
         },
         {
             "name": "doctrine/doctrine-bundle",
-            "version": "2.14.0",
+            "version": "2.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineBundle.git",
-                "reference": "ca6a7350b421baf7fbdefbf9f4993292ed18effb"
+                "reference": "d88294521a1bca943240adca65fa19ca8a7288c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/ca6a7350b421baf7fbdefbf9f4993292ed18effb",
-                "reference": "ca6a7350b421baf7fbdefbf9f4993292ed18effb",
+                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/d88294521a1bca943240adca65fa19ca8a7288c6",
+                "reference": "d88294521a1bca943240adca65fa19ca8a7288c6",
                 "shasum": ""
             },
             "require": {
@@ -1065,9 +1073,9 @@
             "require-dev": {
                 "doctrine/annotations": "^1 || ^2",
                 "doctrine/cache": "^1.11 || ^2.0",
-                "doctrine/coding-standard": "^12",
+                "doctrine/coding-standard": "^13",
                 "doctrine/deprecations": "^1.0",
-                "doctrine/orm": "^2.17 || ^3.0",
+                "doctrine/orm": "^2.17 || ^3.1",
                 "friendsofphp/proxy-manager-lts": "^1.0",
                 "phpstan/phpstan": "2.1.1",
                 "phpstan/phpstan-phpunit": "2.0.3",
@@ -1131,7 +1139,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineBundle/tree/2.14.0"
+                "source": "https://github.com/doctrine/DoctrineBundle/tree/2.15.0"
             },
             "funding": [
                 {
@@ -1147,7 +1155,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-22T17:28:21+00:00"
+            "time": "2025-06-16T19:53:58+00:00"
         },
         {
             "name": "doctrine/doctrine-migrations-bundle",
@@ -1669,16 +1677,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "2.20.3",
+            "version": "2.20.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "17d28b5c4cac212ca92730d9a26e32a0b1516126"
+                "reference": "71550106d491c3f888636b731c805473de3c8583"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/17d28b5c4cac212ca92730d9a26e32a0b1516126",
-                "reference": "17d28b5c4cac212ca92730d9a26e32a0b1516126",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/71550106d491c3f888636b731c805473de3c8583",
+                "reference": "71550106d491c3f888636b731c805473de3c8583",
                 "shasum": ""
             },
             "require": {
@@ -1765,9 +1773,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.20.3"
+                "source": "https://github.com/doctrine/orm/tree/2.20.4"
             },
-            "time": "2025-05-02T17:07:53+00:00"
+            "time": "2025-06-09T20:24:12+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -5066,16 +5074,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.43",
+            "version": "3.0.44",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "709ec107af3cb2f385b9617be72af8cf62441d02"
+                "reference": "1d0b5e7e1434678411787c5a0535e68907cf82d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/709ec107af3cb2f385b9617be72af8cf62441d02",
-                "reference": "709ec107af3cb2f385b9617be72af8cf62441d02",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/1d0b5e7e1434678411787c5a0535e68907cf82d9",
+                "reference": "1d0b5e7e1434678411787c5a0535e68907cf82d9",
                 "shasum": ""
             },
             "require": {
@@ -5156,7 +5164,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.43"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.44"
             },
             "funding": [
                 {
@@ -5172,7 +5180,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-14T21:12:59+00:00"
+            "time": "2025-06-15T09:59:26+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
@@ -13828,16 +13836,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.44",
+            "version": "1.12.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "bf84367c53a23f759513985c54ffe0d0c249825b"
+                "reference": "3a6e423c076ab39dfedc307e2ac627ef579db162"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/bf84367c53a23f759513985c54ffe0d0c249825b",
-                "reference": "bf84367c53a23f759513985c54ffe0d0c249825b",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3a6e423c076ab39dfedc307e2ac627ef579db162",
+                "reference": "3a6e423c076ab39dfedc307e2ac627ef579db162",
                 "shasum": ""
             },
             "require": {
@@ -13880,13 +13888,9 @@
                 {
                     "url": "https://github.com/phpstan",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2023-11-21T16:30:46+00:00"
+            "time": "2025-05-21T20:51:45+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
