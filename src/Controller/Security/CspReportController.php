@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller\Security;
 
 use Psr\Log\LoggerInterface;
@@ -9,8 +10,9 @@ use Symfony\Component\Routing\Attribute\Route;
 class CspReportController
 {
     public function __construct(
-        private readonly LoggerInterface $logger
-    ) {}
+        private readonly LoggerInterface $logger,
+    ) {
+    }
 
     #[Route('/csp-report', name: 'csp_report', methods: ['POST'])]
     public function report(Request $request): Response
@@ -26,9 +28,8 @@ class CspReportController
                 $report['violated-directive'] ?? 'N/A',
                 $report['document-uri'] ?? 'N/A',
             );
-            $this->logger->warning($logMessage); 
+            $this->logger->warning($logMessage);
             \Sentry\captureMessage($logMessage);
-
         }
 
         return new Response('', Response::HTTP_NO_CONTENT);
