@@ -247,17 +247,6 @@ class Affectation implements EntityHistoryInterface
         return $this;
     }
 
-    public function getAffectationLabel(): string
-    {
-        return match ($this->getStatut()) {
-            AffectationStatus::WAIT => 'En attente...',
-            AffectationStatus::ACCEPTED => 'Accepté',
-            AffectationStatus::REFUSED => 'Refusé',
-            AffectationStatus::CLOSED => 'Cloturé',
-            default => 'Unexpected affectation status',
-        };
-    }
-
     public function getNextStatut(): ?AffectationStatus
     {
         return $this->nextStatut;

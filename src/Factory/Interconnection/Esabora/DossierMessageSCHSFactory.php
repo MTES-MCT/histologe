@@ -91,7 +91,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
         }
 
         foreach ($signalement->getAffectations() as $affectation) {
-            $commentaire .= \PHP_EOL.$affectation->getPartner()->getNom().' => '.$affectation->getAffectationLabel();
+            $commentaire .= \PHP_EOL.$affectation->getPartner()->getNom().' => '.$affectation->getStatut()->label();
         }
 
         return $commentaire;
