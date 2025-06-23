@@ -129,7 +129,7 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, Territory> $territories
+     * @param array<int, mixed> $territories
      */
     public function countPartnerNonNotifiables(array $territories): CountPartner
     {
