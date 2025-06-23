@@ -37,6 +37,7 @@ enum AffectationStatus: string
         };
     }
 
+    /** @return array<string, string> */
     public static function getLabelList(): array
     {
         return [
