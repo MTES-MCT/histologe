@@ -27,7 +27,7 @@ class AffectationVoter extends Voter
     ) {
     }
 
-    /** @var array<int, array<int, int>> */
+    /** @var array<string, array<string, string>> */
     private const array VALID_WORKFLOW_STATUT = [
         AffectationStatus::WAIT->value => [AffectationStatus::ACCEPTED->value, AffectationStatus::REFUSED->value],
         AffectationStatus::ACCEPTED->value => [AffectationStatus::CLOSED->value],
