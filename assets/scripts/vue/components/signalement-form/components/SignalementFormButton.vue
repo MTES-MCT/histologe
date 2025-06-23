@@ -109,6 +109,12 @@ export default defineComponent({
   color: var(--text-action-high-blue-france);
   box-shadow: inset 0 0 0 1px var(--border-action-high-blue-france);
 }
+.fr-btn.fr-btn--tertiary-no-outline.fr-btn--loading:disabled {
+  background-color: transparent;
+  --hover: inherit;
+  --active: inherit;
+  color: var(--text-action-high-blue-france);
+}
 .fr-btn.btn-link {
   background-color: white;
   color: var(--blue-france-sun-113-625);

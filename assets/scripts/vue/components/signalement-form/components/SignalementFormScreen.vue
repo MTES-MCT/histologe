@@ -77,7 +77,8 @@ export default defineComponent({
       currentDisorderIndex: {
         batiment: 0,
         logement: 0
-      } as { [key: string]: number }
+      } as { [key: string]: number },
+      mailSentForDraftThisSession: false
     }
   },
   methods: {
@@ -136,7 +137,7 @@ export default defineComponent({
       } else if (type.includes('resolve')) {
         this.navigateToDisorderScreen(param, param2, type.includes('save'))
       } else if (type.includes('finish')) {
-        this.finishLater(type.includes('save'))
+        this.finishLater(type.includes('save'), param2)
       }
     },
     showComponentBySlug (slug:string, slugButton:string) {
@@ -229,14 +230,20 @@ export default defineComponent({
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
     },
-    finishLater (isSaveAndCheck:boolean) {
+    finishLater (isSaveAndCheck:boolean, slugButton:string) {
+      this.formStore.lastButtonClicked = slugButton
+      if (this.mailSentForDraftThisSession) {
+        return
+      }
       formStore.validationErrors = {}
 
       if (isSaveAndCheck) {
         if (this.validateAndFocusFirstError()) {
+          this.formStore.lastButtonClicked = ''
           return
         }
       }
+      this.mailSentForDraftThisSession = true
       requests.saveSignalementDraft(this.sendMailContinueFromDraft)
     },
     sendMailContinueFromDraft (requestResponse: any) {
@@ -247,10 +254,12 @@ export default defineComponent({
           for (const index in requestResponse.violations) {
             formStore.data.errorMessage += requestResponse.violations[index].title + '\n'
           }
+        this.formStore.lastButtonClicked = ''
       }
     },
     redirectToDraftMailScreen (requestResponse: any) {
       formStore.data.errorMessage = ''
+      this.formStore.lastButtonClicked = ''
       if (requestResponse && requestResponse.success === true ) {
         if (this.changeEvent !== undefined) {
           this.changeEvent('draft_mail', false)
@@ -269,7 +278,7 @@ export default defineComponent({
 <style>
   @media (max-width: 48em) {
     .form-screen-body {
-      margin-bottom: 7.5rem !important;
+      margin-bottom: 8.5rem !important;
     }
 
     .form-screen-body-margin {
