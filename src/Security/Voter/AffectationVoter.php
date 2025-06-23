@@ -113,7 +113,7 @@ class AffectationVoter extends Voter
 
     private function canReinit(Affectation $affectation, User $user): bool
     {
-        if (!in_array($affectation->getStatut(), [Affectation::STATUS_CLOSED, Affectation::STATUS_REFUSED])) {
+        if (!in_array($affectation->getStatut(), [AffectationStatus::CLOSED, AffectationStatus::REFUSED])) {
             return false;
         }
         if (SignalementStatus::ACTIVE !== $affectation->getSignalement()->getStatut()) {
