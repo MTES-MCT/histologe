@@ -20,6 +20,7 @@ class FileListService
     ) {
     }
 
+    /** @return array<mixed> */
     public function getFileChoicesForSignalement(Signalement $signalement): array
     {
         $signalementFiles = $signalement->getFiles()->filter(function (File $file) {

@@ -210,7 +210,7 @@ class AffectationUpdateController extends AbstractController
         }
         $motifRefus = $message = null;
         if (AffectationStatus::REFUSED === $statut) {
-            $motifRefus = MotifRefus::tryFrom($affectationRequest->motifRefus)->value;
+            $motifRefus = MotifRefus::tryFrom($affectationRequest->motifRefus);
             $message = $affectationRequest->message;
         }
 

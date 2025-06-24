@@ -57,6 +57,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::AFFECTATION_IS_REFUSED,
                 user: $user,
+                files: $event->getFiles(),
             );
         }
 

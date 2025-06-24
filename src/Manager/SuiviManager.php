@@ -33,6 +33,9 @@ class SuiviManager extends Manager
         parent::__construct($managerRegistry, $entityName);
     }
 
+    /**
+     * @param iterable<File> $files
+     */
     public function createSuivi(
         Signalement $signalement,
         string $description,
