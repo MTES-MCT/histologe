@@ -278,7 +278,7 @@ export default defineComponent({
 <style>
   @media (max-width: 48em) {
     .form-screen-body {
-      margin-bottom: 8.5rem !important;
+      margin-bottom: 11rem !important;
     }
 
     .form-screen-body-margin {
