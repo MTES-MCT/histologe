@@ -4,18 +4,22 @@ namespace App\Controller\Back;
 
 use App\Service\Gouv\Rial\RialService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/bo/tools/rial', name: 'back_tools_rial')]
+#[Route('/bo/tools/rial')]
 #[IsGranted('ROLE_ADMIN')]
-class AdminRialToolController extends AbstractController
+class RialToolController extends AbstractController
 {
-    public function __invoke(Request $request, RialService $rialService)
-    {
+    #[Route('/', name: 'back_tools_rial', methods: ['GET', 'POST'])]
+    public function index(
+        Request $request,
+        RialService $rialService,
+    ): Response {
         $form = $this->createFormBuilder()
             ->add('banIds', TextareaType::class, [
                 'label' => 'BAN id(s) (séparés par des virgules ou des retours à la ligne)',
@@ -47,7 +51,7 @@ class AdminRialToolController extends AbstractController
                             $results[] = [
                                 'ban_id' => $banId,
                                 'identifiant_fiscal' => $identifiantFiscal,
-                                'local_data' => json_encode($localData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
+                                'local_data' => json_encode($localData, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_UNICODE),
                             ];
                         } else {
                             $results[] = [
@@ -72,4 +76,4 @@ class AdminRialToolController extends AbstractController
             'results' => $results,
         ]);
     }
-} 
+}
