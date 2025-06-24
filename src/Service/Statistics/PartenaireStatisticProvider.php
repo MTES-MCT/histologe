@@ -33,16 +33,16 @@ class PartenaireStatisticProvider
             }
             ++$data[$partnerName]['total'];
             switch ($countPerPartenaire['statut']) {
-                case AffectationStatus::ACCEPTED->value:
+                case AffectationStatus::ACCEPTED:
                     ++$data[$partnerName]['accepted'];
                     break;
-                case AffectationStatus::REFUSED->value:
+                case AffectationStatus::REFUSED:
                     ++$data[$partnerName]['refused'];
                     break;
-                case AffectationStatus::CLOSED->value:
+                case AffectationStatus::CLOSED:
                     ++$data[$partnerName]['closed'];
                     break;
-                case AffectationStatus::WAIT->value:
+                case AffectationStatus::WAIT:
                 default:
                     ++$data[$partnerName]['wait'];
                     break;
