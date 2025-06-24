@@ -164,7 +164,7 @@ class SuiviManager extends Manager
             }
         }
 
-        if (DocumentType::PHOTO_VISITE === $documentType) {
+        if (DocumentType::PHOTO_VISITE === $documentType && null !== $intervention) {
             $isVisibleUsager = true;
             $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             if ($nbPhotos > 0) {
