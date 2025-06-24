@@ -63,10 +63,19 @@ sed -i '/DEFINER/d' "${backup_file_name}"
 #echo "> mysql log with cat"
 #echo $line
 
-# Test import ligne par ligne pour traquer l’erreur
+# Test import ligne par ligne pour traquer l'erreur
+line_number=0
+> mysql_line_errors_detailed.log
 while IFS= read -r line; do
-    echo "$line" | mysql -u "${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
-         -h "${DATABASE_HOST}" -P "${DATABASE_PORT}" "${DATABASE_NAME}" 2>> mysql_error_line.log
+    line_number=$((line_number+1))
+    # Try to import the line, capture error
+    ERROR_MSG=$(echo "$line" | mysql -u "${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
+         -h "${DATABASE_HOST}" -P "${DATABASE_PORT}" "${DATABASE_NAME}" 2>&1 1>/dev/null)
+    if [ $? -ne 0 ]; then
+        echo "[Line $line_number] SQL: $line" >> mysql_line_errors_detailed.log
+        echo "[Line $line_number] Error: $ERROR_MSG" >> mysql_line_errors_detailed.log
+        echo "---" >> mysql_line_errors_detailed.log
+    fi
 done < "$backup_file_name"
 
 # Loading database
@@ -88,6 +97,12 @@ if [ $EXIT_CODE -ne 0 ]; then
     else
         echo ">>> Aucune erreur explicite trouvée."
         ERROR_DETAILS="Aucune erreur explicite trouvée. Dernières lignes : $(tail -n 5 mysql_full_output.log | tr '\n' ' ' | sed 's/"/\\"/g')"
+    fi
+
+    # Show detailed line-by-line errors if any
+    if [ -s mysql_line_errors_detailed.log ]; then
+        echo ">>> Détail des erreurs ligne par ligne :"
+        tail -n 30 mysql_line_errors_detailed.log
     fi
 
     # Capture les logs MySQL pour le diagnostic
