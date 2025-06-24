@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\File;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -34,12 +35,16 @@ class AffectationManager extends Manager
         parent::__construct($this->managerRegistry, $entityName);
     }
 
+    /**
+     * @param array<File>|null $files
+     */
     public function updateAffectation(
         Affectation $affectation,
         User $user,
         AffectationStatus $status,
-        ?string $motifRefus = null,
+        ?MotifRefus $motifRefus = null,
         ?string $message = null,
+        ?array $files = [],
         ?bool $dispatchAffectationAnsweredEvent = true,
     ): Affectation {
         $affectation
@@ -48,7 +53,7 @@ class AffectationManager extends Manager
             ->setAnsweredAt(new \DateTimeImmutable());
 
         if (!empty($motifRefus)) {
-            $affectation->setMotifRefus(MotifRefus::tryFrom($motifRefus));
+            $affectation->setMotifRefus($motifRefus);
         }
 
         if (AffectationStatus::WAIT === $status || AffectationStatus::ACCEPTED === $status) {
@@ -57,7 +62,10 @@ class AffectationManager extends Manager
 
         $this->save($affectation);
         if ($dispatchAffectationAnsweredEvent) {
-            $this->dispatchAffectationAnsweredEvent($affectation, $user, $status, $affectation->getMotifRefus(), $message);
+            $this->eventDispatcher->dispatch(
+                new AffectationAnsweredEvent($affectation, $user, $status, $affectation->getMotifRefus(), $message, $files),
+                AffectationAnsweredEvent::NAME
+            );
         }
 
         return $affectation;
@@ -181,18 +189,5 @@ class AffectationManager extends Manager
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->getRepository();
         $affectationRepository->deleteAffectationsByPartner($partner);
-    }
-
-    private function dispatchAffectationAnsweredEvent(
-        Affectation $affectation,
-        User $user,
-        AffectationStatus $status,
-        ?MotifRefus $motifRefus = null,
-        ?string $message = null,
-    ): void {
-        $this->eventDispatcher->dispatch(
-            new AffectationAnsweredEvent($affectation, $user, $status, $motifRefus, $message),
-            AffectationAnsweredEvent::NAME
-        );
     }
 }

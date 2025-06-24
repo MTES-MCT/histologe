@@ -2,6 +2,8 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\RefusAffectation;
+use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
@@ -15,6 +17,8 @@ use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Form\AddSuiviType;
 use App\Form\ClotureType;
+use App\Form\RefusAffectationType;
+use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
@@ -122,12 +126,32 @@ class SignalementController extends AbstractController
                                             && SignalementStatus::NEED_VALIDATION === $signalement->getStatut();
         $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
 
+        $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
+        $refusSignalementRoute = $this->generateUrl('back_signalement_validation_response_deny', ['uuid' => $signalement->getUuid()]);
+        $refusSignalementForm = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
+
+        $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
+        $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
+        $clotureForm = $this->createForm(ClotureType::class, $signalementAffectationClose, ['action' => $clotureFormRoute]);
+
         $newSuiviToAdd = (new Suivi())->setSignalement($signalement);
         $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
         $addSuiviForm = $this->createForm(AddSuiviType::class, $newSuiviToAdd, ['action' => $addSuiviRoute]);
 
+        $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
         $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
-        $clotureForm = $this->createForm(ClotureType::class, (new SignalementAffectationClose())->setSignalement($signalement), ['action' => $clotureFormRoute]);
+        $clotureForm = $this->createForm(ClotureType::class, $signalementAffectationClose, ['action' => $clotureFormRoute]);
+
+        $refusAffectationForm = null;
+        if ($canAnswerAffectation) {
+            $refusAffectation = (new RefusAffectation())->setSignalement($signalement);
+            $refusAffectationFormRoute = $this->generateUrl('back_signalement_affectation_response_deny', [
+                'signalement' => $signalement->getId(),
+                'affectation' => $affectation->getId(),
+                'user' => $user->getId(),
+            ]);
+            $refusAffectationForm = $this->createForm(RefusAffectationType::class, $refusAffectation, ['action' => $refusAffectationFormRoute]);
+        }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
@@ -213,6 +237,8 @@ class SignalementController extends AbstractController
             'partners' => $partners,
             'clotureForm' => $clotureForm,
             'addSuiviForm' => $addSuiviForm,
+            'refusAffectationForm' => $refusAffectationForm,
+            'refusSignalementForm' => $refusSignalementForm,
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
@@ -249,6 +275,7 @@ class SignalementController extends AbstractController
         if (!$this->isGranted('SIGN_CLOSE', $signalement) && (!$affectation || !$this->isGranted('AFFECTATION_CLOSE', $affectation))) {
             return $this->json(['code' => Response::HTTP_FORBIDDEN, 'message' => 'Vous n\'êtes pas autorisé à fermer ce signalement ou cette affectation.'], Response::HTTP_FORBIDDEN);
         }
+
         $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
         $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(ClotureType::class, $signalementAffectationClose, ['action' => $clotureFormRoute]);

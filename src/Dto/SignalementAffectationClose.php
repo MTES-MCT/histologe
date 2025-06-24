@@ -3,6 +3,7 @@
 namespace App\Dto;
 
 use App\Entity\Enum\MotifCloture;
+use App\Entity\File;
 use App\Entity\Signalement;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -20,6 +21,7 @@ class SignalementAffectationClose
     #[Assert\Length(min: 10, minMessage: 'Le contenu doit contenir au moins {{ limit }} caractères.')]
     private ?string $description = null;
 
+    /** @var array<File> */
     private array $files = [];
 
     private bool $isPublic = true;
@@ -74,11 +76,15 @@ class SignalementAffectationClose
         return $this;
     }
 
+    /** @return array<File> */
     public function getFiles(): array
     {
         return $this->files;
     }
 
+    /**
+     * @param array<File> $files
+     */
     public function setFiles(array $files): self
     {
         $this->files = $files;

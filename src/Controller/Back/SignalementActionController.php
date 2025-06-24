@@ -2,8 +2,8 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\RefusSignalement;
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
@@ -11,6 +11,7 @@ use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Form\AddSuiviType;
+use App\Form\RefusSignalementType;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
@@ -38,48 +39,70 @@ class SignalementActionController extends AbstractController
         SuiviManager $suiviManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))
-                && $response = $request->get('signalement-validation-response')) {
-            if (isset($response['accept'])) {
-                $suiviContext = Suivi::CONTEXT_SIGNALEMENT_ACCEPTED;
-                $statut = SignalementStatus::ACTIVE;
-                $description = Suivi::DESCRIPTION_SIGNALEMENT_VALIDE;
-                $signalement->setValidatedAt(new \DateTimeImmutable());
-                $suiviCategory = SuiviCategory::SIGNALEMENT_IS_ACTIVE;
-            } else {
-                $suiviContext = Suivi::CONTEXT_SIGNALEMENT_REFUSED;
-                $statut = SignalementStatus::REFUSED;
-                $motifRefus = MotifRefus::tryFrom($response['motifRefus']);
-                if (!$motifRefus || mb_strlen($response['suivi']) < 10) {
-                    $this->addFlash('error', 'Champs incorrects ou manquants !');
-
-                    return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-                }
-                $signalement->setMotifRefus($motifRefus);
-                $description = 'Signalement cloturé car non-valide avec le motif suivant : '.$motifRefus->label().'<br>Plus précisément :<br>'.$response['suivi'];
-                $suiviCategory = SuiviCategory::SIGNALEMENT_IS_REFUSED;
-            }
+        if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))) {
+            $signalement->setValidatedAt(new \DateTimeImmutable());
             /** @var User $user */
             $user = $this->getUser();
-            $signalement->setStatut($statut);
-
+            $signalement->setStatut(SignalementStatus::ACTIVE);
             $suiviManager->createSuivi(
                 user : $user,
                 signalement: $signalement,
-                description: $description,
+                description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
                 type : Suivi::TYPE_AUTO,
-                category: $suiviCategory,
+                category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 isPublic: true,
-                sendMail: true,
-                context: $suiviContext,
+                context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             );
-
             $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
         } else {
             $this->addFlash('error', 'Une erreur est survenue...');
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid:signalement}/validation/response-deny', name: 'back_signalement_validation_response_deny', methods: 'POST')]
+    public function validationResponseDenySignalement(
+        Signalement $signalement,
+        Request $request,
+        SuiviManager $suiviManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
+        $refusSignalementRoute = $this->generateUrl('back_signalement_validation_response_deny', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+        if ($form->isSubmitted()) {
+            $signalement->setMotifRefus($refusSignalement->getMotifRefus());
+            $description = 'Signalement cloturé car non-valide avec le motif suivant : '.$refusSignalement->getMotifRefus()->label().'<br>Plus précisément :<br>'.$refusSignalement->getDescription();
+
+            /** @var User $user */
+            $user = $this->getUser();
+            $signalement->setStatut(SignalementStatus::REFUSED);
+
+            $suiviManager->createSuivi(
+                user : $user,
+                signalement: $signalement,
+                description: $description,
+                type : Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
+                isPublic: true,
+                context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
+                files: $refusSignalement->getFiles(),
+            );
+
+            $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+
+        return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
     }
 
     #[Route('/{uuid:signalement}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
