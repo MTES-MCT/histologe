@@ -6,6 +6,7 @@ use App\Command\Cron\SynchronizeObjectStorageCommand;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -17,128 +18,101 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SynchronizeObjectStorageCommandTest extends TestCase
 {
-    public function testCommandSucceedsWithMockedProcess(): void
-    {
-        $logger = $this->createMock(LoggerInterface::class);
-        $mailer = $this->createMock(NotificationMailerRegistry::class);
-        $params = $this->createMock(ParameterBagInterface::class);
+    private MockObject|LoggerInterface $logger;
+    private MockObject|NotificationMailerRegistry $mailer;
+    private MockObject|ParameterBagInterface $params;
 
-        $params->method('get')->willReturnMap([
+    protected function setUp(): void
+    {
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->mailer = $this->createMock(NotificationMailerRegistry::class);
+        $this->params = $this->createMock(ParameterBagInterface::class);
+
+        $this->params->method('get')->willReturnMap([
             ['maintenance_enable', false],
             ['cron_enable', true],
             ['admin_email', 'admin@example.com'],
         ]);
+    }
 
-        $logger->expects($this->once())->method('info');
-        $mailer->expects($this->once())->method('send')
-            ->with($this->callback(fn (NotificationMail $mail) => str_contains($mail->getMessage(), '✅')
-            ));
+    /**
+     * @dataProvider provideExecutionOutcome
+     */
+    public function testCommandExecution(
+        bool $shouldFail,
+        int $expectedExitCode,
+        string $expectedSnippet,
+        string $loggerMethod,
+    ): void {
+        $this->logger->expects($this->once())->method($loggerMethod);
 
-        $command = new class($logger, $params, $mailer) extends SynchronizeObjectStorageCommand {
+        $this->mailer->expects($this->once())->method('send')
+            ->with($this->callback(function (NotificationMail $mail) use ($expectedSnippet) {
+                return null !== $mail->getMessage()
+                    && str_contains($mail->getMessage(), mb_substr($expectedSnippet, 0, 2));
+            }));
+
+        $tester = new CommandTester($this->createStubCommand($shouldFail));
+        $exit = $tester->execute([]);
+
+        $this->assertSame($expectedExitCode, $exit);
+        $this->assertStringContainsString($expectedSnippet, $tester->getDisplay());
+    }
+
+    public static function provideExecutionOutcome(): \Generator
+    {
+        yield 'success' => [false, Command::SUCCESS, '✅ Synchronisation terminée avec succès.', 'info'];
+        yield 'failure' => [true,  Command::FAILURE, '❌ Échec de la synchronisation',           'error'];
+    }
+
+    private function createStubCommand(bool $shouldFail): Command
+    {
+        return new class($this->logger, $this->params, $this->mailer, $shouldFail) extends SynchronizeObjectStorageCommand {
             public function __construct(
-                private readonly LoggerInterface $loggerMock,
-                private readonly ParameterBagInterface $paramMock,
-                private readonly NotificationMailerRegistry $mailerMock,
+                private readonly LoggerInterface $logger,
+                private readonly ParameterBagInterface $params,
+                private readonly NotificationMailerRegistry $mailer,
+                private readonly bool $shouldFail,
             ) {
                 parent::__construct(
-                    logger: $loggerMock,
-                    parameterBag: $paramMock,
-                    notificationMailerRegistry: $mailerMock,
+                    logger: $logger,
+                    parameterBag: $params,
+                    notificationMailerRegistry: $mailer,
                     sourceBucketName: 'fake_source',
                     destinationBucketName: 'fake_dest'
                 );
             }
 
+            private function notify(string $message): void
+            {
+                $this->mailer->send(new NotificationMail(
+                    type: NotificationMailerType::TYPE_CRON,
+                    to: $this->params->get('admin_email'),
+                    message: $message,
+                    cronLabel: 'Synchronisation des buckets',
+                ));
+            }
+
             protected function execute(InputInterface $input, OutputInterface $output): int
             {
                 $io = new SymfonyStyle($input, $output);
-                $io->note('🚀 Synchronisation en cours...');
 
-                $io->write("Simulated rclone progress...\n");
-                $message = '✅ Synchronisation terminée avec succès.';
-                $this->loggerMock->info($message);
-                $io->success($message);
+                if ($this->shouldFail) {
+                    $msg = "❌ Échec de la synchronisation.\n\nSimulated error: connection timeout.";
+                    $this->logger->error($msg);
+                    $io->error($msg);
+                    $this->notify($msg);
 
-                $this->mailerMock->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_CRON,
-                        to: $this->paramMock->get('admin_email'),
-                        message: $message,
-                        cronLabel: 'Synchronisation des buckets',
-                    )
-                );
+                    return Command::FAILURE;
+                }
+
+                $msg = '✅ Synchronisation terminée avec succès.';
+                $this->logger->info($msg);
+                $io->success($msg);
+                $this->notify($msg);
 
                 return Command::SUCCESS;
             }
         };
-
-        $tester = new CommandTester($command);
-        $exitCode = $tester->execute([]);
-
-        $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('✅ Synchronisation terminée avec succès.', $tester->getDisplay());
-    }
-
-    public function testCommandFailsWithErrorMessage(): void
-    {
-        // Arrange
-        $logger = $this->createMock(LoggerInterface::class);
-        $mailer = $this->createMock(NotificationMailerRegistry::class);
-        $params = $this->createMock(ParameterBagInterface::class);
-
-        $params->method('get')->willReturnMap([
-            ['maintenance_enable', false],
-            ['cron_enable', true],
-            ['admin_email', 'admin@example.com'],
-        ]);
-
-        $logger->expects($this->once())->method('error')
-            ->with($this->callback(fn (string $msg) => str_contains($msg, '❌ Échec')));
-        $mailer->expects($this->once())->method('send')
-            ->with($this->callback(fn (NotificationMail $mail) => str_contains($mail->getMessage(), '❌')
-            ));
-
-        $command = new class($logger, $params, $mailer) extends SynchronizeObjectStorageCommand {
-            public function __construct(
-                private readonly LoggerInterface $loggerMock,
-                private readonly ParameterBagInterface $paramMock,
-                private readonly NotificationMailerRegistry $mailerMock,
-            ) {
-                parent::__construct(
-                    logger: $loggerMock,
-                    parameterBag: $paramMock,
-                    notificationMailerRegistry: $mailerMock,
-                    sourceBucketName: 'fake_source',
-                    destinationBucketName: 'fake_dest'
-                );
-            }
-
-            protected function execute(InputInterface $input, OutputInterface $output): int
-            {
-                $io = new SymfonyStyle($input, $output);
-                $io->note('🚀 Synchronisation en cours...');
-
-                $errorMessage = "❌ Échec de la synchronisation.\n\nSimulated error: connection timeout.";
-                $this->loggerMock->error($errorMessage);
-                $io->error($errorMessage);
-
-                $this->mailerMock->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_CRON,
-                        to: $this->paramMock->get('admin_email'),
-                        message: $errorMessage,
-                        cronLabel: 'Synchronisation des buckets',
-                    )
-                );
-
-                return Command::FAILURE;
-            }
-        };
-
-        $tester = new CommandTester($command);
-        $exitCode = $tester->execute([]);
-
-        $this->assertSame(Command::FAILURE, $exitCode);
-        $this->assertStringContainsString('❌ Échec de la synchronisation', $tester->getDisplay());
     }
 }
