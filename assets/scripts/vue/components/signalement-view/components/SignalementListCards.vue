@@ -162,16 +162,16 @@ export default defineComponent({
     getBadgeStyleAffectation (affectation: any): string {
       let className = 'fr-badge'
       switch (affectation.statut) {
-        case 0:
+        case 'NOUVEAU':
           className += ' fr-badge--info'
           break
-        case 1:
+        case 'EN_COURS':
           className += ' fr-badge--success'
           break
-        case 2:
+        case 'REFUSE':
           className += ' fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line'
           break
-        case 3:
+        case 'FERME':
           className += ' fr-badge--error'
           break
       }
