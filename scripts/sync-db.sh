@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# Diagnostic : log d'environnement, date, utilisateur, répertoire courant, PID
+LOGFILE="/tmp/sync-db-$(date +%Y%m%d-%H%M%S)-$$.log"
+{
+  echo "==== Début exécution sync-db.sh ===="
+  echo "Date : $(date)"
+  echo "Utilisateur : $(whoami)"
+  echo "PID : $$"
+  echo "Répertoire courant : $(pwd)"
+  echo "Variables d'environnement :"
+  env
+  echo "==== Fin diagnostic initial ===="
+} >> "$LOGFILE" 2>&1
+
+# Redirige toute la sortie du script vers le log (stdout+stderr)
+exec >> "$LOGFILE" 2>&1
+set -x
+
 if [ "${APP}" = "histologe" ]; then
     echo "This script cannot run in production."
     exit 1
