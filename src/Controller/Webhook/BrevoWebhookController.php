@@ -4,17 +4,23 @@ namespace App\Controller\Webhook;
 
 use Sentry\Severity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BrevoWebhookController extends AbstractController
 {
-    // Plages d'IP autorisées pour Brevo
-    private const ALLOWED_IPS = [
-        '1.179.112.0/20',
-        '172.18.0.1/32', // temporaire pour localhost
-    ];
+    /**
+     * @var string[]
+     */
+    private array $allowedIps;
+
+    public function __construct(
+        #[Autowire(env: 'BREVO_ALLOWED_IPS')] string $allowedIps,
+    ) {
+        $this->allowedIps = array_filter(array_map('trim', explode(',', $allowedIps)));
+    }
 
     #[Route('/webhook/brevo', name: 'webhook_brevo', methods: ['POST'])]
     public function handle(Request $request): Response
@@ -53,7 +59,7 @@ class BrevoWebhookController extends AbstractController
         if (null === $ip) {
             return false;
         }
-        foreach (self::ALLOWED_IPS as $cidr) {
+        foreach ($this->allowedIps as $cidr) {
             if ($this->ipInRange($ip, $cidr)) {
                 return true;
             }
@@ -62,7 +68,6 @@ class BrevoWebhookController extends AbstractController
         return false;
     }
 
-    // Vérifie si une IP est dans une plage CIDR
     private function ipInRange(string $ip, string $cidr): bool
     {
         [$subnet, $mask] = explode('/', $cidr);
