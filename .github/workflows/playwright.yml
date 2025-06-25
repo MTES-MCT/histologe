@@ -168,3 +168,8 @@ jobs:
           ls -l /data
           ls -l /data/public
           ls -l /data/public/build
+
+      - name: Find build output in container
+        if: ${{ always() }}
+        run: |
+          docker compose exec -T signal_logement_phpfpm find / -type d \( -name 'build' -o -name 'dist' \) 2>/dev/null
