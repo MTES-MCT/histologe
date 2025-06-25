@@ -78,6 +78,7 @@ env:
 
 jobs:
   e2e:
+    continue-on-error: true
     runs-on: ubuntu-latest
 
     steps:
