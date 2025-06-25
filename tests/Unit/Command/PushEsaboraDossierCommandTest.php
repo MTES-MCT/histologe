@@ -96,7 +96,6 @@ class PushEsaboraDossierCommandTest extends TestCase
             ->method('findAffectationSubscribedToEsabora')
             ->with(
                 $this->equalTo(PartnerType::ARS),
-                null,
                 $this->equalTo('00000000-0000-0000-2023-000000000010')
             )
             ->willReturn($affectations);
@@ -121,6 +120,45 @@ class PushEsaboraDossierCommandTest extends TestCase
         $commandTester->execute([
             'service_type' => 'sish',
             '--uuid' => '00000000-0000-0000-2023-000000000010',
+        ]);
+    }
+
+    public function testExecuteWithUuidOptionAndSynchronized(): void
+    {
+        $affectation = $this->getAffectation(PartnerType::ARS);
+        $affectations = [
+            ['affectation' => $affectation, 'signalement_uuid' => $affectation->getUuid()],
+        ];
+
+        $this->affectationRepository
+            ->expects($this->once())
+            ->method('findAffectationSubscribedToEsabora')
+            ->with(
+                $this->equalTo(PartnerType::ARS),
+                $this->equalTo('00000000-0000-0000-2023-000000000012')
+            )
+            ->willReturn($affectations);
+
+        $this->affectationRepository
+            ->expects($this->atMost(2))
+            ->method('save');
+
+        $this->esaboraBus
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo($affectation));
+
+        $command = new PushEsaboraDossierCommand(
+            $this->affectationRepository,
+            $this->territoryRepository,
+            $this->esaboraBus,
+            self::ENV
+        );
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'service_type' => 'sish',
+            '--uuid' => '00000000-0000-0000-2023-000000000012',
         ]);
     }
 }

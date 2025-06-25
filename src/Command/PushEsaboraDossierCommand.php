@@ -59,7 +59,6 @@ class PushEsaboraDossierCommand extends Command
         if ($uuid) {
             $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
                 partnerType: 'sish' === $serviceType ? PartnerType::ARS : PartnerType::COMMUNE_SCHS,
-                isSynchronized: null,
                 uuidSignalement: $uuid
             );
         } elseif ($zip) {
