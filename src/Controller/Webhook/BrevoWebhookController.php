@@ -2,6 +2,7 @@
 
 namespace App\Controller\Webhook;
 
+use Sentry\Severity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,22 +33,20 @@ class BrevoWebhookController extends AbstractController
         }
         $event = $data['event'];
 
-        // Incrémentation du compteur pour cet événement
-        $counter = $this->incrementEventCounter($event);
+        \Sentry\configureScope(function (\Sentry\State\Scope $scope) use ($data) {
+            $scope->setExtra('brevo_payload', $data);
+        });
 
-        // On ne traite que les "blocked" pour l'instant
         if ($event === 'blocked') {
-            $message = sprintf(
-                '[BREVO][%s] %d occurrence(s)\nEmail: %s\nSubject: %s\nDate: %s\nMessage-ID: %s',
-                $event,
-                $counter,
-                $data['email'] ?? '-',
-                $data['subject'] ?? '-',
-                $data['date'] ?? '-',
-                $data['message-id'] ?? '-'
-            );
-            \Sentry\captureMessage($message);
+            $titleIssue = '[BREVO] Email bloqué';
+            $severity = new Severity(Severity::FATAL);
         }
+        if ($event === 'hard_bounce') {
+            $titleIssue = '[BREVO] Email en hard_bounce';
+            $severity = new Severity(Severity::ERROR);
+        }
+        \Sentry\captureMessage($titleIssue, $severity);
+
 
         return new Response('OK', 200);
     }
@@ -70,16 +69,5 @@ class BrevoWebhookController extends AbstractController
     {
         [$subnet, $mask] = explode('/', $cidr);
         return (ip2long($ip) & ~((1 << (32 - $mask)) - 1)) === ip2long($subnet);
-    }
-
-    // Incrémente et retourne le compteur pour un type d'événement
-    private function incrementEventCounter(string $event): int
-    {
-        if (!isset(self::$eventCounters[$event])) {
-            self::$eventCounters[$event] = 1;
-        } else {
-            self::$eventCounters[$event]++;
-        }
-        return self::$eventCounters[$event];
     }
 } 
