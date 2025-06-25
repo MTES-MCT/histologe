@@ -29,24 +29,35 @@
 
         {% if results is defined and results|length > 0 %}
             <h2>Résultats</h2>
-            <table class="fr-table">
-                <thead>
-                    <tr>
-                        <th>BAN ID</th>
-                        <th>Identifiant fiscal</th>
-                        <th>Données locales</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in results %}
-                        <tr>
-                            <td>{{ row.ban_id }}</td>
-                            <td>{{ row.identifiant_fiscal }}</td>
-                            <td><pre style="white-space: pre-wrap;">{{ row.local_data }}</pre></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="fr-table fr-table--lg fr-table--bordered">
+                <div class="fr-table__wrapper">
+                    <div class="fr-table__container">
+                        <div class="fr-table__content">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">BAN ID</th>
+                                        <th scope="col">Identifiant fiscal</th>
+                                        <th scope="col">Données locales</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in results %}
+                                        <tr>
+                                            <td class="fr-cell--top">{{ row.ban_id }}</td>
+                                            <td class="fr-cell--top">{{ row.identifiant_fiscal }}</td>
+                                            <td><pre style="white-space: pre-wrap;">{{ row.local_data }}</pre></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        {% else %}
+            <img alt="BOOH!" src="{{ asset('img/easter/casper.png') }}">
         {% endif %}
     </section>
 {% endblock %} 
