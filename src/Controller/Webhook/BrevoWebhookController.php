@@ -27,31 +27,30 @@ class BrevoWebhookController extends AbstractController
     {
         $clientIp = $request->getClientIp();
         if (!$this->isAllowedIp($clientIp)) {
-            return new Response('Forbidden', 403);
+            return new Response('Forbidden', Response::HTTP_FORBIDDEN);
         }
 
-        $data = json_decode($request->getContent(), true);
-        if (!isset($data['event'])) {
-            return new Response('Bad Request', 400);
+        $payload = json_decode($request->getContent(), true);
+        $event = $payload['event'] ?? null;
+        if (!$event) {
+            return new Response('Bad Request', Response::HTTP_BAD_REQUEST);
         }
-        $event = $data['event'];
 
-        \Sentry\configureScope(function (\Sentry\State\Scope $scope) use ($data) {
-            $scope->setExtra('brevo_payload', $data);
+        \Sentry\configureScope(function (\Sentry\State\Scope $scope) use ($payload) {
+            $scope->setExtra('brevo_payload', $payload);
         });
 
-        if ('blocked' === $event) {
-            $titleIssue = '[BREVO] Email bloqué';
-            $severity = new Severity(Severity::FATAL);
-            \Sentry\captureMessage($titleIssue, $severity);
-        }
-        if ('hard_bounce' === $event) {
-            $titleIssue = '[BREVO] Email en hard_bounce';
-            $severity = new Severity(Severity::ERROR);
-            \Sentry\captureMessage($titleIssue, $severity);
+        $severity = match ($event) {
+            'blocked' => new Severity(Severity::FATAL),
+            'hard_bounce' => new Severity(Severity::ERROR),
+            default => null,
+        };
+
+        if ($severity) {
+            \Sentry\captureMessage("[BREVO] Email: {$event}", $severity);
         }
 
-        return new Response('OK', 200);
+        return new Response('OK', Response::HTTP_OK);
     }
 
     private function isAllowedIp(?string $ip): bool
