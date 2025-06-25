@@ -28,6 +28,7 @@ scalingo login --api-token "${DUPLICATE_API_TOKEN}"
 echo ">>> Retrieve the addon id"
 addon_id="$( scalingo --app "${DUPLICATE_SOURCE_APP}" addons \
              | grep "${DUPLICATE_ADDON_KIND}" \
+             | sed 's/│/|/g' \
              | cut -d "|" -f 3 \
              | tr -d " " )"
 
