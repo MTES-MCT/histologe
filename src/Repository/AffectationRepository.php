@@ -312,4 +312,25 @@ class AffectationRepository extends ServiceEntityRepository
 
         $qb->getQuery()->execute();
     }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function findAffectationSubscribedToIdoss(
+        string $uuidSignalement,
+    ): array {
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('a AS affectation', 's.uuid AS signalement_uuid');
+        $qb = $qb
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('a.signalement', 's')
+            ->where('p.isIdossActive = 1')
+            ->andWhere('p.idossUrl IS NOT NULL')
+            ->andWhere('s.statut NOT IN (:signalement_status_list)')
+            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
+            ->andWhere('s.uuid LIKE :uuid_signalement')
+            ->setParameter('uuid_signalement', $uuidSignalement);
+
+        return $qb->getQuery()->getResult();
+    }
 }
