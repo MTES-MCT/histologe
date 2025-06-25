@@ -129,18 +129,31 @@ class WidgetDataManagerCache implements WidgetDataManagerInterface
     }
 
     /**
+     * @param array<int, mixed> $territories
+     *
      * @throws InvalidArgumentException
      */
-    public function invalidateCacheForUser(): void
+    public function invalidateCacheForUser(array $territories): void
     {
         /** @var User $user */
         $user = $this->security->getUser();
+        $territoriesKey = implode('-', array_keys($territories));
         $key = 'countDataKpi'
-            .'-'.$this->commonKey
+            .'-'.$this->commonKey.$territoriesKey
             .'-id-'.$user->getId();
 
         try {
             $this->dashboardCache->delete($key);
+
+            // Si plusieurs territoires, supprimer aussi le cache pour chaque territoire individuellement
+            if (count($territories) > 1) {
+                foreach (array_keys($territories) as $territoryKey) {
+                    $singleKey = 'countDataKpi'
+                        .'-'.$this->commonKey.$territoryKey
+                        .'-id-'.$user->getId();
+                    $this->dashboardCache->delete($singleKey);
+                }
+            }
         } catch (InvalidArgumentException $exception) {
             $this->logger->error(\sprintf('Invalidate cache failed %s', $exception->getMessage()));
         }
