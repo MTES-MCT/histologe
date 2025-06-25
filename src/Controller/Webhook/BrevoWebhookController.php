@@ -13,11 +13,8 @@ class BrevoWebhookController extends AbstractController
     // Plages d'IP autorisées pour Brevo
     private const ALLOWED_IPS = [
         '1.179.112.0/20',
-        '172.18.0.1/32' // temporaire pour localhost
+        '172.18.0.1/32', // temporaire pour localhost
     ];
-
-    // Compteur d'événements par type (stocké en mémoire, à remplacer par Redis/Memcached si besoin)
-    private static array $eventCounters = [];
 
     #[Route('/webhook/brevo', name: 'webhook_brevo', methods: ['POST'])]
     public function handle(Request $request): Response
@@ -37,23 +34,23 @@ class BrevoWebhookController extends AbstractController
             $scope->setExtra('brevo_payload', $data);
         });
 
-        if ($event === 'blocked') {
+        if ('blocked' === $event) {
             $titleIssue = '[BREVO] Email bloqué';
             $severity = new Severity(Severity::FATAL);
+            \Sentry\captureMessage($titleIssue, $severity);
         }
-        if ($event === 'hard_bounce') {
+        if ('hard_bounce' === $event) {
             $titleIssue = '[BREVO] Email en hard_bounce';
             $severity = new Severity(Severity::ERROR);
+            \Sentry\captureMessage($titleIssue, $severity);
         }
-        \Sentry\captureMessage($titleIssue, $severity);
-
 
         return new Response('OK', 200);
     }
 
     private function isAllowedIp(?string $ip): bool
     {
-        if ($ip === null) {
+        if (null === $ip) {
             return false;
         }
         foreach (self::ALLOWED_IPS as $cidr) {
@@ -61,6 +58,7 @@ class BrevoWebhookController extends AbstractController
                 return true;
             }
         }
+
         return false;
     }
 
@@ -68,6 +66,8 @@ class BrevoWebhookController extends AbstractController
     private function ipInRange(string $ip, string $cidr): bool
     {
         [$subnet, $mask] = explode('/', $cidr);
+        $mask = (int) $mask;
+
         return (ip2long($ip) & ~((1 << (32 - $mask)) - 1)) === ip2long($subnet);
     }
-} 
+}
