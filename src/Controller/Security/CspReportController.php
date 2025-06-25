@@ -17,10 +17,10 @@ class CspReportController
     #[Route('/csp-report', name: 'csp_report', methods: ['POST'])]
     public function report(Request $request): Response
     {
-        $content = json_decode($request->getContent(), true);
+        $payload = json_decode($request->getContent(), true);
 
-        if (isset($content['csp-report'])) {
-            $report = $content['csp-report'];
+        if (isset($payload['csp-report'])) {
+            $report = $payload['csp-report'];
 
             $logMessage = sprintf(
                 'CSP Violation: blocked-uri=%s, violated-directive=%s, document-uri=%s',
