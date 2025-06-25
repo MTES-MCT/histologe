@@ -157,7 +157,9 @@ jobs:
         run: npx playwright test
 
       - name: List build output
+        if: ${{ always() }}
         run: docker compose exec -T signal_logement_phpfpm ls -l /public/build/
 
       - name: Check server logs
+        if: ${{ always() }}
         run: docker compose logs signal_logement_phpfpm
