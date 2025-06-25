@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Diagnostic : log d'environnement, date, utilisateur, répertoire courant, PID
+# Diagnostic : log d'environnement, date, utilisateur, répertoire courant, PID 
 LOGFILE="/tmp/sync-db-$(date +%Y%m%d-%H%M%S)-$$.log"
 {
   echo "==== Début exécution sync-db.sh ===="
