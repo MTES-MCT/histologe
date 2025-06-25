@@ -45,7 +45,7 @@ class SynchronizeObjectStorageCommand extends AbstractCronCommand
 
         $io->note('🚀 Synchronisation en cours...');
 
-        $process->run(function ($type, $buffer) use ($io) {
+        $process->run(function (string $type, iterable|string $buffer) use ($io) {
             if (Process::ERR === $type) {
                 $io->error($buffer);
             } else {
