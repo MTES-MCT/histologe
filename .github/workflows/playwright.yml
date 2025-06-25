@@ -156,10 +156,13 @@ jobs:
         working-directory: tests/e2e
         run: npx playwright test
 
-      - name: List build output
-        if: ${{ always() }}
-        run: docker compose exec -T signal_logement_phpfpm ls -l /public/build/
-
       - name: Check server logs
         if: ${{ always() }}
         run: docker compose logs signal_logement_phpfpm
+
+      - name: Check build output inside container
+        if: ${{ always() }}
+        run: |
+          docker compose exec signal_logement_phpfpm bash
+          ls -l /
+          ls -l /public
