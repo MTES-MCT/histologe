@@ -155,3 +155,9 @@ jobs:
       - name: Run Playwright tests
         working-directory: tests/e2e
         run: npx playwright test
+
+      - name: List build output
+        run: docker compose exec -T signal_logement_phpfpm ls -l /public/build/
+
+      - name: Check server logs
+        run: docker compose logs signal_logement_phpfpm
