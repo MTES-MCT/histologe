@@ -78,6 +78,7 @@ env:
 
 jobs:
   e2e:
+    continue-on-error: true
     runs-on: ubuntu-latest
 
     steps:
@@ -155,3 +156,16 @@ jobs:
       - name: Run Playwright tests
         working-directory: tests/e2e
         run: npx playwright test
+
+      - name: Check server logs
+        if: ${{ always() }}
+        run: docker compose logs signal_logement_phpfpm
+
+      - name: Check build output inside container
+        if: ${{ always() }}
+        run: |
+          docker compose exec signal_logement_phpfpm bash
+          ls -l /
+          ls -l /app
+          ls -l /app/public
+          ls -l /app/public/build

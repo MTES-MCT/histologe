@@ -201,6 +201,9 @@ test-coverage: ## Generate phpunit coverage report in html
 test-e2e: ## Run E2E tests
 	@cd tests/e2e/ ; $(NPX) playwright test
 
+test-e2e-ui: ## Run E2E tests
+	@cd tests/e2e/ ; $(NPX) playwright test --ui
+
 open-test-e2e: ## Open Playwright
 	@$(NPX) playwright open
 
