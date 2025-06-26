@@ -2,14 +2,14 @@ affectations:
   -
     signalement: 2022-1
     partner: "partenaire-13-01@signal-logement.fr"
-    statut: 0
+    statut: "NOUVEAU"
     answered_by: "admin-03@signal-logement.fr"
     affected_by: "admin-03@signal-logement.fr"
     territory: "Bouches-du-Rhône"
   -
     signalement: 2022-2
     partner: "partenaire-01-01@signal-logement.fr"
-    statut: 3
+    statut: "FERME"
     answered_by: "admin-territoire-01-01@signal-logement.fr"
     affected_by: "admin-territoire-01-01@signal-logement.fr"
     motif_cloture: "DEPART_OCCUPANT"
@@ -17,7 +17,7 @@ affectations:
   -
     signalement: 2022-3
     partner: "partenaire-13-01@signal-logement.fr"
-    statut: 3
+    statut: "FERME"
     answered_by: "admin-territoire-13-01@signal-logement.fr"
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: "DEPART_OCCUPANT"
@@ -25,14 +25,14 @@ affectations:
   -
     signalement: 2022-6
     partner: "partenaire-13-01@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: "admin-territoire-13-01@signal-logement.fr"
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     territory: "Bouches-du-Rhône"
   -
     signalement: 2022-12
     partner: "partenaire-01-03@signal-logement.fr"
-    statut: 3
+    statut: "FERME"
     answered_by: ""
     affected_by: "admin-territoire-01-01@signal-logement.fr"
     motif_cloture: ""
@@ -40,7 +40,7 @@ affectations:
   -
     signalement: 2022-13
     partner: "partenaire-01-03@signal-logement.fr"
-    statut: 3
+    statut: "FERME"
     answered_by: ""
     affected_by: "admin-territoire-01-01@signal-logement.fr"
     motif_cloture: ""
@@ -48,7 +48,7 @@ affectations:
   -
     signalement: 2022-10
     partner: "partenaire-13-02@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-01-01@signal-logement.fr"
     motif_cloture: ""
@@ -56,7 +56,7 @@ affectations:
   -
     signalement: 2022-10
     partner: "partenaire-13-03@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -64,7 +64,7 @@ affectations:
   -
     signalement: 2022-10
     partner: "partenaire-13-04@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -72,7 +72,7 @@ affectations:
   -
     signalement: 2022-8
     partner: "partenaire-13-02@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -80,7 +80,7 @@ affectations:
   -
     signalement: 2022-8
     partner: "partenaire-13-03@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -88,7 +88,7 @@ affectations:
   -
     signalement: 2022-8
     partner: "partenaire-13-04@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -96,7 +96,7 @@ affectations:
   -
     signalement: 2023-6
     partner: "partenaire-13-02@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -104,7 +104,7 @@ affectations:
   -
     signalement: 2023-6
     partner: "partenaire-13-03@signal-logement.fr"
-    statut: 3
+    statut: "FERME"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -112,7 +112,7 @@ affectations:
   -
     signalement: 2023-9
     partner: "partenaire-13-05@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -120,7 +120,7 @@ affectations:
   -
     signalement: 2023-10
     partner: "partenaire-13-06@signal-logement.fr"
-    statut: 0
+    statut: "NOUVEAU"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -128,7 +128,7 @@ affectations:
   -
     signalement: 2023-12
     partner: "partenaire-13-06@signal-logement.fr"
-    statut: 0
+    statut: "NOUVEAU"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -137,7 +137,7 @@ affectations:
   -
     signalement: 2023-12
     partner: "partenaire-13-05@signal-logement.fr"
-    statut: 0
+    statut: "NOUVEAU"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -146,14 +146,14 @@ affectations:
   -
     signalement: 2023-3
     partner: "partenaire-05-69@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: "admin-03@signal-logement.fr"
     affected_by: "admin-03@signal-logement.fr"
     territory: "Rhône"
   -
     signalement: 2023-22
     partner: "partenaire-38-01@signal-logement.fr"
-    statut: 2
+    statut: "REFUSE"
     answered_by: "user-38-01@signal-logement.fr"
     affected_by: "user-38-01@signal-logement.fr"
     motif_cloture: ""
@@ -162,7 +162,7 @@ affectations:
   -
     signalement: 2023-23
     partner: "partenaire-38-01@signal-logement.fr"
-    statut: 3
+    statut: "FERME"
     answered_by: "user-38-01@signal-logement.fr"
     affected_by: "user-38-01@signal-logement.fr"
     motif_cloture: ""
@@ -170,7 +170,7 @@ affectations:
   - 
     signalement: 2023-26
     partner: "partenaire-13-01@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: "admin-03@signal-logement.fr"
     affected_by: "admin-03@signal-logement.fr"
     territory: "Bouches-du-Rhône"
@@ -178,14 +178,14 @@ affectations:
   -
     signalement: 2024-01
     partner: "partenaire-62-01@signal-logement.fr"
-    statut: 0
+    statut: "NOUVEAU"
     answered_by: "admin-01@signal-logement.fr"
     affected_by: "admin-01@signal-logement.fr"
     territory: "Pas-de-Calais"
   -
     signalement: 2023-20
     partner: "partenaire-13-01@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: "admin-01@signal-logement.fr"
     affected_by: "admin-01@signal-logement.fr"
     territory: "Bouches-du-Rhône"
@@ -193,7 +193,7 @@ affectations:
   -
     signalement: 2024-04
     partner: "partenaire-13-05@signal-logement.fr"
-    statut: 3
+    statut: "FERME"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -202,7 +202,7 @@ affectations:
   -
     signalement: 2024-04
     partner: "partenaire-13-06@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -211,7 +211,7 @@ affectations:
   -
     signalement: 2023-13
     partner: "partenaire-13-05@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -219,7 +219,7 @@ affectations:
   -
     signalement: 2023-14
     partner: "partenaire-13-05@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -227,7 +227,7 @@ affectations:
   -
     signalement: 2023-15
     partner: "partenaire-13-05@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -235,7 +235,7 @@ affectations:
   -
     signalement: 2024-12
     partner: "partenaire-30-01@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-01@signal-logement.fr"
     motif_cloture: ""
@@ -243,7 +243,7 @@ affectations:
   -
     signalement: 2024-10
     partner: "partenaire-13-06@signal-logement.fr"
-    statut: 1
+    statut: "EN_COURS"
     answered_by: ""
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
@@ -252,7 +252,7 @@ affectations:
   -
     signalement: 2024-12
     partner: "partenaire-30-02@signal-logement.fr"
-    statut: 0
+    statut: "NOUVEAU"
     answered_by: ""
     affected_by: "admin-01@signal-logement.fr"
     motif_cloture: ""
@@ -260,7 +260,7 @@ affectations:
   -
     signalement: 2024-08
     partner: "partenaire-34-04@signal-logement.fr"
-    statut: 0
+    statut: "NOUVEAU"
     answered_by: ""
     affected_by: "admin-01@signal-logement.fr"
     motif_cloture: ""
@@ -268,7 +268,7 @@ affectations:
   -
     signalement: 2023-13
     partner: "partenaire-13-01@signal-logement.fr"
-    statut: 3
+    statut: "FERME"
     answered_by: "api-01@signal-logement.fr"
     affected_by: "admin-03@signal-logement.fr"
     motif_cloture: "DEPART_OCCUPANT"
@@ -276,7 +276,7 @@ affectations:
   -
     signalement: 2025-07
     partner: "partenaire-30-02@signal-logement.fr"
-    statut: 0
+    statut: "NOUVEAU"
     answered_by: ""
     affected_by: "admin-01@signal-logement.fr"
     motif_cloture: ""

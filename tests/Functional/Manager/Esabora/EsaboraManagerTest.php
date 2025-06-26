@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Manager\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Factory\FileFactory;
@@ -76,7 +77,7 @@ class EsaboraManagerTest extends KernelTestCase
         string $referenceSignalement,
         string $filename,
         string $suiviDescription,
-        int $expectedAffectationStatus,
+        AffectationStatus $expectedAffectationStatus,
         int $suiviStatus,
         bool $mailSent,
     ): void {
@@ -139,7 +140,7 @@ class EsaboraManagerTest extends KernelTestCase
             '2022-8',
             'etat_a_traiter.json',
             'remis en attente',
-            Affectation::STATUS_WAIT,
+            AffectationStatus::WAIT,
             Suivi::TYPE_TECHNICAL,
             false, // suivi mail not sent cause suivi technical
         ];
@@ -148,7 +149,7 @@ class EsaboraManagerTest extends KernelTestCase
             '2022-1',
             'etat_importe.json',
             'accepté via Esabora',
-            Affectation::STATUS_ACCEPTED,
+            AffectationStatus::ACCEPTED,
             Suivi::TYPE_AUTO,
             true, // suivi mail sent
         ];
@@ -157,7 +158,7 @@ class EsaboraManagerTest extends KernelTestCase
             '2022-10',
             'etat_termine.json',
             'cloturé via Esabora',
-            Affectation::STATUS_CLOSED,
+            AffectationStatus::CLOSED,
             Suivi::TYPE_AUTO,
             true, // suivi mail sent
         ];
@@ -166,7 +167,7 @@ class EsaboraManagerTest extends KernelTestCase
             '2022-2',
             'etat_non_importe.json',
             'refusé via Esabora',
-            Affectation::STATUS_REFUSED,
+            AffectationStatus::REFUSED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
         ];
@@ -175,7 +176,7 @@ class EsaboraManagerTest extends KernelTestCase
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_rejete.json',
             'refusé via '.EsaboraSISHService::NAME_SI.' pour motif suivant:',
-            Affectation::STATUS_REFUSED,
+            AffectationStatus::REFUSED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
         ];
@@ -184,7 +185,7 @@ class EsaboraManagerTest extends KernelTestCase
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_importe.json',
             'accepté via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)',
-            Affectation::STATUS_ACCEPTED,
+            AffectationStatus::ACCEPTED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
         ];
@@ -195,7 +196,7 @@ class EsaboraManagerTest extends KernelTestCase
         $referenceSignalement = '2022-2';
         $filename = '../../sish/ws_etat_dossier_sas/etat_importe.json';
         $suiviDescription = 'accepté via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)';
-        $expectedAffectationStatus = Affectation::STATUS_ACCEPTED;
+        $expectedAffectationStatus = AffectationStatus::ACCEPTED;
         $suiviStatus = Suivi::TYPE_AUTO;
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([

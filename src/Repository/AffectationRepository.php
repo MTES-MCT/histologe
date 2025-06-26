@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
@@ -158,8 +159,8 @@ class AffectationRepository extends ServiceEntityRepository
             ->addSelect('t.zip', 'p.nom')
             ->innerJoin('a.territory', 't')
             ->innerJoin('a.partner', 'p')
-            ->setParameter('statut_wait', Affectation::STATUS_WAIT)
-            ->setParameter('statut_refused', Affectation::STATUS_REFUSED);
+            ->setParameter('statut_wait', AffectationStatus::WAIT)
+            ->setParameter('statut_refused', AffectationStatus::REFUSED);
 
         if (\count($territories)) {
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
@@ -180,7 +181,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->where('a.partner IN (:partners)')
             ->setParameter('partners', $user->getPartners())
             ->andWhere('a.statut = :statut_wait')
-            ->setParameter('statut_wait', Affectation::STATUS_WAIT);
+            ->setParameter('statut_wait', AffectationStatus::WAIT);
         if (\count($territories)) {
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
         }
@@ -206,10 +207,10 @@ class AffectationRepository extends ServiceEntityRepository
                 CountSignalement::class
             )
         )
-            ->setParameter('statut_wait', Affectation::STATUS_WAIT)
-            ->setParameter('statut_accepted', Affectation::STATUS_ACCEPTED)
-            ->setParameter('statut_closed', Affectation::STATUS_CLOSED)
-            ->setParameter('statut_refused', Affectation::STATUS_REFUSED)
+            ->setParameter('statut_wait', AffectationStatus::WAIT)
+            ->setParameter('statut_accepted', AffectationStatus::ACCEPTED)
+            ->setParameter('statut_closed', AffectationStatus::CLOSED)
+            ->setParameter('statut_refused', AffectationStatus::REFUSED)
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
             ->where('s.statut NOT IN (:statut_list)')
@@ -250,7 +251,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
             ->where('a.statut = :statusAffectation')
-            ->setParameter('statusAffectation', Affectation::STATUS_ACCEPTED)
+            ->setParameter('statusAffectation', AffectationStatus::ACCEPTED->value)
             ->andWhere('s.statut = :statusSignalement')
             ->setParameter('statusSignalement', SignalementStatus::ACTIVE->value)
             ->andWhere('p.competence LIKE :qualification')
@@ -261,7 +262,7 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function deleteByStatusAndSignalement(int $status, Signalement $signalement): void
+    public function deleteByStatusAndSignalement(AffectationStatus $status, Signalement $signalement): void
     {
         $qb = $this->createQueryBuilder('a');
         $qb->delete()
@@ -273,7 +274,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function updateStatusBySignalement(int $status, Signalement $signalement): void
+    public function updateStatusBySignalement(AffectationStatus $status, Signalement $signalement): void
     {
         $qb = $this->createQueryBuilder('a');
         $qb->update()
@@ -293,7 +294,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->set('a.answeredBy', ':answeredBy')
             ->set('a.motifCloture', ':motif')
             ->where('a.signalement = :signalement')
-            ->setParameter('status', Affectation::STATUS_CLOSED)
+            ->setParameter('status', AffectationStatus::CLOSED)
             ->setParameter('answeredBy', $user)
             ->setParameter('motif', $motif)
             ->setParameter('signalement', $signalement)
@@ -307,7 +308,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->delete()
             ->andWhere('a.statut IN (:statuses)')
             ->andWhere('a.partner = :partner')
-            ->setParameter('statuses', [Affectation::STATUS_ACCEPTED, Affectation::STATUS_WAIT])
+            ->setParameter('statuses', [AffectationStatus::ACCEPTED, AffectationStatus::WAIT])
             ->setParameter('partner', $partner);
 
         $qb->getQuery()->execute();

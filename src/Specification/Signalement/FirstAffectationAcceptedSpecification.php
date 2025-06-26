@@ -3,6 +3,7 @@
 namespace App\Specification\Signalement;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -24,7 +25,7 @@ readonly class FirstAffectationAcceptedSpecification
             '<p>Suite à votre signalement, le ou les partenaires compétents'
         );
         $affectationAccepted = $signalement->getAffectations()->filter(function (Affectation $affectation) {
-            return Affectation::STATUS_ACCEPTED === $affectation->getStatut();
+            return AffectationStatus::ACCEPTED === $affectation->getStatut();
         });
 
         $interventions = $signalement
@@ -57,7 +58,7 @@ readonly class FirstAffectationAcceptedSpecification
     ): bool {
         return !$signalement->getIsImported()
         && 1 === $affectationAccepted->count()
-        && Affectation::STATUS_ACCEPTED === $affectation->getStatut()
+        && AffectationStatus::ACCEPTED === $affectation->getStatut()
         && SignalementStatus::ACTIVE === $signalement->getStatut()
         && empty($suiviAffectationAccepted)
         && $interventions->isEmpty();

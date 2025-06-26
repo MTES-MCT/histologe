@@ -5,6 +5,7 @@ namespace App\Service\Import\Signalement;
 use App\Entity\Affectation;
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
@@ -225,7 +226,7 @@ class SignalementImportLoader
                             MotifCloture::tryFrom($dataMapped['motifCloture'])
                         );
                     } else {
-                        $affectation->setStatut(Affectation::STATUS_ACCEPTED);
+                        $affectation->setStatut(AffectationStatus::ACCEPTED);
                     }
                     $affectationCollection->add($affectation);
                 }

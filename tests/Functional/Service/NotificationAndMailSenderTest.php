@@ -154,8 +154,8 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $expectedAdress = [$respTerritoire->getEmail()];
         $expectedNotification = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory);
         foreach ($signalement->getAffectations() as $affectation) {
-            if (AffectationStatus::STATUS_WAIT->value === $affectation->getStatut()
-                    || AffectationStatus::STATUS_ACCEPTED->value === $affectation->getStatut()) {
+            if (AffectationStatus::WAIT === $affectation->getStatut()
+                    || AffectationStatus::ACCEPTED === $affectation->getStatut()) {
                 $partner = $affectation->getPartner();
 
                 if ($partnerEmail = $partner->getEmail()) {

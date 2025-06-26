@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Dto\Command\CommandContext;
-use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\HistoryEntry;
 use App\Entity\Signalement;
@@ -80,7 +80,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
-        $affectation = $this->affectationRepository->findOneBy(['statut' => Affectation::STATUS_WAIT]);
+        $affectation = $this->affectationRepository->findOneBy(['statut' => AffectationStatus::WAIT]);
 
         $historyEntry = $this->historyEntryManager->create(
             historyEntryEvent: HistoryEntryEvent::CREATE,
@@ -100,13 +100,13 @@ class HistoryEntryManagerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
-        $affectation = $this->affectationRepository->findOneBy(['statut' => Affectation::STATUS_WAIT]);
+        $affectation = $this->affectationRepository->findOneBy(['statut' => AffectationStatus::WAIT]);
 
-        $affectation->setStatut(Affectation::STATUS_ACCEPTED);
+        $affectation->setStatut(AffectationStatus::ACCEPTED);
         $changes = [];
         $changes['statut'] = [
-            'old' => Affectation::STATUS_WAIT,
-            'new' => Affectation::STATUS_ACCEPTED,
+            'old' => AffectationStatus::WAIT->value,
+            'new' => AffectationStatus::ACCEPTED->value,
         ];
 
         $historyEntry = $this->historyEntryManager->create(
@@ -117,7 +117,7 @@ class HistoryEntryManagerTest extends WebTestCase
 
         $this->assertInstanceOf(HistoryEntry::class, $historyEntry);
         $this->assertEquals(HistoryEntryEvent::UPDATE, $historyEntry->getEvent());
-        $this->assertEquals(Affectation::STATUS_ACCEPTED, $historyEntry->getChanges()['statut']['new']);
+        $this->assertEquals(AffectationStatus::ACCEPTED->value, $historyEntry->getChanges()['statut']['new']);
     }
 
     public function testDeleteAffectationHistoryEntry(): void
@@ -127,7 +127,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
-        $affectation = $this->affectationRepository->findOneBy(['statut' => Affectation::STATUS_WAIT]);
+        $affectation = $this->affectationRepository->findOneBy(['statut' => AffectationStatus::WAIT]);
 
         $historyEntry = $this->historyEntryManager->create(
             historyEntryEvent: HistoryEntryEvent::DELETE,
@@ -166,8 +166,8 @@ class HistoryEntryManagerTest extends WebTestCase
         $affectations = $signalement->getAffectations();
         $changes = [];
         $changes['statut'] = [];
-        $changes['statut']['new'] = Affectation::STATUS_ACCEPTED;
-        $changes['statut']['old'] = $affectations[0]->getStatut();
+        $changes['statut']['new'] = AffectationStatus::ACCEPTED->value;
+        $changes['statut']['old'] = $affectations[0]->getStatut()->value;
         $historyEntry = $this->historyEntryManager->create(HistoryEntryEvent::UPDATE, $affectations[0], $changes);
         $source = $this->historyEntryManager->getSource();
         $historyEntry->setSource($source);

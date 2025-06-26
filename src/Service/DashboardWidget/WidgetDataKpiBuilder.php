@@ -6,7 +6,7 @@ use App\Dto\CountPartner;
 use App\Dto\CountSignalement;
 use App\Dto\CountSuivi;
 use App\Dto\CountUser;
-use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -119,8 +119,8 @@ class WidgetDataKpiBuilder
                 Qualification::NON_DECENCE_ENERGETIQUE,
                 [QualificationStatus::NDE_AVEREE, QualificationStatus::NDE_CHECK]
             );
-            $newNDE = isset($countAffectationByStatus[Affectation::STATUS_WAIT]) ? $countAffectationByStatus[Affectation::STATUS_WAIT]['count'] : 0;
-            $currentNDE = isset($countAffectationByStatus[Affectation::STATUS_ACCEPTED]) ? $countAffectationByStatus[Affectation::STATUS_ACCEPTED]['count'] : 0;
+            $newNDE = isset($countAffectationByStatus[AffectationStatus::WAIT->value]) ? $countAffectationByStatus[AffectationStatus::WAIT->value]['count'] : 0;
+            $currentNDE = isset($countAffectationByStatus[AffectationStatus::ACCEPTED->value]) ? $countAffectationByStatus[AffectationStatus::ACCEPTED->value]['count'] : 0;
         }
 
         $this->countSignalement->setNewNDE($newNDE)->setCurrentNDE($currentNDE);

@@ -9,7 +9,6 @@ use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Response\SignalementResponse;
 use App\Entity\Affectation;
-use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\EtageType;
@@ -70,7 +69,7 @@ readonly class SignalementResponseFactory
 
         $signalementResponse->affectation = new AffectationModel();
         $signalementResponse->affectation->uuid = $affectation->getUuid();
-        $signalementResponse->affectation->statut = AffectationStatus::mapNewStatus($affectation->getStatut());
+        $signalementResponse->affectation->statut = $affectation->getStatut();
         $signalementResponse->affectation->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
         $signalementResponse->affectation->dateAcceptation = $affectation->getAnsweredAt()?->format(\DATE_ATOM);
         $signalementResponse->affectation->motifCloture = $affectation->getMotifCloture();

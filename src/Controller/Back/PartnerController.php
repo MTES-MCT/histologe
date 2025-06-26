@@ -2,7 +2,7 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Enum\Qualification;
@@ -188,8 +188,8 @@ class PartnerController extends AbstractController
                 $affectations = $partner->getAffectations();
                 foreach ($affectations as $affectation) {
                     if (
-                        Affectation::STATUS_ACCEPTED === $affectation->getStatut()
-                        || Affectation::STATUS_WAIT === $affectation->getStatut()
+                        AffectationStatus::ACCEPTED === $affectation->getStatut()
+                        || AffectationStatus::WAIT === $affectation->getStatut()
                     ) {
                         $partner->removeAffectation($affectation);
                     }

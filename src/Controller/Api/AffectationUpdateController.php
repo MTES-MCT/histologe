@@ -5,7 +5,7 @@ namespace App\Controller\Api;
 use App\Dto\Api\Request\AffectationRequest;
 use App\Dto\Api\Response\AffectationResponse;
 use App\Entity\Affectation;
-use App\Entity\Enum\AffectationNewStatus;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\User;
@@ -182,7 +182,7 @@ class AffectationUpdateController extends AbstractController
             throw new ValidationFailedException($affectationRequest, $errors);
         }
 
-        $affectation->setNextStatut(AffectationNewStatus::mapStatus($affectationRequest->statut));
+        $affectation->setNextStatut(AffectationStatus::tryFrom($affectationRequest->statut));
         $this->denyAccessUnlessGranted(AffectationVoter::UPDATE_STATUT, $affectation, SecurityApiExceptionListener::TRANSITION_STATUT_DENIED);
         $this->applyUsagerNotification($affectationRequest, $affectation);
 
@@ -197,7 +197,7 @@ class AffectationUpdateController extends AbstractController
         $user = $this->getUser();
 
         $statut = $affectation->getNextStatut();
-        if (Affectation::STATUS_CLOSED === $statut) {
+        if (AffectationStatus::CLOSED === $statut) {
             $motifCloture = MotifCloture::tryFrom($affectationRequest->motifCloture);
 
             return $this->affectationManager->closeAffectation(
@@ -209,7 +209,7 @@ class AffectationUpdateController extends AbstractController
             );
         }
         $motifRefus = $message = null;
-        if (Affectation::STATUS_REFUSED === $statut) {
+        if (AffectationStatus::REFUSED === $statut) {
             $motifRefus = MotifRefus::tryFrom($affectationRequest->motifRefus)->value;
             $message = $affectationRequest->message;
         }
@@ -219,8 +219,8 @@ class AffectationUpdateController extends AbstractController
 
     private function applyUsagerNotification(AffectationRequest $affectationRequest, Affectation $affectation): void
     {
-        if (Affectation::STATUS_CLOSED === $affectation->getStatut()
-            && Affectation::STATUS_WAIT === $affectation->getNextStatut()) {
+        if (AffectationStatus::CLOSED === $affectation->getStatut()
+            && AffectationStatus::WAIT === $affectation->getNextStatut()) {
             $affectation->setHasNotificationUsagerToCreate($affectationRequest->notifyUsager);
         }
     }

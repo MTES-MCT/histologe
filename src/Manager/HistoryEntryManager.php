@@ -5,6 +5,7 @@ namespace App\Manager;
 use App\Dto\Command\CommandContext;
 use App\Entity\Affectation;
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
@@ -258,20 +259,20 @@ class HistoryEntryManager extends AbstractManager
                 $description = $userName;
                 if (array_key_exists('statut', $changes)) {
                     switch ($changes['statut']['new']) {
-                        case Affectation::STATUS_ACCEPTED:
-                            if (Affectation::STATUS_WAIT === $changes['statut']['old']) {
+                        case AffectationStatus::ACCEPTED->value:
+                            if (AffectationStatus::WAIT->value === $changes['statut']['old']) {
                                 $description .= ' a accepté son affectation ';
                             } else {
                                 $description .= ' a réouvert son affectation ';
                             }
                             break;
-                        case Affectation::STATUS_REFUSED:
+                        case AffectationStatus::REFUSED->value:
                             $description .= ' a refusé son affectation ';
                             break;
-                        case Affectation::STATUS_CLOSED:
+                        case AffectationStatus::CLOSED->value:
                             $description .= ' a clôturé son affectation ';
                             break;
-                        case Affectation::STATUS_WAIT:
+                        case AffectationStatus::WAIT->value:
                             $description .= ' a remis en attente son affectation ';
                             break;
                         default:

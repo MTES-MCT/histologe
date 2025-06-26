@@ -138,7 +138,7 @@ class SearchFilter
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
                     ->select('DISTINCT s.id')
                     ->innerJoin('a.signalement', 's')
-                    ->where('a.statut = '.Affectation::STATUS_CLOSED);
+                    ->where('a.statut = '.AffectationStatus::CLOSED->value);
 
                 // les signalements n'ayant aucune affectation fermée :
                 $qb->andWhere('s.id NOT IN (:subquery)')
@@ -156,7 +156,7 @@ class SearchFilter
                     ->setParameter('statut_closed', SignalementStatus::CLOSED->value)
                     ->setParameter('status_draft', SignalementStatus::DRAFT->value)
                     ->setParameter('status_draft_archived', SignalementStatus::DRAFT_ARCHIVED->value)
-                    ->setParameter('statut_affectation_closed', Affectation::STATUS_CLOSED);
+                    ->setParameter('statut_affectation_closed', AffectationStatus::CLOSED->value);
 
                 if (!empty($filters['territories'])) {
                     $subqueryClosedAffectation->andWhere('a.territory IN (:territories)')
@@ -174,7 +174,7 @@ class SearchFilter
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
                     ->select('DISTINCT s.id')
                     ->leftJoin('a.signalement', 's')
-                    ->where('a.statut != '.Affectation::STATUS_CLOSED);
+                    ->where('a.statut != '.AffectationStatus::CLOSED->value);
 
                 // les signalements n'ayant aucune affectation non fermée ou qui sont fermés
                 $qb->andWhere(
@@ -207,7 +207,7 @@ class SearchFilter
                 $partners = ($user->isPartnerAdmin() || $user->isUserPartner()) ? new ArrayCollection($user->getPartners()->toArray()) : new ArrayCollection();
                 if (!$partners->isEmpty()) {
                     $parameters['partners'] = $partners;
-                    $parameters['status_accepted'] = AffectationStatus::STATUS_ACCEPTED->value;
+                    $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
                 }
                 $sql = $this->suiviRepository->getSignalementsLastSuivisTechnicalsQuery(
                     excludeUsagerAbandonProcedure: false,

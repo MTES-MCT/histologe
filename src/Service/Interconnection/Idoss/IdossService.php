@@ -2,7 +2,7 @@
 
 namespace App\Service\Interconnection\Idoss;
 
-use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\File;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
@@ -29,9 +29,9 @@ class IdossService
     public const STATUS_IN_PROGRESS = 'en_cours';
     public const STATUS_CLOSED = 'termine';
     public const MAPPING_STATUS = [
-        self::STATUS_ACCEPTED => Affectation::STATUS_ACCEPTED,
-        self::STATUS_IN_PROGRESS => Affectation::STATUS_ACCEPTED,
-        self::STATUS_CLOSED => Affectation::STATUS_CLOSED,
+        self::STATUS_ACCEPTED => AffectationStatus::ACCEPTED,
+        self::STATUS_IN_PROGRESS => AffectationStatus::ACCEPTED,
+        self::STATUS_CLOSED => AffectationStatus::CLOSED,
     ];
     public const ACTION_PUSH_DOSSIER = 'push_dossier';
     private const ACTION_UPLOAD_FILES = 'upload_files';

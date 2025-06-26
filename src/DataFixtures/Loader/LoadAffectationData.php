@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Event\AffectationCreatedEvent;
@@ -44,7 +45,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         $affectation = (new Affectation())
             ->setSignalement($this->signalementRepository->findOneBy(['reference' => $row['signalement']]))
             ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
-            ->setStatut($row['statut'])
+            ->setStatut(AffectationStatus::tryFrom($row['statut']))
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAffectedBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
@@ -53,12 +54,12 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
             ->setIsSynchronized($row['is_synchronized'] ?? false)
         ;
 
-        if (Affectation::STATUS_CLOSED === $row['statut'] && '' !== $row['motif_cloture']) {
+        if (AffectationStatus::CLOSED->value === $row['statut'] && '' !== $row['motif_cloture']) {
             $affectation
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']));
         }
 
-        if (Affectation::STATUS_REFUSED === $row['statut'] && '' !== $row['motif_refus']) {
+        if (AffectationStatus::REFUSED === $row['statut'] && '' !== $row['motif_refus']) {
             $affectation
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }

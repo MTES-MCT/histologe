@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\AffectationManager;
@@ -151,8 +152,8 @@ class AffectationController extends AbstractController
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))
             && $response = $request->get('signalement-affectation-response')
         ) {
-            $status = isset($response['accept']) ? Affectation::STATUS_ACCEPTED : Affectation::STATUS_REFUSED;
-            $motifRefus = (Affectation::STATUS_REFUSED === $status) ? $response['motifRefus'] : null;
+            $status = isset($response['accept']) ? AffectationStatus::ACCEPTED : AffectationStatus::REFUSED;
+            $motifRefus = (AffectationStatus::REFUSED === $status) ? $response['motifRefus'] : null;
             $message = $response['suivi'] ?? null;
             $this->affectationManager->updateAffectation($affectation, $user, $status, $motifRefus, $message);
             $this->addFlash('success', 'Affectation mise à jour avec succès !');

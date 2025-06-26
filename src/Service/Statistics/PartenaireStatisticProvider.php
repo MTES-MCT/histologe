@@ -3,7 +3,7 @@
 namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
-use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Repository\AffectationRepository;
 
 class PartenaireStatisticProvider
@@ -33,16 +33,16 @@ class PartenaireStatisticProvider
             }
             ++$data[$partnerName]['total'];
             switch ($countPerPartenaire['statut']) {
-                case Affectation::STATUS_ACCEPTED:
+                case AffectationStatus::ACCEPTED:
                     ++$data[$partnerName]['accepted'];
                     break;
-                case Affectation::STATUS_REFUSED:
+                case AffectationStatus::REFUSED:
                     ++$data[$partnerName]['refused'];
                     break;
-                case Affectation::STATUS_CLOSED:
+                case AffectationStatus::CLOSED:
                     ++$data[$partnerName]['closed'];
                     break;
-                case Affectation::STATUS_WAIT:
+                case AffectationStatus::WAIT:
                 default:
                     ++$data[$partnerName]['wait'];
                     break;

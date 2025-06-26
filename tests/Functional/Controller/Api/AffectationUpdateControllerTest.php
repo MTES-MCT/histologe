@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\AffectationStatus;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Tests\ApiHelper;
@@ -50,7 +49,7 @@ class AffectationUpdateControllerTest extends WebTestCase
 
         $this->patchAffectation($affectation->getUuid(), $payload);
         $this->assertResponseIsSuccessful();
-        $this->assertEquals($statut, AffectationStatus::mapNewStatus($affectation->getStatut())->value);
+        $this->assertEquals($statut, $affectation->getStatut()->value);
         $this->assertEmailCount($mailSent);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
