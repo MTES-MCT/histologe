@@ -3,6 +3,7 @@
 namespace App\Controller\Webhook;
 
 use Sentry\Severity;
+use Sentry\State\Scope;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,8 @@ class BrevoWebhookController extends AbstractController
             return new Response('Bad Request', Response::HTTP_BAD_REQUEST);
         }
 
-        \Sentry\configureScope(function (\Sentry\State\Scope $scope) use ($payload) {
+        \Sentry\configureScope(function (Scope $scope) use ($payload): void {
+            $scope->setTag('email_recipient', $payload['email']);
             $scope->setExtra('brevo_payload', $payload);
         });
 
