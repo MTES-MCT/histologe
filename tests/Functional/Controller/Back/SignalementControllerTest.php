@@ -211,9 +211,9 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour tous les partenaires',
             [
-                'cloture[motif]' => 'INSALUBRITE',
-                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[publicSuivi]' => '0',
+                'cloture[motifCloture]' => 'INSALUBRITE',
+                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[isPublic]' => '0',
                 'cloture[type]' => 'all',
             ]
         );
@@ -252,9 +252,9 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour tous les partenaires',
             [
-                'cloture[motif]' => 'INSALUBRITE',
-                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[publicSuivi]' => '1',
+                'cloture[motifCloture]' => 'INSALUBRITE',
+                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[isPublic]' => '1',
                 'cloture[type]' => 'all',
             ]
         );
@@ -293,8 +293,8 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour Partenaire 13-01',
             [
-                'cloture[motif]' => 'INSALUBRITE',
-                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[motifCloture]' => 'INSALUBRITE',
+                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                 'cloture[type]' => 'partner',
             ]
         );
@@ -330,8 +330,8 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour Partenaire 13-02',
             [
-                'cloture[motif]' => 'RSD',
-                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[motifCloture]' => 'RSD',
+                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                 'cloture[type]' => 'partner',
             ]
         );
@@ -370,14 +370,14 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour Partenaire 13-02',
             [
-                'cloture[motif]' => 'RSD',
+                'cloture[motifCloture]' => 'RSD',
                 'cloture[type]' => 'partner',
+                'cloture[description]' => 'bla',
             ]
         );
-
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Le motif de suivi doit contenir au moins 10 caractères.');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertStringContainsString('Le contenu doit contenir au moins 10 caract\u00e8res.', $client->getResponse()->getContent());
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     public function testNewDeleteSignalement(): void

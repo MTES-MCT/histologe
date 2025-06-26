@@ -54,24 +54,20 @@ class AffectationControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => self::SIGNALEMENT_REFERENCE]);
 
-        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response', [
+        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response_deny', [
             'signalement' => $signalement->getId(),
             'affectation' => $signalement->getAffectations()->first()->getId(),
             'user' => $user->getId(),
         ]);
 
-        $tokenId = 'signalement_affectation_response_'.$signalement->getId();
-        $this->client->request(
-            'POST',
-            $routeAffectationResponse,
-            [
-                'signalement-affectation-response' => [
-                    'motifRefus' => MotifRefus::AUTRE->name,
-                    'suivi' => 'Cela ne me concerne pas, voir avec un autre organisme',
-                ],
-                '_token' => $this->generateCsrfToken($this->client, $tokenId),
-            ]
-        );
+        $csrfToken = $this->generateCsrfToken($this->client, 'refus_affectation');
+        $this->client->request('POST', $routeAffectationResponse, [
+            'refus_affectation' => [
+                'motifRefus' => MotifRefus::AUTRE->name,
+                'description' => 'Cela ne me concerne pas, voir avec un autre organisme',
+                '_token' => $csrfToken,
+            ],
+        ]);
 
         /** @var Suivi $suivi */
         $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement], ['createdAt' => 'DESC']);

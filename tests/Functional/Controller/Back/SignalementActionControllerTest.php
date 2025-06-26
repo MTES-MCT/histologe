@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\File;
 use App\Entity\Suivi;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
@@ -83,7 +84,7 @@ class SignalementActionControllerTest extends WebTestCase
     public function testValidationResponseSignalementError(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
-        $route = $this->router->generate('back_signalement_validation_response', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('back_signalement_validation_response_deny', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',
             $route,
@@ -95,45 +96,92 @@ class SignalementActionControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_validation_response_'.$signalement->getId()),
             ]
         );
+        $csrfToken = $this->generateCsrfToken($this->client, 'refus_signalement');
+        $this->client->request('POST', $route, [
+            'refus_signalement' => [
+                'motifRefus' => 'DOUBLON',
+                'description' => 'test',
+                '_token' => $csrfToken,
+            ],
+        ]);
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Champs incorrects ou manquants !');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertStringContainsString('Le message doit contenir au moins 10 caract\u00e8res.', $this->client->getResponse()->getContent());
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
     }
 
     public function testAddSuiviSignalementSuccess(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
         $route = $this->router->generate('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'content' => 'La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !',
-                'notifyUsager' => '1',
-                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_suivi_'.$signalement->getId()),
-            ]
-        );
+        $csrfToken = $this->generateCsrfToken($this->client, 'add_suivi');
+
+        $filesIds = $signalement->getFiles()->filter(function (File $file) {
+            return $file->isTypeDocument() && !$file->getIsSuspicious();
+        })->map(fn ($file) => $file->getId())->toArray();
+
+        $this->client->request('POST', $route, [
+            'add_suivi' => [
+                'isPublic' => '1',
+                'description' => 'La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !',
+                'files' => $filesIds,
+                '_token' => $csrfToken,
+            ],
+        ]);
+
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertResponseStatusCodeSame(200);
+
+        $lastSuiviPublic = $this->suiviRepository->findLastPublicSuivi($signalement);
+        $this->assertStringContainsString('La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !', $lastSuiviPublic->getDescription());
+        $this->assertEquals(3, $lastSuiviPublic->getSuiviFiles()->count());
+
+        $this->assertStringContainsString('<i>3 Fichiers joints :</i>', $lastSuiviPublic->getDescription());
+        $this->assertEquals(3, substr_count($lastSuiviPublic->getDescription(), '<a '));
+
+        foreach ($lastSuiviPublic->getSuiviFiles() as $suiviFile) {
+            $suiviFile->setFile(null);
+            break;
+        }
+        $this->assertEquals(2, substr_count($lastSuiviPublic->getDescription(), '<a '));
+        $this->assertStringContainsString('Fichier supprimé', $lastSuiviPublic->getDescription());
+    }
+
+    public function testAddSuiviSignalementErrorInvalidFiles(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
+        $route = $this->router->generate('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
+        $csrfToken = $this->generateCsrfToken($this->client, 'add_suivi');
+        $this->client->request('POST', $route, [
+            'add_suivi' => [
+                'isPublic' => '1',
+                'description' => 'La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !',
+                'files' => [1, 2],
+                '_token' => $csrfToken,
+            ],
+        ]);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertStringContainsString('Le choix s\u00e9lectionn\u00e9 est invalide.', $this->client->getResponse()->getContent());
     }
 
     public function testAddSuiviSignalementError(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
         $route = $this->router->generate('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'content' => 'Je v',
-                'notifyUsager' => '1',
-                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_suivi_'.$signalement->getId()),
-            ]
-        );
+        $csrfToken = $this->generateCsrfToken($this->client, 'add_suivi');
+        $this->client->request('POST', $route, [
+            'add_suivi' => [
+                'description' => 'Je v',
+                'isPublic' => '1',
+                '_token' => $csrfToken,
+            ],
+        ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertStringContainsString('Le contenu du suivi doit faire au moins 10 caract\u00e8res !', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Le contenu du suivi doit contenir au moins 10 caract\u00e8res.', $this->client->getResponse()->getContent());
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
     }
 
     public function testDeleteSuivi(): void

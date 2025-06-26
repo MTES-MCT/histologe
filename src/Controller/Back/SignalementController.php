@@ -138,10 +138,6 @@ class SignalementController extends AbstractController
         $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
         $addSuiviForm = $this->createForm(AddSuiviType::class, $newSuiviToAdd, ['action' => $addSuiviRoute]);
 
-        $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
-        $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
-        $clotureForm = $this->createForm(ClotureType::class, $signalementAffectationClose, ['action' => $clotureFormRoute]);
-
         $refusAffectationForm = null;
         if ($canAnswerAffectation) {
             $refusAffectation = (new RefusAffectation())->setSignalement($signalement);
