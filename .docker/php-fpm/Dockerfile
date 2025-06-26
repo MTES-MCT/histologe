@@ -33,7 +33,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         && docker-php-ext-enable opcache \
         && rm /usr/src/php/ext/*.tgz \
         && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer  \
-        && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+        && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
+        #  Install rclone latest
+        && curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip \
+        && unzip rclone-current-linux-amd64.zip \
+        && cp rclone-*-linux-amd64/rclone /usr/bin/rclone \
+        && chmod +x /usr/bin/rclone \
+        && rm -rf rclone-current-linux-amd64.zip rclone-*-linux-amd64 \
+        \
+        # Clean up
+        && rm -rf /var/lib/apt/lists/* /usr/src/php/ext/*.tgz
 
 RUN sed -E -i -e 's/memory_limit = 128M/memory_limit = 512M/' "$PHP_INI_DIR/php.ini" \
     && sed -E -i -e 's/post_max_size = 8M/post_max_size = 75M/' "$PHP_INI_DIR/php.ini" \
