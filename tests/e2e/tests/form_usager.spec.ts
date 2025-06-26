@@ -1,0 +1,60 @@
+import { test, expect } from '@playwright/test';
+
+test('bouton finir plus tard locataire', async ({ page }) => {
+  await page.goto('http://localhost:8080/signalement');
+  await page.getByRole('button', { name: 'Je démarre' }).click();
+  await page.getByRole('button', { name: 'C\'est parti' }).click();
+  await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
+  await page.getByRole('textbox', { name: 'Adresse du logement Format' }).fill('8 La Bodini');
+  await page.getByText('8 la bodiniere 44850 Saint-').click();
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await page.getByText('Pour vous-même', { exact: true }).click();
+  await page.getByText('Locataire du logement').click();
+  await page.locator('#signalement_concerne_logement_social_autre_tiers').getByText('Non').click();
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await page.getByText('Madame').click();
+  await page.getByRole('textbox', { name: 'Nom de famille' }).click();
+  await page.getByRole('textbox', { name: 'Nom de famille' }).fill('Sattler');
+  await page.getByRole('textbox', { name: 'Prénom' }).click();
+  await page.getByRole('textbox', { name: 'Prénom' }).fill('Ellie');
+  await page.getByRole('textbox', { name: 'Adresse e-mail Format attendu' }).click();
+  await page.getByRole('textbox', { name: 'Adresse e-mail Format attendu' }).fill('ellie.sattler.'+Date.now()+'@jurassic.park');// Add Date.now() to avoid double detection
+  await page.locator('#vos_coordonnees_occupant_tel').click();
+  await page.locator('#vos_coordonnees_occupant_tel').fill('0288997788');
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await page.getByRole('textbox', { name: 'Nom de famille ou de l\'organisme' }).click();
+  await expect(page.getByRole('button', { name: 'Finir plus tard' })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Nom de famille ou de l\'organisme' }).fill('Mon super bailleur');
+  await page.getByRole('button', { name: 'Finir plus tard' }).click();
+  await expect(page.getByText('Un e-mail a été envoyé à')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Retourner à l\'accueil' })).toBeVisible();
+});
+
+test('bouton finir plus tard service secours', async ({ page }) => {
+  await page.goto('http://localhost:8080/signalement');
+  await page.getByRole('button', { name: 'Je démarre' }).click();
+  await page.getByRole('button', { name: 'C\'est parti' }).click();
+  await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
+  await page.getByRole('textbox', { name: 'Adresse du logement Format' }).fill('25 Rue de la Poste 13');
+  await page.getByText('Rue de la Poste 13690 Graveson').click();
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await page.getByText('Pour quelqu\'un d\'autre', { exact: true }).click();
+  await page.getByText('Service de secours (pompier,').click();
+  await page.locator('#signalement_concerne_logement_social_service_secours').getByText('Oui').click();
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await page.getByRole('textbox', { name: 'Nom de l\'organisme' }).fill('Les gentils pompiers');
+  await page.getByRole('textbox', { name: 'Nom de l\'organisme' }).press('Tab');
+  await page.getByRole('textbox', { name: 'Nom de famille' }).fill('Leroy');
+  await page.getByRole('textbox', { name: 'Nom de famille' }).press('Tab');
+  await page.getByRole('textbox', { name: 'Prénom' }).fill('Albertine');
+  await page.getByRole('textbox', { name: 'Prénom' }).press('Tab');
+  await page.getByRole('textbox', { name: 'Adresse e-mail Format attendu' }).fill('albertine.'+Date.now()+'@yopmail.com');
+  await page.getByRole('textbox', { name: 'Adresse e-mail Format attendu' }).press('Tab');
+  await page.locator('#vos_coordonnees_tiers_tel_countrycode').press('Tab');
+  await page.locator('#vos_coordonnees_tiers_tel').fill('0288774488');
+  await page.getByRole('button', { name: 'Suivant' }).click();
+  await expect(page.getByRole('button', { name: 'Finir plus tard' })).toBeVisible();
+  await page.getByRole('button', { name: 'Finir plus tard' }).click();
+  await expect(page.getByText('Un e-mail a été envoyé à')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Retourner à l\'accueil' })).toBeVisible();
+});
