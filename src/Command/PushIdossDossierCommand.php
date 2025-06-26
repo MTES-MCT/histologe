@@ -7,7 +7,6 @@ use App\Repository\AffectationRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -27,16 +26,16 @@ class PushIdossDossierCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('uuid', null, InputOption::VALUE_REQUIRED, 'Signalement Uuid');
+            ->addArgument('uuid', null, 'Signalement Uuid');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $uuid = $input->getOption('uuid');
+        $uuid = $input->getArgument('uuid');
 
         if (!$uuid) {
-            $io->error('L\'option --uuid est obligatoire.');
+            $io->error('L\'argument uuid est obligatoire.');
 
             return Command::FAILURE;
         }
@@ -49,8 +48,7 @@ class PushIdossDossierCommand extends Command
             return Command::FAILURE;
         }
 
-        foreach ($affectations as $row) {
-            $affectation = $row['affectation'];
+        foreach ($affectations as $affectation) {
             $this->interconnectionBus->dispatch($affectation);
             $io->success(sprintf(
                 '[%s] Dossier %s poussé vers iDoss',

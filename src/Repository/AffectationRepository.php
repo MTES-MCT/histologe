@@ -314,14 +314,13 @@ class AffectationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, array<string, mixed>>
+     * @return array<int, Affectation>
      */
     public function findAffectationSubscribedToIdoss(
         string $uuidSignalement,
     ): array {
         $qb = $this->createQueryBuilder('a');
-        $qb->select('a AS affectation', 's.uuid AS signalement_uuid');
-        $qb = $qb
+        $qb->select('a')
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
             ->where('p.isIdossActive = 1')

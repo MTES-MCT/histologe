@@ -33,7 +33,7 @@ class PushIdossDossierCommandTest extends TestCase
             ->setIsIdossActive(true)
             ->setIdossUrl('https://idoss-partenaire-13-05.fr');
         $affectations = [
-            ['affectation' => $affectation, 'signalement_uuid' => $affectation->getSignalement()->getUuid()],
+            $affectation,
         ];
 
         $this->affectationRepository
@@ -54,7 +54,7 @@ class PushIdossDossierCommandTest extends TestCase
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            '--uuid' => 'uuid-test',
+            'uuid' => 'uuid-test',
         ]);
 
         $this->assertStringContainsString('poussé vers iDoss', $commandTester->getDisplay());
@@ -79,13 +79,13 @@ class PushIdossDossierCommandTest extends TestCase
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            '--uuid' => 'uuid-inconnu',
+            'uuid' => 'uuid-inconnu',
         ]);
 
         $this->assertStringContainsString('Aucun partenaire iDoss affecté à ce signalement', $commandTester->getDisplay());
     }
 
-    public function testExecuteWithoutUuidOption(): void
+    public function testExecuteWithoutUuidArgument(): void
     {
         $command = new PushIdossDossierCommand(
             $this->affectationRepository,
@@ -95,6 +95,6 @@ class PushIdossDossierCommandTest extends TestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
-        $this->assertStringContainsString('L\'option --uuid est obligatoire', $commandTester->getDisplay());
+        $this->assertStringContainsString('L\'argument uuid est obligatoire', $commandTester->getDisplay());
     }
 }
