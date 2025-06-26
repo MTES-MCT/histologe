@@ -8,6 +8,11 @@
     </div>
     <h1 v-if="formStore.currentScreen?.slug === 'introduction'" >{{ variablesReplacer.replace(label) }}</h1>
     <h2 v-else-if="label !== ''">{{ label }}</h2>
+    <SignalementFormWarning
+      v-if="formStore.data.errorMessage !== ''"
+      id="form-screen-warning"
+      :label="formStore.data.errorMessage"
+    ></SignalementFormWarning>
     <div v-html="variablesReplacer.replace(description)"></div>
     <div v-if="components != undefined">
       <template v-if="formStore.shouldAddFieldset(formStore.currentScreen?.components?.body)">
@@ -47,11 +52,13 @@ import { variablesReplacer } from './../services/variableReplacer'
 import { componentValidator } from './../services/componentValidator'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
 import SignalementFormComponentGenerator from './SignalementFormComponentGenerator.vue'
+import SignalementFormWarning from './SignalementFormWarning.vue'
 
 export default defineComponent({
   name: 'SignalementFormScreen',
   components: {
-    SignalementFormComponentGenerator
+    SignalementFormComponentGenerator,
+    SignalementFormWarning
   },
   props: {
     label: String,
@@ -70,7 +77,8 @@ export default defineComponent({
       currentDisorderIndex: {
         batiment: 0,
         logement: 0
-      } as { [key: string]: number }
+      } as { [key: string]: number },
+      mailSentForDraftThisSession: false
     }
   },
   methods: {
@@ -128,6 +136,8 @@ export default defineComponent({
         await this.showScreenBySlug(param, param2, type.includes('save'), type.includes('checkloc'))
       } else if (type.includes('resolve')) {
         this.navigateToDisorderScreen(param, param2, type.includes('save'))
+      } else if (type.includes('finish')) {
+        this.finishLater(type.includes('save'), param2)
       }
     },
     showComponentBySlug (slug:string, slugButton:string) {
@@ -150,42 +160,49 @@ export default defineComponent({
         (componentToToggle as HTMLButtonElement).disabled = (isVisible !== '1')
       }
     },
+    validateAndFocusFirstError (): boolean {
+      if (this.components && this.components.body) {
+        this.validateComponents(this.components.body)
+        if (Object.keys(formStore.validationErrors).length > 0) {
+          this.$nextTick(() => {
+            // Tableau contenant toutes les classes d'erreur possibles
+            const errorClasses = [
+              'signalement-form-roomlist-error',
+              'fr-fieldset--error',
+              'fr-input--error',
+              'fr-select--error',
+              'fr-checkbox-group--error',
+              'fr-input-group--error',
+              'custom-file-input-error'
+            ]
+            // Construire dynamiquement le sélecteur pour toutes les classes d'erreur
+            const selectors = errorClasses.map(errorClass => `.${errorClass}`).join(', ')
+
+            // Sélectionner tous les éléments correspondant aux classes d'erreur pour tester
+            const ancestorsWithError = document.querySelectorAll(selectors)
+            if (ancestorsWithError.length > 0) {
+              // Sélectionner le premier input ou textarea dans le premier élément trouvé
+              const firstAncestorWithError = ancestorsWithError[0]
+              const inputElement = firstAncestorWithError.querySelector('input, textarea') as HTMLElement
+              // Si un élément input/textarea est trouvé, mettre le focus dessus
+              if (inputElement) {
+                inputElement.focus()
+                inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              }
+            }
+          })
+          return true
+        }
+      }
+      return false
+    },
     async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean, isCheckLocation:boolean) {
+      formStore.data.errorMessage = ''
       formStore.validationErrors = {}
 
       if (isSaveAndCheck || isCheckLocation) {
-        if (this.components && this.components.body) {
-          this.validateComponents(this.components.body)
-          if (Object.keys(formStore.validationErrors).length > 0) {
-            this.$nextTick(() => {
-              // Tableau contenant toutes les classes d'erreur possibles
-              const errorClasses = [
-                'signalement-form-roomlist-error',
-                'fr-fieldset--error',
-                'fr-input--error',
-                'fr-select--error',
-                'fr-checkbox-group--error',
-                'fr-input-group--error',
-                'custom-file-input-error'
-              ]
-              // Construire dynamiquement le sélecteur pour toutes les classes d'erreur
-              const selectors = errorClasses.map(errorClass => `.${errorClass}`).join(', ')
-
-              // Sélectionner tous les éléments correspondant aux classes d'erreur pour tester
-              const ancestorsWithError = document.querySelectorAll(selectors)
-              if (ancestorsWithError.length > 0) {
-                // Sélectionner le premier input ou textarea dans le premier élément trouvé
-                const firstAncestorWithError = ancestorsWithError[0]
-                const inputElement = firstAncestorWithError.querySelector('input, textarea') as HTMLElement
-                // Si un élément input/textarea est trouvé, mettre le focus dessus
-                if (inputElement) {
-                  inputElement.focus()
-                  inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                }
-              }
-            })
-            return
-          }
+        if (this.validateAndFocusFirstError()) {
+          return
         }
       }
 
@@ -213,6 +230,44 @@ export default defineComponent({
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
     },
+    finishLater (isSaveAndCheck:boolean, slugButton:string) {
+      this.formStore.lastButtonClicked = slugButton
+      if (this.mailSentForDraftThisSession) {
+        return
+      }
+      formStore.validationErrors = {}
+
+      if (isSaveAndCheck) {
+        if (this.validateAndFocusFirstError()) {
+          this.formStore.lastButtonClicked = ''
+          return
+        }
+      }
+      this.mailSentForDraftThisSession = true
+      requests.saveSignalementDraft(this.sendMailContinueFromDraft)
+    },
+    sendMailContinueFromDraft (requestResponse: any) {
+      formStore.data.errorMessage = ''
+      if (requestResponse && requestResponse.uuid) {
+        requests.sendMailContinueFromDraft(this.redirectToDraftMailScreen)
+      } else if (requestResponse && requestResponse.success === false) {
+          for (const index in requestResponse.violations) {
+            formStore.data.errorMessage += requestResponse.violations[index].title + '\n'
+          }
+        this.formStore.lastButtonClicked = ''
+      }
+    },
+    redirectToDraftMailScreen (requestResponse: any) {
+      formStore.data.errorMessage = ''
+      this.formStore.lastButtonClicked = ''
+      if (requestResponse && requestResponse.success === true ) {
+        if (this.changeEvent !== undefined) {
+          this.changeEvent('draft_mail', false)
+        }
+      } else if (requestResponse && requestResponse.success === false || requestResponse.response.data.success === false) {
+        formStore.data.errorMessage = requestResponse.response.data.message ?? requestResponse.message
+      }
+    },
     gotoHomepage () {
       window.location.href = '/'
     }
@@ -223,7 +278,7 @@ export default defineComponent({
 <style>
   @media (max-width: 48em) {
     .form-screen-body {
-      margin-bottom: 7.5rem !important;
+      margin-bottom: 11rem !important;
     }
 
     .form-screen-body-margin {

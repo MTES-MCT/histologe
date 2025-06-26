@@ -83,21 +83,38 @@ pre {
         width: 100%;
     }
 
-    .button-group-responsive-inverted {
-        .signalement-form-button, .signalement-form-link {
-            display: flex;
+    .button-group-responsive-inverted .signalement-form-button,
+    .button-group-responsive-inverted .signalement-form-link,
+    .button-group-footer .signalement-form-button {
+        display: flex;
+        width: 100%;
+        margin-bottom: 0.75rem;
+        button, a {
             width: 100%;
-            margin-bottom: 0.75rem;
-
-            button, a {
-                width: 100%;
-                justify-content: center;
-            }
+            justify-content: center;
+        }
+    }
+    
+    .button-group-footer {
+        width: 100%;
+        > div {
+            display: flex;
+            flex-direction: column;
+        }
+        .signalement-form-button[id*="next"] {
+            order: 1;
+        }
+        .signalement-form-button[id*="previous"] {
+            order: 2;
+        }
+        .signalement-form-button[id*="finish_later"] {
+            order: 3;
         }
     }
 }
 
 @media (min-width: 48em) {
+    
     .button-group-responsive-inverted {
         > div {
             display: flex;
@@ -108,6 +125,26 @@ pre {
                 display: inline-flex;
                 margin-left: 0.25rem;
             }
+        }
+    }
+    .button-group-footer {
+        width: 100%;
+        > div {
+            display: flex;
+            flex-wrap: nowrap;
+            flex-direction: row-reverse;
+            justify-content: flex-end; /* par défaut : tous à droite */
+            gap: 0.5rem;
+            width: 100%;
+        }
+        .signalement-form-button {
+            display: inline-flex;
+        }
+        .signalement-form-button[id*="previous"] {
+            margin-right: auto;
+        }
+        .signalement-form-button:not([id*="previous"]) {
+            margin-left: 0.25rem;
         }
     }
 }
