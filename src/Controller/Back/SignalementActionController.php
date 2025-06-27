@@ -32,7 +32,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/signalements')]
 class SignalementActionController extends AbstractController
 {
-    #[Route('/{uuid:signalement}/validation/response', name: 'back_signalement_validation_response', methods: 'GET')]
+    #[Route('/{uuid:signalement}/accept', name: 'back_signalement_accept', methods: 'GET')]
     public function validationResponseSignalement(
         Signalement $signalement,
         Request $request,
@@ -53,7 +53,7 @@ class SignalementActionController extends AbstractController
                 isPublic: true,
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             );
-            $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
+            $this->addFlash('success', 'Signalement accepté avec succès !');
         } else {
             $this->addFlash('error', 'Une erreur est survenue...');
         }
@@ -61,7 +61,7 @@ class SignalementActionController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid:signalement}/validation/response-deny', name: 'back_signalement_validation_response_deny', methods: 'POST')]
+    #[Route('/{uuid:signalement}/deny', name: 'back_signalement_deny', methods: 'POST')]
     public function validationResponseDenySignalement(
         Signalement $signalement,
         Request $request,
@@ -69,40 +69,38 @@ class SignalementActionController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
-        $refusSignalementRoute = $this->generateUrl('back_signalement_validation_response_deny', ['uuid' => $signalement->getUuid()]);
+        $refusSignalementRoute = $this->generateUrl('back_signalement_deny', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
-
         $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        if (!$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
             return $this->json($response, $response['code']);
         }
-        if ($form->isSubmitted()) {
-            $signalement->setMotifRefus($refusSignalement->getMotifRefus());
-            $description = 'Signalement cloturé car non-valide avec le motif suivant : '.$refusSignalement->getMotifRefus()->label().'<br>Plus précisément :<br>'.$refusSignalement->getDescription();
+        $signalement->setMotifRefus($refusSignalement->getMotifRefus());
+        $description = 'Signalement cloturé car non-valide avec le motif suivant : '.$refusSignalement->getMotifRefus()->label().'<br>Plus précisément :<br>'.$refusSignalement->getDescription();
 
-            /** @var User $user */
-            $user = $this->getUser();
-            $signalement->setStatut(SignalementStatus::REFUSED);
+        /** @var User $user */
+        $user = $this->getUser();
+        $signalement->setStatut(SignalementStatus::REFUSED);
 
-            $suiviManager->createSuivi(
-                user : $user,
-                signalement: $signalement,
-                description: $description,
-                type : Suivi::TYPE_AUTO,
-                category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
-                isPublic: true,
-                context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
-                files: $refusSignalement->getFiles(),
-            );
+        $suiviManager->createSuivi(
+            user : $user,
+            signalement: $signalement,
+            description: $description,
+            type : Suivi::TYPE_AUTO,
+            category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
+            isPublic: true,
+            context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
+            files: $refusSignalement->getFiles(),
+        );
 
-            $this->addFlash('success', 'Statut du signalement mis à jour avec succès !');
+        $this->addFlash('success', 'Signalement refusé avec succès !');
 
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-        }
-
-        return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
     #[Route('/{uuid:signalement}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
@@ -117,38 +115,38 @@ class SignalementActionController extends AbstractController
         $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(AddSuiviType::class, $suivi, ['action' => $addSuiviRoute]);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        if (!$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
             return $this->json($response, $response['code']);
         }
-        if ($form->isSubmitted()) {
-            try {
-                /** @var User $user */
-                $user = $this->getUser();
-                $suiviManager->createSuivi(
-                    signalement: $signalement,
-                    description: $suivi->getDescription(),
-                    type: Suivi::TYPE_PARTNER,
-                    category: SuiviCategory::MESSAGE_PARTNER,
-                    isPublic: $suivi->getIsPublic(),
-                    user: $user,
-                    files: $form->get('files')->getData(),
-                );
-            } catch (\Throwable $exception) {
-                $logger->error($exception->getMessage());
-                $errors = ['main' => ['errors' => ['Une erreur est survenue lors de la publication, veuillez réessayer.']]];
-                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
 
-                return $this->json($response, $response['code']);
-            }
-            $response = ['code' => Response::HTTP_OK];
-            $this->addFlash('success', 'Suivi publié avec succès !');
+        try {
+            /** @var User $user */
+            $user = $this->getUser();
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $suivi->getDescription(),
+                type: Suivi::TYPE_PARTNER,
+                category: SuiviCategory::MESSAGE_PARTNER,
+                isPublic: $suivi->getIsPublic(),
+                user: $user,
+                files: $form->get('files')->getData(),
+            );
+        } catch (\Throwable $exception) {
+            $logger->error($exception->getMessage());
+            $errors = ['main' => ['errors' => ['Une erreur est survenue lors de la publication, veuillez réessayer.']]];
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
 
             return $this->json($response, $response['code']);
         }
+        $response = ['code' => Response::HTTP_OK];
+        $this->addFlash('success', 'Suivi publié avec succès !');
 
-        return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        return $this->json($response, $response['code']);
     }
 
     #[Route('/{uuid:signalement}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]

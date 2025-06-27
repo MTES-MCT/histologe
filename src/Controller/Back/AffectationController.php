@@ -140,59 +140,56 @@ class AffectationController extends AbstractController
         return new RedirectResponse($this->generateUrl('back_signalement_view', ['uuid' => $affectation->getSignalement()->getUuid()]));
     }
 
-    #[Route('/{signalement}/{affectation}/{user}/response', name: 'back_signalement_affectation_response', methods: 'POST')]
+    #[Route('/affectation/{affectation}/accept', name: 'back_signalement_affectation_accept', methods: 'POST')]
     public function affectationResponseSignalement(
-        Signalement $signalement,
         Affectation $affectation,
-        User $user,
         Request $request,
     ): Response {
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
+        $signalement = $affectation->getSignalement();
+        /** @var User $user */
+        $user = $this->getUser();
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
             $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED);
-            $this->addFlash('success', 'Affectation mise à jour avec succès !');
+            $this->addFlash('success', 'Affectation acceptée avec succès !');
         } else {
-            $this->addFlash('error', "Une erreur est survenu lors de l'affectation");
+            $this->addFlash('error', "Une erreur est survenue lors de l'affectation");
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{signalement}/{affectation}/{user}/response-deny', name: 'back_signalement_affectation_response_deny', methods: 'POST')]
+    #[Route('/affectation/{affectation}/deny', name: 'back_signalement_affectation_deny', methods: 'POST')]
     public function affectationResponseDenySignalement(
-        Signalement $signalement,
         Affectation $affectation,
-        User $user,
         Request $request,
     ): Response {
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
+        $signalement = $affectation->getSignalement();
+        /** @var User $user */
+        $user = $this->getUser();
         $refusAffectation = (new RefusAffectation())->setSignalement($signalement);
-        $refusAffectationFormRoute = $this->generateUrl('back_signalement_affectation_response_deny', [
-            'signalement' => $signalement->getId(),
-            'affectation' => $affectation->getId(),
-            'user' => $user->getId(),
-        ]);
+        $refusAffectationFormRoute = $this->generateUrl('back_signalement_affectation_deny', ['affectation' => $affectation->getId()]);
         $form = $this->createForm(RefusAffectationType::class, $refusAffectation, ['action' => $refusAffectationFormRoute]);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        if (!$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
             return $this->json($response, $response['code']);
         }
-        if ($form->isSubmitted()) {
-            $this->affectationManager->updateAffectation(
-                affectation: $affectation,
-                user: $user,
-                status: AffectationStatus::REFUSED,
-                motifRefus: $refusAffectation->getMotifRefus(),
-                message: $refusAffectation->getDescription(),
-                files: $refusAffectation->getFiles()
-            );
-            $this->addFlash('success', 'Affectation mise à jour avec succès !');
+        $this->affectationManager->updateAffectation(
+            affectation: $affectation,
+            user: $user,
+            status: AffectationStatus::REFUSED,
+            motifRefus: $refusAffectation->getMotifRefus(),
+            message: $refusAffectation->getDescription(),
+            files: $refusAffectation->getFiles()
+        );
+        $this->addFlash('success', 'Affectation refusée avec succès !');
 
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-        }
-
-        return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 }

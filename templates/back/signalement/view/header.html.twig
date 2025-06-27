@@ -181,7 +181,7 @@
 
             <div class="fr-mb-4v fr-text--right">
                 {% if canAnswerAffectation %}
-                    <form id="signalement-affectation-response-form" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:affectation.id}) }}" method="POST" class="inline-form">
+                    <form id="signalement-affectation-response-form" action="{{ path('back_signalement_affectation_accept',{affectation:affectation.id}) }}" method="POST" class="inline-form">
                         <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success">
                             Accepter
                         </button>
@@ -205,7 +205,7 @@
                     </div>
 
                 {% elseif canCancelRefusedAffectation %}
-                    <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:affectation.id}) }}">
+                    <form method="POST" action="{{ path('back_signalement_affectation_accept',{affectation:affectation.id}) }}">
                         <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill reaffect fr-mb-3v">
                             Annuler le refus
                         </button>
@@ -214,7 +214,7 @@
 
                 {% elseif canValidateOrRefuseSignalement %}
                     <div class="admin-territory-validation">
-                        <form id="signalement-validation-response-form" action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}" class="inline-form">
+                        <form id="signalement-validation-response-form" action="{{ path('back_signalement_accept',{uuid:signalement.uuid}) }}" class="inline-form">
                             <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" name="signalement-validation-response[accept]" value="1">
                                 Valider le signalement
                             </button>

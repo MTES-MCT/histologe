@@ -2,6 +2,7 @@
 
 namespace App\Validator;
 
+use App\Command\FixEmailAddressesCommand;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 use Symfony\Component\Validator\Constraints\Email;
@@ -35,5 +36,10 @@ class EmailFormatValidator
         }
 
         return false;
+    }
+
+    public static function isInvalidEmail(?string $email): bool
+    {
+        return !self::validate($email) || FixEmailAddressesCommand::EMAIL_HISTOLOGE_INCONNU === $email;
     }
 }

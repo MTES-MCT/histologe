@@ -35,7 +35,7 @@ class ClotureType extends AbstractType
                 },
                 'label' => 'Motif <span class="fr-text-default--error">*</span>',
                 'label_html' => true,
-                'placeholder' => 'Sélectionner un motif',
+                'placeholder' => 'Sélectionnez un motif',
                 'help' => 'Choisissez un motif de cloture parmi la liste ci-dessous.',
             ])
             ->add('type', HiddenType::class)
@@ -53,8 +53,8 @@ class ClotureType extends AbstractType
                 'class' => File::class,
                 'choice_label' => 'title',
                 'label' => 'Fichiers',
-                'noselectionlabel' => 'Sélectionner une ou plusieurs fichiers à joindre au suivi de clôture',
-                'nochoiceslabel' => 'Aucun fichiers disponible',
+                'noselectionlabel' => 'Sélectionnez un ou plusieurs fichiers à joindre au suivi de clôture',
+                'nochoiceslabel' => 'Aucun fichier disponible',
                 'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
             ]);
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
