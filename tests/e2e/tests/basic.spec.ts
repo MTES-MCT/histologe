@@ -15,8 +15,8 @@ test('signalement form for locataire', async ({page}) => {
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement`);
 
 
+    await waitForVueAppToBeInteractive(page, 60000);
 
-    await page.getByRole('button', { name: 'Je démarre'}).waitFor({ state: 'visible', timeout: 10000 });
     // Log tous les boutons visibles avant de cliquer
     const visibleButtonsDebug = await page.locator('button:visible').all();
     for (const btn of visibleButtonsDebug) {
@@ -25,6 +25,7 @@ test('signalement form for locataire', async ({page}) => {
       const id = await btn.getAttribute('id');
       console.log(`Bouton visible: text='${text}', name='${name}', id='${id}'`);
     }
+    await page.getByRole('button', { name: 'Je démarre'}).waitFor({ state: 'visible', timeout: 10000 });
     await expect(page.getByRole('button', { name: 'Je démarre' })).toBeVisible();
     await page.getByRole('button', { name: 'Je démarre' }).click();
     
