@@ -13,8 +13,8 @@ test('signalement form for locataire', async ({page}) => {
     // Attendre que l'application VueJS soit complètement chargée et interactive
     await waitForVueAppToBeInteractive(page, 60000);
     
-    // Vérifier que la page est accessible
-    await expect(page).toHaveTitle(/Signalement/);
+    // Vérifier que la page est accessible avec le titre correct
+    await expect(page).toHaveTitle(/Signaler un problème de logement/);
     
     // Attendre spécifiquement pour le titre ou un bouton
     try {
