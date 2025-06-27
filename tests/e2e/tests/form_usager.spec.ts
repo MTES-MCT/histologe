@@ -1,7 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { waitForVueAppToBeInteractive } from '../utils/vue-app-helper';
 
 test('bouton finir plus tard locataire', async ({ page }) => {
   await page.goto('http://localhost:8080/signalement');
+  
+  // Attendre que l'application VueJS soit complètement chargée et interactive
+  await waitForVueAppToBeInteractive(page, 60000);
+  
   await page.getByRole('button', { name: 'Je démarre' }).click();
   await page.getByRole('button', { name: 'C\'est parti' }).click();
   await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
@@ -32,6 +37,10 @@ test('bouton finir plus tard locataire', async ({ page }) => {
 
 test('bouton finir plus tard service secours', async ({ page }) => {
   await page.goto('http://localhost:8080/signalement');
+  
+  // Attendre que l'application VueJS soit complètement chargée et interactive
+  await waitForVueAppToBeInteractive(page, 60000);
+  
   await page.getByRole('button', { name: 'Je démarre' }).click();
   await page.getByRole('button', { name: 'C\'est parti' }).click();
   await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForVueAppToBeInteractive } from '../utils/vue-app-helper';
 
 test('connexion page loads with correct title', async ({ page }) => {
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
@@ -8,6 +9,9 @@ test('connexion page loads with correct title', async ({ page }) => {
 test('signalement form for locataire', async ({page}) => {
     test.setTimeout(120000);
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement`);
+    
+    // Attendre que l'application VueJS soit complètement chargée et interactive
+    await waitForVueAppToBeInteractive(page, 60000);
     
     await page.getByRole('heading', { name: 'Signaler un problème de' }).click();
     await page.getByRole('button', { name: 'Je démarre' }).click();
