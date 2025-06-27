@@ -175,8 +175,6 @@ class AutoAffectationRuleType extends AbstractType
                 'label' => 'Procédures suspectées (facultatif)',
                 'noselectionlabel' => 'Sélectionner une ou plusieurs procédures',
                 'nochoiceslabel' => 'Aucune procédure disponible',
-                'multiple' => true,
-                'expanded' => false,
                 'help' => 'Choisissez une ou plusieurs procédures parmi la liste ci-dessous.',
                 'help_attr' => [
                     'class' => 'fr-hint-text',
