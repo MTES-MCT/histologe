@@ -238,6 +238,15 @@ jobs:
           docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=dev --no-warmup
           docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=dev
 
+      - name: Clear cache and sessions
+        run: |
+          echo "Nettoyage complet du cache et des sessions..."
+          docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=dev --no-warmup
+          docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=dev
+          # Nettoyer les sessions
+          docker compose exec -T signal_logement_phpfpm rm -rf var/sessions/* || true
+          echo "Cache et sessions nettoyés"
+
       - name: Init database
         run: |
           docker compose exec -T signal_logement_phpfpm php bin/console doctrine:database:drop --force --no-interaction || true
