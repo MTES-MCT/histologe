@@ -30,7 +30,7 @@ class UserAvatar implements RuntimeExtensionInterface
             $src = "data:image/$type;base64,$data64";
 
             return sprintf(
-                '<img src="%s" alt="Avatar de l\'utilisateur" class="avatar-histologe avatar-%s">',
+                '<img src="%s" alt="" aria-hidden="true" class="avatar-histologe avatar-%s">',
                 $src,
                 $size
             );
