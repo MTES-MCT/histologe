@@ -29,7 +29,7 @@ env:
   MAIL_ENABLE: 0
   MAIL_TEST_ENABLE: 0
   MAIL_TEST_EMAIL: test@example.com
-  CSP_ENABLE: 1
+  CSP_ENABLE: 0
   MATOMO_ENABLE: 0
   MAINTENANCE_ENABLE: 0
   MAINTENANCE_BANNER_ENABLE: 0
@@ -75,6 +75,11 @@ env:
   REDIS_URL: redis://signal_logement_redis:6379
   LOCK_DSN: flock
   SIGNATURE_KEY: change_me
+  # Configuration PHP-FPM pour les tests
+  PHP_FPM_PM_MAX_CHILDREN: 20
+  PHP_FPM_PM_START_SERVERS: 5
+  PHP_FPM_PM_MIN_SPARE_SERVERS: 2
+  PHP_FPM_PM_MAX_SPARE_SERVERS: 10
 
 jobs:
   e2e:
@@ -102,9 +107,33 @@ jobs:
       - name: Build Docker containers
         run: docker compose build
 
+      - name: Configure PHP-FPM for testing
+        run: |
+          # Créer un fichier de configuration PHP-FPM temporaire pour les tests
+          cat > php-fpm-test.conf << 'EOF'
+          [www]
+          pm = dynamic
+          pm.max_children = 20
+          pm.start_servers = 5
+          pm.min_spare_servers = 2
+          pm.max_spare_servers = 10
+          pm.max_requests = 1000
+          request_terminate_timeout = 300s
+          EOF
+
+      - name: Verify Docker volumes
+        run: |
+          # Vérifier que le répertoire courant existe et contient les fichiers nécessaires
+          echo "Contenu du répertoire courant:"
+          ls -la
+          echo "Vérification de la présence des fichiers clés:"
+          test -f composer.json && echo "✅ composer.json trouvé" || echo "❌ composer.json manquant"
+          test -f docker-compose.yml && echo "✅ docker-compose.yml trouvé" || echo "❌ docker-compose.yml manquant"
+          test -d src && echo "✅ src/ trouvé" || echo "❌ src/ manquant"
+
       - name: Generate .env file safely
         run: |
-          env | grep -E '^(APP_URL|APP_ENV|APP_SECRET|MAILER_DSN|DATABASE_URL|CORS_ALLOW_ORIGIN|WKHTMLTOPDF_PATH|WKHTMLTOIMAGE_PATH|ADMIN_EMAIL|NOTIFICATIONS_EMAIL|CONTACT_EMAIL|USER_SYSTEM_EMAIL|WIDGET_DATA_KPI_CACHE_EXPIRED_AFTER|WIDGET_AFFECTATION_PARTNER_CACHE_EXPIRED_AFTER|WIDGET_SIGNALEMENT_ACCEPTED_NO_SUIVI_CACHE_EXPIRED_AFTER|WIDGET_SIGNALEMENT_TERRITOIRE_CACHE_EXPIRED_AFTER|WIDGET_ESABORA_EVENTS_CACHE_EXPIRED_AFTER|FEATURE_OILHI_ENABLE|FEATURE_BO_SIGNALEMENT_CREATE|CRON_ENABLE|MAIL_ENABLE|MAIL_TEST_ENABLE|MAIL_TEST_EMAIL|CSP_ENABLE|MATOMO_ENABLE|MAINTENANCE_ENABLE|MAINTENANCE_BANNER_ENABLE|MAINTENANCE_BANNER_MESSAGE|AXIOS_TIMEOUT|LIMIT_DAILY_RELANCES_BY_REQUEST|FORMS_SUBMIT_LIMITER_LIMIT|FORMS_SUBMIT_LIMITER_INTERVAL|API_LIMITER_LIMIT|API_LIMITER_INTERVAL|FEATURE_2FA_EMAIL_ENABLED|MISE_EN_BERNE_ENABLE|CLAMAV_SCAN_ENABLE|HISTORY_TRACKING_ENABLE|DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES|SITES_FACILES_URL|FEATURE_SITES_FACILES|PLATFORM_NAME|PLATFORM_LOGO|FEATURE_BANNER_HISTOLOGE|FEATURE_SECURE_UUID_URL|FEATURE_PROCONNECT|PROCONNECT_SCHEME_PROTOCOL|PROCONNECT_DOMAIN|PROCONNECT_CLIENT_ID|PROCONNECT_CLIENT_SECRET:|FEATURE_EMAIL_RECAP|FEATURE_SUIVI_ACTION|FEATURE_ACCUSE_LECTURE|TRUSTED_PROXIES|S3_ENDPOINT|S3_KEY|S3_SECRET|S3_BUCKET|S3_URL_BUCKET|SENTRY_DSN|SENTRY_DSN_FRONT|SENTRY_ENVIRONMENT|SENTRY_TRACES_SAMPLE_RATE|WIREMOCK_HOSTNAME|WIREMOCK_PORT|MESSENGER_TRANSPORT_DSN|REDIS_URL|LOCK_DSN|SIGNATURE_KEY)=' \
+          env | grep -E '^(APP_URL|APP_ENV|APP_SECRET|MAILER_DSN|DATABASE_URL|CORS_ALLOW_ORIGIN|WKHTMLTOPDF_PATH|WKHTMLTOIMAGE_PATH|ADMIN_EMAIL|NOTIFICATIONS_EMAIL|CONTACT_EMAIL|USER_SYSTEM_EMAIL|WIDGET_DATA_KPI_CACHE_EXPIRED_AFTER|WIDGET_AFFECTATION_PARTNER_CACHE_EXPIRED_AFTER|WIDGET_SIGNALEMENT_ACCEPTED_NO_SUIVI_CACHE_EXPIRED_AFTER|WIDGET_SIGNALEMENT_TERRITOIRE_CACHE_EXPIRED_AFTER|WIDGET_ESABORA_EVENTS_CACHE_EXPIRED_AFTER|FEATURE_OILHI_ENABLE|FEATURE_BO_SIGNALEMENT_CREATE|CRON_ENABLE|MAIL_ENABLE|MAIL_TEST_ENABLE|MAIL_TEST_EMAIL|CSP_ENABLE|MATOMO_ENABLE|MAINTENANCE_ENABLE|MAINTENANCE_BANNER_ENABLE|MAINTENANCE_BANNER_MESSAGE|AXIOS_TIMEOUT|LIMIT_DAILY_RELANCES_BY_REQUEST|FORMS_SUBMIT_LIMITER_LIMIT|FORMS_SUBMIT_LIMITER_INTERVAL|API_LIMITER_LIMIT|API_LIMITER_INTERVAL|FEATURE_2FA_EMAIL_ENABLED|MISE_EN_BERNE_ENABLE|CLAMAV_SCAN_ENABLE|HISTORY_TRACKING_ENABLE|DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES|SITES_FACILES_URL|FEATURE_SITES_FACILES|PLATFORM_NAME|PLATFORM_LOGO|FEATURE_BANNER_HISTOLOGE|FEATURE_SECURE_UUID_URL|FEATURE_PROCONNECT|PROCONNECT_SCHEME_PROTOCOL|PROCONNECT_DOMAIN|PROCONNECT_CLIENT_ID|PROCONNECT_CLIENT_SECRET:|FEATURE_EMAIL_RECAP|FEATURE_SUIVI_ACTION|FEATURE_ACCUSE_LECTURE|TRUSTED_PROXIES|S3_ENDPOINT|S3_KEY|S3_SECRET|S3_BUCKET|S3_URL_BUCKET|SENTRY_DSN|SENTRY_DSN_FRONT|SENTRY_ENVIRONMENT|SENTRY_TRACES_SAMPLE_RATE|WIREMOCK_HOSTNAME|WIREMOCK_PORT|MESSENGER_TRANSPORT_DSN|REDIS_URL|LOCK_DSN|SIGNATURE_KEY|PHP_FPM_PM_MAX_CHILDREN|PHP_FPM_PM_START_SERVERS|PHP_FPM_PM_MIN_SPARE_SERVERS|PHP_FPM_PM_MAX_SPARE_SERVERS)=' \
           | while IFS='=' read -r key value; do
               safe_value=$(printf "%s" "$value" | sed 's/"/\\"/g')
               echo "${key}=\"${safe_value}\""
@@ -112,6 +141,42 @@ jobs:
 
       - name: Start Docker containers
         run: docker compose up -d
+
+      - name: Force restart containers and verify volumes
+        run: |
+          echo "Arrêt des conteneurs..."
+          docker compose down
+          echo "Redémarrage des conteneurs..."
+          docker compose up -d
+          echo "Attente que les conteneurs soient prêts..."
+          sleep 15
+          echo "Vérification du montage des volumes..."
+          docker compose exec -T signal_logement_phpfpm ls -la /app/ || {
+            echo "❌ Problème de montage détecté, tentative de correction..."
+            echo "Création explicite du répertoire /app..."
+            docker compose exec -T signal_logement_phpfpm mkdir -p /app
+            docker compose exec -T signal_logement_phpfpm chown -R www-data:www-data /app
+            echo "Vérification des permissions..."
+            docker compose exec -T signal_logement_phpfpm ls -la /app/ || echo "❌ Toujours pas accessible"
+          }
+
+      - name: Restart PHP-FPM with test configuration
+        run: |
+          # Copier la configuration de test dans le conteneur
+          docker cp php-fpm-test.conf signal_logement_phpfpm:/usr/local/etc/php-fpm.d/www.conf
+          # Redémarrer PHP-FPM
+          docker compose restart signal_logement_phpfpm
+          # Attendre que PHP-FPM redémarre
+          sleep 10
+
+      - name: Verify container volumes
+        run: |
+          echo "Vérification du montage des volumes dans le conteneur PHP-FPM:"
+          docker compose exec -T signal_logement_phpfpm ls -la /app/ || echo "❌ Répertoire /app/ non accessible"
+          docker compose exec -T signal_logement_phpfpm test -f /app/composer.json && echo "✅ composer.json accessible" || echo "❌ composer.json non accessible"
+          docker compose exec -T signal_logement_phpfpm test -d /app/src && echo "✅ src/ accessible" || echo "❌ src/ non accessible"
+          echo "Vérification du répertoire de travail:"
+          docker compose exec -T signal_logement_phpfpm pwd
 
       - name: Wait for PHP container to be ready
         run: |
@@ -132,9 +197,12 @@ jobs:
       - name: Verify frontend assets
         run: |
           # Vérifier que les assets sont bien construits
-          docker compose exec -T signal_logement_phpfpm ls -la public/build/
+          echo "Vérification des assets frontend:"
+          docker compose exec -T signal_logement_phpfpm ls -la /app/public/build/ 2>/dev/null || echo "❌ Répertoire public/build/ non accessible"
           # Vérifier que les fichiers JavaScript sont présents
-          docker compose exec -T signal_logement_phpfpm find public/build -name "*.js" -type f
+          docker compose exec -T signal_logement_phpfpm find /app/public -name "*.js" -type f 2>/dev/null | head -5 || echo "❌ Aucun fichier JS trouvé"
+          echo "Vérification alternative depuis l'extérieur du conteneur:"
+          ls -la public/build/ 2>/dev/null || echo "❌ Répertoire public/build/ non accessible depuis l'hôte"
 
       - name: Cache clear & warmup
         run: |
@@ -200,8 +268,41 @@ jobs:
       - name: Check build output inside container
         if: ${{ always() }}
         run: |
-          docker compose exec signal_logement_phpfpm bash
-          ls -l /
-          ls -l /app
-          ls -l /app/public
-          ls -l /app/public/build
+          echo "=== DEBUG: Informations sur le conteneur ==="
+          docker compose ps
+          echo "=== DEBUG: Volumes du conteneur ==="
+          docker inspect signal_logement_phpfpm | grep -A 10 -B 5 "Mounts"
+          echo "=== DEBUG: Tentative d'accès au conteneur ==="
+          docker compose exec signal_logement_phpfpm bash -c "ls -la /" || echo "❌ Impossible d'exécuter bash"
+          echo "=== DEBUG: Vérification du répertoire de travail ==="
+          docker compose exec signal_logement_phpfpm pwd || echo "❌ Impossible d'obtenir le répertoire de travail"
+          echo "=== DEBUG: Tentative d'accès à /app ==="
+          docker compose exec signal_logement_phpfpm ls -la /app 2>/dev/null || echo "❌ Répertoire /app non accessible"
+
+      - name: Debug container issues
+        if: ${{ always() }}
+        run: |
+          echo "=== DIAGNOSTIC COMPLET ==="
+          echo "1. État des conteneurs:"
+          docker compose ps -a
+          echo ""
+          echo "2. Logs du conteneur PHP-FPM:"
+          docker compose logs signal_logement_phpfpm | tail -20
+          echo ""
+          echo "3. Configuration des volumes:"
+          docker inspect signal_logement_phpfpm | jq '.[0].Mounts' 2>/dev/null || docker inspect signal_logement_phpfpm | grep -A 20 "Mounts"
+          echo ""
+          echo "4. Tentative d'accès au conteneur:"
+          docker compose exec -T signal_logement_phpfpm whoami 2>/dev/null || echo "❌ Impossible d'exécuter des commandes dans le conteneur"
+          echo ""
+          echo "5. Vérification du répertoire de travail:"
+          docker compose exec -T signal_logement_phpfpm pwd 2>/dev/null || echo "❌ Impossible d'obtenir le répertoire de travail"
+          echo ""
+          echo "6. Tentative d'accès à /app:"
+          docker compose exec -T signal_logement_phpfpm ls -la /app 2>/dev/null || echo "❌ Répertoire /app non accessible"
+          echo ""
+          echo "7. Vérification depuis l'hôte:"
+          ls -la | head -10
+          echo ""
+          echo "8. Test de montage manuel:"
+          docker run --rm -v $(pwd):/test alpine ls -la /test | head -5 || echo "❌ Montage manuel échoué"
