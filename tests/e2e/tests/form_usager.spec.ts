@@ -17,7 +17,7 @@ test('bouton finir plus tard locataire', async ({ page }) => {
   await page.waitForLoadState('networkidle');
   
   // Vérifier si on est sur la page de reprise ou de nouveau signalement
-  const pageContent = await page.content();
+ /* const pageContent = await page.content();
   if (pageContent.includes('Mon signalement') || pageContent.includes('Reprendre la saisie')) {
       console.log('Page de reprise détectée, cliquer sur "Non, faire un nouveau signalement"');
       try {
@@ -26,7 +26,7 @@ test('bouton finir plus tard locataire', async ({ page }) => {
       } catch (error) {
           console.log('Bouton "Non, faire un nouveau signalement" non trouvé');
       }
-  }
+  }*/
   
   // Essayer de trouver un bouton "Je démarre" ou n'importe quel bouton visible
   try {
@@ -60,8 +60,8 @@ test('bouton finir plus tard service secours', async ({ page }) => {
   await page.waitForLoadState('networkidle');
   
   // Vérifier si on est sur la page de reprise ou de nouveau signalement
-  const pageContent = await page.content();
-  if (pageContent.includes('Mon signalement') || pageContent.includes('Reprendre la saisie')) {
+ /*  const pageContent = await page.content();
+ if (pageContent.includes('Mon signalement') || pageContent.includes('Reprendre la saisie')) {
       console.log('Page de reprise détectée, cliquer sur "Non, faire un nouveau signalement"');
       try {
           await page.getByRole('button', { name: 'Non, faire un nouveau signalement' }).click();
@@ -69,7 +69,7 @@ test('bouton finir plus tard service secours', async ({ page }) => {
       } catch (error) {
           console.log('Bouton "Non, faire un nouveau signalement" non trouvé');
       }
-  }
+  }*/
   
   // Essayer de trouver un bouton "Je démarre" ou n'importe quel bouton visible
   try {

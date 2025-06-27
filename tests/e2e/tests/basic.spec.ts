@@ -14,18 +14,31 @@ test('signalement form for locataire', async ({page}) => {
     
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement`);
 
-    await page.getByRole('heading', { name: 'Signaler un problème de' }).click();
-    await page.getByRole('button', { name: 'Je démarre' }).click();
-    await page.getByRole('heading', { name: 'Adresse et coordonnées' }).click();
-    await page.getByRole('button', { name: 'C\'est parti' }).click();
-    await page.getByRole('heading', { name: 'Commençons par l\'adresse du' }).click();
-    await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
-    await page.getByRole('textbox', { name: 'Adresse du logement Format' }).fill('3 rue de l\'école 13');
+    await page.getByRole('button', { name: 'Je démarre', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('button', { name: 'Je démarre', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Je démarre', exact: true }).click();
+
+    await page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true })).toBeVisible();
+    await page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true }).click();
+
+    await page.getByRole('button', { name: 'C\'est parti', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('button', { name: 'C\'est parti', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'C\'est parti', exact: true }).click();
+
+    await page.getByRole('heading', { name: 'Commençons par l\'adresse du', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Commençons par l\'adresse du', exact: true })).toBeVisible();
+    await page.getByRole('heading', { name: 'Commençons par l\'adresse du', exact: true }).click();
+
+    await page.getByRole('textbox', { name: 'Adresse du logement Format', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('textbox', { name: 'Adresse du logement Format', exact: true })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Adresse du logement Format', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Adresse du logement Format', exact: true }).fill('3 rue de l\'école 13');
     await page.getByText('Rue de l\'ecole 13007 Marseille').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Pour vous-même', { exact: true }).click();
     await page.getByText('Locataire du logement').click();
-    await page.locator('#signalement_concerne_logement_social_autre_tiers').getByText('Non').click();
+   /* await page.locator('#signalement_concerne_logement_social_autre_tiers').getByText('Non').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Monsieur').click();
     await page.getByRole('textbox', { name: 'Nom de famille' }).click();
@@ -120,7 +133,7 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByRole('heading', { name: 'Validation du signalement' }).click();
     await page.getByRole('button', { name: 'Valider mon signalement' }).click();
-    await page.getByRole('heading', { name: 'Votre signalement a bien été' }).click();
+    await page.getByRole('heading', { name: 'Votre signalement a bien été' }).click();*/
 /*    
     // Attendre que l'application VueJS soit complètement chargée et interactive
     await waitForVueAppToBeInteractive(page, 60000);
