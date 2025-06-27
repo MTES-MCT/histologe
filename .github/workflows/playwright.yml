@@ -112,6 +112,12 @@ jobs:
           # Créer un fichier de configuration PHP-FPM temporaire pour les tests
           cat > php-fpm-test.conf << 'EOF'
           [www]
+          user = www-data
+          group = www-data
+          listen = 9000
+          listen.owner = www-data
+          listen.group = www-data
+          listen.mode = 0660
           pm = dynamic
           pm.max_children = 20
           pm.start_servers = 5
@@ -119,6 +125,7 @@ jobs:
           pm.max_spare_servers = 10
           pm.max_requests = 1000
           request_terminate_timeout = 300s
+          catch_workers_output = yes
           EOF
 
       - name: Verify Docker volumes
@@ -162,12 +169,18 @@ jobs:
 
       - name: Restart PHP-FPM with test configuration
         run: |
+          echo "Copie de la configuration PHP-FPM de test..."
           # Copier la configuration de test dans le conteneur
           docker cp php-fpm-test.conf signal_logement_phpfpm:/usr/local/etc/php-fpm.d/www.conf
-          # Redémarrer PHP-FPM
+          echo "Redémarrage du conteneur PHP-FPM..."
+          # Redémarrer le conteneur complet pour s'assurer que la configuration est prise en compte
           docker compose restart signal_logement_phpfpm
-          # Attendre que PHP-FPM redémarre
-          sleep 10
+          echo "Attente que PHP-FPM redémarre..."
+          sleep 15
+          echo "Vérification que PHP-FPM fonctionne..."
+          docker compose ps signal_logement_phpfpm
+          echo "Logs PHP-FPM après redémarrage:"
+          docker compose logs signal_logement_phpfpm | tail -10
 
       - name: Verify container volumes
         run: |
@@ -177,6 +190,22 @@ jobs:
           docker compose exec -T signal_logement_phpfpm test -d /app/src && echo "✅ src/ accessible" || echo "❌ src/ non accessible"
           echo "Vérification du répertoire de travail:"
           docker compose exec -T signal_logement_phpfpm pwd
+
+      - name: Verify PHP-FPM is working
+        run: |
+          echo "Vérification que PHP-FPM fonctionne correctement..."
+          # Vérifier que le conteneur est en cours d'exécution
+          docker compose ps signal_logement_phpfpm | grep "Up" || {
+            echo "❌ Conteneur PHP-FPM n'est pas en cours d'exécution"
+            docker compose logs signal_logement_phpfpm
+            exit 1
+          }
+          # Vérifier que PHP-FPM répond
+          docker compose exec -T signal_logement_phpfpm php -v || {
+            echo "❌ PHP n'est pas accessible dans le conteneur"
+            exit 1
+          }
+          echo "✅ PHP-FPM fonctionne correctement"
 
       - name: Wait for PHP container to be ready
         run: |
