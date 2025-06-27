@@ -7,8 +7,8 @@ test('bouton finir plus tard locataire', async ({ page }) => {
   // Attendre que l'application VueJS soit complètement chargée et interactive
   await waitForVueAppToBeInteractive(page, 60000);
   
-  // Vérifier que la page est accessible
-  await expect(page).toHaveTitle(/Signalement/);
+  // Vérifier que la page est accessible avec le titre correct
+  await expect(page).toHaveTitle(/Signaler un problème de logement/);
   
   // Essayer de trouver un bouton "Je démarre" ou n'importe quel bouton
   try {
@@ -31,8 +31,8 @@ test('bouton finir plus tard service secours', async ({ page }) => {
   // Attendre que l'application VueJS soit complètement chargée et interactive
   await waitForVueAppToBeInteractive(page, 60000);
   
-  // Vérifier que la page est accessible
-  await expect(page).toHaveTitle(/Signalement/);
+  // Vérifier que la page est accessible avec le titre correct
+  await expect(page).toHaveTitle(/Signaler un problème de logement/);
   
   // Essayer de trouver un bouton "Je démarre" ou n'importe quel bouton
   try {
