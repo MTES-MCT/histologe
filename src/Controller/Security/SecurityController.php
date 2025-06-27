@@ -128,7 +128,7 @@ class SecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         $targetPath = $this->getTargetPath($request->getSession(), 'code_suivi');
         $title = 'Suivre mon signalement';
-        if (str_contains($targetPath, '/show-export-pdf-usager/')) {
+        if ($targetPath && str_contains($targetPath, '/show-export-pdf-usager/')) {
             $title = 'Accéder à mon export pdf';
         }
 
