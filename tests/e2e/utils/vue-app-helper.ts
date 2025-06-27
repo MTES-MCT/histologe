@@ -35,6 +35,12 @@ export async function waitForVueAppToBeInteractive(page: Page, timeout = 30000) 
     
     console.log(`Found ${buttons.length} buttons, ${inputs.length} inputs, ${headings.length} headings`);
     
+    for (const btn of buttons) {
+        const text = btn.textContent;
+        const name = btn.getAttribute('name');
+        const id = btn.getAttribute('id');
+        console.log(`Bouton visible: text='${text}', name='${name}', id='${id}'`);
+      }
     return buttons.length > 0 || inputs.length > 0 || headings.length > 0;
   }, { timeout });
   
