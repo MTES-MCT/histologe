@@ -26,14 +26,14 @@ test('signalement form for locataire', async ({page}) => {
     await expect(page.getByRole('button', { name: 'C\'est parti', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'C\'est parti', exact: true }).click();
 
-    await page.getByRole('heading', { name: 'Commençons par l\'adresse du', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
-    await expect(page.getByRole('heading', { name: 'Commençons par l\'adresse du', exact: true })).toBeVisible();
-    await page.getByRole('heading', { name: 'Commençons par l\'adresse du', exact: true }).click();
+    await page.getByRole('heading', { name: 'Commençons par l\'adresse du logement', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Commençons par l\'adresse du logement', exact: true })).toBeVisible();
+    await page.getByRole('heading', { name: 'Commençons par l\'adresse du logement', exact: true }).click();
 
-    await page.getByRole('textbox', { name: 'Adresse du logement Format', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
-    await expect(page.getByRole('textbox', { name: 'Adresse du logement Format', exact: true })).toBeVisible();
-    await page.getByRole('textbox', { name: 'Adresse du logement Format', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Adresse du logement Format', exact: true }).fill('3 rue de l\'école 13');
+    await page.getByRole('textbox', { name: 'Adresse du logement Format' }).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('textbox', { name: 'Adresse du logement Format' })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
+    await page.getByRole('textbox', { name: 'Adresse du logement Format' }).fill('3 rue de l\'école 13');
     await page.getByText('Rue de l\'ecole 13007 Marseille').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Pour vous-même', { exact: true }).click();
