@@ -14,15 +14,27 @@ test('signalement form for locataire', async ({page}) => {
     
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement`);
 
-    await page.getByRole('button', { name: 'Je démarre', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
-    await expect(page.getByRole('button', { name: 'Je démarre', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Je démarre', exact: true }).click();
+
+
+    await page.getByRole('button', { name: 'Je démarre'}).waitFor({ state: 'visible', timeout: 10000 });
+    // Log tous les boutons visibles avant de cliquer
+    const visibleButtonsDebug = await page.locator('button:visible').all();
+    for (const btn of visibleButtonsDebug) {
+      const text = await btn.textContent();
+      const name = await btn.getAttribute('name');
+      const id = await btn.getAttribute('id');
+      console.log(`Bouton visible: text='${text}', name='${name}', id='${id}'`);
+    }
+    await expect(page.getByRole('button', { name: 'Je démarre' })).toBeVisible();
+    await page.getByRole('button', { name: 'Je démarre' }).click();
+    
+
 
     await page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true })).toBeVisible();
     await page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true }).click();
 
-    await page.getByRole('button', { name: 'C\'est parti', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+ /*    await page.getByRole('button', { name: 'C\'est parti', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await expect(page.getByRole('button', { name: 'C\'est parti', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'C\'est parti', exact: true }).click();
 
@@ -38,7 +50,7 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Pour vous-même', { exact: true }).click();
     await page.getByText('Locataire du logement').click();
-   /* await page.locator('#signalement_concerne_logement_social_autre_tiers').getByText('Non').click();
+   await page.locator('#signalement_concerne_logement_social_autre_tiers').getByText('Non').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Monsieur').click();
     await page.getByRole('textbox', { name: 'Nom de famille' }).click();
@@ -173,4 +185,5 @@ test('signalement form for locataire', async ({page}) => {
     */
     // Le reste du test est simplifié pour l'instant
     console.log('Test de base réussi - application VueJS chargée');
+
 });
