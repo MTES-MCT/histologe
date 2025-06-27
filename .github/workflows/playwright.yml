@@ -28,7 +28,7 @@ env:
   CRON_ENABLE: 0
   MAIL_ENABLE: 0
   MAIL_TEST_ENABLE: 0
-  MAIL_TEST_EMAIL:
+  MAIL_TEST_EMAIL: test@example.com
   CSP_ENABLE: 1
   MATOMO_ENABLE: 0
   MAINTENANCE_ENABLE: 0
@@ -52,23 +52,23 @@ env:
   FEATURE_BANNER_HISTOLOGE: 1
   FEATURE_SECURE_UUID_URL: 1
   FEATURE_PROCONNECT: 0
-  PROCONNECT_SCHEME_PROTOCOL:
-  PROCONNECT_DOMAIN:
-  PROCONNECT_CLIENT_ID:
-  PROCONNECT_CLIENT_SECRET:
+  PROCONNECT_SCHEME_PROTOCOL: https
+  PROCONNECT_DOMAIN: example.com
+  PROCONNECT_CLIENT_ID: test_client_id
+  PROCONNECT_CLIENT_SECRET: test_client_secret
   FEATURE_EMAIL_RECAP: 1
   FEATURE_SUIVI_ACTION: 1
   FEATURE_ACCUSE_LECTURE: 1
   TRUSTED_PROXIES: 0.0.0.0/0
-  S3_ENDPOINT:
-  S3_KEY:
-  S3_SECRET:
-  S3_BUCKET:
-  S3_URL_BUCKET:
-  SENTRY_DSN:
-  SENTRY_DSN_FRONT:
-  SENTRY_ENVIRONMENT:
-  SENTRY_TRACES_SAMPLE_RATE:
+  S3_ENDPOINT: https://s3.example.com
+  S3_KEY: test_key
+  S3_SECRET: test_secret
+  S3_BUCKET: test_bucket
+  S3_URL_BUCKET: https://test-bucket.s3.example.com
+  SENTRY_DSN: https://test@sentry.example.com/123
+  SENTRY_DSN_FRONT: https://test@sentry.example.com/456
+  SENTRY_ENVIRONMENT: test
+  SENTRY_TRACES_SAMPLE_RATE: 1.0
   WIREMOCK_HOSTNAME: signal_logement_wiremock
   WIREMOCK_PORT: 8080
   MESSENGER_TRANSPORT_DSN: doctrine://default
@@ -129,6 +129,13 @@ jobs:
           docker compose exec -T signal_logement_phpfpm npm ci
           docker compose exec -T signal_logement_phpfpm npm run build
 
+      - name: Verify frontend assets
+        run: |
+          # Vérifier que les assets sont bien construits
+          docker compose exec -T signal_logement_phpfpm ls -la public/build/
+          # Vérifier que les fichiers JavaScript sont présents
+          docker compose exec -T signal_logement_phpfpm find public/build -name "*.js" -type f
+
       - name: Cache clear & warmup
         run: |
           docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=dev --no-warmup
@@ -141,6 +148,15 @@ jobs:
           docker compose exec -T signal_logement_phpfpm php bin/console messenger:setup-transports --no-interaction
           docker compose exec -T signal_logement_phpfpm php bin/console doctrine:migrations:migrate --no-interaction
           docker compose exec -T signal_logement_phpfpm php bin/console doctrine:fixtures:load --no-interaction
+
+      - name: Wait for application to be ready
+        run: |
+          # Attendre que l'application soit accessible
+          until curl -f http://localhost:8080/signalement > /dev/null 2>&1; do
+            echo "Waiting for application to be ready..."
+            sleep 5
+          done
+          echo "Application is ready!"
 
       - name: Install Node.js for Playwright
         uses: actions/setup-node@v3
@@ -157,9 +173,29 @@ jobs:
         working-directory: tests/e2e
         run: npx playwright test
 
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: tests/e2e/test-results/
+          retention-days: 30
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-screenshots
+          path: tests/e2e/test-results/**/*.png
+          retention-days: 30
+
       - name: Check server logs
         if: ${{ always() }}
         run: docker compose logs signal_logement_phpfpm
+
+      - name: Check nginx logs
+        if: ${{ always() }}
+        run: docker compose logs signal_logement_nginx
 
       - name: Check build output inside container
         if: ${{ always() }}
