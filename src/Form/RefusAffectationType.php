@@ -37,7 +37,7 @@ class RefusAffectationType extends AbstractType
                 },
                 'label' => 'Veuillez sélectionner le motif de refus <span class="fr-text-default--error">*</span>',
                 'label_html' => true,
-                'placeholder' => 'Sélectionner un motif',
+                'placeholder' => 'Sélectionnez un motif',
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Message aux partenaires <span class="fr-text-default--error">*</span>',
@@ -53,8 +53,8 @@ class RefusAffectationType extends AbstractType
                 'class' => File::class,
                 'choice_label' => 'title',
                 'label' => 'Fichiers',
-                'noselectionlabel' => 'Sélectionner une ou plusieurs fichiers à joindre au message',
-                'nochoiceslabel' => 'Aucun fichiers disponible',
+                'noselectionlabel' => 'Sélectionnez une ou plusieurs fichiers à joindre au message',
+                'nochoiceslabel' => 'Aucun fichier disponible',
                 'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
             ]);
     }

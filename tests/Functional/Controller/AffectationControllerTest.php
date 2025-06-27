@@ -54,11 +54,7 @@ class AffectationControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => self::SIGNALEMENT_REFERENCE]);
 
-        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response_deny', [
-            'signalement' => $signalement->getId(),
-            'affectation' => $signalement->getAffectations()->first()->getId(),
-            'user' => $user->getId(),
-        ]);
+        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_deny', ['affectation' => $signalement->getAffectations()->first()->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'refus_affectation');
         $this->client->request('POST', $routeAffectationResponse, [
@@ -91,11 +87,7 @@ class AffectationControllerTest extends WebTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
         $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getTerritory())]);
 
-        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response', [
-            'signalement' => $signalement->getId(),
-            'affectation' => $affectation->getId(),
-            'user' => $user->getId(),
-        ]);
+        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
 
         $tokenId = 'signalement_affectation_response_'.$signalement->getId();
         $this->client->request(
@@ -129,11 +121,7 @@ class AffectationControllerTest extends WebTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-12']);
         $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getTerritory())]);
 
-        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_response', [
-            'signalement' => $signalement->getId(),
-            'affectation' => $affectation->getId(),
-            'user' => $user->getId(),
-        ]);
+        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
 
         $tokenId = 'signalement_affectation_response_'.$signalement->getId();
         $this->client->request(

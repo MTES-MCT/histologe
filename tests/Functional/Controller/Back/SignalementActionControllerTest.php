@@ -40,7 +40,7 @@ class SignalementActionControllerTest extends WebTestCase
     public function testValidationResponseAcceptSignalementSuccess(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
-        $route = $this->router->generate('back_signalement_validation_response', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',
             $route,
@@ -54,7 +54,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Statut du signalement mis à jour avec succès !');
+        $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
 
         $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
@@ -63,7 +63,7 @@ class SignalementActionControllerTest extends WebTestCase
     public function testValidationResponseRefusSignalementSuccess(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
-        $route = $this->router->generate('back_signalement_validation_response', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',
             $route,
@@ -78,13 +78,13 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Statut du signalement mis à jour avec succès !');
+        $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
     }
 
     public function testValidationResponseSignalementError(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
-        $route = $this->router->generate('back_signalement_validation_response_deny', ['uuid' => $signalement->getUuid()]);
+        $route = $this->router->generate('back_signalement_deny', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',
             $route,

@@ -30,14 +30,10 @@ class FileListService
             'signalement' => $signalement,
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE,
         ]);
+        $choices = ['Documents du dossier' => $signalementFiles->toArray()];
         if ($this->security->isGranted('SIGN_SEE_NDE', $signalement) && $this->qualificationStatusService->canSeenNDEEditZone($signalementQualificationNDE)) {
             $standaloneFiles = $this->fileRepository->findBy(['isStandalone' => true], ['title' => 'ASC']);
-            $choices = [
-                'Documents du dossier' => $signalementFiles->toArray(),
-                'Documents types' => $standaloneFiles,
-            ];
-        } else {
-            $choices = $signalementFiles->toArray();
+            $choices['Documents types'] = $standaloneFiles;
         }
 
         return $choices;

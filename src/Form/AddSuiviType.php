@@ -5,8 +5,8 @@ namespace App\Form;
 use App\Entity\File;
 use App\Entity\Suivi;
 use App\Form\Type\SearchCheckboxType;
-use App\Service\DataValidationHelper;
 use App\Service\FileListService;
+use App\Validator\EmailFormatValidator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,7 +23,7 @@ class AddSuiviType extends AbstractType
     {
         $suivi = $builder->getData();
         $signalement = $suivi->getSignalement();
-        $isNotNotifiable = DataValidationHelper::isInvalidEmail($signalement->getMailDeclarant()) && DataValidationHelper::isInvalidEmail($signalement->getMailOccupant());
+        $isNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailDeclarant()) && EmailFormatValidator::isInvalidEmail($signalement->getMailOccupant());
 
         $builder->add('isPublic', null, [
             'label' => 'En cochant cette case, le suivi sera envoyé à l\'usager',
@@ -59,8 +59,8 @@ class AddSuiviType extends AbstractType
             'class' => File::class,
             'choice_label' => 'title',
             'label' => 'Fichiers',
-            'noselectionlabel' => 'Sélectionner une ou plusieurs fichiers à joindre au suivi',
-            'nochoiceslabel' => 'Aucun fichiers disponible',
+            'noselectionlabel' => 'Sélectionnez un ou plusieurs fichiers à joindre au suivi',
+            'nochoiceslabel' => 'Aucun fichier disponible',
             'mapped' => false,
             'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
         ]);
