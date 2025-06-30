@@ -63,11 +63,6 @@
                     {{ signalement.isNotOccupant ? 'DECLARANT':'OCCUPANT'}}
                 {% endif %}
             {% endif %}
-            {% if feature_accuse_lecture %}
-                {% if suivi.isPublic and suivi.type is not same as (2) %}
-                    <span class="fr-badge fr-badge--{{ suivi.isSeenByUsager ? 'success fr-background--notif-info' : 'error fr-background--notif-error' }}">{{ suivi.isSeenByUsager ? 'Lu' : 'Non lu' }}</span>
-                {% endif %}
-            {% endif  %}
         </div>
 
         {% if is_granted('ROLE_ADMIN') %}
@@ -83,6 +78,12 @@
             {% else %}
                 <span class="fr-badge fr-badge--no-icon" title="Suivi interne">Suivi interne</span>
             {% endif %}
+            {% if feature_accuse_lecture %}
+                <br>
+                {% if suivi.isPublic and suivi.type is not same as (2) %}
+                    <span class="fr-badge fr-badge--{{ suivi.isSeenByUsager ? 'success fr-background--notif-info' : 'error fr-background--notif-error' }}">{{ suivi.isSeenByUsager ? 'Lu' : 'Non lu' }}</span>
+                {% endif %}
+            {% endif  %}
         </div>
         {% if is_granted('ROLE_ADMIN') %}
             <div class="fr-col-1 fr-text--right">
