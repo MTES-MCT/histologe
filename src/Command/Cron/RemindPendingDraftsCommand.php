@@ -36,6 +36,15 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
     {
         $io = new SymfonyStyle($input, $output);
 
+        // histologe is the name of the production scalingo app
+        // test is injected in RemindPendingDraftsCommandTest
+        // dev is for local development
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP') && 'dev' !== $_ENV['APP_ENV']) {
+            $io->error('This command is only available on production environment, test environment and dev environment');
+
+            return Command::FAILURE;
+        }
+
         $signalementDrafts = $this->signalementDraftRepository->findPendingBlockedBailLast3Months();
 
         $count = 0;

@@ -35,6 +35,15 @@ class SendSummaryEmailsCommand extends AbstractCronCommand
     {
         $this->io = new SymfonyStyle($input, $output);
 
+        // histologe is the name of the production scalingo app
+        // test is injected in SendSummaryEmailsCommandTest
+        // dev is for local development
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP') && 'dev' !== $_ENV['APP_ENV']) {
+            $this->io->error('This command is only available on production environment, test environment and dev environment');
+
+            return Command::FAILURE;
+        }
+
         $users = $this->userRepository->findUserWaitingSummaryEmail();
         $progressBar = $this->io->createProgressBar(\count($users));
         $progressBar->start();

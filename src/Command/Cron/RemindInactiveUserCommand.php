@@ -43,8 +43,11 @@ class RemindInactiveUserCommand extends AbstractCronCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP')) {
-            $io->error('This command is only available on production and test environment');
+        // histologe is the name of the production scalingo app
+        // test is injected in RemindInactiveUserCommandTest
+        // dev is for local development
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP') && 'dev' !== $_ENV['APP_ENV']) {
+            $io->error('This command is only available on production environment, test environment and dev environment');
 
             return Command::FAILURE;
         }
