@@ -91,7 +91,7 @@ final class DossierMessage implements DossierMessageInterface
             'mailProprietaire' => $affectation->getSignalement()->getMailProprio(),
         ];
         if ($affectation->getSignalement()->getDetails()) {
-            $this->descriptionProblemes = mb_strimwidth($affectation->getSignalement()->getDetails(), 0, self::DESCRIPTION_MAX_LENGTH);
+            $this->descriptionProblemes = $affectation->getSignalement()->getDetails() ? mb_strimwidth($affectation->getSignalement()->getDetails(), 0, self::DESCRIPTION_MAX_LENGTH) : '';
         }
         $this->numAllocataire = $affectation->getSignalement()->getNumAllocataire();
         $this->montantAllocation = $affectation->getSignalement()->getMontantAllocation();
