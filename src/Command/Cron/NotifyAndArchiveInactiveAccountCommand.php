@@ -52,8 +52,9 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
 
         // histologe is the name of the production scalingo app
         // test is injected in NotifyAndArchiveInactiveAccountCommandTest
-        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP')) {
-            $this->io->error('This command is only available on production environment');
+        // dev is for local development
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP') && 'dev' !== $_ENV['APP_ENV']) {
+            $this->io->error('This command is only available on production environment, test environment and dev environment');
 
             return Command::FAILURE;
         }

@@ -38,8 +38,9 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
 
         // histologe is the name of the production scalingo app
         // test is injected in RemindPendingDraftsCommandTest
-        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP')) {
-            $io->error('This command is only available on production environment');
+        // dev is for local development
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP') && 'dev' !== $_ENV['APP_ENV']) {
+            $io->error('This command is only available on production environment, test environment and dev environment');
 
             return Command::FAILURE;
         }
