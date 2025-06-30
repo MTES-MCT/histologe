@@ -13,6 +13,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
 {
     public function testDisplayMessageSuccessfullyForDebug(): void
     {
+        putenv('APP=test');
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
@@ -31,6 +32,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
 
     public function testDisplayMessageSuccessfully(): void
     {
+        putenv('APP=test');
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 

@@ -51,6 +51,14 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     {
         $this->io = new SymfonyStyle($input, $output);
 
+        // histologe is the name of the production scalingo app
+        // test is injected in AskFeedbackUsagerCommandTest
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP')) {
+            $this->io->error('This command is only available on production environment and test environment');
+
+            return Command::FAILURE;
+        }
+
         $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input);
         $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input);
         $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input);

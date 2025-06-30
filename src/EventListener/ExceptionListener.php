@@ -49,13 +49,15 @@ readonly class ExceptionListener
         }
 
         if ($this->shouldNotifyForException($exception)) {
-            $this->notificationMailerRegistry->send(
-                new NotificationMail(
-                    type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
-                    to: $this->params->get('admin_email'),
-                    event: $event
-                )
-            );
+            if ('histologe' === getenv('APP')) {
+                $this->notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_ERROR_SIGNALEMENT,
+                        to: $this->params->get('admin_email'),
+                        event: $event
+                    )
+                );
+            }
         }
     }
 

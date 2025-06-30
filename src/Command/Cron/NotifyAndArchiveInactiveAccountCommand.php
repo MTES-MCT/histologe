@@ -49,6 +49,15 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
+
+        // histologe is the name of the production scalingo app
+        // test is injected in NotifyAndArchiveInactiveAccountCommandTest
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP')) {
+            $this->io->error('This command is only available on production environment');
+
+            return Command::FAILURE;
+        }
+
         $message = '';
         $nbScheduled = 0;
 

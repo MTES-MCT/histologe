@@ -45,6 +45,14 @@ class NotifyVisitsCommand extends AbstractCronCommand
     {
         $io = new SymfonyStyle($input, $output);
 
+        // histologe is the name of the production scalingo app
+        // test is injected in NotifyVisitsCommandTest
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP')) {
+            $io->error('This command is only available on production environment');
+
+            return Command::FAILURE;
+        }
+
         $countFutureVisits = 0;
         $countPastVisits = 0;
         $countVisitsToPlan = 0;
