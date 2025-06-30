@@ -15,7 +15,7 @@ class UserAvatar implements RuntimeExtensionInterface
     ) {
     }
 
-    public function userAvatarOrPlaceholder(User $user, int $size = 74): string
+    public function userAvatarOrPlaceholder(User $user, int $size = 74, bool $ariaHidden = true): string
     {
         $zipCode = ($user->getFirstTerritory()) ? substr($user->getFirstTerritory()->getZip(), 0, 2) : 'SA';
 
@@ -29,15 +29,19 @@ class UserAvatar implements RuntimeExtensionInterface
 
             $src = "data:image/$type;base64,$data64";
 
+            $arriaHiddenAttribute = $ariaHidden ? 'alt="" aria-hidden="true"' : 'alt="Avatar de l\'utilisateur"';
+
             return sprintf(
-                '<img src="%s" alt="" aria-hidden="true" class="avatar-histologe avatar-%s">',
+                '<img src="%s" '.$arriaHiddenAttribute.' class="avatar-histologe avatar-%s">',
                 $src,
                 $size
             );
         }
 
+        $arriaHiddenAttribute = $ariaHidden ? 'aria-hidden="true"' : '';
+
         return sprintf(
-            '<span class="avatar-histologe avatar-placeholder avatar-%s">%s</span>',
+            '<span '.$arriaHiddenAttribute.' class="avatar-histologe avatar-placeholder avatar-%s">%s</span>',
             $size,
             $zipCode
         );

@@ -14,7 +14,7 @@
                               id="profil_edit_infos_form" method="POST" enctype="multipart/form-data">
                             <div class="fr-display-inline-flex fr-align-items-center fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-display-flex-column fr-align-items-center fr-col-12 fr-col-md-4">
-                                    {{ user_avatar_or_placeholder(app.user, 124) }}
+                                    {{ user_avatar_or_placeholder(app.user, 124, false) }}
                                     {% if app.user.avatarFilename %}
                                         <br>
                                         <a href="{{ path('back_profil_delete_avatar') }}"

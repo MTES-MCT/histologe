@@ -23,12 +23,12 @@ class UserAvatarTest extends WebTestCase
         $userAvatar = $container->get(UserAvatar::class);
 
         $user = (new User())
-        ->setRoles([User::ROLES['Super Admin']]);
+            ->setRoles([User::ROLES['Super Admin']]);
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
-        $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-74">SA</span>', $outputSpan);
+        $this->assertEquals('<span aria-hidden="true" class="avatar-histologe avatar-placeholder avatar-74">SA</span>', $outputSpan);
 
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user, 80);
-        $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-80">SA</span>', $outputSpan);
+        $this->assertEquals('<span aria-hidden="true" class="avatar-histologe avatar-placeholder avatar-80">SA</span>', $outputSpan);
 
         $user->setRoles([User::ROLES['Admin. partenaire']]);
         $territory = (new Territory())->setZip('44');
@@ -36,7 +36,7 @@ class UserAvatarTest extends WebTestCase
         $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
         $user->addUserPartner($userPartner);
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
-        $this->assertEquals('<span class="avatar-histologe avatar-placeholder avatar-74">44</span>', $outputSpan);
+        $this->assertEquals('<span aria-hidden="true" class="avatar-histologe avatar-placeholder avatar-74">44</span>', $outputSpan);
 
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = $this->createMock(ParameterBagInterface::class);
@@ -55,11 +55,11 @@ class UserAvatarTest extends WebTestCase
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
 
         $this->assertStringContainsString('<img src="data:image/jpg;base64,', $outputSpan);
-        $this->assertStringContainsString('alt="Avatar de l\'utilisateur" class="avatar-histologe avatar-74">', $outputSpan);
+        $this->assertStringContainsString('alt="" aria-hidden="true" class="avatar-histologe avatar-74">', $outputSpan);
 
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user, 100);
 
         $this->assertStringContainsString('<img src="data:image/jpg;base64,', $outputSpan);
-        $this->assertStringContainsString('alt="Avatar de l\'utilisateur" class="avatar-histologe avatar-100">', $outputSpan);
+        $this->assertStringContainsString('alt="" aria-hidden="true" class="avatar-histologe avatar-100">', $outputSpan);
     }
 }
