@@ -794,15 +794,15 @@ function reloadDeleteFileList() {
 
         fetch(formAction, { method: 'POST', body: formData }).then((response) => {
           if (response.ok) {
-            window.dispatchEvent(new Event('refreshUploadedFileList'));
-          } else {
+            window.dispatchEvent(new Event('refreshUploadedFileList'))
+          }else{
             response.json().then((response) => {
-              alert(response.message);
-            });
+              alert(response.message)
+            })
           }
-        });
-      });
-    });
+        })
+      })
+    })
   }
 }
 
