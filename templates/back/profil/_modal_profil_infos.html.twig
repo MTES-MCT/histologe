@@ -12,17 +12,18 @@
                         </h1>   
                         <form action="{{ path('back_profil_edit_infos') }}" name="profil_edit_infos"
                               id="profil_edit_infos_form" method="POST" enctype="multipart/form-data">
-                            <div class="fr-display-inline-flex fr-align-items-center">
-                                <div class="fr-display-flex-column fr-align-items-center">
-                                    {{ user_avatar_or_placeholder(app.user, 124) }}
-                                    {% if app.user.avatarFilename %}                                        
+                            <div class="fr-display-inline-flex fr-align-items-center fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-display-flex-column fr-align-items-center fr-col-12 fr-col-md-4">
+                                    {{ user_avatar_or_placeholder(app.user, 124, false) }}
+                                    {% if app.user.avatarFilename %}
+                                        <br>
                                         <a href="{{ path('back_profil_delete_avatar') }}"
                                         class="fr-link fr-fi-delete-line fr-link--icon-left">Supprimer l'avatar</a>
                                     {% endif %}
                                 </div>
-                                <div class="fr-ml-3v">
+                                <div class="fr-col-12 fr-col-md-8">
                                     <div class="fr-upload-group fr-mb-5v">
-                                        <label class="fr-label" for="profil_edit_infos[avatar]">Choisir un nouvel avatar (facultatif)
+                                        <label class="fr-label" for="profil_edit_infos_avatar">Choisir un nouvel avatar (facultatif)
                                             <span class="fr-hint-text">Taille Maximale : 5 Mo, Formats supportés : {{ get_accepted_extensions('resizable')}}</span>
                                         </label>
                                         <input class="fr-upload" type="file" accept={{ get_accepted_mime_type('resizable')}} name="profil_edit_infos[avatar]" id="profil_edit_infos_avatar">
