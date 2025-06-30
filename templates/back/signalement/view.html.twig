@@ -48,7 +48,10 @@
         {% include '_partials/_modal_send_lien_suivi.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_file_delete.html.twig' %}
-    {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+    {% include '_partials/_select_file_document_type.html.twig' %}
+    <div data-ajax-form>
+        {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
+    </div>
 
     {% if is_granted('SIGN_REOPEN', signalement) %}
         {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}

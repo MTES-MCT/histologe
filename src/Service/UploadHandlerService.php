@@ -34,17 +34,15 @@ class UploadHandlerService
     }
 
     /**
-     * @return self|array<mixed>
+     * @return array<mixed>
      *
      * @throws MaxUploadSizeExceededException
      * @throws EmptyFileException
      * @throws FilesystemException
      * @throws UnsupportedFileFormatException
      */
-    public function toTempFolder(
-        UploadedFile $file,
-        ?string $fileType = File::INPUT_NAME_DOCUMENTS,
-    ): self|array {
+    public function toTempFolder(UploadedFile $file, ?string $fileType = null): array
+    {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
         if (empty($originalFilename) || !$file->isValid()) {
             return ['error' => 'Erreur lors du téléversement.', 'message' => 'Fichier vide', 'status' => 500];
@@ -58,15 +56,7 @@ class UploadHandlerService
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
-        if (
-            File::INPUT_NAME_DOCUMENTS === $fileType
-            && !self::isAcceptedDocumentFormat($file, $fileType)
-        ) {
-            throw new UnsupportedFileFormatException($file, $fileType);
-        } elseif (
-            File::INPUT_NAME_PHOTOS === $fileType
-            && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
-        ) {
+        if (!self::isAcceptedDocumentFormat($file, $fileType)) {
             throw new UnsupportedFileFormatException($file, $fileType);
         }
 
@@ -78,45 +68,33 @@ class UploadHandlerService
         } catch (FileException $e) {
             $this->logger->error($e->getMessage());
 
-            return [
-                'error' => 'Erreur lors du téléversement.',
-                'message' => $e->getMessage(),
-                'status' => 500,
-            ];
+            return ['error' => 'Erreur lors du téléversement.', 'message' => $e->getMessage(), 'status' => 500];
         }
-
         if (!empty($newFilename) && !empty($titre)) {
             $filePath = $distantFolder.$newFilename;
             $this->file = ['file' => $newFilename, 'filePath' => $filePath, 'titre' => $titre];
         }
 
-        return $this;
+        return $this->file;
     }
 
-    public static function isAcceptedDocumentFormat(
-        UploadedFile $file,
-        string $fileType,
-    ): bool {
-        if (File::INPUT_NAME_DOCUMENTS === $fileType
-            && \in_array($file->getMimeType(), File::DOCUMENT_MIME_TYPES)
-            && (\in_array($file->getClientOriginalExtension(), File::DOCUMENT_EXTENSION)
-            || \in_array($file->getExtension(), File::DOCUMENT_EXTENSION)
-            || \in_array($file->guessExtension(), File::DOCUMENT_EXTENSION))
-        ) {
-            return true;
+    public static function isAcceptedDocumentFormat(UploadedFile $file, ?string $fileType = null): bool
+    {
+        if ('photo' === $fileType) {
+            return \in_array($file->getMimeType(), File::IMAGE_MIME_TYPES);
         }
 
-        return false;
+        return \in_array($file->getMimeType(), File::DOCUMENT_MIME_TYPES);
     }
 
-    public static function getAcceptedExtensions(?string $type = 'document'): string
+    public static function getAcceptedExtensions(?string $type = null): string
     {
-        if ('document' === $type || 'documents' === $type) {
-            $extensions = array_map('strtoupper', File::DOCUMENT_EXTENSION);
-        } elseif ('resizable' === $type) {
+        if ('resizable' === $type) {
             $extensions = array_map('strtoupper', array_diff(File::IMAGE_EXTENSION, ['pdf']));
-        } else {
+        } elseif ('photo' === $type) {
             $extensions = array_map('strtoupper', File::IMAGE_EXTENSION);
+        } else {
+            $extensions = array_map('strtoupper', File::DOCUMENT_EXTENSION);
         }
 
         $allButLast = \array_slice($extensions, 0, -1);
@@ -254,7 +232,6 @@ class UploadHandlerService
     public function uploadFromFile(
         UploadedFile $file,
         string $newFilename,
-        ?string $fileType = File::INPUT_NAME_DOCUMENTS,
     ): ?string {
         if ($this->isFileEmpty($file)) {
             throw new EmptyFileException();
@@ -262,16 +239,8 @@ class UploadHandlerService
         if ($file->getSize() > self::MAX_FILESIZE) {
             throw new MaxUploadSizeExceededException(self::MAX_FILESIZE);
         }
-        if (
-            File::INPUT_NAME_DOCUMENTS === $fileType
-            && !self::isAcceptedDocumentFormat($file, $fileType)
-        ) {
-            throw new UnsupportedFileFormatException($file, $fileType);
-        } elseif (
-            File::INPUT_NAME_PHOTOS === $fileType
-            && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $fileType)
-        ) {
-            throw new UnsupportedFileFormatException($file, $fileType);
+        if (!self::isAcceptedDocumentFormat($file)) {
+            throw new UnsupportedFileFormatException($file);
         }
         try {
             $tmpFilepath = $file->getPathname();
@@ -343,16 +312,6 @@ class UploadHandlerService
         }
 
         return false;
-    }
-
-    /**
-     * @return ?array<mixed>
-     */
-    public function setKey(string $key): ?array
-    {
-        $this->file['key'] = $key;
-
-        return $this->file;
     }
 
     /**

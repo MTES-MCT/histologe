@@ -41,8 +41,6 @@ class FileFactory
             $file->setDocumentType(DocumentType::AUTRE);
         }
 
-        $file->setFileType($file->isTypePhoto() ? File::FILE_TYPE_PHOTO : File::FILE_TYPE_DOCUMENT);
-
         if (null !== $signalement) {
             $file->setSignalement($signalement);
         }

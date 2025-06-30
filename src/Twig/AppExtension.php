@@ -162,16 +162,15 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         ];
     }
 
-    public function getAcceptedMimeTypes(?string $type = 'document'): string
+    public function getAcceptedMimeTypes(?string $type = null): string
     {
-        if ('document' === $type) {
-            return implode(',', File::DOCUMENT_MIME_TYPES);
-        }
         if ('resizable' === $type) {
             return implode(',', File::RESIZABLE_MIME_TYPES);
+        } elseif ('photo' === $type) {
+            return implode(',', File::IMAGE_MIME_TYPES);
         }
 
-        return implode(',', File::IMAGE_MIME_TYPES);
+        return implode(',', File::DOCUMENT_MIME_TYPES);
     }
 
     public function displaySingularOrPlural(?int $count, string $strIfSingular, string $strIfPlural): string

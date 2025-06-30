@@ -638,7 +638,7 @@
     <section>
         <div class="page">
         {% set sortedPhotos = signalement.files
-            |filter(photo => photo.isTypePhoto)
+            |filter(photo => photo.isTypeImage)
             |sort((a, b) =>
                 (a.documentType.name == 'PHOTO_VISITE' ? 1 : 0) <=> (b.documentType.name == 'PHOTO_VISITE' ? 1 : 0)
                 ?: (a.createdAt <=> b.createdAt)

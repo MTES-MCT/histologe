@@ -23,7 +23,6 @@ class FileManager extends AbstractManager
     public function createOrUpdate(
         ?string $filename = null,
         ?string $title = null,
-        ?string $type = null,
         ?Signalement $signalement = null,
         ?User $user = null,
         bool $flush = false,
@@ -46,7 +45,6 @@ class FileManager extends AbstractManager
 
         $file
             ->setTitle($title)
-            ->setFileType($type)
             ->setSignalement($signalement)
             ->setDocumentType($documentType ?? DocumentType::AUTRE)
             ->setDescription($description);

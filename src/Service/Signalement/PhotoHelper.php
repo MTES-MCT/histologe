@@ -27,23 +27,21 @@ class PhotoHelper
     public static function getSortedPhotos(Signalement $signalement): ?array
     {
         $photoList = $signalement->getPhotos()->toArray();
-        $photoListByType = [
-            DocumentType::PHOTO_SITUATION->value => [],
-            DocumentType::PHOTO_VISITE->value => [],
-            DocumentType::AUTRE->value => [],
-        ];
+        $photoListByType = ['situation' => [], 'procedure' => [], 'visite' => []];
 
         foreach ($photoList as $photoItem) {
-            $type = $photoItem->getDocumentType();
-            $photoListByType[$type->value][] = $photoItem;
+            if ($photoItem->isSituationImage()) {
+                $photoListByType['situation'][] = $photoItem;
+            } elseif ($photoItem->isProcedureImage()) {
+                $photoListByType['procedure'][] = $photoItem;
+            } else {
+                $photoListByType['visite'][] = $photoItem;
+            }
         }
 
-        foreach ($photoListByType as &$photoArray) {
-            usort($photoArray, function (File $fileA, File $fileB) {
-                if (DocumentType::PHOTO_SITUATION === $fileA->getDocumentType()) {
-                    return $fileA->getId() <=> $fileB->getId();
-                }
-                if (DocumentType::PHOTO_VISITE === $fileA->getDocumentType()) {
+        foreach ($photoListByType as $key => &$photoArray) {
+            usort($photoArray, function (File $fileA, File $fileB) use ($key) {
+                if ('visite' === $key) {
                     $interventionA = $fileA->getIntervention();
                     $interventionB = $fileB->getIntervention();
                     if (null === $interventionA && null === $interventionB) {
@@ -63,10 +61,6 @@ class PhotoHelper
             });
         }
 
-        return array_merge(
-            $photoListByType[DocumentType::PHOTO_SITUATION->value],
-            $photoListByType[DocumentType::AUTRE->value],
-            $photoListByType[DocumentType::PHOTO_VISITE->value]
-        );
+        return array_merge($photoListByType['situation'], $photoListByType['procedure'], $photoListByType['visite']);
     }
 }

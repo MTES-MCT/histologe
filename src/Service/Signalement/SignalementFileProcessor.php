@@ -46,8 +46,7 @@ class SignalementFileProcessor
      *     file: string,
      *     title: string,
      *     date: \DateTimeImmutable,
-     *     type: string,
-     *     documentType: ?DocumentType,
+     *     documentType: DocumentType,
      *     isSuspicious: bool
      * }>
      *
@@ -55,11 +54,10 @@ class SignalementFileProcessor
      */
     public function process(
         array $files,
-        string $inputName,
         ?DocumentType $documentType = DocumentType::AUTRE,
     ): array {
         $fileList = [];
-        foreach ($files[$inputName] as $key => $file) {
+        foreach ($files as $key => $file) {
             $fileSizeOk = $isSuspicious = false;
 
             if ($file instanceof UploadedFile) {
@@ -90,39 +88,19 @@ class SignalementFileProcessor
             }
 
             if ($fileSizeOk) {
-                if (
-                    $file instanceof UploadedFile
-                    && File::INPUT_NAME_DOCUMENTS === $inputName
-                    && !UploadHandlerService::isAcceptedDocumentFormat($file, $inputName)
-                ) {
-                    $message = UnsupportedFileFormatException::getFileFormatErrorMessage($file, 'document');
-                    $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
-                    $this->logger->error($message.$fileInfo);
-                    $this->errors[] = $message;
-                } elseif (
-                    $file instanceof UploadedFile
-                    && File::INPUT_NAME_PHOTOS === $inputName
-                    && !ImageManipulationHandler::isAcceptedPhotoFormat($file, $inputName)
-                ) {
-                    $message = UnsupportedFileFormatException::getFileFormatErrorMessage($file, 'photo');
+                if ($file instanceof UploadedFile && !UploadHandlerService::isAcceptedDocumentFormat($file)) {
+                    $message = UnsupportedFileFormatException::getFileFormatErrorMessage($file);
                     $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
                     $this->logger->error($message.$fileInfo);
                     $this->errors[] = $message;
                 } else {
-                    $inputTypeDetection = $inputName;
                     try {
                         if ($file instanceof UploadedFile) {
-                            $filename = $this->uploadHandlerService->uploadFromFile(
-                                $file,
-                                $this->filenameGenerator->generate($file),
-                                $inputTypeDetection
-                            );
+                            $filename = $this->uploadHandlerService->uploadFromFile($file, $this->filenameGenerator->generate($file));
                             $title = $this->filenameGenerator->getTitle();
 
                             if (\in_array($file->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
                                 $this->imageManipulationHandler->setUseTmpDir(false)->resize($filename)->thumbnail($filename);
-                            } else {
-                                $inputTypeDetection = 'documents';
                             }
                         } else {
                             $filename = $this->uploadHandlerService->moveFromBucketTempFolder($file);
@@ -134,7 +112,7 @@ class SignalementFileProcessor
                         continue;
                     }
                     if (!empty($filename)) {
-                        $fileList[] = $this->createFileItem($filename, $title, $inputTypeDetection, $documentType, $isSuspicious);
+                        $fileList[] = $this->createFileItem($filename, $title, $documentType, $isSuspicious);
                     }
                 }
             }
@@ -200,12 +178,17 @@ class SignalementFileProcessor
     }
 
     /**
-     * @return array<mixed>
+     * @return array{
+     *     file: string,
+     *     title: string,
+     *     date: \DateTimeImmutable,
+     *     documentType: DocumentType,
+     *     isSuspicious: bool
+     * }
      */
     private function createFileItem(
         string $filename,
         string $title,
-        string $inputName,
         DocumentType $documentType,
         bool $isSuspicious = false,
     ): array {
@@ -213,7 +196,6 @@ class SignalementFileProcessor
             'file' => $filename,
             'title' => $title,
             'date' => new \DateTimeImmutable(),
-            'type' => 'documents' === $inputName ? File::FILE_TYPE_DOCUMENT : File::FILE_TYPE_PHOTO,
             'documentType' => $documentType,
             'isSuspicious' => $isSuspicious,
         ];

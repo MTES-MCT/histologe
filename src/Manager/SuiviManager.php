@@ -98,8 +98,7 @@ class SuiviManager extends Manager
      */
     public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files): Suivi
     {
-        $nbDocs = 0;
-        $nbPhotos = 0;
+        $nbDocs = count($files);
         /** @var ?DocumentType $documentType */
         $documentType = null;
 
@@ -107,11 +106,6 @@ class SuiviManager extends Manager
         $intervention = null;
         /** @var File $file */
         foreach ($files as $file) {
-            if ($file->isTypePhoto()) {
-                ++$nbPhotos;
-            } else {
-                ++$nbDocs;
-            }
             $documentType = $file->getDocumentType();
             $intervention = $file->getIntervention();
         }
@@ -135,24 +129,7 @@ class SuiviManager extends Manager
                 $description .= $nbDocs;
                 $description .= $nbDocs > 1 ? ' documents ' : ' document ';
                 $description .= 'sur la situation usager';
-            }
-
-            if ($nbPhotos > 0) {
-                if ('' !== $description) {
-                    $description .= ' et ';
-                }
-                $description .= $nbPhotos;
-                $description .= $nbPhotos > 1 ? ' photos' : ' photo';
-                if ($signalement->isV2()) {
-                    $description .= ' concernant les désordres suivants';
-                }
-            }
-            if (0 === $nbDocs && $nbPhotos > 1) {
-                $description .= ' ont été ajoutées au signalement : ';
-            } elseif ($nbDocs + $nbPhotos > 1) {
-                $description .= ' ont été ajoutés au signalement : ';
-            } elseif (1 === $nbPhotos) {
-                $description .= ' a été ajoutée au signalement : ';
+                $description .= $nbDocs > 1 ? ' ont été ajoutés au signalement : ' : ' a été ajouté au signalement : ';
             }
         }
 
@@ -173,12 +150,12 @@ class SuiviManager extends Manager
         if (DocumentType::PHOTO_VISITE === $documentType && null !== $intervention) {
             $isVisibleUsager = true;
             $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
-            if ($nbPhotos > 0) {
+            if ($nbDocs > 0) {
                 $description .= \sprintf(
                     '%s a ajouté %s %s de la visite du %s :',
                     $partner->getNom(),
-                    $nbPhotos,
-                    $nbPhotos > 1 ? ' photos' : ' photo',
+                    $nbDocs,
+                    $nbDocs > 1 ? ' photos' : ' photo',
                     $intervention->getScheduledAt()->format('d/m/Y')
                 );
             }
