@@ -64,6 +64,11 @@
             <div class="fr-col-12 fr-col-lg-4">
                 {{ form_row(form.isNotNotifiable) }}
             </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12 fr-col-lg-4">
+                    {{ form_row(form.isOnlyInterconnected) }}
+                </div>
+            {% endif %}
             <div class="fr-col-12 fr-col-lg-4">
                 <a href="{{ path('back_partner_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
