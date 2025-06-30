@@ -44,10 +44,8 @@
                 </div>
                 <div class="photos-album-flex">
                     <div class="fr-mt-1w">
-                        {% if photo.documentType is not same as null
-                            and photo.documentType is not same as enum('App\\Entity\\Enum\\DocumentType').AUTRE %}
-                            {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION
-                                    and photo.desordreSlug is not same as null %}
+                        {% if photo.documentType is not same as null and photo.documentType is not same as enum('App\\Entity\\Enum\\DocumentType').AUTRE %}
+                            {% if photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.desordreSlug is not same as null %}
                                 {{ signalement.getDesordreLabel(photo.desordreSlug) }}
                             {% elseif photo.documentType is same as enum('App\\Entity\\Enum\\DocumentType').PHOTO_VISITE and photo.intervention %}
                                 {{ photo.documentType.label() }} du {{ photo.intervention.scheduledAt|date('d/m/Y') }} par {{ photo.intervention.partner.nom}}

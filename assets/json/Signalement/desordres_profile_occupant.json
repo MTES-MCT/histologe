@@ -2957,7 +2957,7 @@
           "slug": "message_administration_documents",
           "label": "Documents complémentaires (facultatif)",
           "labelInfo": "Merci de ne transmettre aucun document comportant des données de santé. Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
-          "description": "Vous pouvez ajouter ici les documents utiles au traitement du dossier, par exemple : le bail, les échanges avec le propriétaire ou bailleur, les courriers à votre propriétaire ou assurance, etc.",
+          "description": "Vous pouvez ajouter ici les documents utiles au traitement du dossier, par exemple : des photos des désordres rencontrés, le bail, les échanges avec le propriétaire ou bailleur, les courriers à votre propriétaire ou assurance, etc.",
           "labelUpload": "Ajouter des documents",
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil_detail_occupant === 'locataire'"
@@ -2971,22 +2971,11 @@
           "slug": "message_administration_documents",
           "label": "Documents complémentaires (facultatif)",
           "labelInfo": "Merci de ne transmettre aucun document comportant des données de santé. Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
-          "description": "Vous pouvez ajouter ici les documents utiles au traitement du dossier, par exemple : les différents diagnostics du logement, les courriers ou échanges avec votre assurance ou avec l'administration, etc.",
+          "description": "Vous pouvez ajouter ici les documents utiles au traitement du dossier, par exemple : des photos des désordres rencontrés, les différents diagnostics du logement, les courriers ou échanges avec votre assurance ou avec l'administration, etc.",
           "labelUpload": "Ajouter des documents",
           "conditional": {
             "show": "formStore.data.signalement_concerne_profil_detail_occupant === 'bailleur_occupant'"
           },
-          "validate": {
-            "required": false
-          }
-        },
-        {
-          "type": "SignalementFormUploadPhotos",
-          "slug": "message_administration_photos",
-          "label": "Photos complémentaires (facultatif)",
-          "labelInfo": "Les photos ne doivent pas contenir de visages de personnes ou d'objets personnels",
-          "description": "Vous pouvez ajouter ici des photos des désordres rencontrés dans le logement et / ou le bâtiment.",
-          "labelUpload": "Ajouter des photos",
           "validate": {
             "required": false
           }

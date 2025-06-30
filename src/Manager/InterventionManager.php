@@ -211,8 +211,9 @@ class InterventionManager extends AbstractManager
         $intervention->setDetails($visiteRequest->getDetails());
         if ($visiteRequest->getDocument()) {
             $document = $visiteRequest->getDocument();
-            foreach ($intervention->getFiles() as $file) {
-                $intervention->removeFile($file);
+            $rapportDeVisite = $intervention->getRapportDeVisite();
+            if ($rapportDeVisite) {
+                $intervention->removeFile($rapportDeVisite);
             }
             $intervention->addFile($this->createFile($intervention, $document));
         }

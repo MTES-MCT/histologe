@@ -131,12 +131,11 @@ class ProfilController extends AbstractController
                     $errorMessage['errors']['profil_edit_infos[avatar]']['errors'][] = 'Le fichier est infecté';
                 } else {
                     try {
-                        $res = $uploadHandlerService->toTempFolder($avatarFile, 'avatar');
+                        $res = $uploadHandlerService->toTempFolder($avatarFile);
 
-                        if (\is_array($res) && isset($res['error'])) {
+                        if (isset($res['error'])) {
                             throw new \Exception($res['error']);
                         }
-                        $res = $uploadHandlerService->setKey('avatar');
 
                         if (\in_array($avatarFile->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
                             $imageManipulationHandler->avatar($res['filePath']);

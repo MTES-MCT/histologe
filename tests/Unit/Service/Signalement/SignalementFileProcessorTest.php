@@ -2,7 +2,6 @@
 
 namespace App\Tests\Unit\Service\Signalement;
 
-use App\Entity\File;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
 use App\Service\ImageManipulationHandler;
@@ -63,7 +62,7 @@ class SignalementFileProcessorTest extends TestCase
             false
         );
 
-        $fileList = $signalementFileProcessor->process(self::FILE_LIST, 'documents');
+        $fileList = $signalementFileProcessor->process(self::FILE_LIST['documents']);
         $this->assertTrue($signalementFileProcessor->isValid());
         $this->assertEmpty($signalementFileProcessor->getErrors());
         $this->assertCount(2, $fileList);
@@ -72,7 +71,6 @@ class SignalementFileProcessorTest extends TestCase
             $this->assertArrayHasKey('title', $fileItem);
             $this->assertArrayHasKey('date', $fileItem);
             $this->assertArrayHasKey('type', $fileItem);
-            $this->assertEquals(File::FILE_TYPE_DOCUMENT, $fileItem['type']);
         }
     }
 
@@ -98,8 +96,8 @@ class SignalementFileProcessorTest extends TestCase
             false
         );
         $signalement = $this->getSignalement();
-        $fileList = $signalementFileProcessor->process(self::FILE_LIST, 'photos');
-        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement); // TODO
+        $fileList = $signalementFileProcessor->process(self::FILE_LIST['photos']);
+        $signalementFileProcessor->addFilesToSignalement($fileList, $signalement);
         $this->assertNotNull($signalement->getFiles());
     }
 }

@@ -16,26 +16,19 @@
             {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
-        {% if signalement.interventions is empty or intervention.files is empty or intervention.getRapportDeVisite is empty %}
+        {% if not intervention.rapportDeVisite %}
             {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
-                <button
-                    class="fr-btn fr-btn--secondary fr-fi-file-fill"
-                    aria-controls="edit-visite-modal-{{intervention.id}}"
-                    data-fr-opened="false"
-                    >
+                <button class="fr-btn fr-btn--secondary fr-fi-file-fill" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
                     Ajouter un rapport de visite
                 </button>
             {% endif %}
         {% else %}
             {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
-                <button
-                    class="fr-btn fr-btn--secondary fr-fi-edit-line"
-                    aria-controls="edit-visite-modal-{{intervention.id}}"
-                    data-fr-opened="false">
+                <button class="fr-btn fr-btn--secondary fr-fi-edit-line" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
                     Editer le rapport
                 </button>
             {% endif %}
-            <a href="{{ sign_url(path('show_file', {uuid: intervention.getRapportDeVisite.first.uuid})) }}"
+            <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
                 class="fr-btn fr-btn--secondary"
                 title="Voir le rapport de visite"
                 rel="noopener"
@@ -48,17 +41,14 @@
                 class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn"
                 data-fr-opened="false"
                 aria-controls="visites-upload-files-{{intervention.id}}"
-                data-file-type="photo"
                 data-document-type="PHOTO_VISITE"
-                data-accepted-type-mimes={{ get_accepted_mime_type('photo')}}
-                data-accepted-extensions="{{ get_accepted_extensions('photo')}}"
                 data-intervention-id="{{intervention.id}}">
                 Ajouter les photos de la visite
             </button>
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_NOT_DONE') %}
-        {% if intervention.getRapportDeVisite is not empty %}
-            <a href="{{ sign_url(path('show_file', {uuid: intervention.getRapportDeVisite.first.uuid})) }}"
+        {% if intervention.rapportDeVisite %}
+            <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
                 class="fr-btn fr-btn--secondary"
                 title="Voir le rapport de visite"
                 rel="noopener"

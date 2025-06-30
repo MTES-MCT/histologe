@@ -32,12 +32,12 @@ class InterventionVoter extends Voter
         }
 
         return match ($attribute) {
-            self::EDIT_VISITE => $this->canEditVisite($subject, $user),
+            self::EDIT_VISITE => self::canEditVisite($subject, $user),
             default => false,
         };
     }
 
-    private function canEditVisite(Intervention $intervention, User $user): bool
+    public static function canEditVisite(Intervention $intervention, User $user): bool
     {
         $signalement = $intervention->getSignalement();
         if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {

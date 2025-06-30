@@ -356,25 +356,24 @@ class SignalementVisitesController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid:signalement}/visites/{intervention}/delete-rapport', name: 'back_signalement_visite_deleterapport')]
+    #[Route('/visites/{intervention}/delete-rapport', name: 'back_signalement_visite_deleterapport')]
     public function deleteRapportVisiteFromSignalement(
-        Signalement $signalement,
         Intervention $intervention,
         Request $request,
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
     ): Response {
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
-        if (!$this->isCsrfTokenValid('delete_rapport', $request->get('_token')) || $intervention->getSignalement()->getId() !== $signalement->getId() || $intervention->getFiles()->isEmpty()) {
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        if (!$this->isCsrfTokenValid('delete_rapport', $request->get('_token')) || !$intervention->getRapportDeVisite()) {
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]);
         }
-        $file = $intervention->getFiles()->first();
+        $file = $intervention->getRapportDeVisite();
         $uploadHandlerService->deleteFileInBucket($file);
         $entityManager->remove($file);
         $entityManager->flush();
         $this->addFlash('success', 'Le rapport de visite a bien été supprimé.');
 
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]);
     }
 
     private function validateRequest(VisiteRequest $visiteRequest, ValidatorInterface $validator): string

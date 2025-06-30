@@ -2256,7 +2256,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getPhotos(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return $file->isTypePhoto() && !$file->isTemp() && !$file->isIsWaitingSuivi();
+            return $file->isTypeImage() && !$file->isTemp() && !$file->isIsWaitingSuivi();
         });
     }
 

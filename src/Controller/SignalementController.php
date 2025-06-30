@@ -379,16 +379,16 @@ class SignalementController extends AbstractController
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
+                    $fileType = 'photos' === $key ? 'photo' : $key;
                     /** @var UploadedFile $file */
                     // PDF files will be checked asynchronously and flagged as suspicious if necessary
                     if (!$fileScanner->isClean($file->getPathname()) && 'application/pdf' !== $file->getMimeType()) {
                         return $this->json(['error' => 'Le fichier est infecté par un virus.'], 400);
                     }
-                    $res = $uploadHandlerService->toTempFolder($file, $key);
-                    if (\is_array($res) && isset($res['error'])) {
+                    $res = $uploadHandlerService->toTempFolder($file, $fileType);
+                    if (isset($res['error'])) {
                         throw new \Exception($res['error']);
                     }
-                    $res = $uploadHandlerService->setKey($key);
                     if (\in_array($file->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
                         $imageManipulationHandler->resize($res['filePath'])->thumbnail();
                     }

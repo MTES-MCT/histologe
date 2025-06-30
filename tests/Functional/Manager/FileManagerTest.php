@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Entity\Enum\DocumentType;
-use App\Entity\File;
 use App\Entity\Signalement;
 use App\Factory\FileFactory;
 use App\Manager\FileManager;
@@ -24,7 +23,6 @@ class FileManagerTest extends KernelTestCase
         $file = $fileManager->createOrUpdate(
             'blank.pdf',
             'Blank',
-            File::FILE_TYPE_DOCUMENT,
             $signalement = $signalementRepository->findOneBy(['reference' => '2023-12'])
         );
 
@@ -57,7 +55,7 @@ class FileManagerTest extends KernelTestCase
         $this->assertEquals('blank.jpg', $file->getFilename());
         $this->assertEquals('Blank', $file->getTitle());
         $this->assertEquals('jpg', $file->getExtension());
-        $this->assertTrue($file->isTypePhoto());
+        $this->assertTrue($file->isTypeImage());
         $this->assertEquals($signalement->getReference(), $file->getSignalement()->getReference());
         $this->assertEquals($desc, $file->getDescription());
         $this->assertEquals(DocumentType::PHOTO_VISITE, $file->getDocumentType());

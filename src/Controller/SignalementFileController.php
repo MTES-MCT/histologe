@@ -4,13 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\File;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
+use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,8 +43,7 @@ class SignalementFileController extends AbstractController
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
         }
-        $inputName = isset($files[File::INPUT_NAME_DOCUMENTS]) ? File::INPUT_NAME_DOCUMENTS : File::INPUT_NAME_PHOTOS;
-        $fileList = $signalementFileProcessor->process($files, $inputName);
+        $fileList = $signalementFileProcessor->process($files);
         if (!$signalementFileProcessor->isValid()) {
             return $this->json(['response' => $signalementFileProcessor->getErrorMessages()], Response::HTTP_BAD_REQUEST);
         }
@@ -62,6 +61,7 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         EntityManagerInterface $entityManager,
         SignalementRepository $signalementRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
@@ -75,15 +75,16 @@ class SignalementFileController extends AbstractController
         if (null === $file) {
             return $this->json(['response' => 'Document introuvable'], Response::HTTP_BAD_REQUEST);
         }
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
         $documentType = DocumentType::tryFrom($request->get('documentType'));
-        if (null === $documentType || !isset(DocumentType::getOrderedSituationList()[$documentType->name])) {
+        if ($request->get('documentType') && isset($infoDesordres['criteres'][$request->get('documentType')])) {
+            $file->setDocumentType(DocumentType::PHOTO_SITUATION);
+            $file->setDesordreSlug($request->get('documentType'));
+        } elseif (null === $documentType || !isset(DocumentType::getOrderedSituationList()[$documentType->name])) {
             return $this->json(['response' => 'Type de document invalide'], Response::HTTP_BAD_REQUEST);
-        }
-        $file->setDocumentType($documentType);
-        $desordreSlug = $request->get('desordreSlug');
-        $file->setDesordreSlug($desordreSlug);
-        if ($desordreSlug && !$file->getDesordreSlug()) {
-            return $this->json(['response' => 'Type de désordre invalide'], Response::HTTP_BAD_REQUEST);
+        } else {
+            $file->setDocumentType($documentType);
+            $file->setDesordreSlug(null);
         }
         $entityManager->persist($file);
         $entityManager->flush();

@@ -75,9 +75,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->fileRepository
         );
 
-        $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);
-        $this->assertInstanceOf(UploadHandlerService::class, $uploadHandler);
-        $fileResult = $uploadHandler->getFile();
+        $fileResult = $uploadHandlerService->toTempFolder($uploadFile);
         $this->assertIsArray($fileResult);
         $this->assertArrayHasKey('file', $fileResult);
         $this->assertArrayHasKey('titre', $fileResult);

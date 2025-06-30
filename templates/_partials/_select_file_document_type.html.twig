@@ -1,0 +1,28 @@
+<div class="fr-display-none">
+    {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+    <select class="fr-select select-type" data-file-id="" id="select-type-situation-to-clone">
+        <option value="">Sélectionner un type</option>
+        {% if criteres is defined and criteres|length %}
+            <optgroup label="Désordres">
+                {% for key, value in criteres %}
+                    <option value="{{ key }}">{{ value }}</option>
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Autres">
+                {% for key, value in DocumentType.getOrderedSituationList() %}
+                    <option value="{{ key }}">{{ value }}</option>
+                {% endfor %}
+            </optgroup>
+        {% else %}
+            {% for key, value in DocumentType.getOrderedSituationList() %}
+                <option value="{{ key }}">{{ value }}</option>
+            {% endfor %}
+        {% endif %}
+    </select>
+    <select class="fr-select select-type" data-file-id="" id="select-type-procedure-to-clone">
+        <option value="">Sélectionner un type</option>
+        {% for key, value in DocumentType.getOrderedProcedureList() %}
+            <option value="{{ key }}">{{ value }}</option>
+        {% endfor %}
+    </select>
+</div>
