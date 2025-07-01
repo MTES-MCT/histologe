@@ -41,6 +41,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             procedureConstatee: 'non_decence',
             page: 1,
             isImported: 'oui',
+            isZonesDisplayed: 'oui',
             relancesUsager: 'NO_SUIVI_AFTER_3_RELANCES',
             usagerAbandonProcedure: true,
             nouveauSuivi: 'oui',
@@ -80,6 +81,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             ],
             'statusAffectation' => 'accepte',
             'isImported' => true,
+            'isZonesDisplayed' => true,
             'relances_usager' => [
                 'NO_SUIVI_AFTER_3_RELANCES',
             ],

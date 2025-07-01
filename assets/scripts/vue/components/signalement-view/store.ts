@@ -34,6 +34,7 @@ export const store = {
         dateDepot: null,
         dateDernierSuivi: null,
         isImported: 'oui' as 'oui' | null,
+        isZonesDisplayed: null as 'oui' | null,
         showMyAffectationOnly: null as 'oui' | null,
         showWithoutAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
