@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Enum\PartnerType;
 use App\Messenger\InterconnectionBus;
+use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\AffectationRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -58,7 +59,7 @@ class PushEsaboraDossierCommand extends Command
         $affectations = null;
         if ($uuid) {
             $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
-                partnerType: 'sish' === $serviceType ? PartnerType::ARS : PartnerType::COMMUNE_SCHS,
+                partnerType: 'sish' === $serviceType ? PartnerType::ARS : DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA,
                 isSynchronized: false,
                 uuidSignalement: $uuid
             );

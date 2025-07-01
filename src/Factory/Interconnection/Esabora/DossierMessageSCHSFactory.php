@@ -3,7 +3,6 @@
 namespace App\Factory\Interconnection\Esabora;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
@@ -22,7 +21,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     public function supports(Affectation $affectation): bool
     {
         return $this->isEsaboraPartnerActive($affectation)
-            && PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType();
+            && in_array($affectation->getPartner()->getType(), DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA);
     }
 
     public function createInstance(Affectation $affectation): DossierMessageSCHS

@@ -7,6 +7,12 @@ use App\Messenger\Message\DossierMessageInterface;
 
 final class DossierMessageSCHS implements DossierMessageInterface
 {
+    /** @var PartnerType[] */
+    public const array CAN_SYNC_SCHS_ESABORA = [
+        PartnerType::COMMUNE_SCHS,
+        PartnerType::EPCI,
+    ];
+
     private ?string $url = null;
 
     private ?string $token = null;

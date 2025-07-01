@@ -13,6 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -40,6 +41,9 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
         );
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->synchronizeStatus(
@@ -47,7 +51,6 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
             $output,
             $this->esaboraService,
             PartnerType::ARS,
-            'Reference_Dossier'
         );
 
         return Command::SUCCESS;

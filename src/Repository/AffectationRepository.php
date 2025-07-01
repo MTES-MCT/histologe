@@ -110,10 +110,12 @@ class AffectationRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param PartnerType|PartnerType[] $partnerType
+     *
      * @return array<int, array<string, mixed>>
      */
     public function findAffectationSubscribedToEsabora(
-        PartnerType $partnerType,
+        PartnerType|array $partnerType,
         ?bool $isSynchronized = true,
         ?string $uuidSignalement = null,
         ?Territory $territory = null,
@@ -125,9 +127,17 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.signalement', 's')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
-            ->andWhere('p.type = :partner_type')
-            ->setParameter('partner_type', $partnerType);
+            ->setParameter('signalement_status_list', [
+                SignalementStatus::ARCHIVED,
+                SignalementStatus::DRAFT,
+                SignalementStatus::DRAFT_ARCHIVED,
+            ]);
+
+        if (is_array($partnerType)) {
+            $qb->andWhere('p.type IN (:partner_types)')->setParameter('partner_types', $partnerType);
+        } else {
+            $qb->andWhere('p.type = :partner_type')->setParameter('partner_type', $partnerType);
+        }
 
         if (null !== $isSynchronized) {
             $qb->andWhere('a.isSynchronized = :is_synchronized')

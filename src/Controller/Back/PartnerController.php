@@ -164,7 +164,7 @@ class PartnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!\in_array($partner->getType(), [EnumPartnerType::ARS, EnumPartnerType::COMMUNE_SCHS])) {
+            if (!\in_array($partner->getType(), [EnumPartnerType::ARS, EnumPartnerType::COMMUNE_SCHS, EnumPartnerType::EPCI])) {
                 $partner->setIsEsaboraActive(false);
             }
             if (!\in_array($partner->getType(), [EnumPartnerType::COMMUNE_SCHS])) {

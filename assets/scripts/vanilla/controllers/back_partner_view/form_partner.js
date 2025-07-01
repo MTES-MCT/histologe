@@ -9,7 +9,9 @@ function histoUpdateFieldsVisibility () {
 
   let showEsabora, showIdoss, showBailleurSocial
   showEsabora = showIdoss = showBailleurSocial = false
-  if (partnerType.value === 'COMMUNE_SCHS') {
+  if ((partnerType.value === 'EPCI')) {
+    showEsabora = true
+  } else if (partnerType.value === 'COMMUNE_SCHS') {
     showEsabora = true
     showIdoss = true
   } else if (partnerType.value === 'ARS') {

@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
 {
-    public const PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/schs/';
+    public const string PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/schs/';
 
     public function testSyncDossierEsaboraSCHS(): void
     {

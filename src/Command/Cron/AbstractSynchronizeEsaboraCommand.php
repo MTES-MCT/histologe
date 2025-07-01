@@ -22,6 +22,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -59,17 +60,22 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         return Command::FAILURE;
     }
 
+    /**
+     * @param PartnerType|PartnerType[] $partnerType
+     *
+     * @throws ExceptionInterface
+     */
     protected function synchronizeStatus(
         InputInterface $input,
         OutputInterface $output,
         EsaboraServiceInterface $esaboraService,
-        PartnerType $partnerType,
-        string $criterionName,
+        PartnerType|array $partnerType,
     ): void {
         $io = new SymfonyStyle($input, $output);
         $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
+        $partnerTypes = is_array($partnerType) ? $partnerType : [$partnerType];
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
-            partnerType: $partnerType,
+            partnerType: $partnerTypes,
             uuidSignalement: $uuidSignalement
         );
         $countSyncSuccess = 0;
@@ -158,16 +164,23 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         );
     }
 
+    /**
+     * @param PartnerType|PartnerType[] $partnerType
+     */
     protected function notify(
-        PartnerType $partnerType,
+        PartnerType|array $partnerType,
         int $countSyncSuccess,
         int $countSyncFailed,
     ): void {
+        $partnerTypeLabel = is_array($partnerType)
+            ? implode('-', array_map(fn (PartnerType $type) => $type->value, $partnerType))
+            : $partnerType->value;
+
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
                 to: $this->parameterBag->get('admin_email'),
-                cronLabel: '['.$partnerType->value.'] Synchronisation des signalements depuis Esabora',
+                cronLabel: '['.$partnerTypeLabel.'] Synchronisation des signalements depuis Esabora',
                 params: [
                     'count_success' => $countSyncSuccess,
                     'count_failed' => $countSyncFailed,
