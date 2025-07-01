@@ -221,9 +221,9 @@ class SignalementImportLoader
                         ->setAnsweredAt($dataMapped['createdAt']);
                     if (MotifCloture::tryFrom($dataMapped['motifCloture'])) {
                         $affectation = $this->affectationManager->closeAffectation(
-                            $affectation,
-                            $this->userSystem,
-                            MotifCloture::tryFrom($dataMapped['motifCloture'])
+                            affectation: $affectation,
+                            user: $this->userSystem,
+                            motif: MotifCloture::tryFrom($dataMapped['motifCloture'])
                         );
                     } else {
                         $affectation->setStatut(AffectationStatus::ACCEPTED);

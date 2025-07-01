@@ -251,6 +251,9 @@ document?.getElementById('fr-modal-add-suivi')?.addEventListener('dsfr.disclose'
   document.getElementById('add_suivi_isPublic').checked = false
   document.getElementById('add_suivi_isPublic').dispatchEvent(new Event('change'))
   tinymce.get('add_suivi_description').setContent('');
+  document.querySelectorAll('input[name="add_suivi[files][]"]').forEach(checkbox => {
+    checkbox.checked = false;
+  });
 })
 
 document?.getElementById('add_suivi_isPublic')?.addEventListeners('change', (e) => {

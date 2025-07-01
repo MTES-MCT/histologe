@@ -92,11 +92,11 @@ class AffectationManagerTest extends KernelTestCase
             ['email' => $affectationAccepted->getPartner()->getUsers()->first()->getEmail()]
         );
         $affectationClosed = $this->affectationManager->closeAffectation(
-            $affectationAccepted,
-            $user,
-            MotifCloture::tryFrom('NON_DECENCE'),
-            null,
-            true
+            affectation: $affectationAccepted,
+            user: $user,
+            motif: MotifCloture::tryFrom('NON_DECENCE'),
+            message: null,
+            flush: true
         );
 
         $this->assertEquals(AffectationStatus::CLOSED, $affectationClosed->getStatut());

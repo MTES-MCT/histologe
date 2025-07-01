@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Controller\FileController;
 use App\Entity\Enum\DocumentType;
+use App\Repository\DesordreCritereRepository;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -11,8 +12,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SuiviTransformerService
 {
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
+        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly UrlSignerInterface $urlSigner,
+        private readonly DesordreCritereRepository $desordreCritereRepository,
     ) {
     }
 
@@ -60,7 +62,12 @@ class SuiviTransformerService
                 $url = $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
                 $description .= '<a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$suiviFile->getTitle().'</a>';
                 if ($suiviFile->getFile()->getDocumentType() && DocumentType::AUTRE !== $suiviFile->getFile()->getDocumentType()) {
-                    $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().')</small>';
+                    if (DocumentType::PHOTO_SITUATION === $suiviFile->getFile()->getDocumentType() && null !== $suiviFile->getFile()->getDesordreSlug()) {
+                        $desordreCritere = $this->desordreCritereRepository->findOneBy(['slugCritere' => $suiviFile->getFile()->getDesordreSlug()]);
+                        $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().' - '.$desordreCritere->getLabelCritere().')</small>';
+                    } else {
+                        $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().')</small>';
+                    }
                 }
             } else {
                 $description .= 'Fichier supprimé ('.$suiviFile->getTitle().')';
