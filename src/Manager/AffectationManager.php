@@ -116,11 +116,15 @@ class AffectationManager extends Manager
         return $affectation;
     }
 
+    /**
+     * @param iterable<File> $files
+     */
     public function closeAffectation(
         Affectation $affectation,
         User $user,
         MotifCloture $motif,
         ?string $message = null,
+        iterable $files = [],
         bool $flush = false): Affectation
     {
         $affectation
@@ -131,11 +135,7 @@ class AffectationManager extends Manager
         if ($flush) {
             $this->save($affectation);
             $this->eventDispatcher->dispatch(
-                new AffectationClosedEvent(
-                    affectation: $affectation,
-                    user: $user,
-                    message: $message
-                ),
+                new AffectationClosedEvent(affectation: $affectation, user: $user, message: $message, files: $files),
                 AffectationClosedEvent::NAME
             );
         }

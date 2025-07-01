@@ -294,11 +294,12 @@ class SignalementController extends AbstractController
         /* @var Affectation $affectation */
         } elseif ($affectation) {
             $entity = $affectationManager->closeAffectation(
-                $affectation,
-                $user,
-                $signalementAffectationClose->getMotifCloture(),
-                $signalementAffectationClose->getDescription(),
-                true
+                affectation: $affectation,
+                user: $user,
+                motif: $signalementAffectationClose->getMotifCloture(),
+                message: $signalementAffectationClose->getDescription(),
+                files: $signalementAffectationClose->getFiles(),
+                flush: true
             );
             $reference = $entity->getSignalement()->getReference();
         }
