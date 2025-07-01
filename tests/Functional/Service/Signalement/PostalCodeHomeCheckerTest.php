@@ -44,7 +44,7 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
 
     public function testInactiveTerritoryDifferentZip(): void
     {
-        $this->assertFalse($this->postalCodeHomeChecker->isActiveByInseeCode('39102'));
+        $this->assertFalse($this->postalCodeHomeChecker->isActiveByInseeCode('75002'));
     }
 
     public function testTerritoryWithNoAuthorizedInseeCodes(): void
