@@ -32,6 +32,10 @@
     },
     {
       "command": "0 6 2 * * php bin/console app:remind-pending-drafts-bailleur-prevenu"
+    },
+    {
+      "command": "0 1 * * * php bin/console app:sync-object-storage",
+      "size": "2XL"
     }
   ]
 }
