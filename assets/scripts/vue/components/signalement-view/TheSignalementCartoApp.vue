@@ -9,6 +9,7 @@
             @changeTerritory="handleTerritoryChange"
             @clickReset="handleClickReset"
             :layout="'vertical'"
+            :viewType="'carto'"
         />
       </div>
       <div class="fr-col-9 fr-col-md-10">

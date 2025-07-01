@@ -29,7 +29,7 @@
       </li>
       <li>
         <button
-            v-if="sharedState.zones.length > 0"
+            v-if="sharedState.zones.length > 0 && viewType === 'carto'"
             ref="isZonesDisplayedButton"
             class="fr-tag"
             :aria-pressed="ariaPressed.isZonesDisplayed.toString()"
@@ -397,6 +397,11 @@ export default defineComponent({
       type: String,
       required: false,
       default: 'horizontal'
+    },
+    viewType: {
+      type: String,
+      required: false,
+      default: 'list'
     },
     onChange: { type: Function }
   },
