@@ -169,8 +169,9 @@ class ImportGridAffectationCommand extends Command
         );
 
         $partnerLink = $this->urlGenerator->generate('back_partner_index', [
-            'territory' => $territory->getId(),
-            'type' => PartnerType::ARS->value, ],
+            'territoire' => $territory->getId(),
+            'partnerType' => PartnerType::ARS->value,
+        ],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
