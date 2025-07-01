@@ -14,3 +14,6 @@ parameters:
         -
           command: 'sh /app/scripts/sync-db.sh'
           schedule: '%env(METABASE_CRON_SCHEDULE_SYNC_BDD)%'
+        -
+          command: 'php bin/console app:sync-object-storage'
+          schedule: '%env(S3_CRON_SCHEDULE_SYNC)%'
