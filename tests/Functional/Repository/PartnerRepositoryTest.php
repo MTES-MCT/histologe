@@ -171,7 +171,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
         $searchPartner = new SearchPartner($user);
         $searchPartner->setIsNotNotifiable(true);
-        $searchPartner->setIsOnlyInterconnected(false);
+        $searchPartner->setInterconnected('all');
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
         $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null, $searchPartner);
         foreach ($partnerPaginator as $partner) {
@@ -188,10 +188,23 @@ class PartnerRepositoryTest extends KernelTestCase
         $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
         $searchPartner = new SearchPartner($user);
         $searchPartner->setIsNotNotifiable(false);
-        $searchPartner->setIsOnlyInterconnected(true);
+        $searchPartner->setInterconnected('connected');
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
         $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null, $searchPartner);
         $this->assertEquals(2, $partnerPaginator->count());
+    }
+
+    public function testGetPartnerPaginatorWithSearchPartnerNotInterconnected(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
+        $searchPartner = new SearchPartner($user);
+        $searchPartner->setIsNotNotifiable(false);
+        $searchPartner->setInterconnected('not_connected');
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
+        $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null, $searchPartner);
+        $this->assertEquals(6, $partnerPaginator->count());
     }
 
     public function testGetPartnerQueryBuilder(): void

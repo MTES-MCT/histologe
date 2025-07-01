@@ -99,8 +99,10 @@ class PartnerRepository extends ServiceEntityRepository
             $queryBuilder->andHaving('isNotifiable = 0');
         }
 
-        if (isset($searchPartner) && $searchPartner->getIsOnlyInterconnected()) {
+        if (isset($searchPartner) && 'connected' === $searchPartner->getInterconnected()) {
             $queryBuilder->andWhere('p.isEsaboraActive = 1 or p.isIdossActive = 1');
+        } elseif (isset($searchPartner) && 'not_connected' === $searchPartner->getInterconnected()) {
+            $queryBuilder->andWhere('p.isEsaboraActive = 0 and p.isIdossActive = 0');
         }
 
         if (!empty($type)) {

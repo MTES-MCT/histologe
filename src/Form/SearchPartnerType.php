@@ -88,23 +88,20 @@ class SearchPartnerType extends AbstractType
             'empty_data' => '0',
         ]);
 
-        if ($this->isAdmin) {
-            $builder->add('isOnlyInterconnected', CheckboxType::class, [
-                'row_attr' => [
-                    'class' => 'fr-toggle',
-                ],
-                'label_attr' => [
-                    'class' => 'fr-toggle__label',
-                ],
-                'attr' => [
-                    'class' => 'fr-toggle__input fr-auto-submit',
-                ],
-                'required' => false,
-                'label' => 'N\'afficher que les partenaires inter-connectés',
-                'false_values' => ['0', null],
-                'empty_data' => '0',
-            ]);
-        }
+        $builder->add('interconnected', ChoiceType::class, [
+            'label' => 'Connexions externes',
+            'choices' => [
+                'Tous les partenaires' => 'all',
+                'Avec connexion externe' => 'connected',
+                'Sans connexion externe' => 'not_connected',
+            ],
+            'row_attr' => [
+                'class' => 'fr-select-group',
+            ],
+            'attr' => [
+                'class' => 'fr-select',
+            ],
+        ]);
 
         $builder->add('partnerType', EnumType::class, [
             'class' => PartnerType::class,

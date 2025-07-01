@@ -19,7 +19,7 @@ class SearchPartner
     private ?PartnerType $partnerType = null;
     private ?string $orderType = null;
     private ?bool $isNotNotifiable = null;
-    private ?bool $isOnlyInterconnected = null;
+    private ?string $interconnected = null;
 
     public function __construct(User $user)
     {
@@ -84,14 +84,14 @@ class SearchPartner
         $this->isNotNotifiable = $isNotNotifiable;
     }
 
-    public function getIsOnlyInterconnected(): ?bool
+    public function getInterconnected(): ?string
     {
-        return $this->isOnlyInterconnected;
+        return $this->interconnected;
     }
 
-    public function setIsOnlyInterconnected(?bool $isOnlyInterconnected): void
+    public function setInterconnected(?string $interconnected): void
     {
-        $this->isOnlyInterconnected = $isOnlyInterconnected;
+        $this->interconnected = $interconnected;
     }
 
     /**
