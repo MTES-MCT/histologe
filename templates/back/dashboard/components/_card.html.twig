@@ -1,0 +1,29 @@
+{% set columns = columns|default([]) %}
+{% set data = data|default([]) %}
+{% set link = link|default('#') %}
+
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12">
+        <div class="fr-card fr-card--no-border fr-mb-2v">
+            <div class="fr-card__body fr-px-0">
+                <div class="fr-card__content">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        {% for index, col in columns %}
+                            <div class="fr-col-12 {{ col.class|default('fr-col-md') }}">
+                                {% if col.title is defined %}
+                                    <div class="fr-mb-1v fr-text--sm">{{ col.title }}</div>
+                                {% endif %}
+                                <div>{{ data[index]|default('')|raw }}</div>
+                            </div>
+                        {% endfor %}
+                        <div class="fr-col-auto fr-py-10v">
+                            <a href="{{ link }}" class="fr-btn fr-icon-arrow-right-line"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+
