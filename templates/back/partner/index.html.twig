@@ -48,19 +48,25 @@
     <section class="fr-col-12">
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-lg-4">
+        
+            {% if is_granted('ROLE_ADMIN') %}
+                {% set cssClass = 'fr-col-lg-3' %}
+            {% else %}
+                {% set cssClass = 'fr-col-lg-4' %}
+            {% endif %}
+            <div class="fr-col-12 {{ cssClass }}">
                 {{ form_row(form.queryPartner) }}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
-                <div class="fr-col-12 fr-col-lg-4">
+                <div class="fr-col-12 fr-col-lg-3">
                     {{ form_row(form.territoire) }}
                 </div>
             {% endif %}
-            <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-col-12 {{ cssClass }}">
                 {{ form_row(form.partnerType) }}
             </div>
-            <div class="fr-col-12 fr-col-lg-4">
-                {{ form_row(form.interconnected) }}
+            <div class="fr-col-12 {{ cssClass }}">
+                {{ form_row(form.isOnlyInterconnected) }}
             </div>
         </div>
         <div class="fr-grid-row fr-grid-row--gutters">

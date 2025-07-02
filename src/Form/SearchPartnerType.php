@@ -88,12 +88,12 @@ class SearchPartnerType extends AbstractType
             'empty_data' => '0',
         ]);
 
-        $builder->add('interconnected', ChoiceType::class, [
+        $builder->add('isOnlyInterconnected', ChoiceType::class, [
             'label' => 'Connexions externes',
             'choices' => [
-                'Tous les partenaires' => 'all',
-                'Avec connexion externe' => 'connected',
-                'Sans connexion externe' => 'not_connected',
+                'Tous les partenaires' => null,
+                'Avec connexion externe' => true,
+                'Sans connexion externe' => false,
             ],
         ]);
 

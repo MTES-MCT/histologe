@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Dto\CountPartner;
 use App\Entity\Affectation;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
@@ -50,26 +49,16 @@ class PartnerRepository extends ServiceEntityRepository
     public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator
     {
         return $this->getPartners(
-            $searchPartner->getPage(),
             $maxResult,
-            $searchPartner->getUser(),
-            $searchPartner->getTerritoire(),
-            $searchPartner->getPartnerType(),
-            $searchPartner->getQueryPartner(),
             $searchPartner,
         );
     }
 
     public function getPartners(
-        int $page,
         int $maxResult,
-        User $user,
-        ?Territory $territory,
-        ?PartnerType $type,
-        ?string $filterTerms,
-        ?SearchPartner $searchPartner = null,
+        SearchPartner $searchPartner,
     ): Paginator {
-        $queryBuilder = $this->getPartnersQueryBuilder($territory);
+        $queryBuilder = $this->getPartnersQueryBuilder($searchPartner->getTerritoire());
         $queryBuilder->select('p', 'z', 'ez')
             ->leftJoin('p.zones', 'z')
             ->leftJoin('p.excludedZones', 'ez');
@@ -89,44 +78,44 @@ class PartnerRepository extends ServiceEntityRepository
                 ELSE 0
             END) AS isNotifiable'
         );
-
-        if (!$user->isSuperAdmin() && !$territory) {
+        $user = $searchPartner->getUser();
+        if (!$user->isSuperAdmin() && !$searchPartner->getTerritoire()) {
             $queryBuilder->andWhere('p.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         }
 
-        if (isset($searchPartner) && $searchPartner->getIsNotNotifiable()) {
+        if ($searchPartner->getIsNotNotifiable()) {
             $queryBuilder->andHaving('isNotifiable = 0');
         }
 
-        if (isset($searchPartner) && 'connected' === $searchPartner->getInterconnected()) {
+        if ($searchPartner->getIsOnlyInterconnected()) {
             $queryBuilder->andWhere('p.isEsaboraActive = 1 or p.isIdossActive = 1');
-        } elseif (isset($searchPartner) && 'not_connected' === $searchPartner->getInterconnected()) {
+        } elseif (false === $searchPartner->getIsOnlyInterconnected()) {
             $queryBuilder->andWhere('p.isEsaboraActive = 0 and p.isIdossActive = 0');
         }
 
-        if (!empty($type)) {
+        if (!empty($searchPartner->getPartnerType())) {
             $queryBuilder
                 ->andWhere('p.type = :type')
-                ->setParameter('type', $type);
+                ->setParameter('type', $searchPartner->getPartnerType());
         }
 
-        if (!empty($filterTerms)) {
+        if (!empty($searchPartner->getQueryPartner())) {
             $queryBuilder
                 ->andWhere('LOWER(p.nom) LIKE :usersterms
                 OR LOWER(p.email) LIKE :usersterms');
             $queryBuilder
-                ->setParameter('usersterms', '%'.strtolower($filterTerms).'%');
+                ->setParameter('usersterms', '%'.strtolower($searchPartner->getQueryPartner()).'%');
         }
 
-        if (!empty($searchPartner) && !empty($searchPartner->getOrderType())) {
+        if (!empty($searchPartner->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchPartner->getOrderType());
             $queryBuilder->orderBy($orderField, $orderDirection);
         } else {
             $queryBuilder->orderBy('p.nom', 'ASC');
         }
 
-        $firstResult = ($page - 1) * $maxResult;
+        $firstResult = ($searchPartner->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         $paginator = new Paginator($queryBuilder->getQuery());
