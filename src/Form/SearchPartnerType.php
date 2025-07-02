@@ -95,12 +95,6 @@ class SearchPartnerType extends AbstractType
                 'Avec connexion externe' => 'connected',
                 'Sans connexion externe' => 'not_connected',
             ],
-            'row_attr' => [
-                'class' => 'fr-select-group',
-            ],
-            'attr' => [
-                'class' => 'fr-select',
-            ],
         ]);
 
         $builder->add('partnerType', EnumType::class, [
