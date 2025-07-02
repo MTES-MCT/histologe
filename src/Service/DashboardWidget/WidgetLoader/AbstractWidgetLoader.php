@@ -6,6 +6,10 @@ use App\Service\DashboardWidget\Widget;
 use App\Service\DashboardWidget\WidgetLoaderInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+/**
+ * @deprecated This class will be removed in the next major release.
+ * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
+ */
 abstract class AbstractWidgetLoader implements WidgetLoaderInterface
 {
     protected ?string $widgetType = null;
