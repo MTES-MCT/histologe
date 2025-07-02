@@ -75,7 +75,12 @@ class AffectationControllerTest extends WebTestCase
             )
         );
         $this->assertEquals(Suivi::TYPE_AUTO, $suivi->getType());
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/'.$signalement->getUuid(), $response['url']);
     }
 
     public function testFirstAcceptationAffectationSignalement(): void

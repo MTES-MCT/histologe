@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
@@ -66,7 +67,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         SuiviManager $suiviManager,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
         $refusSignalementRoute = $this->generateUrl('back_signalement_deny', ['uuid' => $signalement->getUuid()]);
@@ -100,7 +101,9 @@ class SignalementActionController extends AbstractController
 
         $this->addFlash('success', 'Signalement refusé avec succès !');
 
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return $this->json(['redirect' => true, 'url' => $url]);
     }
 
     #[Route('/{uuid:signalement}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]

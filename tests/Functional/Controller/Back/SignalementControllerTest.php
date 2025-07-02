@@ -218,7 +218,12 @@ class SignalementControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/', $response['url']);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-8']);
         $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
@@ -259,7 +264,12 @@ class SignalementControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/', $response['url']);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
         $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
@@ -299,7 +309,12 @@ class SignalementControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/', $response['url']);
 
         $client->enableProfiler();
         $this->assertEmailCount(1);
@@ -336,7 +351,12 @@ class SignalementControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/', $response['url']);
 
         $client->enableProfiler();
         $this->assertEmailCount(2);

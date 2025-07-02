@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/bo/signalements')]
@@ -163,7 +164,7 @@ class AffectationController extends AbstractController
     public function affectationResponseDenySignalement(
         Affectation $affectation,
         Request $request,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
         $signalement = $affectation->getSignalement();
         /** @var User $user */
@@ -190,6 +191,8 @@ class AffectationController extends AbstractController
         );
         $this->addFlash('success', 'Affectation refusée avec succès !');
 
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return $this->json(['redirect' => true, 'url' => $url]);
     }
 }

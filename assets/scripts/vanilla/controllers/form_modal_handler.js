@@ -59,6 +59,11 @@ async function submitPayload (formElement) {
     } else if (response.redirected) {
       window.location.href = response.url
     } else if (response.ok) {
+      response.json().then((response) => {
+        if (response.redirect) {
+          window.location.href = response.url
+        }
+      })
       location.reload()
       window.scrollTo(0, 0)
     } else if (response.status === 400) {

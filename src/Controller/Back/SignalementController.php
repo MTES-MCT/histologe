@@ -49,6 +49,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
@@ -257,7 +258,7 @@ class SignalementController extends AbstractController
         AffectationManager $affectationManager,
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
-    ): Response {
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
@@ -308,9 +309,10 @@ class SignalementController extends AbstractController
             $this->addFlash('success', sprintf('Signalement #%s fermé avec succès !', $reference));
         }
         $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery');
-        $url = $signalementSearchQuery ? $this->generateUrl('back_signalements_index').$signalementSearchQuery->getQueryStringForUrl() : $this->generateUrl('back_signalements_index');
+        $url = $this->generateUrl('back_signalements_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $url .= $signalementSearchQuery?->getQueryStringForUrl();
 
-        return $this->redirect($url);
+        return $this->json(['redirect' => true, 'url' => $url]);
     }
 
     #[Route('/{uuid:signalement}/supprimer', name: 'back_signalement_delete', methods: 'POST')]
