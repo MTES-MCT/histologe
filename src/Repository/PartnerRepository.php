@@ -89,9 +89,9 @@ class PartnerRepository extends ServiceEntityRepository
         }
 
         if ($searchPartner->getIsOnlyInterconnected()) {
-            $queryBuilder->andWhere('p.isEsaboraActive = 1 or p.isIdossActive = 1');
+            $queryBuilder->andWhere('(p.isEsaboraActive = 1 and p.esaboraUrl is not null) or (p.isIdossActive = 1 and p.idossUrl is not null)');
         } elseif (false === $searchPartner->getIsOnlyInterconnected()) {
-            $queryBuilder->andWhere('p.isEsaboraActive = 0 and p.isIdossActive = 0');
+            $queryBuilder->andWhere('(p.isEsaboraActive = 0 or p.esaboraUrl is null) or (p.isIdossActive = 0 or p.idossUrl is null)');
         }
 
         if (!empty($searchPartner->getPartnerType())) {
