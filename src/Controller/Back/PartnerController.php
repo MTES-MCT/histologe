@@ -21,6 +21,7 @@ use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
 use App\Manager\PopNotificationManager;
 use App\Manager\UserManager;
+use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
@@ -164,7 +165,7 @@ class PartnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!\in_array($partner->getType(), [EnumPartnerType::ARS, EnumPartnerType::COMMUNE_SCHS])) {
+            if (!\in_array($partner->getType(), [EnumPartnerType::ARS, ...DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA])) {
                 $partner->setIsEsaboraActive(false);
             }
             if (!\in_array($partner->getType(), [EnumPartnerType::COMMUNE_SCHS])) {

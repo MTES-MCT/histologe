@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
 {
     use FixturesHelper;
-    public const PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
+    public const string PATH_MOCK = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
 
     public function testSyncDossierEsaboraSISH(): void
     {

@@ -3,8 +3,8 @@
 namespace App\Command\Cron;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Suivi;
+use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
 use App\Service\Interconnection\Esabora\EsaboraManager;
@@ -21,6 +21,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -56,6 +57,9 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
         );
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -64,8 +68,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
             $input,
             $output,
             $this->esaboraService,
-            PartnerType::COMMUNE_SCHS,
-            'SAS_Référence'
+            DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA,
         );
 
         $this->synchronizeEvents();
@@ -76,7 +79,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
     protected function synchronizeEvents(): void
     {
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
-            partnerType: PartnerType::COMMUNE_SCHS
+            partnerType: DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA,
         );
         $this->existingEvents = $this->suiviRepository->findExistingEventsForSCHS();
         $count = 0;
