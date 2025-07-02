@@ -2,6 +2,10 @@
 
 namespace App\Service\DashboardWidget;
 
+/**
+ * @deprecated This class will be removed in the next major release.
+ * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
+ */
 interface WidgetDataManagerInterface
 {
     /**

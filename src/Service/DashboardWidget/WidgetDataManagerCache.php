@@ -10,6 +10,10 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
+/**
+ * @deprecated This class will be removed in the next major release.
+ * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
+ */
 class WidgetDataManagerCache implements WidgetDataManagerInterface
 {
     private ?string $commonKey = null;

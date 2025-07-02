@@ -1,0 +1,24 @@
+{% set icon_path = icon_path|default('img/picto-dsfr/cuisine.svg') %}
+{% set title = title|default('Titre par défaut') %}
+{% set badge_class = badge_class|default('fr-badge--info') %}
+{% set badge_label = badge_label|default('LABEL') %}
+
+<div class="fr-tile fr-tile--sm fr-tile--horizontal fr-enlarge-link fr-mb-3w fr-w-100">
+    <div class="fr-tile__body">
+        <div class="fr-tile__content">
+            <div class="fr-tile__start">
+                <p class="fr-badge fr-badge--sm fr-badge--no-icon {{ badge_class }}">{{ badge_label|upper }}</p>
+            </div>
+            <h3 class="fr-tile__title">
+                <a href="#">
+                    {{ title }}
+                </a>
+            </h3>
+        </div>
+    </div>
+    <div class="fr-tile__header">
+        <div class="fr-tile__pictogram">
+            <img src="{{ asset(icon_path) }}" aria-hidden="true" class="fr-artwork" alt="" width="40" height="40">
+        </div>
+    </div>
+</div>

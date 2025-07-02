@@ -5,6 +5,10 @@ namespace App\Service\DashboardWidget;
 use App\Entity\Territory;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * @deprecated This class will be removed in the next major release.
+ * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
+ */
 class Widget
 {
     #[Groups(['widget:read'])]

@@ -40,3 +40,4 @@ import './vanilla/controllers/back_profil_edit_email/back_profil_edit_email.js';
 import './vanilla/controllers/back_zone_view/back_zone_index.js';
 import './vanilla/controllers/back_territory_view/back_territory_index.js';
 import './vanilla/controllers/back_bailleur_view/back_bailleur_index.js';
+import './vanilla/controllers/back_dashboard/back_dashboard.js';

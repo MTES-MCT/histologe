@@ -11,6 +11,10 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 
+/**
+ * @deprecated This class will be removed in the next major release.
+ * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
+ */
 class WidgetDataManager implements WidgetDataManagerInterface
 {
     public const FORMAT_DATE_TIME = 'Y-m-d H:i';
