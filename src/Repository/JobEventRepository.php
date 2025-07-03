@@ -64,6 +64,8 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     public function findLastJobEventByTerritory(
         int $dayPeriod,
         SearchInterconnexion $searchInterconnexion,
+        ?int $limit = null,
+        ?int $offset = null,
     ): array {
         $qb = $this->createQueryBuilder('j')
             ->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response')
@@ -90,9 +92,42 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             $qb->orderBy('j.createdAt', 'DESC');
         }
 
-        $qb->setMaxResults(1000);
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+        if ($offset !== null) {
+            $qb->setFirstResult($offset);
+        }
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * Compte le nombre total de JobEvent pour la recherche donnée
+     * @return int
+     */
+    public function countLastJobEventByTerritory(
+        int $dayPeriod,
+        SearchInterconnexion $searchInterconnexion
+    ): int {
+        $qb = $this->createQueryBuilder('j')
+            ->select('COUNT(j.id)')
+            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
+            ->where('j.createdAt >= :date_limit');
+
+        if ($searchInterconnexion->getTerritory()) {
+            $qb->andWhere('p.territory = :territory')->setParameter('territory', $searchInterconnexion->getTerritory());
+        }
+        if ($searchInterconnexion->getPartner()) {
+            $qb->andWhere('p.id = :partnerId')->setParameter('partnerId', $searchInterconnexion->getPartner()->getId());
+        }
+        if ($searchInterconnexion->getStatus()) {
+            $qb->andWhere('j.status = :status')->setParameter('status', $searchInterconnexion->getStatus());
+        }
+
+        $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

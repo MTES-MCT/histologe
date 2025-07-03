@@ -33,15 +33,21 @@ class InterconnexionController extends AbstractController
         $maxListPagination = 5;
 
         $page = $searchInterconnexion->getPage() ?? 1;
+        $limit = $maxListPagination;
+        $offset = ($page - 1) * $limit;
 
-        $allConnections = $jobEventRepository->findLastJobEventByTerritory(
+        $connections = $jobEventRepository->findLastJobEventByTerritory(
+            90,
+            $searchInterconnexion,
+            $limit,
+            $offset
+        );
+
+        $total = $jobEventRepository->countLastJobEventByTerritory(
             90,
             $searchInterconnexion
         );
-
-        $total = count($allConnections);
-        $pages = (int) ceil($total / $maxListPagination);
-        $connections = array_slice($allConnections, ($page - 1) * $maxListPagination, $maxListPagination);
+        $pages = (int) ceil($total / $limit);
 
         return $this->render('back/interconnexion/index.html.twig', [
             'form' => $form,
