@@ -99,10 +99,10 @@
                     </div>
                 {% endif %}  
             </div>
-            {% if partner.esaboraUrl or partner.isIdossActive %}
+            {% if partner.isEsaboraActive or partner.isIdossActive %}
                 <h3>Interfaçage</h3>
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {% if partner.esaboraUrl %}
+                    {% if partner.isEsaboraActive %}
                         <div class="fr-col-6">
                             <div><b>URL ESABORA :</b> {{ partner.esaboraUrl }}</div>
                         </div>
@@ -124,6 +124,9 @@
                         </div>
                     {% endif %}
                     {% if partner.isIdossActive %}
+                        <div class="fr-col-6">
+                            <div><b>URL iDoss :</b> {{ partner.idossUrl }}</div>
+                        </div>
                         <div class="fr-col-6">
                             <div>
                                 <b>Synchronisation iDoss :</b>

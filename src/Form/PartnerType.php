@@ -221,7 +221,14 @@ class PartnerType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Partner::class,
             'constraints' => [
-                new Assert\Callback([$this, 'validateEmailIsUnique']),
+                new Assert\Callback([
+                    $this,
+                    'validateEmailIsUnique',
+                ]),
+                new Assert\Callback([
+                    $this,
+                    'validateEsaboraAndIdoss',
+                ]),
             ],
         ]);
     }
@@ -239,6 +246,28 @@ class PartnerType extends AbstractType
 
             if (!empty($user) && !$user->isUsager()) {
                 $context->addViolation('Un utilisateur existe déjà avec cette adresse e-mail.');
+            }
+        }
+    }
+
+    public function validateEsaboraAndIdoss(mixed $value, ExecutionContextInterface $context): void
+    {
+        if ($value instanceof Partner) {
+            // Esabora
+            if ($value->isEsaboraActive()) {
+                if (empty($value->getEsaboraUrl()) || empty($value->getEsaboraToken())) {
+                    $context->buildViolation('Pour activer Esabora, l’URL et le token doivent être renseignés.')
+                        ->atPath('isEsaboraActive')
+                        ->addViolation();
+                }
+            }
+            // Idoss
+            if (method_exists($value, 'isIdossActive') && $value->isIdossActive()) {
+                if (empty($value->getIdossUrl())) {
+                    $context->buildViolation('Pour activer Idoss, l’URL doit être renseignée.')
+                        ->atPath('isIdossActive')
+                        ->addViolation();
+                }
             }
         }
     }
