@@ -5,7 +5,6 @@ namespace App\Controller\Back;
 use App\Form\SearchInterconnexionType;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
 use App\Service\ListFilters\SearchInterconnexion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,35 +21,27 @@ class InterconnexionController extends AbstractController
     public function index(
         Request $request,
         JobEventRepository $jobEventRepository,
-        TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
         ParameterBagInterface $parameterBag,
     ): Response {
         $searchInterconnexion = new SearchInterconnexion();
-        // TODO: simplifier
-        $user = $this->getUser();
-        $form = $this->createForm(SearchInterconnexionType::class, $searchInterconnexion, [
-            'partner_repository' => $partnerRepository,
-            'territory_repository' => $territoryRepository,
-            'user' => $user,
-            'data' => $searchInterconnexion,
-            'request' => $request,
-        ]);
+        $form = $this->createForm(SearchInterconnexionType::class, $searchInterconnexion);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchInterconnexion = new SearchInterconnexion();
         }
         // $maxListPagination = $parameterBag->get('standard_max_list_pagination');
-        $maxListPagination =5;
-          $territoryId = $searchInterconnexion->getTerritoryId();
+        $maxListPagination = 5;
+        $territoryId = null;
         $territory = $searchInterconnexion->getTerritory();
         if ($territory && is_object($territory) && method_exists($territory, 'getId')) {
             $territoryId = $territory->getId();
         } elseif (is_int($territory)) {
             $territoryId = $territory;
         }
-      $partnerId = $searchInterconnexion->getPartnerId();
         $partner = $searchInterconnexion->getPartner();
+        $partnerId = null;
         if ($partner && is_object($partner) && method_exists($partner, 'getId')) {
             $partnerId = $partner->getId();
         } elseif (is_int($partner)) {
@@ -63,7 +54,7 @@ class InterconnexionController extends AbstractController
         $territories = $territoryId ? [$territoryId] : [];
         $params = ['period' => 90];
         $allConnections = $jobEventRepository->findLastJobEventByTerritory(
-            $params['period'], 
+            $params['period'],
             $territories
         );
         $connections = array_filter($allConnections, function ($conn) use ($partnerId, $status) {
@@ -101,22 +92,23 @@ class InterconnexionController extends AbstractController
                 'response' => $conn['response'] ?? '',
             ];
         }, $connections);
-      /*  dump('ici');
-        $paginatedConnections = $jobEventRepository->findFilteredPaginated(
-            $searchInterconnexion,
-            90, 
-            $maxListPagination
-        );
-        dump($paginatedConnections->count());
-        dump($paginatedConnections);
-        dump((int) ceil($paginatedConnections->count() / $maxListPagination));*/
+
+        /*  dump('ici');
+          $paginatedConnections = $jobEventRepository->findFilteredPaginated(
+              $searchInterconnexion,
+              90,
+              $maxListPagination
+          );
+          dump($paginatedConnections->count());
+          dump($paginatedConnections);
+          dump((int) ceil($paginatedConnections->count() / $maxListPagination));*/
         return $this->render('back/interconnexion/index.html.twig', [
             'form' => $form,
             'searchInterconnexion' => $searchInterconnexion,
             'connections' => $connections,
             'pages' => $pages,
             // 'connections' => $paginatedConnections,
-            //'pages' => (int) ceil($paginatedConnections->count() / $maxListPagination),
+            // 'pages' => (int) ceil($paginatedConnections->count() / $maxListPagination),
         ]);
     }
 }

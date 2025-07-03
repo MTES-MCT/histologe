@@ -4,53 +4,32 @@ namespace App\Form;
 
 use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Repository\PartnerRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\ListFilters\SearchInterconnexion;
 use App\Service\ListFilters\SearchPartner;
-use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchInterconnexionType extends AbstractType
 {
+    public function __construct(
+        private readonly Security $security,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly PartnerRepository $partnerRepository,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $partnerRepository = $options['partner_repository'];
-        $territoryRepository = $options['territory_repository'];
-        $user = $options['user'];
-        $territory = null;
-        if (isset($options['request'])) {
-            $territoryId = $options['request']->get('territory') ?? $options['request']->query->get('territory') ?? $options['request']->request->get('territory');
-            if ($territoryId) {
-                $territory = $territoryRepository->find($territoryId);
-            }
-        }
-        if (!$territory && isset($options['data']) && $options['data'] instanceof SearchInterconnexion) {
-            $territory = $options['data']->getTerritory();
-            if ($territory instanceof Territory) {
-                // ok
-            } elseif (is_int($territory) && $territory > 0) {
-                $territory = $territoryRepository->find($territory);
-            } else {
-                $territory = null;
-            }
-        }
-        $searchPartner = new SearchPartner($user);
-        $searchPartner->setIsOnlyInterconnected(true);
-        if ($territory) {
-            $searchPartner->setTerritoire($territory);
-        }
-        $partners = $partnerRepository->getPartners(1000, $searchPartner);
-        $partnerChoices = [];
-        foreach ($partners as $partner) {
-            $partnerChoices[] = $partner;
-        }
-
-
-
         $builder->add('territory', EntityType::class, [
             'class' => Territory::class,
             'query_builder' => function (TerritoryRepository $tr) {
@@ -64,14 +43,22 @@ class SearchInterconnexionType extends AbstractType
             'label' => 'Territoire',
         ]);
 
-        $builder->add('partner', EntityType::class, [
-            'class' => Partner::class,
-            'choices' => $partnerChoices,
-            'choice_label' => 'nom',
-            'required' => false,
-            'label' => 'Partenaire',
-            'placeholder' => 'Tous les partenaires',
-        ]);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
+            $territory = $builder->getData()->getTerritory() ? $this->territoryRepository->find($builder->getData()->getTerritory()) : null;
+            $this->addPartnersField(
+                $event->getForm(),
+                $territory
+            );
+        });
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            if (isset($event->getData()['territory'])) {
+                $territory = $event->getData()['territory'] ? $this->territoryRepository->find($event->getData()['territory']) : null;
+                $this->addPartnersField(
+                    $event->getForm(),
+                    $territory
+                );
+            }
+        });
         $builder->add('status', ChoiceType::class, [
             'required' => false,
             'label' => 'Statut',
@@ -83,15 +70,39 @@ class SearchInterconnexionType extends AbstractType
         ]);
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
-                'Synchro la plus récente' => 'createdAt-DESC',
-                'Synchro la plus ancienne' => 'createdAt-ASC',
+                'Synchro la plus récente' => 'j.createdAt-DESC',
+                'Synchro la plus ancienne' => 'j.createdAt-ASC',
             ],
             'required' => false,
             'placeholder' => false,
             'label' => 'Trier par',
-            'data' => 'createdAt-DESC',
+            'data' => 'j.createdAt-DESC',
         ]);
         $builder->add('page', HiddenType::class);
+    }
+
+    private function addPartnersField(FormInterface $builder, ?Territory $territory): void
+    {
+        $choicesPartners = [];
+        $searchPartner = new SearchPartner($this->security->getUser());
+        $searchPartner->setIsOnlyInterconnected(true);
+        if ($territory) {
+            $searchPartner->setTerritoire($territory);
+        }
+        $partners = $this->partnerRepository->getPartners(1000, $searchPartner);
+
+        foreach ($partners as $partner) {
+            $choicesPartners[] = $partner[0];
+        }
+
+        $builder->add('partner', EntityType::class, [
+            'class' => Partner::class,
+            'choices' => $choicesPartners,
+            'choice_label' => 'nom',
+            'required' => false,
+            'label' => 'Partenaire',
+            'placeholder' => 'Tous les partenaires',
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -101,12 +112,7 @@ class SearchInterconnexionType extends AbstractType
             'csrf_protection' => false,
             'method' => 'GET',
             'attr' => ['id' => 'search-interconnexion-form', 'class' => 'fr-p-4v bo-filter-form'],
-            'partner_repository' => null,
-            'territory_repository' => null,
-            'user' => null,
-            'request' => null,
         ]);
-        $resolver->setRequired(['partner_repository', 'territory_repository', 'user', 'request']);
     }
 
     public function getBlockPrefix(): string

@@ -11,8 +11,8 @@ use App\Entity\Signalement;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<JobEvent>
@@ -59,17 +59,15 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         return $qb->getQuery()->getArrayResult();
     }
 
-
     public function findFilteredPaginated(
-        SearchInterconnexion $searchInterconnexion, 
+        SearchInterconnexion $searchInterconnexion,
         int $dayPeriod,
-        int $maxResult
-    ): Paginator
-    {
+        int $maxResult,
+    ): Paginator {
         $qb = $this->createQueryBuilder('j');
         $qb
-        //->select('j.id, j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response')
-        ->select('j',  'partial s.{id, reference}', 'partial p.{id, nom}')
+        // ->select('j.id, j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response')
+        ->select('j', 'partial s.{id, reference}', 'partial p.{id, nom}')
         ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
         ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
         ->Where('j.createdAt >= :date_limit');
@@ -78,14 +76,14 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $searchInterconnexion->getTerritory());
         }
         dump($searchInterconnexion->getPartner());
-        if($searchInterconnexion->getPartner()){
+        if ($searchInterconnexion->getPartner()) {
             $qb->andWhere('p.id = :partner')->setParameter('partner', $searchInterconnexion->getPartner());
         }
         dump($searchInterconnexion->getStatus());
-        if($searchInterconnexion->getStatus()){
+        if ($searchInterconnexion->getStatus()) {
             $qb->andWhere('j.status = :status')->setParameter('status', $searchInterconnexion->getStatus());
         }
-        
+
         dump($searchInterconnexion->getOrderType());
         if (!empty($searchInterconnexion->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());
@@ -99,9 +97,9 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         $firstResult = ($searchInterconnexion->getPage() - 1) * $maxResult;
         $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
         dump($qb->getQuery()->getSQL());
+
         return new Paginator($qb->getQuery());
     }
-
 
     /**
      * @param array<int, int> $territories

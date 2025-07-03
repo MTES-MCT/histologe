@@ -10,48 +10,30 @@ class SearchInterconnexion
 {
     use SearchQueryTrait;
 
-    private Territory|int|null $territory = null;
-    private Partner|int|null $partner = null;
+    private ?Territory $territory = null;
+    private ?Partner $partner = null;
     private ?string $status = null;
     private ?string $orderType = null;
     private ?int $page = 1;
 
-    public function getTerritory(): Territory|int|null
+    public function getTerritory(): ?Territory
     {
         return $this->territory;
     }
 
-    public function setTerritory(Territory|int|null $territory): void
+    public function setTerritory(?Territory $territory): void
     {
         $this->territory = $territory;
     }
 
-    public function getTerritoryId(): ?int
-    {
-        if ($this->territory instanceof Territory) {
-            return $this->territory->getId();
-        }
-
-        return is_int($this->territory) ? $this->territory : null;
-    }
-
-    public function getPartner(): Partner|int|null
+    public function getPartner(): ?Partner
     {
         return $this->partner;
     }
 
-    public function setPartner(Partner|int|null $partner): void
+    public function setPartner(?Partner $partner): void
     {
         $this->partner = $partner;
-    }
-
-    public function getPartnerId(): ?int
-    {
-        if ($this->partner instanceof Partner) {
-            return $this->partner->getId();
-        }
-
-        return is_int($this->partner) ? $this->partner : null;
     }
 
     public function getStatus(): ?string
