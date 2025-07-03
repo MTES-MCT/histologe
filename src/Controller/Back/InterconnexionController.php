@@ -15,6 +15,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/connexions-si')]
 class InterconnexionController extends AbstractController
 {
+    private const int DAY_PERIOD = 90;
+
     #[Route('/', name: 'back_interconnexion_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
@@ -29,22 +31,21 @@ class InterconnexionController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchInterconnexion = new SearchInterconnexion();
         }
-        // $maxListPagination = $parameterBag->get('standard_max_list_pagination');
-        $maxListPagination = 5;
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
 
         $page = $searchInterconnexion->getPage() ?? 1;
         $limit = $maxListPagination;
         $offset = ($page - 1) * $limit;
 
         $connections = $jobEventRepository->findLastJobEventByTerritory(
-            90,
+            self::DAY_PERIOD,
             $searchInterconnexion,
             $limit,
             $offset
         );
 
         $total = $jobEventRepository->countLastJobEventByTerritory(
-            90,
+            self::DAY_PERIOD,
             $searchInterconnexion
         );
         $pages = (int) ceil($total / $limit);

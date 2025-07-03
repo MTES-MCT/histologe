@@ -92,10 +92,10 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             $qb->orderBy('j.createdAt', 'DESC');
         }
 
-        if ($limit !== null) {
+        if (null !== $limit) {
             $qb->setMaxResults($limit);
         }
-        if ($offset !== null) {
+        if (null !== $offset) {
             $qb->setFirstResult($offset);
         }
 
@@ -103,12 +103,11 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     }
 
     /**
-     * Compte le nombre total de JobEvent pour la recherche donnée
-     * @return int
+     * Compte le nombre total de JobEvent pour la recherche donnée.
      */
     public function countLastJobEventByTerritory(
         int $dayPeriod,
-        SearchInterconnexion $searchInterconnexion
+        SearchInterconnexion $searchInterconnexion,
     ): int {
         $qb = $this->createQueryBuilder('j')
             ->select('COUNT(j.id)')
