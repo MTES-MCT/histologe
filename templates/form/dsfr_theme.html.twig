@@ -11,7 +11,7 @@
         {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-select-group')|trim}) %}
     {% elseif 'checkbox' in block_prefixes %}
         {% if row_attr.class is defined and row_attr.class starts with 'fr-toggle' %}
-            {% set row_attr = row_attr|merge({'class': row_attr.class ~ ' fr-mb-6v'}) %}
+            {% set row_attr = row_attr|merge({'class': row_attr.class}) %}
         {% else %}
             {% set row_attr = row_attr|merge({'class': (row_attr.class|default('') ~ ' fr-checkbox-group fr-mb-6v')|trim}) %}
         {% endif %}
