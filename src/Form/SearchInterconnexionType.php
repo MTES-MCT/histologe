@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\ListFilters\SearchInterconnexion;
@@ -84,7 +85,9 @@ class SearchInterconnexionType extends AbstractType
     private function addPartnersField(FormInterface $builder, ?Territory $territory): void
     {
         $choicesPartners = [];
-        $searchPartner = new SearchPartner($this->security->getUser());
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $searchPartner = new SearchPartner($user);
         $searchPartner->setIsOnlyInterconnected(true);
         if ($territory) {
             $searchPartner->setTerritoire($territory);

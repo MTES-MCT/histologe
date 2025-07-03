@@ -11,7 +11,6 @@ use App\Entity\Signalement;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -59,56 +58,12 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         return $qb->getQuery()->getArrayResult();
     }
 
-    public function findFilteredPaginated(
-        SearchInterconnexion $searchInterconnexion,
-        int $dayPeriod,
-        int $maxResult,
-    ): Paginator {
-        $qb = $this->createQueryBuilder('j');
-        $qb
-        // ->select('j.id, j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response')
-        ->select('j', 'partial s.{id, reference}', 'partial p.{id, nom}')
-        ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
-        ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
-        ->Where('j.createdAt >= :date_limit');
-        dump($searchInterconnexion->getTerritory());
-        if (null !== $searchInterconnexion->getTerritory()) {
-            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $searchInterconnexion->getTerritory());
-        }
-        dump($searchInterconnexion->getPartner());
-        if ($searchInterconnexion->getPartner()) {
-            $qb->andWhere('p.id = :partner')->setParameter('partner', $searchInterconnexion->getPartner());
-        }
-        dump($searchInterconnexion->getStatus());
-        if ($searchInterconnexion->getStatus()) {
-            $qb->andWhere('j.status = :status')->setParameter('status', $searchInterconnexion->getStatus());
-        }
-
-        dump($searchInterconnexion->getOrderType());
-        if (!empty($searchInterconnexion->getOrderType())) {
-            [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
-        } else {
-            $qb->orderBy('j.createdAt', 'DESC');
-        }
-
-        dump($searchInterconnexion->getPage());
-        $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
-        $firstResult = ($searchInterconnexion->getPage() - 1) * $maxResult;
-        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
-        dump($qb->getQuery()->getSQL());
-
-        return new Paginator($qb->getQuery());
-    }
-
     /**
-     * @param array<int, int> $territories
-     *
      * @return array<int, array<string, mixed>>
      */
     public function findLastJobEventByTerritory(
         int $dayPeriod,
-        array $territories,
+        SearchInterconnexion $searchInterconnexion,
     ): array {
         $qb = $this->createQueryBuilder('j')
             ->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response')
@@ -116,12 +71,24 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->Where('j.createdAt >= :date_limit');
 
-        if (\count($territories)) {
-            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $territories);
+        if ($searchInterconnexion->getTerritory()) {
+            $qb->andWhere('p.territory = :territory')->setParameter('territory', $searchInterconnexion->getTerritory());
+        }
+        if ($searchInterconnexion->getPartner()) {
+            $qb->andWhere('p.id = :partnerId')->setParameter('partnerId', $searchInterconnexion->getPartner()->getId());
+        }
+        if ($searchInterconnexion->getStatus()) {
+            $qb->andWhere('j.status = :status')->setParameter('status', $searchInterconnexion->getStatus());
         }
 
-        $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'))
-            ->orderBy('j.createdAt', 'DESC');
+        $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
+
+        if (!empty($searchInterconnexion->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('j.createdAt', 'DESC');
+        }
 
         $qb->setMaxResults(1000);
 

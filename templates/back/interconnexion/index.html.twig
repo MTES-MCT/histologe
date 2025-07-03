@@ -43,7 +43,7 @@
     </section>
 
     <section class="fr-col-12 fr-py-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(connections|length, 'connexion à un SI externe trouvée', 'connexions à un SI externe trouvées') }}</h2>
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(totalConnexions, 'connexion à un SI externe trouvée', 'connexions à un SI externe trouvées') }}</h2>
     </section>
     
     <section class="fr-col-3 fr-pt-0">
@@ -66,9 +66,9 @@
         {% set tableBody %}
             {% for connection in connections %}
                 <tr>
-                    <td>{{ connection.signalementReference }}</td>
+                    <td>{{ connection.reference }}</td>
                     <td>{{ connection.createdAt|date('d/m/Y H:i') }}</td>
-                    <td>{{ connection.partnerName }}</td>
+                    <td>{{ connection.nom }}</td>
                     <td>{{ connection.service }}</td>
                     <td>{{ connection.action }}</td>
                     <td>
@@ -80,7 +80,6 @@
                     </td>
                     <td>{{ connection.response|raw }}</td>
                 </tr>
-               <!-- {{ dump(connection) }}-->
             {% endfor %}
         {% endset %}
 
