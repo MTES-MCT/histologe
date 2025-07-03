@@ -11,6 +11,7 @@ use App\Entity\Signalement;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -58,20 +59,22 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         return $qb->getQuery()->getArrayResult();
     }
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function findLastJobEventByTerritory(
+    private function createJobEventByTerritoryQueryBuilder(
         int $dayPeriod,
         SearchInterconnexion $searchInterconnexion,
-        ?int $limit = null,
-        ?int $offset = null,
-    ): array {
-        $qb = $this->createQueryBuilder('j')
-            ->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response')
-            ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
-            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
-            ->Where('j.createdAt >= :date_limit');
+        bool $isCount = false,
+    ): QueryBuilder {
+        $qb = $this->createQueryBuilder('j');
+        if ($isCount) {
+            $qb->select('COUNT(j.id)');
+        } else {
+            $qb->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response');
+        }
+        $qb->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId');
+        if (!$isCount) {
+            $qb->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
+        }
+        $qb->where('j.createdAt >= :date_limit');
 
         if ($searchInterconnexion->getTerritory()) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $searchInterconnexion->getTerritory());
@@ -85,6 +88,20 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
 
         $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
 
+        return $qb;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function findLastJobEventByTerritory(
+        int $dayPeriod,
+        SearchInterconnexion $searchInterconnexion,
+        int $limit,
+        int $offset,
+    ): array {
+        $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion, false);
+
         if (!empty($searchInterconnexion->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());
             $qb->orderBy($orderField, $orderDirection);
@@ -92,12 +109,8 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             $qb->orderBy('j.createdAt', 'DESC');
         }
 
-        if (null !== $limit) {
-            $qb->setMaxResults($limit);
-        }
-        if (null !== $offset) {
-            $qb->setFirstResult($offset);
-        }
+        $qb->setMaxResults($limit)
+            ->setFirstResult($offset);
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -109,22 +122,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         int $dayPeriod,
         SearchInterconnexion $searchInterconnexion,
     ): int {
-        $qb = $this->createQueryBuilder('j')
-            ->select('COUNT(j.id)')
-            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
-            ->where('j.createdAt >= :date_limit');
-
-        if ($searchInterconnexion->getTerritory()) {
-            $qb->andWhere('p.territory = :territory')->setParameter('territory', $searchInterconnexion->getTerritory());
-        }
-        if ($searchInterconnexion->getPartner()) {
-            $qb->andWhere('p.id = :partnerId')->setParameter('partnerId', $searchInterconnexion->getPartner()->getId());
-        }
-        if ($searchInterconnexion->getStatus()) {
-            $qb->andWhere('j.status = :status')->setParameter('status', $searchInterconnexion->getStatus());
-        }
-
-        $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
+        $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion, true);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }

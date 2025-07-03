@@ -33,7 +33,7 @@ class InterconnexionController extends AbstractController
         }
         $maxListPagination = $parameterBag->get('standard_max_list_pagination');
 
-        $page = $searchInterconnexion->getPage() ?? 1;
+        $page = $searchInterconnexion->getPage();
         $limit = $maxListPagination;
         $offset = ($page - 1) * $limit;
 

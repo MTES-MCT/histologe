@@ -14,7 +14,6 @@ class SearchInterconnexion
     private ?Partner $partner = null;
     private ?string $status = null;
     private ?string $orderType = null;
-    private ?int $page = 1;
 
     public function getTerritory(): ?Territory
     {
@@ -54,15 +53,5 @@ class SearchInterconnexion
     public function setOrderType(?string $orderType): void
     {
         $this->orderType = $orderType;
-    }
-
-    public function getPage(): ?int
-    {
-        return $this->page;
-    }
-
-    public function setPage(?int $page): void
-    {
-        $this->page = $page;
     }
 }
