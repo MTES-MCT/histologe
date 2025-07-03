@@ -1,0 +1,95 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Connexions SI externes{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Connexions SI externes',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-mb-0">Connexions SI externes</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    {% form_theme form 'form/dsfr_theme.html.twig' %}
+    {{ form_start(form) }}
+
+    <section class="fr-container--fluid overflow-visible">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.territory) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.partner) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.status) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                <a href="{{ path('back_interconnexion_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-py-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(connections|length, 'connexion à un SI externe trouvée', 'connexions à un SI externe trouvées') }}</h2>
+    </section>
+    
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form) }}
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">Référence</th>
+            <th scope="col">Dernière synchro</th>
+            <th scope="col">Partenaire</th>
+            <th scope="col">Service</th>
+            <th scope="col">Action</th>
+            <th scope="col">Statut</th>
+            <th scope="col">Message d'erreur</th>
+        {% endset %}
+        
+        {% set tableBody %}
+            {% for connection in connections %}
+                <tr>
+                    <td>{{ connection.signalementReference }}</td>
+                    <td>{{ connection.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ connection.partnerName }}</td>
+                    <td>{{ connection.service }}</td>
+                    <td>{{ connection.action }}</td>
+                    <td>
+                        {% if connection.status == 'success' %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
+                        {% else %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ connection.response|raw }}</td>
+                </tr>
+               <!-- {{ dump(connection) }}-->
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Connexions SI externes', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+        <div id="interconnexion-pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchInterconnexion.page, 'back_interconnexion_index', searchInterconnexion.urlParams) }}
+        </div>
+    </section>
+
+{% endblock %} 
