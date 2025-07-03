@@ -61,25 +61,6 @@
                                 <input class="fr-input" type="number" id="compositionLogementSuperficie" name="superficie" value="{{ signalement.superficie }}">
                             </div>
 
-                            <div class="fr-select-group">
-                                {% set compositionLogementHauteur = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.compositionLogementHauteur : null %}
-                                <label class="fr-label" for="compositionLogementHauteur">
-                                    Hauteur > 2m
-                                    {{ show_label_facultatif(
-                                        'App\\Dto\\Request\\Signalement\\CompositionLogementRequest',
-                                        'compositionLogementHauteur',
-                                        signalement.profileDeclarant,
-                                        signalement.isV2)
-                                    }}
-                                </label>
-                                <select class="fr-select" id="compositionLogementHauteur" name="compositionLogementHauteur">
-                                    <option value="" {{ compositionLogementHauteur not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ compositionLogementHauteur is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ compositionLogementHauteur is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ compositionLogementHauteur is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
-                                </select>
-                            </div>
-
                             <div class="fr-input-group">
                                 <label class="fr-label" for="compositionLogementNbPieces">Nombre de pièces à vivre</label>
                                 <input class="fr-input" type="number" id="compositionLogementNbPieces" name="compositionLogementNbPieces" value="{{ signalement.typeCompositionLogement.compositionLogementNbPieces ?? 0 }}">

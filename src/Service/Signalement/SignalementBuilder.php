@@ -160,6 +160,28 @@ class SignalementBuilder
             $jsonContent['desordres_logement_chauffage'] = $chauffageType->label();
         }
 
+        if (isset($this->payload['desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille'])) {
+            $jsonContent['desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre'] =
+                $this->payload['desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille'];
+        }
+        if (isset($this->payload['desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille_nsp'])) {
+            $jsonContent['desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre'] = 'Ne sait pas';
+        }
+        if (isset($this->payload['desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille'])) {
+            $jsonContent['desordres_logement_lumiere_plafond_trop_bas_salle_de_bain'] =
+                $this->payload['desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille'];
+        }
+        if (isset($this->payload['desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille_nsp'])) {
+            $jsonContent['desordres_logement_lumiere_plafond_trop_bas_salle_de_bain'] = 'Ne sait pas';
+        }
+        if (isset($this->payload['desordres_logement_lumiere_plafond_trop_bas_cuisine_taille'])) {
+            $jsonContent['desordres_logement_lumiere_plafond_trop_bas_cuisine'] =
+                $this->payload['desordres_logement_lumiere_plafond_trop_bas_cuisine_taille'];
+        }
+        if (isset($this->payload['desordres_logement_lumiere_plafond_trop_bas_cuisine_taille_nsp'])) {
+            $jsonContent['desordres_logement_lumiere_plafond_trop_bas_cuisine'] = 'Ne sait pas';
+        }
+
         if (isset($jsonContent)) {
             $this->signalement->setJsonContent($jsonContent);
         }

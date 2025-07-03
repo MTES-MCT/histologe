@@ -208,7 +208,6 @@ class SignalementManagerTest extends WebTestCase
             typeLogementNatureAutrePrecision: '',
             typeCompositionLogement: '',
             superficie: '',
-            compositionLogementHauteur: '',
             compositionLogementNbPieces: '',
             nombreEtages: '',
             etage: '',

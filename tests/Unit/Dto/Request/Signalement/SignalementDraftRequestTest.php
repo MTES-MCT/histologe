@@ -73,7 +73,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTypeLogementSousCombleSansFenetre('oui')
             ->setCompositionLogementPieceUnique('piece_unique')
             ->setCompositionLogementSuperficie('50')
-            ->setCompositionLogementHauteur('oui')
             ->setCompositionLogementNbPieces('2')
             ->setCompositionLogementNombrePersonnes('3')
             ->setCompositionLogementEnfants('oui')
@@ -139,7 +138,6 @@ class SignalementDraftRequestTest extends WebTestCase
         $this->assertSame('non', $signalementDraftRequest->getTypeLogementSousSolSansFenetre());
         $this->assertSame('oui', $signalementDraftRequest->getTypeLogementSousCombleSansFenetre());
         $this->assertSame('piece_unique', $signalementDraftRequest->getCompositionLogementPieceUnique());
-        $this->assertSame('oui', $signalementDraftRequest->getCompositionLogementHauteur());
         $this->assertSame('oui', $signalementDraftRequest->getCompositionLogementEnfants());
         $this->assertSame('oui', $signalementDraftRequest->getTypeLogementCommoditesPieceAVivre9m());
         $this->assertSame('oui', $signalementDraftRequest->getTypeLogementCommoditesCuisine());
@@ -245,7 +243,6 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTypeLogementSousCombleSansFenetre('invalid_sous_comble')
             ->setCompositionLogementPieceUnique('invalid_piece_unique')
             ->setCompositionLogementSuperficie('invalid_superficie')
-            ->setCompositionLogementHauteur('invalid_hauteur')
             ->setCompositionLogementNbPieces('invalid_nb_pieces')
             ->setCompositionLogementNombrePersonnes('invalid_nombre_personnes')
             ->setCompositionLogementEnfants('invalid_enfants')

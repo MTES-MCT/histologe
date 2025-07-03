@@ -47,11 +47,6 @@ class CompositionLogementRequest implements RequestInterface
             groups: [
                 'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', ]
         )]
-        #[Assert\Choice(
-            choices: ['oui', 'non', 'nsp'],
-            message: 'Le champ "Hauteur > 2m" est incorrecte.'
-        )]
-        private readonly ?string $compositionLogementHauteur = null,
         #[Assert\NotBlank(
             message: 'Merci de définir le nombre de pièces à vivre.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
@@ -197,11 +192,6 @@ class CompositionLogementRequest implements RequestInterface
     public function getSuperficie(): ?string
     {
         return $this->superficie;
-    }
-
-    public function getCompositionLogementHauteur(): ?string
-    {
-        return $this->compositionLogementHauteur;
     }
 
     public function getCompositionLogementNbPieces(): ?string

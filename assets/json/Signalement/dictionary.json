@@ -292,5 +292,43 @@
   "desordres_logement_bruit_exterieur": { "default": "On entend le bruit extérieur, même en fermant les portes et les fenêtres" },
   "desordres_logement_bruit_voisins": { "default": "On entend les voisins parler et marcher depuis le logement, comme s'ils étaient dans la pièce" },
   "desordres_logement_lumiere_pas_lumiere": { "default": "Le logement n'est pas éclairé par la lumière du jour. Il est difficile de voir sans allumer la lumière, même en pleine journée." },
-  "desordres_logement_lumiere_pas_volets": { "default": "Il n'y a pas de volets, ni de stores aux fenêtres" }
+  "desordres_logement_lumiere_pas_volets": { "default": "Il n'y a pas de volets, ni de stores aux fenêtres" },
+  "desordres_logement_lumiere_plafond_trop_bas": { "default": "Les plafonds sont trop bas" },
+  "desordres_logement_lumiere_plafond_trop_bas_taille": { "default": "Quelle est (environ) la hauteur sous plafond en cm ?" },
+  "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre": {
+    "default": "Une ou des pièces à vivre",
+    "disorderOverview": {
+      "default": "Les plafonds sont trop bas dans une ou des pièces à vivre"
+    }
+  },
+  "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille": {
+    "disorderOverview": {
+      "default": "Hauteur dans pièces à vivre : {{formStore.data.desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille}} cm"
+    }
+  },
+  "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille_nsp": { "default": "Hauteur inconnue dans pièces à vivre" },
+  "desordres_logement_lumiere_plafond_trop_bas_cuisine": {
+    "default": "La cuisine / Le coin cuisine",
+    "disorderOverview": {
+      "default": "Les plafonds sont trop bas dans la cuisine"
+    }
+  },
+  "desordres_logement_lumiere_plafond_trop_bas_cuisine_taille": {
+    "disorderOverview": {
+      "default": "Hauteur dans cuisine : {{formStore.data.desordres_logement_lumiere_plafond_trop_bas_cuisine_taille}} cm"
+    }
+  },
+  "desordres_logement_lumiere_plafond_trop_bas_cuisine_taille_nsp": { "default": "Hauteur inconnue dans cuisine" },
+  "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain": {
+    "default": "La salle de bain / salle d'eau et ou les toilettes",
+    "disorderOverview": {
+      "default": "Les plafonds sont trop bas dans la salle de bain"
+    }
+  },
+  "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille": {
+    "disorderOverview": {
+      "default": "Hauteur dans salle de bain : {{formStore.data.desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille}} cm"
+    }
+  },
+  "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille_nsp": { "default": "Hauteur inconnue dans salle de bain" }
 }

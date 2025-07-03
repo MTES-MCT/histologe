@@ -43,7 +43,6 @@
     "type_logement_commodites_wc": "oui",
     "type_logement_dernier_etage": "oui",
     "composition_logement_enfants": "oui",
-    "composition_logement_hauteur": "non",
     "vos_coordonnees_occupant_nom": "TousLesDesordresLocataire",
     "vos_coordonnees_occupant_tel": "0611547845",
     "utilisation_service_ok_visite": 1,
