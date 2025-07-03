@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/connexions-si')]
 class InterconnexionController extends AbstractController
 {
-    private const int DAY_PERIOD = 90;
+    private const int DAY_PERIOD = 30;
 
     #[Route('/', name: 'back_interconnexion_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
