@@ -159,7 +159,9 @@ class PartnerRepositoryTest extends KernelTestCase
     {
         $user = new User();
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '69']);
-        $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null);
+        $searchPartner = new SearchPartner($user);
+        $searchPartner->setTerritoire($territory);
+        $partnerPaginator = $this->partnerRepository->getPartners(1, $searchPartner);
 
         $this->assertGreaterThan(1, $partnerPaginator->count());
     }
@@ -171,9 +173,10 @@ class PartnerRepositoryTest extends KernelTestCase
         $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
         $searchPartner = new SearchPartner($user);
         $searchPartner->setIsNotNotifiable(true);
-        $searchPartner->setIsOnlyInterconnected(false);
+        $searchPartner->setIsOnlyInterconnected(null);
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
-        $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null, $searchPartner);
+        $searchPartner->setTerritoire($territory);
+        $partnerPaginator = $this->partnerRepository->getPartners(50, $searchPartner);
         foreach ($partnerPaginator as $partner) {
             $this->assertFalse($partner[0]->receiveEmailNotifications());
         }
@@ -190,8 +193,23 @@ class PartnerRepositoryTest extends KernelTestCase
         $searchPartner->setIsNotNotifiable(false);
         $searchPartner->setIsOnlyInterconnected(true);
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
-        $partnerPaginator = $this->partnerRepository->getPartners(1, 50, $user, $territory, null, null, $searchPartner);
+        $searchPartner->setTerritoire($territory);
+        $partnerPaginator = $this->partnerRepository->getPartners(50, $searchPartner);
         $this->assertEquals(2, $partnerPaginator->count());
+    }
+
+    public function testGetPartnerPaginatorWithSearchPartnerNotInterconnected(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
+        $searchPartner = new SearchPartner($user);
+        $searchPartner->setIsNotNotifiable(false);
+        $searchPartner->setIsOnlyInterconnected(false);
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
+        $searchPartner->setTerritoire($territory);
+        $partnerPaginator = $this->partnerRepository->getPartners(50, $searchPartner);
+        $this->assertEquals(6, $partnerPaginator->count());
     }
 
     public function testGetPartnerQueryBuilder(): void
