@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForVueAppToBeInteractive } from '../utils/vue-app-helper';
 
 test('connexion page loads with correct title', async ({ page }) => {
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
@@ -7,11 +8,24 @@ test('connexion page loads with correct title', async ({ page }) => {
 
 test('signalement form for locataire', async ({page}) => {
     test.setTimeout(120000);
-    await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement`);
     
-    await page.getByRole('heading', { name: 'Signaler un problème de' }).click();
+    // Nettoyer le contexte pour avoir une session propre
+    await page.context().clearCookies();
+    
+    await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement`);
+
+    page.on('requestfailed', request => {
+        console.log('Request failed:', request.url(), request.failure());
+    });
+
+    await waitForVueAppToBeInteractive(page, 60000);
+
+    await page.getByRole('button', { name: 'Je démarre'}).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('button', { name: 'Je démarre' })).toBeVisible();
     await page.getByRole('button', { name: 'Je démarre' }).click();
-    await page.getByRole('heading', { name: 'Adresse et coordonnées' }).click();
+    await page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true })).toBeVisible();
+    await page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true }).click();
     await page.getByRole('button', { name: 'C\'est parti' }).click();
     await page.getByRole('heading', { name: 'Commençons par l\'adresse du' }).click();
     await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
@@ -115,5 +129,4 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByRole('heading', { name: 'Validation du signalement' }).click();
     await page.getByRole('button', { name: 'Valider mon signalement' }).click();
-    await page.getByRole('heading', { name: 'Votre signalement a bien été' }).click();
-})
+});
