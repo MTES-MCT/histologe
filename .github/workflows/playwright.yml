@@ -7,7 +7,7 @@ on:
 
 env:
   APP_URL: http://localhost:8080
-  APP_ENV: dev
+  APP_ENV: test
   APP_SECRET: test_secret_key_for_github_actions
   MAILER_DSN: smtp://signal_logement_mailer:1025
   DATABASE_URL: mysql://signal_logement:signal_logement@signal_logement_mysql:3307/signal_logement_db
@@ -344,3 +344,6 @@ jobs:
           echo ""
           echo "8. Test de montage manuel:"
           docker run --rm -v $(pwd):/test alpine ls -la /test | head -5 || echo "❌ Montage manuel échoué"
+
+      - name: Show Symfony logs
+        run: cat var/log/test.log || true
