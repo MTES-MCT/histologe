@@ -14,6 +14,7 @@
                     <a {% if maintenance is defined and not maintenance.enable %}href="{{ path('login_activation') }}"{% endif %}>activer votre compte</a> ou
                     <a {% if maintenance is defined and not maintenance.enable %}href="{{ path('login_mdp_perdu') }}"{% endif %}>récupérer votre mot de passe</a> si nécessaire</em>
             </header>
+
             {% include 'security/_form_pro_connect.html.twig' %}
             <form class="needs-validation fr-mt-5v fr-col-md-6" name="login-form" method="POST" novalidate="">
                 {% if error %}

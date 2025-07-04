@@ -1,6 +1,5 @@
-
 import { test, expect } from '@playwright/test';
-import { waitForVueAppToBeInteractive, waitForSpecificElement } from '../utils/vue-app-helper';
+import { waitForVueAppToBeInteractive } from '../utils/vue-app-helper';
 
 test('bouton finir plus tard locataire', async ({ page }) => {
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/signalement`);

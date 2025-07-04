@@ -1,9 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { waitForVueAppToBeInteractive, waitForSpecificElement } from '../utils/vue-app-helper';
+import { waitForVueAppToBeInteractive } from '../utils/vue-app-helper';
 
 test('connexion page loads with correct title', async ({ page }) => {
     await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
-    // console.log(await page.content());
     await expect(page).toHaveTitle("Connexion - Signal-Logement");
 });
 
@@ -21,26 +20,12 @@ test('signalement form for locataire', async ({page}) => {
 
     await waitForVueAppToBeInteractive(page, 60000);
 
-    // Log tous les boutons visibles avant de cliquer
-    /* const visibleButtonsDebug = await page.locator('button:visible').all();
-    for (const btn of visibleButtonsDebug) {
-      const text = await btn.textContent();
-      const name = await btn.getAttribute('name');
-      const id = await btn.getAttribute('id');
-      console.log(`Bouton visible: text='${text}', name='${name}', id='${id}'`);
-    } */
-    //console.log(await page.content());
     await page.getByRole('button', { name: 'Je démarre'}).waitFor({ state: 'visible', timeout: 10000 });
     await expect(page.getByRole('button', { name: 'Je démarre' })).toBeVisible();
     await page.getByRole('button', { name: 'Je démarre' }).click();
-    
-
-
     await page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true })).toBeVisible();
     await page.getByRole('heading', { name: 'Adresse et coordonnées', exact: true }).click();
-
-
     await page.getByRole('button', { name: 'C\'est parti' }).click();
     await page.getByRole('heading', { name: 'Commençons par l\'adresse du' }).click();
     await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
