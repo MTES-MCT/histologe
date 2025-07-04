@@ -57,6 +57,17 @@ class CartographieController extends AbstractController
             foreach ($zones as $zone) {
                 $zoneAreas[] = $zone->getArea();
             }
+        } elseif (!empty($filters['isZonesDisplayed'])) {
+            $criteria = [];
+            if (!empty($filters['territories'])) {
+                $criteria['territory'] = $filters['territories'];
+            } elseif (!$this->isGranted('ROLE_ADMIN')) {
+                $criteria['territory'] = $user->getPartnersTerritories();
+            }
+            $zones = $zoneRepository->findBy($criteria);
+            foreach ($zones as $zone) {
+                $zoneAreas[] = $zone->getArea();
+            }
         }
 
         return $this->json(

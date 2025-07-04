@@ -27,6 +27,16 @@
         >Afficher les signalements importés
         </button>
       </li>
+      <li>
+        <button
+            v-if="sharedState.zones.length > 0 && viewType === 'carto'"
+            ref="isZonesDisplayedButton"
+            class="fr-tag"
+            :aria-pressed="ariaPressed.isZonesDisplayed.toString()"
+            @click="toggleIsZonesDisplayed"
+        >Afficher les zones du territoire
+        </button>
+      </li>
     </ul>
   </div>
   <div :class="defineCssBloc1()">
@@ -388,13 +398,18 @@ export default defineComponent({
       required: false,
       default: 'horizontal'
     },
+    viewType: {
+      type: String,
+      required: false,
+      default: 'list'
+    },
     onChange: { type: Function }
   },
   emits: ['changeTerritory', 'clickReset'],
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
-        if (key === 'isImported' || key === 'showMyAffectationOnly' || key === 'showWithoutAffectationOnly') {
+        if (key === 'isImported' || key === 'isZonesDisplayed' || key === 'showMyAffectationOnly' || key === 'showWithoutAffectationOnly') {
           return false
         }
         if (value !== null) {
@@ -445,6 +460,14 @@ export default defineComponent({
     },  
     toggleIsImported () {
       this.sharedState.input.filters.isImported = this.sharedState.input.filters.isImported !== 'oui'
+        ? 'oui'
+        : null
+      if (typeof this.onChange === 'function') {
+        this.onChange(false)
+      }
+    },
+    toggleIsZonesDisplayed () {
+      this.sharedState.input.filters.isZonesDisplayed = this.sharedState.input.filters.isZonesDisplayed !== 'oui'
         ? 'oui'
         : null
       if (typeof this.onChange === 'function') {
@@ -551,6 +574,7 @@ export default defineComponent({
         dateDepot: null,
         dateDernierSuivi: null,
         isImported: null,
+        isZonesDisplayed: null,
         showMyAffectationOnly: null,
         showWithoutAffectationOnly: null,
         statusAffectation: null,
@@ -570,6 +594,10 @@ export default defineComponent({
 
       if (this.$refs.isImportedButton) {
         (this.$refs.isImportedButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      }
+
+      if (this.$refs.isZonesDisplayedButton) {
+        (this.$refs.isZonesDisplayedButton as HTMLElement).setAttribute('aria-pressed', 'false')
       }
 
       this.reset = !this.reset
@@ -593,6 +621,7 @@ export default defineComponent({
       sharedProps: store.props,
       ariaPressed: {
         isImported: store.state.input.filters.isImported === 'oui',
+        isZonesDisplayed: store.state.input.filters.isZonesDisplayed === 'oui',
         showMyAffectationOnly: store.state.input.filters.showMyAffectationOnly === 'oui',
         showWithoutAffectationOnly: store.state.input.filters.showWithoutAffectationOnly === 'oui'
       },

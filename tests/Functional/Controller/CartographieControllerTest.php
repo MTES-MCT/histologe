@@ -142,5 +142,8 @@ class CartographieControllerTest extends WebTestCase
         yield 'Partenaire by visites' => [self::PARTNER, 'bo-filters-visites', ['0']];
         yield 'Admin partner multi territory by territory' => [self::ADMIN_PARTNER_MULTI_TERRITORIES, 'bo-filters-territories', ['1']];
         yield 'User partner multi territory by territory' => [self::USER_PARTNER_MULTI_TERRITORIES, 'bo-filters-territories', ['31']];
+        yield 'Super Admin by isZonesDisplayed' => [self::SUPER_ADMIN, 'bo-filters-isZonesDisplayed', ['oui']];
+        yield 'Resp territoire by isZonesDisplayed' => [self::ADMIN_TERRITOIRE, 'bo-filters-isZonesDisplayed', ['oui']];
+        yield 'Partenaire by isZonesDisplayed' => [self::PARTNER, 'bo-filters-isZonesDisplayed', ['oui']];
     }
 }

@@ -85,6 +85,8 @@ class SignalementSearchQuery
         private readonly ?int $page = 1,
         #[Assert\Choice(['oui'])]
         private readonly ?string $isImported = null,
+        #[Assert\Choice(['oui'])]
+        private readonly ?string $isZonesDisplayed = null,
         #[Assert\Choice(['NO_SUIVI_AFTER_3_RELANCES'])]
         private readonly ?string $relancesUsager = null,
         private readonly ?bool $usagerAbandonProcedure = false,
@@ -251,6 +253,11 @@ class SignalementSearchQuery
         return $this->isImported;
     }
 
+    public function getIsZonesDisplayed(): ?string
+    {
+        return $this->isZonesDisplayed;
+    }
+
     public function getRelancesUsager(): ?string
     {
         return $this->relancesUsager;
@@ -363,6 +370,11 @@ class SignalementSearchQuery
         };
 
         $filters['isImported'] = match ($this->getIsImported()) {
+            'oui' => true,
+            default => null,
+        };
+
+        $filters['isZonesDisplayed'] = match ($this->getIsZonesDisplayed()) {
             'oui' => true,
             default => null,
         };

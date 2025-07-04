@@ -15,6 +15,7 @@
                 @changeTerritory="handleTerritoryChange"
                 @clickReset="handleClickReset"
                 :layout="'horizontal'"
+                :viewType="'list'"
             />
           </div>
         </div>
