@@ -68,9 +68,11 @@ class SignalementFileProcessorTest extends TestCase
         $this->assertCount(2, $fileList);
 
         foreach ($fileList as $fileItem) {
+            $this->assertArrayHasKey('file', $fileItem);
             $this->assertArrayHasKey('title', $fileItem);
             $this->assertArrayHasKey('date', $fileItem);
-            $this->assertArrayHasKey('type', $fileItem);
+            $this->assertArrayHasKey('documentType', $fileItem);
+            $this->assertArrayHasKey('isSuspicious', $fileItem);
         }
     }
 

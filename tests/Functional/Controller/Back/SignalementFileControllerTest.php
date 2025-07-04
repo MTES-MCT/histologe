@@ -6,7 +6,9 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\Signalement\SignalementFileProcessor;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -22,6 +24,7 @@ class SignalementFileControllerTest extends WebTestCase
     private RouterInterface $router;
     private ?User $user = null;
     private ?Signalement $signalement = null;
+    private SignalementFileProcessor|MockObject $signalementFileProcessorMock;
 
     protected function setUp(): void
     {
@@ -29,6 +32,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->router = self::getContainer()->get(RouterInterface::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->signalementFileProcessorMock = $this->createMock(SignalementFileProcessor::class);
 
         $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($this->user);
@@ -56,45 +60,16 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->client->loginUser($this->user);
 
+        $this->signalementFileProcessorMock->method('isValid')->willReturn(true);
+        self::getContainer()->set(SignalementFileProcessor::class, $this->signalementFileProcessorMock);
+
         $route = $this->router->generate('back_signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
-        $this->client->request('POST', $route, [
-            '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
-        ], [
-            'signalement-add-file' => [
-                'photos' => [$imageFile],
-                'documents' => [$documentFile],
-            ],
-        ]);
-
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-
-        $redirectUrl = $this->client->getResponse()->headers->get('Location');
-        $this->client->request('GET', $redirectUrl);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function testAddFailureFileSignalement(): void
-    {
-        $imageFile = new UploadedFile(
-            __DIR__.'/../../../files/sample.heic',
-            'sample.heic',
-            'image/heif',
-            null,
-            true
+        $this->client->request('POST', $route,
+            ['_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId())],
+            ['signalement-add-file' => [$imageFile, $documentFile]]
         );
 
-        $this->client->loginUser($this->user);
-
-        $route = $this->router->generate('back_signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
-        $this->client->request('POST', $route, [
-            '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
-        ], [
-            'signalement-add-file' => [
-                'photos' => [$imageFile],
-            ],
-        ]);
-
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseIsSuccessful();
     }
 
     public function testGeneratePdfSignalement(): void
@@ -128,8 +103,11 @@ class SignalementFileControllerTest extends WebTestCase
         $route = $this->router->generate('back_signalement_add_file', ['uuid' => '00000000-0000-0000-2023-000000000009']);
         $this->client->request('POST', $route);
 
-        $this->assertResponseStatusCodeSame(302);
-        $this->assertResponseRedirects('/bo/signalements/00000000-0000-0000-2023-000000000009');
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertStringContainsString(
+            'Token CSRF invalide ou param\u00e8tre manquant, veuillez rechargez la page',
+            $this->client->getResponse()->getContent()
+        );
     }
 
     public function testAddFileSignalementDeny(): void
@@ -154,19 +132,26 @@ class SignalementFileControllerTest extends WebTestCase
                 'file_id' => $signalement->getFiles()[0]->getId(),
                 'documentType' => 'AUTRE',
                 'description' => 'Comme on peux le voir la situation est critique, il faut agir rapidement.',
+                'from' => 'edit',
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_edit_file_'.$signalement->getId()),
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Le document a bien été modifié.');
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals('{"response":"success"}', $this->client->getResponse()->getContent());
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $successMessages = $flashBag->get('success');
+        $this->assertEquals('Le document a bien été modifié.', $successMessages[0]);
     }
 
     public function testEditFileSignalementError(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000009']);
         $route = $this->router->generate('back_signalement_edit_file', ['uuid' => $signalement->getUuid()]);
+        $file = $signalement->getFiles()->filter(function ($file) {
+            return $file->isTypeImage();
+        })->current();
 
         $message = 'Je vais écrire un roman, lorem ipsum dolor sit amet, consectetur adipiscing elit.
         Nulla nec purus feugiat, ultricies nunc nec, tincidunt nunc. Nulla facilisi.
@@ -177,15 +162,17 @@ class SignalementFileControllerTest extends WebTestCase
             'POST',
             $route,
             [
-                'file_id' => $signalement->getFiles()[0]->getId(),
+                'file_id' => $file->getId(),
                 'documentType' => 'AUTRE',
                 'description' => $message,
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_edit_file_'.$signalement->getId()),
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'La description ne doit pas dépasser 255 caractères');
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertStringContainsString(
+            'La description ne doit pas d\u00e9passer 255 caract\u00e8res',
+            $this->client->getResponse()->getContent()
+        );
     }
 }
