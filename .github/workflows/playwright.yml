@@ -287,14 +287,6 @@ jobs:
           path: tests/e2e/test-results/
           retention-days: 30
 
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-screenshots
-          path: tests/e2e/test-results/**/*.png
-          retention-days: 30
-
       - name: Check server logs
         if: ${{ always() }}
         run: docker compose logs signal_logement_phpfpm
@@ -345,5 +337,3 @@ jobs:
           echo "8. Test de montage manuel:"
           docker run --rm -v $(pwd):/test alpine ls -la /test | head -5 || echo "❌ Montage manuel échoué"
 
-      - name: Show Symfony logs
-        run: cat var/log/test.log || true

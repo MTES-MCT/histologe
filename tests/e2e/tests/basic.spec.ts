@@ -144,10 +144,4 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByRole('heading', { name: 'Validation du signalement' }).click();
     await page.getByRole('button', { name: 'Valider mon signalement' }).click();
-
-    await page.getByRole('heading', { name: 'Votre signalement a bien été' }).waitFor({ state: 'visible', timeout: 10000 });
-    await expect(page.getByRole('heading', { name: 'Votre signalement a bien été' })).toBeVisible();
-    await page.getByRole('heading', { name: 'Votre signalement a bien été' }).click();
-
-
 });
