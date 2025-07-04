@@ -9,12 +9,5 @@ export default defineConfig({
     baseURL: process.env.BASE_URL || 'http://localhost:8080',
     browserName: 'chromium',
     headless: true,
-    // viewport: { width: 1280, height: 720 },
-    // ignoreHTTPSErrors: true,
-    // actionTimeout: 30000,
-    // navigationTimeout: 30000,
   },
-  // workers: process.env.CI ? 1 : 2,
-  // retries: process.env.CI ? 1 : 0,
-  // globalSetup: require.resolve('./global-setup.ts'),
 });

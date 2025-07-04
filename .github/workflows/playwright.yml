@@ -107,27 +107,6 @@ jobs:
       - name: Build Docker containers
         run: docker compose build
 
-      - name: Configure PHP-FPM for testing
-        run: |
-          # Créer un fichier de configuration PHP-FPM temporaire pour les tests
-          cat > php-fpm-test.conf << 'EOF'
-          [www]
-          user = www-data
-          group = www-data
-          listen = 9000
-          listen.owner = www-data
-          listen.group = www-data
-          listen.mode = 0660
-          pm = dynamic
-          pm.max_children = 20
-          pm.start_servers = 5
-          pm.min_spare_servers = 2
-          pm.max_spare_servers = 10
-          pm.max_requests = 1000
-          request_terminate_timeout = 300s
-          catch_workers_output = yes
-          EOF
-
       - name: Verify Docker volumes
         run: |
           # Vérifier que le répertoire courant existe et contient les fichiers nécessaires
