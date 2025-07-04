@@ -267,16 +267,22 @@ class SignalementFileController extends AbstractController
             }
         }
         $description = $request->get('description');
-        if ($file->isTypeImage() && $description) {
-            if (mb_strlen($description) > 255) {
+        if ($file->isTypeImage()) {
+            if ($description && mb_strlen($description) > 255) {
                 $errorMsg = 'La description ne doit pas dépasser 255 caractères';
 
                 return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
             }
+            $file->setDescription($description);
+        } else {
+            $file->setDescription(null);
         }
-        $file->setDescription($description);
         $entityManager->persist($file);
         $entityManager->flush();
+
+        if ('edit' === $request->get('from')) {
+            $this->addFlash('success', 'Le document a bien été modifié.');
+        }
 
         return $this->json(['response' => 'success']);
     }

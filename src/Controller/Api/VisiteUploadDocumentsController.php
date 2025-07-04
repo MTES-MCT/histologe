@@ -268,7 +268,7 @@ class VisiteUploadDocumentsController extends AbstractController
     private function canAddDocument(string $typeDocumentVisite, Intervention $intervention, ?string &$errorMessage): bool
     {
         if (self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite) {
-            if (!$intervention->getRapportDeVisite()) {
+            if ($intervention->getRapportDeVisite()) {
                 $errorMessage = 'Un rapport de visite existe déjà pour cette intervention.';
 
                 return false;

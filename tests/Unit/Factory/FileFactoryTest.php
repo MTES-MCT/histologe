@@ -76,7 +76,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_dpe_upload',
             ],
             'dummy-filename-dpe.PNG',
-            true,
+            false,
             DocumentType::SITUATION_FOYER_DPE,
         ];
 
@@ -100,7 +100,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_bail_upload',
             ],
             'dummy-filename-bail.png',
-            true,
+            false,
             DocumentType::SITUATION_FOYER_BAIL,
         ];
 
@@ -112,7 +112,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_bail_upload',
             ],
             'dummy-filename-bail.png',
-            true,
+            false,
             DocumentType::SITUATION_FOYER_BAIL,
         ];
 

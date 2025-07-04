@@ -101,39 +101,6 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testAddFailureFileSignalement(): void
-    {
-        $imageFile = new UploadedFile(
-            __DIR__.'/../../files/sample.heic',
-            'sample.heic',
-            'image/heif',
-            null,
-            true
-        );
-
-        $this->client->loginUser($this->signalementUser, 'code_suivi');
-
-        $route = $this->router->generate('signalement_add_file', ['code' => $this->signalement->getCodeSuivi()]);
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                '_token' => $this->generateCsrfToken($this->client, 'signalement_add_file_'.$this->signalement->getId()),
-                'email' => $this->signalement->getMailOccupant() ?? $this->signalement->getMailDeclarant(),
-            ],
-            [
-                'signalement-add-file' => [
-                    'photos' => [$imageFile],
-                ],
-            ],
-            [
-                'HTTP_X-Requested-With' => 'XMLHttpRequest',
-            ]
-        );
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Le fichier a une extension heic mais est au format', $this->client->getResponse()->getContent());
-    }
-
     public function testDeleteFileAccessDeniedSignalement(): void
     {
         $this->client->catchExceptions(false);

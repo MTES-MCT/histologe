@@ -322,7 +322,8 @@ class File implements EntityHistoryInterface
 
     public function setDescription(?string $description): self
     {
-        $this->description = trim($description);
+        $description = null !== $description ? trim($description) : null;
+        $this->description = $description ?: null;
 
         return $this;
     }

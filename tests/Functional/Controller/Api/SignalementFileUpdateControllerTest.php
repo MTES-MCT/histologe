@@ -55,7 +55,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
     {
         $signalement = self::getContainer()->get(SignalementRepository::class)->find(1);
         $file = $signalement->getFiles()->filter(function (File $file) {
-            return $file->isTypeImage();
+            return $file->isTypeDocument();
         })->current();
 
         $payload = [
