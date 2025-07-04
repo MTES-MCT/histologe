@@ -104,11 +104,9 @@ class SignalementFileUpdateController extends AbstractController
 
         $documentType = DocumentType::tryFrom($fileRequest->documentType);
         $ext = pathinfo($file->getFilename(), \PATHINFO_EXTENSION);
-        if ((in_array($ext, File::IMAGE_EXTENSION) && 'pdf' !== $ext) && isset(DocumentType::getOrderedPhotosList()[$documentType->name])) {
-            $file->setFileType(File::FILE_TYPE_PHOTO);
+        if ($file->isTypeImage()) {
             $file->setDescription($fileRequest->description);
         } else {
-            $file->setFileType(File::FILE_TYPE_DOCUMENT);
             $file->setDescription(null);
         }
         $file->setExtension($ext);

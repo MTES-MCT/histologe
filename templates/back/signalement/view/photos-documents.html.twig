@@ -1,146 +1,115 @@
-<div class="fr-grid-row">
-    <div class="fr-col-9 fr-col-md-6">
-        <h3 class="fr-h5">{{ zonetitle }}</h3>
-    </div>
-    <div class="fr-col-3 fr-col-md-6 fr-text--right">
-        {% if (is_granted('SIGN_EDIT', signalement)) and displayAddButton %}
-            <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
-                {% if 'document' in filesType %}
+{% if zonetitle is not null %}
+    <div class="fr-grid-row">
+        <div class="fr-col-9 fr-col-md-6">
+            <h3 class="fr-h5">{{ zonetitle }}</h3>
+        </div>
+        <div class="fr-col-3 fr-col-md-6 fr-text--right">
+            {% if (is_granted('SIGN_EDIT', signalement)) and filesFilter is not same as 'visite' %}
+                <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
                     <li>
                         <button
                         class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn"
                         data-fr-opened="false"
                         aria-controls="fr-modal-upload-files"
-                        data-file-type="document"
                         data-file-filter={{filesFilter}}
-                        data-accepted-type-mimes={{ get_accepted_mime_type('document')}}
-                        data-accepted-extensions="{{ get_accepted_extensions('document')}}"
                         >
-                            {% if buttonTitle is defined %}{{buttonTitle}}{% else %}Ajouter des documents{% endif %}
+                            Ajouter des documents sur la {{filesFilter}}
                         </button>
                     </li>
-                {% endif %}
-                {% if 'photo' in filesType and filesFilter is same as 'situation' %}
-                    <li>
-                        <button 
-                        class="fr-btn fr-btn--secondary fr-icon-image-add-line open-modal-upload-files-btn" 
-                        data-fr-opened="false" 
-                        aria-controls="fr-modal-upload-files" 
-                        data-file-type="photo"
-                        data-file-filter={{filesFilter}}
-                        data-accepted-type-mimes={{ get_accepted_mime_type('photo')}}
-						data-accepted-extensions="{{ get_accepted_extensions('photo')}}"
-                        >
-                            {% if buttonTitle is defined %}{{buttonTitle}}{% else %}Ajouter des photos{% endif %}
-                        </button>
-                    </li>
-                {% endif %}
-            </ul>  
+                </ul>  
+            {% endif %}
+        </div>
+        {% if filesFilter is same as 'situation' %}
+            <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
+                Ajoutez ici des photos ou documents concernant la situation de l'usager (photos de désordres, bail, DPE, diagnostic et état des lieux). 
+                Les fichiers ajoutés sont partagés à l'usager.
+                <br>
+                Vous ne pouvez pas supprimer les documents ajoutés par l'usager.
+            </p>
+        {% endif %}
+        {% if filesFilter is same as 'procédure' %}
+            <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
+                Ajoutez ici les documents liés à la procédure (mise en demeure, rapport de visite, arrêté, etc.).
+                <br>
+                Vous pouvez supprimer uniquement les documents que vous avez ajoutés.
+            </p>
         {% endif %}
     </div>
-    {% if filesFilter is same as 'situation' %}
-        <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
-            {% if 'document' in filesType and 'photo' in filesType %}
-            Ajoutez ici des photos ou documents concernant la situation de l'usager (photos de désordres, bail, DPE, diagnostic et état des lieux). 
-            Les fichiers ajoutés sont partagés à l'usager.
-            {% elseif 'document' in filesType %}
-            Vous ne pouvez pas supprimer les documents ajoutés par l'usager.
-            {% else %}
-            Vous ne pouvez pas supprimer les photos ajoutées par l'usager.
-            {% endif %}
-        </p>
-    {% endif %}
-    {% if filesFilter is same as 'procedure' %}
-        <p class="fr-text--sm fr-mt-n2w fr-mb-2w">
-            {% if 'document' in filesType and 'photo' in filesType %}
-            Ajoutez ici les documents liés à la procédure (mise en demeure, rapport de visite, arrêté, etc.). Vous pouvez supprimer uniquement les documents que vous avez ajoutés.
-            {% elseif 'document' in filesType %}
-            Vous pouvez supprimer uniquement les documents que vous avez ajoutés.
-            {% endif %}
-        </p>
-    {% endif %}
-</div>
-
-{% if signalement.files|length == 0 %}
-    <p class="fr-text--sm">
-        Aucun document ou photo disponible
-    </p>
 {% endif %}
 
 {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
-{% if 'photo' in filesType and (filesFilter is same as 'situation' or filesFilter is same as 'visite') %}
-    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-        {% for index, photo in signalement.files|filter(
-            photo => photo.isTypePhoto and (
-                (filesFilter is same as 'situation' and photo.isSituationPhoto) or
-                (filesFilter is same as 'visite' and photo.intervention is not null and photo.intervention.id is same as interventionId)
-            )) %}
-            <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-                <div class="fr-hidden" id="tippy_photodoc_{{ photo.id }}">
-                    {% include '_partials/_tippy_photo_template.html.twig' %}
-                </div>
-                <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
-                    data-template="tippy_photodoc_{{ photo.id }}"
-                    style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
-                    >
-                    <button 
-                        class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
-                        data-id={{ photo.id }} 
-                        title="Voir la photo {{ photo.filename }}"
-                    ></button>
-                    {% if is_granted('FILE_EDIT', photo) %}   
-                        {% set partner = photo.uploadedBy ? photo.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}                    
-                        <button 
-                            class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
-                            id="file_edit_{{ photo.id }}" 
-                            title="Editer la photo {{ photo.filename }}"
-                            aria-controls="fr-modal-edit-file"
-                            data-fr-opened="false" 
-                            data-filename="{{ photo.filename }}" 
-                            data-type="photo" 
-                            data-file-id="{{ photo.id}}" 
-                            data-file-path="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}"
-                            data-description="{{ photo.description }}" 
-                            data-documentType="{{ photo.documentType.name }}" 
-                            data-documentType-list="{{ DocumentType.getOrderedPhotosList() | json_encode }}"
-                            data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
-                            data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
-                            data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                            data-desordreSlug="{{ photo.desordreSlug }}"
-                            data-signalement-desordres="{{ criteres | json_encode }}"
-                        ></button>
-                    {% endif %}
-                    {% if is_granted('FILE_DELETE', photo) %}
-                        <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
-                            id="file_delete_{{ photo.id }}" 
-                            title="Supprimer la photo {{ photo.filename }}"
-                            aria-controls="fr-modal-delete-file"
-                            data-fr-opened="false" 
-                            data-filename="{{ photo.filename }}" 
-                            data-type="photo" 
-                            data-file-id="{{ photo.id}}"                     
-                        ></button>
-                    {% endif %}
-                </div>
+<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+    {% set photos = signalement.files|filter(
+        photo => 
+            (filesFilter is same as 'situation' and photo.isSituationImage) or
+            (filesFilter is same as 'procédure' and photo.isProcedureImage) or
+            (filesFilter is same as 'visite' and photo.isTypeImage and photo.intervention is not null and photo.intervention.id is same as interventionId)
+    ) %}
+    {% for photo in photos %}
+        <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+            <div class="fr-hidden" id="tippy_photodoc_{{ photo.id }}">
+                {% include '_partials/_tippy_photo_template.html.twig' %}
             </div>
-        {% endfor %}
-    </div>
-{% endif %}
+            <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
+                data-template="tippy_photodoc_{{ photo.id }}"
+                style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
+                >
+                <button 
+                    class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
+                    data-id={{ photo.id }} 
+                    title="Voir la photo {{ photo.filename }}"
+                ></button>
+                {% if is_granted('FILE_EDIT', photo) %}   
+                    {% set partner = photo.uploadedBy ? photo.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}                    
+                    <button 
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                        id="file_edit_{{ photo.id }}" 
+                        title="Editer la photo {{ photo.filename }}"
+                        aria-controls="fr-modal-edit-file"
+                        data-fr-opened="false" 
+                        data-filename="{{ photo.filename }}" 
+                        data-type="photo" 
+                        data-file-id="{{ photo.id}}" 
+                        data-signalement-uuid="{{ photo.signalement.uuid}}" 
+                        data-description="{{ photo.description }}" 
+                        data-file-path="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}"
+                        data-file-filter="{{ filesFilter }}"
+                        data-documentType="{{ photo.documentType.name }}" 
+                        data-desodreSlug="{{ photo.desordreSlug }}"
+                        data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
+                        data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
+                        data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                        data-desordreSlug="{{ photo.desordreSlug }}"
+                        data-signalement-desordres="{{ criteres | json_encode }}"
+                    ></button>
+                {% endif %}
+                {% if is_granted('FILE_DELETE', photo) %}
+                    <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
+                        id="file_delete_{{ photo.id }}" 
+                        title="Supprimer la photo {{ photo.filename }}"
+                        aria-controls="fr-modal-delete-file"
+                        data-fr-opened="false" 
+                        data-filename="{{ photo.filename }}" 
+                        data-file-id="{{ photo.id}}"                     
+                    ></button>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
-{% if 'document' in filesType %}
-{% for index, doc in signalement.files|filter(
+{% set documents = signalement.files|filter(
     doc => doc.isTypeDocument
         and (
-            (filesFilter is same as 'situation' 
-            and doc.documentType.label() in  DocumentType.getOrderedSituationList)
-            or 
-            (filesFilter is same as 'procedure' 
-            and doc.documentType.label() in  DocumentType.getOrderedProcedureList)
+            (filesFilter is same as 'situation' and doc.documentType.label() in DocumentType.getOrderedSituationList) or 
+            (filesFilter is same as 'procédure' and doc.intervention is null and doc.documentType.label() in DocumentType.getOrderedProcedureList) or 
+            (filesFilter is same as 'visite' and doc.intervention is not null and doc.intervention.id is same as interventionId)
         )
     )|reverse %}
-    {% set partner = doc.uploadedBy ? doc.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}   
+{% for doc in documents %}
+    {% set partner = doc.uploadedBy ? doc.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}
     <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
-        <div class="fr-col-9">
+        <div class="fr-col-10">
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-col-lg-1">
                     {{ doc.createdAt is defined ? doc.createdAt|date('d/m/Y') : 'N/R' }}
@@ -153,11 +122,7 @@
                 </div>
                 <div class="fr-col-12 fr-col-lg-4">
                     {% if not doc.isSuspicious %}
-                        {% if doc.intervention is null %}
-                            <i>{{ doc.title|truncate_filename(45) }}</i>
-                        {% else %}
-                            <i>Rapport de la visite du {{ doc.intervention.scheduledAt|date('d/m/Y') }} par {{ doc.intervention.partner.nom}}</i>
-                        {% endif %}
+                        <i>{{ doc.title|truncate_filename(45) }}</i>
                     {% else %}
                         <i><strong>{{ doc.title|truncate_filename(45) }}</strong> a été désactivé par mesure de sécurité.
                             Une analyse par notre équipe de support est nécéssaire. Merci de votre compréhension.
@@ -166,15 +131,13 @@
                 </div>
             </div>
         </div>
-        <div class="fr-col-3 fr-text--right">
+        <div class="fr-col-2 fr-text--right">
 
             {% if not doc.isSuspicious %}
                 <a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
                         class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }}"
                         target="_blank" rel="noopener"></a>
-
-                {% if is_granted('FILE_EDIT', doc) and doc.intervention is null %}
-                    {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
+                {% if doc.documentType is not same as DocumentType.PHOTO_VISITE and is_granted('FILE_EDIT', doc) %}
                     <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                         id="file_edit_{{ doc.id }}"
                         title="Editer le document {{ doc.filename }}"
@@ -183,8 +146,10 @@
                         data-filename="{{ doc.filename }}"
                         data-type="document"
                         data-file-id="{{ doc.id}}"
+                        data-signalement-uuid="{{ signalement.uuid}}" 
+                        data-file-filter="{{ filesFilter }}"
                         data-documentType="{{ doc.documentType.name }}"
-                        data-documentType-list="{{ filesFilter is same as 'situation' ? DocumentType.getOrderedSituationList() | json_encode : DocumentType.getOrderedProcedureList() | json_encode }}"
+                        data-desordreSlug="{{ doc.desordreSlug }}"
                         data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d/m/Y') : 'N/R' }}"
                         data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
                         data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
@@ -192,18 +157,22 @@
                 {% endif %}
             {% endif %}
 
-            {% if is_granted('FILE_DELETE', doc) and doc.intervention is null %}
+            {% if is_granted('FILE_DELETE', doc) %}
                 <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
                     id="file_delete_{{ doc.id }}" 
                     title="Supprimer le document {{ doc.filename }}"
                     aria-controls="fr-modal-delete-file"
                     data-fr-opened="false" 
                     data-filename="{{ doc.filename }}" 
-                    data-type="document" 
                     data-file-id="{{ doc.id}}"                     
                 ></button>
             {% endif %}
         </div>
     </div>
 {% endfor %}
+
+{% if photos|length == 0 and documents|length == 0 %}
+    <p class="fr-text--sm">
+        Aucun document ou photo disponible
+    </p>
 {% endif %}

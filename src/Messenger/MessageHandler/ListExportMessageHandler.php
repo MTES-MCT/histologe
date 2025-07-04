@@ -61,7 +61,6 @@ readonly class ListExportMessageHandler
                     $file = $this->fileManager->createOrUpdate(
                         filename: $filename,
                         title: $filename,
-                        type: 'document',
                         user: $user,
                         flush: true,
                         documentType: DocumentType::EXPORT

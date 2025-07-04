@@ -365,14 +365,15 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, File>
-     */
-    public function getRapportDeVisite(): Collection
+    public function getRapportDeVisite(): ?File
     {
-        return $this->files->filter(function (File $file) {
-            return DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType();
-        });
+        foreach ($this->files as $file) {
+            if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType()) {
+                return $file;
+            }
+        }
+
+        return null;
     }
 
     /** @return array<mixed> */
