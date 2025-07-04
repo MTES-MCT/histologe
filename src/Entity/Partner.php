@@ -96,6 +96,7 @@ class Partner implements EntityHistoryInterface
     private ?bool $isIdossActive = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url]
     private ?string $idossUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]
