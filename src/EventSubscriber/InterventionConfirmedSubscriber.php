@@ -12,7 +12,6 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 
 class InterventionConfirmedSubscriber implements EventSubscriberInterface
@@ -23,7 +22,6 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         private readonly Security $security,
         private readonly VisiteNotifier $visiteNotifier,
         private readonly SuiviManager $suiviManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -53,18 +51,6 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             $description .= '<br>Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
 
-            if (!$intervention->getFiles()->isEmpty()) {
-                $description .= '<br>Rapport de visite : ';
-
-                $urlDocument = $this->urlGenerator->generate(
-                    'show_file',
-                    ['uuid' => $intervention->getFiles()->first()->getUuid()],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                );
-
-                $description .= '<a href="'.$urlDocument.'" title="Afficher le document" rel="noopener" target="_blank">Afficher le document</a>';
-            }
-
             $isUsagerNotified = $event->getContext()['isUsagerNotified'] ?? true;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
@@ -74,6 +60,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 isPublic: $isUsagerNotified,
                 user: $currentUser,
                 context: Suivi::CONTEXT_INTERVENTION,
+                files: $intervention->getFiles(),
             );
 
             if ($isUsagerNotified) {

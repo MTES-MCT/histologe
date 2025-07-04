@@ -28,7 +28,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EsaboraManagerTest extends KernelTestCase
 {
@@ -45,7 +44,6 @@ class EsaboraManagerTest extends KernelTestCase
     private FileScanner $fileScanner;
     private UploadHandlerService $uploadHander;
     private ImageManipulationHandler $imageManipulationHandler;
-    private UrlGeneratorInterface $UrlGeneratorInterface;
     private FileFactory $fileFactory;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
@@ -64,7 +62,6 @@ class EsaboraManagerTest extends KernelTestCase
         $this->fileScanner = self::getContainer()->get(FileScanner::class);
         $this->uploadHander = self::getContainer()->get(UploadHandlerService::class);
         $this->imageManipulationHandler = self::getContainer()->get(ImageManipulationHandler::class);
-        $this->UrlGeneratorInterface = self::getContainer()->get('router');
         $this->fileFactory = self::getContainer()->get(FileFactory::class);
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
@@ -109,7 +106,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileScanner,
             $this->uploadHander,
             $this->imageManipulationHandler,
-            $this->UrlGeneratorInterface,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizerInterface
@@ -227,7 +223,6 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileScanner,
             $this->uploadHander,
             $this->imageManipulationHandler,
-            $this->UrlGeneratorInterface,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizerInterface

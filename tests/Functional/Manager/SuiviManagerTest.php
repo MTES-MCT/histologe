@@ -9,14 +9,12 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
 use App\Manager\SuiviManager;
-use App\Repository\DesordreCritereRepository;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SuiviManagerTest extends KernelTestCase
@@ -26,8 +24,6 @@ class SuiviManagerTest extends KernelTestCase
     private SignalementUpdatedListener $signalementUpdatedListener;
     private EventDispatcherInterface $eventDispatcherInterface;
     private Security $security;
-    private UrlGeneratorInterface $urlGenerator;
-    private DesordreCritereRepository $desordreCritereRepository;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
     private SuiviManager $suiviManager;
 
@@ -38,16 +34,12 @@ class SuiviManagerTest extends KernelTestCase
         $this->signalementUpdatedListener = static::getContainer()->get(SignalementUpdatedListener::class);
         $this->eventDispatcherInterface = static::getContainer()->get(EventDispatcherInterface::class);
         $this->security = static::getContainer()->get(Security::class);
-        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
-        $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
         $this->suiviManager = new SuiviManager(
             $this->managerRegistry,
-            $this->urlGenerator,
             $this->signalementUpdatedListener,
             $this->eventDispatcherInterface,
             $this->security,
-            $this->desordreCritereRepository,
             $this->htmlSanitizerInterface,
             Suivi::class,
         );

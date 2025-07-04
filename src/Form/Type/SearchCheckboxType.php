@@ -13,7 +13,7 @@ class SearchCheckboxType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'expanded' => true,
+            'expanded' => false,
             'multiple' => true,
             'attr' => ['class' => 'search-checkbox'],
             'noselectionlabel' => '',

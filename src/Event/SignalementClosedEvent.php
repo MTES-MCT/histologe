@@ -2,30 +2,19 @@
 
 namespace App\Event;
 
-use App\Entity\Signalement;
+use App\Dto\SignalementAffectationClose;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class SignalementClosedEvent extends Event
 {
     public const string NAME = 'signalement.closed';
 
-    /**
-     * @param array<string, mixed> $params
-     */
-    public function __construct(private readonly Signalement $signalement, private readonly array $params)
+    public function __construct(private readonly SignalementAffectationClose $signalementAffectationClose)
     {
     }
 
-    public function getSignalement(): ?Signalement
+    public function getSignalementAffectationClose(): SignalementAffectationClose
     {
-        return $this->signalement;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getParams(): array
-    {
-        return $this->params;
+        return $this->signalementAffectationClose;
     }
 }

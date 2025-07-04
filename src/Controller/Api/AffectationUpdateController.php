@@ -201,16 +201,16 @@ class AffectationUpdateController extends AbstractController
             $motifCloture = MotifCloture::tryFrom($affectationRequest->motifCloture);
 
             return $this->affectationManager->closeAffectation(
-                $affectation,
-                $user,
-                $motifCloture,
-                $affectationRequest->message,
-                true
+                affectation: $affectation,
+                user: $user,
+                motif: $motifCloture,
+                message: $affectationRequest->message,
+                flush: true
             );
         }
         $motifRefus = $message = null;
         if (AffectationStatus::REFUSED === $statut) {
-            $motifRefus = MotifRefus::tryFrom($affectationRequest->motifRefus)->value;
+            $motifRefus = MotifRefus::tryFrom($affectationRequest->motifRefus);
             $message = $affectationRequest->message;
         }
 

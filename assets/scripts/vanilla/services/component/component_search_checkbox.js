@@ -32,8 +32,7 @@ window.addEventListener('refreshSearchCheckboxContainerEvent', (e) => {
     input.addEventListener('keyup', function () {
       const value = input.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
       checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox) => {
-        const text = checkbox.querySelector('label').textContent.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-        if (text.includes(value)) {
+        if (checkbox.classList.contains('optgroup__element') || checkbox.querySelector('label').textContent.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(value)) {
           checkbox.style.display = ''
         } else {
           checkbox.style.display = 'none'

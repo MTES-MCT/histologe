@@ -39,6 +39,7 @@ readonly class AffectationClosedSubscriber implements EventSubscriberInterface
             description: SuiviManager::buildDescriptionClotureSignalement($params),
             type: Suivi::TYPE_PARTNER,
             category: SuiviCategory::AFFECTATION_IS_CLOSED,
+            files: $event->getFiles(),
             user: $user,
         );
 

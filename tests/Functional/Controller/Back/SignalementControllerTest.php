@@ -211,14 +211,19 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour tous les partenaires',
             [
-                'cloture[motif]' => 'INSALUBRITE',
-                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[publicSuivi]' => '0',
+                'cloture[motifCloture]' => 'INSALUBRITE',
+                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[isPublic]' => '0',
                 'cloture[type]' => 'all',
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/', $response['url']);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-8']);
         $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
@@ -252,14 +257,19 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour tous les partenaires',
             [
-                'cloture[motif]' => 'INSALUBRITE',
-                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[publicSuivi]' => '1',
+                'cloture[motifCloture]' => 'INSALUBRITE',
+                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[isPublic]' => '1',
                 'cloture[type]' => 'all',
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/', $response['url']);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
         $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
@@ -293,13 +303,18 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour Partenaire 13-01',
             [
-                'cloture[motif]' => 'INSALUBRITE',
-                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[motifCloture]' => 'INSALUBRITE',
+                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                 'cloture[type]' => 'partner',
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/', $response['url']);
 
         $client->enableProfiler();
         $this->assertEmailCount(1);
@@ -330,13 +345,18 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour Partenaire 13-02',
             [
-                'cloture[motif]' => 'RSD',
-                'cloture[suivi]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'cloture[motifCloture]' => 'RSD',
+                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                 'cloture[type]' => 'partner',
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertStringContainsString('/bo/signalements/', $response['url']);
 
         $client->enableProfiler();
         $this->assertEmailCount(2);
@@ -370,14 +390,14 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Clôturer pour Partenaire 13-02',
             [
-                'cloture[motif]' => 'RSD',
+                'cloture[motifCloture]' => 'RSD',
                 'cloture[type]' => 'partner',
+                'cloture[description]' => 'bla',
             ]
         );
-
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Le motif de suivi doit contenir au moins 10 caractères.');
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertStringContainsString('Le contenu doit contenir au moins 10 caract\u00e8res.', $client->getResponse()->getContent());
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     public function testNewDeleteSignalement(): void
