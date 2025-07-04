@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\ListFilters\SearchInterconnexion;
@@ -31,18 +32,7 @@ class SearchInterconnexionType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('territory', EntityType::class, [
-            'class' => Territory::class,
-            'query_builder' => function (TerritoryRepository $tr) {
-                return $tr->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC');
-            },
-            'choice_label' => function (Territory $territory) {
-                return $territory->getZip().' - '.$territory->getName();
-            },
-            'required' => false,
-            'placeholder' => 'Tous les territoires',
-            'label' => 'Territoire',
-        ]);
+        $builder->add('territory', TerritoryChoiceType::class);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
             $territory = $builder->getData()->getTerritory() ? $this->territoryRepository->find($builder->getData()->getTerritory()) : null;
@@ -59,6 +49,11 @@ class SearchInterconnexionType extends AbstractType
                     $territory
                 );
             }
+            $data = $event->getData();
+            if (isset($data['page']) && (!is_numeric($data['page']))) {
+                $data['page'] = 1;
+            }
+            $event->setData($data);
         });
         $builder->add('status', ChoiceType::class, [
             'required' => false,

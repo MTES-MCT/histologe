@@ -11,6 +11,8 @@ use App\Entity\Signalement;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -59,22 +61,17 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         return $qb->getQuery()->getArrayResult();
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     private function createJobEventByTerritoryQueryBuilder(
         int $dayPeriod,
         SearchInterconnexion $searchInterconnexion,
-        bool $isCount = false,
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('j');
-        if ($isCount) {
-            $qb->select('COUNT(j.id)');
-        } else {
-            $qb->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response');
-        }
-        $qb->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId');
-        if (!$isCount) {
-            $qb->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
-        }
-        $qb->where('j.createdAt >= :date_limit');
+        $qb
+            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
+            ->where('j.createdAt >= :date_limit');
 
         if ($searchInterconnexion->getTerritory()) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $searchInterconnexion->getTerritory());
@@ -93,6 +90,8 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
 
     /**
      * @return array<int, array<string, mixed>>
+     *
+     * @throws \DateMalformedStringException
      */
     public function findLastJobEventByTerritory(
         int $dayPeriod,
@@ -100,7 +99,9 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         int $limit,
         int $offset,
     ): array {
-        $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion, false);
+        $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion);
+        $qb->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response');
+        $qb->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
 
         if (!empty($searchInterconnexion->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());
@@ -109,26 +110,30 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             $qb->orderBy('j.createdAt', 'DESC');
         }
 
-        $qb->setMaxResults($limit)
-            ->setFirstResult($offset);
+        $qb->setMaxResults($limit)->setFirstResult($offset);
 
         return $qb->getQuery()->getArrayResult();
     }
 
     /**
-     * Compte le nombre total de JobEvent pour la recherche donnée.
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     * @throws \DateMalformedStringException
      */
     public function countLastJobEventByTerritory(
         int $dayPeriod,
         SearchInterconnexion $searchInterconnexion,
     ): int {
-        $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion, true);
+        $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion);
+        $qb->select('COUNT(j.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
      * @return array<string, mixed>|null
+     *
+     * @throws NonUniqueResultException
      */
     public function findLastEsaboraJobByPartner(
         Partner $partner,
