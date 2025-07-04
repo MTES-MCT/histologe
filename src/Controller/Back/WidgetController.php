@@ -11,6 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * @deprecated this class will be removed in the next major release
+ * @see TabPanelController
+ */
 #[Route('/bo')]
 class WidgetController extends AbstractController
 {

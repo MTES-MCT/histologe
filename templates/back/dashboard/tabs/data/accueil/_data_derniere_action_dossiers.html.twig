@@ -1,0 +1,50 @@
+{% set columns = [
+    { class: 'fr-col-md-5', title: 'Référence' },
+    { class: 'fr-col-md-4', title: 'Votre dernière action' },
+    { class: 'fr-col-md-2', title: 'Action depuis' }
+] %}
+
+<section class="fr-mb-5v">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-md-8 fr-pr-10v">
+            <h1 class="fr-mb-3v fr-text-label--blue-france tab-panel-title-with-calendar-icon">Vos dernières actions</h1>
+            <hr class="hr--blue-france">
+            <div class="fr-container--fluid">
+                {% for item in items.data %}
+                    {% set statutClass = item.statut == 'En cours'
+                        ? 'fr-badge--success'
+                        : (item.statut == 'En attente' ? 'fr-badge--info' : 'fr-badge--grey')
+                    %}
+                    {% set actionClass = item.actionDepuis == 'OUI'
+                        ? 'fr-badge--success'
+                        : 'fr-badge--grey'
+                    %}
+
+                    {% include 'back/dashboard/components/_card.html.twig' with {
+                        columns: columns,
+                        data: [
+                            '<div class="fr-text-label--blue-france">
+                                <div><strong class="text--xl">' ~ item.reference ~ '</strong></div>
+                                <div>' ~ item.adresse ~ '</div>
+                                <div class="fr-mt-1v">
+                                    <span class="fr-badge ' ~ statutClass ~ '">' ~ item.statut ~ '</span>
+                                </div>
+                            </div>',
+                            '<div><strong class="text--xl">' ~ item.derniereAction ~ '</strong></div><div>' ~ item.derniereActionAt ~ '</div>',
+                            '<span class="fr-badge ' ~ actionClass ~ '">' ~ item.actionDepuis ~ '</span>'
+                        ],
+                        link: item.lien
+                    } %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+            <h2 class="fr-mb-8v">Administrer mon territoire</h2>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                {% for tile in items.tiles %}
+                    {% include 'back/dashboard/components/_tuile.html.twig' with tile %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
