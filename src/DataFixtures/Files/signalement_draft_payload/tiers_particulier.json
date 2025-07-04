@@ -33,7 +33,6 @@
   "composition_logement_nb_pieces": 1,
   "logement_social_date_naissance": "1987-10-10",
   "composition_logement_superficie": "25",
-  "composition_logement_hauteur": "oui",
   "type_logement_commodites_cuisine": "non",
   "type_logement_commodites_piece_a_vivre_9m": "oui",
   "composition_logement_piece_unique": "piece_unique",

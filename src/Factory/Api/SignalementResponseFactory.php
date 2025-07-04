@@ -97,7 +97,6 @@ readonly class SignalementResponseFactory
         $signalementResponse->wc = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesWc());
         $signalementResponse->wcDansCuisine = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesWcCuisine());
         $signalementResponse->wcCollectif = $this->stringToBool($signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesWcCollective());
-        $signalementResponse->hauteurSuperieureA2metres = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementHauteur());
         $signalementResponse->dpeExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeDpe());
         $signalementResponse->dpeClasseEnergetique = $signalement->getTypeCompositionLogement()?->getBailDpeClasseEnergetique();
         $signalementResponse->dateEntreeLogement = $signalement->getDateEntree()?->format('Y-m-d');

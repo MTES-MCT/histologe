@@ -277,11 +277,6 @@ class SignalementDraftRequest
     )]
     private ?string $compositionLogementSuperficie = null;
 
-    #[Assert\Choice(
-        choices: ['oui', 'non', 'nsp'],
-        message: 'Le champs "compositionLogementHauteur" est incorrect.'
-    )]
-    private ?string $compositionLogementHauteur = null;
     #[Assert\NotBlank(
         message: 'Merci de définir le nombre de pièces à vivre.',
         groups: [
@@ -1167,18 +1162,6 @@ class SignalementDraftRequest
     public function setCompositionLogementSuperficie(?string $compositionLogementSuperficie): self
     {
         $this->compositionLogementSuperficie = $compositionLogementSuperficie;
-
-        return $this;
-    }
-
-    public function getCompositionLogementHauteur(): ?string
-    {
-        return $this->compositionLogementHauteur;
-    }
-
-    public function setCompositionLogementHauteur(?string $compositionLogementHauteur): self
-    {
-        $this->compositionLogementHauteur = $compositionLogementHauteur;
 
         return $this;
     }

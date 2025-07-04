@@ -143,7 +143,6 @@ class SignalementBoManager
         $typeCompositionLogement->setCompositionLogementNbPieces($form->get('nombrePieces')->getData());
         $signalement->setSuperficie($form->get('superficie')->getData());
         $typeCompositionLogement->setCompositionLogementSuperficie($form->get('superficie')->getData());
-        $typeCompositionLogement->setCompositionLogementHauteur($form->get('hauteur')->getData());
         $typeCompositionLogement->setTypeLogementCommoditesPieceAVivre9m($form->get('pieceAVivre9m')->getData());
 
         $cuisine = $form->get('cuisine')->getData();

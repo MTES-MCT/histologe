@@ -199,7 +199,6 @@ class SignalementEditControllerTest extends WebTestCase
             'typeLogementNatureAutrePrecision' => '',
             'typeCompositionLogement' => 'plusieurs_pieces',
             'superficie' => '55',
-            'compositionLogementHauteur' => 'oui',
             'compositionLogementNbPieces' => '5',
             'nombreEtages' => '1',
             'etage' => 'RDC',

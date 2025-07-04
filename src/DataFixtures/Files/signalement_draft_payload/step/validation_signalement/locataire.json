@@ -48,7 +48,6 @@
   "composition_logement_nb_pieces": "5",
   "composition_logement_nombre_personnes": "5",
   "composition_logement_superficie": "100",
-  "composition_logement_hauteur": "oui",
   "composition_logement_piece_unique": "plusieurs_pieces",
   "composition_logement_enfants": "oui",
   "type_logement_commodites_cuisine": "oui",

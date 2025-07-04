@@ -158,10 +158,6 @@
                                     <b>Logement :</b> {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
                                 </li>
                                 <li>
-                                    <b>Hauteur > 2m :</b> {{ signalement.typeCompositionLogement.compositionLogementHauteur(false) }}
-                                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' } %}
-                                </li>
-                                <li>
                                     <b>Nombre de pièces à vivre :</b> {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
                                 </li>
                                 <li>

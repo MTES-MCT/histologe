@@ -124,9 +124,6 @@
 				</li>
 				<li>Superficie en m² : {{ signalement.superficie }} m²</li>
 				{% if signalement.typeCompositionLogement %}
-					<li>La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?
-						{{ signalement.typeCompositionLogement.compositionLogementHauteur(false)|capitalize }}
-					</li>
 					<li>Une seule ou plusieurs pièces ?
 						{{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
 					</li>

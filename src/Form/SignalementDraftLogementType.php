@@ -55,7 +55,6 @@ class SignalementDraftLogementType extends AbstractType
         $pieceUnique = $signalement->getTypeCompositionLogement()?->getCompositionLogementPieceUnique();
         $nombrePieces = $signalement->getTypeCompositionLogement()?->getCompositionLogementNbPieces();
         $superficie = $signalement->getTypeCompositionLogement()?->getCompositionLogementSuperficie();
-        $hauteur = $signalement->getTypeCompositionLogement()?->getCompositionLogementHauteur();
         $pieceAVivre9m = $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesPieceAVivre9m() ?? null;
 
         $cuisine = $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine();
@@ -166,19 +165,6 @@ class SignalementDraftLogementType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $superficie,
-            ])
-            ->add('hauteur', ChoiceType::class, [
-                'label' => 'Hauteur sous plafond supérieure ou égale à 2m (200 cm)',
-                'choices' => [
-                    'Oui' => 'oui',
-                    'Non' => 'non',
-                ],
-                'expanded' => true,
-                'multiple' => false,
-                'required' => false,
-                'placeholder' => false,
-                'mapped' => false,
-                'data' => $hauteur,
             ])
             ->add('pieceAVivre9m', ChoiceType::class, [
                 'label' => 'Au moins une pièce à vivre supérieure ou égale à 9m²',

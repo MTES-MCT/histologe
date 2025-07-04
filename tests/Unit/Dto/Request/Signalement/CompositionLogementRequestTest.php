@@ -16,7 +16,6 @@ class CompositionLogementRequestTest extends KernelTestCase
             typeLogementNatureAutrePrecision: null,
             typeCompositionLogement: 'piece_unique',
             superficie: '80',
-            compositionLogementHauteur: 'oui',
             compositionLogementNbPieces: '3',
             nombreEtages: '2',
             etage: EtageType::AUTRE->value,
@@ -35,7 +34,6 @@ class CompositionLogementRequestTest extends KernelTestCase
         $this->assertNull($compositionLogementRequest->getTypeLogementNatureAutrePrecision());
         $this->assertSame('piece_unique', $compositionLogementRequest->getTypeCompositionLogement());
         $this->assertSame('80', $compositionLogementRequest->getSuperficie());
-        $this->assertSame('oui', $compositionLogementRequest->getCompositionLogementHauteur());
         $this->assertSame('3', $compositionLogementRequest->getCompositionLogementNbPieces());
         $this->assertSame('2', $compositionLogementRequest->getNombreEtages());
         $this->assertSame(EtageType::AUTRE->value, $compositionLogementRequest->getEtage());
@@ -61,7 +59,6 @@ class CompositionLogementRequestTest extends KernelTestCase
             typeLogementNatureAutrePrecision: str_repeat('a', 101),
             typeCompositionLogement: 'invalid_choice',
             superficie: 'invalid_superficie',
-            compositionLogementHauteur: 'invalid_choice',
             compositionLogementNbPieces: 'invalid_nb',
             nombreEtages: 'invalid_nb',
             etage: 'invalid_choice',
@@ -78,6 +75,6 @@ class CompositionLogementRequestTest extends KernelTestCase
 
         $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
         $errors = $validator->validate($compositionLogementRequest);
-        $this->assertCount(18, $errors);
+        $this->assertCount(17, $errors);
     }
 }

@@ -671,7 +671,6 @@ class SignalementManager extends AbstractManager
             ->setTypeLogementNature($compositionLogementRequest->getType())
             ->setCompositionLogementPieceUnique($compositionLogementRequest->getTypeCompositionLogement())
             ->setCompositionLogementSuperficie($compositionLogementRequest->getSuperficie())
-            ->setCompositionLogementHauteur($compositionLogementRequest->getCompositionLogementHauteur())
             ->setCompositionLogementNbPieces($compositionLogementRequest->getCompositionLogementNbPieces())
             ->setTypeLogementAppartementEtage($compositionLogementRequest->getEtage())
             ->setTypeLogementAppartementAvecFenetres($compositionLogementRequest->getAvecFenetres())
