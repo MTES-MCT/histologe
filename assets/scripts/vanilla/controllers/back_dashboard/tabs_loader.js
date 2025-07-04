@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/browser'
+
 export default function initTabsLoader() {
     document.querySelectorAll(".fr-tabs__panel").forEach(panel => {
         if (panel.classList.contains("fr-tabs__panel--selected")) {
@@ -17,7 +19,9 @@ export default function initTabsLoader() {
         const loaders = panel.querySelectorAll('[data-url]');
         const queryParams = window.location.search;
         if (!loaders.length) {
-            console.error("Aucun data-url trouvé dans ce panel.");
+            const error = `Aucun data-url trouvé dans le panel dont l'id est ${panel.id}`;
+            console.error(error);
+            Sentry.captureException(new Error(error))
             return;
         }
 
@@ -43,7 +47,8 @@ export default function initTabsLoader() {
                 })
                 .catch(err => {
                     loader.innerHTML = '<div class="fr-text--error">Erreur de chargement.</div>';
-                    console.error("Erreur chargement:", err);
+                    console.error('Erreur chargement:', err);
+                    Sentry.captureException(`Erreur changement : ${err}`);
                 });
         });
     }
