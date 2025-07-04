@@ -28,7 +28,7 @@ test('signalement form for locataire', async ({page}) => {
       const name = await btn.getAttribute('name');
       const id = await btn.getAttribute('id');
       console.log(`Bouton visible: text='${text}', name='${name}', id='${id}'`);
-    }* /
+    } */
     //console.log(await page.content());
     await page.getByRole('button', { name: 'Je démarre'}).waitFor({ state: 'visible', timeout: 10000 });
     await expect(page.getByRole('button', { name: 'Je démarre' })).toBeVisible();
