@@ -2906,7 +2906,7 @@
           "slug": "desordres_logement_lumiere_plafond_trop_bas_pieces",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas === 1"
+            "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           },
           "components": {
             "body": [

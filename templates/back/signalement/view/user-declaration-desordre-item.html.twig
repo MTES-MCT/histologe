@@ -3,7 +3,7 @@
     <h3 class="fr-accordion__title">
         <button class="fr-accordion__btn" aria-expanded="false" aria-controls="{{ zone }}-collapse-{{ loop.index }}"><strong>{{ situation|capitalize }}</strong></button>
     </h3>
-    <div class="fr-collapse" id="{{ zone }}-collapse-{{ loop.index }}">  
+    <div class="fr-collapse" id="{{ zone }}-collapse-{{ loop.index }}">
         {# Affichage des données spécifiques liées à la catégorie #}
         {% set firstCritere = criteres|first %}
         {% if firstCritere is defined %}
@@ -13,11 +13,11 @@
                     {{ signalement.jsonContent[firstPrecision.desordreCritere.slugCategorie] }}
                 {% endif %}
             {% endif %}
-        {% endif %}    
+        {% endif %}
         <ul>
             {% for critere,precisions in criteres %}
                 <li>
-                    {{ critere }}     
+                    {{ critere }}
                     {% for precision in precisions %}
                         {% if precision.label is not same as '' %}
                             <ul class="fr-list fr-list--none">
@@ -31,13 +31,13 @@
                                         <br>Taille : <i>{{ signalement.jsonContent[precision.desordrePrecisionSlug] }}</i>
                                     {% endif %}
                                 </li>
-                            </ul>                                            
+                            </ul>
                         {% endif %}
                         {# ajout des photos liées spécifiquement à ce critère ou à cette précision #}
-                        {% if photos[precision.desordreCritere.slugCritere] is defined %}    
-                            <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">                    
+                        {% if photos[precision.desordreCritere.slugCritere] is defined %}
+                            <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
                                 {% for photo in photos[precision.desordreCritere.slugCritere] %}
-                                    {% include 'back/signalement/view/user-declaration-desordre-photo.html.twig' %}   
+                                    {% include 'back/signalement/view/user-declaration-desordre-photo.html.twig' %}
                                 {% endfor %}
                             </div>
                         {% endif %}

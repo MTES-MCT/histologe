@@ -2862,29 +2862,16 @@
         },
         {
           "type": "SignalementFormCheckbox",
-          "slug": "desordres_logement_lumiere_plafond_trop_bas_piece_unique",
-          "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas}}",
-          "validate": {
-            "required": false
-          },
-          "conditional": {
-            "show": "formStore.data.composition_logement_piece_unique === 'piece_unique'"
-          }
-        },
-        {
-          "type": "SignalementFormCheckbox",
           "slug": "desordres_logement_lumiere_plafond_trop_bas",
           "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas}}",
           "validate": {
             "required": false
-          },
-          "conditional": {
-            "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           }
         },
         {
           "type": "SignalementFormSubscreen",
-          "label": "Dans quelle(s) pièce(s) ?",
+          "label": "",
+          "description": "Dans quelle(s) pièce(s) ?",
           "slug": "desordres_logement_lumiere_plafond_trop_bas_pieces",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {

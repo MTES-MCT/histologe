@@ -9,7 +9,6 @@ class DesordreLogementPlafondTropBas implements DesordreTraitementInterface
 {
     public function __construct(
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
-        private readonly DesordreTraitementPieces $desordreTraitementPieces,
     ) {
     }
 
@@ -22,21 +21,27 @@ class DesordreLogementPlafondTropBas implements DesordreTraitementInterface
     {
         $precisions = [];
 
-        $suffixes = [
-            '_piece_a_vivre',
-            '_cuisine',
-            '_salle_de_bain',
-            '_toutes_pieces',
-            '_piece_unique',
-        ];
+        if ('piece_unique' === $payload['composition_logement_piece_unique']) {
+            $key = $slug.'_toutes_pieces';
+            $precision = $this->desordrePrecisionRepository->findOneBy(
+                ['desordrePrecisionSlug' => $key]
+            );
+            $precisions[] = $precision;
+        } else {
+            $suffixes = [
+                '_piece_a_vivre',
+                '_cuisine',
+                '_salle_de_bain',
+            ];
 
-        foreach ($suffixes as $suffix) {
-            $key = $slug.$suffix;
-            if (\array_key_exists($key, $payload)) {
-                $precision = $this->desordrePrecisionRepository->findOneBy(
-                    ['desordrePrecisionSlug' => $key]
-                );
-                $precisions[] = $precision;
+            foreach ($suffixes as $suffix) {
+                $key = $slug.$suffix;
+                if (\array_key_exists($key, $payload)) {
+                    $precision = $this->desordrePrecisionRepository->findOneBy(
+                        ['desordrePrecisionSlug' => $key]
+                    );
+                    $precisions[] = $precision;
+                }
             }
         }
 
