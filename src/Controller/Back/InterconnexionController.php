@@ -35,41 +35,34 @@ class InterconnexionController extends AbstractController
         $form = $this->createForm(SearchInterconnexionType::class, $searchInterconnexion);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $maxListPagination = $parameterBag->get('standard_max_list_pagination');
-
-            $page = $searchInterconnexion->getPage();
-            $limit = $maxListPagination;
-            $offset = ($page - 1) * $limit;
-
-            $connections = $jobEventRepository->findLastJobEventByTerritory(
-                self::DAY_PERIOD,
-                $searchInterconnexion,
-                $limit,
-                $offset
-            );
-
-            $total = $jobEventRepository->countLastJobEventByTerritory(
-                self::DAY_PERIOD,
-                $searchInterconnexion
-            );
-            $pages = (int) ceil($total / $limit);
-
-            return $this->render('back/interconnexion/index.html.twig', [
-                'form' => $form,
-                'searchInterconnexion' => $searchInterconnexion,
-                'connections' => $connections,
-                'pages' => $pages,
-                'totalConnexions' => $total,
-            ]);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchInterconnexion = new SearchInterconnexion();
         }
+        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
+
+        $page = $searchInterconnexion->getPage();
+        $limit = $maxListPagination;
+        $offset = ($page - 1) * $limit;
+
+        $connections = $jobEventRepository->findLastJobEventByTerritory(
+            self::DAY_PERIOD,
+            $searchInterconnexion,
+            $limit,
+            $offset
+        );
+
+        $total = $jobEventRepository->countLastJobEventByTerritory(
+            self::DAY_PERIOD,
+            $searchInterconnexion
+        );
+        $pages = (int) ceil($total / $limit);
 
         return $this->render('back/interconnexion/index.html.twig', [
             'form' => $form,
             'searchInterconnexion' => $searchInterconnexion,
-            'connections' => [],
-            'pages' => 0,
-            'totalConnexions' => 0,
+            'connections' => $connections,
+            'pages' => $pages,
+            'totalConnexions' => $total,
         ]);
     }
 }
