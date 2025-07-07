@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Sauvegarde la sortie standard réelle dans le descripteur 3
+exec 3>&1
+
 # Diagnostic : log d'environnement, date, utilisateur, répertoire courant, PID 
 LOGFILE="/tmp/sync-db-$(date +%Y%m%d-%H%M%S)-$$.log"
 {
@@ -148,4 +151,14 @@ else
     echo ">>> Success reported to API."
 fi
 
+# À la toute fin du script, avant le dernier echo
+# Copie le fichier de log dans le dossier courant pour qu'il soit récupérable
+cp "$LOGFILE" ./sync-db-latest.log
+
+# Affiche l'emplacement du log sur la sortie standard d'origine (console)
+# On suppose que le descripteur 3 a été sauvegardé avant la redirection
+# (à ajouter en début de script)
+echo "Le log complet de l'exécution est disponible dans : $LOGFILE et ./sync-db-latest.log" >&3
+
+# Affiche le message de fin
 echo ">>> Done, thank you"
