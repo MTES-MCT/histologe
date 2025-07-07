@@ -70,7 +70,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('j');
         $qb
-            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
+            ->leftJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
             ->where('j.createdAt >= :date_limit');
 
         if ($searchInterconnexion->getTerritory()) {
@@ -100,8 +100,8 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         int $offset,
     ): array {
         $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion);
+        $qb->leftJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
         $qb->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response');
-        $qb->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
 
         if (!empty($searchInterconnexion->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());
