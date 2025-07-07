@@ -1,0 +1,17 @@
+<div id="storybook-tab-dossiers-messages-usagers-panel"
+     class="fr-tabs__panel"
+     role="tabpanel"
+     aria-labelledby="storybook-tab-dossiers-messages-usagers"
+     tabindex="0">
+    {% include 'back/dashboard/tabs/dossiers_messages_usagers/_header_dossier_messages_usagers.html.twig' %}
+
+    <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-messages-nouveaux'}) }}">
+        Chargement...
+    </div>
+    <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-messages-apres-fermeture' }) }}">
+        Chargement...
+    </div>
+    <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-messages-usagers-sans-reponse' }) }}">
+        Chargement...
+    </div>
+</div>

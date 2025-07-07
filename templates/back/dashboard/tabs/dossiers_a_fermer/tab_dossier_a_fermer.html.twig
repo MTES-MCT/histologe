@@ -1,0 +1,17 @@
+<div id="storybook-tab-dossiers-a-fermer-panel"
+     class="fr-tabs__panel"
+     role="tabpanel"
+     aria-labelledby="storybook-tab-dossiers-a-fermer"
+     tabindex="0">
+    {% include 'back/dashboard/tabs/dossiers_a_fermer/_header_dossier_a_fermer.html.twig' %}
+
+    <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-ferme-partenaire-tous' }) }}">
+        Chargement...
+    </div>
+    <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-demandes-fermeture-usager' }) }}">
+        Chargement...
+    </div>
+    <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-relance-usager-sans-reponse' }) }}">
+        Chargement...
+    </div>
+</div>

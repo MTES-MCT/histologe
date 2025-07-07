@@ -4,139 +4,93 @@
 
 {% block content %}
     {% if feature_new_dashboard %}
-       <div id="dashboard">
-           {% include 'back/dashboard/_header.html.twig' %}
-           <section class="fr-container--fluid fr-container-sml">
-               <div class="fr-tabs">
-                   <ul class="fr-tabs__list" role="tablist" aria-label="">
-                       <li role="presentation">
-                           <button type="button"
-                                   id="storybook-tab-0"
-                                   class="fr-tabs__tab"
-                                   tabindex="0" role="tab"
-                                   aria-selected="true"
-                                   aria-controls="storybook-tab-0-panel">Accueil</button>
-                       </li>
-                       <li role="presentation">
-                           <button type="button"
-                                   id="storybook-tab-1"
-                                   class="fr-tabs__tab"
-                                   tabindex="-1"
-                                   role="tab"
-                                   aria-selected="false"
-                                   aria-controls="storybook-tab-1-panel">Nouveaux dossiers (7)</button>
-                       </li>
-                       <li role="presentation">
-                           <button type="button"
-                                   id="storybook-tab-2"
-                                   class="fr-tabs__tab"
-                                   tabindex="-1"
-                                   role="tab"
-                                   aria-selected="false"
-                                   aria-controls="storybook-tab-2-panel">A fermer (104)</button>
-                       </li>
-                       <li role="presentation">
-                           <button type="button"
-                                   id="storybook-tab-3"
-                                   class="fr-tabs__tab"
-                                   tabindex="-1"
-                                   role="tab"
-                                   aria-selected="false"
-                                   aria-controls="storybook-tab-3-panel">Messages usagers (179)</button>
-                       </li>
-                       <li role="presentation">
-                           <button type="button"
-                                   id="storybook-tab-4"
-                                   class="fr-tabs__tab"
-                                   tabindex="-1"
-                                   role="tab"
-                                   aria-selected="false"
-                                   aria-controls="storybook-tab-4-panel">A vérifier (586)</button>
-                       </li>
-                   </ul>
-                   <div id="storybook-tab-0-panel"
-                        class="fr-tabs__panel fr-tabs__panel--selected"
-                        role="tabpanel"
-                        aria-labelledby="storybook-tab-0"
-                        tabindex="0">
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'derniers-dossiers' }) }}">
-                           Chargement...
-                       </div>
-                   </div>
-                   <div id="storybook-tab-1-panel"
-                        class="fr-tabs__panel"
-                        role="tabpanel"
-                        aria-labelledby="storybook-tab-1"
-                        tabindex="0"
-                   >
-                       {% include 'back/dashboard/tabs/headers/_header_dossiers_nouveaux.html.twig' %}
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-form-usager' }) }}">
+        <div id="dashboard">
+            {% include 'back/dashboard/_header.html.twig' %}
+            <section class="fr-container--fluid fr-container-sml">
+                <div class="fr-tabs">
+                    <ul class="fr-tabs__list" role="tablist" aria-label="">
+                        <li role="presentation">
+                            <button type="button"
+                                    id="storybook-tab-homepage-dernieres-actions"
+                                    class="fr-tabs__tab"
+                                    tabindex="0"
+                                    role="tab"
+                                    aria-selected="true"
+                                    aria-controls="storybook-tab-homepage-dernieres-actions-panel">Accueil
+                            </button>
+                        </li>
+                        <li role="presentation">
+                            <button type="button"
+                                    id="storybook-tab-dossiers-nouveaux"
+                                    class="fr-tabs__tab"
+                                    tabindex="-1"
+                                    role="tab"
+                                    aria-selected="false"
+                                    aria-controls="storybook-tab-dossiers-nouveaux-panel">Nouveaux dossiers
+                                ({{ tab_count_kpi.countNouveauxDossiers }})
+                            </button>
+                        </li>
+                        <li role="presentation">
+                            <button type="button"
+                                    id="storybook-tab-dossiers-a-fermer"
+                                    class="fr-tabs__tab"
+                                    tabindex="-1"
+                                    role="tab"
+                                    aria-selected="false"
+                                    aria-controls="storybook-tab-dossiers-a-fermer-panel">A fermer
+                                ({{ tab_count_kpi.countDossiersAFermer }})
+                            </button>
+                        </li>
+                        <li role="presentation">
+                            <button type="button"
+                                    id="storybook-tab-dossiers-messages-usagers"
+                                    class="fr-tabs__tab"
+                                    tabindex="-1"
+                                    role="tab"
+                                    aria-selected="false"
+                                    aria-controls="storybook-tab-dossiers-messages-usagers-panel">Messages usagers
+                                ({{ tab_count_kpi.countDossiersMessagesUsagers }})
+                            </button>
+                        </li>
+                        <li role="presentation">
+                            <button type="button"
+                                    id="storybook-tab-dossiers-a-verifier"
+                                    class="fr-tabs__tab"
+                                    tabindex="-1"
+                                    role="tab"
+                                    aria-selected="false"
+                                    aria-controls="storybook-tab-dossiers-a-verifier-panel">A vérifier
+                                ({{ tab_count_kpi.countDossiersAVerifier }})
+                            </button>
+                        </li>
+                    </ul>
+                    <!-- Onglet 1 : Accueil -->
+                    {% include 'back/dashboard/tabs/accueil/tab_accueil.html.twig' %}
 
-                       </div>
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-form-pro' }) }}">
-                           Chargement...
-                       </div>
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-non-affectation' }) }}">
-                           Chargement...
-                       </div>
-                   </div>
-                   <div id="storybook-tab-2-panel"
-                        class="fr-tabs__panel"
-                        role="tabpanel"
-                        aria-labelledby="storybook-tab-2"
-                        tabindex="0">
-                       {% include 'back/dashboard/tabs/headers/_header_dossiers_a_fermer.html.twig' %}
+                    <!-- Onglet 2 : Nouveaux dossiers -->
+                    {% include 'back/dashboard/tabs/dossiers_nouveaux/tab_dossier_nouveaux.html.twig' %}
 
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-ferme-partenaire-tous' }) }}">
-                           Chargement...
-                       </div>
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-demandes-fermeture-usager' }) }}">
-                           Chargement...
-                       </div>
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-relance-usager-sans-reponse' }) }}">
-                           Chargement...
-                       </div>
-                   </div>
-                   <div id="storybook-tab-3-panel"
-                        class="fr-tabs__panel"
-                        role="tabpanel"
-                        aria-labelledby="storybook-tab-3"
-                        tabindex="0">
-                       {% include 'back/dashboard/tabs/headers/_header_dossiers_messages_usagers.html.twig' %}
+                    <!-- Onglet 3 : A fermer -->
+                    {% include 'back/dashboard/tabs/dossiers_a_fermer/tab_dossier_a_fermer.html.twig' %}
 
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-messages-nouveaux' }) }}">
-                           Chargement...
-                       </div>
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-messages-apres-fermeture' }) }}">
-                           Chargement...
-                       </div>
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-messages-usagers-sans-reponse' }) }}">
-                           Chargement...
-                       </div>
+                    <!-- Onglet 4 : Messages usagers -->
+                    {% include 'back/dashboard/tabs/dossiers_messages_usagers/tab_dossier_messages_usagers.html.twig' %}
 
-                   </div>
-                   <div id="storybook-tab-4-panel"
-                        class="fr-tabs__panel"
-                        role="tabpanel"
-                        aria-labelledby="storybook-tab-4"
-                        tabindex="0">
-                       {% include 'back/dashboard/tabs/headers/_header_dossiers_a_verifier.html.twig' %}
-                       <div data-url="{{ path('back_tab_panel_data', {tabDataType : 'dossiers-sans-activite-partenaire' }) }}">
-                           Chargement...
-                       </div>
-                   </div>
-               </div>
-           </section>
-       </div>
+                    <!-- Onglet 5 : A vérifier -->
+                    {% include 'back/dashboard/tabs/dossiers_a_verifier/tab_dossier_a_verifier.html.twig' %}
+
+                </div>
+            </section>
+        </div>
     {% else %}
-    <div
-        id="app-dashboard"
-        data-ajaxurl-settings="{{ path('back_widget_settings') }}"
-        data-ajaxurl-KPI="{{ path('back_dashboard_widget', {widgetType: 'data-kpi'}) }}"
-        data-ajaxurl-partners="{{ path('back_dashboard_widget', {widgetType: 'affectations-partenaires'}) }}"
-        data-ajaxurl-signalements-nosuivi="{{ path('back_dashboard_widget', {widgetType: 'signalements-acceptes-sans-suivi'}) }}"
-        data-ajaxurl-signalements-per-territoire="{{ path('back_dashboard_widget', {widgetType: 'signalements-territoires'}) }}"
-        data-ajaxurl-connections-esabora="{{ path('back_dashboard_widget', {widgetType: 'esabora-evenements'}) }}"
+        <div
+                id="app-dashboard"
+                data-ajaxurl-settings="{{ path('back_widget_settings') }}"
+                data-ajaxurl-KPI="{{ path('back_dashboard_widget', {widgetType: 'data-kpi'}) }}"
+                data-ajaxurl-partners="{{ path('back_dashboard_widget', {widgetType: 'affectations-partenaires'}) }}"
+                data-ajaxurl-signalements-nosuivi="{{ path('back_dashboard_widget', {widgetType: 'signalements-acceptes-sans-suivi'}) }}"
+                data-ajaxurl-signalements-per-territoire="{{ path('back_dashboard_widget', {widgetType: 'signalements-territoires'}) }}"
+                data-ajaxurl-connections-esabora="{{ path('back_dashboard_widget', {widgetType: 'esabora-evenements'}) }}"
         ></div>
     {% endif %}
 {% endblock %}
