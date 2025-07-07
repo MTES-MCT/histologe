@@ -22,9 +22,9 @@ class PhotoHelper
     }
 
     /**
-     * @return ?array<File>
+     * @return array<File>
      */
-    public static function getSortedPhotos(Signalement $signalement): ?array
+    public static function getSortedPhotos(Signalement $signalement, ?string $type = null): array
     {
         $photoList = $signalement->getPhotos()->toArray();
         $photoListByType = ['situation' => [], 'procedure' => [], 'visite' => []];
@@ -69,6 +69,9 @@ class PhotoHelper
 
                 return $fileA->getId() <=> $fileB->getId();
             });
+        }
+        if ($type) {
+            return $photoListByType[$type] ?? [];
         }
 
         return array_merge($photoListByType['situation'], $photoListByType['procedure'], $photoListByType['visite']);

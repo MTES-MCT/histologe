@@ -163,21 +163,6 @@
     </script>
 
     <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
-        tippy('.part-infos-hover', {
-            content(reference) {
-                const id = reference.getAttribute('data-template');
-                const template = document.getElementById(id);
-                return template.innerHTML;
-            },      
-            allowHTML: true,
-            interactive: true,
-            hideOnClick: true,
-            theme: 'light-border',
-            arrow: true,
-            placement: "bottom",
-            maxWidth: "100%"
-        });
-        
         {% if isClosedForMe or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
         document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box,.fr-accordion__btn,.keep-when-signalement-closed),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill,.keep-when-signalement-closed)').forEach(input => {
             input.remove()
