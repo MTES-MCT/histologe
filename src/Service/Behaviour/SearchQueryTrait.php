@@ -19,9 +19,14 @@ trait SearchQueryTrait
         return $this->page;
     }
 
-    public function setPage(?int $page): void
+    public function setPage(?string $page): void
     {
-        $this->page = $page;
+        if (!is_numeric($page)) {
+            $this->page = 1;
+
+            return;
+        }
+        $this->page = (int) $page;
     }
 
     /**
