@@ -1,3 +1,7 @@
+import { init } from '@sentry/browser'
+import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper'
+import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/file_delete'
+import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file'
 import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper';
 import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/file_delete';
 import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file';
