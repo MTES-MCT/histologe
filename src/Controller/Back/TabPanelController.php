@@ -6,28 +6,32 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
-use App\Service\DashboardTabPanel\TabData;
-use App\Service\DashboardTabPanel\TabDataLoaderCollection;
+use App\Service\DashboardTabPanel\TabBody;
+use App\Service\DashboardTabPanel\TabBodyLoaderCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\When;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/bo')]
 class TabPanelController extends AbstractController
 {
     public function __construct(private readonly TerritoryRepository $territoryRepository)
     {
     }
 
-    #[When(env: 'dev')]
-    #[When(env: 'test')]
-    #[Route('/tab-panel-data/{tabDataType}', name: 'back_tab_panel_data', methods: ['GET'])]
-    public function getTabData(
-        string $tabDataType,
-        TabDataLoaderCollection $tabDataLoaderCollection,
+    #[Route('/tab-panel-body/{tabBodyType}', name: 'back_tab_panel_body', methods: ['GET'])]
+    public function getTabBody(
+        string $tabBodyType,
+        TabBodyLoaderCollection $tabBodyLoaderCollection,
         #[MapQueryParameter('territoire')] ?int $territoireId = null,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
     ): Response {
+        if (!$featureNewDashboard) {
+            throw $this->createNotFoundException('Cette fonctionnalité n\'est pas activée.');
+        }
+
         /** @var ?User $user */
         $user = $this->getUser();
         $territoires = [];
@@ -41,8 +45,8 @@ class TabPanelController extends AbstractController
             $territoires = $user?->getPartnersTerritories() ?? [];
         }
 
-        $tab = new TabData(type: $tabDataType, territoires: $territoires);
-        $tabDataLoaderCollection->load($tab);
+        $tab = new TabBody(type: $tabBodyType, territoires: $territoires);
+        $tabBodyLoaderCollection->load($tab);
 
         return $this->render($tab->getTemplate(), [
             'items' => $tab->getData(),

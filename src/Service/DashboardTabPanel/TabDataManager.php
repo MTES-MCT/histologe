@@ -12,7 +12,9 @@ class TabDataManager
         return [
             new TabDossier(
                 profilDeclarant: 'Tiers déclarant',
-                reference: '#2022-150 - MARTINEZ Claude',
+                nomDeclarant: 'MARTINEZ',
+                prenomDeclarant: 'Claude',
+                reference: '#2022-150',
                 adresse: '12 rue Saint-Ferréol, 13001 Marseille',
                 depotAt: '24/04/2025',
                 valideAt: '24/04/2025',
@@ -30,7 +32,9 @@ class TabDataManager
     {
         return [
             new TabDossier(
-                reference: '#2024-1525 - MOREAU Samuel',
+                nomDeclarant: 'MOREAU',
+                prenomDeclarant: 'Samuel',
+                reference: '#2024-1525',
                 adresse: '4 impasse des Lilas, 13002 Marseille',
                 statut: 'En cours',
                 derniereAction: 'Relance partenaire',
@@ -39,7 +43,9 @@ class TabDataManager
                 lien: '#',
             ),
             new TabDossier(
-                reference: '#2024-1526 - DUPONT Jean',
+                nomDeclarant: 'DUPONT',
+                prenomDeclarant: 'Jean',
+                reference: '#2024-1526',
                 adresse: '3 rue Victor Hugo, 13003 Marseille',
                 statut: 'En attente',
                 derniereAction: 'Vérification des pièces',
@@ -57,7 +63,9 @@ class TabDataManager
     {
         return [
             new TabDossier(
-                reference: '#2022-150 - MARTINEZ Claude',
+                nomDeclarant: 'MARTINEZ',
+                prenomDeclarant: 'Claude',
+                reference: '#2022-150',
                 adresse: '12 rue Saint-Ferréol, 13001 Marseille',
                 depotAt: '24/04/2025',
                 depotBy: 'MIREILLE DUMAS',
@@ -66,7 +74,9 @@ class TabDataManager
                 lien: '#'
             ),
             new TabDossier(
-                reference: '#2022-151 - DUPUIS Marine',
+                nomDeclarant: 'DUPUIS',
+                prenomDeclarant: 'Marine',
+                reference: '#2022-151',
                 adresse: '85 boulevard Longchamp, 13004 Marseille',
                 depotAt: '23/04/2025',
                 depotBy: 'MIREILLE DUMAS',
@@ -75,7 +85,9 @@ class TabDataManager
                 lien: '#'
             ),
             new TabDossier(
-                reference: '#2022-152 - BENOIT Julien',
+                nomDeclarant: 'BENOIT',
+                prenomDeclarant: 'Julien',
+                reference: '#2022-152',
                 adresse: '5 avenue de la Capelette, 13010 Marseille',
                 depotAt: '22/04/2025',
                 depotBy: 'MIREILLE DUMAS',
@@ -84,7 +96,9 @@ class TabDataManager
                 lien: '#'
             ),
             new TabDossier(
-                reference: '#2022-153 - RICCI Paolo',
+                nomDeclarant: 'RICCI',
+                prenomDeclarant: 'Paolo',
+                reference: '#2022-153',
                 adresse: '17 rue Paradis, 13006 Marseille',
                 depotAt: '21/04/2025',
                 depotBy: 'MIREILLE DUMAS',
@@ -103,7 +117,9 @@ class TabDataManager
         return [
             new TabDossier(
                 profilDeclarant: 'PROPRIÉTAIRE OCCUPANT',
-                reference: '#2022-150 - MARTINEZ Claude',
+                nomDeclarant: 'MARTINEZ',
+                prenomDeclarant: 'Claude',
+                reference: '#2022-150',
                 adresse: '12 rue Saint-Ferréol, 13001 Marseille',
                 depotAt: '24/04/2025',
                 parc: 'PRIVÉ',
@@ -111,7 +127,9 @@ class TabDataManager
             ),
             new TabDossier(
                 profilDeclarant: 'LOCATAIRE',
-                reference: '#2022-151 - DUPUIS Marine',
+                nomDeclarant: 'DUPUIS',
+                prenomDeclarant: 'Marine',
+                reference: '#2022-151',
                 adresse: '85 boulevard Longchamp, 13004 Marseille',
                 depotAt: '23/04/2025',
                 parc: 'PRIVÉ',
@@ -119,7 +137,9 @@ class TabDataManager
             ),
             new TabDossier(
                 profilDeclarant: 'TIERS PARTICULIER',
-                reference: '#2022-152 - BENOIT Julien',
+                nomDeclarant: 'BENOIT',
+                prenomDeclarant: 'Julien',
+                reference: '#2022-152',
                 adresse: '5 avenue de la Capelette, 13010 Marseille',
                 depotAt: '22/04/2025',
                 parc: 'PUBLIC',
@@ -127,11 +147,216 @@ class TabDataManager
             ),
             new TabDossier(
                 profilDeclarant: 'LOCATAIRE',
-                reference: '#2022-153 - RICCI Paolo',
+                nomDeclarant: 'RICCI',
+                prenomDeclarant: 'Paolo',
+                reference: '#2022-153',
                 adresse: '17 rue Paradis, 13006 Marseille',
                 depotAt: '21/04/2025',
                 parc: 'PRIVÉ',
                 lien: '#'
+            ),
+        ];
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function getMessagesUsagersNouveauxMessages(): array
+    {
+        return [
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                messageAt: '06/06/2025 à 07:13',
+                messageSuiviByNom: 'Abdallah',
+                messageSuiviByPrenom: 'Karim',
+                messageByProfileDeclarant: 'OCCUPANT'
+            ),
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-151',
+                adresse: '9 rue du Péronnet, 63390 Vernaison',
+                messageAt: '06/06/2025 à 07:13',
+                messageSuiviByNom: 'Abdallah',
+                messageSuiviByPrenom: 'Karim',
+                messageByProfileDeclarant: 'TIERS DECLARANT'
+            ),
+        ];
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function getMessagesUsagersMessageApresFermeture(): array
+    {
+        return [
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                clotureAt: '05/06/2026 à 15:21',
+                messageAt: '06/06/2025 à 07:13',
+                messageSuiviByNom: 'Abdallah',
+                messageSuiviByPrenom: 'Karim',
+                messageByProfileDeclarant: 'OCCUPANT'
+            ),
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-151',
+                adresse: '9 rue du Péronnet, 63390 Vernaison',
+                clotureAt: '05/06/2026 à 15:21',
+                messageAt: '06/06/2025 à 07:13',
+                messageSuiviByNom: 'Abdallah',
+                messageSuiviByPrenom: 'Karim',
+                messageByProfileDeclarant: 'TIERS DECLARANT'
+            ),
+        ];
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function getMessagesUsagersMessagesSansReponse(): array
+    {
+        return [
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                clotureAt: '05/06/2026 à 15:21',
+                messageDaysAgo: 577,
+                messageSuiviByNom: 'Abdallah',
+                messageSuiviByPrenom: 'Karim',
+                messageByProfileDeclarant: 'OCCUPANT'
+            ),
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-151',
+                adresse: '9 rue du Péronnet, 63390 Vernaison',
+                clotureAt: '05/06/2026 à 15:21',
+                messageDaysAgo: 504,
+                messageSuiviByNom: 'Abdallah',
+                messageSuiviByPrenom: 'Karim',
+                messageByProfileDeclarant: 'TIERS DECLARANT'
+            ),
+        ];
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function getDossiersAVerifierSansActivitePartenaires(): array
+    {
+        return [
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                derniereActionAt: '01/12/2023',
+                derniereActionTypeSuivi: 'Suivi interne',
+                derniereActionPartenaireDaysAgo: 497,
+                derniereActionPartenaireNom: 'Commune de Vandoeuvre',
+                derniereActionPartenaireNomAgent: 'Dumas',
+                derniereActionPartenairePrenomAgent: 'Mireille',
+            ),
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                derniereActionAt: '01/12/2023',
+                derniereActionTypeSuivi: 'Suivi interne',
+                derniereActionPartenaireDaysAgo: 497,
+                derniereActionPartenaireNom: 'Commune de Vandoeuvre',
+                derniereActionPartenaireNomAgent: 'Dumas',
+                derniereActionPartenairePrenomAgent: 'Mireille',
+            ),
+        ];
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function getDossiersDemandesFermetureByUsager(): array
+    {
+        return [
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                demandeFermetureUsagerDaysAgo: 497,
+                demandeFermetureUsagerProfileDeclarant: 'OCCUPANT',
+                demandeFermetureUsagerAt: '07/12/2023'
+            ),
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                demandeFermetureUsagerDaysAgo: 497,
+                demandeFermetureUsagerProfileDeclarant: 'OCCUPANT',
+                demandeFermetureUsagerAt: '07/12/2023'
+            ),
+        ];
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function getDossiersRelanceSansReponse(): array
+    {
+        return [
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                nbRelanceDossier: 14,
+                premiereRelanceDossierAt: '17/12/2024',
+                dernierSuiviPublicAt: '29/09/2024',
+                dernierTypeSuivi: 'Suivi automatique',
+            ),
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                nbRelanceDossier: 14,
+                premiereRelanceDossierAt: '17/12/2024',
+                dernierSuiviPublicAt: '29/09/2024',
+                dernierTypeSuivi: 'Suivi automatique',
+            ),
+        ];
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function getDossiersFermePartenaireTous(): array
+    {
+        return [
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                clotureAt: '17/12/2024',
+            ),
+            new TabDossier(
+                nomDeclarant: 'Abdallah',
+                prenomDeclarant: 'Karim',
+                reference: '#2022-150',
+                adresse: '8 rue du Péronnet, 63390 Vernaison',
+                clotureAt: '17/12/2024',
             ),
         ];
     }
