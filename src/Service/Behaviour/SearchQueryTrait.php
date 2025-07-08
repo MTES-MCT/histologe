@@ -12,7 +12,7 @@ trait SearchQueryTrait
 
     public function getPage(): int
     {
-        if ($this->page < 1) {
+        if ($this->page < 1 || empty($this->page)) {
             return 1;
         }
 
@@ -21,6 +21,11 @@ trait SearchQueryTrait
 
     public function setPage(?string $page): void
     {
+        if (empty($page) || !is_numeric($page) || (int) $page < 1) {
+            $this->page = 1;
+
+            return;
+        }
         $this->page = (int) $page;
     }
 
