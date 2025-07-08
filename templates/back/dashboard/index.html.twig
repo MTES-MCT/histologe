@@ -4,7 +4,7 @@
 
 {% block content %}
     {% if feature_new_dashboard %}
-        <div id="dashboard">
+        <div id="dashboard" data-url-login="{{ path('app_login') }}">
             {% include 'back/dashboard/_header.html.twig' %}
             <section class="fr-container--fluid fr-container-sml">
                 <div class="fr-tabs">
