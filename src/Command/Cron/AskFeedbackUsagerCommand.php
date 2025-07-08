@@ -10,6 +10,7 @@ use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,7 +26,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class AskFeedbackUsagerCommand extends AbstractCronCommand
 {
     private SymfonyStyle $io;
-    private const FLUSH_COUNT = 1000;
+    private const int FLUSH_COUNT = 1000;
 
     public function __construct(
         private readonly SuiviManager $suiviManager,
@@ -47,6 +48,9 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         );
     }
 
+    /**
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -98,6 +102,9 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         return Command::SUCCESS;
     }
 
+    /**
+     * @throws Exception
+     */
     protected function processSignalementsThirdRelance(
         InputInterface $input,
     ): int {
@@ -109,7 +116,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         );
         if (!$input->getOption('debug')) {
             $this->io->success(\sprintf(
-                '%s signalement(s) for which the two last suivis are technicals and the last one is older than '
+                '%s signalement(s) for which the two last suivis are feedback requests and the last one is older than '
                 .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
                 $nbSignalements
             ));
@@ -129,7 +136,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         );
         if (!$input->getOption('debug')) {
             $this->io->success(\sprintf(
-                '%s signalement(s) for which the last suivi is technical and is older than '
+                '%s signalement(s) for which the last suivi is feedback request and is older than '
                 .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
                 $nbSignalements
             ));

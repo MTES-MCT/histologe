@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -308,6 +309,8 @@ class SuiviRepository extends ServiceEntityRepository
 
     /**
      * @return array<int, int|string>
+     *
+     * @throws Exception
      */
     public function findSignalementsForThirdRelance(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
@@ -316,6 +319,7 @@ class SuiviRepository extends ServiceEntityRepository
 
         $parameters = [
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'suivi_category' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
             'status_closed' => SignalementStatus::CLOSED->value,
             'status_archived' => SignalementStatus::ARCHIVED->value,
@@ -344,6 +348,7 @@ class SuiviRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
             'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'suivi_category' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
             'status_archived' => SignalementStatus::ARCHIVED->value,
             'status_closed' => SignalementStatus::CLOSED->value,
@@ -419,7 +424,7 @@ class SuiviRepository extends ServiceEntityRepository
                 INNER JOIN (
                     SELECT su.signalement_id, MIN(su.created_at) AS min_date
                     FROM suivi su
-                    WHERE su.type = :type_suivi_technical
+                    WHERE su.type = :type_suivi_technical AND su.category = :suivi_category
                     GROUP BY su.signalement_id
                     HAVING COUNT(*) >= :nb_suivi_technical
                 ) t1 ON s.id = t1.signalement_id
