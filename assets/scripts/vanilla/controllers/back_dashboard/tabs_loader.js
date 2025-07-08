@@ -40,6 +40,12 @@ export default function initTabsLoader() {
             })
                 .then(response => {
                     if (!response.ok) throw new Error("HTTP error " + response.status);
+
+                    if (response.redirected) {
+                        const dashboard = document.getElementById('dashboard');
+                        window.location.href = dashboard?.dataset.urlLogin || '/connexion';
+                        return;
+                    }
                     return response.text();
                 })
                 .then(html => {
