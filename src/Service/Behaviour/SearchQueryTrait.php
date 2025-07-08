@@ -21,11 +21,6 @@ trait SearchQueryTrait
 
     public function setPage(?string $page): void
     {
-        if (!is_numeric($page)) {
-            $this->page = 1;
-
-            return;
-        }
         $this->page = (int) $page;
     }
 
