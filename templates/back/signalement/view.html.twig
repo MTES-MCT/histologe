@@ -27,8 +27,10 @@
         {% include '_partials/_modal_historique_affectation.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_dpe.html.twig' %}
-    {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION and not isSignalementClosed and not isClosedForMe and ((affectation and isAffectationAccepted)) or is_granted('ROLE_ADMIN_TERRITORY') %}
-        {% include '_partials/_modal_cloture.html.twig' %}
+    {% if is_granted('SIGN_CLOSE', signalement) or (affectation and is_granted('AFFECTATION_CLOSE', affectation)) %}
+        <div data-ajax-form>
+            {% include '_partials/_modal_cloture.html.twig' %}
+        </div>
     {% endif %}
     {% if canEditNDE %}
         {% include '_partials/_modal_edit_nde.html.twig' %}

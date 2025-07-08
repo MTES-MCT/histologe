@@ -2,7 +2,6 @@
 
 namespace App\Twig;
 
-use App\Command\FixEmailAddressesCommand;
 use App\Controller\FileController;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
@@ -155,7 +154,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
-            new TwigFunction('show_email_alert', [$this, 'showEmailAlert']),
+            new TwigFunction('show_email_alert', [EmailFormatValidator::class, 'isInvalidEmail']),
             new TwigFunction('user_avatar_or_placeholder', [UserAvatar::class, 'userAvatarOrPlaceholder'], ['is_safe' => ['html']]),
             new TwigFunction('singular_or_plural', [$this, 'displaySingularOrPlural']),
             new TwigFunction('transform_suivi_description', [$this, 'transformSuiviDescription']),
@@ -173,11 +172,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         }
 
         return implode(',', File::IMAGE_MIME_TYPES);
-    }
-
-    public function showEmailAlert(?string $emailAddress): bool
-    {
-        return !EmailFormatValidator::validate($emailAddress) || FixEmailAddressesCommand::EMAIL_HISTOLOGE_INCONNU === $emailAddress;
     }
 
     public function displaySingularOrPlural(?int $count, string $strIfSingular, string $strIfPlural): string

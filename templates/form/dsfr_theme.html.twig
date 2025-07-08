@@ -115,66 +115,68 @@
 {% block choice_widget_expanded %}
     {% set display_mode = display_mode|default('inline') %}
     <div {{ block('widget_container_attributes') }} class="fr-fieldset fr-mt-1w fr-mb-0">
-    {% if not form|length and nochoiceslabel is defined %}
-        {{ nochoiceslabel }}
-    {% else %}
-        {% for child in form %}
-            <div class="fr-fieldset__element {% if display_mode == 'inline' and 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline{% elseif display_mode == 'block' and 'radio' in child.vars.block_prefixes %}fr-border--light fr-p-2w fr-mx-2w {% endif %}">
-                <div class="{% if 'radio' in child.vars.block_prefixes %}fr-radio-group{% else %}fr-checkbox-group{% endif %}">
-                    {{form_widget(child)}}
-                    {{form_label(child, null, {translation_domain: choice_translation_domain})}}
-                </div>
+    {% for child in form %}
+        <div class="fr-fieldset__element {% if display_mode == 'inline' and 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline{% elseif display_mode == 'block' and 'radio' in child.vars.block_prefixes %}fr-border--light fr-p-2w fr-mx-2w {% endif %}">
+            <div class="{% if 'radio' in child.vars.block_prefixes %}fr-radio-group{% else %}fr-checkbox-group{% endif %}">
+                {{form_widget(child)}}
+                {{form_label(child, null, {translation_domain: choice_translation_domain})}}
             </div>
-        {% endfor %}
-    {% endif %}
+        </div>
+    {% endfor %}
     </div>
 {% endblock choice_widget_expanded %}
 
-{% block search_checkbox_row %}
-    <div class="search-checkbox-container fr-input-group {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
-        <div class="fr-input-group fr-mb-0">
-            {% if label is not same as(false) %}
-                <label for="{{ id }}_input" class="fr-label">
-                    {{ label }}
-                    {{form_help(form)}}
-                </label>
-            {% endif %}
-            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
-        </div>
-        {{ block('choice_widget_expanded') }}
-        {{ block('form_errors') }}
-    </div>
-{% endblock %}
-
 {% block choice_enum_widget_expanded %}
     <div {{ block('widget_container_attributes') }}>
-    {% if not form.vars|length and nochoiceslabel is defined %}
+    {% if not form|length and not form.vars.choices|length and nochoiceslabel is defined %}
         {{ nochoiceslabel }}
     {% else %}
-        {% for child in form.vars.choices %}
-            <div class="fr-fieldset__element">
-                <div class="fr-checkbox-group">
-                    <input name="{{form.vars.full_name}}" id="checkboxes-{{child.value}}"
-                        type="checkbox" value="{{child.value}}"
-                        {% if child.value in form.vars.value %}
-                        checked="checked"
-                        {% endif %}
-                        >
-                    <label class="fr-label" for="checkboxes-{{child.value}}">
-                        {{child.label}}
-                    </label>
-                </div>
-            </div>
+        {% for key, child in form.vars.choices %}
+                {% if child.choices is defined %}
+                    <div class="fr-fieldset__element optgroup__element">
+                        <strong>{{key}}</strong>
+                    </div>
+                    {% for subChild in child.choices %}
+                        <div class="fr-fieldset__element">
+                            <div class="fr-checkbox-group">
+                                <input name="{{form.vars.full_name}}" id="{{id}}-checkboxes-{{subChild.value}}" type="checkbox" value="{{subChild.value}}" 
+                                    {% if subChild.value in form.vars.value %}checked="checked"{% endif %} >
+                                <label class="fr-label" for="{{id}}-checkboxes-{{subChild.value}}">{{subChild.label}}</label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="fr-fieldset__element">
+                        <div class="fr-checkbox-group">
+                            <input name="{{form.vars.full_name}}" id="{{id}}-checkboxes-{{child.value}}" type="checkbox" value="{{child.value}}" 
+                                    {% if child.value in form.vars.value %}checked="checked"{% endif %} >
+                            <label class="fr-label" for="{{id}}-checkboxes-{{child.value}}">{{child.label}}</label>
+                        </div>
+                    </div>
+                {% endif %}
         {% endfor %}
     {% endif %}
     </div>
 {% endblock choice_enum_widget_expanded %}
 
+{% block search_checkbox_row %}
+    <div class="search-checkbox-container fr-input-group {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
+        <div class="fr-input-group fr-mb-0">
+            {% if label is not same as(false) %}
+                <label for="{{ id }}_input" class="fr-label">{{ label }} {{form_help(form)}}</label>
+            {% endif %}
+            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
+        </div>
+        {{ block('choice_enum_widget_expanded') }}
+        {{ block('form_errors') }}
+    </div>
+{% endblock %}
+
 {% block search_checkbox_enum_row %}
     <div class="search-checkbox-container fr-input-group {% if errors|length > 0 %}fr-select-group--error{% endif %}">   
         <div class="fr-input-group fr-mb-0">
             {% if label is not same as(false) %}
-                <label for="{{ id }}_input" class="fr-label">{{ label }}</label>
+                <label for="{{ id }}_input" class="fr-label">{{ label }}  {{form_help(form)}}</label>
             {% endif %}
             <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
         </div>

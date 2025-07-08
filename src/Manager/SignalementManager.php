@@ -12,6 +12,7 @@ use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
+use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
@@ -238,17 +239,18 @@ class SignalementManager extends AbstractManager
         return $affectation->toArray();
     }
 
-    public function closeSignalementForAllPartners(Signalement $signalement, MotifCloture $motif, string $comCloture): Signalement
+    public function closeSignalementForAllPartners(SignalementAffectationClose $signalementAffectationClose): Signalement
     {
+        $signalement = $signalementAffectationClose->getSignalement();
         $signalement
             ->setStatut(SignalementStatus::CLOSED)
-            ->setMotifCloture($motif)
+            ->setMotifCloture($signalementAffectationClose->getMotifCloture())
             ->setClosedAt(new \DateTimeImmutable())
-            ->setComCloture($this->htmlSanitizer->sanitize($comCloture));
+            ->setComCloture($this->htmlSanitizer->sanitize($signalementAffectationClose->getDescription()));
 
         /** @var User $user */
         $user = $this->security->getUser();
-        $this->affectationRepository->closeBySignalement($signalement, $motif, $user);
+        $this->affectationRepository->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user);
         $this->managerRegistry->getManager()->flush();
 
         return $signalement;

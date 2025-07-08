@@ -8,27 +8,24 @@ use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
 use App\EventListener\SignalementUpdatedListener;
-use App\Repository\DesordreCritereRepository;
 use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviManager extends Manager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SignalementUpdatedListener $signalementUpdatedListener,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly Security $security,
-        private readonly DesordreCritereRepository $desordreCritereRepository,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         string $entityName = Suivi::class,
@@ -36,6 +33,9 @@ class SuiviManager extends Manager
         parent::__construct($managerRegistry, $entityName);
     }
 
+    /**
+     * @param iterable<File> $files
+     */
     public function createSuivi(
         Signalement $signalement,
         string $description,
@@ -46,6 +46,7 @@ class SuiviManager extends Manager
         ?\DateTimeImmutable $createdAt = null,
         ?string $context = null,
         bool $sendMail = true,
+        iterable $files = [],
         bool $flush = true,
     ): Suivi {
         $suivi = (new Suivi())
@@ -59,6 +60,11 @@ class SuiviManager extends Manager
             ->setCategory($category);
         if (!empty($createdAt)) {
             $suivi->setCreatedAt($createdAt);
+        }
+        foreach ($files as $file) {
+            $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());
+            $this->persist($suiviFile);
+            $suivi->addSuiviFile($suiviFile);
         }
         if ($flush) {
             $this->save($suivi);
@@ -178,28 +184,6 @@ class SuiviManager extends Manager
             }
         }
 
-        $descriptionList = [];
-        foreach ($files as $file) {
-            $fileUrl = $this->urlGenerator->generate(
-                'show_file',
-                ['uuid' => $file->getUuid()],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-
-            $linkFile = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$fileUrl.'">'.$file->getTitle().'</a>';
-            if (DocumentType::PHOTO_SITUATION === $file->getDocumentType() && null !== $file->getDesordreSlug()) {
-                $desordreCritere = $this->desordreCritereRepository->findOneBy(
-                    ['slugCritere' => $file->getDesordreSlug()]
-                );
-                if (null !== $desordreCritere) {
-                    $linkFile .= ' ('.$desordreCritere->getLabelCritere().')';
-                }
-            }
-            $linkFile .= '</li>';
-            $descriptionList[] = $linkFile;
-        }
-        $description .= '<ul>'.implode('', $descriptionList).'</ul>';
-
         return $this->createSuivi(
             signalement: $signalement,
             description: $description,
@@ -207,6 +191,7 @@ class SuiviManager extends Manager
             category: SuiviCategory::NEW_DOCUMENT,
             isPublic: $isVisibleUsager,
             user: $user,
+            files: $files,
             flush: false
         );
     }

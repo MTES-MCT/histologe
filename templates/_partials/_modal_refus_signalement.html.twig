@@ -3,61 +3,40 @@
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
-                    <form id="signalement-validation-response-deny-form" class="tinyCheck"
-                            action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}">
-                        <div class="fr-modal__header">
-                            <button type="button" class="fr-btn--close fr-btn" aria-controls="refus-signalement-modal">Fermer</button>
-                        </div>
-                        <div class="fr-modal__content fr-text--left">
-                            <h1 id="refus-signalement-modal-title" class="fr-modal__title">
-                                Refus signalement #{{ signalement.reference }}
-                            </h1>
-                            <div class="fr-select-group">
-                                <label class="fr-label required" for="signalement-validation-response[motifRefus]">
-                                    Veuillez sélectionner le motif de refus
-                                </label>
-                                <select class="fr-select" id="signalement-validation-response[motifRefus]" name="signalement-validation-response[motifRefus]" required>
-                                    <option value="" selected disabled hidden>Selectionnez une option</option>
-                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_PDLHI.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').HORS_PDLHI.label }}</option>
-                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').DOUBLON.label }}</option>
-                                    <option value="{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.name }}">{{ enum('App\\Entity\\Enum\\MotifRefus').AUTRE.label }}</option>
-                                </select>
-                            </div>
-                            <div class="fr-input-group fr-mt-2v fr-text--left">
-                                <label for="signalement_validation_refus_motif" class="fr-label required">Message à l'usager</label>
-                                <p class="fr-hint-text">Expliquez à l'usager la raison du refus de son signalement
-                                    <em>(10 caractères minimum)</em>
-                                </p>
-                                <textarea class="fr-input fr-input--no-resize editor"
-                                        name="signalement-validation-response[suivi]"
-                                        id="signalement_validation_refus_motif"></textarea>
-                                <p class="fr-error-text fr-hidden">Vous devez indiquer le motif de ce refus. (10 caractères
-                                    minimum)</p>
-                            </div>
-                            <input type="hidden" name="_token"
-                                    value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
-                        </div>
+                    <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="refus-signalement-modal">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content fr-text--left">
+                        <h1 id="refus-signalement-modal-title" class="fr-modal__title">
+                            Refus signalement #{{ signalement.reference }}
+                        </h1>
+                        
+                        {% form_theme refusSignalementForm 'form/dsfr_theme.html.twig' %}
+                        {{ form_start(refusSignalementForm, {'attr': {'id': 'signalement-validation-response-deny-form', 'data-submit-type':'formData'}}) }}
+                        {{ form_errors(refusSignalementForm) }}
+                        {{ form_row(refusSignalementForm.motifRefus) }}
+                        {{ form_row(refusSignalementForm.description) }}
+                        {{ form_row(refusSignalementForm.files) }}
+                        {{ form_end(refusSignalementForm) }}
 
-                        <div class="fr-modal__footer">
-                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                <li>
-                                    <button class="fr-btn fr-icon-check-line"
-                                            form="signalement-validation-response-deny-form" type="submit"
-                                            name="signalement-validation-response[deny]" value="1" disabled
-                                        >
-                                        Refuser le signalement
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button"
-                                            class="fr-btn fr-btn--secondary fr-icon-close-line"
-                                            aria-controls="refus-signalement-modal">
-                                        Annuler
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </form>
+                    </div>
+
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-icon-check-line" form="signalement-validation-response-deny-form" type="submit" >
+                                    Refuser le signalement
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button"
+                                        class="fr-btn fr-btn--secondary fr-icon-close-line"
+                                        aria-controls="refus-signalement-modal">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

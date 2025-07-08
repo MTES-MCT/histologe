@@ -10,46 +10,27 @@
                         <h1 id="fr-modal-add-suivi-title" class="fr-modal__title">
                             Ajouter un suivi
                         </h1>
-                        <form method="POST" name="signalement-add-suivi" id="signalement-add-suivi-form" class="tinyCheck"
-                                action="{{ path('back_signalement_add_suivi',{uuid:signalement.uuid}) }}">
-                            <div class="fr-input-group">
-                                <span class="no-field-errors"></span>
-                            </div>
-                            <div class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-                                {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
-                                    <p class="fr-badge fr-badge--error">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
-                                    <input type="hidden" name="notifyUsager" value="0">
-                                {% else %}
-                                <div class="fr-fieldset__content">
-                                    <div class="fr-toggle fr-col-12">
-                                        <input type="checkbox" class="fr-toggle__input" aria-describedby="toggle-698-hint-text" id="signalement-add-suivi-notify-usager" name="notifyUsager" value="1">
-                                        <label class="fr-toggle__label" for="signalement-add-suivi-notify-usager">En cochant cette case, le suivi sera envoyé à l'usager</label>
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
 
-                            <div class="fr-input-group">
-                                <label class="fr-label" for="signalement-add-suivi-content">
-                                    <span class="fr-hint-text">
-                                        Décrivez la ou les action(s) menée(s). 10 caractères minimum
-                                        <sup class="fr-text-default--error">*</sup>
-                                    </span>
-                                </label>
-                                <textarea class="fr-input fr-input--no-resize editor" id="signalement-add-suivi-content" name="content" minlength="10"></textarea>
-                                <p class="fr-error-text fr-hidden">
-                                    Merci de proposer une rapide description (minimum 10 caractères).
-                                </p>
-                            </div>
+                        {% form_theme addSuiviForm 'form/dsfr_theme.html.twig' %}
+                        {{ form_start(addSuiviForm, {'attr': {'id': 'signalement-add-suivi-form', 'data-submit-type':'formData'}}) }}
+                        <div class="fr-input-group">
+                            <span class="no-field-errors"></span>
+                        </div>
+                        {{ form_errors(addSuiviForm) }}
+                        {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
+                            <p class="fr-badge fr-badge--error">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
+                        {% endif %}
+                        {{ form_row(addSuiviForm.isPublic) }}
+                        {{ form_row(addSuiviForm.description) }}
+                        {{ form_row(addSuiviForm.files) }}
+                        {{ form_end(addSuiviForm) }}
 
-                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_add_suivi_'~signalement.id) }}">
-                        </form>
                     </div>
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <li>
                                 <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line"
-                                        form="signalement-add-suivi-form" disabled id="signalement-add-suivi-submit">
+                                        form="signalement-add-suivi-form" id="signalement-add-suivi-submit">
                                     Enregistrer le suivi interne
                                 </button>
                             </li>

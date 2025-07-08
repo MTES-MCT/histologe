@@ -181,20 +181,18 @@
 
             <div class="fr-mb-4v fr-text--right">
                 {% if canAnswerAffectation %}
-                    <form action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:affectation.id}) }}"
-                            class="tinyCheck" id="signalement-affectation-response-form"
-                            name="signalement-affectation-response-form" method="POST">
-                        <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
-                                name="signalement-affectation-response[accept]" value="1">
+                    <form id="signalement-affectation-response-form" action="{{ path('back_signalement_affectation_accept',{affectation:affectation.id}) }}" method="POST" class="inline-form">
+                        <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success">
                             Accepter
                         </button>
-                        <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-close-circle-fill fr-btn--danger"
-                            data-fr-opened="false" aria-controls="refus-affectation-modal">Refuser
-                        </a>
-                        <input type="hidden" name="_token"
-                                value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                     </form>
-                    {% include '_partials/_modal_refus_affectation.html.twig' %}
+                    <div data-ajax-form class="fr-display-inline">
+                        {% include '_partials/_modal_refus_affectation.html.twig' %}
+                    </div>
+                    <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-close-circle-fill fr-btn--danger"
+                        data-fr-opened="false" aria-controls="refus-affectation-modal">Refuser
+                    </a>
 
                     <div class="fr-notice fr-notice--info fr-my-4v fr-text--left">
                         <div class="fr-container">
@@ -207,30 +205,24 @@
                     </div>
 
                 {% elseif canCancelRefusedAffectation %}
-                    <form method="POST" action="{{ path('back_signalement_affectation_response',{signalement:signalement.id,user:app.user.id,affectation:affectation.id}) }}">
-                        <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill reaffect fr-mb-3v"
-                                name="signalement-affectation-response[accept]" value="1"
-                                >
+                    <form method="POST" action="{{ path('back_signalement_affectation_accept',{affectation:affectation.id}) }}">
+                        <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill reaffect fr-mb-3v">
                             Annuler le refus
                         </button>
-                        <input type="hidden" name="_token"
-                                value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                     </form>
 
                 {% elseif canValidateOrRefuseSignalement %}
                     <div class="admin-territory-validation">
-                        <form id="signalement-validation-response-form"
-                                action="{{ path('back_signalement_validation_response',{uuid:signalement.uuid}) }}"
-                                class="tinyCheck inline-form">
-                            <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
-                                    name="signalement-validation-response[accept]" value="1"
-                                    >
+                        <form id="signalement-validation-response-form" action="{{ path('back_signalement_accept',{uuid:signalement.uuid}) }}" class="inline-form">
+                            <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" name="signalement-validation-response[accept]" value="1">
                                 Valider le signalement
                             </button>
-                            <input type="hidden" name="_token"
-                                    value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
                         </form>
-                        {% include '_partials/_modal_refus_signalement.html.twig' %}
+                        <div data-ajax-form class="fr-display-inline">
+                            {% include '_partials/_modal_refus_signalement.html.twig' %}
+                        </div>
                         <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
                             aria-controls="refus-signalement-modal" data-fr-opened="false">
                             Refuser le signalement

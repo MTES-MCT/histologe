@@ -224,11 +224,11 @@ class UploadHandlerService
         }
     }
 
-    public function uploadFromFilename(string $filename): ?string
+    public function uploadFromFilename(string $filename, ?string $fromFolder = null): ?string
     {
         $this->logger->info($filename);
-        $localTmpFolder = $this->parameterBag->get('uploads_tmp_dir');
-        $tmpFilepath = $localTmpFolder.$filename;
+        $fromFolder = $fromFolder ?? $this->parameterBag->get('uploads_tmp_dir');
+        $tmpFilepath = $fromFolder.$filename;
 
         try {
             $pathInfo = pathinfo($tmpFilepath);

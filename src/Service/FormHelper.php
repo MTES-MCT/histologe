@@ -9,11 +9,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class FormHelper
 {
     /**
-     * @param bool $recursive
-     *
      * @return array<string, mixed>
      */
-    public static function getErrorsFromForm(FormInterface $form, $recursive = false): array
+    public static function getErrorsFromForm(FormInterface $form, bool $withPrefix = false, bool $recursive = false): array
     {
         $errors = [];
         foreach ($form->getErrors() as $error) {
@@ -25,15 +23,30 @@ class FormHelper
         }
         foreach ($form->all() as $childForm) {
             if ($childForm instanceof FormInterface) {
-                if ($childErrors = self::getErrorsFromForm($childForm, true)) {
+                if ($childErrors = self::getErrorsFromForm(form: $childForm, withPrefix: $withPrefix, recursive: true)) {
                     foreach ($childErrors as $childError) {
-                        $errors[$childForm->getName()]['errors'][] = $childError;
+                        if ($withPrefix) {
+                            $errors[self::getFieldNameWithPrefix($childForm)]['errors'][] = $childError;
+                        } else {
+                            $errors[$childForm->getName()]['errors'][] = $childError;
+                        }
                     }
                 }
             }
         }
 
         return $errors;
+    }
+
+    private static function getFieldNameWithPrefix(FormInterface $form): string
+    {
+        $fieldName = $form->getName();
+        while ($form->getParent()) {
+            $form = $form->getParent();
+        }
+        $blockPrefix = $form->getConfig()->getType()->getBlockPrefix();
+
+        return $blockPrefix.'['.$fieldName.']';
     }
 
     /**

@@ -6,7 +6,6 @@
 
 imports:
     - { resource: 'app/widgets.yaml' }
-    - { resource: 'app/documents.yaml'}
     - { resource: 'app/competences.yaml'}
     - { resource: 'app/suivi_messages.yaml'}
     - { resource: 'app/cron_scheduler.yaml'}

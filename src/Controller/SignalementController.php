@@ -48,7 +48,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
@@ -627,17 +626,15 @@ class SignalementController extends AbstractController
             $description = nl2br(htmlspecialchars($formMessage->get('description')->getData(), \ENT_QUOTES, 'UTF-8'));
 
             $docs = $fileRepository->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $signalementUser->getUser()]);
+            $filesToAttach = [];
             if (\count($docs)) {
-                $descriptionList = [];
                 foreach ($docs as $doc) {
                     if ($uploadHandlerService->deleteIfExpiredFile($doc)) {
                         continue;
                     }
                     $doc->setIsTemp(false);
-                    $url = $this->generateUrl('show_file', ['uuid' => $doc->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
-                    $descriptionList[] = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$doc->getTitle().'</a></li>';
+                    $filesToAttach[] = $doc;
                 }
-                $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
             }
 
             $typeSuivi = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
@@ -645,9 +642,10 @@ class SignalementController extends AbstractController
                 signalement: $signalement,
                 description: $description,
                 type: $typeSuivi,
+                category: SuiviCategory::MESSAGE_USAGER,
                 isPublic: true,
                 user: $signalementUser->getUser(),
-                category: SuiviCategory::MESSAGE_USAGER,
+                files: $filesToAttach
             );
 
             $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
@@ -880,17 +878,15 @@ class SignalementController extends AbstractController
         ));
 
         $docs = $entityManager->getRepository(File::class)->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $user]);
+        $filesToAttach = [];
         if (\count($docs)) {
-            $descriptionList = [];
             foreach ($docs as $doc) {
                 if ($uploadHandlerService->deleteIfExpiredFile($doc)) {
                     continue;
                 }
                 $doc->setIsTemp(false);
-                $url = $this->generateUrl('show_file', ['uuid' => $doc->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
-                $descriptionList[] = '<li><a class="fr-link" target="_blank" rel="noopener" href="'.$url.'">'.$doc->getTitle().'</a></li>';
+                $filesToAttach[] = $doc;
             }
-            $description .= '<br>Ajout de pièces au signalement<ul>'.implode('', $descriptionList).'</ul>';
         }
 
         $typeSuivi = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
@@ -900,6 +896,7 @@ class SignalementController extends AbstractController
             type: $typeSuivi,
             category: SuiviCategory::MESSAGE_USAGER,
             isPublic: true,
+            files: $filesToAttach,
             user: $user,
         );
 

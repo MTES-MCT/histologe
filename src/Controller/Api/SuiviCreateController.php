@@ -5,12 +5,13 @@ namespace App\Controller\Api;
 use App\Dto\Api\Request\SuiviRequest;
 use App\Dto\Api\Response\SuiviResponse;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\SuiviManager;
-use App\Service\Signalement\DescriptionFilesBuilder;
+use App\Service\Sanitizer;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +27,6 @@ class SuiviCreateController extends AbstractController
 {
     public function __construct(
         readonly private SuiviManager $suiviManager,
-        readonly private DescriptionFilesBuilder $descriptionFilesBuilder,
         readonly private ValidatorInterface $validator,
     ) {
     }
@@ -143,13 +143,17 @@ class SuiviCreateController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
+        $fileToAttach = $signalement->getFiles()->filter(function (File $file) use ($suiviRequest) {
+            return in_array($file->getUuid(), $suiviRequest->getFiles(), true);
+        });
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
-            description: $this->descriptionFilesBuilder->build($signalement, $suiviRequest),
+            description: Sanitizer::sanitize($suiviRequest->getDescription()),
             type: Suivi::TYPE_PARTNER,
             category: SuiviCategory::MESSAGE_PARTNER,
             isPublic: $suiviRequest->notifyUsager,
             user: $user,
+            files: $fileToAttach,
         );
 
         return $this->json(new SuiviResponse($suivi), Response::HTTP_CREATED);
