@@ -211,7 +211,7 @@
     }
   },
   "desordres_logement_humidite_salle_de_bain": {
-    "default": "La salle de bain / salle d'eau et ou les toilettes",
+    "default": "La salle de bain / La salle d'eau et/ou les toilettes",
     "disorderOverview": {
       "default": "Humidité ou moisissure dans la salle de bain"
     }
@@ -320,7 +320,7 @@
   },
   "desordres_logement_lumiere_plafond_trop_bas_cuisine_taille_nsp": { "default": "Hauteur inconnue dans cuisine" },
   "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain": {
-    "default": "La salle de bain / salle d'eau et ou les toilettes",
+    "default": "La salle de bain / La salle d'eau et/ou les toilettes",
     "disorderOverview": {
       "default": "Les plafonds sont trop bas dans la salle de bain"
     }

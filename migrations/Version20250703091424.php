@@ -41,7 +41,7 @@ final class Version20250703091424 extends AbstractMigration
                 $insertIntoColumns.' VALUES ('.$desordreCritereIdSubquery.', 3, 0, 0, 0, \'<span>Dans : <b>La cuisine / le coin cuisine</b></span>\', \'["RSD", "NON_DECENCE"]\', \'desordres_logement_lumiere_plafond_trop_bas_cuisine\', NOW())'
             );
             $this->addSql(
-                $insertIntoColumns.' VALUES ('.$desordreCritereIdSubquery.', 3, 0, 0, 0, \'<span>Dans : <b>La salle de bain / salle d\\\'eau et ou les toilettes</b></span>\', \'["RSD", "NON_DECENCE"]\', \'desordres_logement_lumiere_plafond_trop_bas_salle_de_bain\', NOW())'
+                $insertIntoColumns.' VALUES ('.$desordreCritereIdSubquery.', 3, 0, 0, 0, \'<span>Dans : <b>La salle de bain / La salle d\\\'eau et/ou les toilettes</b></span>\', \'["RSD", "NON_DECENCE"]\', \'desordres_logement_lumiere_plafond_trop_bas_salle_de_bain\', NOW())'
             );
             $this->addSql(
                 $insertIntoColumns.' VALUES ('.$desordreCritereIdSubquery.', 3, 0, 0, 1, \'<span>Dans : <b>Toutes les pièces</b></span>\', \'["RSD", "NON_DECENCE", "INSALUBRITE"]\', \'desordres_logement_lumiere_plafond_trop_bas_toutes_pieces\', NOW())'

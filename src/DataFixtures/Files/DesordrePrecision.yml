@@ -1361,7 +1361,7 @@ desordre_precision:
     desordre_critere_slug: "desordres_logement_lumiere_plafond_trop_bas" 
     coef: 3
     is_danger: 0
-    label: "<span>Dans : <b>La salle de bain / salle d'eau et ou les toilettes</b></span>"
+    label: "<span>Dans : <b>La salle de bain / La salle d'eau et/ou les toilettes</b></span>"
     qualification: ['RSD', 'NON_DECENCE']
     desordre_precision_slug: "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain"
     is_suroccupation: 0

@@ -2934,9 +2934,12 @@
                     {
                       "type": "SignalementFormTextfield",
                       "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
+                      "description": "Format attendu : Saisir un nombre entier",
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille",
                       "validate": {
-                        "required": false
+                        "required": false,
+                        "pattern": "^[0-9]*$",
+                        "patternMessage": "Veuillez renseigner une hauteur de plafond valide (nombre entier, en cm)."
                       }
                     },
                     {
@@ -2974,9 +2977,12 @@
                     {
                       "type": "SignalementFormTextfield",
                       "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
+                      "description": "Format attendu : Saisir un nombre entier",
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_cuisine_taille",
                       "validate": {
-                        "required": false
+                        "required": false,
+                        "pattern": "^[0-9]*$",
+                        "patternMessage": "Veuillez renseigner une hauteur de plafond valide (nombre entier, en cm)."
                       }
                     },
                     {
@@ -3014,9 +3020,12 @@
                     {
                       "type": "SignalementFormTextfield",
                       "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
+                      "description": "Format attendu : Saisir un nombre entier",
                       "slug": "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille",
                       "validate": {
-                        "required": false
+                        "required": false,
+                        "pattern": "^[0-9]*$",
+                        "patternMessage": "Veuillez renseigner une hauteur de plafond valide (nombre entier, en cm)."
                       }
                     },
                     {
