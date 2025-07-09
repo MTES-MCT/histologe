@@ -28,7 +28,7 @@
                                         <br>Commentaire usager : <i>{{ signalement.jsonContent[precision.desordreCritere.slugCritere] }}</i>
                                     {# Affichage des données spécifiques liées aux précisions sur la taille des pièces (à standardiser si nécessaire) #}
                                     {% elseif signalement.jsonContent[precision.desordrePrecisionSlug] is defined %}
-                                        <br>Taille : <i>{{ signalement.jsonContent[precision.desordrePrecisionSlug] }}</i>
+                                        <br>Taille (en cm) : <i>{{ signalement.jsonContent[precision.desordrePrecisionSlug] }}</i>
                                     {% endif %}
                                 </li>
                             </ul>

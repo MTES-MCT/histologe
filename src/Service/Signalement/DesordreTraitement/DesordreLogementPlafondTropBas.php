@@ -36,7 +36,7 @@ class DesordreLogementPlafondTropBas implements DesordreTraitementInterface
 
             foreach ($suffixes as $suffix) {
                 $key = $slug.$suffix;
-                if (\array_key_exists($key, $payload)) {
+                if (\array_key_exists($key, $payload) && !empty($payload[$key])) {
                     $precision = $this->desordrePrecisionRepository->findOneBy(
                         ['desordrePrecisionSlug' => $key]
                     );
