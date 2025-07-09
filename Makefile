@@ -222,6 +222,9 @@ es-vue-fix: ## Fix vue source code with es-lint --fix
 es-js-fix: ## Fix vanilla js source code with es-lint --fix
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-js-fix
 
+es-js-prettier-fix: ## Fix vanilla js source code with prettier --write
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-js-prettier-fix
+
 ## Tools
 tools-build: ## [Tools] Install tools (Matomo, ...) local environement
 	@bash -l -c 'make .check .tools-destroy .tools-setup tools-run'

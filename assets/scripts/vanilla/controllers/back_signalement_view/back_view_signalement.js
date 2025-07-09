@@ -1,107 +1,112 @@
-import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper'
+import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper';
 
 if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   window.onscroll = function () {
-    const yPos = window.scrollY
+    const yPos = window.scrollY;
     if (yPos > 150) {
-      document?.querySelector('.fr-breadcrumb.can-fix').classList.add('fixed')
+      document?.querySelector('.fr-breadcrumb.can-fix').classList.add('fixed');
     } else {
-      document?.querySelector('.fr-breadcrumb.can-fix').classList.remove('fixed')
+      document?.querySelector('.fr-breadcrumb.can-fix').classList.remove('fixed');
     }
-  }
+  };
 }
 
 document.querySelectorAll('.open-modal-reinit-affectation').forEach((button) => {
   button.addEventListener('click', (e) => {
-    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent = e.target.dataset.partnerNom
-    document.querySelector('form#fr-modal-reinit-affectation-form').action = e.target.dataset.action
-  })
-})
+    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent =
+      e.target.dataset.partnerNom;
+    document.querySelector('form#fr-modal-reinit-affectation-form').action =
+      e.target.dataset.action;
+  });
+});
 
 /* global histoPhotoIds */
 
 document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {
-  e.preventDefault()
-  document.querySelectorAll('.suivi-item').forEach(item => {
-    item.classList.remove('fr-hidden')
-  })
-  document.querySelector('#btn-display-all-suivis').classList.add('fr-hidden')
-})
+  e.preventDefault();
+  document.querySelectorAll('.suivi-item').forEach((item) => {
+    item.classList.remove('fr-hidden');
+  });
+  document.querySelector('#btn-display-all-suivis').classList.add('fr-hidden');
+});
 
-document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
-  const swipeId = btn.getAttribute('data-id')
-  btn.addEventListeners('click touchdown', (event) => {
-    document?.querySelectorAll('.photos-album')?.forEach(element => {
-      element.classList?.remove('fr-hidden')
-      displayPhotoAlbum(swipeId)
-    })
-  })
-})
-document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
-  btn.addEventListeners('click touchdown', (event) => {
-    document?.querySelectorAll('.photos-album')?.forEach(element => {
-      element.classList?.add('fr-hidden')
-    })
-  })
-})
-document?.querySelectorAll('.photos-album-swipe')?.forEach(btn => {
-  const swipeDirection = Number(btn.getAttribute('data-direction'))
+document?.querySelectorAll('.open-photo-album')?.forEach((btn) => {
+  const swipeId = btn.getAttribute('data-id');
+  btn.addEventListeners('click touchdown', () => {
+    document?.querySelectorAll('.photos-album')?.forEach((element) => {
+      element.classList?.remove('fr-hidden');
+      displayPhotoAlbum(swipeId);
+    });
+  });
+});
+document?.querySelectorAll('.photos-album-btn-close')?.forEach((btn) => {
+  btn.addEventListeners('click touchdown', () => {
+    document?.querySelectorAll('.photos-album')?.forEach((element) => {
+      element.classList?.add('fr-hidden');
+    });
+  });
+});
+document?.querySelectorAll('.photos-album-swipe')?.forEach((btn) => {
+  const swipeDirection = Number(btn.getAttribute('data-direction'));
 
-  btn.addEventListeners('click touchdown', (event) => {
-    let currentId = null
-    document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
-      currentId = Number(element.getAttribute('data-id'))
-    })
-    let newIndex = histoPhotoIds.indexOf(currentId)
-    newIndex += Number(swipeDirection)
+  btn.addEventListeners('click touchdown', () => {
+    let currentId = null;
+    document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach((element) => {
+      currentId = Number(element.getAttribute('data-id'));
+    });
+    let newIndex = histoPhotoIds.indexOf(currentId);
+    newIndex += Number(swipeDirection);
     if (newIndex < 0) {
-      newIndex = histoPhotoIds.length - 1
+      newIndex = histoPhotoIds.length - 1;
     }
     if (newIndex > histoPhotoIds.length - 1) {
-      newIndex = 0
+      newIndex = 0;
     }
-    displayPhotoAlbum(histoPhotoIds[newIndex])
-  })
-})
-document?.querySelectorAll('.photos-album-main-btn-edit')?.forEach(btn => {
-  btn.addEventListeners('click touchdown', (event) => {
-    const photoId = btn.dataset.id
-    btn.classList?.add('fr-hidden')
-    document?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')?.classList?.remove('fr-hidden')
-  })
-})
-document?.querySelectorAll('.photo-album-rotate-left-btn')?.forEach(btn => {
-  btn.addEventListeners('click touchdown', (event) => {
-    const photoId = btn.dataset.id
-    rotatePhotoAlbumImage(photoId, 'left')
-  })
-})
-document?.querySelectorAll('.photo-album-rotate-right-btn')?.forEach(btn => {
-  btn.addEventListeners('click touchdown', (event) => {
-    const photoId = btn.dataset.id
-    rotatePhotoAlbumImage(photoId, 'right')
-  })
-})
-document?.querySelectorAll('.photo-album-save-rotation')?.forEach(btn => {
-  btn.addEventListeners('click touchdown', (event) => {
-    const photoId = btn.dataset.id
-    const rotate = document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset.rotate
-    const action = btn.dataset.action
-    const form = document.querySelector('#form-save-file-rotation')
-    form.querySelector('input[name="rotate"]').value = rotate
-    form.action = action
-    form.submit()
-  })
-})
-document?.querySelectorAll('.photos-album-btn-zoom-in')?.forEach(btn => {
-  btn.addEventListener('click', (event) => {
-    setZoom(btn.dataset.id, true)
+    displayPhotoAlbum(histoPhotoIds[newIndex]);
+  });
+});
+document?.querySelectorAll('.photos-album-main-btn-edit')?.forEach((btn) => {
+  btn.addEventListeners('click touchdown', () => {
+    const photoId = btn.dataset.id;
+    btn.classList?.add('fr-hidden');
+    document
+      ?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')
+      ?.classList?.remove('fr-hidden');
+  });
+});
+document?.querySelectorAll('.photo-album-rotate-left-btn')?.forEach((btn) => {
+  btn.addEventListeners('click touchdown', () => {
+    const photoId = btn.dataset.id;
+    rotatePhotoAlbumImage(photoId, 'left');
+  });
+});
+document?.querySelectorAll('.photo-album-rotate-right-btn')?.forEach((btn) => {
+  btn.addEventListeners('click touchdown', () => {
+    const photoId = btn.dataset.id;
+    rotatePhotoAlbumImage(photoId, 'right');
+  });
+});
+document?.querySelectorAll('.photo-album-save-rotation')?.forEach((btn) => {
+  btn.addEventListeners('click touchdown', () => {
+    const photoId = btn.dataset.id;
+    const rotate = document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset
+      .rotate;
+    const action = btn.dataset.action;
+    const form = document.querySelector('#form-save-file-rotation');
+    form.querySelector('input[name="rotate"]').value = rotate;
+    form.action = action;
+    form.submit();
+  });
+});
+document?.querySelectorAll('.photos-album-btn-zoom-in')?.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    setZoom(btn.dataset.id, true);
   });
 });
 
-document?.querySelectorAll('.photos-album-btn-zoom-out')?.forEach(btn => {
-  btn.addEventListener('click', (event) => {
-      setZoom(btn.dataset.id, false)
+document?.querySelectorAll('.photos-album-btn-zoom-out')?.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    setZoom(btn.dataset.id, false);
   });
 });
 
@@ -120,22 +125,22 @@ const setZoom = (photoId, isZoomIn) => {
   parent.scrollTop = (parent.scrollHeight - parent.clientHeight) / 2;
 
   // correct transform scale with margin if necessary
-  let newHeight = img.height * scale
-  let newWidth = img.width * scale
- 
+  let newHeight = img.height * scale;
+  let newWidth = img.width * scale;
+
   if (newHeight > parent.clientHeight && newWidth < parent.clientWidth) {
-    let diffW = newWidth - img.width
-    img.style.marginLeft = '-' + diffW + 'px'
+    let diffW = newWidth - img.width;
+    img.style.marginLeft = '-' + diffW + 'px';
   }
   if (newHeight < parent.clientHeight && newWidth > parent.clientWidth) {
-    let diffH = newHeight - img.height
-    img.style.marginTop = '-' + diffH + 'px'
+    let diffH = newHeight - img.height;
+    img.style.marginTop = '-' + diffH + 'px';
   }
-  if (scale == 1 ){
+  if (scale == 1) {
     img.style.marginLeft = '0px';
     img.style.marginTop = '0px';
   }
-}
+};
 
 const resetZoom = (photoId) => {
   const img = document.querySelector('.photos-album-image[data-id="' + photoId + '"]');
@@ -145,209 +150,239 @@ const resetZoom = (photoId) => {
   img.style.marginLeft = '0px';
   img.style.marginTop = '0px';
   img.style.transformOrigin = 'center center';
-}
+};
 
 const displayPhotoAlbum = (photoId) => {
-  document?.querySelector('.photos-album-main-btn-edit[data-id="' + photoId + '"]')?.classList?.remove('fr-hidden')
-  document?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')?.classList?.add('fr-hidden')
+  document
+    ?.querySelector('.photos-album-main-btn-edit[data-id="' + photoId + '"]')
+    ?.classList?.remove('fr-hidden');
+  document
+    ?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')
+    ?.classList?.add('fr-hidden');
 
-  document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach(element => {
-    element.classList?.remove('loop-current')
-    element.classList?.add('fr-hidden')
-  })
-  document?.querySelectorAll('.photos-album-image-item[data-id="' + photoId + '"]')?.forEach(element => {
-    element.classList?.add('loop-current')
-    element.classList?.remove('fr-hidden')
-    document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset.rotate = 1
-    rotatePhotoAlbumImage(photoId, 'left')
-    resetZoom(photoId)
-  })
-}
+  document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach((element) => {
+    element.classList?.remove('loop-current');
+    element.classList?.add('fr-hidden');
+  });
+  document
+    ?.querySelectorAll('.photos-album-image-item[data-id="' + photoId + '"]')
+    ?.forEach((element) => {
+      element.classList?.add('loop-current');
+      element.classList?.remove('fr-hidden');
+      document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset.rotate = 1;
+      rotatePhotoAlbumImage(photoId, 'left');
+      resetZoom(photoId);
+    });
+};
 const rotatePhotoAlbumImage = (photoId, direction) => {
   resetZoom(photoId);
-  const imgElement = document.querySelector('.photos-album-image[data-id="' + photoId + '"]')
-  const parentElement = imgElement.parentElement
-  
-  imgElement.dataset.rotate = parseInt(imgElement.dataset.rotate) + (direction === 'left' ? -1 : 1)
-  if(imgElement.dataset.rotate > 3 || imgElement.dataset.rotate < -3){
-    imgElement.dataset.rotate = 0
+  const imgElement = document.querySelector('.photos-album-image[data-id="' + photoId + '"]');
+  const parentElement = imgElement.parentElement;
+
+  imgElement.dataset.rotate = parseInt(imgElement.dataset.rotate) + (direction === 'left' ? -1 : 1);
+  if (imgElement.dataset.rotate > 3 || imgElement.dataset.rotate < -3) {
+    imgElement.dataset.rotate = 0;
   }
-  let rotation = 0
-  rotation += parseInt(imgElement.dataset.rotate) * 90
-  imgElement.style.transform = `rotate(${rotation}deg)`
+  let rotation = 0;
+  rotation += parseInt(imgElement.dataset.rotate) * 90;
+  imgElement.style.transform = `rotate(${rotation}deg)`;
   if (rotation % 180 !== 0) {
-    imgElement.style.width = parentElement.clientHeight + 'px'
-    imgElement.style.height = parentElement.clientWidth + 'px'
+    imgElement.style.width = parentElement.clientHeight + 'px';
+    imgElement.style.height = parentElement.clientWidth + 'px';
   } else {
-    imgElement.style.width = parentElement.clientWidth + 'px'
-    imgElement.style.height = parentElement.clientHeight + 'px'
+    imgElement.style.width = parentElement.clientWidth + 'px';
+    imgElement.style.height = parentElement.clientHeight + 'px';
   }
-  if(imgElement.dataset.rotate !== '0') {
-    document.querySelector('.photo-album-save-rotation[data-id="' + photoId + '"]').removeAttribute('disabled')
-  }else{
-    document.querySelector('.photo-album-save-rotation[data-id="' + photoId + '"]').setAttribute('disabled', 'disabled')
+  if (imgElement.dataset.rotate !== '0') {
+    document
+      .querySelector('.photo-album-save-rotation[data-id="' + photoId + '"]')
+      .removeAttribute('disabled');
+  } else {
+    document
+      .querySelector('.photo-album-save-rotation[data-id="' + photoId + '"]')
+      .setAttribute('disabled', 'disabled');
   }
-}
+};
 
+loadWindowWithLocalStorage('click', '[data-filter-list-signalement]', 'back_link_signalement_view');
 
-loadWindowWithLocalStorage('click', '[data-filter-list-signalement]', 'back_link_signalement_view')
-
-document?.querySelectorAll('[data-fr-select-target]')?.forEach(t => {
-  const source = document?.querySelector('#' + t.getAttribute('data-fr-select-source'))
-  const target = document?.querySelector('#' + t.getAttribute('data-fr-select-target'))
+document?.querySelectorAll('[data-fr-select-target]')?.forEach((t) => {
+  const source = document?.querySelector('#' + t.getAttribute('data-fr-select-source'));
+  const target = document?.querySelector('#' + t.getAttribute('data-fr-select-target'));
   t.addEventListeners('click touchdown', () => {
-    [...source.selectedOptions].forEach(s => {
-      target.append(s)
-    })
-  })
-})
+    [...source.selectedOptions].forEach((s) => {
+      target.append(s);
+    });
+  });
+});
 
-document?.querySelector('#signalement-affectation-form-submit')?.addEventListeners('click touchdown', (e) => {
-  e.preventDefault()
-  e.target.disabled = true
-  e.target?.form?.querySelectorAll('option').forEach(o => {
-    o.selected = true
-  })
-  document?.querySelectorAll('#signalement-affectation-form-row,#signalement-affectation-loader-row').forEach(el => {
-    el.classList.toggle('fr-hidden')
-  })
+document
+  ?.querySelector('#signalement-affectation-form-submit')
+  ?.addEventListeners('click touchdown', (e) => {
+    e.preventDefault();
+    e.target.disabled = true;
+    e.target?.form?.querySelectorAll('option').forEach((o) => {
+      o.selected = true;
+    });
+    document
+      ?.querySelectorAll('#signalement-affectation-form-row,#signalement-affectation-loader-row')
+      .forEach((el) => {
+        el.classList.toggle('fr-hidden');
+      });
 
-  const formData = new FormData(e.target.form)
-  fetch(e.target.getAttribute('formaction'), {
-    method: 'POST',
-    body: formData
-  }).then(r => {
-    if (r.ok) {
-      window.location.reload(true)
-    }
-  })
-})
+    const formData = new FormData(e.target.form);
+    fetch(e.target.getAttribute('formaction'), {
+      method: 'POST',
+      body: formData,
+    }).then((r) => {
+      if (r.ok) {
+        window.location.reload(true);
+      }
+    });
+  });
 
-const modalsElement = document?.querySelectorAll('#cloture-modal, #fr-modal-add-suivi, #refus-signalement-modal, #refus-affectation-modal')
-modalsElement.forEach(modalElement => {
-  modalElement.addEventListener('submit', (e) => {
-    const submitButton = modalElement.querySelector('.fr-modal--opened [type=submit]')
+const modalsElement = document?.querySelectorAll(
+  '#cloture-modal, #fr-modal-add-suivi, #refus-signalement-modal, #refus-affectation-modal'
+);
+modalsElement.forEach((modalElement) => {
+  modalElement.addEventListener('submit', () => {
+    const submitButton = modalElement.querySelector('.fr-modal--opened [type=submit]');
     if (submitButton) {
-      submitButton.disabled = true
+      submitButton.disabled = true;
     }
-  })
-})
+  });
+});
 
-document.querySelectorAll('button[data-cloture-type]').forEach(button => {
+document.querySelectorAll('button[data-cloture-type]').forEach((button) => {
   button.addEventListener('click', (e) => {
-    const element = e.target
+    const element = e.target;
     if (element && element?.dataset) {
-      document.getElementById('cloture_type').value = element.dataset.clotureType
+      document.getElementById('cloture_type').value = element.dataset.clotureType;
     }
-  })
-})
+  });
+});
 
 let modalAddSuiviHasBeenOpened = false;
-document?.getElementById('fr-modal-add-suivi')?.addEventListener('dsfr.disclose', (event) => {
-  if(modalAddSuiviHasBeenOpened) {
+document?.getElementById('fr-modal-add-suivi')?.addEventListener('dsfr.disclose', () => {
+  if (modalAddSuiviHasBeenOpened) {
     return;
   }
   modalAddSuiviHasBeenOpened = true;
-  document.getElementById('add_suivi_isPublic').checked = false
-  document.getElementById('add_suivi_isPublic').dispatchEvent(new Event('change'))
+  document.getElementById('add_suivi_isPublic').checked = false;
+  document.getElementById('add_suivi_isPublic').dispatchEvent(new Event('change'));
   tinymce.get('add_suivi_description').setContent('');
-  document.querySelectorAll('input[name="add_suivi[files][]"]').forEach(checkbox => {
+  document.querySelectorAll('input[name="add_suivi[files][]"]').forEach((checkbox) => {
     checkbox.checked = false;
   });
-})
+});
 
 document?.getElementById('add_suivi_isPublic')?.addEventListeners('change', (e) => {
-  document.getElementById('signalement-add-suivi-submit').textContent = (e.target.checked) ? 'Envoyer le suivi à l\'usager' : 'Enregistrer le suivi interne'
-})
+  document.getElementById('signalement-add-suivi-submit').textContent = e.target.checked
+    ? 'Envoyer le suivi à l\'usager'
+    : 'Enregistrer le suivi interne';
+});
 
-document?.getElementById('fr-modal-historique-affectation')?.addEventListener('dsfr.disclose', (event) => {
-  const signalementId = event.target.dataset.signalementId
+document
+  ?.getElementById('fr-modal-historique-affectation')
+  ?.addEventListener('dsfr.disclose', (event) => {
+    const signalementId = event.target.dataset.signalementId;
 
-  document?.querySelectorAll('#signalement-historique-affectation-loader-row').forEach(el => {
-    el.classList.toggle('fr-hidden')
-  })
+    document?.querySelectorAll('#signalement-historique-affectation-loader-row').forEach((el) => {
+      el.classList.toggle('fr-hidden');
+    });
 
-  if (!signalementId) {
-    console.warn('Aucun signalementId trouvé')
-    return
-  }
+    if (!signalementId) {
+      console.warn('Aucun signalementId trouvé');
+      return;
+    }
 
-  fetch('/bo/history/signalement/' + signalementId + '/affectations', {
-    method: 'GET'
-  }).then(response => response.json())
-    .then(data => {
-      if (data.historyEntries) {
-        if (data.historyEntries.length === 0) {
-          const loadingMessage = document.getElementById('fr-modal-historique-affectation-loading-message')
-          loadingMessage.textContent = 'Il n\'y a pas d\'historique pour ce signalement'
-          loadingMessage.classList.remove('fr-hidden')
-        } else {
-          const historyEntries = data.historyEntries
-          const loadingMessage = document.getElementById('fr-modal-historique-affectation-loading-message')
-          loadingMessage.classList.add('fr-hidden')
-          const modalContent = document.getElementById('fr-modal-historique-affectation-content')
-          modalContent.innerHTML = ''
+    fetch('/bo/history/signalement/' + signalementId + '/affectations', {
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.historyEntries) {
+          if (data.historyEntries.length === 0) {
+            const loadingMessage = document.getElementById(
+              'fr-modal-historique-affectation-loading-message'
+            );
+            loadingMessage.textContent = 'Il n\'y a pas d\'historique pour ce signalement';
+            loadingMessage.classList.remove('fr-hidden');
+          } else {
+            const historyEntries = data.historyEntries;
+            const loadingMessage = document.getElementById(
+              'fr-modal-historique-affectation-loading-message'
+            );
+            loadingMessage.classList.add('fr-hidden');
+            const modalContent = document.getElementById('fr-modal-historique-affectation-content');
+            modalContent.innerHTML = '';
 
-          for (const [partner, events] of Object.entries(historyEntries)) {
-            const table = document.createElement('div')
-            table.classList.add('fr-table--sm')
-            table.classList.add('fr-table')
+            for (const [partner, events] of Object.entries(historyEntries)) {
+              const table = document.createElement('div');
+              table.classList.add('fr-table--sm');
+              table.classList.add('fr-table');
 
-            const wrapper = document.createElement('div')
-            wrapper.classList.add('fr-table__wrapper')
-            table.appendChild(wrapper)
+              const wrapper = document.createElement('div');
+              wrapper.classList.add('fr-table__wrapper');
+              table.appendChild(wrapper);
 
-            const container = document.createElement('div')
-            container.classList.add('fr-table__container')
-            wrapper.appendChild(container)
+              const container = document.createElement('div');
+              container.classList.add('fr-table__container');
+              wrapper.appendChild(container);
 
-            const tableContent = document.createElement('div')
-            tableContent.classList.add('fr-table__content')
-            container.appendChild(tableContent)
+              const tableContent = document.createElement('div');
+              tableContent.classList.add('fr-table__content');
+              container.appendChild(tableContent);
 
-            const tableContentTable = document.createElement('table')
-            tableContentTable.classList.add('fr-table__content')
-            tableContent.appendChild(tableContentTable)
+              const tableContentTable = document.createElement('table');
+              tableContentTable.classList.add('fr-table__content');
+              tableContent.appendChild(tableContentTable);
 
-            const tableContentTitle = document.createElement('caption')
-            tableContentTitle.textContent = partner
-            tableContentTable.appendChild(tableContentTitle)
+              const tableContentTitle = document.createElement('caption');
+              tableContentTitle.textContent = partner;
+              tableContentTable.appendChild(tableContentTitle);
 
-            const tableHeader = document.createElement('thead')
-            tableHeader.innerHTML = `
+              const tableHeader = document.createElement('thead');
+              tableHeader.innerHTML = `
                             <tr>
                                 <th class="fr-w-15">Date</th>
                                 <th>Action</th>
                             </tr>
-                        `
-            tableContentTable.appendChild(tableHeader)
+                        `;
+              tableContentTable.appendChild(tableHeader);
 
-            const tableBody = document.createElement('tbody')
-            events.forEach(event => {
-              const row = document.createElement('tr')
-              const dateCell = document.createElement('td')
-              const dateObj = new Date(event.Date)
-              const formattedDate = dateObj.toLocaleDateString('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
-                                                ' à ' + dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-              dateCell.textContent = formattedDate
-              row.appendChild(dateCell)
+              const tableBody = document.createElement('tbody');
+              events.forEach((event) => {
+                const row = document.createElement('tr');
+                const dateCell = document.createElement('td');
+                const dateObj = new Date(event.Date);
+                const formattedDate =
+                  dateObj.toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  }) +
+                  ' à ' +
+                  dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                dateCell.textContent = formattedDate;
+                row.appendChild(dateCell);
 
-              const actionCell = document.createElement('td')
-              actionCell.textContent = event.Action
-              row.appendChild(actionCell)
+                const actionCell = document.createElement('td');
+                actionCell.textContent = event.Action;
+                row.appendChild(actionCell);
 
-              tableBody.appendChild(row)
-            })
+                tableBody.appendChild(row);
+              });
 
-            tableContentTable.appendChild(tableBody)
-            modalContent.appendChild(table)
+              tableContentTable.appendChild(tableBody);
+              modalContent.appendChild(table);
+            }
           }
+        } else {
+          console.warn('Erreur de récupération des données :', data.response);
         }
-      } else {
-        console.warn('Erreur de récupération des données :', data.response)
-      }
-    })
-    .catch(function (err) {
-      console.warn('Something went wrong.', err)
-    })
-})
+      })
+      .catch(function (err) {
+        console.warn('Something went wrong.', err);
+      });
+  });

@@ -1,17 +1,17 @@
-document?.querySelectorAll('[data-reactive]')?.forEach(actionBtn => {
-  actionBtn.addEventListeners('click touchdown', event => {
-    event.preventDefault()
+document?.querySelectorAll('[data-reactive]')?.forEach((actionBtn) => {
+  actionBtn.addEventListeners('click touchdown', (event) => {
+    event.preventDefault();
     if (confirm('Voulez-vous vraiment réactiver ce signalement ?')) {
-      const formData = new FormData()
-      formData.append('_token', actionBtn.getAttribute('data-token'))
+      const formData = new FormData();
+      formData.append('_token', actionBtn.getAttribute('data-token'));
       fetch(actionBtn.getAttribute('data-reactive'), {
         method: 'POST',
-        body: formData
-      }).then(r => {
+        body: formData,
+      }).then((r) => {
         if (r.ok) {
-          window.location = r.url
+          window.location = r.url;
         }
-      })
+      });
     }
-  })
-})
+  });
+});
