@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboard = document.getElementById('dashboard');
     if (!dashboard) {
         const error = 'Erreur de chargement, merci de vérifier que l\'élément #dashboard existe.';
-        console.warn(error);
+        console.error(error);
         Sentry.captureException(new Error(error));
         return;
     }
