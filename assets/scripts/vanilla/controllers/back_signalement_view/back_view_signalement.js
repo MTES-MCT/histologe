@@ -43,8 +43,6 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
   })
 })
 
-initTippy()
-
 function initTippy() {
   tippy('.part-infos-hover', {
       content(reference) {
@@ -62,6 +60,9 @@ function initTippy() {
   });
 }
 
+if(typeof tippy !== 'undefined') {
+  initTippy()
+}
 openPhotoAlbumAddEventListeners()
 
 function openPhotoAlbumAddEventListeners() {

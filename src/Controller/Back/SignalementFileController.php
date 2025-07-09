@@ -73,7 +73,7 @@ class SignalementFileController extends AbstractController
             $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
-            return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
         $documentType = DocumentType::AUTRE;
         if ($request->get('documentType') && $request->get('documentType') === DocumentType::AUTRE_PROCEDURE->name) {
@@ -161,7 +161,7 @@ class SignalementFileController extends AbstractController
         $fileId = $request->get('file_id');
         $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
         $this->denyAccessUnlessGranted('FILE_DELETE', $file);
-        $fragment = in_array($request->get('is_draft'), ['activite', 'situation']) ? $request->get('is_draft') : 'documents';
+        $fragment = in_array($request->get('hash_src'), ['activite', 'situation']) ? $request->get('hash_src') : 'documents';
         if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
             $message = 'Token CSRF invalide, veuillez recharger la page';
             if ('1' === $request->get('is_draft')) {
@@ -233,7 +233,7 @@ class SignalementFileController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
-            $errorMsg = 'Token CSRF invalide, veuillez rechargez la page';
+            $errorMsg = 'Token CSRF invalide, veuillez recharger la page';
 
             return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
         }
@@ -247,7 +247,7 @@ class SignalementFileController extends AbstractController
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
         $documentType = DocumentType::tryFrom($request->get('documentType'));
         if (DocumentType::PHOTO_VISITE === $file->getDocumentType()) {
-            // le type de document ne peut pas être modifié pour PHOTO_VISITE
+            // un document typé PHOTO_VISITE ne peut pas changer de type
         } elseif ($request->get('documentType') && isset($infoDesordres['criteres'][$request->get('documentType')])) {
             $file->setDocumentType(DocumentType::PHOTO_SITUATION);
             $file->setDesordreSlug($request->get('documentType'));

@@ -38,9 +38,11 @@
                             <div>
                                 Ajouter un ou plusieurs documents. Pour chaque document, veuillez renseigner son type.
                             </div>
-                            <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-1w ">
-                                <p>Pour ajouter des documents concernant la procédure ou le bailleur, rendez-vous dans l'onglet "Documents".</p>
-                            </div>
+                            {% if context == 'form-bo-edit' %}
+                                <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-1w ">
+                                    <p>Pour ajouter des documents concernant la procédure ou le bailleur, rendez-vous dans l'onglet "Documents".</p>
+                                </div>
+                            {% endif %}
                             {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}   
                                 <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
                                     <p>Ces documents seront visibles sur la fiche de suivi usager.</p>

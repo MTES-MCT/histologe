@@ -105,7 +105,7 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(400);
         $this->assertStringContainsString(
-            'Token CSRF invalide ou param\u00e8tre manquant, veuillez rechargez la page',
+            'Token CSRF invalide ou param\u00e8tre manquant, veuillez recharger la page',
             $this->client->getResponse()->getContent()
         );
     }

@@ -41,7 +41,7 @@ class SignalementFileController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
-            return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
         $fileList = $signalementFileProcessor->process($files);
         if (!$signalementFileProcessor->isValid()) {
@@ -69,7 +69,7 @@ class SignalementFileController extends AbstractController
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
-            return $this->json(['response' => 'Token CSRF invalide, veuillez rechargez la page'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['response' => 'Token CSRF invalide, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
         $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
         if (null === $file) {
@@ -159,7 +159,7 @@ class SignalementFileController extends AbstractController
                 $this->addFlash('error', 'Le fichier n\'a pas été supprimé.');
             }
         } else {
-            $this->addFlash('error', 'Token CSRF invalide, veuillez rechargez la page');
+            $this->addFlash('error', 'Token CSRF invalide, veuillez recharger la page');
         }
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);

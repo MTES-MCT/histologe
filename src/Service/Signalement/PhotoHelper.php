@@ -27,13 +27,13 @@ class PhotoHelper
     public static function getSortedPhotos(Signalement $signalement, ?string $type = null): array
     {
         $photoList = $signalement->getPhotos()->toArray();
-        $photoListByType = ['situation' => [], 'procedure' => [], 'visite' => []];
+        $photoListByType = ['situation' => [], 'procédure' => [], 'visite' => []];
 
         foreach ($photoList as $photoItem) {
             if ($photoItem->isSituationImage()) {
                 $photoListByType['situation'][] = $photoItem;
             } elseif ($photoItem->isProcedureImage()) {
-                $photoListByType['procedure'][] = $photoItem;
+                $photoListByType['procédure'][] = $photoItem;
             } else {
                 $photoListByType['visite'][] = $photoItem;
             }
@@ -74,6 +74,6 @@ class PhotoHelper
             return $photoListByType[$type] ?? [];
         }
 
-        return array_merge($photoListByType['situation'], $photoListByType['procedure'], $photoListByType['visite']);
+        return array_merge($photoListByType['situation'], $photoListByType['procédure'], $photoListByType['visite']);
     }
 }
