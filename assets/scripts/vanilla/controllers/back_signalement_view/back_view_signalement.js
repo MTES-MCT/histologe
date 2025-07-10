@@ -278,7 +278,7 @@ document?.getElementById('fr-modal-add-suivi')?.addEventListener('dsfr.disclose'
 
 document?.getElementById('add_suivi_isPublic')?.addEventListeners('change', (e) => {
   document.getElementById('signalement-add-suivi-submit').textContent = e.target.checked
-    ? 'Envoyer le suivi à l\'usager'
+    ? "Envoyer le suivi à l'usager"
     : 'Enregistrer le suivi interne';
 });
 
@@ -306,7 +306,7 @@ document
             const loadingMessage = document.getElementById(
               'fr-modal-historique-affectation-loading-message'
             );
-            loadingMessage.textContent = 'Il n\'y a pas d\'historique pour ce signalement';
+            loadingMessage.textContent = "Il n'y a pas d'historique pour ce signalement";
             loadingMessage.classList.remove('fr-hidden');
           } else {
             const historyEntries = data.historyEntries;

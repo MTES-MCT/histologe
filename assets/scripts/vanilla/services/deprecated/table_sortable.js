@@ -30,7 +30,7 @@ const sortRows = (table, index) => {
   for (
     classList &&
       (classList.contains('date') ? (c = 'date') : classList.contains('number') && (c = 'number')),
-    a = 0;
+      a = 0;
     a < n.length;
     a++
   ) {
@@ -86,7 +86,7 @@ for (let iTables = 0; iTables < tables.length; iTables++) {
     headers = thead.querySelectorAll('th');
 
     for (let jHeaders = 0; jHeaders < headers.length; jHeaders++) {
-      headers[jHeaders].innerHTML = '<a href=\'#\'>' + headers[jHeaders].textContent + '</a>';
+      headers[jHeaders].innerHTML = "<a href='#'>" + headers[jHeaders].textContent + '</a>';
     }
 
     thead.addEventListener('click', sortTableFunction(table));

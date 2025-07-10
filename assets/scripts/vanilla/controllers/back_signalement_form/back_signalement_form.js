@@ -168,23 +168,23 @@ function initBoFormSignalementSubmit(tabName) {
     });
   });
   switch (tabName) {
-  case 'adresse':
-    initBoFormSignalementAdresse();
-    break;
-  case 'logement':
-    initBoFormSignalementLogement();
-    break;
-  case 'situation':
-    initBoFormSignalementSituation();
-    break;
-  case 'coordonnees':
-    initBoFormSignalementCoordonnees();
-    initComponentAdress('#signalement_draft_coordonnees_adresseCompleteProprio');
-    initComponentAdress('#signalement_draft_coordonnees_adresseCompleteAgence');
-    break;
-  case 'desordres':
-    initBoFormSignalementDesordres();
-    break;
+    case 'adresse':
+      initBoFormSignalementAdresse();
+      break;
+    case 'logement':
+      initBoFormSignalementLogement();
+      break;
+    case 'situation':
+      initBoFormSignalementSituation();
+      break;
+    case 'coordonnees':
+      initBoFormSignalementCoordonnees();
+      initComponentAdress('#signalement_draft_coordonnees_adresseCompleteProprio');
+      initComponentAdress('#signalement_draft_coordonnees_adresseCompleteAgence');
+      break;
+    case 'desordres':
+      initBoFormSignalementDesordres();
+      break;
   }
 }
 
@@ -313,7 +313,7 @@ function initBoFormSignalementDesordres() {
 
     let nbCriteres = 0;
     // Récupérer les critères sélectionnés
-    modal.querySelectorAll('input[type=\'checkbox\']:checked').forEach((checkbox) => {
+    modal.querySelectorAll("input[type='checkbox']:checked").forEach((checkbox) => {
       nbCriteres++;
       const critereId = checkbox.value;
 
@@ -381,10 +381,10 @@ function initBoFormSignalementDesordres() {
         if (checkbox) checkbox.checked = false;
         if (modalElement) {
           modalElement
-            .querySelectorAll('input[type=\'checkbox\']')
+            .querySelectorAll("input[type='checkbox']")
             .forEach((cb) => (cb.checked = false));
           modalElement
-            .querySelectorAll('input[type=\'text\']')
+            .querySelectorAll("input[type='text']")
             .forEach((inputTextElement) => (inputTextElement.value = null));
         }
         encart.remove();
@@ -413,7 +413,7 @@ function initBoFormSignalementDesordres() {
     const ulElement = precisionContainer ? precisionContainer.querySelector('ul') : null;
     if (ulElement) {
       ulElement.innerHTML = '';
-      const checkboxes = modal.querySelectorAll('input[type=\'checkbox\']');
+      const checkboxes = modal.querySelectorAll("input[type='checkbox']");
       checkboxes.forEach((checkbox) => {
         if (checkbox.checked) {
           const precisionLabel = checkbox.labels[0].innerHTML;
@@ -433,7 +433,7 @@ function initBoFormSignalementDesordres() {
         ? precisionContainer.querySelector('#details-critere')
         : null;
       detailsCritereElement.innerHTML = '';
-      const inputTextElement = modal.querySelector('input[type=\'text\']');
+      const inputTextElement = modal.querySelector("input[type='text']");
       if ('' != inputTextElement.value) {
         const detailItem = document.createElement('span');
         detailItem.innerText = 'Commentaire : ';

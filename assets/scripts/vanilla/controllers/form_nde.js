@@ -28,32 +28,32 @@ formBtn?.addEventListener('click', () => {
 
     const stringToBoolean = (stringValue) => {
       switch (stringValue?.toLowerCase()?.trim()) {
-      case 'true':
-      case 'yes':
-      case '1':
-        return true;
+        case 'true':
+        case 'yes':
+        case '1':
+          return true;
 
-      case 'false':
-      case 'no':
-      case '0':
-        return false;
+        case 'false':
+        case 'no':
+        case '0':
+          return false;
 
-      case 'null':
-      case null:
-      case undefined:
-      default:
-        return null;
+        case 'null':
+        case null:
+        case undefined:
+        default:
+          return null;
       }
     };
 
     const inputValueToNumber = (inputValue) => {
       switch (inputValue) {
-      case '':
-      case null:
-      case undefined:
-        return null;
-      default:
-        return Math.round(Number(inputValue));
+        case '':
+        case null:
+        case undefined:
+          return null;
+        default:
+          return Math.round(Number(inputValue));
       }
     };
 
@@ -93,24 +93,20 @@ formBtn?.addEventListener('click', () => {
 });
 
 if (document.querySelector('#signalement-edit-nde-dpe-date-before')) {
-  document
-    .querySelector('#signalement-edit-nde-dpe-date-before')
-    .addEventListener('change', () => {
-      document.querySelector('.field-nde-conso-energie').classList.add('fr-col-6');
-      document.querySelector('.field-nde-conso-energie').classList.remove('fr-col-12');
-      document.querySelector('.field-nde-conso-energie-unity').classList.add('fr-hidden');
-      document.querySelector('.field-nde-superficie').classList.add('fr-col-6');
-      document.querySelector('.field-nde-superficie').classList.remove('fr-hidden');
-    });
+  document.querySelector('#signalement-edit-nde-dpe-date-before').addEventListener('change', () => {
+    document.querySelector('.field-nde-conso-energie').classList.add('fr-col-6');
+    document.querySelector('.field-nde-conso-energie').classList.remove('fr-col-12');
+    document.querySelector('.field-nde-conso-energie-unity').classList.add('fr-hidden');
+    document.querySelector('.field-nde-superficie').classList.add('fr-col-6');
+    document.querySelector('.field-nde-superficie').classList.remove('fr-hidden');
+  });
 }
 if (document.querySelector('#signalement-edit-nde-dpe-date-after')) {
-  document
-    .querySelector('#signalement-edit-nde-dpe-date-after')
-    .addEventListener('change', () => {
-      document.querySelector('.field-nde-conso-energie').classList.remove('fr-col-6');
-      document.querySelector('.field-nde-conso-energie').classList.add('fr-col-12');
-      document.querySelector('.field-nde-conso-energie-unity').classList.remove('fr-hidden');
-      document.querySelector('.field-nde-superficie').classList.remove('fr-col-6');
-      document.querySelector('.field-nde-superficie').classList.add('fr-hidden');
-    });
+  document.querySelector('#signalement-edit-nde-dpe-date-after').addEventListener('change', () => {
+    document.querySelector('.field-nde-conso-energie').classList.remove('fr-col-6');
+    document.querySelector('.field-nde-conso-energie').classList.add('fr-col-12');
+    document.querySelector('.field-nde-conso-energie-unity').classList.remove('fr-hidden');
+    document.querySelector('.field-nde-superficie').classList.remove('fr-col-6');
+    document.querySelector('.field-nde-superficie').classList.add('fr-hidden');
+  });
 }

@@ -33,12 +33,12 @@ function handleAcceptButton() {
       if (response.ok) {
         dsfr(modalCguBo).modal.conceal();
       } else {
-        alert('Erreur lors de l\'enregistrement de votre validation');
+        alert("Erreur lors de l'enregistrement de votre validation");
       }
     })
     .catch((error) => {
       console.error('Error:', error);
-      alert('Erreur lors de l\'enregistrement de votre validation');
+      alert("Erreur lors de l'enregistrement de votre validation");
     });
 }
 

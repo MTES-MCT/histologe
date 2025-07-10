@@ -111,7 +111,7 @@ async function submitEditEmail(formElement) {
       alert(responseData.message);
     }
   } catch (error) {
-    alert('Une erreur s\'est produite. Veuillez actualiser la page.');
+    alert("Une erreur s'est produite. Veuillez actualiser la page.");
     Sentry.captureException(new Error(error));
   }
 }
