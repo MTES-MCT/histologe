@@ -1,65 +1,65 @@
 /* global dsfr */
 
-const modalCguBo = document.getElementById('fr-modal-cgu-bo')
-const acceptCguBoCheckbox = document.getElementById('checkboxes-modal-cgu-bo-accept')
-const acceptCguBoButton = document.getElementById('fr-modal-cgu-bo-btn')
+const modalCguBo = document.getElementById('fr-modal-cgu-bo');
+const acceptCguBoCheckbox = document.getElementById('checkboxes-modal-cgu-bo-accept');
+const acceptCguBoButton = document.getElementById('fr-modal-cgu-bo-btn');
 
-function handleModalDisclose () {
+function handleModalDisclose() {
   setTimeout(() => {
-    const divContent = modalCguBo.querySelector('.fr-modal__body')
-    divContent.scrollTo({ top: 0 })
-  }, 200)
+    const divContent = modalCguBo.querySelector('.fr-modal__body');
+    divContent.scrollTo({ top: 0 });
+  }, 200);
 }
 
-function handleAcceptCheck () {
-  acceptCguBoButton.disabled = !acceptCguBoCheckbox.checked
+function handleAcceptCheck() {
+  acceptCguBoButton.disabled = !acceptCguBoCheckbox.checked;
 }
 
-function handleAcceptButton () {
-  const url = document.getElementById('form-cgu-bo-url').value
+function handleAcceptButton() {
+  const url = document.getElementById('form-cgu-bo-url').value;
   const data = {
-    _token: document.getElementById('form-cgu-bo-token').value
-  }
+    _token: document.getElementById('form-cgu-bo-token').value,
+  };
   const options = {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data)
-  }
+    body: JSON.stringify(data),
+  };
 
   fetch(url, options)
     .then((response) => {
       if (response.ok) {
-        dsfr(modalCguBo).modal.conceal()
+        dsfr(modalCguBo).modal.conceal();
       } else {
-        alert('Erreur lors de l\'enregistrement de votre validation')
+        alert("Erreur lors de l'enregistrement de votre validation");
       }
     })
     .catch((error) => {
-      console.error('Error:', error)
-      alert('Erreur lors de l\'enregistrement de votre validation')
-    })
+      console.error('Error:', error);
+      alert("Erreur lors de l'enregistrement de votre validation");
+    });
 }
 
-acceptCguBoCheckbox?.addEventListener('click', handleAcceptCheck)
-acceptCguBoButton?.addEventListener('click', handleAcceptButton)
-modalCguBo?.addEventListener('dsfr.disclose', handleModalDisclose)
+acceptCguBoCheckbox?.addEventListener('click', handleAcceptCheck);
+acceptCguBoButton?.addEventListener('click', handleAcceptButton);
+modalCguBo?.addEventListener('dsfr.disclose', handleModalDisclose);
 
-const modalPopNotification = document.getElementById('fr-modal-pop-notification')
-if(modalPopNotification){
+const modalPopNotification = document.getElementById('fr-modal-pop-notification');
+if (modalPopNotification) {
   //prevent error dsfr is not defined or null
   const checkDsfrInterval = setInterval(() => {
     if (typeof dsfr !== 'undefined' && dsfr !== null) {
       clearInterval(checkDsfrInterval);
 
-        modalPopNotification.addEventListener('dsfr.conceal', (e) => {
-            const deletePopNotificationUrl = modalPopNotification.dataset.deleteUrl;
-            fetch(deletePopNotificationUrl, {})
-        });
+      modalPopNotification.addEventListener('dsfr.conceal', () => {
+        const deletePopNotificationUrl = modalPopNotification.dataset.deleteUrl;
+        fetch(deletePopNotificationUrl, {});
+      });
 
       if (modalCguBo) {
-        modalCguBo.addEventListener('dsfr.conceal', (e) => {
+        modalCguBo.addEventListener('dsfr.conceal', () => {
           dsfr(modalPopNotification).modal.disclose();
         });
       } else {
@@ -68,4 +68,3 @@ if(modalPopNotification){
     }
   }, 100);
 }
-
