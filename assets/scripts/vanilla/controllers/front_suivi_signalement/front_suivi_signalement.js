@@ -195,11 +195,17 @@ if (modalUploadFiles) {
         fetch(deleteFileLink.href, { method: 'DELETE' })
           .then((response) => response.json())
           .then((data) => {
+            div.querySelectorAll('.file-error').forEach(errorEl => errorEl.remove())
             if (data.success) {
               document.getElementById( 'uploaded-file-' + data.fileId).remove()
             } else {
-              deleteFileLink.style.display = 'inline'
+              deleteFileLink.style.display = ''
+              div.insertAdjacentHTML('beforeend', '<div class="fr-col-12 file-error"><div class="fr-alert fr-alert--error fr-alert--sm">Une erreur est survenue lors de la suppression du fichier.</div></div>')
             }
+          }).catch((error) => {
+            deleteFileLink.style.display = ''
+            div.querySelectorAll('.file-error').forEach(errorEl => errorEl.remove())
+            div.insertAdjacentHTML('beforeend', '<div class="fr-col-12 file-error"><div class="fr-alert fr-alert--error fr-alert--sm">Une erreur est survenue lors de la suppression du fichier.</div></div>')
           })
       })
     }

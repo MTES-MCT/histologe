@@ -19,6 +19,7 @@ use App\Form\UsagerPoursuivreProcedureType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
@@ -625,7 +626,7 @@ class SignalementController extends AbstractController
         if ($this->isGranted('SIGN_USAGER_EDIT', $signalement) && $formMessage->isSubmitted() && $formMessage->isValid()) {
             $description = nl2br(htmlspecialchars($formMessage->get('description')->getData(), \ENT_QUOTES, 'UTF-8'));
 
-            $docs = $fileRepository->findTmpForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
+            $docs = $fileRepository->findTempForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
             $filesToAttach = [];
             if (\count($docs)) {
                 foreach ($docs as $doc) {
@@ -701,7 +702,7 @@ class SignalementController extends AbstractController
             $form->handleRequest($request);
             if ($form->isSubmitted()) {
                 if ($form->isValid()) {
-                    $docs = $fileRepository->findTmpForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
+                    $docs = $fileRepository->findTempForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
                     $filesToAttach = [];
                     foreach ($form->getExtraData()['file'] as $fileId) {
                         if (isset($docs[$fileId])) {
@@ -710,9 +711,13 @@ class SignalementController extends AbstractController
                         }
                     }
                     if ($filesToAttach) {
+                        $descriptionDetails = 'un document.';
+                        if (\count($filesToAttach) > 1) {
+                            $descriptionDetails = 'des documents.';
+                        }
                         $suiviManager->createSuivi(
                             signalement: $signalement,
-                            description: '',
+                            description: UserManager::OCCUPANT === $signalementUser->getType() ? 'L\'occupant a ajouté '.$descriptionDetails : 'Le déclarant a ajouté '.$descriptionDetails,
                             type: Suivi::TYPE_USAGER,
                             category: SuiviCategory::MESSAGE_USAGER,
                             isPublic: true,

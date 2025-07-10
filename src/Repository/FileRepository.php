@@ -129,7 +129,7 @@ class FileRepository extends ServiceEntityRepository
     /**
      * @return array<int, File>
      */
-    public function findTmpForSignalementAndUserIndexedById(Signalement $signalement, User $user): array
+    public function findTempForSignalementAndUserIndexedById(Signalement $signalement, User $user): array
     {
         return $this->createQueryBuilder('f')
             ->andWhere('f.signalement = :signalement')

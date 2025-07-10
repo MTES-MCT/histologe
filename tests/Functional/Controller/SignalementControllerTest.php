@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
@@ -244,6 +245,89 @@ class SignalementControllerTest extends WebTestCase
         } else {
             $this->assertResponseRedirects('/authentification/'.$signalement->getCodeSuivi());
         }
+    }
+
+    public function testUsagerAddDocuments(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-09']);
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $fileRepository = $entityManager->getRepository(File::class);
+        $files = $fileRepository->findBy([], [], 2);
+        foreach ($files as $file) {
+            $file->setSignalement($signalement);
+            $file->setUploadedBy($signalementUser->getUser());
+            $file->setIsTemp(true);
+        }
+        $entityManager->flush();
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $urlAddDocuments = $router->generate('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
+
+        $client->request('POST', $urlAddDocuments, [
+            'form' => [
+                'file' => [
+                    $files[0]->getId(),
+                    $files[1]->getId(),
+                ],
+                '_token' => $this->generateCsrfToken($client, 'form'),
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/documents');
+
+        $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $successMessages = $flashBag->get('success');
+        $this->assertEquals('Vos documents ont bien été enregistrés.', $successMessages[0]);
+
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-09']);
+        $lastSuivi = $signalement->getLastSuivi();
+        $this->assertEquals(count($lastSuivi->getSuiviFiles()), 2);
+        $this->assertStringStartsWith('L&#039;occupant a ajouté des documents.', $lastSuivi->getDescription());
+    }
+
+    public function testUsagerAddInvalidDocuments(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-09']);
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $fileRepository = $entityManager->getRepository(File::class);
+        $files = $fileRepository->findBy([], [], 2);
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $urlAddDocuments = $router->generate('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
+
+        $client->request('POST', $urlAddDocuments, [
+            'form' => [
+                'file' => [
+                    $files[0]->getId(),
+                    $files[1]->getId(),
+                ],
+                '_token' => $this->generateCsrfToken($client, 'form'),
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/documents');
+
+        $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertFalse($flashBag->has('success'));
     }
 
     public function testPostSignalementDraft(): void
