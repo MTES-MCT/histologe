@@ -231,6 +231,8 @@ class SuiviRepository extends ServiceEntityRepository
 
     /**
      * @return array<int, int|string>
+     *
+     * @throws Exception
      */
     public function findSignalementsLastSuiviPublic(
         int $period = Suivi::DEFAULT_PERIOD_RELANCE,
@@ -239,7 +241,7 @@ class SuiviRepository extends ServiceEntityRepository
 
         $parameters = [
             'day_period' => $period,
-            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
             'status_closed' => SignalementStatus::CLOSED->value,
             'status_archived' => SignalementStatus::ARCHIVED->value,
@@ -253,7 +255,7 @@ class SuiviRepository extends ServiceEntityRepository
         LEFT JOIN (
             SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique_or_public
             FROM suivi
-            WHERE (type = :type_suivi_technical OR is_public = 1)
+            WHERE (category = :category_ask_feedback OR is_public = 1)
             GROUP BY signalement_id
         ) su ON s.id = su.signalement_id
         WHERE s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused, :status_draft, :status_draft_archived)
@@ -271,15 +273,17 @@ class SuiviRepository extends ServiceEntityRepository
 
     /**
      * @return array<int, int|string>
+     *
+     * @throws Exception
      */
-    public function findSignalementsLastSuiviTechnical(
+    public function findSignalementsLastAskFeedbackSuiviTechnical(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
 
         $parameters = [
             'day_period' => $period,
-            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
             'status_closed' => SignalementStatus::CLOSED->value,
             'status_archived' => SignalementStatus::ARCHIVED->value,
@@ -293,7 +297,7 @@ class SuiviRepository extends ServiceEntityRepository
                 INNER JOIN (
                     SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique
                     FROM suivi
-                    WHERE type = :type_suivi_technical
+                    WHERE category = :category_ask_feedback
                     GROUP BY signalement_id
                 ) su ON s.id = su.signalement_id
                 LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.max_date_suivi_technique
@@ -302,6 +306,7 @@ class SuiviRepository extends ServiceEntityRepository
                 AND s.is_imported != 1
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
                 LIMIT '.$this->limitDailyRelancesByRequest;
+
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
@@ -312,14 +317,13 @@ class SuiviRepository extends ServiceEntityRepository
      *
      * @throws Exception
      */
-    public function findSignalementsForThirdRelance(
+    public function findSignalementsForThirdAskFeedbackRelance(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
         $connection = $this->getEntityManager()->getConnection();
 
         $parameters = [
-            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
-            'suivi_category' => SuiviCategory::ASK_FEEDBACK_SENT->value,
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
             'status_closed' => SignalementStatus::CLOSED->value,
             'status_archived' => SignalementStatus::ARCHIVED->value,
@@ -329,7 +333,7 @@ class SuiviRepository extends ServiceEntityRepository
             'nb_suivi_technical' => 2,
         ];
 
-        $sql = $this->getSignalementsLastSuivisTechnicalsQuery(excludeUsagerAbandonProcedure: true, dayPeriod: $period);
+        $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(dayPeriod: $period);
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
         $statement = $connection->prepare($sql);
 
@@ -347,8 +351,7 @@ class SuiviRepository extends ServiceEntityRepository
     ): int {
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
-            'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
-            'suivi_category' => SuiviCategory::ASK_FEEDBACK_SENT->value,
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
             'status_archived' => SignalementStatus::ARCHIVED->value,
             'status_closed' => SignalementStatus::CLOSED->value,
@@ -368,9 +371,8 @@ class SuiviRepository extends ServiceEntityRepository
 
         $sql = 'SELECT COUNT(*) as count_signalement
                 FROM ('.
-                        $this->getSignalementsLastSuivisTechnicalsQuery(
+                        $this->getSignalementsLastAskFeedbackSuivisQuery(
                             excludeUsagerAbandonProcedure: false,
-                            dayPeriod: 0,
                             partners: $partners,
                             territories: $territories,
                         )
@@ -383,7 +385,7 @@ class SuiviRepository extends ServiceEntityRepository
     /**
      * @param array<int, Territory> $territories
      */
-    public function getSignalementsLastSuivisTechnicalsQuery(
+    public function getSignalementsLastAskFeedbackSuivisQuery(
         bool $excludeUsagerAbandonProcedure = true,
         int $dayPeriod = 0,
         ?ArrayCollection $partners = null,
@@ -424,13 +426,13 @@ class SuiviRepository extends ServiceEntityRepository
                 INNER JOIN (
                     SELECT su.signalement_id, MIN(su.created_at) AS min_date
                     FROM suivi su
-                    WHERE su.type = :type_suivi_technical AND su.category = :suivi_category
+                    WHERE su.category = :category_ask_feedback
                     GROUP BY su.signalement_id
                     HAVING COUNT(*) >= :nb_suivi_technical
                 ) t1 ON s.id = t1.signalement_id
                 LEFT JOIN suivi su2 ON s.id = su2.signalement_id
                 AND su2.created_at > t1.min_date
-                AND su2.type <> :type_suivi_technical
+                AND su2.category <> :category_ask_feedback
                 WHERE su2.signalement_id IS NULL
                 AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused, :status_draft, :status_draft_archived)
                 AND s.is_imported != 1 '

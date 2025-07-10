@@ -44,7 +44,14 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             '--debug',
             null,
             InputOption::VALUE_NONE,
-            'Check how many emails will be send'
+            'Check how many emails will be sent'
+        );
+
+        $this->addOption(
+            '--period',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Days of inactivity before sending feedback emails'
         );
     }
 
@@ -64,9 +71,10 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             return Command::FAILURE;
         }
 
-        $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input);
-        $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input);
-        $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input);
+        $period = $input->getOption('period');
+        $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input, $period);
+        $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input, $period);
+        $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input, $period);
 
         $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsLastSuiviTechnical + $nbSignalementsLastSuiviPublic;
         if ($input->getOption('debug')) {
@@ -107,8 +115,12 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
      */
     protected function processSignalementsThirdRelance(
         InputInterface $input,
+        ?int $period = null,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsForThirdRelance();
+        $signalementsIds = isset($period)
+            ? $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance($period)
+            : $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
+
         $nbSignalements = $this->sendMailToUsagers(
             $input,
             $signalementsIds,
@@ -125,10 +137,17 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         return $nbSignalements;
     }
 
+    /**
+     * @throws Exception
+     */
     protected function processSignalementsLastSuiviTechnical(
         InputInterface $input,
+        ?int $period = null,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsLastSuiviTechnical();
+        $signalementsIds = isset($period)
+            ? $this->suiviRepository->findSignalementsLastAskFeedbackSuiviTechnical($period)
+            : $this->suiviRepository->findSignalementsLastAskFeedbackSuiviTechnical();
+
         $nbSignalements = $this->sendMailToUsagers(
             $input,
             $signalementsIds,
@@ -145,10 +164,16 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         return $nbSignalements;
     }
 
+    /**
+     * @throws Exception
+     */
     protected function processSignalementsLastSuiviPublic(
         InputInterface $input,
+        ?int $period = null,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsLastSuiviPublic();
+        $signalementsIds = isset($period)
+            ? $this->suiviRepository->findSignalementsLastSuiviPublic($period)
+            : $this->suiviRepository->findSignalementsLastSuiviPublic();
         $nbSignalements = $this->sendMailToUsagers(
             $input,
             $signalementsIds,
