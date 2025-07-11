@@ -174,7 +174,8 @@ class SearchFilter
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
                     ->select('DISTINCT s.id')
                     ->leftJoin('a.signalement', 's')
-                    ->where('a.statut != '.AffectationStatus::CLOSED->value);
+                    ->where('a.statut != :statutFerme')
+                    ->setParameter('statutFerme', AffectationStatus::CLOSED->value);
 
                 // les signalements n'ayant aucune affectation non fermée ou qui sont fermés
                 $qb->andWhere(
