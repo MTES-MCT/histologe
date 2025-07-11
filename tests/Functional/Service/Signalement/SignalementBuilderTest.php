@@ -252,8 +252,8 @@ class SignalementBuilderTest extends KernelTestCase
             ->build();
 
         $this->assertCount(12, $signalement->getDesordreCategories());
-        $this->assertCount(57, $signalement->getDesordreCriteres());
-        $this->assertCount(65, $signalement->getDesordrePrecisions());
+        $this->assertCount(56, $signalement->getDesordreCriteres());
+        $this->assertCount(64, $signalement->getDesordrePrecisions());
 
         $desordreCritere = $this->desordreCritereRepository->findOneBy(
             ['slugCritere' => 'desordres_type_composition_logement_sous_combles']

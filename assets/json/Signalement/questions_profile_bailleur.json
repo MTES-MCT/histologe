@@ -585,28 +585,6 @@
           }
         },
         {
-          "type": "SignalementFormOnlyChoice",
-          "label": "La hauteur jusqu'au plafond est de 2m (200cm) ou plus ?",
-          "slug": "composition_logement_hauteur",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            },
-            {
-              "label": "Je ne sais pas",
-              "value": "nsp"
-            }
-          ],
-          "validate": {
-            "message": "Veuillez indiquer si la hauteur jusqu'au plafond est de 2m ou plus."
-          }
-        },
-        {
           "type": "SignalementFormCounter",
           "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
           "description": "Format attendu : Saisir un nombre entier",

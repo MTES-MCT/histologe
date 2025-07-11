@@ -342,7 +342,6 @@ export default defineComponent({
         result += this.addLineIfNeeded('type_logement_nature_autre_precision', 'De type : ')
       }
       result += this.addLineIfNeeded('composition_logement_superficie', 'Superficie en m² : ')
-      result += this.addLineIfNeeded('composition_logement_hauteur', 'La hauteur jusqu\'au plafond est de 2m (200cm) ou plus ? ')
       result += this.addLineIfNeeded('composition_logement_piece_unique', 'Une seule ou plusieurs pièces ? ')
       if (this.formStore.data.composition_logement_piece_unique === 'plusieurs_pieces') {
         result += this.addLineIfNeeded('composition_logement_nb_pieces', 'Nombre de pièces à vivre : ')

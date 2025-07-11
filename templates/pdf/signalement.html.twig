@@ -158,10 +158,6 @@
                                     <b>Logement :</b> {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
                                 </li>
                                 <li>
-                                    <b>Hauteur > 2m :</b> {{ signalement.typeCompositionLogement.compositionLogementHauteur(false) }}
-                                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.compositionLogementHauteur is same as 'non' } %}
-                                </li>
-                                <li>
                                     <b>Nombre de pièces à vivre :</b> {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
                                 </li>
                                 <li>
@@ -424,7 +420,7 @@
                             </li>
                             {% if signalement.typeCompositionLogement %}
                                 {% if signalement.typeCompositionLogement.bailDpeBail %}
-                                    <li>Bail :
+                                    <li><b>Bail :</b>
                                         {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
                                             {{ picto_yes|raw }}
                                         {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
@@ -435,7 +431,7 @@
                                     </li>
                                 {% endif %}
                                 {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
-                                    <li>Etat des lieux :
+                                    <li><b>Etat des lieux :</b>
                                         {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
                                             {{ picto_yes|raw }}
                                         {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
@@ -447,12 +443,12 @@
                                 {% endif %}
                             {% endif %}
                             {% if signalement.numeroInvariant %}
-                                <li>Invariant fiscal saisi par l'usager :
+                                <li><b>Invariant fiscal saisi par l'usager :</b>
                                     {{signalement.numeroInvariant}}
                                 </li>
                             {% endif %}
                             {% if signalement.numeroInvariantRial %}
-                                <li>Invariant fiscal récupéré (base DGFIP) :
+                                <li><b>Invariant fiscal récupéré (base DGFIP) :</b>
                                     {{signalement.numeroInvariantRial}}
                                 </li>
                             {% endif %}

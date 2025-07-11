@@ -64,17 +64,6 @@ class DesordreCompositionLogementLoader
                     'desordres_type_composition_logement_piece_unique_superficie'
                 );
             }
-            if ('non' === $typeCompositionLogement->getCompositionLogementHauteur()) {
-                $this->addDesordreCriterePrecisionBySlugs(
-                    'desordres_type_composition_logement_piece_unique',
-                    'desordres_type_composition_logement_piece_unique_hauteur'
-                );
-            } else {
-                $this->removeDesordreCriterePrecisionBySlugs(
-                    'desordres_type_composition_logement_piece_unique',
-                    'desordres_type_composition_logement_piece_unique_hauteur'
-                );
-            }
         } else {
             if ('non' === $typeCompositionLogement->getTypeLogementCommoditesPieceAVivre9m()) {
                 $this->addDesordreCriterePrecisionBySlugs(
@@ -85,17 +74,6 @@ class DesordreCompositionLogementLoader
                 $this->removeDesordreCriterePrecisionBySlugs(
                     'desordres_type_composition_logement_plusieurs_pieces',
                     'desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9'
-                );
-            }
-            if ('non' === $typeCompositionLogement->getCompositionLogementHauteur()) {
-                $this->addDesordreCriterePrecisionBySlugs(
-                    'desordres_type_composition_logement_plusieurs_pieces',
-                    'desordres_type_composition_logement_plusieurs_pieces_hauteur'
-                );
-            } else {
-                $this->removeDesordreCriterePrecisionBySlugs(
-                    'desordres_type_composition_logement_plusieurs_pieces',
-                    'desordres_type_composition_logement_plusieurs_pieces_hauteur'
                 );
             }
         }

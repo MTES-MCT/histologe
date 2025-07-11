@@ -1386,7 +1386,7 @@
               },
               {
                 "type": "SignalementFormDisorderCategoryItem",
-                "label": "Eclairement, lumière naturelle",
+                "label": "Luminosité et hauteur sous plafond",
                 "slug": "desordres_logement_lumiere",
                 "icon": {
                   "src": "/img/form/LOGEMENT/Picto-lumiere_naturelle.svg",
@@ -2839,7 +2839,7 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Eclairement, lumière naturelle dans le logement",
+    "label": "Luminosité et hauteur sous plafond",
     "description": "Sélectionnez le ou les problèmes rencontrés",
     "icon": {
       "src": "/img/form/LOGEMENT/Picto-lumiere_naturelle.svg",
@@ -2890,6 +2890,156 @@
           },
           "validate": {
             "message": "Veuillez sélectionner la ou les pièces."
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
+          "slug": "desordres_logement_lumiere_plafond_trop_bas",
+          "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas}}",
+          "validate": {
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Dans quelle(s) pièce(s) ?",
+          "slug": "desordres_logement_lumiere_plafond_trop_bas_pieces",
+          "customCss": "signalement-form-subscreen-under-checkbox",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormCheckbox",
+                "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre}}",
+                "slug": "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre",
+                "validate": {
+                  "required": false
+                },
+                "accessibility": {
+                  "focus": true
+                }
+              },
+              {
+                "type": "SignalementFormSubscreen",
+                "label": "",
+                "slug": "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_details",
+                "customCss": "signalement-form-subscreen-under-checkbox",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre === 1"
+                },
+                "components": {
+                  "body": [
+                    {
+                      "type": "SignalementFormTextfield",
+                      "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
+                      "description": "Format attendu : Saisir un nombre entier",
+                      "slug": "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille",
+                      "validate": {
+                        "required": false,
+                        "pattern": "^[0-9]*$",
+                        "patternMessage": "Veuillez renseigner une hauteur de plafond valide (nombre entier, en cm)."
+                      }
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille_nsp",
+                      "label": "{{dictionaryStore::nsp}}",
+                      "validate": {
+                        "required": false
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_cuisine}}",
+                "slug": "desordres_logement_lumiere_plafond_trop_bas_cuisine",
+                "validate": {
+                  "required": false
+                },
+                "accessibility": {
+                  "focus": true
+                }
+              },
+              {
+                "type": "SignalementFormSubscreen",
+                "label": "",
+                "slug": "desordres_logement_lumiere_plafond_trop_bas_cuisine_details",
+                "customCss": "signalement-form-subscreen-under-checkbox",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas_cuisine === 1"
+                },
+                "components": {
+                  "body": [
+                    {
+                      "type": "SignalementFormTextfield",
+                      "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
+                      "description": "Format attendu : Saisir un nombre entier",
+                      "slug": "desordres_logement_lumiere_plafond_trop_bas_cuisine_taille",
+                      "validate": {
+                        "required": false,
+                        "pattern": "^[0-9]*$",
+                        "patternMessage": "Veuillez renseigner une hauteur de plafond valide (nombre entier, en cm)."
+                      }
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_lumiere_plafond_trop_bas_cuisine_taille_nsp",
+                      "label": "{{dictionaryStore::nsp}}",
+                      "validate": {
+                        "required": false
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "SignalementFormCheckbox",
+                "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_salle_de_bain}}",
+                "slug": "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain",
+                "validate": {
+                  "required": false
+                },
+                "accessibility": {
+                  "focus": true
+                }
+              },
+              {
+                "type": "SignalementFormSubscreen",
+                "label": "",
+                "slug": "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_details",
+                "customCss": "signalement-form-subscreen-under-checkbox",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_lumiere_plafond_trop_bas_salle_de_bain === 1"
+                },
+                "components": {
+                  "body": [
+                    {
+                      "type": "SignalementFormTextfield",
+                      "label": "{{dictionaryStore::desordres_logement_lumiere_plafond_trop_bas_taille}}",
+                      "description": "Format attendu : Saisir un nombre entier",
+                      "slug": "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille",
+                      "validate": {
+                        "required": false,
+                        "pattern": "^[0-9]*$",
+                        "patternMessage": "Veuillez renseigner une hauteur de plafond valide (nombre entier, en cm)."
+                      }
+                    },
+                    {
+                      "type": "SignalementFormCheckbox",
+                      "slug": "desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille_nsp",
+                      "label": "{{dictionaryStore::nsp}}",
+                      "validate": {
+                        "required": false
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         }
       ],
