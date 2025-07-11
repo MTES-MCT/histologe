@@ -89,9 +89,9 @@ class Suivi implements EntityHistoryInterface
 
     #[ORM\Column(
         type: 'string',
+        nullable: true,
         enumType: SuiviCategory::class,
-        options: ['comment' => 'Value possible enum SuiviCategory'],
-        nullable: true
+        options: ['comment' => 'Value possible enum SuiviCategory']
     )]
     private ?SuiviCategory $category = null;
 

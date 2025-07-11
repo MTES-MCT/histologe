@@ -45,8 +45,8 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('1 signalement(s) for which the two last suivis are technicals ', $output);
-        $this->assertStringContainsString('1 signalement(s) for which the last suivi is technical', $output);
+        $this->assertStringContainsString('1 signalement(s) for which the two last suivis are feedback requests ', $output);
+        $this->assertStringContainsString('1 signalement(s) for which the last suivi is feedback request', $output);
         $this->assertStringContainsString('6 signalement(s) without suivi public', $output);
         $this->assertEmailCount(11);
 

@@ -24,7 +24,7 @@ class SuiviRepositoryTest extends KernelTestCase
 
     public function testFindSignalementsForThirdRelance(): void
     {
-        $result = $this->suiviRepository->findSignalementsForThirdRelance();
+        $result = $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
         $this->assertCount(1, $result);
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->findOneBy(['id' => $result[0]]);

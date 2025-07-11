@@ -8,10 +8,10 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
 use App\Entity\Partner;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
 use App\Repository\EpciRepository;
@@ -194,7 +194,7 @@ class SearchFilter
                 $connection = $this->entityManager->getConnection();
                 $parameters = [
                     'day_period' => 0,
-                    'type_suivi_technical' => Suivi::TYPE_TECHNICAL,
+                    'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
                     'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
                     'status_archived' => SignalementStatus::ARCHIVED->value,
                     'status_closed' => SignalementStatus::CLOSED->value,
@@ -209,7 +209,7 @@ class SearchFilter
                     $parameters['partners'] = $partners;
                     $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
                 }
-                $sql = $this->suiviRepository->getSignalementsLastSuivisTechnicalsQuery(
+                $sql = $this->suiviRepository->getSignalementsLastAskFeedbackSuivisQuery(
                     excludeUsagerAbandonProcedure: false,
                     partners: $partners
                 );
