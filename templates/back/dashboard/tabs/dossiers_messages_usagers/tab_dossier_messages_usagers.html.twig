@@ -1,17 +1,23 @@
-<div id="storybook-tab-dossiers-messages-usagers-panel"
+<div id="tabpanel-dossiers-messages-usagers-panel"
      class="fr-tabs__panel"
      role="tabpanel"
-     aria-labelledby="storybook-tab-dossiers-messages-usagers"
+     aria-labelledby="tabpanel-dossiers-messages-usagers"
      tabindex="0">
     {% include 'back/dashboard/tabs/dossiers_messages_usagers/_header_dossier_messages_usagers.html.twig' %}
 
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-messages-nouveaux') %}
     <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-messages-nouveaux'}) }}">
         Chargement...
     </div>
+    {% endif %}
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-messages-apres-fermeture') %}
     <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-messages-apres-fermeture' }) }}">
         Chargement...
     </div>
+    {% endif %}
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-messages-usagers-sans-reponse') %}
     <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-messages-usagers-sans-reponse' }) }}">
         Chargement...
     </div>
+    {% endif %}
 </div>

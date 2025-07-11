@@ -12,7 +12,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 
 /**
- * @deprecated This class will be removed in the next major release.
+ * @deprecated This class will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed.
  * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
  */
 class WidgetDataManager implements WidgetDataManagerInterface

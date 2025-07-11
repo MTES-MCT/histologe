@@ -3,18 +3,22 @@
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Service\DashboardTabPanel\TabBody;
-use App\Service\DashboardTabPanel\TabBodyLoaderInterface;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
+use Symfony\Bundle\SecurityBundle\Security;
 
-readonly class DossiersDernierActionTabBodyLoader implements TabBodyLoaderInterface
+class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
 {
-    public function __construct(private TabDataManager $tabDataManager)
+    protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS;
+
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
+        parent::__construct($this->security);
     }
 
     public function load(TabBody $tabBody): void
     {
+        parent::load($tabBody);
         $tabBody->setData([
             'data' => $this->tabDataManager->getDernierActionDossiers(),
             'data_kpi' => [
@@ -23,10 +27,5 @@ readonly class DossiersDernierActionTabBodyLoader implements TabBodyLoaderInterf
             ],
         ]);
         $tabBody->setTemplate('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig');
-    }
-
-    public function supports(string $type): bool
-    {
-        return TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS === $type;
     }
 }

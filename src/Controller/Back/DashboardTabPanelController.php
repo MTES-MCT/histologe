@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/bo')]
-class TabPanelController extends AbstractController
+class DashboardTabPanelController extends AbstractController
 {
     public function __construct(private readonly TerritoryRepository $territoryRepository)
     {

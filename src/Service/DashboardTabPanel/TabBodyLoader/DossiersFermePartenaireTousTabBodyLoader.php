@@ -3,24 +3,23 @@
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Service\DashboardTabPanel\TabBody;
-use App\Service\DashboardTabPanel\TabBodyLoaderInterface;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
+use Symfony\Bundle\SecurityBundle\Security;
 
-readonly class DossiersFermePartenaireTousTabBodyLoader implements TabBodyLoaderInterface
+class DossiersFermePartenaireTousTabBodyLoader extends AbstractTabBodyLoader
 {
-    public function __construct(private TabDataManager $tabDataManager)
+    protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_FERME_PARTENAIRE_TOUS;
+
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
+        parent::__construct($this->security);
     }
 
     public function load(TabBody $tabBody): void
     {
+        parent::load($tabBody);
         $tabBody->setData($this->tabDataManager->getDossiersFermePartenaireTous());
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_fermer/_body_dossier_ferme_partenaire_tous.html.twig');
-    }
-
-    public function supports(string $type): bool
-    {
-        return TabBodyType::TAB_DATA_TYPE_DOSSIERS_FERME_PARTENAIRE_TOUS === $type;
     }
 }
