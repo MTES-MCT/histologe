@@ -59,7 +59,11 @@ class PartnerType extends AbstractType
         $territory = $options['data']->getTerritory();
 
         $builder
-            ->add('nom', TextType::class, [
+            ->add('nom', null, [
+                'label' => 'Nom du partenaire',
+                'help' => 'Le nom du partenaire sera visible dans les signalements pour les autres partenaires',
+                'required' => false,
+                'empty_data' => '',
                 'attr' => [
                     'class' => 'fr-input',
                 ],

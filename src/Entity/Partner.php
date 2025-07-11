@@ -43,7 +43,7 @@ class Partner implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
     #[Assert\Length(max: 255)]
     #[Groups(['widget-settings:read'])]
     private ?string $nom = null;
