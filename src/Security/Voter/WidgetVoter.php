@@ -9,6 +9,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @deprecated This class will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed.
+ * Please refer to the App\Security\TabPanelVoter namespace for the new dashboard.
+ */
 class WidgetVoter extends Voter
 {
     public const string VIEW_WIDGET = 'VIEW_WIDGET';

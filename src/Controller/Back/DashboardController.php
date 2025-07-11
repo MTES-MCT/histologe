@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/bo')]
-class BackDashboardController extends AbstractController
+class DashboardController extends AbstractController
 {
     #[Route('/', name: 'back_dashboard')]
     public function index(

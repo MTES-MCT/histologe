@@ -3,24 +3,23 @@
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Service\DashboardTabPanel\TabBody;
-use App\Service\DashboardTabPanel\TabBodyLoaderInterface;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
+use Symfony\Bundle\SecurityBundle\Security;
 
-readonly class DossiersSansActivitePartenaireTabBodyLoader implements TabBodyLoaderInterface
+class DossiersSansActivitePartenaireTabBodyLoader extends AbstractTabBodyLoader
 {
-    public function __construct(private TabDataManager $tabDataManager)
+    protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE;
+
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
+        parent::__construct($this->security);
     }
 
     public function load(TabBody $tabBody): void
     {
+        parent::load($tabBody);
         $tabBody->setData($this->tabDataManager->getDossiersAVerifierSansActivitePartenaires());
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_verifier/_body_dossier_sans_activite_partenaire.html.twig');
-    }
-
-    public function supports(string $type): bool
-    {
-        return TabBodyType::TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE === $type;
     }
 }

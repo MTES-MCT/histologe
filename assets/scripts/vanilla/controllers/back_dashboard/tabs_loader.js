@@ -1,6 +1,20 @@
 import * as Sentry from '@sentry/browser';
 
 export default function initTabsLoader() {
+  if (window.location.hash) {
+    const hash = window.location.hash.substring(1); // enlève le #
+    const targetPanel = document.getElementById(hash);
+
+    if (targetPanel) {
+      const targetTabId = targetPanel.getAttribute('aria-labelledby');
+      const targetTab = document.getElementById(targetTabId);
+
+      if (targetTab) {
+        targetTab.click();
+      }
+    }
+  }
+
   document.querySelectorAll('.fr-tabs__panel').forEach((panel) => {
     if (panel.classList.contains('fr-tabs__panel--selected')) {
       loadPanelContent(panel);
@@ -52,9 +66,12 @@ export default function initTabsLoader() {
           loader.innerHTML = html;
         })
         .catch((err) => {
-          loader.innerHTML = '<div class="fr-text--error">Erreur de chargement.</div>';
-          console.error('Erreur chargement:', err);
-          Sentry.captureException(`Erreur changement : ${err}`);
+          if (err.message.includes('403')) {
+            loader.innerHTML =
+              '<div class="fr-text--error">Accès refusé, merci de contacter un administrateur.</div>';
+            console.error('Erreur chargement:', err);
+            Sentry.captureException(`Erreur changement : ${err}`);
+          }
         });
     });
   }
