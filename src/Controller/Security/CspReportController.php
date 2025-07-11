@@ -3,14 +3,15 @@
 namespace App\Controller\Security;
 
 use Psr\Log\LoggerInterface;
+use Sentry\State\Scope;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class CspReportController
+readonly class CspReportController
 {
     public function __construct(
-        private readonly LoggerInterface $logger,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -21,12 +22,28 @@ class CspReportController
 
         if (isset($payload['csp-report'])) {
             $report = $payload['csp-report'];
+            if (
+                (isset($report['source-file']) && str_contains($report['source-file'], 'extension'))
+                || (isset($report['blocked-uri']) && str_contains($report['blocked-uri'], 'extension'))
+            ) {
+                return new Response('', Response::HTTP_NO_CONTENT);
+            }
+
+            if (isset($report['violated-directive'])) {
+                \Sentry\configureScope(function (Scope $scope) use ($report): void {
+                    $scope->setTag('violated-directive', $report['violated-directive']);
+                });
+            }
+
+            if (isset($report['document-uri'])) {
+                \Sentry\configureScope(function (Scope $scope) use ($report): void {
+                    $scope->setTag('document-uri', $report['document-uri']);
+                });
+            }
 
             $logMessage = sprintf(
-                'CSP Violation: blocked-uri=%s, violated-directive=%s, document-uri=%s',
-                $report['blocked-uri'] ?? 'N/A',
+                'CSP Violation: violated-directive=%s',
                 $report['violated-directive'] ?? 'N/A',
-                $report['document-uri'] ?? 'N/A',
             );
             $this->logger->warning($logMessage);
             \Sentry\captureMessage($logMessage);
