@@ -8,7 +8,6 @@ use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class MenuBuilderTest extends KernelTestCase
 {
@@ -26,10 +25,7 @@ class MenuBuilderTest extends KernelTestCase
         $security = $this->createMock(Security::class);
         $security->method('getUser')->willReturn($user);
 
-        /** @var MockObject&ParameterBagInterface $parameterBagMock */
-        $parameterBagMock = $this->createMock(ParameterBagInterface::class);
-
-        $menuBuilder = new MenuBuilder($security, $parameterBagMock);
+        $menuBuilder = new MenuBuilder($security);
         $this->assertCount(5, $menuBuilder->build()->getChildren());
         $this->assertEquals('Tableau de bord', $menuBuilder->build()->getChildren()[0]->getLabel());
         $this->assertEquals('Signalements', $menuBuilder->build()->getChildren()[1]->getLabel());

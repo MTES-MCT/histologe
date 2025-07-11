@@ -18,7 +18,6 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 readonly class SignalementResponseFactory
 {
@@ -35,7 +34,6 @@ readonly class SignalementResponseFactory
         private FileFactory $fileFactory,
         private VisiteFactory $visiteFactory,
         private Security $security,
-        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -266,7 +264,7 @@ readonly class SignalementResponseFactory
             );
         }
 
-        if (PersonneType::AGENCE === $personneType && !empty($signalement->getDenominationAgence()) && $this->parameterBag->get('feature_bo_signalement_create')) {
+        if (PersonneType::AGENCE === $personneType && !empty($signalement->getDenominationAgence())) {
             $adresse = new Adresse(
                 adresse: $signalement->getAdresseAgence(),
                 codePostal: $signalement->getCodePostalAgence(),
