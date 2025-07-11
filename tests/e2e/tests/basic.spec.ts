@@ -68,7 +68,6 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByText('Une pièce unique', { exact: true }).click();
     await page.getByRole('textbox', { name: 'Quelle est la superficie de' }).click();
     await page.getByRole('textbox', { name: 'Quelle est la superficie de' }).fill('66');
-    await page.getByText('Oui', { exact: true }).click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Est-ce qu\'au moins une des pi').click();
     await page.getByText('Je ne sais pas').click();
