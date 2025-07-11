@@ -36,6 +36,8 @@ if (fieldsetVisitorType) {
 
 const modalUploadFiles = document?.querySelector('#fr-modal-upload-files-usager');
 if (modalUploadFiles) {
+  const uploadedFilesForm = document.querySelector('#uploaded-file-form');
+  const uploadedFilesList = document.querySelector('#uploaded-files-list');
   const dropArea = document.querySelector('.modal-upload-drop-section');
   const listContainer = document.querySelector('.modal-upload-list');
   const fileSelector = document.querySelector('.modal-upload-files-selector');
@@ -174,45 +176,59 @@ if (modalUploadFiles) {
   }
 
   function addHtmlFile(file, response) {
-    const uploadedFilesList = document.querySelector('#uploaded-files-list');
-    const div = document.createElement('div');
-    div.id = 'uploaded-file-' + response.response;
-    div.classList.add('fr-grid-row', 'fr-grid-row--middle', 'fr-mb-2v');
-    const divTitre = document.createElement('div');
-    divTitre.classList.add('fr-col-9');
-    const textNode = document.createTextNode(file.name);
-    divTitre.appendChild(textNode);
-    div.appendChild(divTitre);
-    const divButton = document.createElement('div');
-    divButton.classList.add('fr-col-3', 'fr-text--right');
-    const deleteFileLink = document.createElement('a');
-    deleteFileLink.href = deleteTmpFileRoute + '?file_id=' + response.response;
-    deleteFileLink.classList.add(
-      'uploaded-file-delete',
-      'fr-ml-2v',
-      'fr-btn',
-      'fr-btn--tertiary',
-      'fr-btn--icon-left',
-      'fr-icon-delete-line'
-    );
-    deleteFileLink.title = 'Supprimer';
-    deleteFileLink.innerHTML = 'Supprimer';
-    divButton.appendChild(deleteFileLink);
-    div.appendChild(divButton);
-    uploadedFilesList.appendChild(div);
-    deleteFileLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      deleteFileLink.style.display = 'none';
-      fetch(deleteFileLink.href, { method: 'DELETE' })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            document.getElementById('uploaded-file-' + data.fileId).remove();
-          } else {
-            deleteFileLink.style.display = 'inline';
-          }
-        });
-    });
+    if (uploadedFilesList) {
+      const div = document.createElement('div');
+      div.id = 'uploaded-file-' + response.response;
+      div.classList.add('fr-grid-row', 'fr-grid-row--middle', 'fr-mb-2v');
+      const divTitre = document.createElement('div');
+      divTitre.classList.add('fr-col-9');
+      const textNode = document.createTextNode(file.name);
+      divTitre.appendChild(textNode);
+      div.appendChild(divTitre);
+      const divButton = document.createElement('div');
+      divButton.classList.add('fr-col-3', 'fr-text--right');
+      const deleteFileLink = document.createElement('a');
+      deleteFileLink.href = deleteTmpFileRoute + '?file_id=' + response.response;
+      deleteFileLink.classList.add(
+        'uploaded-file-delete',
+        'fr-ml-2v',
+        'fr-btn',
+        'fr-btn--tertiary',
+        'fr-btn--icon-left',
+        'fr-icon-delete-line'
+      );
+      deleteFileLink.title = 'Supprimer';
+      deleteFileLink.innerHTML = 'Supprimer';
+      divButton.appendChild(deleteFileLink);
+      div.appendChild(divButton);
+      uploadedFilesList.appendChild(div);
+      deleteFileLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        deleteFileLink.style.display = 'none';
+        fetch(deleteFileLink.href, { method: 'DELETE' })
+          .then((response) => response.json())
+          .then((data) => {
+            div.querySelectorAll('.file-error').forEach((errorEl) => errorEl.remove());
+            if (data.success) {
+              document.getElementById('uploaded-file-' + data.fileId).remove();
+            } else {
+              deleteFileLink.style.display = '';
+              div.insertAdjacentHTML(
+                'beforeend',
+                '<div class="fr-col-12 file-error"><div class="fr-alert fr-alert--error fr-alert--sm">Une erreur est survenue lors de la suppression du fichier.</div></div>'
+              );
+            }
+          })
+          .catch(() => {
+            deleteFileLink.style.display = '';
+            div.querySelectorAll('.file-error').forEach((errorEl) => errorEl.remove());
+            div.insertAdjacentHTML(
+              'beforeend',
+              '<div class="fr-col-12 file-error"><div class="fr-alert fr-alert--error fr-alert--sm">Une erreur est survenue lors de la suppression du fichier.</div></div>'
+            );
+          });
+      });
+    }
   }
 
   function initInnerHtml(file) {
@@ -239,9 +255,7 @@ if (modalUploadFiles) {
             </div>
         </div>
         `;
-    innerHTML += `<div class="fr-col-3 select-container">           
-            </div>
-            <input type="hidden" id="file-id" name="file[id]">`;
+    innerHTML += '<div class="fr-col-3 select-container"></div>';
     innerHTML += `<div class="fr-col-1">
             <a href="${deleteTmpFileRoute}" title="Supprimer" class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line fr-hidden delete-tmp-file delete-html"></a>         
         </div>
@@ -288,7 +302,7 @@ if (modalUploadFiles) {
         .then((data) => {
           if (data.success) {
             button.closest('.fr-grid-row').remove();
-            document.querySelector('#uploaded-file-' + data.fileId).remove();
+            document.querySelector('#uploaded-file-' + data.fileId)?.remove();
           } else {
             button.removeAttribute('disabled');
           }
@@ -317,6 +331,20 @@ if (modalUploadFiles) {
   });
 
   btnValidate.addEventListener('click', () => {
+    if (uploadedFilesForm) {
+      uploadedFilesForm.querySelectorAll('input[name="form[file][]"]').forEach((input) => {
+        input.remove();
+      });
+      modalUploadFiles.querySelectorAll('.select-container select').forEach((select) => {
+        const inputFileId = document.createElement('input');
+        inputFileId.type = 'hidden';
+        inputFileId.name = 'form[file][]';
+        inputFileId.value = select.dataset.fileId;
+        uploadedFilesForm.appendChild(inputFileId);
+      });
+      uploadedFilesForm.submit();
+    }
+
     modalUploadFiles.dataset.validated = true;
   });
 }

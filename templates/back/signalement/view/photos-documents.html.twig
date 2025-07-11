@@ -123,8 +123,8 @@
     {% set documents = signalement.files|filter(
         doc => doc.isTypeDocument
             and (
-                (filesFilter is same as 'situation' and doc.documentType.label() in DocumentType.getOrderedSituationList) or 
-                (filesFilter is same as 'procédure' and doc.intervention is null and doc.documentType.label() in DocumentType.getOrderedProcedureList) or 
+                (filesFilter is same as 'situation' and doc.isSituationDocument()) or 
+                (filesFilter is same as 'procédure' and doc.isProcedureDocument()) or 
                 (filesFilter is same as 'visite' and doc.intervention is not null and doc.intervention.id is same as interventionId)
             )
         )|reverse %}

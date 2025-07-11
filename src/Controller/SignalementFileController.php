@@ -162,7 +162,7 @@ class SignalementFileController extends AbstractController
             $this->addFlash('error', 'Token CSRF invalide, veuillez recharger la page');
         }
 
-        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        return $this->redirectToRoute('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
     }
 
     #[Route('/{code}/file/export-pdf-usager', name: 'signalement_gen_pdf')]
