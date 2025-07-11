@@ -1,7 +1,6 @@
-import { init } from '@sentry/browser'
-import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper'
-import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/file_delete'
-import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file'
+import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper';
+import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/file_delete';
+import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file';
 
 if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   window.onscroll = function () {
@@ -16,65 +15,67 @@ if (document?.querySelector('.fr-breadcrumb.can-fix')) {
 
 document.querySelectorAll('.open-modal-reinit-affectation').forEach((button) => {
   button.addEventListener('click', (e) => {
-    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent = e.target.dataset.partnerNom
-    document.querySelector('form#fr-modal-reinit-affectation-form').action = e.target.dataset.action
-  })
-})
+    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent =
+      e.target.dataset.partnerNom;
+    document.querySelector('form#fr-modal-reinit-affectation-form').action =
+      e.target.dataset.action;
+  });
+});
 
 document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
   button.addEventListener('click', (e) => {
-    e.preventDefault()
-    button.setAttribute('disabled', 'disabled')
-    button.textContent = "Chargement..."
-    const url = e.target.dataset.url
-    fetch(url, { method: 'GET'}).then(response => {       
+    e.preventDefault();
+    button.setAttribute('disabled', 'disabled');
+    button.textContent = 'Chargement...';
+    const url = e.target.dataset.url;
+    fetch(url, { method: 'GET' }).then((response) => {
       if (response.ok) {
-        response.json().then(data => {
-          document.querySelectorAll('.container-situation').forEach(container => {
-            container.innerHTML = data.html
-            initTippy()
-            openPhotoAlbumAddEventListeners()
-            btnSignalementFileEditAddEventListeners()
-            btnSignalementFileDeleteAddEventListeners()
-          })
-        })
+        response.json().then((data) => {
+          document.querySelectorAll('.container-situation').forEach((container) => {
+            container.innerHTML = data.html;
+            initTippy();
+            openPhotoAlbumAddEventListeners();
+            btnSignalementFileEditAddEventListeners();
+            btnSignalementFileDeleteAddEventListeners();
+          });
+        });
       }
-    })
-  })
-})
+    });
+  });
+});
 
 function initTippy() {
   tippy('.part-infos-hover', {
-      content(reference) {
-          const id = reference.getAttribute('data-template');
-          const template = document.getElementById(id);
-          return template.innerHTML;
-      },      
-      allowHTML: true,
-      interactive: true,
-      hideOnClick: true,
-      theme: 'light-border',
-      arrow: true,
-      placement: "bottom",
-      maxWidth: "100%"
+    content(reference) {
+      const id = reference.getAttribute('data-template');
+      const template = document.getElementById(id);
+      return template.innerHTML;
+    },
+    allowHTML: true,
+    interactive: true,
+    hideOnClick: true,
+    theme: 'light-border',
+    arrow: true,
+    placement: 'bottom',
+    maxWidth: '100%',
   });
 }
 
-if(typeof tippy !== 'undefined') {
-  initTippy()
+if (typeof tippy !== 'undefined') {
+  initTippy();
 }
-openPhotoAlbumAddEventListeners()
+openPhotoAlbumAddEventListeners();
 
 function openPhotoAlbumAddEventListeners() {
-  document?.querySelectorAll('.open-photo-album')?.forEach(btn => {
-    const swipeId = btn.getAttribute('data-id')
-    btn.addEventListeners('click touchdown', (event) => {
-      document?.querySelectorAll('.photos-album')?.forEach(element => {
-        element.classList?.remove('fr-hidden')
-        displayPhotoAlbum(swipeId)
-      })
-    })
-  })
+  document?.querySelectorAll('.open-photo-album')?.forEach((btn) => {
+    const swipeId = btn.getAttribute('data-id');
+    btn.addEventListeners('click touchdown', () => {
+      document?.querySelectorAll('.photos-album')?.forEach((element) => {
+        element.classList?.remove('fr-hidden');
+        displayPhotoAlbum(swipeId);
+      });
+    });
+  });
 }
 
 /* global histoPhotoIds */
@@ -87,15 +88,15 @@ document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click tou
   document.querySelector('#btn-display-all-suivis').classList.add('fr-hidden');
 });
 
-document?.querySelectorAll('.photos-album-btn-close')?.forEach(btn => {
-  btn.addEventListeners('click touchdown', (event) => {
-    document?.querySelectorAll('.photos-album')?.forEach(element => {
-      element.classList?.add('fr-hidden')
-    })
-  })
-})
-document?.querySelectorAll('.photos-album-swipe')?.forEach(btn => {
-  const swipeDirection = Number(btn.getAttribute('data-direction'))
+document?.querySelectorAll('.photos-album-btn-close')?.forEach((btn) => {
+  btn.addEventListeners('click touchdown', () => {
+    document?.querySelectorAll('.photos-album')?.forEach((element) => {
+      element.classList?.add('fr-hidden');
+    });
+  });
+});
+document?.querySelectorAll('.photos-album-swipe')?.forEach((btn) => {
+  const swipeDirection = Number(btn.getAttribute('data-direction'));
 
   btn.addEventListeners('click touchdown', () => {
     let currentId = null;
