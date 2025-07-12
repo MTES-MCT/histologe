@@ -37,6 +37,7 @@ class DashboardController extends AbstractController
                 'territoireSelectedId' => $territoireId,
                 'settings' => $widgetSettingsFactory->createInstanceFrom($user, $territory),
                 'tab_count_kpi' => $tabCountKpiFactory->createInstance(),
+                'territory' => $territory,
             ]);
         }
 
