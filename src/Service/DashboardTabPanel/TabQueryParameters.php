@@ -9,7 +9,7 @@ readonly class TabQueryParameters
     public function __construct(
         public ?int $territoireId = null,
         public ?string $communeCodePostal = null,
-        /** @var array<string> */
+        /** @var array<int> */
         public ?array $partenairesId = null,
         #[Assert\Choice(['createdAt', 'closedAt', 'nbRelanceFeedbackUsager', 'nbDay', 'nomOccupant'])]
         public ?string $sortBy = null,
