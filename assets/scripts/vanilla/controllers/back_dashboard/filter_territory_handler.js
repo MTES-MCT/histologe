@@ -5,7 +5,11 @@ export default function initFilterTerritoryHandler() {
     let url = window.location.pathname;
 
     if (selected !== 'all') {
-        url += '?territoireId=' + encodeURIComponent(selected);
+      url += '?territoireId=' + encodeURIComponent(selected);
+    }
+
+    if (window.location.hash) {
+      url += window.location.hash;
     }
 
     window.location.href = url;
