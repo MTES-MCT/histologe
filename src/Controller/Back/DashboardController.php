@@ -21,7 +21,7 @@ class DashboardController extends AbstractController
         WidgetSettingsFactory $widgetSettingsFactory,
         TabCountKpiFactory $tabCountKpiFactory,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
-        #[MapQueryParameter('territoire')] ?int $territoireId = null,
+        #[MapQueryParameter('territoireId')] ?int $territoireId = null,
     ): Response {
         if ($featureNewDashboard) {
             /** @var User $user */

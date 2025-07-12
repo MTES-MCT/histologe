@@ -8,10 +8,11 @@ use App\Entity\User;
 use App\Repository\TerritoryRepository;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoaderCollection;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/bo')]
@@ -25,7 +26,7 @@ class DashboardTabPanelController extends AbstractController
     public function getTabBody(
         string $tabBodyType,
         TabBodyLoaderCollection $tabBodyLoaderCollection,
-        #[MapQueryParameter('territoire')] ?int $territoireId = null,
+        #[MapQueryString] ?TabQueryParameters $tabQueryParameter = null,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
     ): Response {
         if (!$featureNewDashboard) {
@@ -36,6 +37,7 @@ class DashboardTabPanelController extends AbstractController
         $user = $this->getUser();
         $territoires = [];
         $authorizedTerritories = $user?->getPartnersTerritories();
+        $territoireId = $tabQueryParameter?->territoireId;
         if ($territoireId && ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoireId]))) {
             $territory = $this->territoryRepository->find($territoireId);
             if ($territory) {
@@ -45,7 +47,7 @@ class DashboardTabPanelController extends AbstractController
             $territoires = $user?->getPartnersTerritories() ?? [];
         }
 
-        $tab = new TabBody(type: $tabBodyType, territoires: $territoires);
+        $tab = new TabBody(type: $tabBodyType, territoires: $territoires, tabQueryParameters: $tabQueryParameter);
         $tabBodyLoaderCollection->load($tab);
 
         return $this->render($tab->getTemplate(), [

@@ -36,7 +36,17 @@ class TabPanelVoter extends Voter
             return false;
         }
 
-        return !empty(array_filter($roles, fn ($role) => in_array($role, $accessConfig[$subject])));
+        if (!empty(array_filter($roles, fn ($role) => in_array($role, $accessConfig[$subject])))) {
+            return true;
+        }
+
+        if (in_array('USER_PERMISSION_AFFECTATION', $accessConfig[$subject], true) && $user->hasPermissionAffectation()) {
+            return true;
+        }
+
+        $vote?->addReason('Aucun droit trouvé pour accéder à ce panel.');
+
+        return false;
     }
 
     /**
@@ -45,17 +55,17 @@ class TabPanelVoter extends Voter
     private function getAccessConfig(): array
     {
         return [
-            TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
+            TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY', 'ROLE_ADMIN_PARTNER', 'ROLE_USER_PARTNER'],
             TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
-            TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER => ['ROLE_ADMIN'],
-            TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION => ['ROLE_ADMIN'],
+            TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
+            TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY', 'USER_PERMISSION_AFFECTATION'],
             TabBodyType::TAB_DATA_TYPE_DOSSIERS_FERME_PARTENAIRE_TOUS => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
-            TabBodyType::TAB_DATA_TYPE_DOSSIERS_DEMANDE_FERMETURE_USAGER => ['ROLE_ADMIN'],
-            TabBodyType::TAB_DATA_TYPE_DOSSIERS_RELANCE_USAGER_SANS_REPONSE => ['ROLE_ADMIN'],
-            TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_NOUVEAUX => ['ROLE_ADMIN'],
+            TabBodyType::TAB_DATA_TYPE_DOSSIERS_DEMANDE_FERMETURE_USAGER => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
+            TabBodyType::TAB_DATA_TYPE_DOSSIERS_RELANCE_USAGER_SANS_REPONSE => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
+            TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_NOUVEAUX => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY', 'ROLE_ADMIN_PARTNER', 'ROLE_USER_PARTNER'],
             TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_APRES_FERMETURE => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
-            TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_USAGERS_SANS_REPONSE => ['ROLE_ADMIN'],
-            TabBodyType::TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY'],
+            TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_USAGERS_SANS_REPONSE => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY', 'ROLE_ADMIN_PARTNER', 'ROLE_USER_PARTNER'],
+            TabBodyType::TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE => ['ROLE_ADMIN', 'ROLE_ADMIN_TERRITORY', 'ROLE_ADMIN_PARTNER', 'ROLE_USER_PARTNER'],
         ];
     }
 }

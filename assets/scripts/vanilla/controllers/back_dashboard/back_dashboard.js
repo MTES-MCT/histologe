@@ -1,4 +1,4 @@
-import initTerritoiresSelect from './territoires_select.js';
+import initFilterTerritoryHandler from './filter_territory_handler';
 import initTabsLoader from './tabs_loader';
 import * as Sentry from '@sentry/browser';
 
@@ -16,6 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  initTerritoiresSelect();
+  initFilterTerritoryHandler();
   initTabsLoader();
 });

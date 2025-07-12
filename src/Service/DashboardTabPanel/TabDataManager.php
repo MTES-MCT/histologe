@@ -7,7 +7,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getDossierNonAffectation(): array
+    public function getDossierNonAffectation(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -28,38 +28,30 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getDernierActionDossiers(): array
+    public function getDernierActionDossiers(?TabQueryParameters $tabQueryParameters = null): array
     {
-        return [
-            new TabDossier(
+        $tabDossiers = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $tabDossiers[] = new TabDossier(
                 nomDeclarant: 'MOREAU',
                 prenomDeclarant: 'Samuel',
-                reference: '#2024-1525',
+                reference: '#2024-'.rand(1, 1000),
                 adresse: '4 impasse des Lilas, 13002 Marseille',
                 statut: 'En cours',
                 derniereAction: 'Relance partenaire',
                 derniereActionAt: '08/04/2025',
                 actionDepuis: 'OUI',
                 lien: '#',
-            ),
-            new TabDossier(
-                nomDeclarant: 'DUPONT',
-                prenomDeclarant: 'Jean',
-                reference: '#2024-1526',
-                adresse: '3 rue Victor Hugo, 13003 Marseille',
-                statut: 'En attente',
-                derniereAction: 'Vérification des pièces',
-                derniereActionAt: '07/04/2025',
-                actionDepuis: 'NON',
-                lien: '#'
-            ),
-        ];
+            );
+        }
+
+        return $tabDossiers;
     }
 
     /**
      * @return TabDossier[]
      */
-    public function getDossiersFormPro(): array
+    public function getDossiersFormPro(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -112,7 +104,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getDossiersFormUsager(): array
+    public function getDossiersFormUsager(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -161,7 +153,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getMessagesUsagersNouveauxMessages(): array
+    public function getMessagesUsagersNouveauxMessages(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -190,7 +182,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getMessagesUsagersMessageApresFermeture(): array
+    public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -221,7 +213,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getMessagesUsagersMessagesSansReponse(): array
+    public function getMessagesUsagersMessagesSansReponse(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -252,7 +244,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getDossiersAVerifierSansActivitePartenaires(): array
+    public function getDossiersAVerifierSansActivitePartenaires(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -285,7 +277,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getDossiersDemandesFermetureByUsager(): array
+    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -312,7 +304,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getDossiersRelanceSansReponse(): array
+    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(
@@ -341,7 +333,7 @@ class TabDataManager
     /**
      * @return TabDossier[]
      */
-    public function getDossiersFermePartenaireTous(): array
+    public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): array
     {
         return [
             new TabDossier(

@@ -4,13 +4,14 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Security\Voter\TabPanelVoter;
 use App\Service\DashboardTabPanel\TabBody;
-use App\Service\DashboardTabPanel\TabBodyLoaderInterface;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 abstract class AbstractTabBodyLoader implements TabBodyLoaderInterface
 {
     protected ?string $tabBodyType = null;
+    protected ?TabQueryParameters $tabQueryParameters = null;
 
     public function __construct(
         private readonly Security $security,
@@ -24,6 +25,7 @@ abstract class AbstractTabBodyLoader implements TabBodyLoaderInterface
 
     public function load(TabBody $tabBody): void
     {
+        $this->tabQueryParameters = $tabBody->getTabQueryParameters();
         $this->ensureAccess($tabBody);
     }
 

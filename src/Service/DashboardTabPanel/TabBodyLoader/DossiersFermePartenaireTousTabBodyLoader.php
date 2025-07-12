@@ -19,7 +19,7 @@ class DossiersFermePartenaireTousTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getDossiersFermePartenaireTous());
+        $tabBody->setData($this->tabDataManager->getDossiersFermePartenaireTous($this->tabQueryParameters));
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_fermer/_body_dossier_ferme_partenaire_tous.html.twig');
     }
 }

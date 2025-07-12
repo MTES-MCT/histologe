@@ -12,6 +12,7 @@
             </div>
         </div>
 
+
         {% if is_granted('ROLE_ADMIN') or settings.isMultiTerritoire %}
             <div class="fr-col fr-col-md-3">
                 <div class="fr-select-group">
@@ -19,7 +20,6 @@
                     <select class="fr-select"
                             id="filter-territoires"
                             name="filter-territoires"
-                            data-ajaxurl-settings="{{ path('back_widget_settings') }}"
                     >
                         <option value="all">Tous</option>
                         {% for territoire in settings.territories %}

@@ -6,17 +6,17 @@
     {% include 'back/dashboard/tabs/dossiers_a_fermer/_header_dossier_a_fermer.html.twig' %}
 
     {% if is_granted('VIEW_TAB_PANEL', 'dossiers-ferme-partenaire-tous') %}
-        <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-ferme-partenaire-tous' }) }}">
+        <div id="dossiers-ferme-partenaire-tous" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-ferme-partenaire-tous' }) }}">
             Chargement...
         </div>
     {% endif %}
     {% if is_granted('VIEW_TAB_PANEL', 'dossiers-demandes-fermeture-usager') %}
-        <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-demandes-fermeture-usager' }) }}">
+        <div id="dossiers-demandes-fermeture-usager" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-demandes-fermeture-usager' }) }}">
             Chargement...
         </div>
     {% endif %}
     {% if is_granted('VIEW_TAB_PANEL', 'dossiers-relance-usager-sans-reponse') %}
-        <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-relance-usager-sans-reponse' }) }}">
+        <div id="dossiers-relance-usager-sans-reponse" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-relance-usager-sans-reponse' }) }}">
             Chargement...
         </div>
     {% endif %}

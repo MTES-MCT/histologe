@@ -30,17 +30,19 @@
                                 ({{ tab_count_kpi.countNouveauxDossiers }})
                             </button>
                         </li>
-                        <li role="presentation">
-                            <button type="button"
-                                    id="tabpanel-dossiers-a-fermer"
-                                    class="fr-tabs__tab"
-                                    tabindex="-1"
-                                    role="tab"
-                                    aria-selected="false"
-                                    aria-controls="tabpanel-dossiers-a-fermer-panel">A fermer
-                                ({{ tab_count_kpi.countDossiersAFermer }})
-                            </button>
-                        </li>
+                        {% if (is_granted('ROLE_ADMIN_TERRITORY')) %}
+                            <li role="presentation">
+                                <button type="button"
+                                        id="tabpanel-dossiers-a-fermer"
+                                        class="fr-tabs__tab"
+                                        tabindex="-1"
+                                        role="tab"
+                                        aria-selected="false"
+                                        aria-controls="tabpanel-dossiers-a-fermer-panel">A fermer
+                                    ({{ tab_count_kpi.countDossiersAFermer }})
+                                </button>
+                            </li>
+                        {% endif %}
                         <li role="presentation">
                             <button type="button"
                                     id="tabpanel-dossiers-messages-usagers"

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Service\DashboardTabPanel;
+namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
+use App\Service\DashboardTabPanel\TabBody;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('app.tab_body_loader')]

@@ -4,7 +4,7 @@
          aria-labelledby=tabpanel-dernieres-actions"
          tabindex="0">
         {% if is_granted('VIEW_TAB_PANEL', 'derniers-dossiers') %}
-            <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'derniers-dossiers' }) }}">
+            <div id="derniers-dossiers" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'derniers-dossiers' }) }}">
                 Chargement...
             </div>
         {% endif %}

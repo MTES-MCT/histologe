@@ -19,7 +19,7 @@ class DossiersMessagesApresFermetureTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getMessagesUsagersMessageApresFermeture());
+        $tabBody->setData($this->tabDataManager->getMessagesUsagersMessageApresFermeture($this->tabQueryParameters));
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_messages_usagers/_body_dossier_messages_apres_fermeture.html.twig');
     }
 }

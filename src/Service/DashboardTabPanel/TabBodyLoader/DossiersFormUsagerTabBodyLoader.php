@@ -19,7 +19,7 @@ class DossiersFormUsagerTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getDossiersFormUsager());
+        $tabBody->setData($this->tabDataManager->getDossiersFormUsager($this->tabQueryParameters));
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_nouveaux/_body_dossier_usager.html.twig');
     }
 }
