@@ -138,7 +138,8 @@ class SearchFilter
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
                     ->select('DISTINCT s.id')
                     ->innerJoin('a.signalement', 's')
-                    ->where('a.statut = '.AffectationStatus::CLOSED->value);
+                    ->where('a.statut = :statut_affectation_closed')
+                    ->setParameter('statut_affectation_closed', AffectationStatus::CLOSED->value);
 
                 // les signalements n'ayant aucune affectation fermée :
                 $qb->andWhere('s.id NOT IN (:subquery)')
@@ -174,7 +175,8 @@ class SearchFilter
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
                     ->select('DISTINCT s.id')
                     ->leftJoin('a.signalement', 's')
-                    ->where('a.statut != '.AffectationStatus::CLOSED->value);
+                    ->where('a.statut != :statut_affectation_closed')
+                    ->setParameter('statut_affectation_closed', AffectationStatus::CLOSED->value);
 
                 // les signalements n'ayant aucune affectation non fermée ou qui sont fermés
                 $qb->andWhere(
