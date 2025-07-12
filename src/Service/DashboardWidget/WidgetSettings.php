@@ -5,6 +5,9 @@ namespace App\Service\DashboardWidget;
 use App\Entity\User;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * @todo Rename class to Settings once the FEATURE_NEW_DASHBOARD feature flag is removed.
+ */
 class WidgetSettings
 {
     #[Groups('widget-settings:read')]
