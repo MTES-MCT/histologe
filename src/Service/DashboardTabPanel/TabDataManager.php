@@ -352,12 +352,4 @@ class TabDataManager
             ),
         ];
     }
-
-    /**
-     * @return array<string>
-     */
-    public function getEmptyData(): array
-    {
-        return [];
-    }
 }
