@@ -75,10 +75,13 @@ export default function initTabsLoader() {
       } catch (err) {
         if (err.message.includes('403')) {
           loader.innerHTML =
-            '<div class="fr-text--error">Accès refusé, merci de contacter un administrateur.</div>';
+            '<div class="fr-text--error">Accès refusé, vos droits sont insuffisants pour accéder à ce contenu. Merci de contacter un administrateur.</div>';
         }
         console.error('Erreur chargement:', err);
         Sentry.captureException(err);
+        setTimeout(() => {
+          window.location.reload();
+        }, 5000);
       }
     }
   }
