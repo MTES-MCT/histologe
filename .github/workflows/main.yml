@@ -155,3 +155,4 @@ jobs:
           MAINTENANCE_ENABLE: 0
           CLAMAV_STRATEGY: 'clamd_network'
           CLAMAV_HOST: 127.0.0.1
+          FEATURE_NEW_DASHBOARD: 1
