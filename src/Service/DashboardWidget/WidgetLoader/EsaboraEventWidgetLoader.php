@@ -9,6 +9,10 @@ use App\Service\DashboardWidget\WidgetDataManagerInterface;
 use App\Service\DashboardWidget\WidgetType;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+/**
+ * @deprecated This class will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed.
+ * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
+ */
 class EsaboraEventWidgetLoader extends AbstractWidgetLoader
 {
     protected ?string $widgetType = WidgetType::WIDGET_TYPE_ESABORA_EVENTS;

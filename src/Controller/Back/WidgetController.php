@@ -11,6 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * @deprecated This class will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed
+ * @see DashboardTabPanelController
+ */
 #[Route('/bo')]
 class WidgetController extends AbstractController
 {

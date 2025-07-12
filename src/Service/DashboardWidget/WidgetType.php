@@ -2,11 +2,15 @@
 
 namespace App\Service\DashboardWidget;
 
+/**
+ * @deprecated This class will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed.
+ * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
+ */
 class WidgetType
 {
-    public const WIDGET_TYPE_DATA_KPI = 'data-kpi';
-    public const WIDGET_TYPE_AFFECTATION_PARTNER = 'affectations-partenaires';
-    public const WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI = 'signalements-acceptes-sans-suivi';
-    public const WIDGET_TYPE_SIGNALEMENT_TERRITOIRE = 'signalements-territoires';
-    public const WIDGET_TYPE_ESABORA_EVENTS = 'esabora-evenements';
+    public const string WIDGET_TYPE_DATA_KPI = 'data-kpi';
+    public const string WIDGET_TYPE_AFFECTATION_PARTNER = 'affectations-partenaires';
+    public const string WIDGET_TYPE_SIGNALEMENT_ACCEPTED_NO_SUIVI = 'signalements-acceptes-sans-suivi';
+    public const string WIDGET_TYPE_SIGNALEMENT_TERRITOIRE = 'signalements-territoires';
+    public const string WIDGET_TYPE_ESABORA_EVENTS = 'esabora-evenements';
 }

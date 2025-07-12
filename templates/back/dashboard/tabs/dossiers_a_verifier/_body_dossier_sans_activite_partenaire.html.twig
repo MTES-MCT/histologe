@@ -1,0 +1,46 @@
+{% set columns = [
+    { class: 'fr-col-md-3', title: 'Dernière activité partenaire il y a' },
+    { class: 'fr-col-md-4', title: 'Référence' },
+    { class: 'fr-col-md-2', title: 'Dernière action' },
+    { class: 'fr-col-md-2', title: 'Action faite par' },
+] %}
+<section class="fr-mb-5v">
+    <header class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-9">
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-connection-lost-icon">Dossier sans activité partenaire ({{ count }})</h3>
+        </div>
+        <div class="fr-select-group fr-col-12 fr-col-md-3">
+            <label class="fr-label" for="order-type-dossiers-sans-activite-partenaire">
+                Trier par
+            </label>
+            <select id="order-type-dossiers-sans-activite-partenaire" class="fr-select" data-sort-body="dossiers-sans-activite-partenaire">
+                <option value="nbDay-ASC" selected="selected">Activité la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
+                <option value="nbDay-DESC">Activité la plus récente (du plus récent au plus ancien)</option>
+            </select>
+        </div>
+    </header>
+    <hr class="hr--blue-france">
+    <section class="fr-container--fluid">
+        {% for item in items %}
+            {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+            {% include 'back/dashboard/components/_card.html.twig' with {
+                data: [
+                    '<div><span class="fr-badge fr-badge--no-icon fr-badge--error">' ~ item.derniereActionPartenaireDaysAgo  ~ ' JOURS</span></div>',
+                    '<div class="fr-text-label--blue-france">
+                            <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                            <div>' ~ item.adresse ~ '</div>
+                        </div>',
+                    '<div><strong>' ~ item.derniereActionTypeSuivi ~ '</strong><br> le ' ~ item.derniereActionAt ~ '</div>',
+                    '<div>
+                        <strong>' ~ item.derniereActionPartenairePrenomAgent ~ ' ' ~ item.derniereActionPartenaireNomAgent ~ '</strong><br>
+                        <span>' ~ item.derniereActionPartenaireNom ~ '</span>
+                    </div>'
+                ],
+                link: item.lien
+            } %}
+        {% else %}
+            <p>Aucun dossier trouvé.</p>
+        {% endfor %}
+        {% include 'back/dashboard/components/_footer_link.html.twig' %}
+    </section>
+</section>

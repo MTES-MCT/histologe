@@ -1,0 +1,43 @@
+{% set columns = [
+    { class: 'fr-col-md-2', title: 'Message reçu le' },
+    { class: 'fr-col-md-2', title: 'Dossier cloturé le' },
+    { class: 'fr-col-md-4', title: 'Référence' },
+    { class: 'fr-col-md-3', title: 'Message envoyé par' },
+] %}
+<section class="fr-mb-5v">
+    <header class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-9">
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-community-icon">Messages après fermeture ({{ count }})</h3>
+        </div>
+        <div class="fr-select-group fr-col-12 fr-col-md-3">
+            <label class="fr-label" for="order-type-dossiers-messages-apres-fermeture">
+                Trier par
+            </label>
+            <select id="order-type-dossiers-messages-apres-fermeture" class="fr-select" data-sort-body="dossiers-messages-apres-fermeture">
+                <option value="createdAt-ASC" selected="selected">Message le plus ancien (de la plus ancienne à la plus récente) = tri par défaut</option>
+                <option value="createdAt-DESC">Message le plus récent (du plus récent au plus ancien)</option>
+            </select>
+        </div>
+    </header>
+    <hr class="hr--blue-france">
+    <section class="fr-container--fluid">
+        {% for item in items %}
+            {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+            {% include 'back/dashboard/components/_card.html.twig' with {
+                data: [
+                    '<div>' ~ item.messageAt ~ '</div>',
+                    '<div>' ~ item.clotureAt ~ '</div>',
+                    '<div class="fr-text-label--blue-france">
+                            <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                            <div>' ~ item.adresse ~ '</div>
+                        </div>',
+                    '<div><strong class="fr-text--lg">' ~ item.messageByProfileDeclarant|upper ~ '</strong><br>' ~ item.messageSuiviByNom|upper ~ ' ' ~  item.messageSuiviByPrenom|capitalize ~ '</div>',
+                ],
+                link: item.lien
+            } %}
+        {% else %}
+            <p>Aucun dossier trouvé.</p>
+        {% endfor %}
+        {% include 'back/dashboard/components/_footer_link.html.twig' %}
+    </section>
+</section>
