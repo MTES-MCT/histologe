@@ -44,7 +44,6 @@ if (modalUploadFiles) {
   const addFileToken = modalUploadFiles.dataset.addFileToken;
   const deleteTmpFileRoute = modalUploadFiles.dataset.deleteTmpFileRoute;
   const selectTypeSituationToClone = document.querySelector('#select-type-situation-to-clone');
-  const selectDesordreToClone = document.querySelector('#select-desordre-to-clone');
   const editFileRoute = modalUploadFiles.dataset.editFileRoute;
   const editFileToken = modalUploadFiles.dataset.editFileToken;
   const btnValidate = document.querySelector('#btn-validate-modal-upload-files');
@@ -96,9 +95,6 @@ if (modalUploadFiles) {
 
   function typeValidation(file) {
     const acceptedType = fileSelectorInput.getAttribute('accept');
-    if (acceptedType === '*/*') {
-      return true;
-    }
     const acceptedTypes = acceptedType.split(',').map((type) => type.trim());
     if (acceptedTypes.includes(file.type)) {
       return true;
@@ -135,11 +131,7 @@ if (modalUploadFiles) {
     listContainer.prepend(div);
     const http = new XMLHttpRequest();
     const data = new FormData();
-    if (modalUploadFiles.dataset.fileType === 'photo') {
-      data.append('signalement-add-file[photos][]', file);
-    } else {
-      data.append('signalement-add-file[documents][]', file);
-    }
+    data.append('signalement-add-file[]', file);
     data.append('_token', addFileToken);
     http.upload.onprogress = (e) => {
       const percentComplete = (e.loaded / e.total) * 100;
@@ -157,13 +149,8 @@ if (modalUploadFiles) {
         if (this.status === 200) {
           modalUploadFiles.dataset.hasChanges = true;
           let clone;
-          if (modalUploadFiles.dataset.fileType === 'photo') {
-            clone = selectDesordreToClone.cloneNode(true);
-            clone.id = 'select-desordre-' + response.response;
-          } else {
-            clone = selectTypeSituationToClone.cloneNode(true);
-            clone.id = 'select-type-' + response.response;
-          }
+          clone = selectTypeSituationToClone.cloneNode(true);
+          clone.id = 'select-type-' + response.response;
           clone.dataset.fileId = response.response;
           if (clone.querySelectorAll('option').length === 1) {
             clone.remove();
@@ -230,7 +217,7 @@ if (modalUploadFiles) {
 
   function initInnerHtml(file) {
     let innerHTML = '<div class="fr-col-12 file-error"></div>';
-    if (modalUploadFiles.dataset.fileType === 'photo' && file.type !== 'application/pdf') {
+    if (file.type == 'image/jpeg' || file.type == 'image/png' || file.type == 'image/gif') {
       innerHTML += `
             <div class="fr-col-2">
                 <img class="fr-content-media__img" src="${URL.createObjectURL(file)}">
@@ -268,12 +255,7 @@ if (modalUploadFiles) {
       const http = new XMLHttpRequest();
       const data = new FormData();
       data.append('file_id', selectField.dataset.fileId);
-      if (modalUploadFiles.dataset.fileType === 'photo') {
-        data.append('documentType', 'PHOTO_SITUATION');
-        data.append('desordreSlug', selectField.value);
-      } else {
-        data.append('documentType', selectField.value);
-      }
+      data.append('documentType', selectField.value);
       data.append('_token', editFileToken);
       http.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE) {
@@ -327,36 +309,11 @@ if (modalUploadFiles) {
     modalUploadFiles.dataset.hasChanges = false;
   });
 
-  let fileType, acceptedTypeMimes, acceptedExtensions;
-  document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      fileType = e.target.dataset.fileType;
-      acceptedTypeMimes = e.target.dataset.acceptedTypeMimes ?? null;
-      acceptedExtensions = e.target.dataset.acceptedExtensions ?? null;
-    });
-  });
-
   modalUploadFiles.addEventListener('dsfr.disclose', () => {
     nbFilesProccessing = 0;
     listContainer.innerHTML = '';
     modalUploadFiles.dataset.validated = false;
     modalUploadFiles.dataset.hasChanges = false;
-    modalUploadFiles.querySelectorAll('.type-conditional').forEach((type) => {
-      type.classList.add('fr-hidden');
-    });
-    modalUploadFiles.dataset.acceptedExtensions = acceptedExtensions;
-    if (fileType === 'photo') {
-      modalUploadFiles.dataset.fileType = 'photo';
-      modalUploadFiles.querySelector('.type-photo').classList.remove('fr-hidden');
-    } else {
-      modalUploadFiles.dataset.fileType = 'document';
-      modalUploadFiles.querySelector('.type-document').classList.remove('fr-hidden');
-    }
-    if (acceptedTypeMimes !== null) {
-      fileSelectorInput.setAttribute('accept', acceptedTypeMimes);
-    } else {
-      fileSelectorInput.setAttribute('accept', '*/*');
-    }
   });
 
   btnValidate.addEventListener('click', () => {

@@ -4,8 +4,6 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Model\File as FileResponse;
 use App\Dto\Api\Request\FilesUploadRequest;
-use App\Entity\Enum\DocumentType;
-use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\FileUploadedEvent;
@@ -16,7 +14,6 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -147,7 +144,7 @@ class SignalementFileUploadController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $fileList = $this->processFiles($filesUploadRequest);
+        $fileList = $this->signalementFileProcessor->process($filesUploadRequest->files);
         $this->signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,
             signalement: $signalement,
@@ -165,40 +162,5 @@ class SignalementFileUploadController extends AbstractController
         $response = $this->fileFactory->createFromArray($fileUploadedEvent->getFilesPushed());
 
         return $this->json($response, Response::HTTP_CREATED);
-    }
-
-    /**
-     * @return array<int, array{
-     *     file: string,
-     *     title: string,
-     *     date: \DateTimeImmutable,
-     *     type: string,
-     *     documentType: ?DocumentType,
-     *     isSuspicious: bool
-     * }>
-     *
-     * @throws \Throwable
-     */
-    private function processFiles(FilesUploadRequest $fileRequest): array
-    {
-        $files = $fileList = [];
-        foreach ($fileRequest->files as $file) {
-            /** @var UploadedFile $file */
-            if (in_array($file->getMimeType(), File::IMAGE_MIME_TYPES)) {
-                $files['photos'][] = $file;
-            } else {
-                $files['documents'][] = $file;
-            }
-        }
-        if (isset($files['documents'])) {
-            $documentList = $this->signalementFileProcessor->process($files, 'documents');
-            $fileList = [...$fileList, ...$documentList];
-        }
-        if (isset($files['photos'])) {
-            $imageList = $this->signalementFileProcessor->process($files, 'photos');
-            $fileList = [...$fileList, ...$imageList];
-        }
-
-        return $fileList;
     }
 }

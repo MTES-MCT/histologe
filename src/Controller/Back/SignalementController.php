@@ -390,4 +390,23 @@ class SignalementController extends AbstractController
             'uuid' => $signalement->getUuid(),
         ]));
     }
+
+    #[Route('/{uuid:signalement}/list-all-photo-situation', name: 'back_signalement_list_all_photo_situation')]
+    public function listAllPhotoSituation(
+        Signalement $signalement,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+
+        $html = $this->renderView('back/signalement/view/photos-documents.html.twig', [
+            'signalement' => $signalement,
+            'criteres' => $infoDesordres['criteres'],
+            'zonetitle' => null,
+            'filesFilter' => 'situation',
+            'listAllPhotos' => true,
+        ]);
+
+        return $this->json(['html' => $html]);
+    }
 }

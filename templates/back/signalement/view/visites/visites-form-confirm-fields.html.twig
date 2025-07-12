@@ -118,23 +118,23 @@
     </p>
 </div>
 
-{% if not intervention is defined or intervention.files is empty %}
-<div class="fr-upload-group fr-mb-5v">
-    <label class="fr-label" for="visite-{{ formType }}[rapport]">Rapport de visite (facultatif) 
-        <span class="fr-hint-text">Formats supportés : {{ get_accepted_extensions('document')}}</span>
-    </label>
-    <input class="fr-upload" type="file" accept={{ get_accepted_mime_type('document')}} name="visite-{{ formType }}[rapport]">
-</div>
-{% elseif intervention is defined and intervention.files|length %}
-<fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
-	<ul class="fr-btns-group fr-btns-group--inline-sm fr-btns-group--sm">
-		<li>
-			<a href="{{ sign_url(path('show_file', {uuid: intervention.files[0].uuid})) }}" class="fr-btn" title="Afficher le document" rel="noopener" target="_blank">Voir le rapport de visite
-			</a>
-		</li>
-		<li>
-			<a href="{{ path('back_signalement_visite_deleterapport',{uuid:intervention.signalement.uuid, intervention:intervention.id}) }}?_token={{ csrf_token('delete_rapport') }}" title="Supprimer le rapport" class="fr-btn fr-btn--secondary fr-background--white fr-fi-delete-line "></a>
-		</li>
-	</ul>
-</fieldset>
+{% if not intervention is defined or not intervention.rapportDeVisite %}
+    <div class="fr-upload-group fr-mb-5v">
+        <label class="fr-label" for="visite-{{ formType }}[rapport]">Rapport de visite (facultatif) 
+            <span class="fr-hint-text">Formats supportés : {{ get_accepted_extensions()}}</span>
+        </label>
+        <input class="fr-upload" type="file" accept={{ get_accepted_mime_type()}} name="visite-{{ formType }}[rapport]">
+    </div>
+{% elseif intervention is defined and intervention.rapportDeVisite %}
+    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
+        <ul class="fr-btns-group fr-btns-group--inline-sm fr-btns-group--sm">
+            <li>
+                <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}" class="fr-btn" title="Afficher le document" rel="noopener" target="_blank">Voir le rapport de visite
+                </a>
+            </li>
+            <li>
+                <a href="{{ path('back_signalement_visite_deleterapport',{intervention:intervention.id}) }}?_token={{ csrf_token('delete_rapport') }}" title="Supprimer le rapport" class="fr-btn fr-btn--secondary fr-background--white fr-fi-delete-line "></a>
+            </li>
+        </ul>
+    </fieldset>
 {% endif %}

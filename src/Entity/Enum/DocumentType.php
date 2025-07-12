@@ -3,7 +3,6 @@
 namespace App\Entity\Enum;
 
 use App\Entity\Behaviour\EnumTrait;
-use App\Entity\File;
 
 enum DocumentType: string
 {
@@ -84,19 +83,5 @@ enum DocumentType: string
             self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
             self::AUTRE_PROCEDURE->name => self::AUTRE_PROCEDURE->label(),
         ];
-    }
-
-    public function mapFileType(): ?string
-    {
-        return match ($this) {
-            self::SITUATION_FOYER_BAIL, self::SITUATION_FOYER_DPE,
-            self::SITUATION_FOYER_ETAT_DES_LIEUX, self::SITUATION_DIAGNOSTIC_PLOMB_AMIANTE,
-            self::PROCEDURE_MISE_EN_DEMEURE, self::PROCEDURE_RAPPORT_DE_VISITE,
-            self::PROCEDURE_ARRETE_MUNICIPAL, self::PROCEDURE_ARRETE_PREFECTORAL,
-            self::PROCEDURE_SAISINE, self::BAILLEUR_DEVIS_POUR_TRAVAUX,
-            self::BAILLEUR_REPONSE_BAILLEUR, => File::FILE_TYPE_DOCUMENT,
-            self::PHOTO_SITUATION,self::PHOTO_VISITE => File::FILE_TYPE_PHOTO,
-            self::AUTRE, self::AUTRE_PROCEDURE, self::EXPORT => null,
-        };
     }
 }

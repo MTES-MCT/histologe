@@ -1,4 +1,6 @@
 import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper';
+import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/file_delete';
+import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file';
 
 if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   window.onscroll = function () {
@@ -20,6 +22,62 @@ document.querySelectorAll('.open-modal-reinit-affectation').forEach((button) => 
   });
 });
 
+document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
+  button.addEventListener('click', (e) => {
+    e.preventDefault();
+    button.setAttribute('disabled', 'disabled');
+    button.textContent = 'Chargement...';
+    const url = e.target.dataset.url;
+    fetch(url, { method: 'GET' }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          document.querySelectorAll('.container-situation').forEach((container) => {
+            container.innerHTML = data.html;
+            initTippy();
+            openPhotoAlbumAddEventListeners();
+            btnSignalementFileEditAddEventListeners();
+            btnSignalementFileDeleteAddEventListeners();
+          });
+        });
+      }
+    });
+  });
+});
+
+function initTippy() {
+  tippy('.part-infos-hover', {
+    content(reference) {
+      const id = reference.getAttribute('data-template');
+      const template = document.getElementById(id);
+      return template.innerHTML;
+    },
+    allowHTML: true,
+    interactive: true,
+    hideOnClick: true,
+    theme: 'light-border',
+    arrow: true,
+    placement: 'bottom',
+    maxWidth: '100%',
+  });
+}
+
+if (typeof tippy !== 'undefined') {
+  initTippy();
+}
+openPhotoAlbumAddEventListeners();
+
+function openPhotoAlbumAddEventListeners() {
+  document?.querySelectorAll('.open-photo-album')?.forEach((btn) => {
+    const swipeId = btn.getAttribute('data-id');
+    btn.addEventListeners('click touchdown', () => {
+      document?.querySelectorAll('.photos-album')?.forEach((element) => {
+        element.classList?.remove('fr-hidden');
+        displayPhotoAlbum(swipeId);
+      });
+    });
+  });
+}
+
 /* global histoPhotoIds */
 
 document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click touchdown', (e) => {
@@ -30,15 +88,6 @@ document?.querySelector('#btn-display-all-suivis')?.addEventListeners('click tou
   document.querySelector('#btn-display-all-suivis').classList.add('fr-hidden');
 });
 
-document?.querySelectorAll('.open-photo-album')?.forEach((btn) => {
-  const swipeId = btn.getAttribute('data-id');
-  btn.addEventListeners('click touchdown', () => {
-    document?.querySelectorAll('.photos-album')?.forEach((element) => {
-      element.classList?.remove('fr-hidden');
-      displayPhotoAlbum(swipeId);
-    });
-  });
-});
 document?.querySelectorAll('.photos-album-btn-close')?.forEach((btn) => {
   btn.addEventListeners('click touchdown', () => {
     document?.querySelectorAll('.photos-album')?.forEach((element) => {

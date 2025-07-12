@@ -470,7 +470,6 @@ trait FixturesHelper
             ->setFilename('document.pdf')
             ->setTitle('Doc')
             ->setExtension('pdf')
-            ->setFileType(File::FILE_TYPE_DOCUMENT)
             ->setCreatedAt(new \DateTimeImmutable('2022-12-02'));
     }
 
@@ -480,7 +479,6 @@ trait FixturesHelper
             ->setFilename('photo.jpg')
             ->setTitle('Photo')
             ->setExtension('jpg')
-            ->setFileType(File::FILE_TYPE_PHOTO)
             ->setCreatedAt(new \DateTimeImmutable('2022-12-02'));
     }
 

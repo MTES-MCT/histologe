@@ -22,28 +22,36 @@ class PhotoHelper
     }
 
     /**
-     * @return ?array<File>
+     * @return array<File>
      */
-    public static function getSortedPhotos(Signalement $signalement): ?array
+    public static function getSortedPhotos(Signalement $signalement, ?string $type = null): array
     {
         $photoList = $signalement->getPhotos()->toArray();
-        $photoListByType = [
-            DocumentType::PHOTO_SITUATION->value => [],
-            DocumentType::PHOTO_VISITE->value => [],
-            DocumentType::AUTRE->value => [],
-        ];
+        $photoListByType = ['situation' => [], 'procédure' => [], 'visite' => []];
 
         foreach ($photoList as $photoItem) {
-            $type = $photoItem->getDocumentType();
-            $photoListByType[$type->value][] = $photoItem;
+            if ($photoItem->isSituationImage()) {
+                $photoListByType['situation'][] = $photoItem;
+            } elseif ($photoItem->isProcedureImage()) {
+                $photoListByType['procédure'][] = $photoItem;
+            } else {
+                $photoListByType['visite'][] = $photoItem;
+            }
         }
 
-        foreach ($photoListByType as &$photoArray) {
-            usort($photoArray, function (File $fileA, File $fileB) {
-                if (DocumentType::PHOTO_SITUATION === $fileA->getDocumentType()) {
-                    return $fileA->getId() <=> $fileB->getId();
-                }
-                if (DocumentType::PHOTO_VISITE === $fileA->getDocumentType()) {
+        foreach ($photoListByType as $key => &$photoArray) {
+            usort($photoArray, function (File $fileA, File $fileB) use ($key) {
+                if ('situation' === $key) {
+                    if (DocumentType::PHOTO_SITUATION === $fileA->getDocumentType() && DocumentType::PHOTO_SITUATION === $fileB->getDocumentType()) {
+                        return $fileA->getId() <=> $fileB->getId();
+                    }
+                    if (DocumentType::PHOTO_SITUATION === $fileA->getDocumentType()) {
+                        return -1;
+                    }
+                    if (DocumentType::PHOTO_SITUATION === $fileB->getDocumentType()) {
+                        return 1;
+                    }
+                } elseif ('visite' === $key) {
                     $interventionA = $fileA->getIntervention();
                     $interventionB = $fileB->getIntervention();
                     if (null === $interventionA && null === $interventionB) {
@@ -62,11 +70,10 @@ class PhotoHelper
                 return $fileA->getId() <=> $fileB->getId();
             });
         }
+        if ($type) {
+            return $photoListByType[$type] ?? [];
+        }
 
-        return array_merge(
-            $photoListByType[DocumentType::PHOTO_SITUATION->value],
-            $photoListByType[DocumentType::AUTRE->value],
-            $photoListByType[DocumentType::PHOTO_VISITE->value]
-        );
+        return array_merge($photoListByType['situation'], $photoListByType['procédure'], $photoListByType['visite']);
     }
 }
