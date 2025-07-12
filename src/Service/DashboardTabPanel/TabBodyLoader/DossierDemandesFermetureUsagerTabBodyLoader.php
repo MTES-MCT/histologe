@@ -19,7 +19,7 @@ class DossierDemandesFermetureUsagerTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getDossiersDemandesFermetureByUsager());
+        $tabBody->setData($this->tabDataManager->getDossiersDemandesFermetureByUsager($this->tabQueryParameters));
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_fermer/_body_dossier_demande_fermeture_usager.html.twig');
     }
 }

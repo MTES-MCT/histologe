@@ -19,7 +19,7 @@ class DossiersSansActivitePartenaireTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getDossiersAVerifierSansActivitePartenaires());
+        $tabBody->setData($this->tabDataManager->getDossiersAVerifierSansActivitePartenaires($this->tabQueryParameters));
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_verifier/_body_dossier_sans_activite_partenaire.html.twig');
     }
 }

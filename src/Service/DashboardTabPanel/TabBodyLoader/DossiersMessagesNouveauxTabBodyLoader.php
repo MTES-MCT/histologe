@@ -19,7 +19,7 @@ class DossiersMessagesNouveauxTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getMessagesUsagersNouveauxMessages());
+        $tabBody->setData($this->tabDataManager->getMessagesUsagersNouveauxMessages($this->tabQueryParameters));
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_messages_usagers/_body_dossier_messages_nouveaux.html.twig');
     }
 }

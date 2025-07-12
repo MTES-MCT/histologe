@@ -10,14 +10,12 @@
             <h3 class="fr-text-label--blue-france tab-panel-title-with-information-icon">Dossiers avec au moins 3 relances usager restées sans réponse ({{ count }})</h3>
         </div>
         <div class="fr-select-group fr-col-12 fr-col-md-3">
-            <label class="fr-label" for="orderType">
+            <label class="fr-label" for="order-type-dossiers-relance-usager-sans-reponse">
                 Trier par
             </label>
-            <select id="orderType" name="orderType" class="fr-select">
-                <option value="p.nom-ASC" selected="selected">Date la plus récente (du plus récent au plus ancien) = tri par défaut</option>
-                <option value="p.nom-DESC">Date la plus ancienne (de la plus ancienne à la plus récente)</option>
-                <option value="p.id-ASC">Ordre alphabétique (A > Z) = sur le nom associé au dossier</option>
-                <option value="p.id-DESC">Ordre alphabétique (Z > A)</option>
+            <select id="order-type-dossiers-relance-usager-sans-reponse" class="fr-select" data-sort-body="dossiers-relance-usager-sans-reponse">
+                <option value="nbRelanceFeedbackUsager-DESC" selected="selected">Nombre de relances décroissant (du plus grand au plus petit) = tri par défaut</option>
+                <option value="nbRelanceFeedbackUsager-ASC">Nombre de relances décroissant (du plus petite au plus grand)</option>
             </select>
         </div>
     </header>

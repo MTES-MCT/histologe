@@ -19,7 +19,7 @@ class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoade
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getDossiersRelanceSansReponse());
+        $tabBody->setData($this->tabDataManager->getDossiersRelanceSansReponse($this->tabQueryParameters));
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_fermer/_body_dossier_relance_usager_sans_reponse.html.twig');
     }
 }

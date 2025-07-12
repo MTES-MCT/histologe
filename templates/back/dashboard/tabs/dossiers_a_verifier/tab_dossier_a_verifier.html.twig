@@ -5,7 +5,7 @@
      tabindex="0">
     {% include 'back/dashboard/tabs/dossiers_a_verifier/_header_dossier_a_verifier.html.twig' %}
     {% if is_granted('VIEW_TAB_PANEL', 'dossiers-sans-activite-partenaire') %}
-        <div data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-sans-activite-partenaire' }) }}">
+        <div id="dossiers-sans-activite-partenaire" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-sans-activite-partenaire' }) }}">
             Chargement...
         </div>
     {% endif %}

@@ -19,7 +19,7 @@ class DossiersNonAffectationTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getDossierNonAffectation());
+        $tabBody->setData($this->tabDataManager->getDossierNonAffectation($this->tabQueryParameters));
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_nouveaux/_body_dossier_non_affectation.html.twig');
     }
 }

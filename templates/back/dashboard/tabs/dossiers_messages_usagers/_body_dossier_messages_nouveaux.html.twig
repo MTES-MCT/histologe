@@ -9,14 +9,12 @@
             <h3 class="fr-text-label--blue-france tab-panel-title-with-mail-send-icon">Nouveaux messages ({{ count }})</h3>
         </div>
         <div class="fr-select-group fr-col-12 fr-col-md-3">
-            <label class="fr-label" for="orderType">
+            <label class="fr-label" for="order-type-dossiers-messages-nouveaux">
                 Trier par
             </label>
-            <select id="orderType" name="orderType" class="fr-select">
-                <option value="p.nom-ASC" selected="selected">Date la plus récente (du plus récent au plus ancien) = tri par défaut</option>
-                <option value="p.nom-DESC">Date la plus ancienne (de la plus ancienne à la plus récente)</option>
-                <option value="p.id-ASC">Ordre alphabétique (A > Z) = sur le nom associé au dossier</option>
-                <option value="p.id-DESC">Ordre alphabétique (Z > A)</option>
+            <select id="order-type-dossiers-messages-nouveaux" class="fr-select" data-sort-body="dossiers-messages-nouveaux">
+                <option value="createdAt-ASC" selected="selected">Message le plus ancien (de la plus ancienne à la plus récente) = tri par défaut</option>
+                <option value="createdAt-DESC">Message le plus récent (du plus récent au plus ancien)</option>
             </select>
         </div>
     </header>

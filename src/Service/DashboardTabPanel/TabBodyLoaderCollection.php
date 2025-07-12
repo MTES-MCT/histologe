@@ -2,6 +2,7 @@
 
 namespace App\Service\DashboardTabPanel;
 
+use App\Service\DashboardTabPanel\TabBodyLoader\TabBodyLoaderInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 readonly class TabBodyLoaderCollection

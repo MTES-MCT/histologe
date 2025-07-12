@@ -10,9 +10,10 @@ class TabBody
 
     public function __construct(
         private string $type,
-        /** @var Territory[] */
-        private array $territoires = [],
         private string $template = 'back/dashboard/tabs/_body_blank.html.twig',
+        /** @var Territory[] */
+        private readonly array $territoires = [],
+        private readonly ?TabQueryParameters $tabQueryParameters = null,
     ) {
     }
 
@@ -44,6 +45,11 @@ class TabBody
     public function getTerritoires(): array
     {
         return $this->territoires;
+    }
+
+    public function getTabQueryParameters(): ?TabQueryParameters
+    {
+        return $this->tabQueryParameters;
     }
 
     public function getTemplate(): string
