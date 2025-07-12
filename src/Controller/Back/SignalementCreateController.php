@@ -15,7 +15,6 @@ use App\Form\SignalementDraftSituationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
-use App\Messenger\InterconnectionBus;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -27,7 +26,6 @@ use App\Service\Signalement\SignalementBoManager;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -42,12 +40,7 @@ class SignalementCreateController extends AbstractController
     public function __construct(
         private readonly SignalementBoManager $signalementBoManager,
         private readonly SignalementManager $signalementManager,
-        #[Autowire(env: 'FEATURE_BO_SIGNALEMENT_CREATE')]
-        bool $featureSignalementCreate,
     ) {
-        if (!$featureSignalementCreate) {
-            throw $this->createNotFoundException();
-        }
     }
 
     #[Route('/brouillons', name: 'back_signalement_drafts', methods: ['GET'])]
@@ -420,7 +413,6 @@ class SignalementCreateController extends AbstractController
         FileRepository $fileRepository,
         ReferenceGenerator $referenceGenerator,
         EntityManagerInterface $entityManager,
-        InterconnectionBus $interconnectionBus,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
 

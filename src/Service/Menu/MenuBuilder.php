@@ -4,13 +4,11 @@ namespace App\Service\Menu;
 
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 readonly class MenuBuilder
 {
     public function __construct(
         private Security $currentRoute,
-        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -20,11 +18,9 @@ readonly class MenuBuilder
         $user = $this->currentRoute->getUser();
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', roleGranted: User::ROLE_USER, routeParameters: $this->currentRoute->isGranted(User::ROLE_ADMIN) ? ['status' => 'nouveau', 'isImported' => 'oui'] : []));
-        if ($this->parameterBag->get('feature_bo_signalement_create')) {
-            $signalementsSubMenu
+        $signalementsSubMenu
             ->addChild(new MenuItem(label: 'Mes brouillons', route: 'back_signalement_drafts', roleGranted: User::ROLE_USER));
-        }
-        $signalementsSubMenu->addChild(new MenuItem(label: 'Créer un signalement', route: $this->parameterBag->get('feature_bo_signalement_create') ? 'back_signalement_create' : 'front_signalement', roleGranted: User::ROLE_USER))
+        $signalementsSubMenu->addChild(new MenuItem(label: 'Créer un signalement', route: 'back_signalement_create', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(route: 'back_signalement_view'))
         ;
 
