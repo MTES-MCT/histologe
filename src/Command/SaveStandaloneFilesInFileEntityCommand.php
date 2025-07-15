@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\DataFixtures\Loader\LoadFileData;
+use App\Entity\File;
 use App\Factory\FileFactory;
 use App\Repository\UserRepository;
 use App\Service\UploadHandlerService;
@@ -35,7 +35,7 @@ class SaveStandaloneFilesInFileEntityCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $userAdmin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('admin_email')]);
 
-        foreach (LoadFileData::STANDALONE_FILES as $title => $filename) {
+        foreach (File::STANDALONE_FILES as $title => $filename) {
             $this->uploadHandlerService->uploadFromFilename($filename, $this->parameterBag->get('file_dir'));
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $filename,
@@ -47,7 +47,7 @@ class SaveStandaloneFilesInFileEntityCommand extends Command
         }
 
         $this->entityManager->flush();
-        $io->success(count(LoadFileData::STANDALONE_FILES).' standalone files have been saved in File entity');
+        $io->success(count(File::STANDALONE_FILES).' standalone files have been saved in File entity');
 
         return Command::SUCCESS;
     }
