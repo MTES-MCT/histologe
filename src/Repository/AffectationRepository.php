@@ -343,4 +343,22 @@ class AffectationRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findAllActiveAffectationsOnActiveSignalements(): array
+    {
+        $sql = '
+            SELECT a.signalement_id, a.partner_id
+            FROM affectation a
+            INNER JOIN signalement s ON a.signalement_id = s.id
+            WHERE s.statut = :signalement_status
+            AND a.statut = :affectation_status
+        ';
+
+        $connection = $this->getEntityManager()->getConnection();
+        $stmt = $connection->prepare($sql);
+        $stmt->bindValue('signalement_status', SignalementStatus::ACTIVE->value);
+        $stmt->bindValue('affectation_status', AffectationStatus::ACCEPTED->value);
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
 }

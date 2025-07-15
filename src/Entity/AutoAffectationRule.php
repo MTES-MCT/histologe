@@ -319,7 +319,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $description;
     }
 
-    /** @return array<mixed> */
+    /** @return array<HistoryEntryEvent> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

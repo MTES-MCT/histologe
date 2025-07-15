@@ -73,7 +73,7 @@ class UserPartner implements EntityHistoryInterface
         return $this;
     }
 
-    /** @return array<mixed> */
+    /** @return array<HistoryEntryEvent> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];

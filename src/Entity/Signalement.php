@@ -510,6 +510,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\OneToOne(mappedBy: 'signalement', targetEntity: SignalementUsager::class)]
     private ?SignalementUsager $signalementUsager = null;
 
+    /**
+     * @var Collection<int, UserSignalementSubscription>
+     */
+    #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: UserSignalementSubscription::class, orphanRemoval: true)]
+    private Collection $userSignalementSubscriptions;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -532,6 +538,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->desordreCategories = new ArrayCollection();
         $this->desordreCriteres = new ArrayCollection();
         $this->desordrePrecisions = new ArrayCollection();
+        $this->userSignalementSubscriptions = new ArrayCollection();
     }
 
     #[Assert\Callback]
@@ -2753,7 +2760,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->getTerritory()->getTimezone();
     }
 
-    /** @return array<mixed> */
+    /** @return array<HistoryEntryEvent> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
@@ -2842,5 +2849,35 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getUsagers(): array
     {
         return array_filter([$this->getSignalementUsager()?->getOccupant(), $this->getSignalementUsager()?->getDeclarant()]);
+    }
+
+    /**
+     * @return Collection<int, UserSignalementSubscription>
+     */
+    public function getUserSignalementSubscriptions(): Collection
+    {
+        return $this->userSignalementSubscriptions;
+    }
+
+    public function addUserSignalementSubscription(UserSignalementSubscription $userSignalementSubscription): static
+    {
+        if (!$this->userSignalementSubscriptions->contains($userSignalementSubscription)) {
+            $this->userSignalementSubscriptions->add($userSignalementSubscription);
+            $userSignalementSubscription->setSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSignalementSubscription(UserSignalementSubscription $userSignalementSubscription): static
+    {
+        if ($this->userSignalementSubscriptions->removeElement($userSignalementSubscription)) {
+            // set the owning side to null (unless already changed)
+            if ($userSignalementSubscription->getSignalement() === $this) {
+                $userSignalementSubscription->setSignalement(null);
+            }
+        }
+
+        return $this;
     }
 }
