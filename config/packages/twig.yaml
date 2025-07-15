@@ -18,7 +18,6 @@ twig:
         mise_en_berne: '%env(MISE_EN_BERNE_ENABLE)%'
         feature_banner_histologe: '%env(bool:FEATURE_BANNER_HISTOLOGE)%'
         sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
-        feature_bo_signalement_create: '%env(bool:FEATURE_BO_SIGNALEMENT_CREATE)%'
         feature_suivi_action: '%env(bool:FEATURE_SUIVI_ACTION)%'
     paths:
         # point this wherever your images live
