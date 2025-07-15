@@ -2,7 +2,7 @@
     aria-labelledby="fr-modal-visites-upload-files-{{intervention.id}}" 
     id="visites-upload-files-{{intervention.id}}" 
     class="fr-modal fr-modal-visites-upload-files" 
-    data-file-type="document"
+    data-file-type="photos"
     data-intervention-id="{{intervention.id}}"
     data-has-changes="false"
     data-validated="false"
@@ -12,6 +12,8 @@
     data-edit-file-token="{{ csrf_token('signalement_edit_file_'~signalement.id) }}"
     data-delete-tmp-file-route="{{ path('back_signalement_delete_tmpfile',{id:'REPLACE'}) }}"
     data-waiting-suivi-route="{{ path('back_signalement_file_waiting_suivi',{uuid:signalement.uuid}) }}"
+    data-accepted-type-mimes="{{ get_accepted_mime_type('photo') }}"
+    data-accepted-extensions="{{ get_accepted_extensions('photo') }}"
     >
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">

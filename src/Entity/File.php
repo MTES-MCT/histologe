@@ -15,10 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: FileRepository::class)]
 class File implements EntityHistoryInterface
 {
-    public const string FILE_TYPE_DOCUMENT = 'document';
-    public const string FILE_TYPE_PHOTO = 'photo';
-    public const string INPUT_NAME_PHOTOS = 'photos';
-    public const string INPUT_NAME_DOCUMENTS = 'documents';
     /** @var string[] */
     public const array DOCUMENT_MIME_TYPES = [
         'image/jpeg',
@@ -97,9 +93,6 @@ class File implements EntityHistoryInterface
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
-
-    #[ORM\Column(length: 32, options: ['comment' => 'Value possible photo or document'])]
-    private ?string $fileType = null;
 
     #[ORM\Column(length: 255)]
     private ?string $extension = null;
@@ -238,24 +231,6 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    /**
-     * @deprecated  Cette méthode est obsolete et doit être remplacée par isTypePhoto ou isTypeDocument
-     */
-    public function getFileType(): ?string
-    {
-        return $this->fileType;
-    }
-
-    /**
-     * @deprecated  Cette méthode est obsolete et doit être remplacée par isTypePhoto ou isTypeDocument
-     */
-    public function setFileType(?string $fileType): self
-    {
-        $this->fileType = $fileType;
-
-        return $this;
-    }
-
     public function getExtension(): ?string
     {
         return $this->extension;
@@ -323,24 +298,7 @@ class File implements EntityHistoryInterface
 
     public function setDesordreSlug(?string $desordreSlug): self
     {
-        if (
-            !$this->getSignalement()
-            || !$this->getDocumentType()
-            || DocumentType::PHOTO_SITUATION !== $this->getDocumentType()
-        ) {
-            $this->desordreSlug = null;
-
-            return $this;
-        }
-        if (
-            \in_array($desordreSlug, $this->getSignalement()->getDesordreCritereSlugs())
-            || \in_array($desordreSlug, $this->getSignalement()->getDesordrePrecisionSlugs())
-            || \in_array($desordreSlug, $this->getSignalement()->getDesordreCategorieSlugs())
-        ) {
-            $this->desordreSlug = $desordreSlug;
-        } else {
-            $this->desordreSlug = null;
-        }
+        $this->desordreSlug = $desordreSlug;
 
         return $this;
     }
@@ -364,7 +322,8 @@ class File implements EntityHistoryInterface
 
     public function setDescription(?string $description): self
     {
-        $this->description = $description;
+        $description = null !== $description ? trim($description) : null;
+        $this->description = $description ?: null;
 
         return $this;
     }
@@ -381,31 +340,24 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function isTypePhoto(): bool
+    public function isTypeImage(): bool
     {
-        if (empty($this->getExtension())) {
-            return self::FILE_TYPE_PHOTO === $this->fileType;
-        }
-
-        return (self::FILE_TYPE_PHOTO === $this->getDocumentType()->mapFileType() || DocumentType::AUTRE === $this->getDocumentType())
-            && \in_array($this->getExtension(), self::RESIZABLE_EXTENSION)
-        ;
+        return in_array($this->getExtension(), self::RESIZABLE_EXTENSION);
     }
 
     public function isTypeDocument(): bool
     {
-        if (empty($this->getExtension())) {
-            return self::FILE_TYPE_DOCUMENT === $this->fileType;
-        }
-
-        return !$this->isTypePhoto();
+        return !$this->isTypeImage();
     }
 
-    public function isSituationPhoto(): bool
+    public function isSituationImage(): bool
     {
-        return $this->isTypePhoto()
-        && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList())
-        && null === $this->intervention;
+        return $this->isTypeImage() && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList()) && null === $this->intervention;
+    }
+
+    public function isProcedureImage(): bool
+    {
+        return $this->isTypeImage() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
     }
 
     public function isTemp(): ?bool

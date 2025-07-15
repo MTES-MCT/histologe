@@ -2,7 +2,6 @@
     aria-labelledby="fr-modal-upload-files-title" 
     id="fr-modal-upload-files" 
     class="fr-modal" 
-    data-file-type="document"
     data-has-changes="false"
     data-validated="false"
     data-add-file-route="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}"
@@ -11,6 +10,7 @@
     data-edit-file-token="{{ csrf_token('signalement_edit_file_'~signalement.id) }}"
     data-delete-tmp-file-route="{{ path('back_signalement_delete_tmpfile',{id:'REPLACE'}) }}"
     data-waiting-suivi-route="{{ path('back_signalement_file_waiting_suivi',{uuid:signalement.uuid}) }}"
+    data-accepted-extensions="{{ get_accepted_extensions() }}"
     >
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
@@ -20,53 +20,36 @@
                         <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-upload-files">Fermer</button>
                     </div>
                     <div class="fr-modal__content">
-                        <div class="type-conditional type-document">
-                            <div class="filter-conditional filter-procedure">
-                                <h1 id="fr-modal-upload-files-title" class="fr-modal__title">
-                                    Ajouter des documents liés à la procédure
-                                </h1>
-                                <div>
-                                    Ajouter un ou plusieurs documents. Pour chaque document, veuillez renseigner son type.
-                                </div>
-                                <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-1w ">
-                                    <p>Pour ajouter des documents de type Bail, DPE, Diagnostic et Etat des lieux, cliquez sur le bouton "Ajouter des documents usager" ou rendez-vous dans l'onglet "Situation".</p>
-                                </div>
+                        <div class="filter-conditional filter-procedure">
+                            <h1 id="fr-modal-upload-files-title" class="fr-modal__title">
+                                Ajouter des documents liés à la procédure
+                            </h1>
+                            <div>
+                                Ajouter un ou plusieurs documents. Pour chaque document, veuillez renseigner son type.
                             </div>
-                            <div class="filter-conditional filter-situation">
-                                <h1  id="fr-modal-upload-files-title" class="fr-modal__title">
-                                    Ajouter des documents liés à la situation
-                                </h1>
-                                <div>
-                                    Ajouter un ou plusieurs documents. Pour chaque document, veuillez renseigner son type.
-                                </div>
+                            <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-1w ">
+                                <p>Pour ajouter des documents de type Bail, DPE, Diagnostic et Etat des lieux, cliquez sur le bouton "Ajouter des documents sur la situation".</p>
+                            </div>
+                        </div>
+                        <div class="filter-conditional filter-situation">
+                            <h1  id="fr-modal-upload-files-title" class="fr-modal__title">
+                                Ajouter des documents liés à la situation
+                            </h1>
+                            <div>
+                                Ajouter un ou plusieurs documents. Pour chaque document, veuillez renseigner son type.
+                            </div>
+                            {% if context == 'form-bo-edit' %}
                                 <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-1w ">
                                     <p>Pour ajouter des documents concernant la procédure ou le bailleur, rendez-vous dans l'onglet "Documents".</p>
                                 </div>
-                                {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}   
-                                    <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
-                                        <p>Ces documents seront visibles sur la fiche de suivi usager.</p>
-                                    </div>
-                                {% else %}
-                                    <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
-                                        <p>Ces documents seront partagés à l'usager.</p>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="type-conditional type-photo">
-                            <h1 id="fr-modal-upload-files-title"  class="fr-modal__title">
-                                Ajouter des photos de la situation
-                            </h1>
-                            <div>
-                                Ajouter une ou plusieurs photos au signalement. Pour chaque photo, veuillez sélectionner le désordre auquel elle est rattachée. 
-                            </div>
-                            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}                                
+                            {% endif %}
+                            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}   
                                 <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
-                                    <p>Ces photos seront visibles sur la fiche de suivi usager.</p>
+                                    <p>Ces documents seront visibles sur la fiche de suivi usager.</p>
                                 </div>
-                            {% else %}                            
+                            {% else %}
                                 <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
-                                    <p>Ces photos seront partagées à l'usager.</p>
+                                    <p>Ces documents seront partagés à l'usager.</p>
                                 </div>
                             {% endif %}
                         </div>
@@ -79,33 +62,10 @@
                             </div>
                             <p class="fr-mb-1w">ou</p>
                             <button class="modal-upload-files-selector fr-btn fr-icon-search-line fr-btn--icon-left fr-btn--secondary">Parcourir les fichiers de l'appareil</button>
-                            <input type="file" class="modal-upload-files-selector-input" multiple accept={{ get_accepted_mime_type('document')}}>
+                            <input type="file" class="modal-upload-files-selector-input" multiple accept="{{ get_accepted_mime_type() }}">
                         </div>
                         <div class="modal-upload-list-section" id="modal-upload-file-dynamic-content">
                             <div class="modal-upload-list"></div>
-                        </div>
-                        <div class="fr-display-none">
-                            {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
-                            <select class="fr-select select-type" data-file-id="" id="select-type-situation-to-clone">
-                                <option value="">Sélectionner un type</option>
-                                {% for key, value in DocumentType.getOrderedSituationList() %}
-                                    <option value="{{ key }}">{{ value }}</option>
-                                {% endfor %}
-                            </select>
-                            <select class="fr-select select-type" data-file-id="" id="select-type-procedure-to-clone">
-                                <option value="">Sélectionner un type</option>
-                                {% for key, value in DocumentType.getOrderedProcedureList() %}
-                                    <option value="{{ key }}">{{ value }}</option>
-                                {% endfor %}
-                            </select>
-                            {% if criteres is defined %}
-                            <select class="fr-select select-desordre" data-file-id="" id="select-desordre-to-clone">
-                                <option value="">Sélectionner un désordre</option>
-                                {% for key, value in criteres %}
-                                    <option value="{{ key }}">{{ value }}</option>
-                                {% endfor %}
-                            </select>
-                            {% endif %}
                         </div>
                     </div>
                     <div class="fr-modal__footer">

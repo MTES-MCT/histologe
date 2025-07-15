@@ -7,12 +7,12 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UnsupportedFileFormatException extends \Exception
 {
-    public function __construct(UploadedFile $file, ?string $fileType = 'document')
+    public function __construct(UploadedFile $file, ?string $fileType = null)
     {
         parent::__construct(self::getFileFormatErrorMessage($file, $fileType));
     }
 
-    public static function getFileFormatErrorMessage(UploadedFile $file, string $fileType): string
+    public static function getFileFormatErrorMessage(UploadedFile $file, ?string $fileType = null): string
     {
         $ext = $file->getClientOriginalExtension();
         $mime = $file->getMimeType();

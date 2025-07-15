@@ -95,9 +95,6 @@ class ProfilControllerTest extends WebTestCase
         ->method('toTempFolder')
         ->willReturn(['file' => 'avatarTitle.jpg', 'filePath' => 'path']);
         $this->uploadHandlerServiceMock->expects($this->once())
-        ->method('setKey')
-        ->willReturn(['file' => 'avatarTitle.jpg', 'filePath' => 'path']);
-        $this->uploadHandlerServiceMock->expects($this->once())
         ->method('moveFilePath');
         $this->imageManipulationHandlerMock->expects($this->once())
         ->method('avatar');

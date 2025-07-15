@@ -5,7 +5,6 @@ namespace App\Controller\Api;
 use App\Dto\Api\Model\Visite as InterventionModel;
 use App\Dto\Api\Request\FilesUploadRequest;
 use App\Entity\Enum\DocumentType;
-use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -19,7 +18,6 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -212,7 +210,6 @@ class VisiteUploadDocumentsController extends AbstractController
             $intervention,
             $user,
             $this->getDocumentType($typeDocumentVisite),
-            $this->getCategoryUploadType($typeDocumentVisite),
         );
 
         $this->entityManager->persist($signalement);
@@ -244,18 +241,8 @@ class VisiteUploadDocumentsController extends AbstractController
         Intervention $intervention,
         User $user,
         DocumentType $documentType,
-        string $categoryUploadType,
     ): array {
-        $files = [];
-        foreach ($filesUploadRequest->files as $file) {
-            /* @var UploadedFile $file */
-            $files[$categoryUploadType][] = $file;
-        }
-        $processedFiles = $this->signalementFileProcessor->process(
-            $files,
-            $categoryUploadType,
-            $documentType,
-        );
+        $processedFiles = $this->signalementFileProcessor->process($filesUploadRequest->files, $documentType);
         $this->signalementFileProcessor->addFilesToSignalement(
             fileList: $processedFiles,
             signalement: $signalement,
@@ -273,13 +260,6 @@ class VisiteUploadDocumentsController extends AbstractController
             : DocumentType::PHOTO_VISITE;
     }
 
-    private function getCategoryUploadType(string $typeDocumentVisite): string
-    {
-        return self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite
-            ? File::INPUT_NAME_DOCUMENTS
-            : File::INPUT_NAME_PHOTOS;
-    }
-
     private function isRapportVisite(string $typeDocumentVisite): bool
     {
         return self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite;
@@ -288,7 +268,7 @@ class VisiteUploadDocumentsController extends AbstractController
     private function canAddDocument(string $typeDocumentVisite, Intervention $intervention, ?string &$errorMessage): bool
     {
         if (self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite) {
-            if (!$intervention->getRapportDeVisite()->isEmpty()) {
+            if ($intervention->getRapportDeVisite()) {
                 $errorMessage = 'Un rapport de visite existe déjà pour cette intervention.';
 
                 return false;

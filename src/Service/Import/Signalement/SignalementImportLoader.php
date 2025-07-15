@@ -131,8 +131,8 @@ class SignalementImportLoader
                     $signalement->addSuivi($suivi);
                 }
 
-                $this->loadFiles($signalement, File::INPUT_NAME_PHOTOS, $dataMapped);
-                $this->loadFiles($signalement, File::INPUT_NAME_DOCUMENTS, $dataMapped);
+                $this->loadFiles($signalement, $dataMapped['photos']);
+                $this->loadFiles($signalement, $dataMapped['documents']);
 
                 $this->metadata['count_signalement'] = $countSignalement;
                 if (0 === $countSignalement % self::FLUSH_COUNT) {
@@ -322,16 +322,13 @@ class SignalementImportLoader
         return $suiviCollection;
     }
 
-    /**
-     * @param array<string, mixed> $dataMapped
-     */
-    private function loadFiles(Signalement $signalement, string $colName, array $dataMapped): void
+    private function loadFiles(Signalement $signalement, string $data): void
     {
-        if (empty($dataMapped[$colName])) {
+        if (empty($data)) {
             return;
         }
 
-        $fileList = explode('|', $dataMapped[$colName]);
+        $fileList = explode('|', $data);
         foreach ($fileList as $filename) {
             $exist = $this->entityManager->getRepository(File::class)->findOneBy(['filename' => $filename]);
             if ($exist) {

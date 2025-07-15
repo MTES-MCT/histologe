@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\File;
 use App\Entity\User;
@@ -78,24 +79,24 @@ class FileVoter extends Voter
 
     private function canEdit(File $file, User $user): bool
     {
-        return $this->canCreate($file, $user)
-            && (
-                $this->isFileUploadedByUser($file, $user)
-                || $this->isAdminOrRTonHisTerritory($file, $user)
-            );
+        if ($file->getIntervention() && DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType()) {
+            return false;
+        }
+
+        return $this->canCreate($file, $user) && ($this->isFileUploadedByUser($file, $user) || $this->isAdminOrRTonHisTerritory($file, $user));
     }
 
     private function canDelete(File $file, User $user): bool
     {
+        if ($file->getIntervention() && DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType()) {
+            return InterventionVoter::canEditVisite($file->getIntervention(), $user);
+        }
+
         if ($user->isSuperAdmin()) {
             return true;
         }
 
-        return $this->canCreate($file, $user)
-            && (
-                $this->isFileUploadedByUser($file, $user)
-                || $this->isPartnerFileDeletableByAdmin($file, $user)
-            );
+        return $this->canCreate($file, $user) && ($this->isFileUploadedByUser($file, $user) || $this->isPartnerFileDeletableByAdmin($file, $user));
     }
 
     private function isPartnerFileDeletableByAdmin(File $file, User $user): bool

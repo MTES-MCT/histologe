@@ -394,13 +394,13 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 <h4 class="fr-mb-2v">Vos photos</h4>
 <div class="fr-mb-4v">
     	{% include '_partials/_modal_file_delete.html.twig' %}
-	{% if signalement.files|filter(photo => photo.isTypePhoto and photo.isUsagerFile)|length %}
+	{% if signalement.files|filter(photo => photo.isTypeImage and photo.isUsagerFile)|length %}
 		Les photos que vous avez ajoutées.
 		<br>
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
 			<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-			{% for photo in signalement.files|filter(photo => photo.isTypePhoto and photo.isUsagerFile) %}
+			{% for photo in signalement.files|filter(photo => photo.isTypeImage and photo.isUsagerFile) %}
 				<div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
 					<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
 						style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
@@ -417,7 +417,6 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 								aria-controls="fr-modal-delete-file"
 								data-fr-opened="false" 
 								data-filename="{{ photo.filename }}" 
-								data-type="photo" 
 								data-file-id="{{ photo.id}}"                     
 							></button>
 						{% endif %}
@@ -430,7 +429,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 	{% endif %}
 </div>
 
-{% if signalement.files|filter(photo => photo.isTypePhoto and photo.isUsagerFile is same as(false))|length %}
+{% if signalement.files|filter(photo => photo.isSituationImage and photo.isUsagerFile is same as(false))|length %}
 	<h4 class="fr-mb-2v">Photos supplémentaires</h4>
 	<div class="fr-mb-4v">
 		Les photos ajoutées à votre dossier par l'administration.
@@ -438,7 +437,7 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 		Cliquez sur la photo pour l'ouvrir dans un nouvel onglet.
 		<br>
 		<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-			{% for photo in signalement.files|filter(photo => photo.isTypePhoto and photo.isUsagerFile is same as(false)) %}
+			{% for photo in signalement.files|filter(photo => photo.isSituationImage and photo.isUsagerFile is same as(false)) %}
 				<div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
 					<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
 						style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
@@ -497,7 +496,6 @@ and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\Profile
 							aria-controls="fr-modal-delete-file"
 							data-fr-opened="false" 
 							data-filename="{{ doc.filename }}" 
-							data-type="document" 
 							data-file-id="{{ doc.id}}"                     
 						></button>
 					{% endif %}

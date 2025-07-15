@@ -17,6 +17,7 @@ use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Repository\SignalementRepository;
+use App\Service\Signalement\PhotoHelper;
 use App\Service\TimezoneProvider;
 use App\Utils\CommuneHelper;
 use App\Utils\Phone;
@@ -2256,8 +2257,16 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getPhotos(): Collection
     {
         return $this->files->filter(function (File $file) {
-            return $file->isTypePhoto() && !$file->isTemp() && !$file->isIsWaitingSuivi();
+            return $file->isTypeImage() && !$file->isTemp() && !$file->isIsWaitingSuivi();
         });
+    }
+
+    /**
+     * @return array<File>
+     */
+    public function getSortedPhotos(string $type): array
+    {
+        return PhotoHelper::getSortedPhotos($this, $type);
     }
 
     /**

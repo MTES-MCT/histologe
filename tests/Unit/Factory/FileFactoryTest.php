@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Factory;
 
 use App\Entity\Enum\DocumentType;
-use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\FileFactory;
@@ -24,7 +23,7 @@ class FileFactoryTest extends TestCase
         );
         $this->assertEquals('sample-123.jpg', $file->getFilename());
         $this->assertEquals('sample.jpg', $file->getTitle());
-        $this->assertTrue($file->isTypePhoto());
+        $this->assertTrue($file->isTypeImage());
         $this->assertInstanceOf(Signalement::class, $file->getSignalement());
         $this->assertInstanceOf(User::class, $file->getUploadedBy());
         $this->assertInstanceOf(\DateTimeImmutable::class, $file->getCreatedAt());
@@ -39,13 +38,13 @@ class FileFactoryTest extends TestCase
     public function testCreateFromArray(
         array $dataItem,
         string $filename,
-        string $fileType,
+        bool $isTypeDocument,
         DocumentType $documentType,
     ): void {
         $signalement = $this->getSignalement();
         $file = (new FileFactory())->createFromFileArray($dataItem, $signalement);
 
-        $this->assertEquals($fileType, $file->getFileType());
+        $this->assertEquals($isTypeDocument, $file->isTypeDocument());
         $this->assertEquals($documentType, $file->getDocumentType());
         $this->assertEquals($filename, $file->getFilename());
         if (DocumentType::PHOTO_SITUATION === $file->getDocumentType()
@@ -65,7 +64,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_dpe_upload',
             ],
             'dummy-filename-dpe.pdf',
-            File::FILE_TYPE_DOCUMENT,
+            true,
             DocumentType::SITUATION_FOYER_DPE,
         ];
 
@@ -77,7 +76,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_dpe_upload',
             ],
             'dummy-filename-dpe.PNG',
-            File::FILE_TYPE_DOCUMENT,
+            false,
             DocumentType::SITUATION_FOYER_DPE,
         ];
 
@@ -89,7 +88,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_etat_des_lieux_upload',
             ],
             'dummy-filename-dpe.pdf',
-            File::FILE_TYPE_DOCUMENT,
+            true,
             DocumentType::SITUATION_FOYER_ETAT_DES_LIEUX,
         ];
 
@@ -101,7 +100,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_bail_upload',
             ],
             'dummy-filename-bail.png',
-            File::FILE_TYPE_DOCUMENT,
+            false,
             DocumentType::SITUATION_FOYER_BAIL,
         ];
 
@@ -113,7 +112,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'bail_dpe_bail_upload',
             ],
             'dummy-filename-bail.png',
-            File::FILE_TYPE_DOCUMENT,
+            false,
             DocumentType::SITUATION_FOYER_BAIL,
         ];
 
@@ -125,7 +124,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'desordres_batiment_isolation_photos_upload',
             ],
             'dummy-filename-desordre.pdf',
-            File::FILE_TYPE_DOCUMENT,
+            true,
             DocumentType::PHOTO_SITUATION,
         ];
 
@@ -137,7 +136,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'desordres_batiment_isolation_photos_upload',
             ],
             'dummy-filename-desordre.pdf',
-            File::FILE_TYPE_DOCUMENT,
+            true,
             DocumentType::PHOTO_SITUATION,
         ];
 
@@ -149,7 +148,7 @@ class FileFactoryTest extends TestCase
                 'slug' => 'desordres_batiment_isolation_photos_upload',
             ],
             'dummy-filename-desordre.png',
-            File::FILE_TYPE_PHOTO,
+            false,
             DocumentType::PHOTO_SITUATION,
         ];
     }
