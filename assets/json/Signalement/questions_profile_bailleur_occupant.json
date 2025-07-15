@@ -809,7 +809,9 @@
           "validate": {
             "message": "Veuillez renseigner le nombre d'enfants vivant dans votre logement.",
             "pattern": "^[0-9]*$",
-            "patternMessage": "Veuillez renseigner un nombre d'enfants valide."
+            "patternMessage": "Veuillez renseigner un nombre d'enfants valide.",
+            "expression": "formStore.data.composition_logement_nombre_enfants <= formStore.data.composition_logement_nombre_personnes",
+            "expressionMessage": "Le nombre d'enfants doit être inférieur ou égal au nombre total de personnes du foyer."
           }
         },
         {
@@ -1043,7 +1045,7 @@
                 "type": "SignalementFormButton",
                 "label": "Précédent",
                 "slug": "bail_dpe_previous",
-                "action": "goto:type_logement_composition",
+                "action": "goto:composition_logement_personnes",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
