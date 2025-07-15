@@ -79,6 +79,7 @@ class Partner implements EntityHistoryInterface
     private ?Territory $territory = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: PartnerType::class)]
+    #[Assert\NotBlank(message: 'Merci de choisir le type de partenaire.')]
     private ?PartnerType $type = null;
 
     /** @var array<Qualification> $competence */

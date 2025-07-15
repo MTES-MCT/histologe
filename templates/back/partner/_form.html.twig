@@ -12,28 +12,13 @@
                 {{ form_row(form.nom) }}
 			</div>
 			<div class="fr-fieldset__element">
-				<div class="fr-input-group">
-					<label for="{{ form.email.vars.id }}" class="fr-label">
-						E-mail de contact (facultatif)
-						<span class="fr-hint-text">S'il y a des responsables de territoire au sein du partenaire, cette adresse e-mail sera visible par les agents du territoire.</span>
-					</label>
-					{{ form_widget(form.email) }}
-				</div>
+                {{ form_row(form.email) }}
 			</div>
 			<div class="fr-fieldset__element fr-mb-n1v">
 				{{ form_row(form.emailNotifiable) }}
 			</div>
 			<div class="fr-fieldset__element">
-				<div class="fr-select-group">
-					<label for="{{ form.type.vars.id }}" class="fr-label">
-						Type de partenaire<sup class="fr-text-label--red-marianne">*</sup>
-						<span class="fr-hint-text">Sélectionnez un type pour afficher les champs à remplir. Si vous ne trouvez pas de type de partenaire adapté, sélectionnez "Autre".</span>
-					</label>
-					{{ form_widget(form.type) }}
-					<p class="fr-error-text fr-hidden">
-						Vous devez renseigner le type de partenaire.
-					</p>
-				</div>
+                {{ form_row(form.type) }}
 			</div>
 			<div class="fr-fieldset__element">
 				{% if form.competence is defined %}

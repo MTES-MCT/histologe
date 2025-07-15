@@ -69,10 +69,13 @@ class PartnerType extends AbstractType
                 ],
             ])
             ->add('email', EmailType::class, [
+                'label' => 'E-mail de contact (facultatif)',
+                'help' => 'S\'il y a des responsables de territoire au sein du partenaire, cette adresse e-mail sera visible par les agents du territoire.',
+                'required' => false,
+                'empty_data' => '',
                 'attr' => [
                     'class' => 'fr-input',
                 ],
-                'required' => false,
             ])
             ->add('emailNotifiable', ChoiceType::class, [
                 'choices' => [
@@ -84,21 +87,16 @@ class PartnerType extends AbstractType
                 'help' => 'Est-ce que les e-mails concernant les signalements du partenaire doivent être envoyés à cette adresse ?',
             ])
             ->add('type', EnumType::class, [
+                'label' => 'Type de partenaire',
+                'help' => 'Sélectionnez un type pour afficher les champs à remplir. Si vous ne trouvez pas de type de partenaire adapté, sélectionnez "Autre".',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
                 'class' => EnumPartnerType::class,
                 'choice_label' => function ($choice) {
                     return $choice->label();
                 },
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
                 'placeholder' => 'Sélectionner un type',
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
-                'help' => 'Choisissez un type de partenaire parmi la liste ci-dessous.',
-                'help_attr' => [
-                    'class' => 'fr-hint-text',
-                ],
                 'disabled' => !$this->isAdminTerritory,
             ])
             ->add('competence', SearchCheckboxEnumType::class, [
