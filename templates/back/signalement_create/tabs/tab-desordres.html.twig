@@ -104,8 +104,8 @@
                                                 </label>
                                                 {% if formDesordres and attribute(formDesordres, detailsFieldName) is defined %}
                                                     {{ form_widget(attribute(formDesordres, detailsFieldName)) }}
-                                                    {% else %}
-                                                {{ form_widget(field) }}
+                                                {% else %}
+                                                    {{ form_widget(field) }}
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -118,6 +118,11 @@
                                             <div class="fr-checkbox-group">
                                                 {{ form_widget(child) }}
                                                 <label class="fr-label" for="{{ child.vars.id }}"><span>{{ child.vars.label|raw }}</span></label>
+                                                {# Vérification si le champ texte existe pour le critère plafond trop bas }
+                                                {% if field.vars.attr['data-slug-critere'] is same as 'desordres_logement_lumiere_plafond_trop_bas' %}
+                                                    <label for="{{ child.vars.id }}_taille">Précisez la hauteur du plafond (en cm)</label>
+                                                    <input type="text" class="fr-input" id="{{ child.vars.id }}_taille" name="{{ child.vars.full_name }}_taille" placeholder="Ex : 200" />
+                                                {% endif %#}
                                             </div>
                                         </div>
                                     </fieldset>

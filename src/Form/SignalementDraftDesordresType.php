@@ -87,6 +87,30 @@ class SignalementDraftDesordresType extends AbstractType
                         'data-slug-critere' => $critere->getSlugCritere(),
                     ],
                 ]);
+
+            } elseif ('desordres_logement_lumiere_plafond_trop_bas' === $critereSlug) {
+                $jsonContent = $signalement ? $signalement->getJsonContent() : [];
+                $suffixes = [
+                    '_piece_a_vivre',
+                    '_cuisine',
+                    '_salle_de_bain',
+                    '_toutes_pieces',
+                ];
+
+                foreach ($suffixes as $suffix) {
+                    $key = $critereSlug.$suffix;
+                    $value = isset($jsonContent[$key]) ? $jsonContent[$key] : '';
+                    $builder->add('precisions_'.$critere->getId().'_'.$key, TextType::class, [
+                        'label' => 'Hauteur (en cm)',
+                        'required' => false,
+                        'mapped' => false,
+                        'data' => $value,
+                        'attr' => [
+                            'data-slug-critere' => $critere->getSlugCritere(),
+                            'placeholder' => 'Ex : 200',
+                        ],
+                    ]);
+                }
             }
         }
 
