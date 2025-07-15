@@ -190,6 +190,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     private bool $isAuthenticatedViaProConnect = false;
 
+    /**
+     * @var Collection<int, UserSignalementSubscription>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSignalementSubscription::class, orphanRemoval: true)]
+    private Collection $userSignalementSubscriptions;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -203,6 +209,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userPartners = new ArrayCollection();
         $this->popNotifications = new ArrayCollection();
         $this->isMailingSummary = true;
+        $this->userSignalementSubscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -851,7 +858,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    /** @return array<mixed> */
+    /** @return array<HistoryEntryEvent> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
@@ -935,5 +942,35 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function setIsAuthenticatedViaProConnect(bool $isAuthenticatedViaProConnect): void
     {
         $this->isAuthenticatedViaProConnect = $isAuthenticatedViaProConnect;
+    }
+
+    /**
+     * @return Collection<int, UserSignalementSubscription>
+     */
+    public function getUserSignalementSubscriptions(): Collection
+    {
+        return $this->userSignalementSubscriptions;
+    }
+
+    public function addUserSignalementSubscription(UserSignalementSubscription $userSignalementSubscription): static
+    {
+        if (!$this->userSignalementSubscriptions->contains($userSignalementSubscription)) {
+            $this->userSignalementSubscriptions->add($userSignalementSubscription);
+            $userSignalementSubscription->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSignalementSubscription(UserSignalementSubscription $userSignalementSubscription): static
+    {
+        if ($this->userSignalementSubscriptions->removeElement($userSignalementSubscription)) {
+            // set the owning side to null (unless already changed)
+            if ($userSignalementSubscription->getUser() === $this) {
+                $userSignalementSubscription->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

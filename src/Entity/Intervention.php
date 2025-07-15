@@ -376,7 +376,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return null;
     }
 
-    /** @return array<mixed> */
+    /** @return array<HistoryEntryEvent> */
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
