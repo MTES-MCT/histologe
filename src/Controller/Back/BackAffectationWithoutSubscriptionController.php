@@ -6,6 +6,7 @@ use App\Form\SearchAffectationWithoutSubscriptionType;
 use App\Repository\AffectationRepository;
 use App\Service\ListFilters\SearchAffectationWithoutSubscription;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,12 @@ class BackAffectationWithoutSubscriptionController extends AbstractController
         Request $request,
         AffectationRepository $affectationRepository,
         ParameterBagInterface $parameterBag,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
     ): Response {
+        if (!$featureNewDashboard) {
+            throw $this->createNotFoundException();
+        }
         $searchAffectationWithoutSubscription = new SearchAffectationWithoutSubscription();
         $form = $this->createForm(SearchAffectationWithoutSubscriptionType::class, $searchAffectationWithoutSubscription);
         $form->handleRequest($request);
