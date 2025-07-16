@@ -2,8 +2,24 @@
 
 namespace App\Service\DashboardTabPanel;
 
+use App\Entity\Enum\SuiviCategory;
+use App\Entity\User;
+use App\Repository\JobEventRepository;
+use App\Repository\SuiviRepository;
+use App\Repository\TerritoryRepository;
+use App\Service\ListFilters\SearchInterconnexion;
+use Symfony\Bundle\SecurityBundle\Security;
+
 class TabDataManager
 {
+    public function __construct(
+        private readonly Security $security,
+        private readonly JobEventRepository $jobEventRepository,
+        private readonly SuiviRepository $suiviRepository,
+        private readonly TerritoryRepository $territoryRepository,
+    ) {
+    }
+
     /**
      * @return TabDossier[]
      */
@@ -30,22 +46,82 @@ class TabDataManager
      */
     public function getDernierActionDossiers(?TabQueryParameters $tabQueryParameters = null): array
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $territory = null;
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+        $signalements = $this->suiviRepository->findLastSignalementsWithUserSuivi($user, $territory, 10);
         $tabDossiers = [];
-        for ($i = 0; $i < 10; ++$i) {
+        if (empty($signalements)) {
+            return $tabDossiers;
+        }
+        for ($i = 0; $i < \count($signalements); ++$i) {
+            $signalement = $signalements[$i];
+            $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
+                ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
+                : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
-                nomDeclarant: 'MOREAU',
-                prenomDeclarant: 'Samuel',
-                reference: '#2024-'.rand(1, 1000),
-                adresse: '4 impasse des Lilas, 13002 Marseille',
-                statut: 'En cours',
-                derniereAction: 'Relance partenaire',
-                derniereActionAt: '08/04/2025',
-                actionDepuis: 'OUI',
-                lien: '#',
+                nomDeclarant: $signalement['nomOccupant'],
+                prenomDeclarant: $signalement['prenomOccupant'],
+                reference: '#'.$signalement['reference'],
+                adresse: $signalement['adresseOccupant'],
+                statut: $signalement['statut']->label(),
+                derniereAction: $derniereAction,
+                derniereActionAt: $signalement['suiviCreatedAt']->format('d/m/Y'),
+                actionDepuis: $signalement['hasNewerSuivi'] ? 'OUI' : 'NON',
+                lien: '/bo/signalements/'.$signalement['uuid'],
             );
         }
 
         return $tabDossiers;
+    }
+
+    /**
+     * @return array<string, bool|\DateTimeImmutable|string>
+     */
+    public function getInterconnexions(?TabQueryParameters $tabQueryParameters = null): array
+    {
+        $searchInterconnexion = new SearchInterconnexion();
+        $searchInterconnexion->setOrderType('j.createdAt-DESC');
+        $territory = null;
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+        $searchInterconnexion->setTerritory($territory);
+
+        $lastConnection = $this->jobEventRepository->findLastJobEventByTerritory(
+            30,
+            $searchInterconnexion,
+            1,
+            0
+        );
+
+        $lastSynchro = null;
+        if (!empty($lastConnection)) {
+            $lastSynchro = $lastConnection[0];
+        }
+
+        $searchInterconnexion->setStatus('failed');
+        $errorConnectionLastDay = $this->jobEventRepository->findLastJobEventByTerritory(
+            1,
+            $searchInterconnexion,
+            1,
+            0
+        );
+
+        $hasErrorLastDay = false;
+        if (!empty($errorConnectionLastDay)) {
+            $hasErrorLastDay = true;
+            $lastErrorSynchro = $errorConnectionLastDay[0];
+        }
+
+        return [
+            'hasErrorsLastDay' => $hasErrorLastDay,
+            'firstErrorLastDayAt' => $hasErrorLastDay ? $lastErrorSynchro['createdAt']->format('d/m/Y à H:i') : 'N/A', // TODO : timezone ?
+            'LastSyncAt' => $lastSynchro ? $lastSynchro['createdAt']->format('d/m/Y à H:i') : 'N/A', // TODO : timezone ?
+        ];
     }
 
     /**

@@ -537,4 +537,58 @@ class SuiviRepository extends ServiceEntityRepository
 
         $qb->getQuery()->execute();
     }
+
+    /**
+     * Retourne les 10 derniers signalements (hors archivés/brouillons) sur lesquels l'utilisateur a créé un suivi.
+     * Pour chaque signalement :
+     *  - référence, nom/prénom occupant, adresse, statut
+     *  - date du dernier suivi de l'utilisateur
+     *  - catégorie de ce suivi
+     *  - s'il existe un suivi plus récent sur ce signalement.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function findLastSignalementsWithUserSuivi(User $user, ?Territory $territory, int $limit = 10): array
+    {
+        $subQb = $this->createQueryBuilder('sq')
+            ->select('MAX(sq.createdAt)')
+            ->where('sq.signalement = suivi.signalement')
+            ->andWhere('sq.createdBy = :user');
+
+        $qb = $this->createQueryBuilder('suivi')
+            ->innerJoin('suivi.signalement', 'signalement')
+            ->where('suivi.createdBy = :user')
+            ->andWhere('signalement.statut NOT IN (:excludedStatus)')
+            ->andWhere('suivi.createdAt = ('.$subQb->getDQL().')')
+            ->setParameter('user', $user)
+            ->setParameter('excludedStatus', [
+                SignalementStatus::ARCHIVED->value,
+                SignalementStatus::DRAFT->value,
+                SignalementStatus::DRAFT_ARCHIVED->value,
+            ])
+            ->orderBy('suivi.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->select('
+                signalement.reference AS reference,
+                signalement.nomOccupant AS nomOccupant,
+                signalement.prenomOccupant AS prenomOccupant,
+                CONCAT(signalement.adresseOccupant, \' \', signalement.cpOccupant, \' \', signalement.villeOccupant) AS adresseOccupant,
+                signalement.uuid AS uuid,
+                signalement.statut AS statut,
+                suivi.createdAt AS suiviCreatedAt,
+                suivi.category AS suiviCategory,
+                suivi.isPublic AS suiviIsPublic,
+                (
+                    SELECT CASE WHEN MAX(s2.createdAt) > suivi.createdAt THEN 1 ELSE 0 END
+                    FROM App\\Entity\\Suivi s2
+                    WHERE s2.signalement = signalement
+                ) AS hasNewerSuivi
+            ');
+        if (null !== $territory) {
+            $qb->andWhere('signalement.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getArrayResult();
+    }
 }

@@ -12,13 +12,13 @@
             <hr class="hr--blue-france">
             <div class="fr-container--fluid">
                 {% for item in items.data %}
-                    {% set statutClass = item.statut == 'En cours'
+                    {% set statutClass = item.statut == 'en cours'
                         ? 'fr-badge--success'
-                        : (item.statut == 'En attente' ? 'fr-badge--info' : 'fr-badge--grey')
+                        : (item.statut == 'refusé' ? 'fr-badge--error' : 'fr-badge--grey')
                     %}
                     {% set actionClass = item.actionDepuis == 'OUI'
                         ? 'fr-badge--success'
-                        : 'fr-badge--error'
+                        : 'fr-badge--grey'
                     %}
 
                     {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
@@ -57,24 +57,26 @@
                         badge_label: items.data_kpi.partenaires_non_notifiables ~ ' Partenaire' ~ (items.data_kpi.partenaires_non_notifiables > 1 ? 's' : '')
                     } %}
                 </div>
-                <h2>Connexion SI externes</h2>
-                {% set classNotice = items.data_interconnexion.hasErrorsLastDay ? 'warning' : 'info' %}
-                <div class="fr-notice fr-notice--{{ classNotice }}">
-                    <div class="fr-px-2v">
-                        <div class="fr-notice__body">
-                            <span class="fr-notice__title">
-                                {{ items.data_interconnexion.hasErrorsLastDay
-                                ? 'Une erreur de synchronisation a été détectée le ' ~ items.data_interconnexion.firstErrorLastDayAt
-                                : 'Aucune erreur détectée ces dernières 24 heures.' }}
-                            </span>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <h2>Connexion SI externes</h2>
+                    {% set classNotice = items.data_interconnexion.hasErrorsLastDay ? 'warning' : 'info' %}
+                    <div class="fr-notice fr-notice--{{ classNotice }}">
+                        <div class="fr-px-2v">
+                            <div class="fr-notice__body">
+                                <span class="fr-notice__title">
+                                    {{ items.data_interconnexion.hasErrorsLastDay
+                                    ? 'Une erreur de synchronisation a été détectée le ' ~ items.data_interconnexion.firstErrorLastDayAt
+                                    : 'Aucune erreur détectée ces dernières 24 heures.' }}
+                                </span>
 
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="fr-mt-2v">
-                    <p>Dernière synchronisation le {{ items.data_interconnexion.LastSyncAt }}</p>
-                    <p class="fr-text--right"><a href="{{ path('back_interconnexion_index') }}">Voir l'historique</a></p>
-                </div>
+                    <div class="fr-mt-2v">
+                        <p>Dernière synchronisation le {{ items.data_interconnexion.LastSyncAt }}</p>
+                        <p class="fr-text--right"><a href="{{ path('back_interconnexion_index') }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">Voir l'historique</a></p>
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
     </div>
