@@ -21,12 +21,13 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
         parent::load($tabBody);
         $tabBody->setData([
             'data' => $this->tabDataManager->getDernierActionDossiers($this->tabQueryParameters),
-            // TODO
             'data_kpi' => [
-                'comptes_en_attente' => rand(1, 100),
-                'partenaires_non_notifiables' => rand(1, 100),
+                'comptes_en_attente' => rand(1, 100),// TODO
+                'partenaires_non_notifiables' => rand(1, 100),// TODO
+                'partenaires_interfaces' => rand(1, 100),// TODO
             ],
             'data_interconnexion' => $this->tabDataManager->getInterconnexions($this->tabQueryParameters),
+            'territory_id' => $this->tabQueryParameters ? $this->tabQueryParameters->territoireId : null
         ]);
         $tabBody->setTemplate('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig');
     }
