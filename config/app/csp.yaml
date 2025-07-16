@@ -44,6 +44,8 @@ parameters:
       - "https://data.geopf.fr"
       - "https://cdn.matomo.cloud"
       - "https://histologe.matomo.cloud"
+      - "https://histologe.matomo.cloud/*"
+      - "https://histologe.matomo.cloud/matomo.php"
       - "https://koumoul.com"
       - "https://sentry.incubateur.net"
       - "https://rnb-api.beta.gouv.fr"
