@@ -342,7 +342,7 @@ class Partner implements EntityHistoryInterface
         return $this->type;
     }
 
-    public function setType(PartnerType $type): static
+    public function setType(?PartnerType $type): static
     {
         $this->type = $type;
 

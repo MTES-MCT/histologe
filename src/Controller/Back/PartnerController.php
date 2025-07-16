@@ -36,7 +36,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -97,8 +96,6 @@ class PartnerController extends AbstractController
                 'id' => $partner->getId(),
             ]);
         }
-
-        $this->displayErrors($form);
 
         return $this->render('back/partner/edit.html.twig', [
             'partner' => $partner,
@@ -211,8 +208,6 @@ class PartnerController extends AbstractController
                 'id' => $partner->getId(),
             ]);
         }
-
-        $this->displayErrors($form);
 
         return $this->render('back/partner/edit.html.twig', [
             'partner' => $partner,
@@ -619,14 +614,6 @@ class PartnerController extends AbstractController
         $content = $this->renderView('_partials/_modal_user_create_email.html.twig', ['formCheckMail' => $formCheckMail]);
 
         return $this->json(['content' => $content, 'title' => 'Ajouter un utilisateur']);
-    }
-
-    private function displayErrors(FormInterface $form): void
-    {
-        /** @var FormError $error */
-        foreach ($form->getErrors(true) as $error) {
-            $this->addFlash('error', $error->getMessage());
-        }
     }
 
     private function shouldCancelFutureVisite(Intervention $intervention): bool
