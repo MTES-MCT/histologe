@@ -1,0 +1,36 @@
+<section class="fr-p-3v fr-container-sml fr-mb-5v">
+    <div class="fr-grid-row fr-grid-row--middle">
+        <div class="fr-col fr-col-md-9">
+            <div class="fr-display-inline-flex fr-align-items-center">
+                {{ user_avatar_or_placeholder(app.user, 80) }}
+                <div class="fr-ml-3v">
+                    <div class="fr-display-flex fr-flex-direction-column fr-justify-content-center fr-mt-3v">
+                        <strong class="fr-h2 fr-mt-1v">Bonjour {{ app.user.prenom }}</strong>
+                        <p class="fr-mt-1v fr-ml-1v fr-fr-text--lg">Bienvenue sur votre tableau de bord !</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        {% if is_granted('ROLE_ADMIN') or settings.isMultiTerritoire %}
+            <div class="fr-col fr-col-md-3">
+                <div class="fr-select-group">
+                    <label class="fr-label" for="filter-territoires">Territoire</label>
+                    <select class="fr-select"
+                            id="filter-territoires"
+                            name="filter-territoires"
+                    >
+                        <option value="all">Tous</option>
+                        {% for territoire in settings.territories %}
+                            <option value="{{ territoire.id }}"
+                                    {% if territoireSelectedId is defined and territoire.id == territoireSelectedId %}selected{% endif %}>
+                                {{ territoire.zip }} - {{ territoire.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>

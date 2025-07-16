@@ -1,0 +1,23 @@
+<div id="tabpanel-dossiers-nouveaux-panel"
+     class="fr-tabs__panel"
+     role="tabpanel"
+     aria-labelledby="tabpanel-dossiers-nouveaux"
+     tabindex="0"
+>
+    {% include 'back/dashboard/tabs/dossiers_nouveaux/_header_dossier_nouveaux.html.twig' %}
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-form-usager') %}
+        <div id="dossiers-form-usager" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-form-usager' }) }}">
+            Chargement...
+        </div>
+    {% endif %}
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-form-pro') %}
+        <div id="dossiers-form-pro" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-form-pro' }) }}">
+            Chargement...
+        </div>
+    {% endif %}
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-non-affectation') %}
+        <div id="dossiers-non-affectation" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-non-affectation' }) }}">
+            Chargement...
+        </div>
+    {% endif %}
+</div>

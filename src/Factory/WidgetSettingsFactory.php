@@ -10,6 +10,9 @@ use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Service\UserAvatar;
 use Symfony\Bundle\SecurityBundle\Security;
 
+/**
+ * @todo Rename class to SettingsFactory once the FEATURE_NEW_DASHBOARD feature flag is removed.
+ */
 class WidgetSettingsFactory
 {
     public function __construct(

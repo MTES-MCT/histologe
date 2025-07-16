@@ -4,6 +4,10 @@ namespace App\Service\DashboardWidget;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * @deprecated This class will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed.
+ * Please refer to the `App\Service\DashboardTabPanel` namespace for the new dashboard.
+ */
 class WidgetCardFactory
 {
     public function __construct(private UrlGeneratorInterface $urlGenerator)

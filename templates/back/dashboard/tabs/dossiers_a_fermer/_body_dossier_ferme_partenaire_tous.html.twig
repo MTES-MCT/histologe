@@ -1,0 +1,39 @@
+{% set columns = [
+    { class: 'fr-col-md-3', title: 'Clôture partenaire le' },
+    { class: 'fr-col-md-8', title: 'Référence' },
+] %}
+<section class="fr-mb-5v">
+    <header class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-9">
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-success-icon">Dossiers fermés par tous les partenaires ({{ count }})</h3>
+        </div>
+        <div class="fr-select-group fr-col-12 fr-col-md-3">
+            <label class="fr-label" for="order-type-dossiers-ferme-partenaire-tous">
+                Trier par
+            </label>
+            <select id="order-type-dossiers-ferme-partenaire-tous" class="fr-select" data-sort-body="dossiers-ferme-partenaire-tous">
+                <option value="closedAt-ASC" selected="selected">Fermeture la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
+                <option value="closedAt-DESC">Fermeture la plus récente (du plus récent au plus ancien)</option>
+            </select>
+        </div>
+    </header>
+    <hr class="hr--blue-france">
+    <section class="fr-container--fluid">
+        {% for item in items %}
+            {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+            {% include 'back/dashboard/components/_card.html.twig' with {
+                data: [
+                    '<div>' ~ item.clotureAt ~ '</div>',
+                    '<div class="fr-text-label--blue-france">
+                            <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                            <div>' ~ item.adresse ~ '</div>
+                    </div>',
+                ],
+                link: item.lien
+            } %}
+        {% else %}
+            <p>Aucun dossier trouvé.</p>
+        {% endfor %}
+        {% include 'back/dashboard/components/_footer_link.html.twig' %}
+    </section>
+</section>
