@@ -1,0 +1,87 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Liste des affectations sans prise en charge{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Affectations sans prise en charge',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-mb-0">Liste des affectations sans prise en charge</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    {% form_theme form 'form/dsfr_theme.html.twig' %}
+    {{ form_start(form) }}
+
+    <section class="fr-container--fluid overflow-visible">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.territory) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.signalementStatus) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                <a href="{{ path('back_affectation_without_subscription_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-py-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(affectations|length, 'Affectation trouvée', 'Affectations trouvées') }}</h2>
+    </section>
+    
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form) }}
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">Signalement</th>
+            <th scope="col">Statut du signalement</th>
+            <th scope="col">Partenaire</th>
+            <th scope="col">Territoires</th>
+            <th scope="col">Date de création</th>
+        {% endset %}
+        
+        {% set tableBody %}
+            {% for affectation in affectations %}
+                <tr class="signalement-row">
+                    <td><a href="{{ path('back_signalement_view', {uuid: affectation.signalement.uuid}) }}">{{ affectation.signalement.reference }}</a></td>
+                    <td>
+                        {% if affectation.signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
+                            <span class="fr-badge fr-badge--success fr-badge--no-icon">{{ affectation.signalement.statut.label }}</span>
+                        {% else %}
+                            <span class="fr-badge fr-badge--error fr-badge--no-icon">{{ affectation.signalement.statut.label }}</span>
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ path('back_partner_view', {id: affectation.partner.id}) }}">{{ affectation.partner.nom }}</a></td>
+                    <td>{{affectation.signalement.territory.zip}} - {{affectation.signalement.territory.name}}</td>
+                    <td>{{ affectation.createdAt|date('d/m/Y H:i') }}</td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des affectations sans prise en charge', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+        <div id="territory-pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchAffectation.page, 'back_bailleur_index', searchAffectation.urlParams) }}
+        </div>
+    </section>
+
+{% endblock %}

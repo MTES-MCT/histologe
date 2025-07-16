@@ -55,6 +55,7 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Connexions SI externes', route: 'back_interconnexion_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Affectations sans prise en charge', route: 'back_affectation_without_subscription_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(route: 'back_archived_users_reactiver'))
             ->addChild(new MenuItem(route: 'back_territory_edit'))
             ->addChild(new MenuItem(route: 'back_bailleur_edit'))

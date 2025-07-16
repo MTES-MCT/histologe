@@ -539,6 +539,9 @@ class SuiviRepository extends ServiceEntityRepository
         $qb->getQuery()->execute();
     }
 
+    /**
+     * @return array<array{id: int, signalement_id: int}>
+     */
     public function findWithUnarchivedRtDistinctByUserAndSignalement(): ?array
     {
         $sql = "

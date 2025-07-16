@@ -15,8 +15,10 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\ListFilters\SearchAffectationWithoutSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -344,6 +346,9 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<array{signalement_id: int, partner_id: int}>
+     */
     public function findAllActiveAffectationsOnActiveSignalements(): array
     {
         $sql = '
@@ -360,5 +365,48 @@ class AffectationRepository extends ServiceEntityRepository
         $stmt->bindValue('affectation_status', AffectationStatus::ACCEPTED->value);
 
         return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
+    public function findWithoutSubscriptionFilteredPaginated(SearchAffectationWithoutSubscription $searchAffectation, int $maxResult): Paginator
+    {
+        // Sous-requête pour identifier les affectations avec abonnements
+        $subQb = $this->getEntityManager()->createQueryBuilder();
+        $subQb->select('DISTINCT a2.id')
+            ->from(Affectation::class, 'a2')
+            ->innerJoin('a2.partner', 'p2')
+            ->innerJoin('p2.userPartners', 'up2')
+            ->innerJoin('up2.user', 'u2')
+            ->innerJoin('u2.userSignalementSubscriptions', 'uss2')
+            ->where('a2.statut = :status')
+            ->andWhere('uss2.signalement = a2.signalement');
+
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('a', 'p', 's', 't', 'su')
+            ->innerJoin('a.partner', 'p')
+            ->innerJoin('a.signalement', 's')
+            ->innerJoin('s.territory', 't')
+            ->leftJoin('s.signalementUsager', 'su')
+            ->where('a.statut = :status')->setParameter('status', AffectationStatus::ACCEPTED)
+            ->andWhere($qb->expr()->not($qb->expr()->in('a.id', $subQb->getDQL())));
+
+        if (!empty($searchAffectation->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchAffectation->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('a.createdAt', 'DESC');
+        }
+
+        if (null !== $searchAffectation->getTerritory()) {
+            $qb->andWhere('s.territory = :territory')->setParameter('territory', $searchAffectation->getTerritory());
+        }
+
+        if (null !== $searchAffectation->getSignalementStatus()) {
+            $qb->andWhere('s.statut = :signalementStatus')->setParameter('signalementStatus', $searchAffectation->getSignalementStatus());
+        }
+
+        $firstResult = ($searchAffectation->getPage() - 1) * $maxResult;
+        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($qb->getQuery());
     }
 }
