@@ -98,6 +98,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    /**
+     * @return array<array{id: int, partner_id: int}>
+     */
     public function findAllUnarchivedUserPartnerOrAdminPartner(): ?array
     {
         $sql = "

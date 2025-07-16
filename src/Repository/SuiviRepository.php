@@ -587,7 +587,7 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<array{id: int, signalement_id: int, created_at: string}>
+     * @return array<array{id: int, signalement_id: int}>
      */
     public function findWithUnarchivedRtDistinctByUserAndSignalement(): ?array
     {

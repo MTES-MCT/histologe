@@ -21,7 +21,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class InitUserSignalementSubscriptionsCommand
 {
     private const int BATCH_SIZE = 50000;
+    /** @var array<int, array<int>> */
     private array $usersByPartner = [];
+    /** @var array<string, string> */
     private array $affectationSignalement = [];
     private User $userAdmin;
     private Connection $connection;
@@ -106,6 +108,9 @@ class InitUserSignalementSubscriptionsCommand
         return Command::SUCCESS;
     }
 
+    /**
+     * @param array<array{user_id: int, signalement_id: int}> $batchData
+     */
     private function insertBatch(array $batchData): void
     {
         $sql = 'INSERT INTO user_signalement_subscription (user_id, signalement_id, created_by_id, is_legacy, created_at) VALUES ';
