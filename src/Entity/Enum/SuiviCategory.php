@@ -67,7 +67,7 @@ enum SuiviCategory: string
             'DEMANDE_ABANDON_PROCEDURE' => 'Demande d\'abandon de procédure par l\'usager',
             'DEMANDE_POURSUITE_PROCEDURE' => 'Demande de poursuite de procédure par l\'usager',
             'MESSAGE_ESABORA_SCHS' => 'Message Esabora SCHS',
-            'MESSAGE_PARTNER' => 'Suivi du partenaire', // todo peut-être Suivi interne ou Suivi visible par l'usager en fonction de is_public
+            'MESSAGE_PARTNER' => 'Suivi du partenaire',
         ];
     }
 }

@@ -73,23 +73,30 @@
                 </div>
                 {% if is_granted('ROLE_ADMIN') %}
                     <h2>Connexion SI externes</h2>
-                    {% set classNotice = items.data_interconnexion.hasErrorsLastDay ? 'warning' : 'info' %}
-                    <div class="fr-notice fr-notice--{{ classNotice }}">
-                        <div class="fr-px-2v">
-                            <div class="fr-notice__body">
-                                <span class="fr-notice__title">
-                                    {{ items.data_interconnexion.hasErrorsLastDay
-                                    ? 'Une erreur de synchronisation a été détectée le ' ~ items.data_interconnexion.firstErrorLastDayAt
-                                    : 'Aucune erreur détectée ces dernières 24 heures.' }}
-                                </span>
+                    {% if items.data_interconnexion.LastSyncAt %}
+                        {% set classNotice = items.data_interconnexion.hasErrorsLastDay ? 'warning' : 'info' %}
+                        <div class="fr-notice fr-notice--{{ classNotice }}">
+                            <div class="fr-px-2v">
+                                <div class="fr-notice__body">
+                                    <span class="fr-notice__title">
+                                        {{ items.data_interconnexion.hasErrorsLastDay
+                                        ? 'Une erreur de synchronisation a été détectée le ' ~ items.data_interconnexion.firstErrorLastDayAt|date('d/m/Y H:i')
+                                        : 'Aucune erreur détectée ces dernières 24 heures.' }}
+                                    </span>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="fr-mt-2v">
-                        <p>Dernière synchronisation le {{ items.data_interconnexion.LastSyncAt }}</p>
-                        <p class="fr-text--right"><a href="{{ path('back_interconnexion_index', { territory: items.territory_id }) }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">Voir l'historique</a></p>
-                    </div>
+                        <div class="fr-mt-2v">
+                            <p>Dernière synchronisation le {{ items.data_interconnexion.LastSyncAt|date('d/m/Y H:i')  }}</p>
+                            <p class="fr-text--right"><a href="{{ path('back_interconnexion_index', { territory: items.territory_id }) }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">Voir l'historique</a></p>
+                        </div>
+                    {% else %}
+                        <div class="fr-mt-2v">
+                            <p>Pas de synchronisation trouvée depuis 1 an</p>
+                            <p class="fr-text--right"><a href="{{ path('back_interconnexion_index', { territory: items.territory_id }) }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">Voir l'historique</a></p>
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
         {% endif %}

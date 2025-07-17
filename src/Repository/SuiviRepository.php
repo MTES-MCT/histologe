@@ -539,13 +539,6 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * Retourne les 10 derniers signalements (hors archivés/brouillons) sur lesquels l'utilisateur a créé un suivi.
-     * Pour chaque signalement :
-     *  - référence, nom/prénom occupant, adresse, statut
-     *  - date du dernier suivi de l'utilisateur
-     *  - catégorie de ce suivi
-     *  - s'il existe un suivi plus récent sur ce signalement.
-     *
      * @return array<int, array<string, mixed>>
      */
     public function findLastSignalementsWithUserSuivi(User $user, ?Territory $territory, int $limit = 10): array

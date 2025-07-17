@@ -15,6 +15,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class TabDataManager
 {
+    private const int DAY_PERIOD = 365;
+
     public function __construct(
         private readonly Security $security,
         private readonly JobEventRepository $jobEventRepository,
@@ -121,7 +123,7 @@ class TabDataManager
     }
 
     /**
-     * @return array<string, bool|\DateTimeImmutable|string>
+     * @return array<string, bool|\DateTimeImmutable|null>
      */
     public function getInterconnexions(?TabQueryParameters $tabQueryParameters = null): array
     {
@@ -134,7 +136,7 @@ class TabDataManager
         $searchInterconnexion->setTerritory($territory);
 
         $lastConnection = $this->jobEventRepository->findLastJobEventByTerritory(
-            30,
+            self::DAY_PERIOD,
             $searchInterconnexion,
             1,
             0
@@ -161,8 +163,8 @@ class TabDataManager
 
         return [
             'hasErrorsLastDay' => $hasErrorLastDay,
-            'firstErrorLastDayAt' => $hasErrorLastDay ? $lastErrorSynchro['createdAt']->format('d/m/Y à H:i') : 'N/A', // TODO : timezone ?
-            'LastSyncAt' => $lastSynchro ? $lastSynchro['createdAt']->format('d/m/Y à H:i') : 'N/A', // TODO : timezone ?
+            'firstErrorLastDayAt' => $hasErrorLastDay ? $lastErrorSynchro['createdAt'] : null,
+            'LastSyncAt' => $lastSynchro ? $lastSynchro['createdAt'] : null,
         ];
     }
 
