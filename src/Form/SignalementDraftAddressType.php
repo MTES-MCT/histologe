@@ -276,5 +276,18 @@ class SignalementDraftAddressType extends AbstractType
                 $form->get('villeOccupant')->addError(new FormError('Veuillez renseigner une ville.'));
             }
         }
+
+        $nbOccupants = $form->get('nbOccupantsLogement')->getData();
+        $nbEnfants = $form->get('nbEnfantsDansLogement')->getData();
+
+        if (
+            null !== $nbOccupants && null !== $nbEnfants
+            && is_numeric($nbOccupants) && is_numeric($nbEnfants)
+            && $nbEnfants > $nbOccupants
+        ) {
+            $form->get('nbEnfantsDansLogement')->addError(
+                new FormError("Le nombre d'enfants ne peut pas dépasser le nombre de personnes.")
+            );
+        }
     }
 }
