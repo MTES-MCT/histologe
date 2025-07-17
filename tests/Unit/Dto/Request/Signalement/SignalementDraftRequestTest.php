@@ -201,7 +201,7 @@ class SignalementDraftRequestTest extends WebTestCase
         $this->assertSame('8', $signalementDraftRequest->getCompositionLogementNombreEnfants());
         $errors = $this->validator->validate($signalementDraftRequest);
         $this->assertCount(1, $errors);
-        $this->assertStringContainsString('doit être inférieur ou égal au nombre total de personnes', $errors[0]->getMessage());
+        $this->assertStringContainsString('Le nombre d\'enfants ne peut pas dépasser le nombre de personnes.', $errors[0]->getMessage());
     }
 
     private function getGoodSignalementDraftRequest(): SignalementDraftRequest

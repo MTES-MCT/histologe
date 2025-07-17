@@ -3,25 +3,29 @@
 namespace App\Tests\Unit\Validator;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
-use App\Validator\ChildrenLessThanPeople;
-use App\Validator\ChildrenLessThanPeopleValidator;
+use App\Validator\ValueLessThanOtherValue;
+use App\Validator\ValueLessThanOtherValueValidator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
- * @extends ConstraintValidatorTestCase<ChildrenLessThanPeopleValidator>
+ * @extends ConstraintValidatorTestCase<ValueLessThanOtherValueValidator>
  */
-class ChildrenLessThanPeopleValidatorTest extends ConstraintValidatorTestCase
+class ValueLessThanOtherValueValidatorTest extends ConstraintValidatorTestCase
 {
     protected function createValidator(): ConstraintValidatorInterface
     {
-        return new ChildrenLessThanPeopleValidator();
+        return new ValueLessThanOtherValueValidator();
     }
 
-    public function testValidWhenChildrenLessThanPeople(): void
+    public function testValidWhenValueLessThanOtherValue(): void
     {
         $dto = $this->createDto('2', '4');
-        $constraint = new ChildrenLessThanPeople();
+        $constraint = new ValueLessThanOtherValue(
+            property: 'compositionLogementNombreEnfants',
+            otherProperty: 'compositionLogementNombrePersonnes',
+        );
         $this->validator->validate($dto, $constraint);
         $this->assertNoViolation();
     }
@@ -29,7 +33,10 @@ class ChildrenLessThanPeopleValidatorTest extends ConstraintValidatorTestCase
     public function testValidWhenChildrenEqualPeople(): void
     {
         $dto = $this->createDto('3', '3');
-        $constraint = new ChildrenLessThanPeople();
+        $constraint = new ValueLessThanOtherValue(
+            property: 'compositionLogementNombreEnfants',
+            otherProperty: 'compositionLogementNombrePersonnes',
+        );
         $this->validator->validate($dto, $constraint);
         $this->assertNoViolation();
     }
@@ -37,11 +44,16 @@ class ChildrenLessThanPeopleValidatorTest extends ConstraintValidatorTestCase
     public function testInvalidWhenChildrenGreaterThanPeople(): void
     {
         $dto = $this->createDto('5', '3');
-        $constraint = new ChildrenLessThanPeople();
+        $constraint = new ValueLessThanOtherValue(
+            property: 'compositionLogementNombreEnfants',
+            otherProperty: 'compositionLogementNombrePersonnes',
+        );
         $this->validator->validate($dto, $constraint);
         $this->buildViolation($constraint->message)
-            ->setParameter('{{ children }}', '5')
-            ->setParameter('{{ people }}', '3')
+            ->setParameter('{{ property }}', 'compositionLogementNombreEnfants')
+            ->setParameter('{{ value }}', '5')
+            ->setParameter('{{ otherProperty }}', 'compositionLogementNombrePersonnes')
+            ->setParameter('{{ otherValue }}', '3')
             ->atPath('property.path.compositionLogementNombreEnfants')
             ->assertRaised();
     }
@@ -49,7 +61,10 @@ class ChildrenLessThanPeopleValidatorTest extends ConstraintValidatorTestCase
     public function testNoViolationIfNullValues(): void
     {
         $dto = $this->createDto(null, '3');
-        $constraint = new ChildrenLessThanPeople();
+        $constraint = new ValueLessThanOtherValue(
+            property: 'compositionLogementNombreEnfants',
+            otherProperty: 'compositionLogementNombrePersonnes',
+        );
         $this->validator->validate($dto, $constraint);
         $this->assertNoViolation();
 
@@ -59,7 +74,7 @@ class ChildrenLessThanPeopleValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @return SignalementDraftRequest|\PHPUnit\Framework\MockObject\MockObject
+     * @return SignalementDraftRequest|MockObject
      */
     private function createDto(?string $children, ?string $people)
     {

@@ -3,14 +3,17 @@
 namespace App\Dto\Request\Signalement;
 
 use App\Validator as AppAssert;
-use App\Validator\ChildrenLessThanPeople;
 use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[AppAssert\IsTerritoryActive]
-#[ChildrenLessThanPeople]
+#[AppAssert\ValueLessThanOtherValue(
+    property: 'compositionLogementNombreEnfants',
+    otherProperty: 'compositionLogementNombrePersonnes',
+    message: "Le nombre d'enfants ne peut pas dépasser le nombre de personnes."
+)]
 class SignalementDraftRequest
 {
     use DateNaissanceValidatorTrait;
