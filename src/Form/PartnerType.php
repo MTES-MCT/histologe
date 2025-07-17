@@ -59,16 +59,17 @@ class PartnerType extends AbstractType
         $territory = $options['data']->getTerritory();
 
         $builder
-            ->add('nom', TextType::class, [
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
+            ->add('nom', null, [
+                'label' => 'Nom du partenaire',
+                'help' => 'Le nom du partenaire sera visible dans les signalements pour les autres partenaires',
+                'required' => false,
+                'empty_data' => '',
             ])
             ->add('email', EmailType::class, [
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
+                'label' => 'E-mail de contact (facultatif)',
+                'help' => 'S\'il y a des responsables de territoire au sein du partenaire, cette adresse e-mail sera visible par les agents du territoire.',
                 'required' => false,
+                'empty_data' => '',
             ])
             ->add('emailNotifiable', ChoiceType::class, [
                 'choices' => [
@@ -80,22 +81,15 @@ class PartnerType extends AbstractType
                 'help' => 'Est-ce que les e-mails concernant les signalements du partenaire doivent être envoyés à cette adresse ?',
             ])
             ->add('type', EnumType::class, [
+                'label' => 'Type de partenaire',
+                'help' => 'Sélectionnez un type pour afficher les champs à remplir. Si vous ne trouvez pas de type de partenaire adapté, sélectionnez "Autre".',
                 'class' => EnumPartnerType::class,
                 'choice_label' => function ($choice) {
                     return $choice->label();
                 },
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
                 'placeholder' => 'Sélectionner un type',
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
-                'help' => 'Choisissez un type de partenaire parmi la liste ci-dessous.',
-                'help_attr' => [
-                    'class' => 'fr-hint-text',
-                ],
                 'disabled' => !$this->isAdminTerritory,
+                'required' => false,
             ])
             ->add('competence', SearchCheckboxEnumType::class, [
                 'class' => Qualification::class,
@@ -113,9 +107,6 @@ class PartnerType extends AbstractType
                 'noselectionlabel' => 'Sélectionner une ou plusieurs compétences',
                 'nochoiceslabel' => 'Aucune compétence disponible',
                 'help' => 'Choisissez une ou plusieurs compétences parmi la liste ci-dessous.',
-                'help_attr' => [
-                    'class' => 'fr-hint-text',
-                ],
                 'required' => false,
             ])
             ->add('isEsaboraActive', CheckboxType::class, [
@@ -126,17 +117,11 @@ class PartnerType extends AbstractType
                 'disabled' => !$this->isAdminTerritory,
             ])
             ->add('esaboraUrl', UrlType::class, [
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
                 'required' => false,
                 'disabled' => !$this->isAdmin,
                 'default_protocol' => null,
             ])
             ->add('esaboraToken', TextType::class, [
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
                 'required' => false,
                 'disabled' => !$this->isAdmin,
             ]);
@@ -148,9 +133,6 @@ class PartnerType extends AbstractType
                 'required' => false,
             ])
             ->add('idossUrl', UrlType::class, [
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
                 'required' => false,
                 'default_protocol' => null,
             ]);
@@ -165,11 +147,8 @@ class PartnerType extends AbstractType
             'choice_label' => function (Territory $territory) {
                 return $territory->getZip().' - '.$territory->getName();
             },
-            'attr' => [
-                'class' => 'fr-select',
-            ],
             'row_attr' => [
-                'class' => !$this->isAdmin ? 'fr-input-group fr-hidden' : 'fr-input-group',
+                'class' => !$this->isAdmin ? 'fr-hidden' : '',
             ],
             'label' => 'Territoire',
             'required' => true,

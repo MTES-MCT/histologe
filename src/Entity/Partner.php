@@ -43,7 +43,7 @@ class Partner implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
     #[Assert\Length(max: 255)]
     #[Groups(['widget-settings:read'])]
     private ?string $nom = null;
@@ -79,6 +79,7 @@ class Partner implements EntityHistoryInterface
     private ?Territory $territory = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: PartnerType::class)]
+    #[Assert\NotBlank(message: 'Merci de choisir le type de partenaire.')]
     private ?PartnerType $type = null;
 
     /** @var array<Qualification> $competence */
@@ -341,7 +342,7 @@ class Partner implements EntityHistoryInterface
         return $this->type;
     }
 
-    public function setType(PartnerType $type): static
+    public function setType(?PartnerType $type): static
     {
         $this->type = $type;
 
