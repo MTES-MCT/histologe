@@ -275,7 +275,7 @@ class SignalementBoManager
                 }
             }
             if (str_starts_with($fieldName, 'precisions_')) {
-                if (str_ends_with($fieldName, 'details_type_nuisibles')) {
+                if (str_ends_with($fieldName, 'details_type_nuisibles') || str_contains($fieldName, '_plafond_trop_bas')) {
                     $idJsonData = $this->extractCritere($fieldName);
                     $jsonContent[$idJsonData] = $fieldData;
                 } else {
@@ -296,6 +296,11 @@ class SignalementBoManager
     {
         // Expression régulière pour capturer la partie "desordres_*_nuisibles_autres"
         if (preg_match('/precisions_\d+_(desordres_[a-z_]+_nuisibles_autres)_details_type_nuisibles/', $fieldName, $matches)) {
+            return $matches[1];
+        }
+
+        // Expression régulière pour capturer la partie "desordres_*_nuisibles_autres" "desordres_*_lumiere_plafond_trop_bas_piece_a_vivre"
+        if (preg_match('/precisions_\d+_(desordres_logement_lumiere_plafond_trop_bas[a-z_]+)/', $fieldName, $matches)) {
             return $matches[1];
         }
 

@@ -416,7 +416,15 @@ function initBoFormSignalementDesordres() {
       const checkboxes = modal.querySelectorAll("input[type='checkbox']");
       checkboxes.forEach((checkbox) => {
         if (checkbox.checked) {
-          const precisionLabel = checkbox.labels[0].innerHTML;
+          let precision = '';
+          if ('desordres_logement_lumiere_plafond_trop_bas' == modal.dataset.critereslug) {
+            const inputTextElement = checkbox.parentElement.querySelector("input[type='text']");
+            if ('' != inputTextElement.value) {
+              precision = ' (hauteur : ' + inputTextElement.value + ' cm)';
+            }
+          }
+
+          const precisionLabel = checkbox.labels[0].innerHTML + precision;
           const precisionItem = document.createElement('li');
           precisionItem.innerHTML = precisionLabel;
           ulElement.appendChild(precisionItem);

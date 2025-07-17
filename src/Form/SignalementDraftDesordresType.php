@@ -87,7 +87,6 @@ class SignalementDraftDesordresType extends AbstractType
                         'data-slug-critere' => $critere->getSlugCritere(),
                     ],
                 ]);
-
             } elseif ('desordres_logement_lumiere_plafond_trop_bas' === $critereSlug) {
                 $jsonContent = $signalement ? $signalement->getJsonContent() : [];
                 $suffixes = [
@@ -98,7 +97,7 @@ class SignalementDraftDesordresType extends AbstractType
                 ];
 
                 foreach ($suffixes as $suffix) {
-                    $key = $critereSlug.$suffix;
+                    $key = 'desordres_logement_lumiere_plafond_trop_bas'.$suffix;
                     $value = isset($jsonContent[$key]) ? $jsonContent[$key] : '';
                     $builder->add('precisions_'.$critere->getId().'_'.$key, TextType::class, [
                         'label' => 'Hauteur (en cm)',

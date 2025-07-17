@@ -69,6 +69,7 @@
     {% endif %}
     {% set nuisibles_autres_critere = '_details_type_nuisibles' %}
     {% set nuisibles_logement_autres_critere = '_desordres_logement_nuisibles_autres' %}
+    {% set precisionHauteur = 'desordres_logement_lumiere_plafond_trop_bas' %}
 
     {% if field.vars.name starts with 'precisions_' and not field.rendered %}
         {% set critereId = field.vars.id|replace({'signalement_draft_desordres_precisions_': ''}) %}
@@ -118,11 +119,24 @@
                                             <div class="fr-checkbox-group">
                                                 {{ form_widget(child) }}
                                                 <label class="fr-label" for="{{ child.vars.id }}"><span>{{ child.vars.label|raw }}</span></label>
-                                                {# Vérification si le champ texte existe pour le critère plafond trop bas }
-                                                {% if field.vars.attr['data-slug-critere'] is same as 'desordres_logement_lumiere_plafond_trop_bas' %}
-                                                    <label for="{{ child.vars.id }}_taille">Précisez la hauteur du plafond (en cm)</label>
-                                                    <input type="text" class="fr-input" id="{{ child.vars.id }}_taille" name="{{ child.vars.full_name }}_taille" placeholder="Ex : 200" />
-                                                {% endif %#}
+                                                {# Vérification si le champ texte existe pour le critère plafond trop bas #}
+                                                {% if field.vars.attr['data-slug-critere'] is same as precisionHauteur %}
+                                                    <div class="fr-mt-2v">
+                                                        {% set piece = '_toutes_pieces' %}
+                                                        {% if 'cuisine' in child.vars.label|raw %}
+                                                            {% set piece = '_cuisine' %}
+                                                        {% elseif 'salle de bain' in child.vars.label|raw %}
+                                                            {% set piece = '_salle_de_bain' %}
+                                                        {% elseif 'salon' in child.vars.label|raw %}
+                                                            {% set piece = '_piece_a_vivre' %}
+                                                        {% endif %}
+                                                        {% set detailsFieldName = field.vars.name ~ '_' ~ precisionHauteur ~ piece %}
+                                                        <label for="{{ detailsFieldName }}">Précisez la hauteur du plafond (en cm)</label>
+                                                        {% if formDesordres and attribute(formDesordres, detailsFieldName) is defined %}
+                                                            {{ form_widget(attribute(formDesordres, detailsFieldName)) }}
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </fieldset>
