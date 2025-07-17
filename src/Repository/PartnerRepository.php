@@ -126,6 +126,32 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @param array<int, mixed> $territories
      */
+    public function countPartnerInterfaces(array $territories): int
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+        ->select('p.id');
+
+        $queryBuilder->andWhere('p.isArchive = 0');
+        $queryBuilder->andWhere('p.isEsaboraActive = 1 or p.isIdossActive = 1');
+
+        // Filtrer par territoires si précisé
+        if (!empty($territories)) {
+            $queryBuilder
+                ->andWhere('p.territory IN (:territories)')
+                ->setParameter('territories', $territories);
+        }
+        try {
+            $count = count($queryBuilder->getQuery()->getSingleColumnResult());
+        } catch (NonUniqueResultException) {
+            $count = 0;
+        }
+
+        return (int) $count;
+    }
+
+    /**
+     * @param array<int, mixed> $territories
+     */
     public function countPartnerNonNotifiables(array $territories): CountPartner
     {
         $queryBuilder = $this->createQueryBuilder('p')

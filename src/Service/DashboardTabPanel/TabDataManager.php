@@ -2,11 +2,14 @@
 
 namespace App\Service\DashboardTabPanel;
 
+use App\Dto\CountPartner;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchInterconnexion;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -17,6 +20,8 @@ class TabDataManager
         private readonly JobEventRepository $jobEventRepository,
         private readonly SuiviRepository $suiviRepository,
         private readonly TerritoryRepository $territoryRepository,
+        private readonly UserRepository $userRepository,
+        private readonly PartnerRepository $partnerRepository,
     ) {
     }
 
@@ -76,6 +81,43 @@ class TabDataManager
         }
 
         return $tabDossiers;
+    }
+
+    public function countUsersPendingToArchive(?TabQueryParameters $tabQueryParameters = null): int
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $territories = [];
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+
+        $users = $this->userRepository->findUsersPendingToArchive($user, $territories);
+
+        return \count($users);
+    }
+
+    public function countPartenairesNonNotifiables(?TabQueryParameters $tabQueryParameters = null): int
+    {
+        $territories = [];
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+
+        /** @var CountPartner $countPartnerDto */
+        $countPartnerDto = $this->partnerRepository->countPartnerNonNotifiables($territories);
+
+        return $countPartnerDto->getNonNotifiables();
+    }
+
+    public function countPartenairesInterfaces(?TabQueryParameters $tabQueryParameters = null): int
+    {
+        $territories = [];
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+
+        return $this->partnerRepository->countPartnerInterfaces($territories);
     }
 
     /**

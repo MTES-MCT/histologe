@@ -22,12 +22,12 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
         $tabBody->setData([
             'data' => $this->tabDataManager->getDernierActionDossiers($this->tabQueryParameters),
             'data_kpi' => [
-                'comptes_en_attente' => rand(1, 100),// TODO
-                'partenaires_non_notifiables' => rand(1, 100),// TODO
-                'partenaires_interfaces' => rand(1, 100),// TODO
+                'comptes_en_attente' => $this->tabDataManager->countUsersPendingToArchive($this->tabQueryParameters),
+                'partenaires_non_notifiables' => $this->tabDataManager->countPartenairesNonNotifiables($this->tabQueryParameters),
+                'partenaires_interfaces' => $this->tabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
             ],
             'data_interconnexion' => $this->tabDataManager->getInterconnexions($this->tabQueryParameters),
-            'territory_id' => $this->tabQueryParameters ? $this->tabQueryParameters->territoireId : null
+            'territory_id' => $this->tabQueryParameters ? $this->tabQueryParameters->territoireId : null,
         ]);
         $tabBody->setTemplate('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig');
     }
