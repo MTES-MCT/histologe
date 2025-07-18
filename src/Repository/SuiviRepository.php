@@ -573,7 +573,7 @@ class SuiviRepository extends ServiceEntityRepository
                 suivi.isPublic AS suiviIsPublic,
                 (
                     SELECT CASE WHEN MAX(s2.createdAt) > suivi.createdAt THEN 1 ELSE 0 END
-                    FROM App\\Entity\\Suivi s2
+                    FROM '.Suivi::class.' s2
                     WHERE s2.signalement = signalement
                 ) AS hasNewerSuivi
             ');

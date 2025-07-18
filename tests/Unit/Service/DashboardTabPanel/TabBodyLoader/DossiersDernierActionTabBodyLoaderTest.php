@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Service\DashboardTabPanel\TabBodyLoader;
 
+use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersDernierActionTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
@@ -17,9 +18,13 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
 {
     public function testLoadFillsTabBodyWithExpectedData(): void
     {
+        /** @var User&MockObject $user */
+        $user = $this->createMock(User::class);
+        $user->method('isSuperAdmin')->willReturn(true);
         /** @var Security&MockObject $security */
         $security = $this->createMock(Security::class);
         $security->method('isGranted')->willReturn(true);
+        $security->method('getUser')->willReturn($user);
 
         /** @var TabDataManager&MockObject $tabDataManager */
         $tabDataManager = $this->createMock(TabDataManager::class);
@@ -67,6 +72,45 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
         $this->assertSame($expectedData, $data['data']);
         $this->assertSame($expectedKpi, $data['data_kpi']);
         $this->assertSame($expectedInterconnexion, $data['data_interconnexion']);
+        $this->assertSame(42, $data['territory_id']);
+        $this->assertSame('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig', $tabBody->getTemplate());
+    }
+
+    public function testLoadFillsTabBodyWithExpectedDataAgent(): void
+    {
+        /** @var User&MockObject $user */
+        $user = $this->createMock(User::class);
+        $user->method('isSuperAdmin')->willReturn(false);
+        $user->method('isTerritoryAdmin')->willReturn(false);
+        /** @var Security&MockObject $security */
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturn(true);
+        $security->method('getUser')->willReturn($user);
+
+        /** @var TabDataManager&MockObject $tabDataManager */
+        $tabDataManager = $this->createMock(TabDataManager::class);
+        $tabQueryParameters = new TabQueryParameters(territoireId: 42);
+
+        $expectedData = ['foo' => 'bar'];
+
+        $tabDataManager->expects($this->once())
+            ->method('getDernierActionDossiers')
+            ->with($tabQueryParameters)
+            ->willReturn($expectedData);
+
+        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager);
+        $tabBody = new TabBody(
+            type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $loader->load($tabBody);
+
+        $data = $tabBody->getData();
+        $this->assertIsArray($data);
+        $this->assertSame($expectedData, $data['data']);
+        $this->assertArrayNotHasKey('data_kpi', $data);
+        $this->assertArrayNotHasKey('data_interconnexion', $data);
         $this->assertSame(42, $data['territory_id']);
         $this->assertSame('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig', $tabBody->getTemplate());
     }
