@@ -6,9 +6,9 @@ use App\Entity\Bailleur;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\Type\SearchCheckboxEnumType;
+use App\Form\Type\TerritoryChoiceType;
 use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
@@ -137,22 +137,8 @@ class PartnerType extends AbstractType
                 'default_protocol' => null,
             ]);
         }
-        $builder->add('territory', EntityType::class, [
-            'class' => Territory::class,
-            'query_builder' => function (TerritoryRepository $tr) {
-                return $tr->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC');
-            },
-            'data' => !empty($territory) ? $territory : null,
-            'disabled' => !$this->isAdmin,
-            'choice_label' => function (Territory $territory) {
-                return $territory->getZip().' - '.$territory->getName();
-            },
-            'row_attr' => [
-                'class' => !$this->isAdmin ? 'fr-hidden' : '',
-            ],
-            'label' => 'Territoire',
-            'required' => true,
-        ]);
+
+        $builder->add('territory', TerritoryChoiceType::class);
         $this->addBailleurSocialField($builder, $territory?->getZip(), $partner);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->handleTerritoryChange($event));
         $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->handleTerritoryChange($event, true));

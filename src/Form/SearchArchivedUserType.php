@@ -47,6 +47,9 @@ class SearchArchivedUserType extends AbstractType
             'placeholder' => 'Tous les territoires',
             'label' => 'Territoire',
         ]);
+        // TODO : est-ce que ça vaut toujours le coup d'ajouter Aucun ici, maintenant que le pb est résolu ?
+        // ou faire évoluer TerritoryChoiceType
+        // $builder->add('territory', TerritoryChoiceType::class);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
             $territory = $builder->getData()->getTerritory() ? $this->territoryRepository->find($builder->getData()->getTerritory()) : null;
             $this->addPartnersField(

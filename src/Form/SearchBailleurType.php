@@ -2,9 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Territory;
+use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchBailleur;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -24,15 +23,7 @@ class SearchBailleurType extends AbstractType
             'label' => 'Bailleur',
             'attr' => ['placeholder' => 'Taper le nom ou une partie du nom du bailleur'],
         ]);
-        $builder->add('territory', EntityType::class, [
-            'class' => Territory::class,
-            'required' => false,
-            'label' => 'Territoire',
-            'placeholder' => 'Tous les territoires',
-            'choice_label' => function (Territory $territory) {
-                return $territory->getZip().' - '.$territory->getName();
-            },
-        ]);
+        $builder->add('territory', TerritoryChoiceType::class);
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
                 'Ordre alphabétique (A -> Z)' => 'b.name-ASC',
