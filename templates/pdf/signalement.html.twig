@@ -610,18 +610,23 @@
                             <tr>
                                 <td style="padding:.5rem;width: 15%">
                                     {% if suivi.createdBy is defined and suivi.createdBy is not null %}
-                                        <b> {{ suivi.createdBy.nom|upper~'. '~ suivi.createdBy.prenom|capitalize }}</b>
+                                        <b> {{ suivi.createdBy.nomComplet(true) }}</b>
                                         {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
                                         <br>
-                                        <small>[{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}
-                                            ]</small>
+                                        <small>
+                                        {% if suivi.createdBy.partners|length and suivi.category is not same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER %}
+                                            [{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}]
+                                        {% else %}
+							                {{(suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}
+                                        {% endif %}
+                                        </small>
                                         <br>
                                     {% else %}
                                         <b> Aucun</b>
                                     {% endif %}
                                     <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                                 </td>
-                                <td style="padding:.5rem;width:85%">  {{ suivi.description|raw }}</td>
+                                <td style="padding:.5rem;width:85%">{{ suivi.description|raw }}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}

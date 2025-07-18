@@ -113,13 +113,13 @@
 							{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
 								Suivi automatique
 							{% elseif suivi.createdBy is not null %}
-								{% if suivi.createdBy.partners|length %}
+								{% if suivi.createdBy.partners|length and suivi.category is not same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER %}
 									{{suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A'}}
 								{% else %}
-									{{(suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Aucun')}}
-								{% endif %}					
+									{{(suivi.createdBy.email ? (suivi.createdBy.email is same as signalement.mailOccupant ? 'OCCUPANT' : 'DECLARANT') : 'Occupant ou déclarant')}}
+								{% endif %}
 							{% else %}
-								{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}					
+								{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}
 							{% endif %}
 							-
 							{{ suivi.createdAt|date('d/m/Y') }}
