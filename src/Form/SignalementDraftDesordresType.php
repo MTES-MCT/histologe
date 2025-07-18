@@ -101,6 +101,8 @@ class SignalementDraftDesordresType extends AbstractType
                     $key = 'desordres_logement_lumiere_plafond_trop_bas'.$suffix;
                     $value = isset($jsonContent[$key]) ? $jsonContent[$key] : null;
                     $builder->add('precisions_'.$critere->getId().'_'.$key, NumberType::class, [
+                        'label' => 'Précisez la hauteur du plafond (en cm)',
+                        'help' => 'Format attendu : saisir un nombre entier',
                         'required' => false,
                         'mapped' => false,
                         'data' => $value,

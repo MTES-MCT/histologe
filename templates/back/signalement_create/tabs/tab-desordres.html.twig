@@ -132,9 +132,7 @@
                                                         {% endif %}
                                                         {% set detailsFieldName = field.vars.name ~ '_' ~ precisionHauteur ~ piece %}
                                                         {% if formDesordres and attribute(formDesordres, detailsFieldName) is defined %}
-                                                            <label for="{{ detailsFieldName }}">Précisez la hauteur du plafond (en cm)</label>
-                                                            <span class="fr-hint-text">Format attendu : saisir un nombre entier</span>
-                                                            {{ form_widget(attribute(formDesordres, detailsFieldName)) }}
+                                                            {{ form_row(attribute(formDesordres, detailsFieldName)) }}
                                                         {% endif %}
                                                     </div>
                                                 {% endif %}
