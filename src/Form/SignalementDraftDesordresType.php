@@ -11,6 +11,7 @@ use App\Utils\TrimHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -87,6 +88,30 @@ class SignalementDraftDesordresType extends AbstractType
                         'data-slug-critere' => $critere->getSlugCritere(),
                     ],
                 ]);
+            } elseif ('desordres_logement_lumiere_plafond_trop_bas' === $critereSlug) {
+                $jsonContent = $signalement ? $signalement->getJsonContent() : [];
+                $suffixes = [
+                    '_piece_a_vivre',
+                    '_cuisine',
+                    '_salle_de_bain',
+                    '_toutes_pieces',
+                ];
+
+                foreach ($suffixes as $suffix) {
+                    $key = 'desordres_logement_lumiere_plafond_trop_bas'.$suffix;
+                    $value = isset($jsonContent[$key]) ? $jsonContent[$key] : null;
+                    $builder->add('precisions_'.$critere->getId().'_'.$key, NumberType::class, [
+                        'label' => 'Précisez la hauteur du plafond (en cm)',
+                        'help' => 'Format attendu : saisir un nombre entier',
+                        'required' => false,
+                        'mapped' => false,
+                        'data' => $value,
+                        'attr' => [
+                            'data-slug-critere' => $critere->getSlugCritere(),
+                            'placeholder' => 'Ex : 200',
+                        ],
+                    ]);
+                }
             }
         }
 

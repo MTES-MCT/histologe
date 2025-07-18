@@ -405,18 +405,41 @@ function initBoFormSignalementDesordres() {
     }
   }
 
+  function clearInputError(event) {
+    const inputTextElement = event.target;
+    inputTextElement.parentElement.classList.remove('fr-input-group--error');
+    const errorElement = inputTextElement.parentElement.querySelector('.fr-error-text');
+    if (errorElement) {
+      errorElement.classList.add('fr-hidden');
+    }
+  }
+
   function updateSelectedPrecisions(modal) {
     const critereId = modal.dataset.critereid;
     const precisionContainer = document.querySelector(`#item-critere-${critereId}`);
 
     let hasPrecisionsChosen = false;
+    let displayPrecisionError = false;
     const ulElement = precisionContainer ? precisionContainer.querySelector('ul') : null;
     if (ulElement) {
       ulElement.innerHTML = '';
       const checkboxes = modal.querySelectorAll("input[type='checkbox']");
       checkboxes.forEach((checkbox) => {
         if (checkbox.checked) {
-          const precisionLabel = checkbox.labels[0].innerHTML;
+          let precision = '';
+          if ('desordres_logement_lumiere_plafond_trop_bas' == modal.dataset.critereslug) {
+            const inputTextElement = checkbox.parentElement.querySelector("input[type='text']");
+            inputTextElement.removeEventListener('input', clearInputError); // avoids double listener
+            inputTextElement.addEventListener('input', clearInputError);
+            if ('' != inputTextElement.value) {
+              precision = ' (hauteur : ' + inputTextElement.value + ' cm)';
+            }
+            if (inputTextElement.parentElement.classList.contains('fr-input-group--error')) {
+              displayPrecisionError = true;
+            }
+          }
+
+          const precisionLabel = checkbox.labels[0].innerHTML + precision;
           const precisionItem = document.createElement('li');
           precisionItem.innerHTML = precisionLabel;
           ulElement.appendChild(precisionItem);
@@ -450,14 +473,18 @@ function initBoFormSignalementDesordres() {
     }
 
     const errorElement = precisionContainer ? precisionContainer.querySelector('p') : null;
-    if (hasPrecisionsChosen) {
+    if (hasPrecisionsChosen && !displayPrecisionError) {
       precisionContainer.classList.add('fr-border--grey');
       precisionContainer.classList.remove('fr-border--red');
       errorElement.classList.add('fr-hidden');
     } else {
       precisionContainer.classList.remove('fr-border--grey');
       precisionContainer.classList.add('fr-border--red');
-      errorElement.innerHTML = 'Veuillez renseigner les détails du désordre';
+      if (displayPrecisionError) {
+        errorElement.innerHTML = 'Merci de corriger les détails du désordre';
+      } else {
+        errorElement.innerHTML = 'Veuillez renseigner les détails du désordre';
+      }
       errorElement.classList.remove('fr-hidden');
     }
   }
