@@ -68,7 +68,10 @@ class SignalementUserProvider implements UserProviderInterface
     public function getUsagerData(Signalement $signalement, string $type, string $codeSuivi): array
     {
         if (UserManager::DECLARANT === $type) {
-            $user = $this->userRepository->findOneBy(['email' => $signalement->getMailDeclarant()]);
+            $user = $signalement->getSignalementUsager()?->getDeclarant();
+            if (empty($user)) {
+                $user = $this->userRepository->findOneBy(['email' => $signalement->getMailDeclarant()]);
+            }
 
             return [
                 'identifier' => $codeSuivi.':'.UserManager::DECLARANT,
@@ -76,7 +79,11 @@ class SignalementUserProvider implements UserProviderInterface
                 'user' => $user,
             ];
         }
-        $user = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
+
+        $user = $signalement->getSignalementUsager()?->getOccupant();
+        if (empty($user)) {
+            $user = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
+        }
 
         return [
             'identifier' => $codeSuivi.':'.UserManager::OCCUPANT,
