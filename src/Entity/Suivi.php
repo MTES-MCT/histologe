@@ -185,7 +185,7 @@ class Suivi implements EntityHistoryInterface
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
         }
 
-        if (!$transformHtml) {
+        if (!$transformHtml || empty($this->description)) {
             $description = $this->description;
         } else {
             $description = str_replace('&lt;br /&gt;', '<br />', $this->description);
