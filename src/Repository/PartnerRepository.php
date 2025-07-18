@@ -129,24 +129,18 @@ class PartnerRepository extends ServiceEntityRepository
     public function countPartnerInterfaces(array $territories): int
     {
         $queryBuilder = $this->createQueryBuilder('p')
-        ->select('p.id');
+        ->select('COUNT(p.id)');
 
         $queryBuilder->andWhere('p.isArchive = 0');
         $queryBuilder->andWhere('p.isEsaboraActive = 1 or p.isIdossActive = 1');
 
-        // Filtrer par territoires si précisé
         if (!empty($territories)) {
             $queryBuilder
                 ->andWhere('p.territory IN (:territories)')
                 ->setParameter('territories', $territories);
         }
-        try {
-            $count = count($queryBuilder->getQuery()->getSingleColumnResult());
-        } catch (NonUniqueResultException) {
-            $count = 0;
-        }
 
-        return (int) $count;
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
     /**
