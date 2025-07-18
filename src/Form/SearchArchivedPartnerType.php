@@ -58,6 +58,9 @@ class SearchArchivedPartnerType extends AbstractType
                 'placeholder' => 'Tous les territoires',
                 'label' => 'Territoire',
             ]);
+            // TODO : est-ce que ça vaut toujours le coup d'ajouter Aucun ici, maintenant que le pb est résolu ?
+            // ou faire évoluer TerritoryChoiceType
+            // $builder->add('territory', TerritoryChoiceType::class);
         }
 
         $builder->add('orderType', ChoiceType::class, [

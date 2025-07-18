@@ -2,10 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\Territory;
 use App\Entity\User;
+use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchTag;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -45,15 +44,7 @@ class SearchTagType extends AbstractType
             'attr' => ['placeholder' => 'Taper le nom de l\'étiquette'],
         ]);
         if ($this->isAdmin) {
-            $builder->add('territory', EntityType::class, [
-                'class' => Territory::class,
-                'choice_label' => function (Territory $territory) {
-                    return $territory->getZip().' - '.$territory->getName();
-                },
-                'required' => false,
-                'placeholder' => 'Tous les territoires',
-                'label' => 'Territoire',
-            ]);
+            $builder->add('territory', TerritoryChoiceType::class);
         }
 
         $builder->add('orderType', ChoiceType::class, [

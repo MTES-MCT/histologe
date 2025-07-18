@@ -3,10 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Enum\PartnerType;
-use App\Entity\Territory;
 use App\Entity\User;
+use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchPartner;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -48,15 +47,7 @@ class SearchPartnerType extends AbstractType
             'attr' => ['placeholder' => 'Saisir le nom ou l\'e-mail d\'un partenaire'],
         ]);
         if ($this->isAdmin) {
-            $builder->add('territoire', EntityType::class, [
-                'class' => Territory::class,
-                'choice_label' => function (Territory $territory) {
-                    return $territory->getZip().' - '.$territory->getName();
-                },
-                'required' => false,
-                'placeholder' => 'Tous les territoires',
-                'label' => 'Territoire',
-            ]);
+            $builder->add('territoire', TerritoryChoiceType::class);
         }
 
         $builder->add('orderType', ChoiceType::class, [

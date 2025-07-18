@@ -8,9 +8,9 @@ use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\Type\SearchCheckboxType;
+use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
 use App\Service\ListFilters\SearchUser;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -61,15 +61,7 @@ class SearchUserType extends AbstractType
             'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un utilisateur'],
         ]);
         if ($this->isAdmin) {
-            $builder->add('territory', EntityType::class, [
-                'class' => Territory::class,
-                'choice_label' => function (Territory $territory) {
-                    return $territory->getZip().' - '.$territory->getName();
-                },
-                'required' => false,
-                'placeholder' => 'Tous les territoires',
-                'label' => 'Territoire',
-            ]);
+            $builder->add('territory', TerritoryChoiceType::class);
         }
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
             $this->addPartnersField(

@@ -6,10 +6,8 @@ use App\Entity\AutoAffectationRule;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
-use App\Entity\Territory;
 use App\Form\Type\SearchCheckboxEnumType;
-use App\Repository\TerritoryRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Form\Type\TerritoryChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
@@ -27,23 +25,7 @@ class AutoAffectationRuleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('territory', EntityType::class, [
-                'class' => Territory::class,
-                'query_builder' => function (TerritoryRepository $tr) {
-                    return $tr->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC');
-                },
-                'disabled' => !$options['create'],
-                'choice_label' => function (Territory $territory) {
-                    return $territory->getZip().' - '.$territory->getName();
-                },
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
-                'row_attr' => [
-                    'class' => 'fr-input-group',
-                ],
-                'label' => 'Territoire',
-            ])
+            ->add('territory', TerritoryChoiceType::class)
             ->add('partnerType', EnumType::class, [
                 'class' => PartnerType::class,
                 'choice_label' => function ($choice) {

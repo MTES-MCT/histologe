@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Territory;
+use App\Form\Type\TerritoryChoiceType;
 use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -20,7 +21,8 @@ class SuiviSummariesType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
+        $builder->add('territory', TerritoryChoiceType::class)
+       /* $builder
             ->add('territory', EntityType::class, [
                 'class' => Territory::class,
                 'query_builder' => function (TerritoryRepository $tr) {
@@ -32,7 +34,7 @@ class SuiviSummariesType extends AbstractType
                 'placeholder' => 'Choisissez un territoire',
                 'label' => 'Territoire',
                 'required' => true,
-            ])
+            ])*/
 
             ->add('count', NumberType::class, [
                 'data' => 300,
