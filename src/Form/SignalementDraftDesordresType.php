@@ -11,6 +11,7 @@ use App\Utils\TrimHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -98,9 +99,8 @@ class SignalementDraftDesordresType extends AbstractType
 
                 foreach ($suffixes as $suffix) {
                     $key = 'desordres_logement_lumiere_plafond_trop_bas'.$suffix;
-                    $value = isset($jsonContent[$key]) ? $jsonContent[$key] : '';
-                    $builder->add('precisions_'.$critere->getId().'_'.$key, TextType::class, [
-                        'label' => 'Hauteur (en cm)',
+                    $value = isset($jsonContent[$key]) ? $jsonContent[$key] : null;
+                    $builder->add('precisions_'.$critere->getId().'_'.$key, NumberType::class, [
                         'required' => false,
                         'mapped' => false,
                         'data' => $value,
