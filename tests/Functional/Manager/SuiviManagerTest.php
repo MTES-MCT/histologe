@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
 use App\Manager\SuiviManager;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -25,6 +26,8 @@ class SuiviManagerTest extends KernelTestCase
     private EventDispatcherInterface $eventDispatcherInterface;
     private Security $security;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private UserRepository $userRepository;
     private SuiviManager $suiviManager;
 
     protected function setUp(): void
@@ -35,12 +38,15 @@ class SuiviManagerTest extends KernelTestCase
         $this->eventDispatcherInterface = static::getContainer()->get(EventDispatcherInterface::class);
         $this->security = static::getContainer()->get(Security::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->userRepository = $this->managerRegistry->getRepository(User::class);
         $this->suiviManager = new SuiviManager(
             $this->managerRegistry,
             $this->signalementUpdatedListener,
             $this->eventDispatcherInterface,
             $this->security,
             $this->htmlSanitizerInterface,
+            $this->userSignalementSubscriptionRepository,
             Suivi::class,
         );
     }
@@ -100,5 +106,25 @@ class SuiviManagerTest extends KernelTestCase
             category: SuiviCategory::MESSAGE_USAGER,
         );
         $this->assertEquals($descSanitized, $suivi->getDescription());
+    }
+
+    public function testCreateSuiviWithAutoSubscription(): void
+    {
+        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000008']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-34-02@signal-logement.fr']);
+
+        $this->suiviManager->createSuivi(
+            signalement : $signalement,
+            description : 'prise en charge du signalement',
+            type : Suivi::TYPE_PARTNER,
+            category: SuiviCategory::MESSAGE_PARTNER,
+            user : $user,
+        );
+
+        $sub = $this->userSignalementSubscriptionRepository->findBy([
+            'signalement' => $signalement,
+            'user' => $user,
+        ]);
+        $this->assertCount(1, $sub);
     }
 }

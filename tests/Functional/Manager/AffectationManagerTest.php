@@ -11,14 +11,17 @@ use App\Manager\AffectationManager;
 use App\Manager\HistoryEntryManager;
 use App\Manager\SuiviManager;
 use App\Messenger\InterconnectionBus;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AffectationManagerTest extends KernelTestCase
+class AffectationManagerTest extends WebTestCase
 {
     private const string REF_SIGNALEMENT = '2022-8';
+    private KernelBrowser $client;
     private ManagerRegistry $managerRegistry;
     private SuiviManager $suiviManager;
     private LoggerInterface $logger;
@@ -26,16 +29,18 @@ class AffectationManagerTest extends KernelTestCase
     private AffectationManager $affectationManager;
     private EventDispatcherInterface $eventDispatcher;
     private InterconnectionBus $interconnectionBus;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
 
     protected function setUp(): void
     {
-        self::bootKernel();
+        $this->client = static::createClient();
         $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
         $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         $this->interconnectionBus = self::getContainer()->get(InterconnectionBus::class);
+        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,
@@ -43,6 +48,8 @@ class AffectationManagerTest extends KernelTestCase
             $this->historyEntryManager,
             $this->eventDispatcher,
             $this->interconnectionBus,
+            $this->userSignalementSubscriptionRepository,
+            true,
             Affectation::class,
         );
     }
@@ -60,6 +67,9 @@ class AffectationManagerTest extends KernelTestCase
 
         $this->assertNotEquals($countAffectationBeforeRemove, $countAffectationAfterRemove);
         $this->assertEquals(0, $countAffectationAfterRemove);
+
+        $subscriptions = $this->userSignalementSubscriptionRepository->findBy(['signalement' => $signalement]);
+        $this->assertCount(1, $subscriptions);
     }
 
     public function testRemoveSomePartnersFromAffectation(): void
@@ -91,6 +101,8 @@ class AffectationManagerTest extends KernelTestCase
         $user = $this->managerRegistry->getRepository(User::class)->findOneBy(
             ['email' => $affectationAccepted->getPartner()->getUsers()->first()->getEmail()]
         );
+        $this->client->loginUser($user);
+
         $affectationClosed = $this->affectationManager->closeAffectation(
             affectation: $affectationAccepted,
             user: $user,
