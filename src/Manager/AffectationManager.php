@@ -16,8 +16,10 @@ use App\Event\AffectationCreatedEvent;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\AffectationRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
@@ -30,6 +32,9 @@ class AffectationManager extends Manager
         protected HistoryEntryManager $historyEntryManager,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterconnectionBus $interconnectionBus,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private readonly bool $featureNewDashboard,
         string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -154,18 +159,30 @@ class AffectationManager extends Manager
     ): void {
         if (empty($postedPartner) && empty($partnersIdToRemove)) {
             foreach ($signalement->getAffectations() as $affectation) {
-                $this->remove($affectation);
+                $this->removeAffectationAndSubscriptions($affectation);
             }
         } else {
             foreach ($partnersIdToRemove as $partnerIdToRemove) {
                 $partner = $this->managerRegistry->getRepository(Partner::class)->find($partnerIdToRemove);
                 foreach ($signalement->getAffectations() as $affectation) {
                     if ($affectation->getPartner()->getId() === $partner->getId()) {
-                        $this->remove($affectation);
+                        $this->removeAffectationAndSubscriptions($affectation);
                     }
                 }
             }
         }
+    }
+
+    private function removeAffectationAndSubscriptions(Affectation $affectation): void
+    {
+        if ($this->featureNewDashboard) {
+            $subscriptions = $this->userSignalementSubscriptionRepository->findForAffectation($affectation);
+            foreach ($subscriptions as $subscription) {
+                $this->remove($subscription);
+            }
+        }
+
+        $this->remove($affectation);
     }
 
     public function flagAsSynchronized(DossierMessageInterface $dossierMessage): void

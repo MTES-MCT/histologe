@@ -6,6 +6,9 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\UserStatus;
+use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use App\Event\AffectationCreatedEvent;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -14,42 +17,53 @@ use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadAffectationData extends Fixture implements OrderedFixtureInterface
 {
+    private ObjectManager $manager;
+    private User $userAdmin;
+
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly TerritoryRepository $territoryRepository,
         private readonly UserRepository $userRepository,
         private readonly EventDispatcherInterface $eventDispatcher,
+        #[Autowire(env: 'USER_SYSTEM_EMAIL')]
+        private readonly string $userSystemEmail,
     ) {
     }
 
     public function load(ObjectManager $manager): void
     {
+        $this->userAdmin = $this->userRepository->findOneBy(['email' => $this->userSystemEmail]);
+        $this->manager = $manager;
         $affectationRows = Yaml::parseFile(__DIR__.'/../Files/Affectation.yml');
         foreach ($affectationRows['affectations'] as $row) {
-            $this->loadAffectation($manager, $row);
+            $this->loadAffectation($row);
         }
-        $manager->flush();
+        $this->manager->flush();
     }
 
     /**
      * @param array<string, mixed> $row
      */
-    public function loadAffectation(ObjectManager $manager, array $row): void
+    public function loadAffectation(array $row): void
     {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+        $partner = $this->partnerRepository->findOneBy(['email' => $row['partner']]);
+        $answeredBy = $this->userRepository->findOneBy(['email' => $row['answered_by']]);
         $affectation = (new Affectation())
-            ->setSignalement($this->signalementRepository->findOneBy(['reference' => $row['signalement']]))
-            ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
+            ->setSignalement($signalement)
+            ->setPartner($partner)
             ->setStatut(AffectationStatus::tryFrom($row['statut']))
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedAt(new \DateTimeImmutable())
             ->setAffectedBy($this->userRepository->findOneBy(['email' => $row['affected_by']]))
-            ->setAnsweredBy($this->userRepository->findOneBy(['email' => $row['answered_by']]))
+            ->setAnsweredBy($answeredBy)
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setIsSynchronized($row['is_synchronized'] ?? false)
         ;
@@ -70,8 +84,22 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
                 ->setAnsweredAt($createdAt);
         }
 
-        $manager->persist($affectation);
+        $this->manager->persist($affectation);
         $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
+
+        if (AffectationStatus::ACCEPTED === $affectation->getStatut()) {
+            foreach ($partner->getUsers() as $user) {
+                if (($user->isUserPartner() || $user->isPartnerAdmin()) && UserStatus::ARCHIVE !== $user->getStatut()) {
+                    $subscription = new UserSignalementSubscription();
+                    $subscription
+                        ->setUser($user)
+                        ->setSignalement($affectation->getSignalement())
+                        ->setCreatedBy($this->userAdmin)
+                        ->setIsLegacy(true);
+                    $this->manager->persist($subscription);
+                }
+            }
+        }
     }
 
     public function getOrder(): int

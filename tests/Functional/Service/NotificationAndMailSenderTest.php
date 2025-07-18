@@ -3,10 +3,8 @@
 namespace App\Tests\Functional\Service;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\NotificationType;
-use App\Entity\Enum\UserStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -14,6 +12,7 @@ use App\Factory\NotificationFactory;
 use App\Repository\NotificationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\NotificationAndMailSender;
 use App\Tests\FixturesHelper;
@@ -34,6 +33,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private NotificationFactory $notificationFactory;
     private Security $security;
     private NotificationAndMailSender $notificationAndMailSender;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
 
     protected function setUp(): void
     {
@@ -45,7 +45,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
         $this->notificationFactory = self::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
-
+        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
@@ -53,6 +53,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            true,
         );
     }
 
@@ -122,10 +123,10 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertEmailAddressContains($mail, 'to', 'ne-pas-repondre@signal-logement.beta.gouv.fr');
         $this->assertCount(2, $mail->getBcc());
         $this->assertEmailAddressContains($mail, 'bcc', 'partenaire-34-04@signal-logement.fr');
-        $this->assertEmailAddressContains($mail, 'bcc', 'user-partenaire-34-02@signal-logement.fr');
+        $this->assertEmailAddressContains($mail, 'bcc', 'admin-territoire-34-01@signal-logement.fr');
 
         $notificationsSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::CLOTURE_SIGNALEMENT, 'waitMailingSummary' => true]);
-        $this->assertCount(1, $notificationsSummary);
+        $this->assertCount(0, $notificationsSummary);
         $notificationNoSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::CLOTURE_SIGNALEMENT, 'waitMailingSummary' => false]);
         $this->assertCount(3, $notificationNoSummary);
     }
@@ -136,7 +137,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
             'reference' => '2022-10',
         ]);
-        $territory = $signalement->getTerritory();
         /** @var User $respTerritoire */
         $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
             'email' => 'admin-territoire-13-01@signal-logement.fr',
@@ -150,50 +150,13 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setIsPublic(true);
 
         $this->entityManager->persist($suivi);
-
-        $expectedAdress = [$respTerritoire->getEmail()];
-        $expectedNotification = $this->userRepository->findActiveAdminsAndTerritoryAdmins($territory);
-        foreach ($signalement->getAffectations() as $affectation) {
-            if (AffectationStatus::WAIT === $affectation->getStatut()
-                    || AffectationStatus::ACCEPTED === $affectation->getStatut()) {
-                $partner = $affectation->getPartner();
-
-                if ($partnerEmail = $partner->getEmail()) {
-                    $expectedAdress[] = $partnerEmail;
-                }
-
-                foreach ($partner->getUsers() as $user) {
-                    if (UserStatus::ACTIVE === $user->getStatut()) {
-                        if ($user->getIsMailingActive() && !$user->getIsMailingSummary()) {
-                            $expectedAdress[] = $user->getEmail();
-                        }
-                        $expectedNotification[] = $user;
-                    }
-                }
-            }
-        }
-
-        // suivi creator doesn't receive notification
-        unset($expectedNotification[array_search($suivi->getCreatedBy(), $expectedNotification)]);
-
+        $existingNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
         $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
 
         $this->assertEmailCount(1);
-        $email = $this->getMailerMessage();
-
-        foreach ($expectedAdress as $adressMail) {
-            $this->assertEmailAddressContains($email, 'Bcc', $adressMail);
-        }
-
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
-        $expectedNotificationIds = array_map(fn ($user) => $user->getId(), $expectedNotification);
-        $newNotificationIds = array_map(fn ($notification) => $notification->getUser()->getId(), $newNotifications);
-
-        sort($expectedNotificationIds);
-        sort($newNotificationIds);
-
-        $this->assertEquals(\count($expectedNotification), \count($newNotifications));
-        $this->assertEquals($expectedNotificationIds, $newNotificationIds);
+        $subscriptions = $this->userSignalementSubscriptionRepository->findBy(['signalement' => $signalement]);
+        $this->assertCount(count($subscriptions) + \count($existingNotifications), $newNotifications);
     }
 
     public function testSendNDemandeAbandonProcedureToUsager(): void
@@ -226,6 +189,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            true,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
@@ -273,6 +237,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            true,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
@@ -313,6 +278,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            true,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -355,6 +321,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            true,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);

@@ -400,6 +400,9 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @deprecated this method will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed
+     */
     public function getWithUserPartners(Partner $partner): Partner
     {
         return $this->createQueryBuilder('p')
