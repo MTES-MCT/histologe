@@ -25,7 +25,7 @@ class MenuBuilderTest extends KernelTestCase
         $security = $this->createMock(Security::class);
         $security->method('getUser')->willReturn($user);
 
-        $menuBuilder = new MenuBuilder($security);
+        $menuBuilder = new MenuBuilder($security, true);
         $this->assertCount(5, $menuBuilder->build()->getChildren());
         $this->assertEquals('Tableau de bord', $menuBuilder->build()->getChildren()[0]->getLabel());
         $this->assertEquals('Signalements', $menuBuilder->build()->getChildren()[1]->getLabel());
