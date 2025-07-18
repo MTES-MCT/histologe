@@ -9,6 +9,11 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[AppAssert\IsTerritoryActive]
+#[AppAssert\ValueLessThanOtherValue(
+    property: 'compositionLogementNombreEnfants',
+    otherProperty: 'compositionLogementNombrePersonnes',
+    message: "Le nombre d'enfants ne peut pas dépasser le nombre de personnes."
+)]
 class SignalementDraftRequest
 {
     use DateNaissanceValidatorTrait;

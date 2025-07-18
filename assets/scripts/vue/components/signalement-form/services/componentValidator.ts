@@ -53,6 +53,21 @@ export const componentValidator = {
         formStore.validationErrors[componentSlug] = 'La valeur dépasse la longueur autorisée ' + maxLength
       }
     }
+
+    if (variableTester.isNotEmpty(value) && component.validate?.expression) {
+      let isValid = false
+      try {
+        const data = formStore.data
+        const safeExpression = component.validate.expression.replace(/formStore\.data/g, 'data')
+        isValid = eval(safeExpression)
+      } catch (e) {
+        isValid = false
+      }
+
+      if (!isValid) {
+        formStore.validationErrors[componentSlug] = component.validate.expressionMessage ?? 'Valeur incorrecte.'
+      }
+    }
   },
 
   validateAddress (component: any) {

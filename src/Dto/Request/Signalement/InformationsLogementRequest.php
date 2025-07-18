@@ -2,8 +2,14 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[AppAssert\ValueLessThanOtherValue(
+    property: 'compositionLogementNombreEnfants',
+    otherProperty: 'nombrePersonnes',
+    message: "Le nombre d'enfants ne peut pas dépasser le nombre de personnes."
+)]
 class InformationsLogementRequest implements RequestInterface
 {
     public function __construct(
