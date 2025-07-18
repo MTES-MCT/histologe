@@ -347,12 +347,12 @@ class AffectationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<array{signalement_id: int, partner_id: int}>
+     * @return array<array{signalement_id: int, partner_id: int, answered_at: string}>
      */
     public function findAllActiveAffectationsOnActiveSignalements(): array
     {
         $sql = '
-            SELECT a.signalement_id, a.partner_id
+            SELECT a.signalement_id, a.partner_id, a.answered_at
             FROM affectation a
             INNER JOIN signalement s ON a.signalement_id = s.id
             WHERE s.statut = :signalement_status
