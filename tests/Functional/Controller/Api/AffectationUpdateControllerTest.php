@@ -123,7 +123,7 @@ class AffectationUpdateControllerTest extends WebTestCase
                 'message' => 'lorem ipsum dolor sit amet',
             ],
             'FERME',
-            1,
+            2,
         ];
 
         yield 'FERME ==> NOUVEAU' => [

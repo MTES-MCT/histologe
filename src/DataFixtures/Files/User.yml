@@ -394,6 +394,7 @@ users:
     partner: "Partenaire Zone Agde"
     statut: "ACTIVE"
     is_mailing_active: 1
+    is_mailing_summary: 0
   -
     email: admin-territoire-34-02@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
