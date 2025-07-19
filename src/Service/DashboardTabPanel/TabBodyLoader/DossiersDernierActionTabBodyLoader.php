@@ -2,6 +2,7 @@
 
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
+use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
@@ -18,19 +19,25 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
 
     public function load(TabBody $tabBody): void
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
         parent::load($tabBody);
-        $tabBody->setData([
-            'data' => $this->tabDataManager->getDernierActionDossiers($this->tabQueryParameters),
-            'data_kpi' => [
-                'comptes_en_attente' => rand(1, 100),
-                'partenaires_non_notifiables' => rand(1, 100),
-            ],
-            'data_interconnexion' => [
-                'hasErrorsLastDay' => (bool) rand(0, 1),
-                'firstErrorLastDayAt' => (new \DateTimeImmutable('2025-04-28 03:59'))->format('d/m/Y à H:i'),
-                'LastSyncAt' => (new \DateTimeImmutable('2025-04-28 03:59'))->format('d/m/Y à H:i'),
-            ],
-        ]);
+
+        $data = [];
+        $data['data'] = $this->tabDataManager->getDernierActionDossiers($this->tabQueryParameters);
+        if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
+            $data['data_kpi'] = [
+                'comptes_en_attente' => $this->tabDataManager->countUsersPendingToArchive($this->tabQueryParameters),
+                'partenaires_non_notifiables' => $this->tabDataManager->countPartenairesNonNotifiables($this->tabQueryParameters),
+                'partenaires_interfaces' => $this->tabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
+            ];
+        }
+        if ($user->isSuperAdmin()) {
+            $data['data_interconnexion'] = $this->tabDataManager->getInterconnexions($this->tabQueryParameters);
+        }
+        $data['territory_id'] = $this->tabQueryParameters ? $this->tabQueryParameters->territoireId : null;
+
+        $tabBody->setData($data);
         $tabBody->setTemplate('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig');
     }
 }

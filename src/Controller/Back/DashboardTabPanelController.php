@@ -43,6 +43,15 @@ class DashboardTabPanelController extends AbstractController
             if ($territory) {
                 $territoires[$territory->getId()] = $territory;
             }
+        } elseif ($territoireId) {
+            $tabQueryParameter = new TabQueryParameters(
+                territoireId: null,
+                communeCodePostal: $tabQueryParameter->communeCodePostal,
+                partenairesId: $tabQueryParameter->partenairesId,
+                sortBy: $tabQueryParameter->sortBy,
+                orderBy: $tabQueryParameter->orderBy,
+            );
+            $territoireId = null;
         } elseif (!$this->isGranted('ROLE_ADMIN')) {
             $territoires = $user?->getPartnersTerritories() ?? [];
         }

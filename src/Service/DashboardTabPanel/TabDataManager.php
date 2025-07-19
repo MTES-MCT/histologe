@@ -2,8 +2,31 @@
 
 namespace App\Service\DashboardTabPanel;
 
+use App\Dto\CountPartner;
+use App\Entity\Enum\SuiviCategory;
+use App\Entity\User;
+use App\Repository\JobEventRepository;
+use App\Repository\PartnerRepository;
+use App\Repository\SuiviRepository;
+use App\Repository\TerritoryRepository;
+use App\Repository\UserRepository;
+use App\Service\ListFilters\SearchInterconnexion;
+use Symfony\Bundle\SecurityBundle\Security;
+
 class TabDataManager
 {
+    private const int DAY_PERIOD = 365;
+
+    public function __construct(
+        private readonly Security $security,
+        private readonly JobEventRepository $jobEventRepository,
+        private readonly SuiviRepository $suiviRepository,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly UserRepository $userRepository,
+        private readonly PartnerRepository $partnerRepository,
+    ) {
+    }
+
     /**
      * @return TabDossier[]
      */
@@ -30,22 +53,119 @@ class TabDataManager
      */
     public function getDernierActionDossiers(?TabQueryParameters $tabQueryParameters = null): array
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $territory = null;
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+        $signalements = $this->suiviRepository->findLastSignalementsWithUserSuivi($user, $territory, 10);
         $tabDossiers = [];
-        for ($i = 0; $i < 10; ++$i) {
+        if (empty($signalements)) {
+            return $tabDossiers;
+        }
+        for ($i = 0; $i < \count($signalements); ++$i) {
+            $signalement = $signalements[$i];
+            $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
+                ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
+                : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
-                nomDeclarant: 'MOREAU',
-                prenomDeclarant: 'Samuel',
-                reference: '#2024-'.rand(1, 1000),
-                adresse: '4 impasse des Lilas, 13002 Marseille',
-                statut: 'En cours',
-                derniereAction: 'Relance partenaire',
-                derniereActionAt: '08/04/2025',
-                actionDepuis: 'OUI',
-                lien: '#',
+                nomDeclarant: $signalement['nomOccupant'],
+                prenomDeclarant: $signalement['prenomOccupant'],
+                reference: '#'.$signalement['reference'],
+                adresse: $signalement['adresseOccupant'],
+                statut: $signalement['statut']->label(),
+                derniereAction: $derniereAction,
+                derniereActionAt: $signalement['suiviCreatedAt']->format('d/m/Y'),
+                actionDepuis: $signalement['hasNewerSuivi'] ? 'OUI' : 'NON',
+                lien: '/bo/signalements/'.$signalement['uuid'],
             );
         }
 
         return $tabDossiers;
+    }
+
+    public function countUsersPendingToArchive(?TabQueryParameters $tabQueryParameters = null): int
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $territories = [];
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+
+        $users = $this->userRepository->findUsersPendingToArchive($user, $territories);
+
+        return \count($users);
+    }
+
+    public function countPartenairesNonNotifiables(?TabQueryParameters $tabQueryParameters = null): int
+    {
+        $territories = [];
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+
+        /** @var CountPartner $countPartnerDto */
+        $countPartnerDto = $this->partnerRepository->countPartnerNonNotifiables($territories);
+
+        return $countPartnerDto->getNonNotifiables();
+    }
+
+    public function countPartenairesInterfaces(?TabQueryParameters $tabQueryParameters = null): int
+    {
+        $territories = [];
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+
+        return $this->partnerRepository->countPartnerInterfaces($territories);
+    }
+
+    /**
+     * @return array<string, bool|\DateTimeImmutable|null>
+     */
+    public function getInterconnexions(?TabQueryParameters $tabQueryParameters = null): array
+    {
+        $searchInterconnexion = new SearchInterconnexion();
+        $searchInterconnexion->setOrderType('j.createdAt-DESC');
+        $territory = null;
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+        $searchInterconnexion->setTerritory($territory);
+
+        $lastConnection = $this->jobEventRepository->findLastJobEventByTerritory(
+            self::DAY_PERIOD,
+            $searchInterconnexion,
+            1,
+            0
+        );
+
+        $lastSynchro = null;
+        if (!empty($lastConnection)) {
+            $lastSynchro = $lastConnection[0];
+        }
+
+        $searchInterconnexion->setStatus('failed');
+        $errorConnectionLastDay = $this->jobEventRepository->findLastJobEventByTerritory(
+            1,
+            $searchInterconnexion,
+            1,
+            0
+        );
+
+        $hasErrorLastDay = false;
+        if (!empty($errorConnectionLastDay)) {
+            $hasErrorLastDay = true;
+            $lastErrorSynchro = $errorConnectionLastDay[0];
+        }
+
+        return [
+            'hasErrorsLastDay' => $hasErrorLastDay,
+            'firstErrorLastDayAt' => $hasErrorLastDay ? $lastErrorSynchro['createdAt'] : null,
+            'LastSyncAt' => $lastSynchro ? $lastSynchro['createdAt'] : null,
+        ];
     }
 
     /**
