@@ -40,8 +40,8 @@
                 </div>
                 <div class="part-infos-hover" data-template="tippy_suivi_{{ suivi.id }}" >
                 {{
-                    'ROLE_USAGER' in suivi.createdBy.roles or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER
-                        ? (suivi.createdBy.email is same as signalement.mailOccupant
+                    suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER
+                        ? (suivi.createdBy is same as signalement.getSignalementUsager.getOccupant
                             ? 'OCCUPANT'~ '\n' ~ suivi.createdBy.nomComplet(true)
                             : 'DECLARANT'~ '\n' ~ suivi.createdBy.nomComplet(true)
                         )|nl2br
