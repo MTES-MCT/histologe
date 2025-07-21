@@ -72,7 +72,7 @@ class SignalementUserProvider implements UserProviderInterface
         if (UserManager::DECLARANT === $type) {
             $user = $signalement->getSignalementUsager()?->getDeclarant();
             if (empty($user)) {
-                $this->logger->info('SignalementUserProvider: No declarant user found, trying to find by email.');
+                $this->logger->error('SignalementUserProvider: No declarant user found, trying to find by email.');
                 $user = $this->userRepository->findOneBy(['email' => $signalement->getMailDeclarant()]);
             }
 
@@ -85,7 +85,7 @@ class SignalementUserProvider implements UserProviderInterface
 
         $user = $signalement->getSignalementUsager()?->getOccupant();
         if (empty($user)) {
-            $this->logger->info('SignalementUserProvider: No occupant user found, trying to find by email.');
+            $this->logger->error('SignalementUserProvider: No occupant user found, trying to find by email.');
             $user = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
         }
 
