@@ -32,7 +32,6 @@ class UserType extends AbstractType
     {
         /** @var User $user */
         $user = $options['data'];
-        // TODO : à checker
         $territory = $user->getPartners()->count() ? $user->getFirstTerritory() : null;
 
         $builder
@@ -62,28 +61,16 @@ class UserType extends AbstractType
                 'required' => true,
             ]);
 
-          $builder
-          ->add('territory', EntityType::class, [
-              'class' => Territory::class,
-              'query_builder' => function (TerritoryRepository $tr) {
-                  return $tr->createQueryBuilder('t')->where('t.isActive = 1')->orderBy('t.id', 'ASC');
-              },
-              'mapped' => false,
-              'data' => !empty($territory) ? $territory : null,
-              'choice_label' => 'name',
-              'placeholder' => 'Aucun territoire',
-              'attr' => [
-                  'class' => 'fr-select',
-              ],
-              'row_attr' => [
-                  'class' => 'fr-input-group',
-              ],
-              'label' => 'Territoire',
-              'required' => false,
-          ]);
-
-          // TODO : à regarde de près car fait péter la réactivation Can't get a way to read the property "territory" in class "App\Entity\User".
-      //  $builder->add('territory', TerritoryChoiceType::class);
+        $builder->add('territory', TerritoryChoiceType::class, [
+            'mapped' => false,
+            'selected_territory' => $territory,
+            'attr' => [
+                'class' => 'fr-select',
+            ],
+            'row_attr' => [
+                'class' => 'fr-input-group',
+            ],
+        ]);
         $formModifier = function (FormInterface $form, ?Territory $territory = null) use ($user) {
             $partners = null === $territory ?
             $this->partnerRepository->findAllWithoutTerritory()

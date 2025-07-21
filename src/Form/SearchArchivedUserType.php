@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Territory;
+use App\Form\Type\TerritoryWithNoneChoiceType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\ListFilters\SearchArchivedUser;
@@ -34,22 +35,7 @@ class SearchArchivedUserType extends AbstractType
             'label' => 'Utilisateur',
             'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un utilisateur'],
         ]);
-        $territories = $this->territoryRepository->findAllList();
-        $choicesTerritories = [
-            'Aucun' => 'none',
-        ];
-        foreach ($territories as $territory) {
-            $choicesTerritories[$territory->getZip().' - '.$territory->getName()] = $territory->getId();
-        }
-        $builder->add('territory', ChoiceType::class, [
-            'choices' => $choicesTerritories,
-            'required' => false,
-            'placeholder' => 'Tous les territoires',
-            'label' => 'Territoire',
-        ]);
-        // TODO : est-ce que ça vaut toujours le coup d'ajouter Aucun ici, maintenant que le pb est résolu ?
-        // ou faire évoluer TerritoryChoiceType
-        // $builder->add('territory', TerritoryChoiceType::class);
+        $builder->add('territory', TerritoryWithNoneChoiceType::class);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
             $territory = $builder->getData()->getTerritory() ? $this->territoryRepository->find($builder->getData()->getTerritory()) : null;
             $this->addPartnersField(
