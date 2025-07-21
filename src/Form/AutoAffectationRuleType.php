@@ -25,7 +25,15 @@ class AutoAffectationRuleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('territory', TerritoryChoiceType::class)
+            ->add('territory', TerritoryChoiceType::class, [
+                'disabled' => !$options['create'],
+                'attr' => [
+                    'class' => 'fr-select',
+                ],
+                'row_attr' => [
+                    'class' => 'fr-input-group',
+                ],
+            ])
             ->add('partnerType', EnumType::class, [
                 'class' => PartnerType::class,
                 'choice_label' => function ($choice) {

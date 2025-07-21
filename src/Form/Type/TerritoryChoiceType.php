@@ -18,16 +18,12 @@ class TerritoryChoiceType extends AbstractType
             'placeholder' => 'Tous les territoires',
             'required' => false,
             'label' => 'Territoire',
-            'selected_territory' => null,
             'query_builder' => fn (
                 TerritoryRepository $territoryRepository,
             ) => $territoryRepository->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC'),
             'attr' => [],
             'row_attr' => [],
         ]);
-        $resolver->setNormalizer('data', function ($options, $value) {
-            return $options['selected_territory'] ?? $value;
-        });
     }
 
     public function getParent(): string

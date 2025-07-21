@@ -63,7 +63,7 @@ class UserType extends AbstractType
 
         $builder->add('territory', TerritoryChoiceType::class, [
             'mapped' => false,
-            'selected_territory' => $territory,
+            'data' => $territory,
             'attr' => [
                 'class' => 'fr-select',
             ],

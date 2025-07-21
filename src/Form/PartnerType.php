@@ -138,7 +138,16 @@ class PartnerType extends AbstractType
             ]);
         }
 
-        $builder->add('territory', TerritoryChoiceType::class);
+        $builder->add('territory', TerritoryChoiceType::class, [
+            'data' => $territory,
+            'attr' => [
+                'class' => 'fr-select',
+            ],
+            'row_attr' => [
+                'class' => !$this->isAdmin ? 'fr-hidden' : '',
+            ],
+            'disabled' => !$this->isAdmin,
+        ]);
         $this->addBailleurSocialField($builder, $territory?->getZip(), $partner);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->handleTerritoryChange($event));
         $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->handleTerritoryChange($event, true));
