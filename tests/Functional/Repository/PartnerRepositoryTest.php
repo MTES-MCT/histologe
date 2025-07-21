@@ -238,6 +238,20 @@ class PartnerRepositoryTest extends KernelTestCase
         $this->assertEquals(0, $count->getNonNotifiables());
     }
 
+    public function testCountPartnerInterfaces(): void
+    {
+        $countAll = $this->partnerRepository->countPartnerInterfaces([]);
+        $this->assertIsInt($countAll);
+        $this->assertEquals(2, $countAll);
+
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy([]);
+        if ($territory) {
+            $countTerritory = $this->partnerRepository->countPartnerInterfaces([$territory->getId()]);
+            $this->assertIsInt($countTerritory);
+            $this->assertEquals(0, $countTerritory);
+        }
+    }
+
     protected function tearDown(): void
     {
         $this->entityManager->close();
