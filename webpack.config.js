@@ -26,8 +26,28 @@ Encore
         to: 'dsfr/[path][name].[ext]'
     })
     .copyFiles({
+        from: './node_modules/@popperjs/core/dist/',
+        to: 'popper/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/leaflet/dist/',
+        to: 'leaflet/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/leaflet.vectorgrid/dist/',
+        to: 'leaflet.vectorgrid/[path][name].[ext]'
+    })
+    .copyFiles({
         from: './node_modules/tinymce/',
         to: 'tinymce/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/tippy.js/dist/',
+        to: 'tippy/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/wellknown/',
+        to: 'wellknown/[path][name].[ext]'
     })
 
     .copyFiles({
