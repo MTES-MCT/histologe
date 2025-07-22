@@ -449,6 +449,10 @@ form.inline-form {
     z-index: 6000 !important;
 }
 
+.tox-statusbar__branding {
+    display: none !important;
+}
+
 .fr-btn.fr-btn--sm.fr-icon-eye-line:before, .fr-btn.fr-btn--sm.fr-icon-eye-fill:before {
     content: "";
 }
