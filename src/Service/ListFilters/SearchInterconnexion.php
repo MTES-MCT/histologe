@@ -15,6 +15,7 @@ class SearchInterconnexion
     private ?string $status = null;
     private ?string $action = null;
     private ?string $orderType = null;
+    private ?string $reference = null;
 
     public function getTerritory(): ?Territory
     {
@@ -64,5 +65,15 @@ class SearchInterconnexion
     public function setOrderType(?string $orderType): void
     {
         $this->orderType = $orderType;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): void
+    {
+        $this->reference = $reference;
     }
 }

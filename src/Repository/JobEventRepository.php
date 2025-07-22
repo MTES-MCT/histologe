@@ -71,6 +71,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         $qb = $this->createQueryBuilder('j');
         $qb
             ->leftJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
+            ->leftJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
             ->where('j.createdAt >= :date_limit');
 
         if ($searchInterconnexion->getTerritory()) {
@@ -81,6 +82,12 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         }
         if ($searchInterconnexion->getStatus()) {
             $qb->andWhere('j.status = :status')->setParameter('status', $searchInterconnexion->getStatus());
+        }
+        if ($searchInterconnexion->getAction()) {
+            $qb->andWhere('j.action = :action')->setParameter('action', $searchInterconnexion->getAction());
+        }
+        if ($searchInterconnexion->getReference()) {
+            $qb->andWhere('s.reference = :reference')->setParameter('reference', $searchInterconnexion->getReference());
         }
 
         $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
@@ -100,7 +107,6 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         int $offset,
     ): array {
         $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion);
-        $qb->leftJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
         $qb->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response');
 
         if (!empty($searchInterconnexion->getOrderType())) {
