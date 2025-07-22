@@ -78,11 +78,11 @@
 
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="{{ asset('build/leaflet/leaflet.css')}}">
 {% endblock %}
 
 {% block javascripts %}
-	<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" ></script>
-    <script src="https://cdn.jsdelivr.net/npm/wellknown@0.5.0/wellknown.js"></script>
+    <script src="{{ asset('build/leaflet/leaflet.js') }}"></script>
+    <script src="{{ asset('js/wellknown/wellknown.js') }}"></script>
     <script src="{{ asset('js/zone_map.js') }}" ></script>
 {% endblock %}
