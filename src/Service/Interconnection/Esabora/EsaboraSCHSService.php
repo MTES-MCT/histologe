@@ -18,8 +18,8 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class EsaboraSCHSService extends AbstractEsaboraService
 {
-    private const string ACTION_SYNC_EVENTS = 'sync_events';
-    private const string ACTION_SYNC_EVENTFILES = 'sync_eventfiles';
+    public const string ACTION_SYNC_EVENTS = 'sync_events';
+    public const string ACTION_SYNC_EVENTFILES = 'sync_eventfiles';
 
     public function __construct(
         private readonly HttpClientInterface $client,

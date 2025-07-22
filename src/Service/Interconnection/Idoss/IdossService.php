@@ -34,8 +34,8 @@ class IdossService
         self::STATUS_CLOSED => AffectationStatus::CLOSED,
     ];
     public const ACTION_PUSH_DOSSIER = 'push_dossier';
-    private const ACTION_UPLOAD_FILES = 'upload_files';
-    private const ACTION_LIST_STATUTS = 'list_statuts';
+    public const ACTION_UPLOAD_FILES = 'upload_files';
+    public const ACTION_LIST_STATUTS = 'list_statuts';
     private const AUTHENTICATE_ENDPOINT = '/api/Utilisateur/authentification';
     private const CREATE_DOSSIER_ENDPOINT = '/api/EtatCivil/creatDossHistologe';
     private const UPLOAD_FILES_ENDPOINT = '/api/EtatCivil/uploadFileRepoHistologe';
