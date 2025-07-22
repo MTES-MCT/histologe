@@ -49,6 +49,7 @@ parameters:
     feature_suivi_action: '%env(bool:FEATURE_SUIVI_ACTION)%'
     proconnect_scheme_protocol: '%env(resolve:PROCONNECT_SCHEME_PROTOCOL)%'
     proconnect_domain: '%env(resolve:PROCONNECT_DOMAIN)%'
+    feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
 
 services:
     # default configuration for services in *this* file

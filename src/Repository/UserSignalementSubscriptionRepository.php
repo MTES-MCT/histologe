@@ -55,7 +55,7 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
             ->andWhere('up.partner = :partner')->setParameter('partner', $partner);
         if ($excludeRT) {
             $queryBuilder->andWhere('JSON_CONTAINS(u.roles, :role_admin_territory) = 0')
-            ->setParameter('role_admin_territory', 'ROLE_ADMIN_TERRITORY');
+            ->setParameter('role_admin_territory', '"ROLE_ADMIN_TERRITORY"');
         }
 
         return $queryBuilder->getQuery()->getResult();

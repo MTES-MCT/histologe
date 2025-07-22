@@ -52,7 +52,7 @@ class ArreteCreateControllerTest extends WebTestCase
             }
             $this->assertStringContainsString($value, $lastDescription);
         }
-        $this->assertEmailCount(1);
+        $this->assertEmailCount(2);
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }

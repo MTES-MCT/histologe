@@ -82,7 +82,11 @@ class NotifyVisitsCommand extends AbstractCronCommand
             );
 
             if ($this->parameterBag->get('feature_new_dashboard')) {
-                // Rentre à présent dans le système classique de notification à la création de suivi (voir SuiviCreatedSubscriber->onSuiviCreated)
+                $this->visiteNotifier->notifySubscribers(
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
+                    intervention: $intervention,
+                    suivi: $suivi,
+                );
             } else {
                 $this->visiteNotifier->notifyAgents(
                     intervention: $intervention,
@@ -142,7 +146,11 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 );
 
                 if ($this->parameterBag->get('feature_new_dashboard')) {
-                    // Rentre à présent dans le système classique de notification à la création de suivi (voir SuiviCreatedSubscriber->onSuiviCreated)
+                    $this->visiteNotifier->notifyAffectationSubscribers(
+                        notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
+                        affectation: $affectation,
+                        suivi: $suivi
+                    );
                 } else {
                     $this->visiteNotifier->notifyAgents(
                         intervention: null,

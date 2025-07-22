@@ -150,10 +150,11 @@ class VisiteNotifier
                 );
             }
         }
-
-        $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
-        $this->entityManager->persist($notification);
-        $this->entityManager->flush();
+        if ($suivi) {
+            $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+            $this->entityManager->persist($notification);
+            $this->entityManager->flush();
+        }
     }
 
     public function notifyVisiteToConclude(Intervention $intervention): int

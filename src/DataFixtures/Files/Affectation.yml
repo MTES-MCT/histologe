@@ -183,6 +183,13 @@ affectations:
     affected_by: "admin-01@signal-logement.fr"
     territory: "Pas-de-Calais"
   -
+    signalement: 2024-02
+    partner: "partenaire-62-01@signal-logement.fr"
+    statut: "EN_COURS"
+    answered_by: "user-62-01@signal-logement.fr"
+    affected_by: "admin-territoire-62-01@signal-logement.fr"
+    territory: "Pas-de-Calais"
+  -
     signalement: 2023-20
     partner: "partenaire-13-01@signal-logement.fr"
     statut: "EN_COURS"

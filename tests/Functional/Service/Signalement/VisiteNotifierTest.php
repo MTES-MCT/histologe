@@ -50,7 +50,7 @@ class VisiteNotifierTest extends KernelTestCase
         $intervention = $signalement->getInterventions()[0];
 
         $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($intervention);
-        $this->assertEquals($nbNotified, 6);
+        $this->assertEquals($nbNotified, 3);
     }
 
     public function testNotifyVisiteToConclude69(): void
@@ -60,6 +60,6 @@ class VisiteNotifierTest extends KernelTestCase
         $intervention = $signalement->getInterventions()[0];
 
         $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($intervention);
-        $this->assertEquals($nbNotified, 2);
+        $this->assertEquals($nbNotified, 1);
     }
 }

@@ -46,7 +46,9 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         }
 
         $this->sendToAdminAndPartners($suivi);
-        $this->sendToUsagers($suivi);
+        if (Suivi::CONTEXT_INTERVENTION !== $suivi->getContext()) {
+            $this->sendToUsagers($suivi);
+        }
     }
 
     private function sendToAdminAndPartners(Suivi $suivi): void
