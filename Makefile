@@ -246,8 +246,8 @@ matomo-disable-ssl: ## Disable ssl use for matomo local instance
 scalingo-update-cli: ## Install/Update Scalingo CLI
 	@bash -l -c 'curl -O https://cli-dl.scalingo.com/install && bash install && scalingo --version'
 
-run-concurrency-request: ## Run concurrency request based postman collection
-	@bash -l -c 'node ./tools/newman/run_concurrency_request.js nb=$(nb)'
+run-concurrency-request: ## Run concurrency request based postman collection ex: make run-concurrency-request nb=5 envName=local|demo
+	@bash -l -c 'node ./tools/newman/run_concurrency_request.js nb=$(nb) envName=$(envName)'
 
 .tools-destroy:
 	@echo "\033[33mRemoving tools containers ...\033[0m"

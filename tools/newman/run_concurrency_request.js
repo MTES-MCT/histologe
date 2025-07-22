@@ -1,12 +1,15 @@
 const newman = require('newman');
 
+const nbConcurrencyRequest = parseInt(process.argv[2].split('=')[1]) || 1  // default 1;
+const envName = process.argv[3].split('=')[1] || 'local'; // default to local
+console.log(`${nbConcurrencyRequest} concurrent calls on "${envName}" environment`);
+
 const options = {
-    collection: require('../histologe/histologe.postman_collection.json'),
+    collection: require('../histologe/signal-logement.postman_collection.json'),
+    environment: require(`../histologe/${envName}-silo.postman_environment.json`),
     reporters: 'cli'
 };
 
-const nbConcurrencyRequest = parseInt(process.argv[2].split('=')[1]) || 1;
-console.log(`${nbConcurrencyRequest} concurrency calls`);
 
 const runNewman = (iteration) => {
     return new Promise((resolve, reject) => {
