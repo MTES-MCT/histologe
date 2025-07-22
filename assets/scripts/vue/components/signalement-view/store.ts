@@ -36,6 +36,7 @@ export const store = {
         isImported: 'oui' as 'oui' | null,
         isZonesDisplayed: null as 'oui' | null,
         showMyAffectationOnly: null as 'oui' | null,
+        showMySignalementsOnly: null as 'oui' | null,
         showWithoutAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,
@@ -52,7 +53,8 @@ export const store = {
       canSeeStatusAffectation: false,
       canSeeBailleurSocial: false,
       canSeeScore: false,
-      canSeeFilterPartner: false,
+      canSeeFilterPartner: false, // TODO: FEATURE_NEW_DASHBOARD feature flipping, remove when not needed
+      canSeeMySignalementsButton: false,
       partnerIds: new Array<string>()
     },
     showOptions: false,

@@ -64,6 +64,8 @@ class WidgetSettings
      */
     #[Groups('widget-settings:read')]
     private array $bailleursSociaux = [];
+    #[Groups('widget-settings:read')]
+    private ?bool $isFeatureNewDashboard = false; // remove when FEATURE_NEW_DASHBOARD active
 
     /**
      * @param array<int, mixed> $territories
@@ -86,6 +88,7 @@ class WidgetSettings
         bool $hasSignalementImported = false,
         array $bailleursSociaux = [],
         string $avatarOrPlaceHolder = '',
+        ?bool $isFeatureNewDashboard = false,
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -102,6 +105,7 @@ class WidgetSettings
         $this->hasSignalementImported = $hasSignalementImported;
         $this->isMultiTerritoire = count($user->getPartnersTerritories()) > 1 ? true : false;
         $this->bailleursSociaux = $bailleursSociaux;
+        $this->isFeatureNewDashboard = $isFeatureNewDashboard;
     }
 
     public function getFirstname(): ?string
@@ -201,5 +205,13 @@ class WidgetSettings
     public function getBailleursSociaux(): array
     {
         return $this->bailleursSociaux;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsFeatureNewDashboard(): bool
+    {
+        return $this->isFeatureNewDashboard;
     }
 }

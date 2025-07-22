@@ -9,6 +9,7 @@ use App\Service\DashboardWidget\WidgetSettings;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Service\UserAvatar;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * @todo Rename class to SettingsFactory once the FEATURE_NEW_DASHBOARD feature flag is removed.
@@ -19,6 +20,8 @@ class WidgetSettingsFactory
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         private readonly Security $security,
         private readonly UserAvatar $userAvatar,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private readonly bool $featureNewDashboard, // remove when FEATURE_NEW_DASHBOARD active
     ) {
     }
 
@@ -37,7 +40,8 @@ class WidgetSettingsFactory
             zones: $filterOptionData['zones'],
             hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
-            avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80)
+            avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
+            isFeatureNewDashboard: $this->featureNewDashboard,
         );
     }
 

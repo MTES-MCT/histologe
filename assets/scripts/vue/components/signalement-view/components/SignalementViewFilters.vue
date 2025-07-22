@@ -1,7 +1,16 @@
 <template>
   <div :class="[defineCssBloc1(), 'fr-p-1w']">
     <ul class="fr-col-12 fr-tags-group fr-mt-2w">
-      <li v-if="sharedState.user.isResponsableTerritoire">
+      <li v-if="sharedState.user.canSeeMySignalementsButton">
+        <button class="fr-tag"
+                ref="mySignalementsButton"
+                :aria-pressed="ariaPressed.showMySignalementsOnly.toString()"
+                @click="toggleCurrentUserSignalements">
+          Afficher uniquement mes dossiers
+        </button>
+      </li>
+      <!-- TODO: Remove button when FEATURE_NEW_DASHBOARD is removed -->
+      <li v-else-if="sharedState.user.isResponsableTerritoire">
         <button class="fr-tag"
                 ref="myAffectationButton"
                 :aria-pressed="ariaPressed.showMyAffectationOnly.toString()"
@@ -17,9 +26,8 @@
           Afficher les signalements sans affectations uniquement
         </button>
       </li>
-      <li>
+      <li v-if="sharedState.hasSignalementImported">
         <button
-            v-if="sharedState.hasSignalementImported"
             ref="isImportedButton"
             class="fr-tag"
             :aria-pressed="ariaPressed.isImported.toString()"
@@ -27,9 +35,8 @@
         >Afficher les signalements importés
         </button>
       </li>
-      <li>
+      <li v-if="sharedState.zones.length > 0 && viewType === 'carto'">
         <button
-            v-if="sharedState.zones.length > 0 && viewType === 'carto'"
             ref="isZonesDisplayedButton"
             class="fr-tag"
             :aria-pressed="ariaPressed.isZonesDisplayed.toString()"
@@ -409,7 +416,7 @@ export default defineComponent({
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
-        if (key === 'isImported' || key === 'isZonesDisplayed' || key === 'showMyAffectationOnly' || key === 'showWithoutAffectationOnly') {
+        if (['isImported', 'isZonesDisplayed', 'showMyAffectationOnly', 'showMySignalementsOnly', 'showWithoutAffectationOnly'].includes(key)) {
           return false
         }
         if (value !== null) {
@@ -495,6 +502,19 @@ export default defineComponent({
         this.onChange(false)
       }
     },
+    toggleCurrentUserSignalements () {
+      this.sharedState.input.filters.showMySignalementsOnly =
+          this.sharedState.input.filters.showMySignalementsOnly !== 'oui' ? 'oui' : null
+
+      if (this.sharedState.input.filters.showMySignalementsOnly === 'oui') {
+        this.deactiveWithoutAffectationsOnly()
+        this.deactiveMyAffectationsOnly()
+      }
+
+      if (typeof this.onChange === 'function') {
+        this.onChange(false)
+      }
+    },
     toggleWithoutAffectation () {
       this.sharedState.input.filters.partenaires = []
       this.sharedState.input.filters.showWithoutAffectationOnly =
@@ -502,6 +522,7 @@ export default defineComponent({
 
       if (this.sharedState.input.filters.showWithoutAffectationOnly === 'oui') {
         this.deactiveMyAffectationsOnly()
+        this.deactiveMySignalementsOnly()
         this.sharedState.input.filters.partenaires = ['AUCUN']
       } else {
         delete this.sharedState.input.filters.partenaires[0]
@@ -515,6 +536,12 @@ export default defineComponent({
       this.sharedState.input.filters.showMyAffectationOnly = null
       if (this.$refs.myAffectationButton) {
         (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      }
+    },
+    deactiveMySignalementsOnly () {
+      this.sharedState.input.filters.showMySignalementsOnly = null
+      if (this.$refs.mySignalementsButton) {
+        (this.$refs.mySignalementsButton as HTMLElement).setAttribute('aria-pressed', 'false')
       }
     },
     deactiveWithoutAffectationsOnly () {
@@ -576,6 +603,7 @@ export default defineComponent({
         isImported: null,
         isZonesDisplayed: null,
         showMyAffectationOnly: null,
+        showMySignalementsOnly: null,
         showWithoutAffectationOnly: null,
         statusAffectation: null,
         criticiteScoreMin: null,
@@ -586,6 +614,10 @@ export default defineComponent({
 
       if (this.$refs.myAffectationButton) {
         (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      }
+
+      if (this.$refs.mySignalementsButton) {
+        (this.$refs.mySignalementsButton as HTMLElement).setAttribute('aria-pressed', 'false')
       }
 
       if (this.$refs.withoutAffectationButton) {
@@ -623,6 +655,7 @@ export default defineComponent({
         isImported: store.state.input.filters.isImported === 'oui',
         isZonesDisplayed: store.state.input.filters.isZonesDisplayed === 'oui',
         showMyAffectationOnly: store.state.input.filters.showMyAffectationOnly === 'oui',
+        showMySignalementsOnly: store.state.input.filters.showMySignalementsOnly === 'oui',
         showWithoutAffectationOnly: store.state.input.filters.showWithoutAffectationOnly === 'oui'
       },
       statusSignalementList: store.state.statusSignalementList,
