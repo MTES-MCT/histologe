@@ -1,6 +1,9 @@
 const Encore = require('@symfony/webpack-encore');
 const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 const isDev = Encore.isDev();
+const path = require('path');
+
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -24,6 +27,26 @@ Encore
     .copyFiles({
         from: './node_modules/@gouvfr/dsfr/dist/',
         to: 'dsfr/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/@popperjs/core/dist/',
+        to: 'popper/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/leaflet/dist/',
+        to: 'leaflet/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/leaflet.vectorgrid/dist/',
+        to: 'leaflet.vectorgrid/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/tinymce/',
+        to: 'tinymce/[path][name].[ext]'
+    })
+    .copyFiles({
+        from: './node_modules/tippy.js/dist/',
+        to: 'tippy/[path][name].[ext]'
     })
 
     .copyFiles({
