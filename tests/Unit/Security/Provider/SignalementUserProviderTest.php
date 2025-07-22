@@ -11,6 +11,7 @@ use App\Tests\FixturesHelper;
 use Doctrine\ORM\NonUniqueResultException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -20,11 +21,13 @@ class SignalementUserProviderTest extends TestCase
 
     private MockObject|SignalementRepository $signalementRepository;
     private MockObject|UserRepository $userRepository;
+    private MockObject|LoggerInterface $logger;
 
     protected function setUp(): void
     {
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
         $this->userRepository = $this->createMock(UserRepository::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     /**
@@ -45,7 +48,7 @@ class SignalementUserProviderTest extends TestCase
             ->with(['email' => 'luc.martin@example.com'])
             ->willReturn($mockUser);
 
-        $signalementRepository = new SignalementUserProvider($this->signalementRepository, $this->userRepository);
+        $signalementRepository = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
         $user = $signalementRepository->loadUserByIdentifier('12345678:occupant');
 
         $this->assertInstanceOf(SignalementUser::class, $user);
@@ -65,7 +68,7 @@ class SignalementUserProviderTest extends TestCase
             ->method('findOneByCodeForPublic')
             ->willReturn(null);
 
-        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository);
+        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
 
         $this->expectException(UserNotFoundException::class);
         $signalementUserProvider->loadUserByIdentifier('00000000:occupant');
@@ -76,7 +79,7 @@ class SignalementUserProviderTest extends TestCase
      */
     public function testRefreshUserThrowsExceptionForInvalidClass(): void
     {
-        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository);
+        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
         $invalidUser = $this->createMock(UserInterface::class);
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Instances de');
@@ -103,7 +106,7 @@ class SignalementUserProviderTest extends TestCase
             ->with(['email' => 'luc.martin@example.com'])
             ->willReturn($mockUserEntity);
 
-        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository);
+        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
 
         $signalementUser = new SignalementUser(
             '12345678:occupant',
@@ -119,7 +122,7 @@ class SignalementUserProviderTest extends TestCase
 
     public function testSupports(): void
     {
-        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository);
+        $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
 
         self::assertTrue($signalementUserProvider->supportsClass(SignalementUser::class));
     }

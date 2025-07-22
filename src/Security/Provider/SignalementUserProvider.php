@@ -9,6 +9,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Security\User\SignalementUser;
 use Doctrine\ORM\NonUniqueResultException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -18,6 +19,7 @@ class SignalementUserProvider implements UserProviderInterface
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly UserRepository $userRepository,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -68,7 +70,11 @@ class SignalementUserProvider implements UserProviderInterface
     public function getUsagerData(Signalement $signalement, string $type, string $codeSuivi): array
     {
         if (UserManager::DECLARANT === $type) {
-            $user = $this->userRepository->findOneBy(['email' => $signalement->getMailDeclarant()]);
+            $user = $signalement->getSignalementUsager()?->getDeclarant();
+            if (empty($user)) {
+                $this->logger->error('SignalementUserProvider: No declarant user found, trying to find by email.');
+                $user = $this->userRepository->findOneBy(['email' => $signalement->getMailDeclarant()]);
+            }
 
             return [
                 'identifier' => $codeSuivi.':'.UserManager::DECLARANT,
@@ -76,7 +82,12 @@ class SignalementUserProvider implements UserProviderInterface
                 'user' => $user,
             ];
         }
-        $user = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
+
+        $user = $signalement->getSignalementUsager()?->getOccupant();
+        if (empty($user)) {
+            $this->logger->error('SignalementUserProvider: No occupant user found, trying to find by email.');
+            $user = $this->userRepository->findOneBy(['email' => $signalement->getMailOccupant()]);
+        }
 
         return [
             'identifier' => $codeSuivi.':'.UserManager::OCCUPANT,
