@@ -6,8 +6,12 @@ namespace App\Tests\Functional\Repository;
 
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Signalement;
 use App\Repository\JobEventRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use App\Service\ListFilters\SearchInterconnexion;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class JobEventRepositoryTest extends KernelTestCase
@@ -43,6 +47,50 @@ class JobEventRepositoryTest extends KernelTestCase
         );
 
         $this->assertCount(8, $jobEvents);
+    }
+
+    public function testFindLastJobEventByTerritoryWithReference(): void
+    {
+        $container = static::getContainer();
+        /** @var JobEventRepository $jobEventRepository */
+        $jobEventRepository = $container->get(JobEventRepository::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get(EntityManagerInterface::class);
+
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-9']);
+
+        $searchInterconnexion = new SearchInterconnexion();
+        $searchInterconnexion->setReference($signalement->getReference());
+
+        $jobEvents = $jobEventRepository->findLastJobEventByTerritory(
+            365,
+            $searchInterconnexion,
+            10,
+            0
+        );
+
+        $this->assertCount(4, $jobEvents);
+        $this->assertEquals($signalement->getReference(), $jobEvents[0]['reference']);
+    }
+
+    public function testFindLastJobEventByTerritoryWithAction(): void
+    {
+        $container = static::getContainer();
+        /** @var JobEventRepository $jobEventRepository */
+        $jobEventRepository = $container->get(JobEventRepository::class);
+
+        $searchInterconnexion = new SearchInterconnexion();
+        $searchInterconnexion->setAction(EsaboraSCHSService::ACTION_PUSH_DOSSIER);
+
+        $jobEvents = $jobEventRepository->findLastJobEventByTerritory(
+            365,
+            $searchInterconnexion,
+            10,
+            0
+        );
+
+        $this->assertCount(3, $jobEvents);
+        $this->assertEquals(EsaboraSCHSService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
     }
 
     public function testFindFailedEsaboraDossierByPartnerTypeByAction(): void

@@ -8,6 +8,9 @@ use App\Entity\User;
 use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchInterconnexion;
 use App\Service\ListFilters\SearchPartner;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -15,6 +18,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -33,6 +37,11 @@ class SearchInterconnexionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('territory', TerritoryChoiceType::class);
+        $builder->add('reference', SearchType::class, [
+            'required' => false,
+            'label' => 'Référence du signalement',
+            'attr' => ['placeholder' => 'Taper la référence'],
+        ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
             $territory = $builder->getData()->getTerritory() ? $this->territoryRepository->find($builder->getData()->getTerritory()) : null;
@@ -62,6 +71,23 @@ class SearchInterconnexionType extends AbstractType
             'choices' => [
                 'Success' => 'success',
                 'Fail' => 'failed',
+            ],
+        ]);
+        $builder->add('action', ChoiceType::class, [
+            'required' => false,
+            'label' => 'Action',
+            'placeholder' => 'Toutes les actions',
+            'choices' => [
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER => AbstractEsaboraService::ACTION_PUSH_DOSSIER,
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE => AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE => AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE,
+                AbstractEsaboraService::ACTION_SYNC_DOSSIER => AbstractEsaboraService::ACTION_SYNC_DOSSIER,
+                AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE => AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE,
+                AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE => AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE,
+                EsaboraSCHSService::ACTION_SYNC_EVENTS => EsaboraSCHSService::ACTION_SYNC_EVENTS,
+                EsaboraSCHSService::ACTION_SYNC_EVENTFILES => EsaboraSCHSService::ACTION_SYNC_EVENTFILES,
+                IdossService::ACTION_LIST_STATUTS => IdossService::ACTION_LIST_STATUTS,
+                IdossService::ACTION_UPLOAD_FILES => IdossService::ACTION_UPLOAD_FILES,
             ],
         ]);
         $builder->add('orderType', ChoiceType::class, [

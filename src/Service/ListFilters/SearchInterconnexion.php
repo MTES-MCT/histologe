@@ -13,7 +13,9 @@ class SearchInterconnexion
     private ?Territory $territory = null;
     private ?Partner $partner = null;
     private ?string $status = null;
+    private ?string $action = null;
     private ?string $orderType = null;
+    private ?string $reference = null;
 
     public function getTerritory(): ?Territory
     {
@@ -45,6 +47,16 @@ class SearchInterconnexion
         $this->status = $status;
     }
 
+    public function getAction(): ?string
+    {
+        return $this->action;
+    }
+
+    public function setAction(?string $action): void
+    {
+        $this->action = $action;
+    }
+
     public function getOrderType(): ?string
     {
         return $this->orderType;
@@ -53,5 +65,15 @@ class SearchInterconnexion
     public function setOrderType(?string $orderType): void
     {
         $this->orderType = $orderType;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): void
+    {
+        $this->reference = $reference;
     }
 }
