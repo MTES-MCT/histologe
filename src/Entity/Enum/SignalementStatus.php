@@ -34,20 +34,9 @@ enum SignalementStatus: string
             self::ACTIVE->name => 'en cours',
             self::CLOSED->name => 'fermé',
             self::REFUSED->name => 'refusé',
+            self::ARCHIVED->name => 'archivé',
+            self::DRAFT_ARCHIVED->name => 'brouillon archivé',
         ];
-    }
-
-    public static function getLabel(self $value): string
-    {
-        return match ($value) {
-            self::DRAFT => 'brouillon',
-            self::NEED_VALIDATION => 'nouveau',
-            self::ACTIVE => 'en cours',
-            self::CLOSED => 'fermé',
-            self::REFUSED => 'refusé',
-            self::ARCHIVED => 'archivé',
-            self::DRAFT_ARCHIVED => 'brouillon archivé',
-        };
     }
 
     public static function mapFilterStatus(string $label): string
