@@ -41,7 +41,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
-        $interventionUpdatedByEsaboraSubscriber = new InterventionUpdatedByEsaboraSubscriber($visiteNotifier, $suiviManager);
+        $interventionUpdatedByEsaboraSubscriber = new InterventionUpdatedByEsaboraSubscriber($visiteNotifier, $suiviManager, true);
         $eventDispatcher->addSubscriber($interventionUpdatedByEsaboraSubscriber);
 
         $intervention = $interventions[0];

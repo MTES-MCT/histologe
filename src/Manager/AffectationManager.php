@@ -176,7 +176,7 @@ class AffectationManager extends Manager
     private function removeAffectationAndSubscriptions(Affectation $affectation): void
     {
         if ($this->featureNewDashboard) {
-            $subscriptions = $this->userSignalementSubscriptionRepository->findForAffectation($affectation);
+            $subscriptions = $this->userSignalementSubscriptionRepository->findForAffectation(affectation: $affectation, excludeRT: true);
             foreach ($subscriptions as $subscription) {
                 $this->remove($subscription);
             }

@@ -3,6 +3,7 @@
 namespace App\Manager;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Intervention;
@@ -31,6 +32,8 @@ class SuiviManager extends Manager
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private readonly bool $featureNewDashboard,
         string $entityName = Suivi::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -51,6 +54,7 @@ class SuiviManager extends Manager
         bool $sendMail = true,
         iterable $files = [],
         bool $flush = true,
+        bool &$subscriptionCreated = false,
     ): Suivi {
         $suivi = (new Suivi())
             ->setCreatedBy($user)
@@ -69,8 +73,8 @@ class SuiviManager extends Manager
             $this->persist($suiviFile);
             $suivi->addSuiviFile($suiviFile);
         }
-        // abonnement au signalement si le suivi est crée par un RT non abonné
-        if ($user && $user->isTerritoryAdmin()) {
+        // abonnement au signalement si le suivi est crée par un agent non abonné
+        if ($this->doesUserNeedSubscription($user, $suivi)) {
             $subscription = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
             if (!$subscription) {
                 $subscription = new UserSignalementSubscription();
@@ -78,6 +82,7 @@ class SuiviManager extends Manager
                             ->setSignalement($signalement)
                             ->setCreatedBy($user);
                 $this->persist($subscription);
+                $subscriptionCreated = true;
             }
         }
         if ($flush) {
@@ -90,10 +95,41 @@ class SuiviManager extends Manager
         return $suivi;
     }
 
+    private function doesUserNeedSubscription(
+        ?User $user,
+        Suivi $suivi,
+    ): bool {
+        if (!$this->featureNewDashboard) {
+            return false;
+        }
+        if (!$user) {
+            return false;
+        }
+        if ($user->isUsager() || $user->isApiUser()) {
+            return false;
+        }
+        if (in_array($suivi->getCategory(), [
+            SuiviCategory::AFFECTATION_IS_ACCEPTED,
+            SuiviCategory::AFFECTATION_IS_REFUSED,
+            SuiviCategory::MESSAGE_USAGER,
+            SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
+            SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
+            SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+        ])) {
+            return false;
+        }
+        if (SignalementStatus::DRAFT === $suivi->getSignalement()->getStatut()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function addSuiviIfNeeded(
         Signalement $signalement,
         string $description,
-    ): void {
+    ): bool {
+        $subscriptionCreated = false;
         if ($this->signalementUpdatedListener->updateOccurred()) {
             /** @var User $user */
             $user = $this->security->getUser();
@@ -103,14 +139,17 @@ class SuiviManager extends Manager
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_EDITED_BO,
                 user: $user,
+                subscriptionCreated: $subscriptionCreated
             );
         }
+
+        return $subscriptionCreated;
     }
 
     /**
      * @param array<int, File> $files
      */
-    public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files): Suivi
+    public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files, bool &$subscriptionCreated = false): Suivi
     {
         $nbDocs = count($files);
         /** @var ?DocumentType $documentType */
@@ -183,7 +222,8 @@ class SuiviManager extends Manager
             isPublic: $isVisibleUsager,
             user: $user,
             files: $files,
-            flush: false
+            flush: false,
+            subscriptionCreated: $subscriptionCreated
         );
     }
 

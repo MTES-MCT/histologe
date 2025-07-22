@@ -54,6 +54,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         'API' => 'ROLE_API_USER',
     ];
 
+    public const string MSG_SUBSCRIPTION_CREATED = 'Vous êtes désormais abonné à ce signalement.';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

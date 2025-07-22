@@ -8,6 +8,7 @@ use App\Factory\NotificationFactory;
 use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\VisiteNotifier;
@@ -27,6 +28,7 @@ class VisiteNotifierTest extends KernelTestCase
         $notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $userRepository = static::getContainer()->get(UserRepository::class);
         $notificationAndMailerSender = static::getContainer()->get(NotificationAndMailSender::class);
+        $userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
 
         $this->visiteNotifier = new VisiteNotifier(
             $entityManager,
@@ -35,6 +37,7 @@ class VisiteNotifierTest extends KernelTestCase
             $notificationMailerRegistry,
             $userRepository,
             $notificationAndMailerSender,
+            $userSignalementSubscriptionRepository,
         );
 
         $this->signalementRepository = $entityManager->getRepository(Signalement::class);

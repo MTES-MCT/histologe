@@ -10,6 +10,7 @@ use App\Manager\SuiviManager;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriberInterface
@@ -17,6 +18,8 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
     public function __construct(
         private VisiteNotifier $visiteNotifier,
         private SuiviManager $suiviManager,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private readonly bool $featureNewDashboard,
     ) {
     }
 
@@ -60,12 +63,16 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             );
         }
 
-        $this->visiteNotifier->notifyAgents(
-            intervention: $intervention,
-            suivi: $suivi,
-            currentUser: $event->getUser(),
-            notificationMailerType: null,
-            notifyOtherAffectedPartners: true,
-        );
+        if ($this->featureNewDashboard) {
+            // Rentre à présent dans le système classique de notification à la création de suivi (voir SuiviCreatedSubscriber->onSuiviCreated)
+        } else {
+            $this->visiteNotifier->notifyAgents(
+                intervention: $intervention,
+                suivi: $suivi,
+                currentUser: $event->getUser(),
+                notificationMailerType: null,
+                notifyOtherAffectedPartners: true,
+            );
+        }
     }
 }

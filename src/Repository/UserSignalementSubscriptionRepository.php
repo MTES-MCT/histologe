@@ -3,6 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Affectation;
+use App\Entity\Intervention;
+use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\UserSignalementSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,20 +23,40 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
     /**
      * @return array<UserSignalementSubscription>
      */
-    public function findForAffectation(Affectation $affectation): array
+    public function findForAffectation(Affectation $affectation, bool $excludeRT = false): array
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
 
+        return $this->findForSignalementAndPartner($signalement, $partner, $excludeRT);
+    }
+
+    /**
+     * @return array<UserSignalementSubscription>
+     */
+    public function findForIntervention(Intervention $intervention, bool $excludeRT = false): array
+    {
+        $signalement = $intervention->getSignalement();
+        $partner = $intervention->getPartner();
+
+        return $this->findForSignalementAndPartner($signalement, $partner, $excludeRT);
+    }
+
+    /**
+     * @return array<UserSignalementSubscription>
+     */
+    public function findForSignalementAndPartner(Signalement $signalement, Partner $partner, bool $excludeRT): array
+    {
         $queryBuilder = $this->createQueryBuilder('s')
+            ->select('s', 'u')
             ->innerJoin('s.user', 'u')
             ->innerJoin('u.userPartners', 'up')
             ->where('s.signalement = :signalement')->setParameter('signalement', $signalement)
-            ->andWhere('up.partner = :partner')->setParameter('partner', $partner)
-            ->andWhere('JSON_CONTAINS(u.roles, :role_admin_partner) = 1 OR JSON_CONTAINS(u.roles, :role_user_partner) = 1')
-            ->setParameter('role_admin_partner', '"ROLE_ADMIN_PARTNER"')
-            ->setParameter('role_user_partner', '"ROLE_USER_PARTNER"')
-        ;
+            ->andWhere('up.partner = :partner')->setParameter('partner', $partner);
+        if ($excludeRT) {
+            $queryBuilder->andWhere('JSON_CONTAINS(u.roles, :role_admin_territory) = 0')
+            ->setParameter('role_admin_territory', 'ROLE_ADMIN_TERRITORY');
+        }
 
         return $queryBuilder->getQuery()->getResult();
     }
