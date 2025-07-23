@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "19b09f3c-88d4-4957-b489-893d65233476",
+		"_postman_id": "7f2385b7-79f8-4c76-80c1-3ec1866c5ce9",
 		"name": "esabora-mock",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "1569180"
@@ -170,7 +170,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"searchName\": \"SISH_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"Reference_Dossier\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2023-000000000010\"\n            ]\n        }\n    ]\n}",
+							"raw": "{\n    \"searchName\": \"SISH_ETAT_DOSSIER_SAS\",\n    \"criterionList\": [\n        {\n            \"criterionName\": \"Reference_Dossier\",\n            \"criterionValueList\": [\n                \"00000000-0000-0000-2023-000000000010\"\n            ]\n        },\n        {\n            \"criterionName\": \"Logiciel_Provenance\",\n            \"criterionValueList\": [\n                \"H\"\n            ]\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
