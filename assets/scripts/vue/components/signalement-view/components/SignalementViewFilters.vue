@@ -10,7 +10,7 @@
         </button>
       </li>
       <!-- TODO: Remove button when FEATURE_NEW_DASHBOARD is removed -->
-      <li v-else-if="sharedState.user.isResponsableTerritoire">
+      <li v-if="sharedState.user.isResponsableTerritoire">
         <button class="fr-tag"
                 ref="myAffectationButton"
                 :aria-pressed="ariaPressed.showMyAffectationOnly.toString()"
@@ -488,6 +488,7 @@ export default defineComponent({
 
       if (this.sharedState.input.filters.showMyAffectationOnly === 'oui') {
         this.deactiveWithoutAffectationsOnly()
+        this.deactiveMySignalementsOnly()
         const currentPartners = this.sharedState.partenaires.filter((partner: HistoInterfaceSelectOption) => {
           for (const partnerId of this.sharedState.user.partnerIds) {
             if (partner.Id?.toString() === partnerId.toString()) {
@@ -503,12 +504,15 @@ export default defineComponent({
       }
     },
     toggleCurrentUserSignalements () {
+      this.sharedState.input.filters.currentUserSubscriptions = false
+      this.sharedState.input.filters.partenaires = []
       this.sharedState.input.filters.showMySignalementsOnly =
           this.sharedState.input.filters.showMySignalementsOnly !== 'oui' ? 'oui' : null
 
       if (this.sharedState.input.filters.showMySignalementsOnly === 'oui') {
         this.deactiveWithoutAffectationsOnly()
         this.deactiveMyAffectationsOnly()
+        this.sharedState.input.filters.currentUserSubscriptions = true
       }
 
       if (typeof this.onChange === 'function') {
@@ -586,6 +590,7 @@ export default defineComponent({
         partenaires: [],
         communes: [],
         epcis: [],
+        currentUserSubscriptions: false,
         searchTerms: null,
         status: null,
         procedure: null,

@@ -19,6 +19,7 @@ export const store = {
         partenaires: new Array<HistoInterfaceSelectOption | string>(),
         communes: new Array<string>(),
         epcis: new Array<string>(),
+        currentUserSubscriptions: false,
         searchTerms: null,
         status: null,
         procedure: null,

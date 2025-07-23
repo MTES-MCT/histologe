@@ -29,6 +29,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'showMyAffectationOnly', showOptions: true, defaultValue: null },
   { type: 'text', name: 'showMySignalementsOnly', showOptions: true, defaultValue: null },
   { type: 'text', name: 'showWithoutAffectationOnly', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'currentUserSubscriptions', showOptions: false, defaultValue: null },
   { type: 'text', name: 'isImported', showOptions: false, defaultValue: null },
   { type: 'text', name: 'isZonesDisplayed', showOptions: false, defaultValue: null },
   { type: 'collection', name: 'communes', showOptions: false, defaultValue: null },

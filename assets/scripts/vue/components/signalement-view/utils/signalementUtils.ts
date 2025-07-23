@@ -193,7 +193,7 @@ export function handleFilters (context: any, ajaxurl: string): any {
         url.searchParams.set(`${key}Debut`, dateDebut)
         url.searchParams.set(`${key}Fin`, dateFin)
         url.searchParams.delete(key)
-      } else if (Array.isArray(value) && (key === 'partenaires' || key === 'communes' || key === 'etiquettes' || key === 'zones')) {
+      } else if (Array.isArray(value) && (['partenaires', 'communes', 'etiquettes', 'zones'].includes(key))) {
         value.forEach((valueItem: any) => {
           addQueryParameter(context, `${key}[]`, valueItem)
           url.searchParams.append(`${key}[]`, valueItem)
