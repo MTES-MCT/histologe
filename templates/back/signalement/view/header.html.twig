@@ -180,13 +180,22 @@
             </div>
 
             <div class="fr-mb-4v fr-text--right">
-                {% if canAnswerAffectation %}
-                    <form id="signalement-affectation-response-form" action="{{ path('back_signalement_affectation_accept',{affectation:affectation.id}) }}" method="POST" class="inline-form">
-                        <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success">
+                {% if canAnswerAffectation %}                
+                    {% if feature_new_dashboard %}
+                        <div data-ajax-form class="fr-display-inline">
+                            {% include '_partials/_modal_accept_affectation.html.twig' %}
+                        </div>
+                        <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" id="open-accept-affectation-modal" data-fr-opened="false" aria-controls="accept-affectation-modal">
                             Accepter
                         </button>
-                        <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
-                    </form>
+                    {% else %}
+                        <form id="signalement-affectation-response-form" action="{{ path('back_signalement_affectation_accept',{affectation:affectation.id}) }}" method="POST" class="inline-form">
+                            <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success">
+                                Accepter
+                            </button>
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
+                        </form>
+                    {% endif %}
                     <div data-ajax-form class="fr-display-inline">
                         {% include '_partials/_modal_refus_affectation.html.twig' %}
                     </div>

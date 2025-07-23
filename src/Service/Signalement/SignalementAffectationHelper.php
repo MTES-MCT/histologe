@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\ProcedureType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -155,5 +156,32 @@ class SignalementAffectationHelper
         $signalement->setStatut($data['statut']);
 
         return $signalement;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getAffectationUsers(User $user, Signalement $signalement): array
+    {
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partnerAgents = [];
+        if ($partner) {
+            $users = $partner->getUsers()->toArray();
+            foreach ($users as $agent) {
+                $isInactive = UserStatus::INACTIVE === $agent->getStatut();
+                $label = sprintf(
+                    '<span>%s %s (%s)</span><br><span class="fr-text--small%s">%s%s</span>',
+                    htmlspecialchars($agent->getPrenom()),
+                    htmlspecialchars($agent->getNom()),
+                    htmlspecialchars($agent->getEmail()),
+                    $isInactive ? ' fr-text-default--error' : ' fr-text-default--grey',
+                    $isInactive ? '⚠️ ' : '',
+                    htmlspecialchars($agent->getRoleLabel().($isInactive ? ' - Compte inactif' : ''))
+                );
+                $partnerAgents[$label] = (string) $agent->getId();
+            }
+        }
+
+        return $partnerAgents;
     }
 }
