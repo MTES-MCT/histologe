@@ -323,6 +323,10 @@ button.fr-btn--success,a[href].fr-btn--success {
 .fr-text--text-default-warning {
     color: var(--text-default-warning);
 }
+.fr-label--stacked {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+}
 
 /*TEXT*/
 

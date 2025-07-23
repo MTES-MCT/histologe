@@ -40,6 +40,7 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\FormHelper;
 use App\Service\Signalement\PhotoHelper;
+use App\Service\Signalement\SignalementAffectationHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SuiviSeenMarker;
 use Doctrine\DBAL\Exception;
