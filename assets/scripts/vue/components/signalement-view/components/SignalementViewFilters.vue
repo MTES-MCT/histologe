@@ -504,7 +504,6 @@ export default defineComponent({
       }
     },
     toggleCurrentUserSignalements () {
-      this.sharedState.input.filters.currentUserSubscriptions = false
       this.sharedState.input.filters.partenaires = []
       this.sharedState.input.filters.showMySignalementsOnly =
           this.sharedState.input.filters.showMySignalementsOnly !== 'oui' ? 'oui' : null
@@ -512,7 +511,6 @@ export default defineComponent({
       if (this.sharedState.input.filters.showMySignalementsOnly === 'oui') {
         this.deactiveWithoutAffectationsOnly()
         this.deactiveMyAffectationsOnly()
-        this.sharedState.input.filters.currentUserSubscriptions = true
       }
 
       if (typeof this.onChange === 'function') {
@@ -590,7 +588,6 @@ export default defineComponent({
         partenaires: [],
         communes: [],
         epcis: [],
-        currentUserSubscriptions: false,
         searchTerms: null,
         status: null,
         procedure: null,

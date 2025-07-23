@@ -207,10 +207,7 @@ class WidgetSettings
         return $this->bailleursSociaux;
     }
 
-    /**
-     * @return bool|null
-     */
-    public function getIsFeatureNewDashboard(): bool
+    public function getIsFeatureNewDashboard(): ?bool
     {
         return $this->isFeatureNewDashboard;
     }
