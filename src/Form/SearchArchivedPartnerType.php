@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Form\Type\TerritoryWithNoneChoiceType;
+use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchArchivedPartner;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -44,7 +44,7 @@ class SearchArchivedPartnerType extends AbstractType
             'attr' => ['placeholder' => 'Taper le nom du partenaire'],
         ]);
         if ($this->isAdmin) {
-            $builder->add('territory', TerritoryWithNoneChoiceType::class);
+            $builder->add('territory', TerritoryChoiceType::class);
         }
 
         $builder->add('orderType', ChoiceType::class, [
