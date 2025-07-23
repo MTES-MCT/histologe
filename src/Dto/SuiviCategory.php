@@ -12,6 +12,7 @@ class SuiviCategory
         private readonly string $labelClass,
         private readonly string $title,
         private readonly string $icon,
+        private ?string $description,
     ) {
     }
 
@@ -38,5 +39,10 @@ class SuiviCategory
     public function getIcon(): string
     {
         return $this->icon;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 }

@@ -2,7 +2,11 @@
 <div class="signalement-card fr-mb-3w">
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-md-6">
-			Déclarant
+			{% if signalement.isNotOccupant %}
+				Déclarant
+			{% else %}
+				Déclarant occupant
+			{% endif %}
 			<br>
 			<span class="info">{{ signalement.prenomDeclarant }} {{ signalement.nomDeclarant }}</span>
 		</div>
@@ -12,9 +16,11 @@
 			<span class="info">#{{ signalement.reference }}</span>
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
-			Personne occupant le logement
-			<br>
-			<span class="info">{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</span>
+			{% if signalement.isNotOccupant %}
+				Personne occupant le logement
+				<br>
+				<span class="info">{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</span>
+			{% endif %}
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
 			Statut du dossier

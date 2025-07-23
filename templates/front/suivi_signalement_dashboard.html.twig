@@ -28,33 +28,58 @@
 							<p class="fr-tile__detail">Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>            
 							<div class="fr-tile__start">
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement refusé</p>           
-							</div>  
+							</div>
+							<h3 class="fr-tile__title">
+								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
+									<span class="fr-hidden">Signalement refusé</span>
+								</a>
+							</h3>  
 						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED and signalement.hasSuiviUsagerPostCloture %}
 							<p class="fr-tile__detail">Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.</p>            
 							<div class="fr-tile__start">
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement fermé</p>           
-							</div> 
+							</div>
+							<h3 class="fr-tile__title">
+								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
+									<span class="fr-hidden">Signalement fermé</span>
+								</a>
+							</h3>  
 						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED and date(signalement.closedAt) < date('-30days') %}
 							<p class="fr-tile__detail">Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>            
 							<div class="fr-tile__start">
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement fermé</p>           
 							</div> 
+							<h3 class="fr-tile__title">
+								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
+									<span class="fr-hidden">Signalement fermé</span>
+								</a>
+							</h3>  
 						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %}
 							<p class="fr-tile__detail">Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>            
 							<div class="fr-tile__start">
-								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement fermé</p>           
+								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement archivé</p>           
 							</div>
+							<h3 class="fr-tile__title">
+								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
+									<span class="fr-hidden">Signalement archivé</span>
+								</a>
+							</h3>
 						{% else %}
 							{% if suiviCategory %}
 								<h3 class="fr-tile__title">
 									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}{% if suiviCategory.suivi.id %}#suivi_{{suiviCategory.suivi.id}}{% endif %}">
 										{{suiviCategory.title}}
 									</a>
-								</h3>            
+								</h3>
 								<p class="fr-tile__detail">{{suiviCategory.suivi.createdAt|date('d/m/Y')}}</p>
 								<div class="fr-tile__start">
 									<p class="fr-badge fr-badge--sm fr-badge--no-icon {{suiviCategory.labelClass}}">{{suiviCategory.label}}</p>           
 								</div>
+								{% if suiviCategory.description %}
+									<div class="fr-card__start">
+        								<p class="fr-card__detail">{{suiviCategory.description}}</p>
+									</div>    
+								{% endif %}   
 							{% else %}
 							  	<p class="fr-tile__detail">Votre signalement est en cours de validation.</p>            
 								<div class="fr-tile__start">
