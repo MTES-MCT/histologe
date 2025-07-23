@@ -8,7 +8,13 @@
 				Déclarant occupant
 			{% endif %}
 			<br>
-			<span class="info">{{ signalement.prenomDeclarant }} {{ signalement.nomDeclarant }}</span>
+			<span class="info">
+				{% if signalement.prenomDeclarant %}
+					{{ signalement.prenomDeclarant }} {{ signalement.nomDeclarant }}
+				{% else %}
+					{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}
+				{% endif %}
+			</span>
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
 			Référence du dossier
