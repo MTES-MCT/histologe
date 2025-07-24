@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Dto\SuiviCategory as SuiviCategoryDto;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 
@@ -89,22 +90,19 @@ class SuiviCategorizerService
             label: $configuration['label'],
             labelClass: $configuration['labelClass'],
             title: $configuration['title'],
-            icon: $configuration['icon']
+            icon: $configuration['icon'],
+            description: $this->getSuiviCategoryDescription($suivi),
         );
     }
 
-    public function getSuiviCategoryFromEnum(SuiviCategory $category): ?SuiviCategoryDto
+    private function getSuiviCategoryDescription(Suivi $suivi): ?string
     {
-        if (isset(self::SUIVI_CATEGORIES_CONFIGURATION[$category->name])) {
-            $configuration = self::SUIVI_CATEGORIES_CONFIGURATION[$category->name];
-
-            return new SuiviCategoryDto(
-                suivi: new Suivi(),
-                label: $configuration['label'],
-                labelClass: $configuration['labelClass'],
-                title: $configuration['title'],
-                icon: $configuration['icon']
-            );
+        if (
+            SuiviCategory::SIGNALEMENT_IS_CLOSED === $suivi->getCategory()
+            && SignalementStatus::CLOSED === $suivi->getSignalement()->getStatut()
+            && $suivi->getSignalement()->getClosedAt()
+        ) {
+            return 'Si nécessaire, vous pouvez envoyer un dernier message avant le '.$suivi->getSignalement()->getClosedAt()->modify('+30 days')->format('d/m/Y').'.';
         }
 
         return null;

@@ -93,6 +93,7 @@ class SignalementControllerTest extends WebTestCase
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
 
         if (SignalementStatus::ARCHIVED->value === $status) {
+            $this->assertResponseStatusCodeSame(200);
             $this->assertEquals(
                 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
                 $crawler->filter('.fr-tile__detail')->text()

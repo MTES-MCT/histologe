@@ -549,8 +549,9 @@ class SignalementController extends AbstractController
             $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement, $user);
             $suiviCategory = null;
             if (!$lastSuiviPublic && SignalementStatus::CLOSED === $signalement->getStatut()) {
-                $suiviCategory = $suiviCategorizerService->getSuiviCategoryFromEnum(SuiviCategory::SIGNALEMENT_IS_CLOSED);
-            } elseif ($lastSuiviPublic) {
+                $lastSuiviPublic = (new Suivi())->setSignalement($signalement)->setCategory(SuiviCategory::SIGNALEMENT_IS_CLOSED);
+            }
+            if ($lastSuiviPublic) {
                 $suiviCategory = $suiviCategorizerService->getSuiviCategoryFromSuivi($lastSuiviPublic);
             }
 
