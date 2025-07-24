@@ -82,6 +82,12 @@ class EsaboraSISHService extends AbstractEsaboraService
                         $uuidSignalement,
                     ],
                 ],
+                [
+                    'criterionName' => 'Logiciel_Provenance',
+                    'criterionValueList' => [
+                        'H',
+                    ],
+                ],
             ],
         ];
 
