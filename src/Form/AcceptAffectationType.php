@@ -17,9 +17,9 @@ class AcceptAffectationType extends AbstractType
             'multiple' => true,
             'expanded' => true,
             'choice_value' => fn ($value) => (string) $value,
-            // 'required' => true,
             'label_html' => true,
             'label' => 'Sélectionnez le(s) agent(s) en charge du dossier',
+            // TODO : le message d'erreur se place mal
             'constraints' => [
                 new Count([
                     'min' => 1,

@@ -40,7 +40,6 @@
     </section>
 
     <section class="fr-col-12 fr-px-5v">
-        <!-- TODO : changer le nom de "nouveaux suivis" à "notifications" ? -->
         <h2 class="fr-h6 fr-mb-0" id="desc-table">{{ count_notification(app.user) }} nouveau(x) suivi(s)</h2>
     </section>
     
@@ -72,17 +71,14 @@
                             </div>
                         </div>
                     </td>
-                    {# simplification car pour les 3 types, on a le signalement, pas besoin de passer par notification.suivi.signalement #}
                     <td>
                         {{ notification.signalement.reference }}
                         <br>
                         ({{ notification.signalement.villeOccupant }})
                     </td>
-                    {# dans le cas d'abonnement on prend la date de création de la notification #}
                     {% set createdAt = notification.suivi ? notification.suivi.createdAt : notification.createdAt %}
                     <td>{{ createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
                     <td class="word-wrap-anywhere">{{ notification.suivi? transform_suivi_description(notification.suivi)|raw : notification.description }}</td>
-                    {# j'ai mis N/A si on n'a pas de suivi lié (abonnement), mais peut-être qu'il faut rajouter une colonne createdBy #}
                     {% set auteur = notification.suivi ?
                                     notification.suivi.createdBy ? 
                                         notification.suivi.createdBy.nomComplet : 
@@ -101,7 +97,6 @@
                 </tr>
             {% else %}
                 <tr>
-                    <!-- TODO : changer le nom de "nouveaux suivis" à "notifications" ? -->
                     <td colspan="6" class="fr-text--center">Aucun suivi non lu</td>
                 </tr>
             {% endfor %}

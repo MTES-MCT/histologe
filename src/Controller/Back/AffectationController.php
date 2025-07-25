@@ -186,7 +186,7 @@ class AffectationController extends AbstractController
                     $user
                 );
                 $userSignalementSubscriptionManager->flush();
-                $description = $user->getNomComplet().' vous a attribué le dossier #'.$signalement->getReference().'. Vous recevrez les mises à jours pour ce dossier.';
+                $description = $user->getNomComplet().' vous a attribué le dossier #'.$signalement->getReference().'. Vous recevrez les mises à jour pour ce dossier.';
                 $notificationAndMailSender->sendNewSubscription($subscription, $description);
             }
             $this->affectationManager->updateAffectation(
