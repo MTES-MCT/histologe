@@ -61,7 +61,7 @@ class NotificationControllerTest extends WebTestCase
     /**
      * @dataProvider provideSelectedNotificationOptions
      */
-    public function testSelectedNotifications(string $route, string $tokenId): void
+    public function testSelectedNotifications(string $route, string $tokenId, string $filter): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -79,8 +79,8 @@ class NotificationControllerTest extends WebTestCase
             'selected_notifications' => $notificationsId,
         ]);
 
-        $client->request('GET', $route);
-        $this->assertResponseRedirects('/bo/notifications');
+        $client->request('GET', $route.'&'.$filter);
+        $this->assertResponseRedirects('/bo/notifications?'.$filter);
     }
 
     public function provideSelectedNotificationOptions(): \Generator
@@ -91,10 +91,12 @@ class NotificationControllerTest extends WebTestCase
         yield 'Mark as read' => [
             'back_notifications_list_read',
             'mark_as_read_'.$user->getId(),
+            'orderType=s.createdAt-ASC',
         ];
         yield 'Delete' => [
             'back_notifications_list_delete',
             'delete_notifications_'.$user->getId(),
+            'orderType=si.villeOccupant-ASC&page=2',
         ];
     }
 
