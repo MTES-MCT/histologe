@@ -109,6 +109,20 @@ class VisiteNotifier
         }
     }
 
+    public function NotifyInAppSubscribers(
+        Intervention $intervention,
+        Suivi $suivi,
+        ?User $currentUser = null,
+    ): void {
+        $listUsersToNotify = $this->userRepository->findUsersSubscribedToSignalement($intervention->getSignalement());
+        foreach ($listUsersToNotify as $user) {
+            if ($user === $currentUser) {
+                continue;
+            }
+            $this->notifyAgent(user: $user, suivi: $suivi, intervention: $intervention);
+        }
+    }
+
     public function notifyInterventionSubscribers(
         NotificationMailerType $notificationMailerType,
         Intervention $intervention,

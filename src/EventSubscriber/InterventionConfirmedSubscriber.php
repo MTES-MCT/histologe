@@ -75,7 +75,12 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             }
 
             if ($this->featureNewDashboard) {
-                // Rentre à présent dans le système classique de notification à la création de suivi (voir SuiviCreatedSubscriber->onSuiviCreated)
+                $this->visiteNotifier->notifySubscribers(
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_PARTNER,
+                    intervention: $intervention,
+                    suivi: $suivi,
+                    currentUser: $currentUser,
+                );
             } else {
                 $this->visiteNotifier->notifyAgents(
                     intervention: $intervention,

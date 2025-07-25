@@ -7,7 +7,6 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Service\NotificationAndMailSender;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SuiviCreatedSubscriber implements EventSubscriberInterface
@@ -16,8 +15,6 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     public function __construct(
         private readonly NotificationAndMailSender $notificationAndMailSender,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        private readonly bool $featureNewDashboard,
     ) {
     }
 
@@ -35,7 +32,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         if (Suivi::TYPE_TECHNICAL === $suivi->getType()) {
             return;
         }
-        if (Suivi::CONTEXT_INTERVENTION === $suivi->getContext() && !$this->featureNewDashboard) {
+        if (Suivi::CONTEXT_INTERVENTION === $suivi->getContext()) {
             return;
         }
 
@@ -46,9 +43,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         }
 
         $this->sendToAdminAndPartners($suivi);
-        if (Suivi::CONTEXT_INTERVENTION !== $suivi->getContext()) {
-            $this->sendToUsagers($suivi);
-        }
+        $this->sendToUsagers($suivi);
     }
 
     private function sendToAdminAndPartners(Suivi $suivi): void

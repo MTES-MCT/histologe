@@ -63,7 +63,11 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
         }
 
         if ($this->featureNewDashboard) {
-            // Rentre à présent dans le système classique de notification à la création de suivi (voir SuiviCreatedSubscriber->onSuiviCreated)
+            $this->visiteNotifier->NotifyInAppSubscribers(
+                intervention: $intervention,
+                suivi: $suivi,
+                currentUser: $event->getUser(),
+            );
         } else {
             $this->visiteNotifier->notifyAgents(
                 intervention: $intervention,

@@ -2,7 +2,9 @@
 
 namespace App\Tests\Functional\Controller\Api;
 
+use App\Entity\Enum\NotificationType;
 use App\Entity\User;
+use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -52,7 +54,9 @@ class ArreteCreateControllerTest extends WebTestCase
             }
             $this->assertStringContainsString($value, $lastDescription);
         }
-        $this->assertEmailCount(2);
+        $notifs = self::getContainer()->get(NotificationRepository::class)->findBy(['signalement' => $signalement, 'type' => NotificationType::NOUVEAU_SUIVI]);
+        $this->assertCount(3, $notifs);
+        $this->assertEmailCount(1);
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }

@@ -51,7 +51,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
             InterventionUpdatedByEsaboraEvent::NAME
         );
 
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
         $this->assertEquals(2, $intervention->getSignalement()->getSuivis()->count());
         $this->assertStringContainsString('a été modifiée', $intervention->getSignalement()->getSuivis()->last()->getDescription());
     }

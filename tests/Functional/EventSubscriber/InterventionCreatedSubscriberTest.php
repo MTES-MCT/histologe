@@ -61,7 +61,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
             InterventionCreatedEvent::NAME
         );
 
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
         $this->assertEquals(2, $intervention->getSignalement()->getSuivis()->count());
 
         $nbSuiviInterventionPlanned = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::INTERVENTION_IS_CREATED, 'signalement' => $intervention->getSignalement()]);
@@ -74,7 +74,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         $date = (new \DateTimeImmutable())->modify('-1 day');
         $type = InterventionType::VISITE;
         $this->testNbMailSent($date, $type);
-        $this->assertEmailCount(1);
+        $this->assertEmailCount(0);
     }
 
     public function testInterventionVisitInFuture(): void
@@ -82,7 +82,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         $date = (new \DateTimeImmutable())->modify('+1 day');
         $type = InterventionType::VISITE;
         $this->testNbMailSent($date, $type);
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
     }
 
     public function testInterventionNoVisitInPast(): void
@@ -90,7 +90,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         $date = (new \DateTimeImmutable())->modify('-1 day');
         $type = InterventionType::ARRETE_PREFECTORAL;
         $this->testNbMailSent($date, $type, Intervention::STATUS_DONE);
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
     }
 
     private function testNbMailSent(\DateTimeImmutable $date, InterventionType $type, string $status = Intervention::STATUS_PLANNED): void
