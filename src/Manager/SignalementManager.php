@@ -251,6 +251,7 @@ class SignalementManager extends AbstractManager
         /** @var User $user */
         $user = $this->security->getUser();
         $this->affectationRepository->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user);
+        // TODO : suppression des abonnements ?
         $this->managerRegistry->getManager()->flush();
 
         return $signalement;
