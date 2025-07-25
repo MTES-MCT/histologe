@@ -183,6 +183,7 @@ class AffectationController extends AbstractController
                     $signalement,
                     $user
                 );
+                $userSignalementSubscriptionManager->flush();
                 // TODO : envoi de la notif (en attente réponse Mathilde)
             }
             $this->affectationManager->updateAffectation(

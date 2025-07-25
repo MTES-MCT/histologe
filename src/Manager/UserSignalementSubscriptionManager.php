@@ -18,8 +18,6 @@ class UserSignalementSubscriptionManager extends AbstractManager
         User $userToSubscribe,
         Signalement $signalement,
         User $createdBy,
-        ?bool $isLegacy = false,
-        ?bool $flush = true,
     ): UserSignalementSubscription {
         $subscription = $this->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]);
         if (null === $subscription) {
@@ -28,11 +26,8 @@ class UserSignalementSubscriptionManager extends AbstractManager
             ->setSignalement($signalement)
             ->setCreatedBy($createdBy);
         }
-        if ($isLegacy) {
-            $subscription->setIsLegacy($isLegacy);
-        }
 
-        $this->save($subscription, $flush);
+        $this->persist($subscription);
 
         return $subscription;
     }
