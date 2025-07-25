@@ -36,7 +36,7 @@
                 {% endfor %}
             {% endif %}
 
-            <table style="width: 100%">
+            <table>
                 <tr>
                     <td style="width: 50%">
                         <h3 style="margin-bottom: 0">Informations de l'occupant</h3>
@@ -263,7 +263,7 @@
             <text>{{ signalement.details|nl2br }}</text>
         </section>
         <section>
-            <table style="width: 100%">
+            <table>
                 <tr>
                     <td style="width: 50%">
                         <h3>Informations propriétaire</h3>
@@ -482,7 +482,7 @@
         {% if isForUsager is same as false %}
             <section>
                 <h2>Prise en charge partenaire</h2>
-                <table style="width: 100%;text-align: center;" class="border">
+                <table style="text-align: center;" class="border">
                     <tr>
                         <td style="width: 33%"><b>En attente</b></td>
                         <td style="width: 34%"><b>Accepté</b></td>
@@ -608,7 +608,7 @@
         <div class="page" style="padding-top: 25px!important;">
             <section>
                 <h2>Suivi(s)</h2>
-                <table class="fr-stripped" style="width: 100%">
+                <table class="fr-stripped">
                     {% for suivi in signalement.suivis|reverse %}
                         {% if (isForUsager and suivi.isPublic) or isForUsager is same as false  %}                            
                             <tr>

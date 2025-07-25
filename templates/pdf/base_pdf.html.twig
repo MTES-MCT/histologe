@@ -10,8 +10,15 @@
             font-size: 12px;
         }
 
+        table {
+            width: 100%;
+            table-layout: fixed;
+        }
         table.border, table.border > tr, table.border td {
             border: 1px solid rgba(0, 0, 0, .5);
+        }
+        table tr td{
+            vertical-align: top;
         }
 
         .page:not(:last-child) {
