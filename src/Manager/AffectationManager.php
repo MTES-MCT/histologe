@@ -143,6 +143,7 @@ class AffectationManager extends Manager
         iterable $files = [],
         bool $flush = false): Affectation
     {
+        // TODO : suppression des abonnements ?
         $affectation
             ->setStatut(AffectationStatus::CLOSED)
             ->setAnsweredAt(new \DateTimeImmutable())
@@ -194,6 +195,7 @@ class AffectationManager extends Manager
         array $postedPartner = [],
         array $partnersIdToRemove = [],
     ): void {
+        // TODO : suppression des abonnements ?
         if (empty($postedPartner) && empty($partnersIdToRemove)) {
             foreach ($signalement->getAffectations() as $affectation) {
                 $this->removeAffectationAndSubscriptions($affectation);
