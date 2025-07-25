@@ -17,6 +17,7 @@ class NotificationFactory
         ?Suivi $suivi = null,
         ?Affectation $affectation = null,
         ?Signalement $signalement = null,
+        ?string $description = null,
     ): Notification {
         if ($suivi) {
             $signalement = $suivi->getSignalement();
@@ -30,6 +31,7 @@ class NotificationFactory
             ->setAffectation($affectation)
             ->setSignalement($signalement)
             ->setType($type)
+            ->setDescription($description)
             ->setWaitMailingSummary($this->shouldWaitMailingSummary($user, $type));
     }
 

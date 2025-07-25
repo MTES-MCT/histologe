@@ -13,6 +13,7 @@ enum NotificationType: string
     case CLOTURE_SIGNALEMENT = 'CLOTURE_SIGNALEMENT';
     case CLOTURE_PARTENAIRE = 'CLOTURE_PARTENAIRE';
     case SUIVI_USAGER = 'SUIVI_USAGER';
+    case NOUVEL_ABONNEMENT = 'NOUVEL_ABONNEMENT';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -24,6 +25,7 @@ enum NotificationType: string
             self::CLOTURE_SIGNALEMENT->name => self::CLOTURE_SIGNALEMENT->value,
             self::CLOTURE_PARTENAIRE->name => self::CLOTURE_PARTENAIRE->value,
             self::SUIVI_USAGER->name => self::SUIVI_USAGER->value,
+            self::NOUVEL_ABONNEMENT->name => self::NOUVEL_ABONNEMENT->value,
         ];
     }
 
