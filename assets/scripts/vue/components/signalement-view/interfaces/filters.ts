@@ -27,7 +27,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'sansSuiviPeriode', showOptions: false, defaultValue: '30' },
   { type: 'text', name: 'nouveauSuivi', showOptions: false, defaultValue: 'oui' },
   { type: 'text', name: 'showMyAffectationOnly', showOptions: true, defaultValue: null },
-  { type: 'text', name: 'showMySignalementsOnly', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'showMySignalementsOnly', showOptions: false, defaultValue: null },
   { type: 'text', name: 'showWithoutAffectationOnly', showOptions: true, defaultValue: null },
   { type: 'text', name: 'isImported', showOptions: false, defaultValue: null },
   { type: 'text', name: 'isZonesDisplayed', showOptions: false, defaultValue: null },

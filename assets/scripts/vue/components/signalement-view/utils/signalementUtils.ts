@@ -66,7 +66,7 @@ export function handleSettings (context: any, requestResponse: any): any {
   context.sharedState.user.isAdministrateurPartenaire = requestResponse.roleLabel === 'Admin. partenaire'
   context.sharedState.user.isAgent = ['Admin. partenaire', 'Agent'].includes(requestResponse.roleLabel)
   context.sharedState.user.isMultiTerritoire = requestResponse.isMultiTerritoire === true
-  const isAdminOrAdminTerritoire = variableTester.isNotEmpty(context.sharedState.user.isAdmin) || variableTester.isNotEmpty(context.sharedState.user.isResponsableTerritoire)
+  const isAdminOrAdminTerritoire = context.sharedState.user.isAdmin === true || context.sharedState.user.isResponsableTerritoire === true
   context.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeBailleurSocial = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeFilterPartner = isAdminOrAdminTerritoire
