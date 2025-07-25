@@ -21,12 +21,6 @@ class TerritoryChoiceType extends AbstractType
             'query_builder' => fn (
                 TerritoryRepository $territoryRepository,
             ) => $territoryRepository->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC'),
-            'attr' => [
-                'class' => 'fr-select',
-            ],
-            'row_attr' => [
-                'class' => 'fr-input-group',
-            ],
         ]);
     }
 
