@@ -115,6 +115,7 @@ class SignalementSearchQuery
             'autre',
         ])]
         private readonly ?string $motifCloture = null,
+        private readonly ?string $showMySignalementsOnly = null,
     ) {
     }
 
@@ -283,6 +284,11 @@ class SignalementSearchQuery
         return $this->motifCloture;
     }
 
+    public function getShowMySignalementsOnly(): ?string
+    {
+        return $this->showMySignalementsOnly;
+    }
+
     public function getPage(): ?int
     {
         return $this->page;
@@ -385,6 +391,7 @@ class SignalementSearchQuery
         $filters['nouveau_suivi'] = $this->getNouveauSuivi();
         $filters['bailleurSocial'] = $this->getBailleurSocial();
         $filters['motifCloture'] = $this->getMotifCloture();
+        $filters['showMySignalementsOnly'] = 'oui' === $this->getShowMySignalementsOnly();
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;

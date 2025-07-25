@@ -447,6 +447,12 @@ class SearchFilter
                 ->setParameter('motif_cloture', $filters['motifCloture']);
         }
 
+        if (!empty($filters['showMySignalementsOnly'])) {
+            $qb->leftJoin('s.userSignalementSubscriptions', 'ust');
+            $qb->andWhere('ust.user = :currentUser')
+                ->setParameter('currentUser', $user);
+        }
+
         return $qb;
     }
 

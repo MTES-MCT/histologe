@@ -19,8 +19,14 @@ readonly class MenuBuilder
     {
         /** @var User $user */
         $user = $this->currentRoute->getUser();
+        $listRouteParameters = [];
+        if ($this->currentRoute->isGranted(User::ROLE_ADMIN)) {
+            $listRouteParameters = ['status' => 'nouveau', 'isImported' => 'oui'];
+        } elseif ($this->currentRoute->isGranted(User::ROLE_USER)) {
+            $listRouteParameters = ['showMySignalementsOnly' => 'oui'];
+        }
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
-            ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', roleGranted: User::ROLE_USER, routeParameters: $this->currentRoute->isGranted(User::ROLE_ADMIN) ? ['status' => 'nouveau', 'isImported' => 'oui'] : []));
+            ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', roleGranted: User::ROLE_USER, routeParameters: $listRouteParameters));
         $signalementsSubMenu
             ->addChild(new MenuItem(label: 'Mes brouillons', route: 'back_signalement_drafts', roleGranted: User::ROLE_USER));
         $signalementsSubMenu->addChild(new MenuItem(label: 'Créer un signalement', route: 'back_signalement_create', roleGranted: User::ROLE_USER))
