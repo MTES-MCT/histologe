@@ -63,7 +63,7 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
             );
 
             if ($this->featureNewDashboard) {
-                $this->visiteNotifier->NotifyInAppSubscribers(
+                $this->visiteNotifier->notifyInAppSubscribers(
                     intervention: $intervention,
                     suivi: $suivi,
                     currentUser: $currentUser,

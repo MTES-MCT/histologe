@@ -109,7 +109,7 @@ class VisiteNotifier
         }
     }
 
-    public function NotifyInAppSubscribers(
+    public function notifyInAppSubscribers(
         Intervention $intervention,
         Suivi $suivi,
         ?User $currentUser = null,
