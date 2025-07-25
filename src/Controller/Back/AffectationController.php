@@ -15,7 +15,6 @@ use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
-use App\Repository\UserSignalementSubscriptionRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Service\FormHelper;
 use App\Service\NotificationAndMailSender;
@@ -85,7 +84,6 @@ class AffectationController extends AbstractController
                 $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$signalement->getTerritory()->getZip()]);
             } else {
                 $this->affectationManager->removeAffectationsFrom($signalement);
-                // TODO : suppression des abonnements ?
             }
             $this->affectationManager->flush();
             $successMessage = 'Les affectations ont bien été effectuées.';
@@ -117,7 +115,6 @@ class AffectationController extends AbstractController
             $partnersIdToRemove = [];
             $partnersIdToRemove[] = $affectation->getPartner()->getId();
             $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
-            // TODO : suppression des abonnements ?
             $this->affectationManager->flush();
             $this->addFlash('success', 'Le partenaire a été désaffecté.');
 
@@ -136,7 +133,7 @@ class AffectationController extends AbstractController
         if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), $request->get('_token'))) {
             /** @var User $user */
             $user = $this->getUser();
-            $this->affectationManager->remove($affectation);
+            $this->affectationManager->removeAffectationAndSubscription($affectation);
             $this->affectationManager->createAffectation(
                 $affectation->getSignalement(),
                 $affectation->getPartner(),
@@ -156,7 +153,6 @@ class AffectationController extends AbstractController
         Request $request,
         UserRepository $userRepository,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
-        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         NotificationAndMailSender $notificationAndMailSender,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
     ): Response {

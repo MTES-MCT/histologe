@@ -40,11 +40,12 @@ validationButton.forEach((button) => {
 });
 
 const linkSelectAllAgents = document.getElementById('select-all-agents');
-linkSelectAllAgents.addEventListener('click', function (e) {
-  console.log('on clique pour tout sélectionner')
-    e.preventDefault();
-    document.querySelectorAll('#accept-affectation-form input[type="checkbox"]').forEach(cb => {
-        cb.checked = true;
-    });
-});
+if (linkSelectAllAgents){
+  linkSelectAllAgents.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelectorAll('#accept-affectation-form input[type="checkbox"]').forEach(cb => {
+          cb.checked = true;
+      });
+  });
+}
 

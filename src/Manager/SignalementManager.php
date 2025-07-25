@@ -41,6 +41,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Gouv\Ban\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
@@ -75,6 +76,7 @@ class SignalementManager extends AbstractManager
         private readonly SuiviManager $suiviManager,
         private readonly BailleurRepository $bailleurRepository,
         private readonly AffectationRepository $affectationRepository,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
@@ -251,7 +253,7 @@ class SignalementManager extends AbstractManager
         /** @var User $user */
         $user = $this->security->getUser();
         $this->affectationRepository->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user);
-        // TODO : suppression des abonnements ?
+        $this->userSignalementSubscriptionRepository->deleteForSignalementOrPartner(signalement: $signalement);
         $this->managerRegistry->getManager()->flush();
 
         return $signalement;
