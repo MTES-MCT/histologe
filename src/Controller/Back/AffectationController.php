@@ -7,16 +7,22 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Form\AcceptAffectationType;
 use App\Form\RefusAffectationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\UserRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Service\FormHelper;
+use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
+use App\Service\Signalement\SignalementAffectationHelper;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -127,7 +133,7 @@ class AffectationController extends AbstractController
         if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), $request->get('_token'))) {
             /** @var User $user */
             $user = $this->getUser();
-            $this->affectationManager->remove($affectation);
+            $this->affectationManager->removeAffectationAndSubscription($affectation);
             $this->affectationManager->createAffectation(
                 $affectation->getSignalement(),
                 $affectation->getPartner(),
@@ -145,11 +151,51 @@ class AffectationController extends AbstractController
     public function affectationResponseSignalement(
         Affectation $affectation,
         Request $request,
+        UserRepository $userRepository,
+        UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        NotificationAndMailSender $notificationAndMailSender,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
     ): Response {
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
         $signalement = $affectation->getSignalement();
         /** @var User $user */
         $user = $this->getUser();
+        if ($featureNewDashboard) {
+            $partnerAgents = SignalementAffectationHelper::getAffectationUsers($user, $signalement);
+            $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+            $form = $this->createForm(AcceptAffectationType::class, null, ['action' => $acceptAffectationFormRoute, 'agents' => $partnerAgents]);
+            $form->handleRequest($request);
+
+            if (!$form->isSubmitted()) {
+                return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+            }
+            if (!$form->isValid()) {
+                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+                return $this->json($response, $response['code']);
+            }
+            foreach ($form->getData()['agents'] as $userId) {
+                $userToSubscribe = $userRepository->find((int) $userId);
+                $subscription = $userSignalementSubscriptionManager->createOrGet(
+                    $userToSubscribe,
+                    $signalement,
+                    $user
+                );
+                $userSignalementSubscriptionManager->flush();
+                $description = $user->getNomComplet().' vous a attribué le dossier #'.$signalement->getReference().'. Vous recevrez les mises à jour pour ce dossier.';
+                $notificationAndMailSender->sendNewSubscription($subscription, $description);
+            }
+            $this->affectationManager->updateAffectation(
+                affectation: $affectation,
+                user: $user,
+                status: AffectationStatus::ACCEPTED
+            );
+            $this->addFlash('success', 'Affectation acceptée avec succès !');
+
+            $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+            return $this->json(['redirect' => true, 'url' => $url]);
+        }
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
             $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED);
             $this->addFlash('success', 'Affectation acceptée avec succès !');

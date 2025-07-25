@@ -16,6 +16,7 @@ use App\Event\AffectationCreatedEvent;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\AffectationRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -30,6 +31,7 @@ class AffectationManager extends Manager
         protected HistoryEntryManager $historyEntryManager,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterconnectionBus $interconnectionBus,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -139,6 +141,7 @@ class AffectationManager extends Manager
                 AffectationClosedEvent::NAME
             );
         }
+        $this->userSignalementSubscriptionRepository->deleteForAffectation($affectation);
 
         return $affectation;
     }
@@ -154,14 +157,14 @@ class AffectationManager extends Manager
     ): void {
         if (empty($postedPartner) && empty($partnersIdToRemove)) {
             foreach ($signalement->getAffectations() as $affectation) {
-                $this->remove($affectation);
+                $this->removeAffectationAndSubscription($affectation);
             }
         } else {
             foreach ($partnersIdToRemove as $partnerIdToRemove) {
                 $partner = $this->managerRegistry->getRepository(Partner::class)->find($partnerIdToRemove);
                 foreach ($signalement->getAffectations() as $affectation) {
                     if ($affectation->getPartner()->getId() === $partner->getId()) {
-                        $this->remove($affectation);
+                        $this->removeAffectationAndSubscription($affectation);
                     }
                 }
             }
@@ -189,5 +192,12 @@ class AffectationManager extends Manager
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->getRepository();
         $affectationRepository->deleteAffectationsByPartner($partner);
+        $this->userSignalementSubscriptionRepository->deleteForSignalementOrPartner(partner: $partner);
+    }
+
+    public function removeAffectationAndSubscription(Affectation $affectation): void
+    {
+        $this->remove($affectation);
+        $this->userSignalementSubscriptionRepository->deleteForAffectation($affectation);
     }
 }

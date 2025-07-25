@@ -15,6 +15,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
+use App\Form\AcceptAffectationType;
 use App\Form\AddSuiviType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
@@ -33,17 +34,20 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\FormHelper;
 use App\Service\Signalement\PhotoHelper;
+use App\Service\Signalement\SignalementAffectationHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SuiviSeenMarker;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,6 +81,7 @@ class SignalementController extends AbstractController
         CritereRepository $critereRepository,
         SuiviSeenMarker $suiviSeenMarker,
         SignalementRepository $signalementRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -144,6 +149,18 @@ class SignalementController extends AbstractController
             $refusAffectation = (new RefusAffectation())->setSignalement($signalement);
             $refusAffectationFormRoute = $this->generateUrl('back_signalement_affectation_deny', ['affectation' => $affectation->getId()]);
             $refusAffectationForm = $this->createForm(RefusAffectationType::class, $refusAffectation, ['action' => $refusAffectationFormRoute]);
+        }
+
+        $acceptAffectationForm = null;
+        if ($parameterBag->get('feature_new_dashboard')) {
+            $partnerAgents = SignalementAffectationHelper::getAffectationUsers($user, $signalement);
+            $defaultAgents[] = $user->getId();
+            if ($canAnswerAffectation) {
+                $data = ['agents' => $defaultAgents];
+                $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+                $options = ['action' => $acceptAffectationFormRoute, 'agents' => $partnerAgents];
+                $acceptAffectationForm = $this->createForm(AcceptAffectationType::class, $data, $options);
+            }
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
@@ -232,6 +249,7 @@ class SignalementController extends AbstractController
             'addSuiviForm' => $addSuiviForm,
             'refusAffectationForm' => $refusAffectationForm,
             'refusSignalementForm' => $refusSignalementForm,
+            'acceptAffectationForm' => $acceptAffectationForm,
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
@@ -322,6 +340,7 @@ class SignalementController extends AbstractController
         ManagerRegistry $doctrine,
         AffectationRepository $affectationRepository,
         NotificationRepository $notificationRepository,
+        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
         if ($this->isCsrfTokenValid(
@@ -332,6 +351,8 @@ class SignalementController extends AbstractController
             $signalement->setStatut(SignalementStatus::ARCHIVED);
             $notificationRepository->deleteBySignalement($signalement);
             $affectationRepository->deleteByStatusAndSignalement(AffectationStatus::WAIT, $signalement);
+            $userSignalementSubscriptionRepository->deleteForSignalementOrPartner(signalement: $signalement);
+
             $doctrine->getManager()->flush();
             $response = [
                 'status' => Response::HTTP_OK,

@@ -38,3 +38,14 @@ validationButton.forEach((button) => {
     }
   });
 });
+
+const linkSelectAllAgents = document.getElementById('select-all-agents');
+if (linkSelectAllAgents){
+  linkSelectAllAgents.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelectorAll('#accept-affectation-form input[type="checkbox"]').forEach(cb => {
+          cb.checked = true;
+      });
+  });
+}
+
