@@ -34,6 +34,7 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
@@ -305,14 +306,12 @@ class SignalementController extends AbstractController
 
         $entity = $reference = null;
         if ('all' === $signalementAffectationClose->getType() && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            // TODO : suppression des abonnements ?
             $signalementAffectationClose->setSubject('tous les partenaires');
             $entity = $signalement = $signalementManager->closeSignalementForAllPartners($signalementAffectationClose);
             $reference = $signalement->getReference();
             $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose), SignalementClosedEvent::NAME);
         /* @var Affectation $affectation */
         } elseif ($affectation) {
-            // TODO : suppression des abonnements ?
             $entity = $affectationManager->closeAffectation(
                 affectation: $affectation,
                 user: $user,
@@ -341,6 +340,7 @@ class SignalementController extends AbstractController
         ManagerRegistry $doctrine,
         AffectationRepository $affectationRepository,
         NotificationRepository $notificationRepository,
+        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
         if ($this->isCsrfTokenValid(
@@ -351,8 +351,8 @@ class SignalementController extends AbstractController
             $signalement->setStatut(SignalementStatus::ARCHIVED);
             $notificationRepository->deleteBySignalement($signalement);
             $affectationRepository->deleteByStatusAndSignalement(AffectationStatus::WAIT, $signalement);
+            $userSignalementSubscriptionRepository->deleteForSignalementOrPartner(signalement: $signalement);
 
-            // TODO : suppression des abonnements ?
             $doctrine->getManager()->flush();
             $response = [
                 'status' => Response::HTTP_OK,

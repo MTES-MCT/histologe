@@ -16,6 +16,7 @@ use App\Event\AffectationCreatedEvent;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\AffectationRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -30,6 +31,7 @@ class AffectationManager extends Manager
         protected HistoryEntryManager $historyEntryManager,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterconnectionBus $interconnectionBus,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -127,7 +129,6 @@ class AffectationManager extends Manager
         iterable $files = [],
         bool $flush = false): Affectation
     {
-        // TODO : suppression des abonnements ?
         $affectation
             ->setStatut(AffectationStatus::CLOSED)
             ->setAnsweredAt(new \DateTimeImmutable())
@@ -140,6 +141,7 @@ class AffectationManager extends Manager
                 AffectationClosedEvent::NAME
             );
         }
+        $this->userSignalementSubscriptionRepository->deleteForAffectation($affectation);
 
         return $affectation;
     }
@@ -153,17 +155,16 @@ class AffectationManager extends Manager
         array $postedPartner = [],
         array $partnersIdToRemove = [],
     ): void {
-        // TODO : suppression des abonnements ?
         if (empty($postedPartner) && empty($partnersIdToRemove)) {
             foreach ($signalement->getAffectations() as $affectation) {
-                $this->remove($affectation);
+                $this->removeAffectationAndSubscription($affectation);
             }
         } else {
             foreach ($partnersIdToRemove as $partnerIdToRemove) {
                 $partner = $this->managerRegistry->getRepository(Partner::class)->find($partnerIdToRemove);
                 foreach ($signalement->getAffectations() as $affectation) {
                     if ($affectation->getPartner()->getId() === $partner->getId()) {
-                        $this->remove($affectation);
+                        $this->removeAffectationAndSubscription($affectation);
                     }
                 }
             }
@@ -191,6 +192,12 @@ class AffectationManager extends Manager
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->getRepository();
         $affectationRepository->deleteAffectationsByPartner($partner);
-        // TODO : suppression des abonnements ?
+        $this->userSignalementSubscriptionRepository->deleteForSignalementOrPartner(partner: $partner);
+    }
+
+    public function removeAffectationAndSubscription(Affectation $affectation): void
+    {
+        $this->remove($affectation);
+        $this->userSignalementSubscriptionRepository->deleteForAffectation($affectation);
     }
 }

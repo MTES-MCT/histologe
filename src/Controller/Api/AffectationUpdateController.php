@@ -207,7 +207,6 @@ class AffectationUpdateController extends AbstractController
                 message: $affectationRequest->message,
                 flush: true
             );
-            // TODO : suppression des abonnements ?
         }
         $motifRefus = $message = null;
         if (AffectationStatus::REFUSED === $statut) {
@@ -215,7 +214,6 @@ class AffectationUpdateController extends AbstractController
             $message = $affectationRequest->message;
         }
 
-        // TODO : création des abonnements ?
         return $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
     }
 

@@ -11,6 +11,7 @@ use App\Manager\AffectationManager;
 use App\Manager\HistoryEntryManager;
 use App\Manager\SuiviManager;
 use App\Messenger\InterconnectionBus;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -26,6 +27,7 @@ class AffectationManagerTest extends KernelTestCase
     private AffectationManager $affectationManager;
     private EventDispatcherInterface $eventDispatcher;
     private InterconnectionBus $interconnectionBus;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
 
     protected function setUp(): void
     {
@@ -36,6 +38,7 @@ class AffectationManagerTest extends KernelTestCase
         $this->historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
         $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         $this->interconnectionBus = self::getContainer()->get(InterconnectionBus::class);
+        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,
@@ -43,6 +46,7 @@ class AffectationManagerTest extends KernelTestCase
             $this->historyEntryManager,
             $this->eventDispatcher,
             $this->interconnectionBus,
+            $this->userSignalementSubscriptionRepository,
             Affectation::class,
         );
     }
