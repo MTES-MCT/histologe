@@ -17,21 +17,23 @@
         <div class="fr-col-6 fr-text--right">
             <div id="notification-selected-buttons" class="fr-hidden">
                 <span id="notification-selected-buttons-count"></span> sélectionnée(s) :
-                <form method="POST" action="{{ path('back_notifications_list_read') }}">
+                <form method="POST" action="{{ path('back_notifications_list_read', searchNotification.urlParams) }}">
                     <button type="submit" class="fr-btn fr-fi-check-line fr-btn--icon-left">Marquer comme lue(s)</button>
                     <input type="hidden" name="selected_notifications" value="">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token('mark_as_read_'~app.user.id) }}">
                 </form>
-                <form method="POST" action="{{ path('back_notifications_list_delete') }}">
+                <form method="POST" action="{{ path('back_notifications_list_delete', searchNotification.urlParams) }}">
                     <button type="submit" class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left">Supprimer</button>
                     <input type="hidden" name="selected_notifications" value="">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_notifications_'~app.user.id) }}">
                 </form>
             </div>
             <div id="notification-all-buttons">
-                <a href="{{ path('back_notifications_list_read') }}?mark_as_read={{ csrf_token('mark_as_read_'~app.user.id) }}"
+                {% set routeParams = {mark_as_read: csrf_token('mark_as_read_'~app.user.id)}|merge(searchNotification.urlParams) %}
+                <a href="{{ path('back_notifications_list_read', routeParams) }}"
                 class="fr-btn fr-fi-check-line fr-btn--icon-left">Marquer comme lus (tous)</a>
-                <a href="{{ path('back_notifications_list_delete') }}?delete_all_notifications={{ csrf_token('delete_all_notifications_'~app.user.id) }}"
+                {% set routeParams = {delete_all_notifications: csrf_token('delete_all_notifications_'~app.user.id)}|merge(searchNotification.urlParams) %}
+                <a href="{{ path('back_notifications_list_delete', routeParams) }}"
                 class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left">Vider</a>
             </div>
         </div>
@@ -80,7 +82,8 @@
                     <td class="fr-text--right fr-ws-nowrap">
                         <a href="{{ path('back_signalement_view',{uuid:notification.suivi.signalement.uuid}) }}#suivis"
                         class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
-                        <a href="{{ path('back_notifications_delete_notification',{id:notification.id}) }}?_token={{ csrf_token('back_delete_notification_'~notification.id) }}"
+                        {% set routeParams = {id: notification.id, _token: csrf_token('back_delete_notification_'~notification.id)}|merge(searchNotification.urlParams) %}
+                        <a href="{{ path('back_notifications_delete_notification', routeParams) }}"
                         class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></a>
                     </td>
                 </tr>

@@ -63,7 +63,7 @@ class NotificationController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('back_notifications_list');
+        return $this->redirectToRoute('back_notifications_list', $this->addParamFromRequest($request));
     }
 
     #[Route('/notifications/supprimer', name: 'back_notifications_list_delete')]
@@ -88,10 +88,12 @@ class NotificationController extends AbstractController
                 $notificationRepository->deleteUserNotifications($user);
                 $widgetDataManagerCache->invalidateCacheForUser($user->getPartnersTerritories());
                 $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
+
+                return $this->redirectToRoute('back_notifications_list');
             }
         }
 
-        return $this->redirectToRoute('back_notifications_list');
+        return $this->redirectToRoute('back_notifications_list', $this->addParamFromRequest($request));
     }
 
     #[Route('/notifications/{id}/supprimer', name: 'back_notifications_delete_notification')]
@@ -116,6 +118,22 @@ class NotificationController extends AbstractController
             $this->addFlash('error', 'Erreur lors de la suppression de la notification.');
         }
 
-        return $this->redirectToRoute('back_notifications_list');
+        return $this->redirectToRoute('back_notifications_list', $this->addParamFromRequest($request));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function addParamFromRequest(Request $request): array
+    {
+        $params = [];
+        if ($request->get('orderType')) {
+            $params['orderType'] = $request->get('orderType');
+        }
+        if ($request->get('page')) {
+            $params['page'] = $request->get('page');
+        }
+
+        return $params;
     }
 }
