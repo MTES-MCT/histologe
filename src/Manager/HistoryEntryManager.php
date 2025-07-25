@@ -13,12 +13,15 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\HistoryEntry;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use App\EventListener\Behaviour\DoctrineListenerRemoverTrait;
 use App\EventListener\EntityHistoryListener;
 use App\Factory\HistoryEntryFactory;
 use App\Repository\AffectationRepository;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\TimezoneProvider;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,6 +40,7 @@ class HistoryEntryManager extends AbstractManager
         private readonly HistoryEntryFactory $historyEntryFactory,
         private readonly HistoryEntryRepository $historyEntryRepository,
         private readonly AffectationRepository $affectationRepository,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly RequestStack $requestStack,
         private readonly CommandContext $commandContext,
@@ -93,9 +97,16 @@ class HistoryEntryManager extends AbstractManager
             HistoryEntryEvent::UPDATE
         );
 
+        $userSignalementSubscriptionHistoryEntries = $this->getHistoryEntries(
+            $signalement->getId(),
+            UserSignalementSubscription::class,
+            HistoryEntryEvent::CREATE
+        );
+
         $formattedHistory = [];
         $this->formatEntries($formattedHistory, $affectationHistoryEntries, 'affectation');
         $this->formatEntries($formattedHistory, $signalementHistoryEntries, 'signalement', $signalement);
+        $this->formatEntries($formattedHistory, $userSignalementSubscriptionHistoryEntries, 'subscription');
         if (isset($formattedHistory['N/A'])) {
             unset($formattedHistory['N/A']);
         }
@@ -148,7 +159,7 @@ class HistoryEntryManager extends AbstractManager
         /** @var HistoryEntry $entry */
         foreach ($entries as $entry) {
             $userName = $entry->getUser() ? $entry->getUser()->getFullName() : 'Système (automatique)';
-            if ('affectation' === $type) {
+            if ('affectation' === $type || 'subscription' === $type) {
                 $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($entry->getSignalement()->getTerritory());
             } else {
                 $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
@@ -171,9 +182,18 @@ class HistoryEntryManager extends AbstractManager
             }
 
             $id = $entry->getEntityId();
-            $action = 'affectation' === $type ?
-                $this->getAffectationActionSummary($entry, $userName, $partnerTarget?->getNom() ?? 'N/A') :
-                $this->getSignalementActionSummary($entry, $userName);
+
+            switch ($type) {
+                case 'affectation':
+                    $action = $this->getAffectationActionSummary($entry, $userName, $partnerTarget?->getNom() ?? 'N/A');
+                    break;
+                case 'subscription':
+                    $action = $this->getSubscriptionActionSummary($entry, $userName);
+                    break;
+                default:
+                    $action = $this->getSignalementActionSummary($entry, $userName);
+                    break;
+            }
 
             if (null !== $action) {
                 $formattedEntry = [
@@ -186,6 +206,30 @@ class HistoryEntryManager extends AbstractManager
                     $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
                 }
             }
+        }
+    }
+
+    private function getSubscriptionActionSummary(HistoryEntry $entry, string $userName): ?string
+    {
+        $userTarget = $this->getTargetUserBySubscriptionId($entry->getEntityId());
+        $event = $entry->getEvent();
+        switch ($event) {
+            case HistoryEntryEvent::CREATE:
+                if ($entry->getUser() === $userTarget) {
+                    return $userName.' a rejoint le dossier';
+                }
+
+                return $userName.' a attribué le dossier à '.$userTarget->getNomComplet();
+
+            case HistoryEntryEvent::DELETE:
+                if ($entry->getUser() === $userTarget) {
+                    return $userName.' a quitté le dossier';
+                }
+
+                return $userName.' a désattribué le dossier à '.$userTarget->getNomComplet();
+
+            default:
+                return null;
         }
     }
 
@@ -261,22 +305,22 @@ class HistoryEntryManager extends AbstractManager
                     switch ($changes['statut']['new']) {
                         case AffectationStatus::ACCEPTED->value:
                             if (AffectationStatus::WAIT->value === $changes['statut']['old']) {
-                                $description .= ' a accepté son affectation ';
+                                $description .= ' a accepté l\'affectation pour le partenaire ';
                             } else {
-                                $description .= ' a réouvert son affectation ';
+                                $description .= ' a réouvert l\'affectation pour le partenaire ';
                             }
                             break;
                         case AffectationStatus::REFUSED->value:
-                            $description .= ' a refusé son affectation ';
+                            $description .= ' a refusé l\'affectation pour le partenaire ';
                             break;
                         case AffectationStatus::CLOSED->value:
-                            $description .= ' a clôturé son affectation ';
+                            $description .= ' a clôturé l\'affectation pour le partenaire ';
                             break;
                         case AffectationStatus::WAIT->value:
-                            $description .= ' a remis en attente son affectation ';
+                            $description .= ' a remis en attente l\'affectation pour le partenaire ';
                             break;
                         default:
-                            $description .= " a modifié son affectation du statut {$changes['statut']['old']} au statut {$changes['statut']['new']}";
+                            $description .= " a modifié l\'affectation pour le partenaire du statut {$changes['statut']['old']} au statut {$changes['statut']['new']}";
                             break;
                     }
                     if (array_key_exists('motifCloture', $changes) && null !== $changes['motifCloture']['new']) {
@@ -295,6 +339,13 @@ class HistoryEntryManager extends AbstractManager
             default:
                 return null;
         }
+    }
+
+    private function getTargetUserBySubscriptionId(int $subscriptionId): ?User
+    {
+        $subscription = $this->userSignalementSubscriptionRepository->find($subscriptionId);
+
+        return $subscription ? $subscription->getUser() : null;
     }
 
     private function getPartnerByEntityId(int $affectationId): ?Partner

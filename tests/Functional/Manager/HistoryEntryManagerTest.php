@@ -14,6 +14,7 @@ use App\Repository\AffectationRepository;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -30,6 +31,7 @@ class HistoryEntryManagerTest extends WebTestCase
     private HistoryEntryManager $historyEntryManager;
     private HistoryEntryRepository $historyEntryRepository;
     private AffectationRepository $affectationRepository;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
     private PartnerRepository $partnerRepository;
 
     protected ManagerRegistry $managerRegistry;
@@ -42,6 +44,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->historyEntryFactory = static::getContainer()->get(HistoryEntryFactory::class);
         $this->historyEntryRepository = static::getContainer()->get(HistoryEntryRepository::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->requestStack = static::getContainer()->get(RequestStack::class);
         $this->commandContext = static::getContainer()->get(CommandContext::class);
@@ -50,6 +53,7 @@ class HistoryEntryManagerTest extends WebTestCase
             $this->historyEntryFactory,
             $this->historyEntryRepository,
             $this->affectationRepository,
+            $this->userSignalementSubscriptionRepository,
             $this->partnerRepository,
             $this->requestStack,
             $this->commandContext,
