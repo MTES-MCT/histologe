@@ -44,6 +44,9 @@ class Notification
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Affectation $affectation = null;
 
+    #[ORM\Column(type: 'text')]
+    private ?string $description = null;
+
     #[ORM\Column]
     private ?bool $waitMailingSummary = null;
 
@@ -148,6 +151,18 @@ class Notification
     public function setAffectation(?Affectation $affectation): static
     {
         $this->affectation = $affectation;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

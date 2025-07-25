@@ -18,6 +18,7 @@ use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Service\FormHelper;
+use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Service\Signalement\SignalementAffectationHelper;
 use Psr\Cache\InvalidArgumentException;
@@ -156,6 +157,7 @@ class AffectationController extends AbstractController
         UserRepository $userRepository,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        NotificationAndMailSender $notificationAndMailSender,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
     ): Response {
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
@@ -184,7 +186,8 @@ class AffectationController extends AbstractController
                     $user
                 );
                 $userSignalementSubscriptionManager->flush();
-                // TODO : envoi de la notif (en attente réponse Mathilde)
+                $description = $user->getNomComplet().' vous a attribué le dossier #'.$signalement->getReference().'. Vous recevrez les mises à jours pour ce dossier.';
+                $notificationAndMailSender->sendNewSubscription($subscription, $description);
             }
             $this->affectationManager->updateAffectation(
                 affectation: $affectation,

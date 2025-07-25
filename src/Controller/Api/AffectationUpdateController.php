@@ -215,7 +215,7 @@ class AffectationUpdateController extends AbstractController
             $message = $affectationRequest->message;
         }
 
-            // TODO : création des abonnements ?
+        // TODO : création des abonnements ?
         return $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
     }
 

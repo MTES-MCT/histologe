@@ -37,11 +37,12 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     {
         $qb = $this->createQueryBuilder('n')
             ->where('n.user = :user')
-            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement)')
+            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement, :nouvel_abonnement)')
             ->andWhere('n.deleted = :deleted')
             ->setParameter('user', $searchNotification->getUser())
             ->setParameter('nouveau_suivi', NotificationType::NOUVEAU_SUIVI)
             ->setParameter('cloture_signalement', NotificationType::CLOTURE_SIGNALEMENT)
+            ->setParameter('nouvel_abonnement', NotificationType::NOUVEL_ABONNEMENT)
             ->setParameter('deleted', false)
             ->leftJoin('n.user', 'u')
             ->leftJoin('n.suivi', 's')
