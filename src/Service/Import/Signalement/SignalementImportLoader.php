@@ -227,6 +227,7 @@ class SignalementImportLoader
                         );
                     } else {
                         $affectation->setStatut(AffectationStatus::ACCEPTED);
+                        // TODO : abonnements ?
                     }
                     $affectationCollection->add($affectation);
                 }

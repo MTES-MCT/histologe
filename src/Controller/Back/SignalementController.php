@@ -305,12 +305,14 @@ class SignalementController extends AbstractController
 
         $entity = $reference = null;
         if ('all' === $signalementAffectationClose->getType() && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
+            // TODO : suppression des abonnements ?
             $signalementAffectationClose->setSubject('tous les partenaires');
             $entity = $signalement = $signalementManager->closeSignalementForAllPartners($signalementAffectationClose);
             $reference = $signalement->getReference();
             $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose), SignalementClosedEvent::NAME);
         /* @var Affectation $affectation */
         } elseif ($affectation) {
+            // TODO : suppression des abonnements ?
             $entity = $affectationManager->closeAffectation(
                 affectation: $affectation,
                 user: $user,
@@ -349,6 +351,8 @@ class SignalementController extends AbstractController
             $signalement->setStatut(SignalementStatus::ARCHIVED);
             $notificationRepository->deleteBySignalement($signalement);
             $affectationRepository->deleteByStatusAndSignalement(AffectationStatus::WAIT, $signalement);
+
+            // TODO : suppression des abonnements ?
             $doctrine->getManager()->flush();
             $response = [
                 'status' => Response::HTTP_OK,
