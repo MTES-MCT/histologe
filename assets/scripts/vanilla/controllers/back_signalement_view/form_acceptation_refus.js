@@ -40,7 +40,6 @@ validationButton.forEach((button) => {
 });
 
 const linkSelectAllAgents = document.getElementById('select-all-agents');
-console.log(linkSelectAllAgents)
 linkSelectAllAgents.addEventListener('click', function (e) {
   console.log('on clique pour tout sélectionner')
     e.preventDefault();
