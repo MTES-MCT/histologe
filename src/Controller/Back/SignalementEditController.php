@@ -12,6 +12,7 @@ use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
@@ -48,9 +49,12 @@ class SignalementEditController extends AbstractController
 
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $adresseOccupantRequest);
             if (empty($errorMessage)) {
-                $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
+                $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'L\'adresse du logement a bien été modifiée.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
@@ -89,9 +93,12 @@ class SignalementEditController extends AbstractController
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $coordonneesTiersRequest);
 
             if (empty($errorMessage)) {
-                $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
+                $subscriptionCreated = $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'Les coordonnées du tiers déclarant ont bien été modifiées.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
@@ -134,9 +141,12 @@ class SignalementEditController extends AbstractController
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $coordonneesFoyerRequest, $validationGroups);
 
             if (empty($errorMessage)) {
-                $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
+                $subscriptionCreated = $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'Les coordonnées du foyer ont bien été modifiées.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
@@ -182,9 +192,12 @@ class SignalementEditController extends AbstractController
             );
 
             if (empty($errorMessage)) {
-                $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
+                $subscriptionCreated = $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'Les coordonnées du bailleur ont bien été modifiées.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
@@ -230,9 +243,12 @@ class SignalementEditController extends AbstractController
             );
 
             if (empty($errorMessage)) {
-                $signalementManager->updateFromCoordonneesAgenceRequest($signalement, $coordonneesAgenceRequest);
+                $subscriptionCreated = $signalementManager->updateFromCoordonneesAgenceRequest($signalement, $coordonneesAgenceRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'Les coordonnées de l\'agence ont bien été modifiées.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
@@ -277,9 +293,12 @@ class SignalementEditController extends AbstractController
             );
 
             if (empty($errorMessage)) {
-                $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
+                $subscriptionCreated = $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'Les informations du logement ont bien été modifiées.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
@@ -324,9 +343,12 @@ class SignalementEditController extends AbstractController
                 $validationGroups
             );
             if (empty($errorMessage)) {
-                $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
+                $subscriptionCreated = $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'La description du logement a bien été modifiée.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
@@ -371,9 +393,12 @@ class SignalementEditController extends AbstractController
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $situationFoyerRequest, $validationGroups);
 
             if (empty($errorMessage)) {
-                $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
+                $subscriptionCreated = $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'La situation du foyer a bien été modifiée.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];
@@ -414,9 +439,12 @@ class SignalementEditController extends AbstractController
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $procedureDemarchesRequest, $validationGroups);
 
             if (empty($errorMessage)) {
-                $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
+                $subscriptionCreated = $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'Les procédures et démarches ont bien été modifiées.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];
                 $response = [...$response, ...$errorMessage];

@@ -495,11 +495,17 @@ class SignalementCreateController extends AbstractController
                         $signalement->addAffectation($affectation);
                     }
                 }
-                $signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $user);
+                $subscriptionCreated = $signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $user);
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-                $signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $user);
+                $subscriptionCreated = $signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $user);
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Vous n\'avez pas défini de partenaires à affecter, rendez-vous dans le signalement pour en affecter !');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
             } else {
                 $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
                 $eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);

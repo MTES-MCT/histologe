@@ -11,6 +11,7 @@ use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -22,6 +23,8 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
         private Security $security,
         private VisiteNotifier $visiteNotifier,
         private SuiviManager $suiviManager,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private readonly bool $featureNewDashboard,
     ) {
     }
 
@@ -59,13 +62,21 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
                 suivi: $suivi
             );
 
-            $this->visiteNotifier->notifyAgents(
-                intervention: $intervention,
-                suivi: $suivi,
-                currentUser: $currentUser,
-                notificationMailerType: null,
-                notifyOtherAffectedPartners: true,
-            );
+            if ($this->featureNewDashboard) {
+                $this->visiteNotifier->notifyInAppSubscribers(
+                    intervention: $intervention,
+                    suivi: $suivi,
+                    currentUser: $currentUser,
+                );
+            } else {
+                $this->visiteNotifier->notifyAgents(
+                    intervention: $intervention,
+                    suivi: $suivi,
+                    currentUser: $currentUser,
+                    notificationMailerType: null,
+                    notifyOtherAffectedPartners: true,
+                );
+            }
         }
     }
 }

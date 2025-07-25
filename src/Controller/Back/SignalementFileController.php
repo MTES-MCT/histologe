@@ -122,8 +122,9 @@ class SignalementFileController extends AbstractController
         if (!\count($files)) {
             return $this->json(['success' => true]);
         }
+        $subscriptionCreated = false;
         if (SignalementStatus::CLOSED !== $signalement->getStatut()) {
-            $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files);
+            $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files, $subscriptionCreated);
             $entityManager->persist($suivi);
         }
 
@@ -142,6 +143,9 @@ class SignalementFileController extends AbstractController
 
         if (SignalementStatus::DRAFT !== $signalement->getStatut()) {
             $this->addFlash('success', 'Les documents ont bien été ajoutés.');
+            if ($subscriptionCreated) {
+                $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+            }
         }
 
         return $this->json(['success' => true]);
@@ -179,6 +183,7 @@ class SignalementFileController extends AbstractController
             }
             $this->addFlash('error', $message);
         }
+        $subscriptionCreated = false;
         if (!$this->isGranted('ROLE_ADMIN')
             && in_array($signalement->getStatut(), [SignalementStatus::CLOSED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
         ) {
@@ -191,12 +196,16 @@ class SignalementFileController extends AbstractController
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::DOCUMENT_DELETED_BY_PARTNER,
+                subscriptionCreated: $subscriptionCreated,
             );
         }
         if ('1' === $request->get('is_draft')) {
             return $this->json(['success' => true]);
         }
         $this->addFlash('success', 'Le document a bien été supprimé.');
+        if ($subscriptionCreated) {
+            $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+        }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => $fragment]));
     }

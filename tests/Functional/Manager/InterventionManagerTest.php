@@ -110,7 +110,7 @@ class InterventionManagerTest extends KernelTestCase
             )
         );
 
-        $this->assertEmailCount(3);
+        $this->assertEmailCount(2);
     }
 
     /**

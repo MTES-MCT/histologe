@@ -5,13 +5,13 @@ namespace App\Service\Signalement;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\NotificationType;
-use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
 use App\Manager\SignalementManager;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -27,6 +27,7 @@ class VisiteNotifier
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly UserRepository $userRepository,
         private readonly NotificationAndMailSender $notificationAndMailSender,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
     ) {
     }
 
@@ -52,6 +53,9 @@ class VisiteNotifier
         }
     }
 
+    /**
+     * @deprecated this method will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed
+     */
     public function notifyAgents(
         ?Intervention $intervention,
         Suivi $suivi,
@@ -85,16 +89,66 @@ class VisiteNotifier
         }
         foreach ($listUsersToNotify as $user) {
             if ($user != $currentUser) {
-                $this->notifyAgent($user, $intervention, $suivi, $notificationMailerType, $affectation);
+                $this->notifyAgent(user: $user, suivi: $suivi, intervention: $intervention, notificationMailerType: $notificationMailerType, affectation: $affectation);
             }
+        }
+    }
+
+    public function notifySubscribers(
+        NotificationMailerType $notificationMailerType,
+        Intervention $intervention,
+        Suivi $suivi,
+        ?User $currentUser = null,
+    ): void {
+        $listUsersToNotify = $this->userRepository->findUsersSubscribedToSignalement($intervention->getSignalement());
+        foreach ($listUsersToNotify as $user) {
+            if ($user === $currentUser) {
+                continue;
+            }
+            $this->notifyAgent(user: $user, suivi: $suivi, notificationMailerType: $notificationMailerType, intervention: $intervention);
+        }
+    }
+
+    public function notifyInAppSubscribers(
+        Intervention $intervention,
+        Suivi $suivi,
+        ?User $currentUser = null,
+    ): void {
+        $listUsersToNotify = $this->userRepository->findUsersSubscribedToSignalement($intervention->getSignalement());
+        foreach ($listUsersToNotify as $user) {
+            if ($user === $currentUser) {
+                continue;
+            }
+            $this->notifyAgent(user: $user, suivi: $suivi, intervention: $intervention);
+        }
+    }
+
+    public function notifyInterventionSubscribers(
+        NotificationMailerType $notificationMailerType,
+        Intervention $intervention,
+    ): void {
+        $subs = $this->userSignalementSubscriptionRepository->findForIntervention($intervention);
+        foreach ($subs as $subscription) {
+            $this->notifyAgent(user: $subscription->getUser(), notificationMailerType: $notificationMailerType, intervention: $intervention);
+        }
+    }
+
+    public function notifyAffectationSubscribers(
+        NotificationMailerType $notificationMailerType,
+        Affectation $affectation,
+        Suivi $suivi,
+    ): void {
+        $subs = $this->userSignalementSubscriptionRepository->findForAffectation($affectation);
+        foreach ($subs as $subscription) {
+            $this->notifyAgent(user: $subscription->getUser(), suivi: $suivi, notificationMailerType: $notificationMailerType, affectation: $affectation);
         }
     }
 
     private function notifyAgent(
         User $user,
-        ?Intervention $intervention,
-        Suivi $suivi,
-        ?NotificationMailerType $notificationMailerType,
+        ?Suivi $suivi = null,
+        ?Intervention $intervention = null,
+        ?NotificationMailerType $notificationMailerType = null,
         ?Affectation $affectation = null,
     ): void {
         if ($notificationMailerType) {
@@ -110,23 +164,17 @@ class VisiteNotifier
                 );
             }
         }
-
-        $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
-        $this->entityManager->persist($notification);
-        $this->entityManager->flush();
+        if ($suivi) {
+            $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+            $this->entityManager->persist($notification);
+            $this->entityManager->flush();
+        }
     }
 
     public function notifyVisiteToConclude(Intervention $intervention): int
     {
         $signalement = $intervention->getSignalement();
         $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId(), $signalement->getInseeOccupant());
-        $affectations = $signalement->getAffectations();
-        foreach ($affectations as $affectation) {
-            if ($affectation->getPartner()->hasCompetence(Qualification::VISITES)) {
-                $listUsersPartner = $affectation->getPartner()->getUsers();
-                $listUsersToNotify = array_unique(array_merge($listUsersToNotify, $listUsersPartner->toArray()), \SORT_REGULAR);
-            }
-        }
 
         foreach ($listUsersToNotify as $user) {
             if ($user->getIsMailingActive()) {

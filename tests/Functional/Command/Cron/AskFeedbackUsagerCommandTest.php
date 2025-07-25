@@ -26,7 +26,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('8 signalement(s) for which a request for feedback will be sent', $output);
+        $this->assertStringContainsString('9 signalement(s) for which a request for feedback will be sent', $output);
         $this->assertEmailCount(0);
     }
 
@@ -47,10 +47,10 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('1 signalement(s) for which the two last suivis are feedback requests ', $output);
         $this->assertStringContainsString('1 signalement(s) for which the last suivi is feedback request', $output);
-        $this->assertStringContainsString('6 signalement(s) without suivi public', $output);
-        $this->assertEmailCount(11);
+        $this->assertStringContainsString('7 signalement(s) without suivi public', $output);
+        $this->assertEmailCount(12);
 
         $nbSuiviFeedback = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::ASK_FEEDBACK_SENT]);
-        $this->assertEquals(11, $nbSuiviFeedback);
+        $this->assertEquals(12, $nbSuiviFeedback);
     }
 }

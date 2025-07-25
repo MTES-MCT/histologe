@@ -339,7 +339,7 @@ class SignalementManager extends AbstractManager
     public function updateFromAdresseOccupantRequest(
         Signalement $signalement,
         AdresseOccupantRequest $adresseOccupantRequest,
-    ): void {
+    ): bool {
         $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse())
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
             ->setVilleOccupant($adresseOccupantRequest->getVille())
@@ -355,7 +355,7 @@ class SignalementManager extends AbstractManager
 
         $this->save($signalement);
 
-        $this->suiviManager->addSuiviIfNeeded(
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'L\'adresse du logement a été modifiée par '
         );
@@ -364,7 +364,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCoordonneesTiersRequest(
         Signalement $signalement,
         CoordonneesTiersRequest $coordonneesTiersRequest,
-    ): void {
+    ): bool {
         if (ProfileDeclarant::BAILLEUR == $signalement->getProfileDeclarant()) {
             $signalement
                 ->setTypeProprio(
@@ -392,7 +392,8 @@ class SignalementManager extends AbstractManager
         }
 
         $this->save($signalement);
-        $this->suiviManager->addSuiviIfNeeded(
+
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
         );
@@ -401,7 +402,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCoordonneesFoyerRequest(
         Signalement $signalement,
         CoordonneesFoyerRequest $coordonneesFoyerRequest,
-    ): void {
+    ): bool {
         if (ProfileDeclarant::BAILLEUR_OCCUPANT == $signalement->getProfileDeclarant()) {
             $signalement
                 ->setTypeProprio(
@@ -421,7 +422,8 @@ class SignalementManager extends AbstractManager
             ->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
 
         $this->save($signalement);
-        $this->suiviManager->addSuiviIfNeeded(
+
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées du foyer ont été modifiées par ',
         );
@@ -430,7 +432,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCoordonneesBailleurRequest(
         Signalement $signalement,
         CoordonneesBailleurRequest $coordonneesBailleurRequest,
-    ): void {
+    ): bool {
         $bailleur = null;
         if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getDenomination()) {
             $bailleur = $this->bailleurRepository->findOneBailleurBy(
@@ -477,7 +479,8 @@ class SignalementManager extends AbstractManager
         $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->save($signalement);
-        $this->suiviManager->addSuiviIfNeeded(
+
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées du bailleur ont été modifiées par ',
         );
@@ -486,7 +489,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCoordonneesAgenceRequest(
         Signalement $signalement,
         CoordonneesAgenceRequest $coordonneesAgenceRequest,
-    ): void {
+    ): bool {
         $signalement
             ->setDenominationAgence($coordonneesAgenceRequest->getDenomination())
             ->setNomAgence($coordonneesAgenceRequest->getNom())
@@ -499,7 +502,8 @@ class SignalementManager extends AbstractManager
             ->setVilleAgence($coordonneesAgenceRequest->getVille());
 
         $this->save($signalement);
-        $this->suiviManager->addSuiviIfNeeded(
+
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées de l\'agence ont été modifiées par ',
         );
@@ -508,7 +512,7 @@ class SignalementManager extends AbstractManager
     public function updateFromInformationsLogementRequest(
         Signalement $signalement,
         InformationsLogementRequest $informationsLogementRequest,
-    ): void {
+    ): bool {
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
             $signalement->setNbOccupantsLogement((int) $informationsLogementRequest->getNombrePersonnes());
         }
@@ -596,7 +600,8 @@ class SignalementManager extends AbstractManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->save($signalement);
-        $this->suiviManager->addSuiviIfNeeded(
+
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les informations sur le logement ont été modifiées par ',
         );
@@ -652,7 +657,7 @@ class SignalementManager extends AbstractManager
     public function updateFromCompositionLogementRequest(
         Signalement $signalement,
         CompositionLogementRequest $compositionLogementRequest,
-    ): void {
+    ): bool {
         $signalement->setNatureLogement($compositionLogementRequest->getType());
         $signalement->setSuperficie((float) $compositionLogementRequest->getSuperficie());
 
@@ -709,7 +714,8 @@ class SignalementManager extends AbstractManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->save($signalement);
-        $this->suiviManager->addSuiviIfNeeded(
+
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'La description du logement a été modifiée par ',
         );
@@ -721,7 +727,7 @@ class SignalementManager extends AbstractManager
     public function updateFromSituationFoyerRequest(
         Signalement $signalement,
         SituationFoyerRequest $situationFoyerRequest,
-    ): void {
+    ): bool {
         $signalement
             ->setIsLogementSocial(
                 SignalementInputValueMapper::map(
@@ -807,7 +813,8 @@ class SignalementManager extends AbstractManager
         $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->save($signalement);
-        $this->suiviManager->addSuiviIfNeeded(
+
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'La situation du foyer a été modifiée par ',
         );
@@ -816,7 +823,7 @@ class SignalementManager extends AbstractManager
     public function updateFromProcedureDemarchesRequest(
         Signalement $signalement,
         ProcedureDemarchesRequest $procedureDemarchesRequest,
-    ): void {
+    ): bool {
         $signalement->setIsProprioAverti('' === $procedureDemarchesRequest->getIsProprioAverti() ? null : (bool) ($procedureDemarchesRequest->getIsProprioAverti()));
 
         $informationProcedure = new InformationProcedure();
@@ -852,7 +859,8 @@ class SignalementManager extends AbstractManager
         }
 
         $this->save($signalement);
-        $this->suiviManager->addSuiviIfNeeded(
+
+        return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les procédures et démarches ont été modifiées par ',
         );
@@ -917,12 +925,12 @@ class SignalementManager extends AbstractManager
         }
     }
 
-    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser): void
+    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser): bool
     {
         $signalement->setStatut(SignalementStatus::ACTIVE);
         $signalement->setValidatedAt(new \DateTimeImmutable());
         $this->persist($signalement);
-
+        $subscriptionCreated = false;
         $suivi = $this->suiviManager->createSuivi(
             user: $adminUser,
             signalement: $signalement,
@@ -931,8 +939,11 @@ class SignalementManager extends AbstractManager
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             isPublic: true,
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
-            flush: false
+            flush: false,
+            subscriptionCreated: $subscriptionCreated
         );
         $this->persist($suivi);
+
+        return $subscriptionCreated;
     }
 }

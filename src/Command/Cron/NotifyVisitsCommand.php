@@ -81,13 +81,21 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 suivi: $suivi
             );
 
-            $this->visiteNotifier->notifyAgents(
-                intervention: $intervention,
-                suivi: $suivi,
-                currentUser: null,
-                notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
-                notifyAdminTerritory: false,
-            );
+            if ($this->parameterBag->get('feature_new_dashboard')) {
+                $this->visiteNotifier->notifySubscribers(
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
+                    intervention: $intervention,
+                    suivi: $suivi,
+                );
+            } else {
+                $this->visiteNotifier->notifyAgents(
+                    intervention: $intervention,
+                    suivi: $suivi,
+                    currentUser: null,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
+                    notifyAdminTerritory: false,
+                );
+            }
 
             $intervention->setReminderBeforeSentAt(new \DateTimeImmutable());
             $this->interventionManager->save($intervention);
@@ -97,18 +105,26 @@ class NotifyVisitsCommand extends AbstractCronCommand
 
         $listPastVisits = $this->interventionRepository->getPastVisits();
         foreach ($listPastVisits as $intervention) {
-            $pastVisiteReminderUsers = $this->getPastVisiteReminderUsers($intervention);
-            foreach ($pastVisiteReminderUsers as $user) {
-                $this->notificationMailerRegistry->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
-                        to: $user->getEmail(),
-                        territory: $intervention->getSignalement()->getTerritory(),
-                        signalement: $intervention->getSignalement(),
-                        intervention: $intervention,
-                    )
+            if ($this->parameterBag->get('feature_new_dashboard')) {
+                $this->visiteNotifier->notifyInterventionSubscribers(
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
+                    intervention: $intervention,
                 );
+            } else {
+                $pastVisiteReminderUsers = $this->getPastVisiteReminderUsers($intervention);
+                foreach ($pastVisiteReminderUsers as $user) {
+                    $this->notificationMailerRegistry->send(
+                        new NotificationMail(
+                            type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
+                            to: $user->getEmail(),
+                            territory: $intervention->getSignalement()->getTerritory(),
+                            signalement: $intervention->getSignalement(),
+                            intervention: $intervention,
+                        )
+                    );
+                }
             }
+
             $intervention->setReminderConclusionSentAt(new \DateTimeImmutable());
             $this->interventionManager->save($intervention);
             ++$countPastVisits;
@@ -129,15 +145,22 @@ class NotifyVisitsCommand extends AbstractCronCommand
                     context: Suivi::CONTEXT_INTERVENTION,
                 );
 
-                $this->visiteNotifier->notifyAgents(
-                    intervention: null,
-                    suivi: $suivi,
-                    currentUser: null,
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
-                    notifyAdminTerritory: false,
-                    affectation: $affectation,
-                );
-
+                if ($this->parameterBag->get('feature_new_dashboard')) {
+                    $this->visiteNotifier->notifyAffectationSubscribers(
+                        notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
+                        affectation: $affectation,
+                        suivi: $suivi
+                    );
+                } else {
+                    $this->visiteNotifier->notifyAgents(
+                        intervention: null,
+                        suivi: $suivi,
+                        currentUser: null,
+                        notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
+                        notifyAdminTerritory: false,
+                        affectation: $affectation,
+                    );
+                }
                 ++$countVisitsToPlan;
             }
         }

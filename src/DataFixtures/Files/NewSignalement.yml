@@ -116,7 +116,7 @@ signalements:
     adresse_occupant: "47 Rue du Général Chanzy"
     cp_occupant: "62100"
     ville_occupant: "Calais"
-    statut: "NEED_VALIDATION"
+    statut: "ACTIVE"
     geoloc: "{\"lat\": 50.94877, \"lng\": 1.85867}"
     insee_occupant: "62193"
     nb_pieces_logement: 5

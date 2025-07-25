@@ -45,6 +45,7 @@ class SignalementActionController extends AbstractController
             /** @var User $user */
             $user = $this->getUser();
             $signalement->setStatut(SignalementStatus::ACTIVE);
+            $subscriptionCreated = false;
             $suiviManager->createSuivi(
                 user : $user,
                 signalement: $signalement,
@@ -53,8 +54,12 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 isPublic: true,
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
+                subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', 'Signalement accepté avec succès !');
+            if ($subscriptionCreated) {
+                $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+            }
         } else {
             $this->addFlash('error', 'Une erreur est survenue...');
         }
@@ -87,7 +92,7 @@ class SignalementActionController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $signalement->setStatut(SignalementStatus::REFUSED);
-
+        $subscriptionCreated = false;
         $suiviManager->createSuivi(
             user : $user,
             signalement: $signalement,
@@ -97,9 +102,12 @@ class SignalementActionController extends AbstractController
             isPublic: true,
             context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
             files: $refusSignalement->getFiles(),
+            subscriptionCreated: $subscriptionCreated,
         );
-
         $this->addFlash('success', 'Signalement refusé avec succès !');
+        if ($subscriptionCreated) {
+            $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+        }
 
         $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -130,6 +138,7 @@ class SignalementActionController extends AbstractController
         try {
             /** @var User $user */
             $user = $this->getUser();
+            $subscriptionCreated = false;
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $suivi->getDescription(),
@@ -138,6 +147,7 @@ class SignalementActionController extends AbstractController
                 isPublic: $suivi->getIsPublic(),
                 user: $user,
                 files: $form->get('files')->getData(),
+                subscriptionCreated: $subscriptionCreated,
             );
         } catch (\Throwable $exception) {
             $logger->error($exception->getMessage());
@@ -148,6 +158,9 @@ class SignalementActionController extends AbstractController
         }
         $response = ['code' => Response::HTTP_OK];
         $this->addFlash('success', 'Suivi publié avec succès !');
+        if ($subscriptionCreated) {
+            $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+        }
 
         return $this->json($response, $response['code']);
     }
@@ -211,6 +224,7 @@ class SignalementActionController extends AbstractController
                 }
             }
             $signalement->setStatut(SignalementStatus::ACTIVE);
+            $subscriptionCreated = false;
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,
@@ -218,8 +232,12 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 isPublic: '1' === $request->get('publicSuivi'),
                 user: $user,
+                subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', 'Signalement rouvert avec succès !');
+            if ($subscriptionCreated) {
+                $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+            }
         } else {
             $this->addFlash('error', 'Erreur lors de la réouverture du signalement !');
         }
