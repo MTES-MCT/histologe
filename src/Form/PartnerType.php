@@ -140,9 +140,6 @@ class PartnerType extends AbstractType
 
         $builder->add('territory', TerritoryChoiceType::class, [
             'data' => $territory,
-            'attr' => [
-                'class' => 'fr-select',
-            ],
             'row_attr' => [
                 'class' => !$this->isAdmin ? 'fr-hidden' : '',
             ],

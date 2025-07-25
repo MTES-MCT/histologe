@@ -64,12 +64,6 @@ class UserType extends AbstractType
         $builder->add('territory', TerritoryChoiceType::class, [
             'mapped' => false,
             'data' => $territory,
-            'attr' => [
-                'class' => 'fr-select',
-            ],
-            'row_attr' => [
-                'class' => 'fr-input-group',
-            ],
         ]);
         $formModifier = function (FormInterface $form, ?Territory $territory = null) use ($user) {
             $partners = null === $territory ?
