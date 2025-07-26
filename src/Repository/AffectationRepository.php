@@ -27,7 +27,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AffectationRepository extends ServiceEntityRepository
 {
-    private const DELAY_VISITE_AFTER_AFFECTATION = 15;
+    private const int DELAY_VISITE_AFTER_AFFECTATION = 15;
 
     public function __construct(ManagerRegistry $registry)
     {

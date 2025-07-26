@@ -7,6 +7,10 @@ use App\Entity\Territory;
 class TabBody
 {
     private mixed $data = null;
+    private int $count = 0;
+
+    /** @var array<string, string|int> */
+    private array $filters = [];
 
     public function __construct(
         private string $type,
@@ -25,6 +29,36 @@ class TabBody
     public function setData(mixed $data): void
     {
         $this->data = $data;
+    }
+
+    public function getCount(): int
+    {
+        return $this->count;
+    }
+
+    public function setCount(int $count): static
+    {
+        $this->count = $count;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string|int>
+     */
+    public function getFilters(): array
+    {
+        return $this->filters;
+    }
+
+    /**
+     * @param array<string, string|int> $filters
+     */
+    public function setFilters(array $filters): static
+    {
+        $this->filters = $filters;
+
+        return $this;
     }
 
     public function getType(): string

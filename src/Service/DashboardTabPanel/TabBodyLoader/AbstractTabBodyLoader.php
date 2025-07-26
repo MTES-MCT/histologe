@@ -4,6 +4,7 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Security\Voter\TabPanelVoter;
 use App\Service\DashboardTabPanel\TabBody;
+use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -26,6 +27,25 @@ abstract class AbstractTabBodyLoader implements TabBodyLoaderInterface
     public function load(TabBody $tabBody): void
     {
         $this->tabQueryParameters = $tabBody->getTabQueryParameters();
+
+        $filters = ['isImported' => 'oui'];
+        if (null !== $this->tabQueryParameters->territoireId) {
+            $filters['territoire'] = $this->tabQueryParameters->territoireId;
+        }
+        if (null !== $this->tabQueryParameters->sortBy && null !== $this->tabQueryParameters->orderBy) {
+            $filters['sortBy'] = $this->tabQueryParameters->sortBy;
+            $filters['direction'] = $this->tabQueryParameters->orderBy;
+        } else {
+            if (in_array($this->tabBodyType, [
+                TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER,
+                TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO,
+                TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION,
+            ])) {
+                $this->tabQueryParameters->sortBy = $filters['sortBy'] = 'createdAt';
+                $this->tabQueryParameters->orderBy = $filters['direction'] = 'DESC';
+            }
+        }
+        $tabBody->setFilters($filters);
         $this->ensureAccess($tabBody);
     }
 

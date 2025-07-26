@@ -93,7 +93,7 @@ class SignalementSearchQuery
         #[Assert\Choice(['oui'])]
         private readonly ?string $nouveauSuivi = null,
         private readonly ?int $sansSuiviPeriode = null,
-        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant'])]
+        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'])]
         private readonly string $sortBy = 'reference',
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
         private readonly string $orderBy = 'DESC',
@@ -115,6 +115,8 @@ class SignalementSearchQuery
             'autre',
         ])]
         private readonly ?string $motifCloture = null,
+        #[Assert\Choice(['formulaire-usager', 'formulaire-pro'])]
+        private readonly ?string $createdFrom = null,
         private readonly ?string $showMySignalementsOnly = null,
     ) {
     }
@@ -304,6 +306,11 @@ class SignalementSearchQuery
         return $this->orderBy;
     }
 
+    public function getCreatedFrom(): ?string
+    {
+        return $this->createdFrom;
+    }
+
     /**
      * @todo: Après la MEP, s'appuyer exclusivement sur le DTO au lieu du tableau de filtres
      *
@@ -391,6 +398,7 @@ class SignalementSearchQuery
         $filters['nouveau_suivi'] = $this->getNouveauSuivi();
         $filters['bailleurSocial'] = $this->getBailleurSocial();
         $filters['motifCloture'] = $this->getMotifCloture();
+        $filters['createdFrom'] = $this->getCreatedFrom();
         $filters['showMySignalementsOnly'] = 'oui' === $this->getShowMySignalementsOnly();
 
         $filters['page'] = $this->getPage() ?? 1;
