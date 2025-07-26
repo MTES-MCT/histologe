@@ -19,20 +19,18 @@
                                     aria-controls="tabpanel-dernieres-actions-panel">Accueil
                             </button>
                         </li>
-                        {% if (is_granted('ROLE_ADMIN_TERRITORY')) or app.user.hasPermissionAffectation %}
-                            <li role="presentation">
-                                <button type="button"
-                                        id="tabpanel-dossiers-nouveaux"
-                                        class="fr-tabs__tab"
-                                        tabindex="-1"
-                                        role="tab"
-                                        aria-selected="false"
-                                        aria-controls="tabpanel-dossiers-nouveaux-panel">Nouveaux dossiers
-                                    ({{ tab_count_kpi.countNouveauxDossiers }})
-                                </button>
-                            </li>
-                        {% endif %}
-                        {% if (is_granted('ROLE_ADMIN_TERRITORY')) %}
+                        <li role="presentation">
+                            <button type="button"
+                                    id="tabpanel-dossiers-nouveaux"
+                                    class="fr-tabs__tab"
+                                    tabindex="-1"
+                                    role="tab"
+                                    aria-selected="false"
+                                    aria-controls="tabpanel-dossiers-nouveaux-panel">Nouveaux dossiers
+                                ({{ tab_count_kpi.countNouveauxDossiers }})
+                            </button>
+                        </li>
+                    {% if (is_granted('ROLE_ADMIN_TERRITORY')) %}
                             <li role="presentation">
                                 <button type="button"
                                         id="tabpanel-dossiers-a-fermer"
@@ -71,10 +69,8 @@
                     <!-- Onglet 1 : Accueil -->
                     {% include 'back/dashboard/tabs/accueil/tab_accueil.html.twig' %}
 
-                    {% if (is_granted('ROLE_ADMIN_TERRITORY')) or app.user.hasPermissionAffectation %}
-                        <!-- Onglet 2 : Nouveaux dossiers -->
-                        {% include 'back/dashboard/tabs/dossiers_nouveaux/tab_dossier_nouveaux.html.twig' %}
-                    {% endif %}
+                    <!-- Onglet 2 : Nouveaux dossiers -->
+                    {% include 'back/dashboard/tabs/dossiers_nouveaux/tab_dossier_nouveaux.html.twig' %}
 
                     {% if (is_granted('ROLE_ADMIN_TERRITORY')) %}
                     <!-- Onglet 3 : A fermer -->

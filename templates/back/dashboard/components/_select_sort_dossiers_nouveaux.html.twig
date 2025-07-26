@@ -1,0 +1,11 @@
+<div class="fr-select-group fr-col-12 fr-col-md-3">
+    <label class="fr-label" for="order-type-{{ data_sort_body }}">
+        Trier par
+    </label>
+    <select id="order-type-{{ data_sort_body }}" class="fr-select" data-sort-body="{{ data_sort_body }}">
+        <option value="createdAt-DESC" selected="selected">Date la plus récente (du plus récent au plus ancien) = tri par défaut</option>
+        <option value="createdAt-ASC">Date la plus ancienne (de la plus ancienne à la plus récente)</option>
+        <option value="nomOccupant-ASC">Ordre alphabétique (A > Z) = sur le nom associé au dossier</option>
+        <option value="nomOccupant-DESC">Ordre alphabétique (Z > A)</option>
+    </select>
+</div>

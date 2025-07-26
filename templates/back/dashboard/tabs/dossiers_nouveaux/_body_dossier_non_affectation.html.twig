@@ -7,19 +7,11 @@
 <section class="fr-mb-5v">
     <header class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-md-9">
-            <h3 class="fr-text-label--blue-france tab-panel-title-with-document-icon">Dossiers non affecté aux partenaires ({{ count }})</h3>
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-document-search-icon">Dossiers non affecté aux partenaires ({{ count }})</h3>
         </div>
-        <div class="fr-select-group fr-col-12 fr-col-md-3">
-            <label class="fr-label" for="order-type-dossiers-non-affectation">
-                Trier par
-            </label>
-            <select id="order-type-dossiers-non-affectation" class="fr-select" data-sort-body="dossiers-non-affectation">
-                <option value="createdAt-ASC" selected="selected">Date la plus récente (du plus récent au plus ancien) = tri par défaut</option>
-                <option value="createdAt-DESC">Date la plus ancienne (de la plus ancienne à la plus récente)</option>
-                <option value="nomOccupant-ASC">Ordre alphabétique (A > Z) = sur le nom associé au dossier</option>
-                <option value="nomOccupant-DESC">Ordre alphabétique (Z > A)</option>
-            </select>
-        </div>
+        {% include 'back/dashboard/components/_select_sort_dossiers_nouveaux.html.twig' with {
+            data_sort_body: 'dossiers-non-affectation'
+        } %}
     </header>
     <hr class="hr--blue-france">
     <section class="fr-container--fluid">
@@ -31,11 +23,11 @@
                         <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                         <div>' ~ item.adresse ~ '</div>
                     </div>',
-                    '<div><strong>' ~ item.depotAt ~ '</strong><br>' ~ item.profilDeclarant|capitalize ~ '</div>',
-                    '<div>' ~ item.valideAt ~ '</div>',
+                    '<div><strong>' ~ item.depotAt|date('d/m/Y') ~ '</strong><br>' ~ item.profilDeclarant.label()|capitalize ~ '</div>',
+                    '<div>' ~ item.valideAt|date('d/m/Y') ~ '</div>',
                     '<span class="fr-badge fr-badge--info fr-badge--no-icon">' ~ item.parc ~ '</span>'
                 ],
-                link: item.lien
+                link: path('back_signalement_view', {'uuid' : item.uuid})
             } %}
         {% else %}
             <p>Aucun dossier trouvé.</p>

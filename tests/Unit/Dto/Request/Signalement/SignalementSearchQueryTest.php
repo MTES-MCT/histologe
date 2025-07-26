@@ -48,6 +48,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             sansSuiviPeriode: 30,
             sortBy: 'reference',
             orderBy: 'DESC',
+            createdFrom: 'formulaire-pro',
         );
 
         $expectedFilters = [
@@ -88,13 +89,15 @@ class SignalementSearchQueryTest extends KernelTestCase
             'usager_abandon_procedure' => true,
             'delays' => 30,
             'nouveau_suivi' => 'oui',
+            'createdFrom' => 'formulaire-pro',
             'page' => 1,
             'maxItemsPerPage' => 25,
             'sortBy' => 'reference',
             'orderBy' => 'DESC',
         ];
 
-        static::assertSame($expectedFilters, $query->getFilters());
+        $filters = $query->getFilters();
+        static::assertSame($expectedFilters, $filters);
         $errors = $validator->validate($query);
         $this->assertCount(0, $errors);
     }

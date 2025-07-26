@@ -2,23 +2,28 @@
 
 namespace App\Service\DashboardTabPanel;
 
+use App\Entity\Enum\ProfileDeclarant;
+
 readonly class TabDossier
 {
     public const int MAX_ITEMS_LIST = 5;
+    public const string CREATED_FROM_FORMULAIRE_USAGER = 'formulaire-usager';
+    public const string CREATED_FROM_FORMULAIRE_PRO = 'formulaire-pro';
 
     public function __construct(
-        public ?string $profilDeclarant = null,
+        public ?string $uuid = null,
+        public ?ProfileDeclarant $profilDeclarant = null,
         public ?string $nomDeclarant = null,
         public ?string $prenomDeclarant = null,
         public ?string $reference = null,
         public ?string $adresse = null,
-        public ?string $depotAt = null,
+        public ?\DateTimeImmutable $depotAt = null,
         public ?string $depotBy = null,
         public ?string $depotPartenaireBy = null,
-        public ?string $valideAt = null,
+        public ?string $parc = null,
+        public ?\DateTimeImmutable $valideAt = null,
         public ?string $validePartenaireBy = null,
         public ?string $clotureAt = null,
-        public ?string $parc = null,
         public ?string $statut = null,
         public ?string $derniereAction = null,
         public ?string $derniereActionAt = null,

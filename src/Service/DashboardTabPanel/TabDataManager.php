@@ -3,14 +3,21 @@
 namespace App\Service\DashboardTabPanel;
 
 use App\Dto\CountPartner;
+use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
+use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
 use App\Service\ListFilters\SearchInterconnexion;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class TabDataManager
@@ -24,28 +31,9 @@ class TabDataManager
         private readonly TerritoryRepository $territoryRepository,
         private readonly UserRepository $userRepository,
         private readonly PartnerRepository $partnerRepository,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly TabCountKpiBuilder $tabCountKpiBuilder,
     ) {
-    }
-
-    /**
-     * @return TabDossier[]
-     */
-    public function getDossierNonAffectation(?TabQueryParameters $tabQueryParameters = null): array
-    {
-        return [
-            new TabDossier(
-                profilDeclarant: 'Tiers déclarant',
-                nomDeclarant: 'MARTINEZ',
-                prenomDeclarant: 'Claude',
-                reference: '#2022-150',
-                adresse: '12 rue Saint-Ferréol, 13001 Marseille',
-                depotAt: '24/04/2025',
-                valideAt: '24/04/2025',
-                validePartenaireBy: 'Ville de Vandoeuvre',
-                parc: 'PRIVÉ',
-                lien: '#'
-            ),
-        ];
     }
 
     /**
@@ -124,12 +112,15 @@ class TabDataManager
 
     /**
      * @return array<string, bool|\DateTimeImmutable|null>
+     *
+     * @throws \DateMalformedStringException
      */
     public function getInterconnexions(?TabQueryParameters $tabQueryParameters = null): array
     {
         $searchInterconnexion = new SearchInterconnexion();
         $searchInterconnexion->setOrderType('j.createdAt-DESC');
         $territory = null;
+        $lastErrorSynchro = [];
         if ($tabQueryParameters && $tabQueryParameters->territoireId) {
             $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
         }
@@ -169,105 +160,64 @@ class TabDataManager
     }
 
     /**
-     * @return TabDossier[]
+     * @throws NonUniqueResultException
+     * @throws NoResultException
      */
-    public function getDossiersFormPro(?TabQueryParameters $tabQueryParameters = null): array
-    {
-        return [
-            new TabDossier(
-                nomDeclarant: 'MARTINEZ',
-                prenomDeclarant: 'Claude',
-                reference: '#2022-150',
-                adresse: '12 rue Saint-Ferréol, 13001 Marseille',
-                depotAt: '24/04/2025',
-                depotBy: 'MIREILLE DUMAS',
-                depotPartenaireBy: 'Habitat 13',
-                parc: 'PRIVÉ',
-                lien: '#'
-            ),
-            new TabDossier(
-                nomDeclarant: 'DUPUIS',
-                prenomDeclarant: 'Marine',
-                reference: '#2022-151',
-                adresse: '85 boulevard Longchamp, 13004 Marseille',
-                depotAt: '23/04/2025',
-                depotBy: 'MIREILLE DUMAS',
-                depotPartenaireBy: 'Habitat 13',
-                parc: 'PRIVÉ',
-                lien: '#'
-            ),
-            new TabDossier(
-                nomDeclarant: 'BENOIT',
-                prenomDeclarant: 'Julien',
-                reference: '#2022-152',
-                adresse: '5 avenue de la Capelette, 13010 Marseille',
-                depotAt: '22/04/2025',
-                depotBy: 'MIREILLE DUMAS',
-                depotPartenaireBy: 'Habitat 13',
-                parc: 'PUBLIC',
-                lien: '#'
-            ),
-            new TabDossier(
-                nomDeclarant: 'RICCI',
-                prenomDeclarant: 'Paolo',
-                reference: '#2022-153',
-                adresse: '17 rue Paradis, 13006 Marseille',
-                depotAt: '21/04/2025',
-                depotBy: 'MIREILLE DUMAS',
-                depotPartenaireBy: 'Habitat 13',
-                parc: 'PRIVÉ',
-                lien: '#'
-            ),
-        ];
+    public function getNouveauxDossiersWithCount(
+        ?SignalementStatus $signalementStatus = null,
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): TabDossierResult {
+        $dossiers = $this->signalementRepository->findNewDossiersFrom(
+            signalementStatus: $signalementStatus,
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countNewDossiersFrom(
+            signalementStatus: $signalementStatus,
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
     }
 
     /**
-     * @return TabDossier[]
+     * @throws NonUniqueResultException
+     * @throws NoResultException
      */
-    public function getDossiersFormUsager(?TabQueryParameters $tabQueryParameters = null): array
+    public function getDossierNonAffectationWithCount(
+        SignalementStatus $signalementStatus,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): TabDossierResult {
+        $tabQueryParameters->partenairesId = ['AUCUN'];
+
+        $dossiers = $this->signalementRepository->findNewDossiersFrom(
+            signalementStatus: $signalementStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countNewDossiersFrom(
+            signalementStatus: $signalementStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
+    }
+
+    /**
+     * @param array<int, mixed> $territories
+     *
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countDataKpi(array $territories): TabCountKpi
     {
-        return [
-            new TabDossier(
-                profilDeclarant: 'PROPRIÉTAIRE OCCUPANT',
-                nomDeclarant: 'MARTINEZ',
-                prenomDeclarant: 'Claude',
-                reference: '#2022-150',
-                adresse: '12 rue Saint-Ferréol, 13001 Marseille',
-                depotAt: '24/04/2025',
-                parc: 'PRIVÉ',
-                lien: '#'
-            ),
-            new TabDossier(
-                profilDeclarant: 'LOCATAIRE',
-                nomDeclarant: 'DUPUIS',
-                prenomDeclarant: 'Marine',
-                reference: '#2022-151',
-                adresse: '85 boulevard Longchamp, 13004 Marseille',
-                depotAt: '23/04/2025',
-                parc: 'PRIVÉ',
-                lien: '#'
-            ),
-            new TabDossier(
-                profilDeclarant: 'TIERS PARTICULIER',
-                nomDeclarant: 'BENOIT',
-                prenomDeclarant: 'Julien',
-                reference: '#2022-152',
-                adresse: '5 avenue de la Capelette, 13010 Marseille',
-                depotAt: '22/04/2025',
-                parc: 'PUBLIC',
-                lien: '#'
-            ),
-            new TabDossier(
-                profilDeclarant: 'LOCATAIRE',
-                nomDeclarant: 'RICCI',
-                prenomDeclarant: 'Paolo',
-                reference: '#2022-153',
-                adresse: '17 rue Paradis, 13006 Marseille',
-                depotAt: '21/04/2025',
-                parc: 'PRIVÉ',
-                lien: '#'
-            ),
-        ];
+        return $this->tabCountKpiBuilder
+            ->setTerritories($territories)
+            ->withTabCountKpi()
+            ->build();
     }
 
     /**

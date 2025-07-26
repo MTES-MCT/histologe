@@ -9,6 +9,7 @@ use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Commune;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
@@ -19,6 +20,9 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\View\ViewLatestIntervention;
+use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
+use App\Service\DashboardTabPanel\TabDossier;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
@@ -38,6 +42,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @method Signalement|null find($id, $lockMode = null, $lockVersion = null)
@@ -52,7 +57,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function __construct(
         ManagerRegistry $registry,
-        private readonly SearchFilter $searchFilter,
+        private readonly SearchFilter $searchFilter, private readonly Security $security,
     ) {
         parent::__construct($registry, Signalement::class);
     }
@@ -253,7 +258,6 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, t.zip, t.name, t.id')
             ->leftJoin('s.territory', 't')
-
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
 
@@ -274,9 +278,8 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year')
-
-        ->where('s.statut NOT IN (:statutList)')
-        ->setParameter('statutList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
+            ->where('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -310,7 +313,6 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel')
             ->leftJoin('s.situations', 'sit')
-
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
 
@@ -341,15 +343,15 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
 
         $qb->select('SUM(CASE WHEN c.type = :batiment THEN 1 ELSE 0 END) AS critere_batiment_count')
-           ->addSelect('SUM(CASE WHEN c.type = :logement THEN 1 ELSE 0 END) AS critere_logement_count')
-           ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :batimentString THEN 1 ELSE 0 END) AS desordrecritere_batiment_count')
-           ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :logementString THEN 1 ELSE 0 END) AS desordrecritere_logement_count')
-           ->leftJoin('s.criteres', 'c')
-           ->leftJoin('s.desordreCriteres', 'dc')
-           ->setParameter('batiment', 1)
-           ->setParameter('logement', 2)
-           ->setParameter('batimentString', 'BATIMENT')
-           ->setParameter('logementString', 'LOGEMENT');
+            ->addSelect('SUM(CASE WHEN c.type = :logement THEN 1 ELSE 0 END) AS critere_logement_count')
+            ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :batimentString THEN 1 ELSE 0 END) AS desordrecritere_batiment_count')
+            ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :logementString THEN 1 ELSE 0 END) AS desordrecritere_logement_count')
+            ->leftJoin('s.criteres', 'c')
+            ->leftJoin('s.desordreCriteres', 'dc')
+            ->setParameter('batiment', 1)
+            ->setParameter('logement', 2)
+            ->setParameter('batimentString', 'BATIMENT')
+            ->setParameter('logementString', 'LOGEMENT');
 
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
@@ -407,7 +409,6 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, s.motifCloture')
-
             ->where('s.motifCloture IS NOT NULL')
             ->andWhere('s.motifCloture != \'0\'')
             ->andWhere('s.closedAt IS NOT NULL')
@@ -431,34 +432,6 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()
             ->getResult();
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     */
-    public function findOneOpenedByMailOccupant(string $email): ?Signalement
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.mailOccupant = :email')
-            ->setParameter('email', $email)
-            ->andWhere('s.statut NOT IN (:statusList)')
-            ->setParameter('statusList', [SignalementStatus::ARCHIVED, SignalementStatus::CLOSED, SignalementStatus::REFUSED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     */
-    public function findOneOpenedByMailDeclarant(string $email): ?Signalement
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.mailDeclarant = :email')
-            ->setParameter('email', $email)
-            ->andWhere('s.statut NOT IN (:statusList)')
-            ->setParameter('statusList', [SignalementStatus::ARCHIVED, SignalementStatus::CLOSED, SignalementStatus::REFUSED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
-            ->getQuery()
-            ->getOneOrNullResult();
     }
 
     /**
@@ -555,7 +528,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         if (!empty($options['bailleurSocial'])) {
             $qb->andWhere('s.bailleur = :bailleur')
-            ->setParameter('bailleur', $options['bailleurSocial']);
+                ->setParameter('bailleur', $options['bailleurSocial']);
         }
         $qb->setParameter('statusList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
@@ -794,7 +767,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     private function getAverageDayResult(
-        string $field, ?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false, bool $removeDraft = true, ): ?float
+        string $field, ?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false, bool $removeDraft = true): ?float
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(datediff(s.'.$field.', s.createdAt))');
@@ -970,7 +943,6 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, s.motifCloture')
-
             ->where('s.motifCloture IS NOT NULL')
             ->andWhere('s.motifCloture != \'0\'')
             ->andWhere('s.closedAt IS NOT NULL');
@@ -1082,14 +1054,14 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($filters->getEpcis()) {
             $subQuery = $qb->getEntityManager()->createQueryBuilder()
-            ->select('DISTINCT s2.id')
-            ->from(Signalement::class, 's2')
-            ->innerJoin(
-                Commune::class,
-                'c2',
-                'WITH',
-                's2.cpOccupant = c2.codePostal AND s2.inseeOccupant = c2.codeInsee AND c2.epci IN (:epcis)'
-            );
+                ->select('DISTINCT s2.id')
+                ->from(Signalement::class, 's2')
+                ->innerJoin(
+                    Commune::class,
+                    'c2',
+                    'WITH',
+                    's2.cpOccupant = c2.codePostal AND s2.inseeOccupant = c2.codeInsee AND c2.epci IN (:epcis)'
+                );
             $qb->andWhere('s.id IN ('.$subQuery->getDQL().')')->setParameter('epcis', $filters->getEpcis());
         }
 
@@ -1377,8 +1349,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->where("f.synchroData IS NULL OR (JSON_CONTAINS_PATH(f.synchroData, 'one', '$.".IdossService::TYPE_SERVICE."') = 0)")
             ->andWhere("JSON_CONTAINS_PATH(s.synchroData, 'one', '$.".IdossService::TYPE_SERVICE."') = 1")
             ->andWhere('a.partner = :partner')
-            ->setParameter('partner', $partner)
-        ;
+            ->setParameter('partner', $partner);
 
         return $qb->getQuery()->getResult();
     }
@@ -1466,6 +1437,26 @@ class SignalementRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->select('s.id')
             ->where('s.banIdOccupant IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return array<int, Signalement>
+     */
+    public function findSynchroIdoss(string $status): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.id', 's.uuid', 's.reference', 'j.action', 'j.response', 'j.createdAt', 'j.codeStatus', 'j.partnerId')
+            ->innerJoin(JobEvent::class, 'j', 'WITH', 's.id = j.signalementId')
+            ->where('j.signalementId = s.id')
+            ->andWhere('j.service = :service')
+            ->andWhere('j.status = :status')
+            ->setParameter('service', IdossService::TYPE_SERVICE)
+            ->setParameter('status', $status)
+            ->addOrderBy('j.createdAt', 'DESC')
+            ->indexBy('s', 's.id')
+            ->setMaxResults(100)
             ->getQuery()
             ->getResult();
     }
@@ -1689,14 +1680,195 @@ class SignalementRepository extends ServiceEntityRepository
 
         if (null !== $signalement->getId()) {
             $qb->andWhere('s.id != :id')
-            ->setParameter('id', $signalement->getId());
+                ->setParameter('id', $signalement->getId());
         }
 
         if (null !== $createdBy) {
             $qb->andWhere('s.createdBy = :user')
-            ->setParameter('user', $createdBy);
+                ->setParameter('user', $createdBy);
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    private function createSignalementQueryBuilder(
+        User $user,
+        ?SignalementStatus $signalementStatus = null,
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): QueryBuilder {
+        $qb = $this->createQueryBuilder('s');
+
+        if (null !== $signalementStatus) {
+            $qb
+                ->andWhere('s.statut = :statut')
+                ->setParameter('statut', $signalementStatus);
+        }
+
+        if ($tabQueryParameters?->territoireId) {
+            $qb
+                ->andWhere('s.territory = :territoireId')
+                ->setParameter('territoireId', $tabQueryParameters->territoireId);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        if ($tabQueryParameters->createdFrom) {
+            $qb->andWhere(
+                TabDossier::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom
+                    ? 's.createdBy IS NULL'
+                    : 's.createdBy IS NOT NULL'
+            );
+        }
+
+        if (!empty($tabQueryParameters->partenairesId)) {
+            if (\in_array('AUCUN', $tabQueryParameters->partenairesId)) {
+                $qb->leftJoin('s.affectations', 'a')->andWhere('a.partner IS NULL');
+            } else {
+                $qb
+                    ->leftJoin('s.affectations', 'a')
+                    ->andWhere('a.partner IN (:partenairesId)')
+                    ->setParameter('partenairesId', $tabQueryParameters->partenairesId);
+            }
+        }
+
+        if ($affectationStatus) {
+            $qb->andWhere('a.statut = :affectationStatus');
+            $qb->setParameter('affectationStatus', $affectationStatus);
+        }
+
+        return $qb;
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function findNewDossiersFrom(
+        ?SignalementStatus $signalementStatus = null,
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): array {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: $signalementStatus,
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        if (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+            $qb
+                ->leftJoin('s.createdBy', 'u')
+                ->leftJoin('u.userPartners', 'up')
+                ->leftJoin('up.partner', 'p');
+        }
+
+        $qb->select(
+            \sprintf(
+                'NEW %s(
+                    s.uuid,
+                    s.profileDeclarant,
+                    s.nomOccupant,
+                    s.prenomOccupant,
+                    s.reference,
+                    CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),
+                    s.createdAt,'.
+                    (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
+                        ? 'CONCAT(UPPER(u.nom), \' \', u.prenom), p.nom,'
+                        : '\'\' , \'\' ,'
+                    ).
+                    'CASE
+                        WHEN s.isLogementSocial = true THEN \'PUBLIC\'
+                        ELSE \'PRIVÉ\'
+                    END,
+                    s.validatedAt
+                )',
+                TabDossier::class
+            )
+        );
+
+        if (null !== $tabQueryParameters
+            && in_array($tabQueryParameters->sortBy, ['createdAt', 'nomOccupant'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $qb->orderBy('s.'.$tabQueryParameters->sortBy, $tabQueryParameters->orderBy);
+        } else {
+            $qb->orderBy('s.createdAt', 'DESC');
+        }
+
+        $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countNewDossiersFrom(
+        ?SignalementStatus $signalementStatus = null,
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): int {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: $signalementStatus,
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select('COUNT(s.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param array<int, mixed> $territories
+     *
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countNouveauxDossiersKpi(array $territories = [], ?User $user = null): CountNouveauxDossiers
+    {
+        $select = sprintf(
+            'NEW %s(
+            %s, -- countFormulaireUsager
+            %s, -- countFormulairePro
+            %s, -- countSansAffectation
+            %s  -- countNouveauxDossiers
+        )',
+            CountNouveauxDossiers::class,
+            $user ? 0 : 'SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NULL THEN 1 ELSE 0 END)',
+            $user ? 0 : 'SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NOT NULL THEN 1 ELSE 0 END)',
+            $user ? 0 : 'SUM(CASE WHEN s.statut = :statut_active AND a.id IS NULL THEN 1 ELSE 0 END)',
+            $user ? 'SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_wait THEN 1 ELSE 0 END)' : 0
+        );
+
+        $qb = $this
+            ->createQueryBuilder('s')
+            ->select($select)
+            ->leftJoin('s.affectations', 'a');
+
+        if (null === $user) {
+            $qb->setParameter('statut_active', SignalementStatus::ACTIVE);
+            $qb->setParameter('statut_validation', SignalementStatus::NEED_VALIDATION);
+        }
+
+        if (!empty($territories)) {
+            $qb->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $territories);
+        }
+
+        if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
+            $qb->setParameter('partners', $user->getPartners());
+            $qb->setParameter('affectation_wait', AffectationStatus::WAIT);
+        }
+
+        return $qb->getQuery()->getSingleResult();
     }
 }

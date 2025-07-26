@@ -6,12 +6,17 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\DashboardTabPanel\TabDossier;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class SignalementRepositoryTest extends KernelTestCase
 {
@@ -268,5 +273,66 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress($new);
         $this->assertCount(2, $signalementsOnSameAddress);
+    }
+
+    public function testFindNewDossiersFromFormulaireUsager(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+
+        $tabQueryParameter = new TabQueryParameters(
+            createdFrom: TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+
+        $dossiers = $signalementRepository->findNewDossiersFrom(
+            signalementStatus: SignalementStatus::NEED_VALIDATION,
+            tabQueryParameters: $tabQueryParameter,
+        );
+
+        foreach ($dossiers as $dossier) {
+            $this->assertNotNull($dossier->uuid);
+            $this->assertNotNull($dossier->profilDeclarant);
+            $this->assertNotNull($dossier->nomDeclarant);
+            $this->assertNotNull($dossier->prenomDeclarant);
+            $this->assertNotNull($dossier->reference);
+            $this->assertNotNull($dossier->adresse);
+            $this->assertNotNull($dossier->depotAt);
+            $this->assertTrue(in_array($dossier->parc, ['PUBLIC', 'PRIVÉ']));
+        }
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function testCountNewDossiersFromFormulaireUsager(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+
+        $tabQueryParameter = new TabQueryParameters(
+            createdFrom: TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+
+        $countDossiers = $signalementRepository->countNewDossiersFrom(
+            signalementStatus: SignalementStatus::NEED_VALIDATION,
+            tabQueryParameters: $tabQueryParameter
+        );
+
+        $this->assertTrue(11 === $countDossiers);
     }
 }
