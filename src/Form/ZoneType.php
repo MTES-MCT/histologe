@@ -4,10 +4,9 @@ namespace App\Form;
 
 use App\Entity\Enum\ZoneType as EnumZoneType;
 use App\Entity\Partner;
-use App\Entity\Territory;
 use App\Form\Type\SearchCheckboxType;
+use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Asset\Package;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
@@ -44,19 +43,7 @@ class ZoneType extends AbstractType
                 'empty_data' => '',
             ]);
         if ($this->security->isGranted('ROLE_ADMIN') && !$zone->getId()) {
-            $builder
-                ->add('territory', null, [
-                    'label' => 'Territoire',
-                    'placeholder' => 'Sélectionner une option',
-                    'required' => false,
-                    'query_builder' => function (TerritoryRepository $tr) {
-                        return $tr->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC');
-                    },
-                    'choice_label' => function (Territory $territory) {
-                        return $territory->getZip().' - '.$territory->getName();
-                    },
-                    'empty_data' => '',
-                ]);
+            $builder->add('territory', TerritoryChoiceType::class);
         } else {
             $territory = $zone->getTerritory();
             $builder->add('partners', SearchCheckboxType::class, [

@@ -2,6 +2,7 @@
 
 namespace App\Service\ListFilters;
 
+use App\Entity\Territory;
 use App\Service\Behaviour\SearchQueryTrait;
 
 class SearchArchivedPartner
@@ -9,7 +10,7 @@ class SearchArchivedPartner
     use SearchQueryTrait;
 
     private ?string $queryArchivedPartner = null;
-    private ?string $territory = null;
+    private ?Territory $territory = null;
     private ?string $orderType = null;
 
     public function getQueryArchivedPartner(): ?string
@@ -22,12 +23,12 @@ class SearchArchivedPartner
         $this->queryArchivedPartner = $queryArchivedPartner;
     }
 
-    public function getTerritory(): ?string
+    public function getTerritory(): ?Territory
     {
         return $this->territory;
     }
 
-    public function setTerritory(?string $territory): void
+    public function setTerritory(?Territory $territory): void
     {
         $this->territory = $territory;
     }

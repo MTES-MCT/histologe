@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Repository\TerritoryRepository;
+use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchArchivedPartner;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -23,7 +23,6 @@ class SearchArchivedPartnerType extends AbstractType
 
     public function __construct(
         private readonly Security $security,
-        private readonly TerritoryRepository $territoryRepository,
     ) {
         $this->roleChoices = User::ROLES;
         unset($this->roleChoices['Usager']);
@@ -45,19 +44,7 @@ class SearchArchivedPartnerType extends AbstractType
             'attr' => ['placeholder' => 'Taper le nom du partenaire'],
         ]);
         if ($this->isAdmin) {
-            $territories = $this->territoryRepository->findAllList();
-            $choicesTerritories = [
-                'Aucun' => 'none',
-            ];
-            foreach ($territories as $territory) {
-                $choicesTerritories[$territory->getZip().' - '.$territory->getName()] = $territory->getId();
-            }
-            $builder->add('territory', ChoiceType::class, [
-                'choices' => $choicesTerritories,
-                'required' => false,
-                'placeholder' => 'Tous les territoires',
-                'label' => 'Territoire',
-            ]);
+            $builder->add('territory', TerritoryChoiceType::class);
         }
 
         $builder->add('orderType', ChoiceType::class, [

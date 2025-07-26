@@ -3,8 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Tag;
-use App\Entity\Territory;
-use App\Repository\TerritoryRepository;
+use App\Form\Type\TerritoryChoiceType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,19 +33,7 @@ class AddTagType extends AbstractType
                 'empty_data' => '',
             ]);
         if ($this->isAdmin) {
-            $builder
-                ->add('territory', null, [
-                    'label' => 'Territoire',
-                    'placeholder' => 'Sélectionner une option',
-                    'required' => false,
-                    'query_builder' => function (TerritoryRepository $tr) {
-                        return $tr->createQueryBuilder('t')->andWhere('t.isActive = 1')->orderBy('t.id', 'ASC');
-                    },
-                    'choice_label' => function (Territory $territory) {
-                        return $territory->getZip().' - '.$territory->getName();
-                    },
-                    'empty_data' => '',
-                ]);
+            $builder->add('territory', TerritoryChoiceType::class);
         }
     }
 
