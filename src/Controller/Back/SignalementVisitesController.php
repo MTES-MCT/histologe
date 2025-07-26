@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Intervention;
+use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
@@ -13,6 +14,7 @@ use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Manager\InterventionManager;
+use App\Manager\SignalementManager;
 use App\Repository\InterventionRepository;
 use App\Service\Files\FilenameGenerator;
 use App\Service\TimezoneProvider;
@@ -72,6 +74,7 @@ class SignalementVisitesController extends AbstractController
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
+        SignalementManager $signalementManager,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
@@ -116,6 +119,9 @@ class SignalementVisitesController extends AbstractController
             $todayDate = new \DateTimeImmutable();
             if ($intervention->getScheduledAt()->format('Y-m-d') <= $todayDate->format('Y-m-d')) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
+                if ($visiteRequest->isVisiteDone()) {
+                    $this->setBailleurPrevenu($signalement, $signalementManager);
+                }
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
                 /** @var User $user */
@@ -183,6 +189,7 @@ class SignalementVisitesController extends AbstractController
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
+        SignalementManager $signalementManager,
         InterventionRepository $interventionRepository,
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
@@ -235,6 +242,9 @@ class SignalementVisitesController extends AbstractController
         } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
             if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
+                if ($visiteRequest->isVisiteDone()) {
+                    $this->setBailleurPrevenu($signalement, $signalementManager);
+                }
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
                 /** @var User $user */
@@ -256,6 +266,7 @@ class SignalementVisitesController extends AbstractController
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
+        SignalementManager $signalementManager,
         InterventionRepository $interventionRepository,
         UploadHandlerService $uploadHandler,
         FilenameGenerator $filenameGenerator,
@@ -293,6 +304,9 @@ class SignalementVisitesController extends AbstractController
 
         if ($interventionManager->confirmVisiteFromRequest($visiteRequest)) {
             $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
+            if ($visiteRequest->isVisiteDone()) {
+                $this->setBailleurPrevenu($signalement, $signalementManager);
+            }
         } else {
             $this->addFlash('error', 'Erreur lors de la conclusion de la visite.');
         }
@@ -389,5 +403,17 @@ class SignalementVisitesController extends AbstractController
         }
 
         return $errorMessage;
+    }
+
+    private function setBailleurPrevenu(Signalement $signalement, SignalementManager $signalementManager): void
+    {
+        $informationProcedure = new InformationProcedure();
+        if (!empty($signalement->getInformationProcedure())) {
+            $informationProcedure = clone $signalement->getInformationProcedure();
+        }
+        $informationProcedure->setInfoProcedureBailleurPrevenu('oui');
+        $signalement->setInformationProcedure($informationProcedure);
+        $signalement->setIsProprioAverti(true);
+        $signalementManager->save($signalement);
     }
 }
