@@ -5,11 +5,11 @@ permissions:
   pull-requests: write
 on:
   push:
-    branches: ['*']
-  pull_request:
     branches:
       - main
       - develop
+  pull_request:
+    branches: ['*']
   schedule:
     - cron: '0 7 * * *'
 
