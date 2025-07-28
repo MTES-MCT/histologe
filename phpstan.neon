@@ -8,6 +8,7 @@ parameters:
 		- tools
 		- tests/Functional/Command/NotifyVisitsCommandTest.php
 		- src/DataFixtures/Loader/LoadInterventionData.php
+		- src/DataFixtures/Loader/LoadAffectationData.php
 	treatPhpDocTypesAsCertain: false
 	checkGenericClassInNonGenericObjectType: false
 	bootstrapFiles:
