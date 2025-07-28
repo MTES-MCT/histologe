@@ -65,7 +65,7 @@ class UserType extends AbstractType
             'mapped' => false,
             'data' => $territory,
             'attr' => [
-                'class' => 'fr-select',// Curieusement nécessaire dans la page de réactivation de compte
+                'class' => 'fr-select', // Curieusement nécessaire dans la page de réactivation de compte
             ],
         ]);
         $formModifier = function (FormInterface $form, ?Territory $territory = null) use ($user) {
