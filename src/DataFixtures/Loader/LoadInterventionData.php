@@ -32,6 +32,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
+        echo 'HEURE SYSTEME: '.(new \DateTimeImmutable())->format('Y-m-d H:i:s')."\n";
         $interventionRows = Yaml::parseFile(__DIR__.'/../Files/Intervention.yml');
         foreach ($interventionRows['interventions'] as $row) {
             $this->loadInterventions($manager, $row);
@@ -48,10 +49,20 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
     private function loadInterventions(ObjectManager $manager, array $row): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+
+        $scheduledAt = $this->getScheduledAt($row);
+
+        echo sprintf(
+            "Intervention pour signalement %s planifiée le %s (%s)\n",
+            $row['signalement'],
+            $scheduledAt->format('Y-m-d H:i'),
+            $row['scheduled_at'] ?? 'par défaut +1 month'
+        );
+
         $intervention = (new Intervention())
             ->setSignalement($signalement)
             ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
-            ->setScheduledAt($this->getScheduledAt($row))
+            ->setScheduledAt($scheduledAt)
             ->setType(isset($row['type']) ? InterventionType::from($row['type']) : InterventionType::VISITE)
             ->setDetails($row['details'] ?? null)
             ->setOccupantPresent($row['occupant_present'] ?? null)

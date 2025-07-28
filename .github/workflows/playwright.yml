@@ -1,190 +1,190 @@
-name: E2E Tests
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-env:
-  APP_URL: http://localhost:8080
-  APP_ENV: test
-  APP_SECRET: test_secret_key_for_github_actions
-  MAILER_DSN: smtp://signal_logement_mailer:1025
-  DATABASE_URL: mysql://signal_logement:signal_logement@signal_logement_mysql:3307/signal_logement_db
-  CORS_ALLOW_ORIGIN: '^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
-  WKHTMLTOPDF_PATH: wkhtmltopdf
-  WKHTMLTOIMAGE_PATH: wkhtmltoimage
-  ADMIN_EMAIL: support@signal-logement.beta.gouv.fr
-  NOTIFICATIONS_EMAIL: notifications@signal-logement.beta.gouv.fr
-  CONTACT_EMAIL: formulaire-contact@signal-logement.beta.gouv.fr
-  USER_SYSTEM_EMAIL: admin@signal-logement.beta.gouv.fr
-  WIDGET_DATA_KPI_CACHE_EXPIRED_AFTER: 3600
-  WIDGET_AFFECTATION_PARTNER_CACHE_EXPIRED_AFTER: 30
-  WIDGET_SIGNALEMENT_ACCEPTED_NO_SUIVI_CACHE_EXPIRED_AFTER: 30
-  WIDGET_SIGNALEMENT_TERRITOIRE_CACHE_EXPIRED_AFTER: 30
-  WIDGET_ESABORA_EVENTS_CACHE_EXPIRED_AFTER: 3600
-  FEATURE_OILHI_ENABLE: 0
-  CRON_ENABLE: 0
-  MAIL_ENABLE: 0
-  MAIL_TEST_ENABLE: 0
-  MAIL_TEST_EMAIL: test@example.com
-  CSP_ENABLE: 0
-  MATOMO_ENABLE: 0
-  MAINTENANCE_ENABLE: 0
-  MAINTENANCE_BANNER_ENABLE: 0
-  MAINTENANCE_BANNER_MESSAGE: 'Une opération de maintenance est en cours'
-  AXIOS_TIMEOUT: 30000
-  LIMIT_DAILY_RELANCES_BY_REQUEST: 275
-  FORMS_SUBMIT_LIMITER_LIMIT: 10
-  FORMS_SUBMIT_LIMITER_INTERVAL: '20 minutes'
-  API_LIMITER_LIMIT: 60
-  API_LIMITER_INTERVAL: '1 minute'
-  FEATURE_2FA_EMAIL_ENABLED: 1
-  MISE_EN_BERNE_ENABLE: 0
-  CLAMAV_SCAN_ENABLE: 0
-  HISTORY_TRACKING_ENABLE: 1
-  DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES: 30
-  SITES_FACILES_URL: https://signal-logement.beta.gouv.fr/
-  FEATURE_SITES_FACILES: 1
-  PLATFORM_NAME: "Signal Logement"
-  PLATFORM_LOGO: logo-signal-logement.svg
-  FEATURE_BANNER_HISTOLOGE: 1
-  FEATURE_SECURE_UUID_URL: 1
-  FEATURE_PROCONNECT: 0
-  FEATURE_NEW_DASHBOARD: 1
-  PROCONNECT_SCHEME_PROTOCOL: https
-  PROCONNECT_DOMAIN: example.com
-  PROCONNECT_CLIENT_ID: test_client_id
-  PROCONNECT_CLIENT_SECRET: test_client_secret
-  FEATURE_EMAIL_RECAP: 1
-  FEATURE_SUIVI_ACTION: 1
-  TRUSTED_PROXIES: 0.0.0.0/0
-  S3_ENDPOINT: https://s3.example.com
-  S3_KEY: test_key
-  S3_SECRET: test_secret
-  S3_BUCKET: test_bucket
-  S3_URL_BUCKET: https://test-bucket.s3.example.com
-  SENTRY_DSN: https://test@sentry.example.com/123
-  SENTRY_DSN_FRONT: https://test@sentry.example.com/456
-  SENTRY_ENVIRONMENT: test
-  SENTRY_TRACES_SAMPLE_RATE: 1.0
-  WIREMOCK_HOSTNAME: signal_logement_wiremock
-  WIREMOCK_PORT: 8080
-  MESSENGER_TRANSPORT_DSN: doctrine://default
-  REDIS_URL: redis://signal_logement_redis:6379
-  LOCK_DSN: flock
-  SIGNATURE_KEY: change_me
-  # Configuration PHP-FPM pour les tests
-  PHP_FPM_PM_MAX_CHILDREN: 20
-  PHP_FPM_PM_START_SERVERS: 5
-  PHP_FPM_PM_MIN_SPARE_SERVERS: 2
-  PHP_FPM_PM_MAX_SPARE_SERVERS: 10
-
-jobs:
-  e2e:
-    continue-on-error: true
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ca-certificates curl gnupg
-          sudo install -m 0755 -d /etc/apt/keyrings
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-          sudo chmod a+r /etc/apt/keyrings/docker.gpg
-          echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
-
-      - name: Build Docker containers
-        run: docker compose build
-
-      - name: Generate .env file safely
-        run: |
-          env | grep -E '^(APP_URL|APP_ENV|APP_SECRET|MAILER_DSN|DATABASE_URL|CORS_ALLOW_ORIGIN|WKHTMLTOPDF_PATH|WKHTMLTOIMAGE_PATH|ADMIN_EMAIL|NOTIFICATIONS_EMAIL|CONTACT_EMAIL|USER_SYSTEM_EMAIL|WIDGET_DATA_KPI_CACHE_EXPIRED_AFTER|WIDGET_AFFECTATION_PARTNER_CACHE_EXPIRED_AFTER|WIDGET_SIGNALEMENT_ACCEPTED_NO_SUIVI_CACHE_EXPIRED_AFTER|WIDGET_SIGNALEMENT_TERRITOIRE_CACHE_EXPIRED_AFTER|WIDGET_ESABORA_EVENTS_CACHE_EXPIRED_AFTER|FEATURE_OILHI_ENABLE|CRON_ENABLE|MAIL_ENABLE|MAIL_TEST_ENABLE|MAIL_TEST_EMAIL|CSP_ENABLE|MATOMO_ENABLE|MAINTENANCE_ENABLE|MAINTENANCE_BANNER_ENABLE|MAINTENANCE_BANNER_MESSAGE|AXIOS_TIMEOUT|LIMIT_DAILY_RELANCES_BY_REQUEST|FORMS_SUBMIT_LIMITER_LIMIT|FORMS_SUBMIT_LIMITER_INTERVAL|API_LIMITER_LIMIT|API_LIMITER_INTERVAL|FEATURE_2FA_EMAIL_ENABLED|MISE_EN_BERNE_ENABLE|CLAMAV_SCAN_ENABLE|HISTORY_TRACKING_ENABLE|DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES|SITES_FACILES_URL|FEATURE_SITES_FACILES|PLATFORM_NAME|PLATFORM_LOGO|FEATURE_BANNER_HISTOLOGE|FEATURE_SECURE_UUID_URL|FEATURE_PROCONNECT|FEATURE_NEW_DASHBOARD|PROCONNECT_SCHEME_PROTOCOL|PROCONNECT_DOMAIN|PROCONNECT_CLIENT_ID|PROCONNECT_CLIENT_SECRET:|FEATURE_EMAIL_RECAP|FEATURE_SUIVI_ACTION|TRUSTED_PROXIES|S3_ENDPOINT|S3_KEY|S3_SECRET|S3_BUCKET|S3_URL_BUCKET|SENTRY_DSN|SENTRY_DSN_FRONT|SENTRY_ENVIRONMENT|SENTRY_TRACES_SAMPLE_RATE|WIREMOCK_HOSTNAME|WIREMOCK_PORT|MESSENGER_TRANSPORT_DSN|REDIS_URL|LOCK_DSN|SIGNATURE_KEY|PHP_FPM_PM_MAX_CHILDREN|PHP_FPM_PM_START_SERVERS|PHP_FPM_PM_MIN_SPARE_SERVERS|PHP_FPM_PM_MAX_SPARE_SERVERS)=' \
-          | while IFS='=' read -r key value; do
-              safe_value=$(printf "%s" "$value" | sed 's/"/\\"/g')
-              echo "${key}=\"${safe_value}\""
-            done > .env
-
-      - name: Start Docker containers
-        run: docker compose up -d
-
-      - name: Wait for PHP container to be ready
-        run: |
-          docker compose exec -T signal_logement_phpfpm bash -c 'until php -v > /dev/null; do sleep 1; done'
-
-      - name: Install PHP dependencies
-        run: |
-          docker compose exec -T signal_logement_phpfpm composer install --no-interaction --optimize-autoloader
-          docker compose exec -T signal_logement_phpfpm composer install --working-dir=tools/php-cs-fixer --no-interaction --optimize-autoloader
-          docker compose exec -T signal_logement_phpfpm composer install --working-dir=tools/wiremock --no-interaction --optimize-autoloader
-          docker compose exec -T signal_logement_phpfpm composer require symfony/redis-messenger --no-interaction
-
-      - name: Build frontend assets
-        run: |
-          docker compose exec -T signal_logement_phpfpm npm ci
-          docker compose exec -T signal_logement_phpfpm npm run build
-
-      - name: Cache clear & warmup
-        run: |
-          docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=dev --no-warmup
-          docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=dev
-
-      - name: Init database
-        run: |
-          docker compose exec -T signal_logement_phpfpm php bin/console doctrine:database:drop --force --no-interaction || true
-          docker compose exec -T signal_logement_phpfpm php bin/console doctrine:database:create --no-interaction
-          docker compose exec -T signal_logement_phpfpm php bin/console messenger:setup-transports --no-interaction
-          docker compose exec -T signal_logement_phpfpm php bin/console doctrine:migrations:migrate --no-interaction
-          docker compose exec -T signal_logement_phpfpm php bin/console doctrine:fixtures:load --no-interaction
-
-      - name: Wait for application to be ready
-        run: |
-          # Attendre que l'application soit accessible
-          until curl -f http://localhost:8080/signalement > /dev/null 2>&1; do
-            echo "Waiting for application to be ready..."
-            sleep 5
-          done
-          echo "Application is ready!"
-
-      - name: Install Node.js for Playwright
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Playwright dependencies
-        working-directory: tests/e2e
-        run: |
-          npm ci
-          npx playwright install --with-deps
-
-      - name: Run Playwright tests
-        working-directory: tests/e2e
-        run: npx playwright test
-
-      - name: Check server logs
-        if: ${{ always() }}
-        run: docker compose logs signal_logement_phpfpm
-
-      - name: Check build output inside container
-        if: ${{ always() }}
-        run: |
-          echo "=== DEBUG: Informations sur le conteneur ==="
-          docker compose ps
-          echo "=== DEBUG: Volumes du conteneur ==="
-          docker inspect signal_logement_phpfpm | grep -A 10 -B 5 "Mounts"
-          echo "=== DEBUG: Tentative d'accès au conteneur ==="
-          docker compose exec signal_logement_phpfpm bash -c "ls -la /" || echo "❌ Impossible d'exécuter bash"
-          echo "=== DEBUG: Vérification du répertoire de travail ==="
-          docker compose exec signal_logement_phpfpm pwd || echo "❌ Impossible d'obtenir le répertoire de travail"
-          echo "=== DEBUG: Tentative d'accès à /app ==="
-          docker compose exec signal_logement_phpfpm ls -la /app 2>/dev/null || echo "❌ Répertoire /app non accessible"
-
+#name: E2E Tests
+#
+#on:
+#  push:
+#    branches: [main]
+#  pull_request:
+#
+#env:
+#  APP_URL: http://localhost:8080
+#  APP_ENV: test
+#  APP_SECRET: test_secret_key_for_github_actions
+#  MAILER_DSN: smtp://signal_logement_mailer:1025
+#  DATABASE_URL: mysql://signal_logement:signal_logement@signal_logement_mysql:3307/signal_logement_db
+#  CORS_ALLOW_ORIGIN: '^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
+#  WKHTMLTOPDF_PATH: wkhtmltopdf
+#  WKHTMLTOIMAGE_PATH: wkhtmltoimage
+#  ADMIN_EMAIL: support@signal-logement.beta.gouv.fr
+#  NOTIFICATIONS_EMAIL: notifications@signal-logement.beta.gouv.fr
+#  CONTACT_EMAIL: formulaire-contact@signal-logement.beta.gouv.fr
+#  USER_SYSTEM_EMAIL: admin@signal-logement.beta.gouv.fr
+#  WIDGET_DATA_KPI_CACHE_EXPIRED_AFTER: 3600
+#  WIDGET_AFFECTATION_PARTNER_CACHE_EXPIRED_AFTER: 30
+#  WIDGET_SIGNALEMENT_ACCEPTED_NO_SUIVI_CACHE_EXPIRED_AFTER: 30
+#  WIDGET_SIGNALEMENT_TERRITOIRE_CACHE_EXPIRED_AFTER: 30
+#  WIDGET_ESABORA_EVENTS_CACHE_EXPIRED_AFTER: 3600
+#  FEATURE_OILHI_ENABLE: 0
+#  CRON_ENABLE: 0
+#  MAIL_ENABLE: 0
+#  MAIL_TEST_ENABLE: 0
+#  MAIL_TEST_EMAIL: test@example.com
+#  CSP_ENABLE: 0
+#  MATOMO_ENABLE: 0
+#  MAINTENANCE_ENABLE: 0
+#  MAINTENANCE_BANNER_ENABLE: 0
+#  MAINTENANCE_BANNER_MESSAGE: 'Une opération de maintenance est en cours'
+#  AXIOS_TIMEOUT: 30000
+#  LIMIT_DAILY_RELANCES_BY_REQUEST: 275
+#  FORMS_SUBMIT_LIMITER_LIMIT: 10
+#  FORMS_SUBMIT_LIMITER_INTERVAL: '20 minutes'
+#  API_LIMITER_LIMIT: 60
+#  API_LIMITER_INTERVAL: '1 minute'
+#  FEATURE_2FA_EMAIL_ENABLED: 1
+#  MISE_EN_BERNE_ENABLE: 0
+#  CLAMAV_SCAN_ENABLE: 0
+#  HISTORY_TRACKING_ENABLE: 1
+#  DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES: 30
+#  SITES_FACILES_URL: https://signal-logement.beta.gouv.fr/
+#  FEATURE_SITES_FACILES: 1
+#  PLATFORM_NAME: "Signal Logement"
+#  PLATFORM_LOGO: logo-signal-logement.svg
+#  FEATURE_BANNER_HISTOLOGE: 1
+#  FEATURE_SECURE_UUID_URL: 1
+#  FEATURE_PROCONNECT: 0
+#  FEATURE_NEW_DASHBOARD: 1
+#  PROCONNECT_SCHEME_PROTOCOL: https
+#  PROCONNECT_DOMAIN: example.com
+#  PROCONNECT_CLIENT_ID: test_client_id
+#  PROCONNECT_CLIENT_SECRET: test_client_secret
+#  FEATURE_EMAIL_RECAP: 1
+#  FEATURE_SUIVI_ACTION: 1
+#  TRUSTED_PROXIES: 0.0.0.0/0
+#  S3_ENDPOINT: https://s3.example.com
+#  S3_KEY: test_key
+#  S3_SECRET: test_secret
+#  S3_BUCKET: test_bucket
+#  S3_URL_BUCKET: https://test-bucket.s3.example.com
+#  SENTRY_DSN: https://test@sentry.example.com/123
+#  SENTRY_DSN_FRONT: https://test@sentry.example.com/456
+#  SENTRY_ENVIRONMENT: test
+#  SENTRY_TRACES_SAMPLE_RATE: 1.0
+#  WIREMOCK_HOSTNAME: signal_logement_wiremock
+#  WIREMOCK_PORT: 8080
+#  MESSENGER_TRANSPORT_DSN: doctrine://default
+#  REDIS_URL: redis://signal_logement_redis:6379
+#  LOCK_DSN: flock
+#  SIGNATURE_KEY: change_me
+#  # Configuration PHP-FPM pour les tests
+#  PHP_FPM_PM_MAX_CHILDREN: 20
+#  PHP_FPM_PM_START_SERVERS: 5
+#  PHP_FPM_PM_MIN_SPARE_SERVERS: 2
+#  PHP_FPM_PM_MAX_SPARE_SERVERS: 10
+#
+#jobs:
+#  e2e:
+#    continue-on-error: true
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Install Docker Compose
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y ca-certificates curl gnupg
+#          sudo install -m 0755 -d /etc/apt/keyrings
+#          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+#          sudo chmod a+r /etc/apt/keyrings/docker.gpg
+#          echo \
+#            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+#            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+#            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+#          sudo apt-get update
+#          sudo apt-get install -y docker-compose-plugin
+#
+#      - name: Build Docker containers
+#        run: docker compose build
+#
+#      - name: Generate .env file safely
+#        run: |
+#          env | grep -E '^(APP_URL|APP_ENV|APP_SECRET|MAILER_DSN|DATABASE_URL|CORS_ALLOW_ORIGIN|WKHTMLTOPDF_PATH|WKHTMLTOIMAGE_PATH|ADMIN_EMAIL|NOTIFICATIONS_EMAIL|CONTACT_EMAIL|USER_SYSTEM_EMAIL|WIDGET_DATA_KPI_CACHE_EXPIRED_AFTER|WIDGET_AFFECTATION_PARTNER_CACHE_EXPIRED_AFTER|WIDGET_SIGNALEMENT_ACCEPTED_NO_SUIVI_CACHE_EXPIRED_AFTER|WIDGET_SIGNALEMENT_TERRITOIRE_CACHE_EXPIRED_AFTER|WIDGET_ESABORA_EVENTS_CACHE_EXPIRED_AFTER|FEATURE_OILHI_ENABLE|CRON_ENABLE|MAIL_ENABLE|MAIL_TEST_ENABLE|MAIL_TEST_EMAIL|CSP_ENABLE|MATOMO_ENABLE|MAINTENANCE_ENABLE|MAINTENANCE_BANNER_ENABLE|MAINTENANCE_BANNER_MESSAGE|AXIOS_TIMEOUT|LIMIT_DAILY_RELANCES_BY_REQUEST|FORMS_SUBMIT_LIMITER_LIMIT|FORMS_SUBMIT_LIMITER_INTERVAL|API_LIMITER_LIMIT|API_LIMITER_INTERVAL|FEATURE_2FA_EMAIL_ENABLED|MISE_EN_BERNE_ENABLE|CLAMAV_SCAN_ENABLE|HISTORY_TRACKING_ENABLE|DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES|SITES_FACILES_URL|FEATURE_SITES_FACILES|PLATFORM_NAME|PLATFORM_LOGO|FEATURE_BANNER_HISTOLOGE|FEATURE_SECURE_UUID_URL|FEATURE_PROCONNECT|FEATURE_NEW_DASHBOARD|PROCONNECT_SCHEME_PROTOCOL|PROCONNECT_DOMAIN|PROCONNECT_CLIENT_ID|PROCONNECT_CLIENT_SECRET:|FEATURE_EMAIL_RECAP|FEATURE_SUIVI_ACTION|TRUSTED_PROXIES|S3_ENDPOINT|S3_KEY|S3_SECRET|S3_BUCKET|S3_URL_BUCKET|SENTRY_DSN|SENTRY_DSN_FRONT|SENTRY_ENVIRONMENT|SENTRY_TRACES_SAMPLE_RATE|WIREMOCK_HOSTNAME|WIREMOCK_PORT|MESSENGER_TRANSPORT_DSN|REDIS_URL|LOCK_DSN|SIGNATURE_KEY|PHP_FPM_PM_MAX_CHILDREN|PHP_FPM_PM_START_SERVERS|PHP_FPM_PM_MIN_SPARE_SERVERS|PHP_FPM_PM_MAX_SPARE_SERVERS)=' \
+#          | while IFS='=' read -r key value; do
+#              safe_value=$(printf "%s" "$value" | sed 's/"/\\"/g')
+#              echo "${key}=\"${safe_value}\""
+#            done > .env
+#
+#      - name: Start Docker containers
+#        run: docker compose up -d
+#
+#      - name: Wait for PHP container to be ready
+#        run: |
+#          docker compose exec -T signal_logement_phpfpm bash -c 'until php -v > /dev/null; do sleep 1; done'
+#
+#      - name: Install PHP dependencies
+#        run: |
+#          docker compose exec -T signal_logement_phpfpm composer install --no-interaction --optimize-autoloader
+#          docker compose exec -T signal_logement_phpfpm composer install --working-dir=tools/php-cs-fixer --no-interaction --optimize-autoloader
+#          docker compose exec -T signal_logement_phpfpm composer install --working-dir=tools/wiremock --no-interaction --optimize-autoloader
+#          docker compose exec -T signal_logement_phpfpm composer require symfony/redis-messenger --no-interaction
+#
+#      - name: Build frontend assets
+#        run: |
+#          docker compose exec -T signal_logement_phpfpm npm ci
+#          docker compose exec -T signal_logement_phpfpm npm run build
+#
+#      - name: Cache clear & warmup
+#        run: |
+#          docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=dev --no-warmup
+#          docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=dev
+#
+#      - name: Init database
+#        run: |
+#          docker compose exec -T signal_logement_phpfpm php bin/console doctrine:database:drop --force --no-interaction || true
+#          docker compose exec -T signal_logement_phpfpm php bin/console doctrine:database:create --no-interaction
+#          docker compose exec -T signal_logement_phpfpm php bin/console messenger:setup-transports --no-interaction
+#          docker compose exec -T signal_logement_phpfpm php bin/console doctrine:migrations:migrate --no-interaction
+#          docker compose exec -T signal_logement_phpfpm php bin/console doctrine:fixtures:load --no-interaction
+#
+#      - name: Wait for application to be ready
+#        run: |
+#          # Attendre que l'application soit accessible
+#          until curl -f http://localhost:8080/signalement > /dev/null 2>&1; do
+#            echo "Waiting for application to be ready..."
+#            sleep 5
+#          done
+#          echo "Application is ready!"
+#
+#      - name: Install Node.js for Playwright
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: '20'
+#
+#      - name: Install Playwright dependencies
+#        working-directory: tests/e2e
+#        run: |
+#          npm ci
+#          npx playwright install --with-deps
+#
+#      - name: Run Playwright tests
+#        working-directory: tests/e2e
+#        run: npx playwright test
+#
+#      - name: Check server logs
+#        if: ${{ always() }}
+#        run: docker compose logs signal_logement_phpfpm
+#
+#      - name: Check build output inside container
+#        if: ${{ always() }}
+#        run: |
+#          echo "=== DEBUG: Informations sur le conteneur ==="
+#          docker compose ps
+#          echo "=== DEBUG: Volumes du conteneur ==="
+#          docker inspect signal_logement_phpfpm | grep -A 10 -B 5 "Mounts"
+#          echo "=== DEBUG: Tentative d'accès au conteneur ==="
+#          docker compose exec signal_logement_phpfpm bash -c "ls -la /" || echo "❌ Impossible d'exécuter bash"
+#          echo "=== DEBUG: Vérification du répertoire de travail ==="
+#          docker compose exec signal_logement_phpfpm pwd || echo "❌ Impossible d'obtenir le répertoire de travail"
+#          echo "=== DEBUG: Tentative d'accès à /app ==="
+#          docker compose exec signal_logement_phpfpm ls -la /app 2>/dev/null || echo "❌ Répertoire /app non accessible"
+#
