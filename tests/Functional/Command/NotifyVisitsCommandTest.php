@@ -26,6 +26,9 @@ class NotifyVisitsCommandTest extends KernelTestCase
         /** @var Email[] $emails */
         $emails = $this->getMailerMessages();
         foreach ($emails as $email) {
+            foreach ($email->getTo() as $emailTo) {
+                echo $emailTo->getAddress().'|';
+            }
             echo $email->getSubject()."\n";
         }
 
