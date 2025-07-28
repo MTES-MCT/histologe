@@ -90,6 +90,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         if (AffectationStatus::ACCEPTED === $affectation->getStatut()) {
             foreach ($partner->getUsers() as $user) {
                 if (($user->isUserPartner() || $user->isPartnerAdmin()) && UserStatus::ARCHIVE !== $user->getStatut()) {
+                    echo 'Subscription created for: '.$user->getEmail().\PHP_EOL;
                     $subscription = new UserSignalementSubscription();
                     $subscription
                         ->setUser($user)
