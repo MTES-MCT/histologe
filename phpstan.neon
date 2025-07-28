@@ -6,6 +6,8 @@ parameters:
 	excludePaths:
 		- .php-cs-fixer.dist.php
 		- tools
+		- tests/Functional/Command/NotifyVisitsCommandTest.php
+		- src/DataFixtures/Loader/LoadInterventionData.php
 	treatPhpDocTypesAsCertain: false
 	checkGenericClassInNonGenericObjectType: false
 	bootstrapFiles:
@@ -17,3 +19,9 @@ parameters:
 		-
 			message: '#Property .+::\$id is never written, only read.#'
 			path: src/Entity/*
+		-
+			message: '#Should not use node with type "Stmt_Echo"#'
+			path: src/DataFixtures/Loader/LoadInterventionData.php
+		-
+			message: '#Should not use node with type "Stmt_Echo"#'
+			path: tests/Functional/Command/NotifyVisitsCommandTest.php
