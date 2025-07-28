@@ -224,25 +224,19 @@ class PartnerRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('p');
 
-        $isNoneTerritory = ('none' == $searchArchivedPartner->getTerritory());
-        if ($isNoneTerritory) {
-            $queryBuilder
-                ->where('p.territory IS NULL');
-        } else {
-            $territory = $searchArchivedPartner->getTerritory() ? $this->territoryRepository->find($searchArchivedPartner->getTerritory()) : null;
-            $builtOrCondition = '';
-            if (empty($territory)) {
-                $builtOrCondition .= ' OR p.territory IS NULL';
-            }
+        $territory = $searchArchivedPartner->getTerritory() ? $this->territoryRepository->find($searchArchivedPartner->getTerritory()) : null;
+        $builtOrCondition = '';
+        if (empty($territory)) {
+            $builtOrCondition .= ' OR p.territory IS NULL';
+        }
 
-            $queryBuilder
-                ->where('p.isArchive = 1'.$builtOrCondition);
+        $queryBuilder
+            ->where('p.isArchive = 1'.$builtOrCondition);
 
-            if (!empty($territory)) {
-                $queryBuilder
-                    ->andWhere('p.territory = :territory')
-                    ->setParameter('territory', $territory);
-            }
+        if (!empty($territory)) {
+            $queryBuilder
+                ->andWhere('p.territory = :territory')
+                ->setParameter('territory', $territory);
         }
 
         $filterTerms = $searchArchivedPartner->getQueryArchivedPartner();

@@ -51,14 +51,15 @@ class SearchInterconnexionType extends AbstractType
             );
         });
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            if (isset($event->getData()['territory'])) {
-                $territory = $event->getData()['territory'] ? $this->territoryRepository->find($event->getData()['territory']) : null;
+            $data = $event->getData();
+            if (isset($data['territory'])) {
+                $territory = $data['territory'] ? $this->territoryRepository->find($data['territory']) : null;
                 $this->addPartnersField(
                     $event->getForm(),
                     $territory
                 );
             }
-            $data = $event->getData();
+
             if (isset($data['page']) && (!is_numeric($data['page']))) {
                 $data['page'] = 1;
             }

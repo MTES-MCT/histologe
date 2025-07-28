@@ -2,9 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Territory;
+use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchArchivedSignalement;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -24,15 +23,7 @@ class SearchArchivedSignalementType extends AbstractType
             'label' => 'Référence de signalement',
             'attr' => ['placeholder' => 'Taper la référence'],
         ]);
-        $builder->add('territory', EntityType::class, [
-            'class' => Territory::class,
-            'choice_label' => function (Territory $territory) {
-                return $territory->getZip().' - '.$territory->getName();
-            },
-            'required' => false,
-            'placeholder' => 'Tous les territoires',
-            'label' => 'Territoire',
-        ]);
+        $builder->add('territory', TerritoryChoiceType::class);
 
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [

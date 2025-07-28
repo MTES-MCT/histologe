@@ -223,17 +223,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->leftJoin('up.partner', 'p');
         $queryBuilder->andWhere('u.anonymizedAt IS NULL');
 
-        $isNoneTerritory = ('none' === $searchArchivedUser->getTerritory());
         $isNonePartner = ('none' === $searchArchivedUser->getPartner());
-        if ($isNoneTerritory || $isNonePartner) {
-            if ($isNoneTerritory) {
-                $queryBuilder
-                    ->andWhere('p.territory IS NULL');
-            }
-            if ($isNonePartner) {
-                $queryBuilder
-                    ->andWhere('up.id IS NULL');
-            }
+        if ($isNonePartner) {
+            $queryBuilder
+                ->andWhere('up.id IS NULL');
         } else {
             $territory = $searchArchivedUser->getTerritory() ? $this->territoryRepository->find($searchArchivedUser->getTerritory()) : null;
             $partner = $searchArchivedUser->getPartner() ? $this->partnerRepository->find($searchArchivedUser->getPartner()) : null;

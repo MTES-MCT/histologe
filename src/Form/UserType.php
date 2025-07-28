@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -60,26 +61,13 @@ class UserType extends AbstractType
                 'required' => true,
             ]);
 
-        $builder
-        ->add('territory', EntityType::class, [
-            'class' => Territory::class,
-            'query_builder' => function (TerritoryRepository $tr) {
-                return $tr->createQueryBuilder('t')->where('t.isActive = 1')->orderBy('t.id', 'ASC');
-            },
+        $builder->add('territory', TerritoryChoiceType::class, [
             'mapped' => false,
-            'data' => !empty($territory) ? $territory : null,
-            'choice_label' => 'name',
-            'placeholder' => 'Aucun territoire',
+            'data' => $territory,
             'attr' => [
-                'class' => 'fr-select',
+                'class' => 'fr-select', // Curieusement nécessaire dans la page de réactivation de compte
             ],
-            'row_attr' => [
-                'class' => 'fr-input-group',
-            ],
-            'label' => 'Territoire',
-            'required' => false,
         ]);
-
         $formModifier = function (FormInterface $form, ?Territory $territory = null) use ($user) {
             $partners = null === $territory ?
             $this->partnerRepository->findAllWithoutTerritory()
