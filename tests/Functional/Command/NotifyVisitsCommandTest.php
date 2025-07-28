@@ -23,6 +23,7 @@ class NotifyVisitsCommandTest extends KernelTestCase
 
         $commandTester->assertCommandIsSuccessful();
 
+        echo "FEATURE_NEW_DASHBOARD : ". $_ENV['FEATURE_NEW_DASHBOARD']."\n";
         /** @var Email[] $emails */
         $emails = $this->getMailerMessages();
         foreach ($emails as $email) {
