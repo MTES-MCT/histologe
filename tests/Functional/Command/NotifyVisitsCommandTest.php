@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Command;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Mime\Email;
 
 class NotifyVisitsCommandTest extends KernelTestCase
 {
@@ -21,6 +22,12 @@ class NotifyVisitsCommandTest extends KernelTestCase
         $commandTester->execute([]);
 
         $commandTester->assertCommandIsSuccessful();
+
+        /** @var Email[] $emails */
+        $emails = $this->getMailerMessages();
+        foreach ($emails as $email) {
+            echo $email->getSubject()."\n";
+        }
 
         $this->assertEmailCount(10);
         $this->assertEmailSubjectContains($this->getMailerMessages()[1], '2024-02');
