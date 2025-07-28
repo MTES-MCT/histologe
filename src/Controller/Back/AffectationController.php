@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\AcceptAffectation;
 use App\Dto\RefusAffectation;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
@@ -14,12 +15,10 @@ use App\Manager\SignalementManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
-use App\Repository\UserRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Service\FormHelper;
 use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
-use App\Service\Signalement\SignalementAffectationHelper;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -151,19 +150,19 @@ class AffectationController extends AbstractController
     public function affectationResponseSignalement(
         Affectation $affectation,
         Request $request,
-        UserRepository $userRepository,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         NotificationAndMailSender $notificationAndMailSender,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
     ): Response {
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
         $signalement = $affectation->getSignalement();
         /** @var User $user */
         $user = $this->getUser();
         if ($featureNewDashboard) {
-            $partnerAgents = SignalementAffectationHelper::getAffectationUsers($user, $signalement);
+            $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-            $form = $this->createForm(AcceptAffectationType::class, null, ['action' => $acceptAffectationFormRoute, 'agents' => $partnerAgents]);
+            $form = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
             $form->handleRequest($request);
 
             if (!$form->isSubmitted()) {
@@ -174,22 +173,13 @@ class AffectationController extends AbstractController
 
                 return $this->json($response, $response['code']);
             }
-            foreach ($form->getData()['agents'] as $userId) {
-                $userToSubscribe = $userRepository->find((int) $userId);
-                $subscription = $userSignalementSubscriptionManager->createOrGet(
-                    $userToSubscribe,
-                    $signalement,
-                    $user
-                );
+            foreach ($acceptAffectation->getAgents() as $agent) {
+                $subscription = $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
                 $userSignalementSubscriptionManager->flush();
                 $description = $user->getNomComplet().' vous a attribué le dossier #'.$signalement->getReference().'. Vous recevrez les mises à jour pour ce dossier.';
                 $notificationAndMailSender->sendNewSubscription($subscription, $description);
             }
-            $this->affectationManager->updateAffectation(
-                affectation: $affectation,
-                user: $user,
-                status: AffectationStatus::ACCEPTED
-            );
+            $this->affectationManager->updateAffectation(affectation: $affectation, user: $user, status: AffectationStatus::ACCEPTED);
             $this->addFlash('success', 'Affectation acceptée avec succès !');
 
             $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);

@@ -25,9 +25,9 @@ class UserSignalementSubscriptionManager extends AbstractManager
             ->setUser($userToSubscribe)
             ->setSignalement($signalement)
             ->setCreatedBy($createdBy);
-        }
 
-        $this->persist($subscription);
+            $this->persist($subscription);
+        }
 
         return $subscription;
     }

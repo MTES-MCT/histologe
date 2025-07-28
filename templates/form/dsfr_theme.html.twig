@@ -113,33 +113,16 @@
 {% endblock button_attributes %}
 
 {% block choice_widget_expanded %}
-    {% set display_mode = display_mode|default('inline') %}    
+    {% set display_mode = display_mode|default('inline') %}
     <div {{ block('widget_container_attributes') }} class="fr-fieldset fr-mt-1w fr-mb-0">
-    {% if display_mode == 'stacked' %}
-        <div class="fr-grid-row fr-p-3v">
-            {% for child in form %}
-                <div class="fr-col-12 fr-col-md-6 fr-mb-3v">
-                    <div class="fr-checkbox-group">
-                        {{ form_widget(child) }}
-                        {{ form_label(child, child.vars.label|raw, {
-                            translation_domain: choice_translation_domain,
-                            label_attr: { class: 'fr-label fr-label--stacked' }
-                        }) }}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        {% for child in form %}
-            {% set is_checkbox = 'checkbox' in child.vars.block_prefixes %}
-            <div class="fr-fieldset__element {% if display_mode == 'inline' and 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline{% elseif display_mode == 'block' and 'radio' in child.vars.block_prefixes %}fr-border--light fr-p-2w fr-mx-2w {% endif %}">
-                <div class="{% if 'radio' in child.vars.block_prefixes %}fr-radio-group{% else %}fr-checkbox-group{% endif %}">
-                    {{ form_widget(child) }}
-                    {{ form_label(child, null, { translation_domain: choice_translation_domain }) }}
-                </div>
+    {% for child in form %}
+        <div class="fr-fieldset__element {% if display_mode == 'inline' and 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline{% elseif display_mode == 'block' and 'radio' in child.vars.block_prefixes %}fr-border--light fr-p-2w fr-mx-2w {% endif %}">
+            <div class="{% if 'radio' in child.vars.block_prefixes %}fr-radio-group{% else %}fr-checkbox-group{% endif %}">
+                {{form_widget(child)}}
+                {{form_label(child, null, {translation_domain: choice_translation_domain})}}
             </div>
-        {% endfor %}
-    {% endif %}
+        </div>
+    {% endfor %}
     </div>
 {% endblock choice_widget_expanded %}
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\AcceptAffectation;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
@@ -40,14 +41,13 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\FormHelper;
 use App\Service\Signalement\PhotoHelper;
-use App\Service\Signalement\SignalementAffectationHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SuiviSeenMarker;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -81,7 +81,8 @@ class SignalementController extends AbstractController
         CritereRepository $critereRepository,
         SuiviSeenMarker $suiviSeenMarker,
         SignalementRepository $signalementRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -152,15 +153,10 @@ class SignalementController extends AbstractController
         }
 
         $acceptAffectationForm = null;
-        if ($parameterBag->get('feature_new_dashboard')) {
-            $partnerAgents = SignalementAffectationHelper::getAffectationUsers($user, $signalement);
-            $defaultAgents[] = $user->getId();
-            if ($canAnswerAffectation) {
-                $data = ['agents' => $defaultAgents];
-                $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-                $options = ['action' => $acceptAffectationFormRoute, 'agents' => $partnerAgents];
-                $acceptAffectationForm = $this->createForm(AcceptAffectationType::class, $data, $options);
-            }
+        if ($featureNewDashboard && $canAnswerAffectation) {
+            $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation)->setAgents([$user]);
+            $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+            $acceptAffectationForm = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);

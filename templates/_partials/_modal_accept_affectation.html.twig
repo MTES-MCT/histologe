@@ -16,9 +16,20 @@
                         </div>
                         {% form_theme acceptAffectationForm 'form/dsfr_theme.html.twig' %}
                         {{ form_start(acceptAffectationForm, {'attr': {'id': 'accept-affectation-form', 'data-submit-type':'formData'}}) }}
-                        <a href="#" id="select-all-agents" class="fr-link fr-mb-2v">Tout sélectionner</a>
+                        <div class="fr-mb-2v">
+                            <a href="#" id="select-all-agents" class="fr-link">Tout sélectionner</a>
+                        </div>
                         {{ form_errors(acceptAffectationForm) }}
-                        {{ form_row(acceptAffectationForm.agents, {display_mode: 'stacked'}) }}
+                        <div class="fr-select-group">
+                            {{ form_label(acceptAffectationForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'accept_affectation[agents]'}}) }}
+                            <div class="fr-grid-row">
+                                {% for agent in acceptAffectationForm.agents %}
+                                    <div class="fr-checkbox-group fr-col-6">
+                                        {{ form_row(agent) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                         {{ form_end(acceptAffectationForm) }}
                     </div>
                     <div class="fr-modal__footer">
