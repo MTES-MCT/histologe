@@ -18,4 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initFilterTerritoryHandler();
   initTabsLoader();
+
+  window._paq = window._paq || [];
+  window.addEventListener('hashchange', function () {
+    const hash = window.location.hash.substring(1);
+    _paq.push(['setCustomUrl', window.location.pathname + '_' + hash]);
+    _paq.push(['setDocumentTitle', document.title + ' ' + window.location.hash]);
+    _paq.push(['trackPageView']);
+  });
 });
