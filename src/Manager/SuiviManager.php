@@ -83,6 +83,7 @@ class SuiviManager extends Manager
                             ->setCreatedBy($user);
                 $this->persist($subscription);
                 $subscriptionCreated = true;
+                echo 'Subscription created for: '.$user->getEmail().\PHP_EOL;
             }
         }
         if ($flush) {

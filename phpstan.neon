@@ -9,6 +9,8 @@ parameters:
 		- tests/Functional/Command/NotifyVisitsCommandTest.php
 		- src/DataFixtures/Loader/LoadInterventionData.php
 		- src/DataFixtures/Loader/LoadAffectationData.php
+		- src/Manager/SuiviManager.php
+		- src/Service/Signalement/VisiteNotifier.php
 	treatPhpDocTypesAsCertain: false
 	checkGenericClassInNonGenericObjectType: false
 	bootstrapFiles:

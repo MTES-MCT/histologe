@@ -102,6 +102,7 @@ class VisiteNotifier
     ): void {
         $listUsersToNotify = $this->userRepository->findUsersSubscribedToSignalement($intervention->getSignalement());
         foreach ($listUsersToNotify as $user) {
+            echo 'Notify agent: '.$user->getEmail().\PHP_EOL;
             if ($user === $currentUser) {
                 continue;
             }
