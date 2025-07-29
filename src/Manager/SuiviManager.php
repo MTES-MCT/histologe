@@ -100,12 +100,15 @@ class SuiviManager extends Manager
         ?User $user,
         Suivi $suivi,
     ): bool {
+        echo 'doesUserNeedSubscription : '.$user->getEmail().\PHP_EOL;
+        echo $this->featureNewDashboard ? 'Feature new dashboard is enabled.'.\PHP_EOL : 'Feature new dashboard is disabled.'.\PHP_EOL;
         if (!$this->featureNewDashboard) {
             return false;
         }
         if (!$user) {
             return false;
         }
+        echo ' isUsager: '.$user->isUsager().' isApiUser: '.$user->isApiUser().\PHP_EOL;
         if ($user->isUsager() || $user->isApiUser()) {
             return false;
         }
