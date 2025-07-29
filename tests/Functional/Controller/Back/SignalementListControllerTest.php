@@ -67,7 +67,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Procédure estimée' => [['procedure' => 'rsd', 'isImported' => 'oui'], 7];
         yield 'Search by Partenaires affectés' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
         yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée', 'isImported' => 'oui'], 5];
-        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 35];
+        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 5];
         yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 3];
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse', 'isImported' => 'oui'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6, 'isImported' => 'oui'], 9];
@@ -87,7 +87,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by dates depot and dates of last suivi' => [['isImported' => 'oui', 'dateDepotDebut' => '2023-01-01', 'dateDepotFin' => '2023-03-31', 'dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-12-31'], 3];
         yield 'Search by Demande fermeture usager territoire 13' => [['territoire' => '13', 'usagerAbandonProcedure' => '1'], 1];
         yield 'Search by Demande fermeture usager all' => [['usagerAbandonProcedure' => '1'], 2];
-        yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 0];
+        yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 1];
     }
 
     /**
@@ -330,6 +330,6 @@ class SignalementListControllerTest extends WebTestCase
         $client->request('GET', $route, ['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertEquals(1, $result['pagination']['total_items']);
+        $this->assertEquals(2, $result['pagination']['total_items']);
     }
 }

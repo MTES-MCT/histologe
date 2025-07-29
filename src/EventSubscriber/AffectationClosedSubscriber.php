@@ -44,7 +44,7 @@ readonly class AffectationClosedSubscriber implements EventSubscriberInterface
         );
 
         $signalement->addSuivi($suivi);
-        $this->notificationAndMailSender->sendAffectationClosed($affectation, $user);
+        $this->notificationAndMailSender->sendAffectationClosed($affectation);
         $this->signalementManager->save($signalement);
     }
 }

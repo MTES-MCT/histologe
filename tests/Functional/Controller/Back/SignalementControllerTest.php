@@ -317,7 +317,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertStringContainsString('/bo/signalements/', $response['url']);
 
         $client->enableProfiler();
-        $this->assertEmailCount(1);
+        $this->assertEmailCount(2);
     }
 
     public function testUserPartnerSubmitClotureSignalementWithEmailSentToPartnersAndRT(): void

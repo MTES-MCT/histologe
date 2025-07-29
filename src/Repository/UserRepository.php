@@ -69,9 +69,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $queryBuilder = $this->createQueryBuilder('u');
 
         return $queryBuilder
-            ->andWhere('u.roles LIKE :role')
-            ->setParameter('role', '%"ROLE_ADMIN"%')
-            ->andWhere('u.statut LIKE :active')
+            ->andWhere('JSON_CONTAINS(u.roles, :role_admin) = 1')
+            ->setParameter('role_admin', '"ROLE_ADMIN"')
+            ->andWhere('u.statut = :active')
             ->setParameter('active', UserStatus::ACTIVE)
             ->getQuery()
             ->getResult();
@@ -533,6 +533,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * @deprecated this method will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed
+     *
      * @return array<int, User>
      */
     public function findUsersAffectedToSignalement(Signalement $signalement, ?Partner $partnerToExclude = null): array
@@ -550,6 +552,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $queryBuilder
                 ->andWhere('a.partner != :partner')
                 ->setParameter('partner', $partnerToExclude);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @return array<int, User>
+     */
+    public function findUsersSubscribedToSignalement(Signalement $signalement, ?bool $onlyRT = false): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u')
+            ->innerJoin('u.userSignalementSubscriptions', 'uss')
+            ->where('uss.signalement = :signalement')
+            ->setParameter('signalement', $signalement)
+            ->andWhere('u.statut = :userStatus')
+            ->setParameter('userStatus', UserStatus::ACTIVE);
+        if ($onlyRT) {
+            $queryBuilder->andWhere('JSON_CONTAINS(u.roles, :roleRT) = 1')
+                ->setParameter('roleRT', '"ROLE_ADMIN_TERRITORY"');
         }
 
         return $queryBuilder->getQuery()->getResult();

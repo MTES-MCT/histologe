@@ -29,8 +29,10 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
     {
         $suivi = $event->getSuivi();
 
-        // pas de notification pour un suivi technique ou si intervention
-        if (Suivi::TYPE_TECHNICAL === $suivi->getType() || Suivi::CONTEXT_INTERVENTION === $suivi->getContext()) {
+        if (Suivi::TYPE_TECHNICAL === $suivi->getType()) {
+            return;
+        }
+        if (Suivi::CONTEXT_INTERVENTION === $suivi->getContext()) {
             return;
         }
 
@@ -46,19 +48,20 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     private function sendToAdminAndPartners(Suivi $suivi): void
     {
-        if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY !== $suivi->getContext()) {
-            if (Suivi::CONTEXT_SIGNALEMENT_CLOSED === $suivi->getContext()) {
-                $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
-            } elseif (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
-                $this->notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
+        if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY === $suivi->getContext()) {
+            return;
+        }
+        if (Suivi::CONTEXT_SIGNALEMENT_CLOSED === $suivi->getContext()) {
+            $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
+        } elseif (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
+            $this->notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
 
-                return;
-            } else {
-                $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
-                    suivi: $suivi,
-                    sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
-                );
-            }
+            return;
+        } else {
+            $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
+                suivi: $suivi,
+                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
+            );
         }
     }
 

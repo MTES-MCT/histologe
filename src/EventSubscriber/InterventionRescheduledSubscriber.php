@@ -9,6 +9,7 @@ use App\Event\InterventionRescheduledEvent;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class InterventionRescheduledSubscriber implements EventSubscriberInterface
@@ -16,6 +17,8 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly VisiteNotifier $visiteNotifier,
         private readonly SuiviManager $suiviManager,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private readonly bool $featureNewDashboard,
     ) {
     }
 
@@ -54,13 +57,21 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 previousDate: $event->getPreviousDate()
             );
 
-            $this->visiteNotifier->notifyAgents(
-                intervention: $intervention,
-                suivi: $suivi,
-                currentUser: $event->getUser(),
-                notificationMailerType: null,
-                notifyOtherAffectedPartners: true,
-            );
+            if ($this->featureNewDashboard) {
+                $this->visiteNotifier->notifyInAppSubscribers(
+                    intervention: $intervention,
+                    suivi: $suivi,
+                    currentUser: $event->getUser(),
+                );
+            } else {
+                $this->visiteNotifier->notifyAgents(
+                    intervention: $intervention,
+                    suivi: $suivi,
+                    currentUser: $event->getUser(),
+                    notificationMailerType: null,
+                    notifyOtherAffectedPartners: true,
+                );
+            }
         }
     }
 }

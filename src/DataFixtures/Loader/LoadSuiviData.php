@@ -29,20 +29,20 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
-        $signalements = $this->signalementRepository->findBy(['statut' => [
-            SignalementStatus::ACTIVE->value,
-            SignalementStatus::CLOSED->value,
-        ]]);
+        $signalements = $this->signalementRepository->findBy(['statut' => [SignalementStatus::ACTIVE->value, SignalementStatus::CLOSED->value]]);
+        $admin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
 
         $second = 1;
         foreach ($signalements as $signalement) {
+            $rt = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId());
+            $user = $rt ? $rt[0] : $admin;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 isPublic: true,
-                user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]),
+                user: $user,
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 flush: false,
             );

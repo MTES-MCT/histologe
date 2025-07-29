@@ -80,9 +80,9 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $this->assertEmailAddressContains($clotureMail, 'to', 'ne-pas-repondre@signal-logement.beta.gouv.fr');
         $this->assertCount(2, $clotureMail->getBcc());
         $this->assertEmailAddressContains($clotureMail, 'bcc', 'partenaire-34-04@signal-logement.fr');
-        $this->assertEmailAddressContains($clotureMail, 'bcc', 'user-partenaire-34-02@signal-logement.fr');
+        $this->assertEmailAddressContains($clotureMail, 'bcc', 'admin-territoire-34-01@signal-logement.fr');
 
         $notifications = $this->notificationRepository->findBy(['signalement' => $signalementClosed, 'type' => NotificationType::CLOTURE_SIGNALEMENT]);
-        $this->assertCount(5, $notifications);
+        $this->assertCount(4, $notifications);
     }
 }
