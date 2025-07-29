@@ -23,24 +23,24 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class IdossService
 {
-    public const TYPE_SERVICE = 'idoss';
+    public const string TYPE_SERVICE = 'idoss';
 
-    public const STATUS_ACCEPTED = 'accepte';
-    public const STATUS_IN_PROGRESS = 'en_cours';
-    public const STATUS_CLOSED = 'termine';
-    public const MAPPING_STATUS = [
+    public const string STATUS_ACCEPTED = 'accepte';
+    public const string STATUS_IN_PROGRESS = 'en_cours';
+    public const string STATUS_CLOSED = 'termine';
+    public const array MAPPING_STATUS = [
         self::STATUS_ACCEPTED => AffectationStatus::ACCEPTED,
         self::STATUS_IN_PROGRESS => AffectationStatus::ACCEPTED,
         self::STATUS_CLOSED => AffectationStatus::CLOSED,
     ];
-    public const ACTION_PUSH_DOSSIER = 'push_dossier';
-    public const ACTION_UPLOAD_FILES = 'upload_files';
-    public const ACTION_LIST_STATUTS = 'list_statuts';
-    private const AUTHENTICATE_ENDPOINT = '/api/Utilisateur/authentification';
-    private const CREATE_DOSSIER_ENDPOINT = '/api/EtatCivil/creatDossHistologe';
-    private const UPLOAD_FILES_ENDPOINT = '/api/EtatCivil/uploadFileRepoHistologe';
-    private const LIST_STATUTS_ENDPOINT = '/api/EtatCivil/listStatutsHistologe';
-    private const NB_MAX_FILES = 20;
+    public const string ACTION_PUSH_DOSSIER = 'push_dossier';
+    public const string ACTION_UPLOAD_FILES = 'upload_files';
+    public const string ACTION_LIST_STATUTS = 'list_statuts';
+    private const string AUTHENTICATE_ENDPOINT = '/api/Utilisateur/authentification';
+    private const string CREATE_DOSSIER_ENDPOINT = '/api/EtatCivil/creatDossHistologe';
+    private const string UPLOAD_FILES_ENDPOINT = '/api/EtatCivil/uploadFileRepoHistologe';
+    private const string LIST_STATUTS_ENDPOINT = '/api/EtatCivil/listStatutsHistologe';
+    private const int NB_MAX_FILES = 20;
 
     public function __construct(
         private readonly HttpClientInterface $client,
