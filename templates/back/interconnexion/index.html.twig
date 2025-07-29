@@ -73,7 +73,7 @@
             {% for connection in connections %}
                 <tr>
                     <td> <a href="{{ path('back_signalement_view', {'uuid': connection.uuid}) }}">{{ connection.reference }}</a></td>
-                    <td>{{ connection.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ connection.createdAt|date('d/m/Y H:i:s') }}</td>
                     <td><a href="{{ path('back_partner_view', {'id' : connection.id}) }}">{{ connection.nom }}</a></td>
                     <td>{{ connection.service }}</td>
                     <td>{{ connection.action }}</td>
@@ -85,28 +85,36 @@
                         {% endif %}
                     </td>
                    <td>
-                       <button data-fr-opened="false" aria-controls="modal" type="button" class="fr-btn fr-fi-eye-fill"></button>
-                       <dialog id="modal" class="fr-modal" aria-labelledby="modal-title" aria-modal="true">
+                       {% set modalId = 'modal-' ~ loop.index %}
+                       <button data-fr-opened="false" aria-controls="{{ modalId }}" type="button" class="fr-btn fr-fi-eye-fill"></button>
+                       <dialog id="{{ modalId }}" class="fr-modal" aria-labelledby="{{ modalId }}-title" aria-modal="true">
                            <div class="fr-container fr-container--fluid fr-container-md">
                                <div class="fr-grid-row fr-grid-row--center">
                                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                                        <div class="fr-modal__body">
                                            <div class="fr-modal__header">
-                                               <button aria-controls="modal" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
+                                               <button aria-controls="{{ modalId  }}" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
                                            </div>
                                            <div class="fr-modal__content">
-                                               <h2 id="modal-title" class="fr-modal__title">
-                                                   <span class="fr-icon-arrow-right-line fr-icon--lg" aria-hidden="true"></span>
-                                                   Détails
-                                               </h2>
-                                               <h3>Requête</h3>
-                                               <pre>
-                                                   <code>{{ connection.message }}</code>
-                                               </pre>
-                                               <h3>Réponse</h3>
-                                               <pre>
+                                               <div>
+                                                   <h2 id="{{ modalId }}-title" class="fr-modal__title">
+                                                       <span class="fr-icon-arrow-right-line fr-icon--lg" aria-hidden="true"></span>
+                                                       Détails  #{{ connection.reference }}
+                                                   </h2>
+                                                   <p>Synchronisation du  {{ connection.createdAt|date('d/m/Y H:i:s')  }} pour {{ connection.nom }}</p>
+                                               </div>
+                                               <div>
+                                                   <h3>Requête</h3>
+                                                   <pre>
+                                                       <code>{{ connection.message }}</code>
+                                                   </pre>
+                                               </div>
+                                               <div>
+                                                   <h3>Réponse</h3>
+                                                   <pre>
                                                    <code>{{ connection.response }}</code>
                                                </pre>
+                                               </div>
                                            </div>
                                        </div>
                                    </div>
