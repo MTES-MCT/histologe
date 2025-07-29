@@ -74,7 +74,7 @@ class EsaboraManager
         if (!empty($description)) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: 'Signalement <b>'.$description.'</b> par '.$affectation->getPartner()->getNom(),
+                description: 'Signalement <b>'.$description.'</b>',
                 type: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? Suivi::TYPE_TECHNICAL : Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
                 user: $this->adminUser,
@@ -95,28 +95,29 @@ class EsaboraManager
         ? strtolower($dossierResponse->getEtat())
         : '';
 
+        $namePartner = $affectation->getPartner()->getNom();
         switch ($esaboraStatus) {
             case EsaboraStatus::ESABORA_WAIT->value:
                 if (AffectationStatus::WAIT !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::WAIT);
-                    $description = 'remis en attente via '.$dossierResponse->getNameSI();
+                    $description = 'remis en attente par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
                 if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED);
-                    $description = 'accepté via '.$dossierResponse->getNameSI();
+                    $description = 'accepté par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED);
-                    $description = 'cloturé via '.$dossierResponse->getNameSI();
+                    $description = 'cloturé par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_REFUSED->value:
                 if (AffectationStatus::REFUSED !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::REFUSED);
-                    $description = 'refusé via '.$dossierResponse->getNameSI();
+                    $description = 'refusé par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_REJECTED->value:
