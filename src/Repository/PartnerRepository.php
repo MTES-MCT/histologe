@@ -342,7 +342,7 @@ class PartnerRepository extends ServiceEntityRepository
         }
 
         $sql = '
-                SELECT p.id, p.nom as name
+                SELECT DISTINCT p.id, p.nom as name
                 FROM partner p
                 LEFT JOIN partner_zone pz ON p.id = pz.partner_id
                 LEFT JOIN zone z ON pz.zone_id = z.id

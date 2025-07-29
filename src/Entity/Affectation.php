@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
+#[ORM\UniqueConstraint(name: 'unique_affectation_signalement_partner', columns: ['signalement_id', 'partner_id'])]
 class Affectation implements EntityHistoryInterface
 {
     #[ORM\Id]
