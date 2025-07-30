@@ -79,11 +79,9 @@
                     <td>{{ connection.service }}</td>
                     <td>{{ connection.action }}</td>
                     <td>
-                        {% if connection.status == 'success' %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
-                        {% else %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
-                        {% endif %}
+                        <span class="fr-badge fr-badge--no-icon {{ connection.status == 'success' ? 'fr-badge--success' : 'fr-badge--error' }}">
+                            {{ connection.status == 'success' ? 'Success' : 'Fail' }}
+                        </span>
                     </td>
                    <td>
                        {% set modalId = 'modal-' ~ loop.index %}
@@ -107,7 +105,11 @@
                                                        <span class="fr-icon-arrow-right-line fr-icon--lg" aria-hidden="true"></span>
                                                        Détails  #{{ connection.reference }}
                                                    </h2>
-                                                   <p>Synchronisation du  {{ syncAt }} pour {{ connection.nom }}</p>
+                                                   <p>Synchronisation du  {{ syncAt }} pour {{ connection.nom }}<br>
+                                                       <span class="fr-badge fr-badge--no-icon {{ connection.status == 'success' ? 'fr-badge--success' : 'fr-badge--error' }}">
+                                                        {{ connection.status == 'success' ? 'Success' : 'Fail' }}
+                                                       </span>
+                                                   </p>
                                                </div>
                                                <div>
                                                    <h3>Requête</h3>
