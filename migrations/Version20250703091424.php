@@ -47,64 +47,6 @@ final class Version20250703091424 extends AbstractMigration
                 $insertIntoColumns.' VALUES ('.$desordreCritereIdSubquery.', 3, 0, 0, 1, \'<span>Dans : <b>Toutes les pièces</b></span>\', \'["RSD", "NON_DECENCE", "INSALUBRITE"]\', \'desordres_logement_lumiere_plafond_trop_bas_toutes_pieces\', NOW())'
             );
         }
-
-        // get list of signalement linked to desordre precision with desordres_type_composition_logement_piece_unique_hauteur or desordres_type_composition_logement_plusieurs_pieces_hauteur
-        $signalementIds = $this->connection->fetchFirstColumn('
-            SELECT DISTINCT dps.signalement_id FROM desordre_precision_signalement dps WHERE dps.desordre_precision_id IN (
-                SELECT id FROM desordre_precision WHERE desordre_precision_slug IN (
-                    "desordres_type_composition_logement_piece_unique_hauteur",
-                    "desordres_type_composition_logement_plusieurs_pieces_hauteur"
-                )
-            )
-        ');
-        if (!empty($signalementIds)) {
-            $signalementIdsTableSql = '('.implode(' UNION ALL ', array_map(
-                fn ($id) => 'SELECT '.$id.' AS signalement_id',
-                $signalementIds
-            )).')';
-            $signalementIdsIn = implode(',', $signalementIds);
-
-            $this->addSql('
-                INSERT INTO desordre_critere_signalement (desordre_critere_id, signalement_id)
-                SELECT dp.desordre_critere_id, s.signalement_id
-                FROM desordre_precision dp
-                JOIN '.$signalementIdsTableSql.' s
-                WHERE dp.desordre_precision_slug = "desordres_logement_lumiere_plafond_trop_bas_toutes_pieces"
-                  AND NOT EXISTS (
-                    SELECT 1 FROM desordre_critere_signalement dcs
-                    WHERE dcs.desordre_critere_id = dp.desordre_critere_id
-                      AND dcs.signalement_id = s.signalement_id
-                  )
-            ');
-            $this->addSql('
-                INSERT INTO desordre_precision_signalement (desordre_precision_id, signalement_id)
-                SELECT dp.id, s.signalement_id
-                FROM desordre_precision dp
-                JOIN '.$signalementIdsTableSql.' s
-                WHERE dp.desordre_precision_slug = "desordres_logement_lumiere_plafond_trop_bas_toutes_pieces"
-                  AND NOT EXISTS (
-                    SELECT 1 FROM desordre_precision_signalement dps2
-                    WHERE dps2.desordre_precision_id = dp.id
-                      AND dps2.signalement_id = s.signalement_id
-                  )
-            ');
-            $this->addSql('
-                DELETE FROM desordre_precision_signalement WHERE desordre_precision_id IN (
-                    SELECT id FROM desordre_precision WHERE desordre_precision_slug IN (
-                        "desordres_type_composition_logement_piece_unique_hauteur",
-                        "desordres_type_composition_logement_plusieurs_pieces_hauteur"
-                    )
-                ) AND signalement_id IN ('.$signalementIdsIn.')
-            ');
-            $this->addSql('
-                DELETE FROM desordre_critere_signalement WHERE desordre_critere_id IN (
-                    SELECT desordre_critere_id FROM desordre_precision WHERE desordre_precision_slug IN (
-                        "desordres_type_composition_logement_piece_unique_hauteur",
-                        "desordres_type_composition_logement_plusieurs_pieces_hauteur"
-                    )
-                ) AND signalement_id IN ('.$signalementIdsIn.')
-            ');
-        }
     }
 
     public function down(Schema $schema): void
