@@ -25,6 +25,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use function Symfony\Component\String\u;
 
 class SearchFilter
@@ -39,6 +40,8 @@ class SearchFilter
         private SignalementQualificationRepository $signalementQualificationRepository,
         private EpciRepository $epciRepository,
         private BailleurRepository $bailleurRepository,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private bool $featureNewDashboard,
     ) {
     }
 
@@ -447,7 +450,7 @@ class SearchFilter
                 ->setParameter('motif_cloture', $filters['motifCloture']);
         }
 
-        if (!empty($filters['showMySignalementsOnly'])) {
+        if (!empty($filters['showMySignalementsOnly']) && $this->featureNewDashboard) {
             $qb->leftJoin('s.userSignalementSubscriptions', 'ust');
             $qb->andWhere('ust.user = :currentUser')
                 ->setParameter('currentUser', $user);
