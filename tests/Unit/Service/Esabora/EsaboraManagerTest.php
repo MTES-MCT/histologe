@@ -32,8 +32,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 class EsaboraManagerTest extends KernelTestCase
 {
     use FixturesHelper;
-    protected const CREATE_ACTION = 'create';
-    protected const UPDATE_ACTION = 'update';
+    protected const string CREATE_ACTION = 'create';
+    protected const string UPDATE_ACTION = 'update';
 
     protected MockObject|AffectationManager $affectationManager;
     protected MockObject|SuiviManager $suiviManager;

@@ -120,7 +120,7 @@ class EsaboraManagerTest extends KernelTestCase
 
         /** @var Suivi $suivi */
         $suivi = $signalement->getSuivis()->last();
-        $this->assertStringContainsString($suiviDescription, $suivi->getDescription());
+        $this->assertStringContainsString($suiviDescription, $suivi->getDescription(), $suiviDescription);
         $this->assertFalse($suivi->getIsPublic());
         $this->assertEquals($suiviStatus, $suivi->getType());
         $this->assertEmailCount($mailSent ? 1 : 0);
@@ -135,7 +135,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_WAIT->value => [
             '2022-8',
             'etat_a_traiter.json',
-            'remis en attente',
+            'remis en attente par Partenaire 13-02 via Esabora',
             AffectationStatus::WAIT,
             Suivi::TYPE_TECHNICAL,
             false, // suivi mail not sent cause suivi technical
@@ -144,7 +144,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_ACCEPTED->value => [
             '2022-1',
             'etat_importe.json',
-            'accepté via Esabora',
+            'accepté par Partenaire 13-01 via Esabora',
             AffectationStatus::ACCEPTED,
             Suivi::TYPE_AUTO,
             true, // suivi mail sent
@@ -153,7 +153,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_CLOSED->value => [
             '2022-10',
             'etat_termine.json',
-            'cloturé via Esabora',
+            'cloturé par Partenaire 13-02 via Esabora',
             AffectationStatus::CLOSED,
             Suivi::TYPE_AUTO,
             true, // suivi mail sent
@@ -162,7 +162,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_REFUSED->value => [
             '2022-2',
             'etat_non_importe.json',
-            'refusé via Esabora',
+            'refusé par Partenaire 01-01 via Esabora',
             AffectationStatus::REFUSED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
@@ -180,7 +180,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_ACCEPTED->value.' SISH' => [
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_importe.json',
-            'accepté via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)',
+            'accepté par Partenaire 01-01 via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)',
             AffectationStatus::ACCEPTED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
@@ -191,7 +191,7 @@ class EsaboraManagerTest extends KernelTestCase
     ): void {
         $referenceSignalement = '2022-2';
         $filename = '../../sish/ws_etat_dossier_sas/etat_importe.json';
-        $suiviDescription = 'accepté via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)';
+        $suiviDescription = 'accepté par Partenaire 01-01 via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)';
         $expectedAffectationStatus = AffectationStatus::ACCEPTED;
         $suiviStatus = Suivi::TYPE_AUTO;
         /** @var Signalement $signalement */
