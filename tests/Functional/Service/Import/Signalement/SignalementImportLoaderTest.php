@@ -9,6 +9,7 @@ use App\Manager\FileManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\Import\Signalement\SignalementImportMapper;
 use App\Service\Signalement\CriticiteCalculator;
@@ -39,6 +40,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     private FileManager $fileManager;
     private MockObject|FilesystemOperator $filesystemOperator;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
+    private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
 
     protected function setUp(): void
     {
@@ -56,6 +58,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
     }
 
     /**
@@ -77,7 +80,8 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->fileManager,
             $this->filesystemOperator,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizerInterface,
+            $this->userSignalementSubscriptionManager
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);

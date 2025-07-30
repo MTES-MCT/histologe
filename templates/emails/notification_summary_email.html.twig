@@ -24,6 +24,16 @@
     <br>
 {% endif %}
 
+{% if events[enum('App\\Entity\\Enum\\NotificationType').NOUVEL_ABONNEMENT.name]|length %}
+    <p><u>Affectations :</u></p>
+    {% for event in events[enum('App\\Entity\\Enum\\NotificationType').NOUVEL_ABONNEMENT.name] %}
+        <ul>
+            <li>Prise en charge du signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong>.</li>
+        </ul>
+    {% endfor %}
+    <br>
+{% endif %}
+
 {% if events[enum('App\\Entity\\Enum\\NotificationType').NOUVEAU_SUIVI.name]|length %}
     <p><u>Nouveaux suivis :</u></p>
     {% for event in events[enum('App\\Entity\\Enum\\NotificationType').NOUVEAU_SUIVI.name] %}

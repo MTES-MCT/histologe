@@ -76,15 +76,15 @@
                         <br>
                         ({{ notification.signalement.villeOccupant }})
                     </td>
-                    {% set createdAt = notification.suivi ? notification.suivi.createdAt : notification.createdAt %}
-                    <td>{{ createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
+                    <td>{{ notification.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
                     <td class="word-wrap-anywhere">{{ notification.suivi? transform_suivi_description(notification.suivi)|raw : notification.description }}</td>
-                    {% set auteur = notification.suivi ?
-                                    notification.suivi.createdBy ? 
-                                        notification.suivi.createdBy.nomComplet : 
-                                        notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize : 
-                                    'N/A' 
-                     %}
+                    {% if notification.suivi and notification.suivi.createdBy %}
+                        {% set auteur =  notification.suivi.createdBy.nomComplet %} 
+                    {% elseif notification.affectation and notification.affectation.answeredBy %}
+                        {% set auteur = notification.affectation.answeredBy.nomComplet %}
+                    {% else %}
+                        {% set auteur = notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize %}   
+                    {% endif %}
                     <td>{{ auteur }}</td>
                     <td class="fr-text--right fr-ws-nowrap">
                         {% set link = path('back_signalement_view', {uuid: notification.signalement.uuid}) ~ (notification.suivi ? '#suivis' : '') %}

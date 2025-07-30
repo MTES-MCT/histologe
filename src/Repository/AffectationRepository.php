@@ -6,12 +6,10 @@ use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -274,18 +272,6 @@ class AffectationRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function deleteByStatusAndSignalement(AffectationStatus $status, Signalement $signalement): void
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->delete()
-            ->where('a.statut = :status')
-            ->andWhere('a.signalement = :signalement')
-            ->setParameter('status', $status)
-            ->setParameter('signalement', $signalement)
-            ->getQuery()
-            ->execute();
-    }
-
     public function updateStatusBySignalement(AffectationStatus $status, Signalement $signalement): void
     {
         $qb = $this->createQueryBuilder('a');
@@ -296,34 +282,6 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('signalement', $signalement)
             ->getQuery()
             ->execute();
-    }
-
-    public function closeBySignalement(Signalement $signalement, MotifCloture $motif, User $user): void
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->update()
-            ->set('a.statut', ':status')
-            ->set('a.answeredBy', ':answeredBy')
-            ->set('a.motifCloture', ':motif')
-            ->where('a.signalement = :signalement')
-            ->setParameter('status', AffectationStatus::CLOSED)
-            ->setParameter('answeredBy', $user)
-            ->setParameter('motif', $motif)
-            ->setParameter('signalement', $signalement)
-            ->getQuery()
-            ->execute();
-    }
-
-    public function deleteAffectationsByPartner(Partner $partner): void
-    {
-        $qb = $this->createQueryBuilder('a')
-            ->delete()
-            ->andWhere('a.statut IN (:statuses)')
-            ->andWhere('a.partner = :partner')
-            ->setParameter('statuses', [AffectationStatus::ACCEPTED, AffectationStatus::WAIT])
-            ->setParameter('partner', $partner);
-
-        $qb->getQuery()->execute();
     }
 
     /**

@@ -15,13 +15,11 @@ use App\Event\AffectationClosedEvent;
 use App\Event\AffectationCreatedEvent;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\DossierMessageInterface;
-use App\Repository\AffectationRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class AffectationManager extends Manager
 {
@@ -121,6 +119,19 @@ class AffectationManager extends Manager
         return $affectation;
     }
 
+    public function closeBySignalement(
+        Signalement $signalement,
+        MotifCloture $motif,
+        User $user,
+    ): void {
+        foreach ($signalement->getAffectations() as $affectation) {
+            if (in_array($affectation->getStatut(), [AffectationStatus::CLOSED, AffectationStatus::REFUSED])) {
+                continue;
+            }
+            $this->closeAffectation(affectation: $affectation, user: $user, motif: $motif);
+        }
+    }
+
     /**
      * @param iterable<File> $files
      */
@@ -137,6 +148,9 @@ class AffectationManager extends Manager
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setMotifCloture($motif)
             ->setAnsweredBy($user);
+
+        $this->removeSubscriptionsOfAffectation($affectation);
+
         if ($flush) {
             $this->save($affectation);
             $this->eventDispatcher->dispatch(
@@ -144,9 +158,31 @@ class AffectationManager extends Manager
                 AffectationClosedEvent::NAME
             );
         }
-        $this->userSignalementSubscriptionRepository->deleteForAffectation($affectation);
 
         return $affectation;
+    }
+
+    public function removeAffectationsBySignalement(Signalement $signalement, AffectationStatus $status): void
+    {
+        foreach ($signalement->getAffectations() as $affectation) {
+            if ($affectation->getStatut() !== $status) {
+                continue;
+            }
+            $this->removeAffectationAndSubscriptions($affectation);
+        }
+    }
+
+    /**
+     * @param array<AffectationStatus> $statuses
+     */
+    public function removeAffectationsByPartner(Partner $partner, array $statuses): void
+    {
+        foreach ($partner->getAffectations() as $affectation) {
+            if (!in_array($affectation->getStatut(), $statuses)) {
+                continue;
+            }
+            $this->removeAffectationAndSubscriptions($affectation);
+        }
     }
 
     /**
@@ -174,16 +210,21 @@ class AffectationManager extends Manager
         }
     }
 
-    private function removeAffectationAndSubscriptions(Affectation $affectation): void
+    public function removeAffectationAndSubscriptions(Affectation $affectation): void
     {
-        if ($this->featureNewDashboard) {
-            $subscriptions = $this->userSignalementSubscriptionRepository->findForAffectation(affectation: $affectation, excludeRT: true);
-            foreach ($subscriptions as $subscription) {
-                $this->remove($subscription);
-            }
-        }
-
+        $this->removeSubscriptionsOfAffectation($affectation);
         $this->remove($affectation);
+    }
+
+    private function removeSubscriptionsOfAffectation(Affectation $affectation): void
+    {
+        if (!$this->featureNewDashboard) {
+            return;
+        }
+        $subscriptions = $this->userSignalementSubscriptionRepository->findForAffectation(affectation: $affectation, excludeRT: true);
+        foreach ($subscriptions as $subscription) {
+            $this->remove($subscription);
+        }
     }
 
     public function flagAsSynchronized(DossierMessageInterface $dossierMessage): void
@@ -197,22 +238,5 @@ class AffectationManager extends Manager
             $affectation->setIsSynchronized(true);
             $this->save($affectation);
         }
-    }
-
-    /**
-     * @throws ExceptionInterface
-     */
-    public function deleteAffectationsByPartner(Partner $partner): void
-    {
-        /** @var AffectationRepository $affectationRepository */
-        $affectationRepository = $this->getRepository();
-        $affectationRepository->deleteAffectationsByPartner($partner);
-        $this->userSignalementSubscriptionRepository->deleteForSignalementOrPartner(partner: $partner);
-    }
-
-    public function removeAffectationAndSubscription(Affectation $affectation): void
-    {
-        $this->remove($affectation);
-        $this->userSignalementSubscriptionRepository->deleteForAffectation($affectation);
     }
 }

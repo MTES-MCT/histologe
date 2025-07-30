@@ -19,6 +19,7 @@ use App\Manager\FileManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use App\Service\Signalement\CriticiteCalculator;
@@ -80,6 +81,7 @@ class SignalementImportLoader
         private FilesystemOperator $fileStorage,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private HtmlSanitizerInterface $htmlSanitizer,
+        private UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
     ) {
     }
 
@@ -227,7 +229,7 @@ class SignalementImportLoader
                         );
                     } else {
                         $affectation->setStatut(AffectationStatus::ACCEPTED);
-                        // TODO : abonnements ?
+                        $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
                     }
                     $affectationCollection->add($affectation);
                 }

@@ -49,7 +49,8 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->leftJoin('s.createdBy', 'cb')
             ->leftJoin('n.signalement', 'si')
             ->leftJoin('n.affectation', 'a')
-            ->addSelect('s', 'si', 'a', 'u', 'cb');
+            ->leftJoin('a.answeredBy', 'ab')
+            ->addSelect('s', 'si', 'a', 'u', 'cb', 'ab');
 
         if (!empty($searchNotification->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchNotification->getOrderType());
@@ -63,12 +64,12 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
                     $orderDirection
                 );
             } elseif ('cb.nom' === $orderField) {
-                $qb->orderBy('CASE WHEN cb.nom IS NOT NULL THEN cb.nom ELSE si.nomOccupant END', $orderDirection);
+                $qb->orderBy('CASE WHEN cb.nom IS NOT NULL THEN cb.nom WHEN ab.nom IS NOT NULL THEN ab.nom ELSE si.nomOccupant END', $orderDirection);
             } else {
                 $qb->orderBy($orderField, $orderDirection);
             }
         } else {
-            $qb->orderBy('s.createdAt', 'DESC');
+            $qb->orderBy('n.createdAt', 'DESC');
         }
 
         $firstResult = ($searchNotification->getPage() - 1) * $maxResult;

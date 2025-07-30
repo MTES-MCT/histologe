@@ -132,12 +132,8 @@ class AffectationController extends AbstractController
         if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), $request->get('_token'))) {
             /** @var User $user */
             $user = $this->getUser();
-            $this->affectationManager->removeAffectationAndSubscription($affectation);
-            $this->affectationManager->createAffectation(
-                $affectation->getSignalement(),
-                $affectation->getPartner(),
-                $user,
-            );
+            $this->affectationManager->removeAffectationAndSubscriptions($affectation);
+            $this->affectationManager->createAffectation($affectation->getSignalement(), $affectation->getPartner(), $user);
             $this->affectationManager->flush();
         } else {
             $this->addFlash('error', 'Token CSRF invalide, merci de réessayer.');
@@ -177,7 +173,7 @@ class AffectationController extends AbstractController
                 $subscription = $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
                 $userSignalementSubscriptionManager->flush();
                 $description = $user->getNomComplet().' vous a attribué le dossier #'.$signalement->getReference().'. Vous recevrez les mises à jour pour ce dossier.';
-                $notificationAndMailSender->sendNewSubscription($subscription, $description);
+                $notificationAndMailSender->sendNewSubscription($subscription, $affectation, $description);
             }
             $this->affectationManager->updateAffectation(affectation: $affectation, user: $user, status: AffectationStatus::ACCEPTED);
             $this->addFlash('success', 'Affectation acceptée avec succès !');
@@ -186,6 +182,7 @@ class AffectationController extends AbstractController
 
             return $this->json(['redirect' => true, 'url' => $url]);
         }
+        // TODO : remove when FEATURE_NEW_DASHBOARD is removed
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
             $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED);
             $this->addFlash('success', 'Affectation acceptée avec succès !');

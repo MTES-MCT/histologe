@@ -35,7 +35,6 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
-use App\Repository\UserSignalementSubscriptionRepository;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
@@ -334,9 +333,8 @@ class SignalementController extends AbstractController
         Signalement $signalement,
         Request $request,
         ManagerRegistry $doctrine,
-        AffectationRepository $affectationRepository,
+        AffectationManager $affectationManager,
         NotificationRepository $notificationRepository,
-        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
         if ($this->isCsrfTokenValid(
@@ -346,8 +344,7 @@ class SignalementController extends AbstractController
         ) {
             $signalement->setStatut(SignalementStatus::ARCHIVED);
             $notificationRepository->deleteBySignalement($signalement);
-            $affectationRepository->deleteByStatusAndSignalement(AffectationStatus::WAIT, $signalement);
-            $userSignalementSubscriptionRepository->deleteForSignalementOrPartner(signalement: $signalement);
+            $affectationManager->removeAffectationsBySignalement($signalement, AffectationStatus::WAIT);
 
             $doctrine->getManager()->flush();
             $response = [

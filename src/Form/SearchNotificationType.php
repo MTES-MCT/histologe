@@ -18,8 +18,8 @@ class SearchNotificationType extends AbstractType
     {
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
-                'Date (la plus récente)' => 's.createdAt-DESC',
-                'Date (la plus ancienne)' => 's.createdAt-ASC',
+                'Date (la plus récente)' => 'n.createdAt-DESC',
+                'Date (la plus ancienne)' => 'n.createdAt-ASC',
                 'Référence (ordre croissant)' => 'si.reference-ASC',
                 'Référence (ordre décroissant)' => 'si.reference-DESC',
                 'Nom de l\'auteur (A -> Z)' => 'cb.nom-ASC',

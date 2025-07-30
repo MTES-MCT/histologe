@@ -60,7 +60,7 @@ class SummaryMailService
         foreach ($notifications as $notification) {
             $notificationType = $notification->getType()->name;
             switch ($notification->getType()) {
-                case NotificationType::NOUVEL_ABONNEMENT: // voir si c'est ici
+                case NotificationType::NOUVEL_ABONNEMENT:
                 case NotificationType::NOUVEAU_SIGNALEMENT:
                 case NotificationType::NOUVELLE_AFFECTATION:
                 case NotificationType::CLOTURE_SIGNALEMENT:

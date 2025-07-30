@@ -293,8 +293,7 @@ class PartnerController extends AbstractController
                 }
             }
 
-            // delete affectations "en attente" et "acceptées"
-            $affectationManager->deleteAffectationsByPartner($partner);
+            $affectationManager->removeAffectationsByPartner($partner, [AffectationStatus::ACCEPTED, AffectationStatus::WAIT]);
 
             $this->cancelOrReplanVisites(
                 partner: $partner,

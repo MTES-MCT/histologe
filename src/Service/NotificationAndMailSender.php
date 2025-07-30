@@ -62,17 +62,18 @@ class NotificationAndMailSender
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVELLE_AFFECTATION, affectation: $affectation);
     }
 
-    public function sendNewSubscription(UserSignalementSubscription $subscription, string $description): void
+    public function sendNewSubscription(UserSignalementSubscription $subscription, Affectation $affectation, string $description): void
     {
         if ($subscription->getUser() !== $subscription->getCreatedBy()) {
-            $this->signalement = $subscription->getSignalement();
+            $this->signalement = $affectation->getSignalement();
             $recipients = new ArrayCollection();
             $recipients->add($subscription->getUser());
-            $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEL_ABONNEMENT, signalement: $this->signalement, description: $description);
+            // pas d'email unitaire pour ce type de notification (notification email uniquement pour les agents ayant l'option isMailingSummary)
+            $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEL_ABONNEMENT, affectation: $affectation, description: $description);
         }
     }
 
-    public function sendAffectationClosed(Affectation $affectation, User $user): void
+    public function sendAffectationClosed(Affectation $affectation): void
     {
         $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER;
         $this->affectation = $affectation;
