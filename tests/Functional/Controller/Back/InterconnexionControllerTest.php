@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\UserRepository;
-use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -38,7 +38,7 @@ class InterconnexionControllerTest extends WebTestCase
         yield 'Search without params' => [[]];
         yield 'Search with status success' => [['status' => 'success']];
         yield 'Search with status failed' => [['status' => 'failed']];
-        yield 'Search with action push_dossier' => [['action' => EsaboraSCHSService::ACTION_PUSH_DOSSIER]];
+        yield 'Search with action push_dossier' => [['action' => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER]];
         yield 'Search with territory 13' => [['territory' => 13]];
         yield 'Search with reference' => [['reference' => '2023-9']];
     }

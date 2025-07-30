@@ -66,25 +66,76 @@
             <th scope="col">Service</th>
             <th scope="col">Action</th>
             <th scope="col">Statut</th>
-            <th scope="col">Message d'erreur</th>
+            <th scope="col">Détails</th>
         {% endset %}
         
         {% set tableBody %}
             {% for connection in connections %}
+                {% set syncAt = connection.createdAt|date('d/m/Y H:i:s') %}
                 <tr>
-                    <td>{{ connection.reference }}</td>
-                    <td>{{ connection.createdAt|date('d/m/Y H:i') }}</td>
-                    <td>{{ connection.nom }}</td>
+                    <td>
+                        {% if connection.uuid is not null %}
+                            <a href="{{ path('back_signalement_view', {'uuid': connection.uuid}) }}">{{ connection.reference }}</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ syncAt }}</td>
+                    <td><a href="{{ path('back_partner_view', {'id' : connection.id}) }}">{{ connection.nom }}</a></td>
                     <td>{{ connection.service }}</td>
                     <td>{{ connection.action }}</td>
                     <td>
-                        {% if connection.status == 'success' %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
-                        {% else %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
-                        {% endif %}
+                        <span class="fr-badge fr-badge--no-icon {{ connection.status == 'success' ? 'fr-badge--success' : 'fr-badge--error' }}">
+                            {{ connection.status == 'success' ? 'Success' : 'Fail' }}
+                        </span>
                     </td>
-                    <td>{{ connection.response|raw }}</td>
+                   <td>
+                       {% set modalId = 'modal-' ~ loop.index %}
+                       <button data-fr-opened="false"
+                               aria-controls="{{ modalId }}"
+                               type="button"
+                               title="Afficher les détails de synchronisation pour {{ connection.reference }} le {{ syncAt  }}"
+                               class="fr-btn fr-fi-eye-fill">
+                       </button>
+                       <dialog id="{{ modalId }}" class="fr-modal" aria-labelledby="{{ modalId }}-title" aria-modal="true">
+                           <div class="fr-container fr-container--fluid fr-container-md">
+                               <div class="fr-grid-row fr-grid-row--center">
+                                   <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                                       <div class="fr-modal__body">
+                                           <div class="fr-modal__header">
+                                               <button aria-controls="{{ modalId  }}" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
+                                           </div>
+                                           <div class="fr-modal__content">
+                                               <div>
+                                                   <h2 id="{{ modalId }}-title" class="fr-modal__title">
+                                                       <span class="fr-icon-arrow-right-line fr-icon--lg" aria-hidden="true"></span>
+                                                       Détails  #{{ connection.reference }}
+                                                   </h2>
+                                                   <p>Synchronisation du  {{ syncAt }} pour {{ connection.nom }}<br>
+                                                       <span class="fr-badge fr-badge--no-icon {{ connection.status == 'success' ? 'fr-badge--success' : 'fr-badge--error' }}">
+                                                        {{ connection.status == 'success' ? 'Success' : 'Fail' }}
+                                                       </span>
+                                                   </p>
+                                               </div>
+                                               <div>
+                                                   <h3>Requête</h3>
+                                                   <pre>
+                                                       <code>{{ connection.message }}</code>
+                                                   </pre>
+                                               </div>
+                                               <div>
+                                                   <h3>Réponse</h3>
+                                                   <pre>
+                                                   <code>{{ connection.response }}</code>
+                                               </pre>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </dialog>
+                   </td>
                 </tr>
             {% endfor %}
         {% endset %}

@@ -90,6 +90,10 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             $qb->andWhere('s.reference = :reference')->setParameter('reference', $searchInterconnexion->getReference());
         }
 
+        if ($searchInterconnexion->getService()) {
+            $qb->andWhere('j.service = :service')->setParameter('service', $searchInterconnexion->getService());
+        }
+
         $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
 
         return $qb;
@@ -107,7 +111,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         int $offset,
     ): array {
         $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion);
-        $qb->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.service, j.action, j.codeStatus, j.response');
+        $qb->select('j.createdAt, p.id, p.nom, s.reference, s.uuid, j.status, j.service, j.action, j.codeStatus,j.message, j.response');
 
         if (!empty($searchInterconnexion->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());

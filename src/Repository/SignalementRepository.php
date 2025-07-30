@@ -13,7 +13,6 @@ use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -1480,26 +1479,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->where('s.isLogementSocial = 1')
             ->andWhere('s.bailleur IS NULL')
             ->andWhere('s.nomProprio IS NOT NULL')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return array<int, Signalement>
-     */
-    public function findSynchroIdoss(string $status): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('s.id', 's.uuid', 's.reference', 'j.action', 'j.response', 'j.createdAt', 'j.codeStatus', 'j.partnerId')
-            ->innerJoin(JobEvent::class, 'j', 'WITH', 's.id = j.signalementId')
-            ->where('j.signalementId = s.id')
-            ->andWhere('j.service = :service')
-            ->andWhere('j.status = :status')
-            ->setParameter('service', IdossService::TYPE_SERVICE)
-            ->setParameter('status', $status)
-            ->addOrderBy('j.createdAt', 'DESC')
-            ->indexBy('s', 's.id')
-            ->setMaxResults(100)
             ->getQuery()
             ->getResult();
     }

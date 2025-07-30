@@ -13,6 +13,7 @@ class SearchInterconnexion
     private ?Territory $territory = null;
     private ?Partner $partner = null;
     private ?string $status = null;
+    private ?string $service = null;
     private ?string $action = null;
     private ?string $orderType = null;
     private ?string $reference = null;
@@ -22,9 +23,11 @@ class SearchInterconnexion
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): void
+    public function setTerritory(?Territory $territory): static
     {
         $this->territory = $territory;
+
+        return $this;
     }
 
     public function getPartner(): ?Partner
@@ -32,9 +35,11 @@ class SearchInterconnexion
         return $this->partner;
     }
 
-    public function setPartner(?Partner $partner): void
+    public function setPartner(?Partner $partner): static
     {
         $this->partner = $partner;
+
+        return $this;
     }
 
     public function getStatus(): ?string
@@ -42,9 +47,11 @@ class SearchInterconnexion
         return $this->status;
     }
 
-    public function setStatus(?string $status): void
+    public function setStatus(?string $status): static
     {
         $this->status = $status;
+
+        return $this;
     }
 
     public function getAction(): ?string
@@ -52,9 +59,11 @@ class SearchInterconnexion
         return $this->action;
     }
 
-    public function setAction(?string $action): void
+    public function setAction(?string $action): static
     {
         $this->action = $action;
+
+        return $this;
     }
 
     public function getOrderType(): ?string
@@ -62,9 +71,11 @@ class SearchInterconnexion
         return $this->orderType;
     }
 
-    public function setOrderType(?string $orderType): void
+    public function setOrderType(?string $orderType): static
     {
         $this->orderType = $orderType;
+
+        return $this;
     }
 
     public function getReference(): ?string
@@ -72,8 +83,22 @@ class SearchInterconnexion
         return $this->reference;
     }
 
-    public function setReference(?string $reference): void
+    public function setReference(?string $reference): static
     {
         $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getService(): ?string
+    {
+        return $this->service;
+    }
+
+    public function setService(?string $service): static
+    {
+        $this->service = $service;
+
+        return $this;
     }
 }

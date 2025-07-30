@@ -11,6 +11,7 @@ use App\Repository\TerritoryRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Idoss\IdossService;
+use App\Service\Interconnection\Oilhi\HookZapierService;
 use App\Service\ListFilters\SearchInterconnexion;
 use App\Service\ListFilters\SearchPartner;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -65,6 +66,20 @@ class SearchInterconnexionType extends AbstractType
             }
             $event->setData($data);
         });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            /** @var SearchInterconnexion $searchInterconnexion */
+            $searchInterconnexion = $event->getData();
+            $actionValue = $searchInterconnexion->getAction();
+
+            if ($actionValue && str_contains($actionValue, ' - ')) {
+                [$service, $action] = explode(' - ', $actionValue);
+                $searchInterconnexion
+                    ->setService($service)
+                    ->setAction($action);
+            }
+        });
+
         $builder->add('status', ChoiceType::class, [
             'required' => false,
             'label' => 'Statut',
@@ -79,16 +94,18 @@ class SearchInterconnexionType extends AbstractType
             'label' => 'Action',
             'placeholder' => 'Toutes les actions',
             'choices' => [
-                AbstractEsaboraService::ACTION_PUSH_DOSSIER => AbstractEsaboraService::ACTION_PUSH_DOSSIER,
-                AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE => AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
-                AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE => AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE,
-                AbstractEsaboraService::ACTION_SYNC_DOSSIER => AbstractEsaboraService::ACTION_SYNC_DOSSIER,
-                AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE => AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE,
-                AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE => AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE,
-                EsaboraSCHSService::ACTION_SYNC_EVENTS => EsaboraSCHSService::ACTION_SYNC_EVENTS,
-                EsaboraSCHSService::ACTION_SYNC_EVENTFILES => EsaboraSCHSService::ACTION_SYNC_EVENTFILES,
-                IdossService::ACTION_LIST_STATUTS => IdossService::ACTION_LIST_STATUTS,
-                IdossService::ACTION_UPLOAD_FILES => IdossService::ACTION_UPLOAD_FILES,
+                AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER,
+                AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
+                AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE,
+                AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_SYNC_DOSSIER => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_SYNC_DOSSIER,
+                AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE,
+                AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE,
+                AbstractEsaboraService::TYPE_SERVICE.' - '.EsaboraSCHSService::ACTION_SYNC_EVENTS => AbstractEsaboraService::TYPE_SERVICE.' - '.EsaboraSCHSService::ACTION_SYNC_EVENTS,
+                AbstractEsaboraService::TYPE_SERVICE.' - '.EsaboraSCHSService::ACTION_SYNC_EVENTFILES => AbstractEsaboraService::TYPE_SERVICE.' - '.EsaboraSCHSService::ACTION_SYNC_EVENTFILES,
+                IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_PUSH_DOSSIER => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_PUSH_DOSSIER,
+                IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_LIST_STATUTS => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_LIST_STATUTS,
+                IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_UPLOAD_FILES => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_UPLOAD_FILES,
+                HookZapierService::TYPE_SERVICE.' - '.HookZapierService::ACTION_PUSH_DOSSIER => HookZapierService::TYPE_SERVICE.' - '.HookZapierService::ACTION_PUSH_DOSSIER,
             ],
         ]);
         $builder->add('orderType', ChoiceType::class, [
