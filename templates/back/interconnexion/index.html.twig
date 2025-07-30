@@ -73,7 +73,13 @@
             {% for connection in connections %}
                 {% set syncAt = connection.createdAt|date('d/m/Y H:i:s') %}
                 <tr>
-                    <td> <a href="{{ path('back_signalement_view', {'uuid': connection.uuid}) }}">{{ connection.reference }}</a></td>
+                    <td>
+                        {% if connection.uuid is not null %}
+                            <a href="{{ path('back_signalement_view', {'uuid': connection.uuid}) }}">{{ connection.reference }}</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
                     <td>{{ syncAt }}</td>
                     <td><a href="{{ path('back_partner_view', {'id' : connection.id}) }}">{{ connection.nom }}</a></td>
                     <td>{{ connection.service }}</td>
