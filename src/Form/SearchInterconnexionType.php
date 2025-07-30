@@ -102,6 +102,7 @@ class SearchInterconnexionType extends AbstractType
                 AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE,
                 AbstractEsaboraService::TYPE_SERVICE.' - '.EsaboraSCHSService::ACTION_SYNC_EVENTS => AbstractEsaboraService::TYPE_SERVICE.' - '.EsaboraSCHSService::ACTION_SYNC_EVENTS,
                 AbstractEsaboraService::TYPE_SERVICE.' - '.EsaboraSCHSService::ACTION_SYNC_EVENTFILES => AbstractEsaboraService::TYPE_SERVICE.' - '.EsaboraSCHSService::ACTION_SYNC_EVENTFILES,
+                IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_PUSH_DOSSIER => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_PUSH_DOSSIER,
                 IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_LIST_STATUTS => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_LIST_STATUTS,
                 IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_UPLOAD_FILES => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_UPLOAD_FILES,
                 HookZapierService::TYPE_SERVICE.' - '.HookZapierService::ACTION_PUSH_DOSSIER => HookZapierService::TYPE_SERVICE.' - '.HookZapierService::ACTION_PUSH_DOSSIER,
