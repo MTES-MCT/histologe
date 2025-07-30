@@ -63,6 +63,7 @@ class InterconnexionController extends AbstractController
             'connections' => $connections,
             'pages' => $pages,
             'totalConnexions' => $total,
+            'day_period' => self::DAY_PERIOD,
         ]);
     }
 }
