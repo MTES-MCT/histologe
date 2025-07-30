@@ -1,10 +1,10 @@
 # API
 
 ## Documentation de l'API
-Une [documentation](https://signal-logement.beta.gouv.fr/api/doc) est disponible en accès libre.
+Une [documentation](https://bo.signal-logement.beta.gouv.fr/api/doc) est disponible en accès libre.
 Les spécifications Open API peuvent y être téléchargées.
 
-Une [documentation Swagger](https://signal-logement.beta.gouv.fr/api/doc/swagger) est également disponible en accès libre.
+Une [documentation Swagger](https://bo.signal-logement.beta.gouv.fr/api/doc/swagger) est également disponible en accès libre.
 
 ## Accès à l'API
 Une demande officielle doit être faite via le [formulaire de contact](https://signal-logement.beta.gouv.fr/une-question/contact/) du site.
