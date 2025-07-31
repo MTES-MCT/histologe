@@ -40,7 +40,6 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\FormHelper;
 use App\Service\Signalement\PhotoHelper;
-use App\Service\Signalement\SignalementAffectationHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SuiviSeenMarker;
 use Doctrine\DBAL\Exception;
@@ -302,14 +301,12 @@ class SignalementController extends AbstractController
 
         $entity = $reference = null;
         if ('all' === $signalementAffectationClose->getType() && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            // TODO : suppression des abonnements ?
             $signalementAffectationClose->setSubject('tous les partenaires');
             $entity = $signalement = $signalementManager->closeSignalementForAllPartners($signalementAffectationClose);
             $reference = $signalement->getReference();
             $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose), SignalementClosedEvent::NAME);
         /* @var Affectation $affectation */
         } elseif ($affectation) {
-            // TODO : suppression des abonnements ?
             $entity = $affectationManager->closeAffectation(
                 affectation: $affectation,
                 user: $user,

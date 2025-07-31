@@ -11,6 +11,7 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\User;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\AffectationManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Security\Voter\AffectationVoter;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +28,7 @@ class AffectationUpdateController extends AbstractController
     public function __construct(
         private readonly AffectationManager $affectationManager,
         private readonly ValidatorInterface $validator,
+        private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
     ) {
     }
 
@@ -207,7 +209,6 @@ class AffectationUpdateController extends AbstractController
                 message: $affectationRequest->message,
                 flush: true
             );
-            // TODO : suppression des abonnements ?
         }
         $motifRefus = $message = null;
         if (AffectationStatus::REFUSED === $statut) {
@@ -215,8 +216,12 @@ class AffectationUpdateController extends AbstractController
             $message = $affectationRequest->message;
         }
 
-            // TODO : création des abonnements ?
-        return $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
+        $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
+        if (AffectationStatus::ACCEPTED === $statut) {
+            $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
+        }
+
+        return $affectation;
     }
 
     private function applyUsagerNotification(AffectationRequest $affectationRequest, Affectation $affectation): void
