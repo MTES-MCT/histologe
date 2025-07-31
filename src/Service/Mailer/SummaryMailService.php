@@ -52,6 +52,7 @@ class SummaryMailService
         $events = [
             NotificationType::NOUVEAU_SIGNALEMENT->name => [],
             NotificationType::NOUVEAU_SUIVI->name => [],
+            NotificationType::NOUVEL_ABONNEMENT->name => [],
             NotificationType::NOUVELLE_AFFECTATION->name => [],
             NotificationType::CLOTURE_SIGNALEMENT->name => [],
             NotificationType::CLOTURE_PARTENAIRE->name => [],
@@ -59,6 +60,7 @@ class SummaryMailService
         foreach ($notifications as $notification) {
             $notificationType = $notification->getType()->name;
             switch ($notification->getType()) {
+                case NotificationType::NOUVEL_ABONNEMENT:
                 case NotificationType::NOUVEAU_SIGNALEMENT:
                 case NotificationType::NOUVELLE_AFFECTATION:
                 case NotificationType::CLOTURE_SIGNALEMENT:

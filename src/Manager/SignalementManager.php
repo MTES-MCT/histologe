@@ -36,7 +36,6 @@ use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
-use App\Repository\AffectationRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
@@ -74,7 +73,7 @@ class SignalementManager extends AbstractManager
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private readonly SuiviManager $suiviManager,
         private readonly BailleurRepository $bailleurRepository,
-        private readonly AffectationRepository $affectationRepository,
+        private readonly AffectationManager $affectationManager,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
@@ -250,7 +249,7 @@ class SignalementManager extends AbstractManager
 
         /** @var User $user */
         $user = $this->security->getUser();
-        $this->affectationRepository->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user);
+        $this->affectationManager->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user);
         $this->managerRegistry->getManager()->flush();
 
         return $signalement;

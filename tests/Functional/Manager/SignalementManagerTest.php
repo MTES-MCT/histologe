@@ -16,9 +16,9 @@ use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
+use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
-use App\Repository\AffectationRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Service\Signalement\CriticiteCalculator;
@@ -59,7 +59,7 @@ class SignalementManagerTest extends WebTestCase
     private SuiviManager $suiviManager;
     private BailleurRepository $bailleurRepository;
     private SignalementAddressUpdater $signalementAddressUpdater;
-    private AffectationRepository $affectationRepository;
+    private AffectationManager $affectationManager;
     private ZipcodeProvider $zipcodeProvider;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
 
@@ -85,7 +85,7 @@ class SignalementManagerTest extends WebTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
-        $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
+        $this->affectationManager = static::getContainer()->get(AffectationManager::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
@@ -104,7 +104,7 @@ class SignalementManagerTest extends WebTestCase
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
             $this->bailleurRepository,
-            $this->affectationRepository,
+            $this->affectationManager,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->htmlSanitizerInterface,

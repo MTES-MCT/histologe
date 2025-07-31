@@ -37,18 +37,20 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     {
         $qb = $this->createQueryBuilder('n')
             ->where('n.user = :user')
-            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement)')
+            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement, :nouvel_abonnement)')
             ->andWhere('n.deleted = :deleted')
             ->setParameter('user', $searchNotification->getUser())
             ->setParameter('nouveau_suivi', NotificationType::NOUVEAU_SUIVI)
             ->setParameter('cloture_signalement', NotificationType::CLOTURE_SIGNALEMENT)
+            ->setParameter('nouvel_abonnement', NotificationType::NOUVEL_ABONNEMENT)
             ->setParameter('deleted', false)
             ->leftJoin('n.user', 'u')
             ->leftJoin('n.suivi', 's')
             ->leftJoin('s.createdBy', 'cb')
             ->leftJoin('n.signalement', 'si')
             ->leftJoin('n.affectation', 'a')
-            ->addSelect('s', 'si', 'a', 'u', 'cb');
+            ->leftJoin('a.answeredBy', 'ab')
+            ->addSelect('s', 'si', 'a', 'u', 'cb', 'ab');
 
         if (!empty($searchNotification->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchNotification->getOrderType());
@@ -62,12 +64,12 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
                     $orderDirection
                 );
             } elseif ('cb.nom' === $orderField) {
-                $qb->orderBy('CASE WHEN cb.nom IS NOT NULL THEN cb.nom ELSE si.nomOccupant END', $orderDirection);
+                $qb->orderBy('CASE WHEN cb.nom IS NOT NULL THEN cb.nom WHEN ab.nom IS NOT NULL THEN ab.nom ELSE si.nomOccupant END', $orderDirection);
             } else {
                 $qb->orderBy($orderField, $orderDirection);
             }
         } else {
-            $qb->orderBy('s.createdAt', 'DESC');
+            $qb->orderBy('n.createdAt', 'DESC');
         }
 
         $firstResult = ($searchNotification->getPage() - 1) * $maxResult;

@@ -11,10 +11,8 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Entity\User;
-use App\Entity\UserSignalementSubscription;
 use App\Event\SuiviCreatedEvent;
 use App\EventListener\SignalementUpdatedListener;
-use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -31,7 +29,7 @@ class SuiviManager extends Manager
         private readonly Security $security,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
-        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         private readonly bool $featureNewDashboard,
         string $entityName = Suivi::class,
@@ -75,15 +73,12 @@ class SuiviManager extends Manager
         }
         // abonnement au signalement si le suivi est crée par un agent non abonné
         if ($this->doesUserNeedSubscription($user, $suivi)) {
-            $subscription = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
-            if (!$subscription) {
-                $subscription = new UserSignalementSubscription();
-                $subscription->setUser($user)
-                            ->setSignalement($signalement)
-                            ->setCreatedBy($user);
-                $this->persist($subscription);
-                $subscriptionCreated = true;
-            }
+            $subscription = $this->userSignalementSubscriptionManager->createOrGet(
+                userToSubscribe: $user,
+                signalement: $signalement,
+                createdBy: $user,
+                subscriptionCreated: $subscriptionCreated
+            );
         }
         if ($flush) {
             $this->save($suivi);

@@ -29,7 +29,7 @@ class UserRepositoryTest extends KernelTestCase
         $users = $userRepository->findInactiveWithNbAffectationPending();
 
         $this->assertIsArray($users);
-        $this->assertCount(10, $users);
+        $this->assertCount(11, $users);
         foreach ($users as $user) {
             $this->assertArrayHasKey('email', $user);
             if (!empty($user['signalements'])) {

@@ -72,15 +72,23 @@
                         </div>
                     </td>
                     <td>
-                        {{ notification.suivi.signalement.reference }}
+                        {{ notification.signalement.reference }}
                         <br>
-                        ({{notification.suivi.signalement.villeOccupant}})
+                        ({{ notification.signalement.villeOccupant }})
                     </td>
-                    <td>{{ notification.suivi.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
-                    <td class="word-wrap-anywhere">{{ transform_suivi_description(notification.suivi)|raw }}</td>
-                    <td>{{ notification.suivi.createdBy ? notification.suivi.createdBy.nomComplet : notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize }}</td>
+                    <td>{{ notification.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
+                    <td class="word-wrap-anywhere">{{ notification.suivi? transform_suivi_description(notification.suivi)|raw : notification.description }}</td>
+                    {% if notification.suivi and notification.suivi.createdBy %}
+                        {% set auteur =  notification.suivi.createdBy.nomComplet %} 
+                    {% elseif notification.affectation and notification.affectation.answeredBy %}
+                        {% set auteur = notification.affectation.answeredBy.nomComplet %}
+                    {% else %}
+                        {% set auteur = notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize %}   
+                    {% endif %}
+                    <td>{{ auteur }}</td>
                     <td class="fr-text--right fr-ws-nowrap">
-                        <a href="{{ path('back_signalement_view',{uuid:notification.suivi.signalement.uuid}) }}#suivis"
+                        {% set link = path('back_signalement_view', {uuid: notification.signalement.uuid}) ~ (notification.suivi ? '#suivis' : '') %}
+                        <a href="{{ link }}"
                         class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
                         {% set routeParams = {id: notification.id, _token: csrf_token('back_delete_notification_'~notification.id)}|merge(searchNotification.urlParams) %}
                         <a href="{{ path('back_notifications_delete_notification', routeParams) }}"

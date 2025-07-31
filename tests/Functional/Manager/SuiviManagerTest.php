@@ -9,6 +9,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
 use App\Manager\SuiviManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,6 +28,7 @@ class SuiviManagerTest extends KernelTestCase
     private Security $security;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
     private UserRepository $userRepository;
     private SuiviManager $suiviManager;
 
@@ -38,15 +40,16 @@ class SuiviManagerTest extends KernelTestCase
         $this->eventDispatcherInterface = static::getContainer()->get(EventDispatcherInterface::class);
         $this->security = static::getContainer()->get(Security::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
+        $this->userRepository = self::getContainer()->get(UserRepository::class);
         $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
-        $this->userRepository = $this->managerRegistry->getRepository(User::class);
         $this->suiviManager = new SuiviManager(
             $this->managerRegistry,
             $this->signalementUpdatedListener,
             $this->eventDispatcherInterface,
             $this->security,
             $this->htmlSanitizerInterface,
-            $this->userSignalementSubscriptionRepository,
+            $this->userSignalementSubscriptionManager,
             true,
             Suivi::class,
         );

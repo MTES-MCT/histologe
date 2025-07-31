@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\AcceptAffectation;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
@@ -15,6 +16,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
+use App\Form\AcceptAffectationType;
 use App\Form\AddSuiviType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
@@ -44,6 +46,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,6 +80,8 @@ class SignalementController extends AbstractController
         CritereRepository $critereRepository,
         SuiviSeenMarker $suiviSeenMarker,
         SignalementRepository $signalementRepository,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -144,6 +149,13 @@ class SignalementController extends AbstractController
             $refusAffectation = (new RefusAffectation())->setSignalement($signalement);
             $refusAffectationFormRoute = $this->generateUrl('back_signalement_affectation_deny', ['affectation' => $affectation->getId()]);
             $refusAffectationForm = $this->createForm(RefusAffectationType::class, $refusAffectation, ['action' => $refusAffectationFormRoute]);
+        }
+
+        $acceptAffectationForm = null;
+        if ($featureNewDashboard && $canAnswerAffectation) {
+            $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation)->setAgents([$user]);
+            $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+            $acceptAffectationForm = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
@@ -232,6 +244,7 @@ class SignalementController extends AbstractController
             'addSuiviForm' => $addSuiviForm,
             'refusAffectationForm' => $refusAffectationForm,
             'refusSignalementForm' => $refusSignalementForm,
+            'acceptAffectationForm' => $acceptAffectationForm,
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
@@ -320,7 +333,7 @@ class SignalementController extends AbstractController
         Signalement $signalement,
         Request $request,
         ManagerRegistry $doctrine,
-        AffectationRepository $affectationRepository,
+        AffectationManager $affectationManager,
         NotificationRepository $notificationRepository,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
@@ -331,7 +344,8 @@ class SignalementController extends AbstractController
         ) {
             $signalement->setStatut(SignalementStatus::ARCHIVED);
             $notificationRepository->deleteBySignalement($signalement);
-            $affectationRepository->deleteByStatusAndSignalement(AffectationStatus::WAIT, $signalement);
+            $affectationManager->removeAffectationsBySignalement($signalement, AffectationStatus::WAIT);
+
             $doctrine->getManager()->flush();
             $response = [
                 'status' => Response::HTTP_OK,

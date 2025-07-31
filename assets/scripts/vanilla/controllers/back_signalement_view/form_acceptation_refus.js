@@ -38,3 +38,20 @@ validationButton.forEach((button) => {
     }
   });
 });
+
+const linkSelectAllAgents = document.getElementById('select-all-agents');
+if (linkSelectAllAgents) {
+  linkSelectAllAgents.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    /** @type {NodeListOf<HTMLInputElement>} */
+    const checkboxes = document.querySelectorAll('#accept-affectation-form input[type="checkbox"]');
+    const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+
+    checkboxes.forEach((cb) => {
+      cb.checked = !allChecked;
+    });
+
+    linkSelectAllAgents.textContent = allChecked ? 'Tout sélectionner' : 'Tout désélectionner';
+  });
+}
