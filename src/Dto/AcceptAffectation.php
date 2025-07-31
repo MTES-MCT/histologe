@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AcceptAffectation
 {
+    #[Assert\NotNull(message: 'Affectation manquante.')]
     private ?Affectation $affectation = null;
 
     /** @var array<User> */

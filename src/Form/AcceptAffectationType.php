@@ -12,9 +12,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AcceptAffectationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $choicesAgents = $builder->getData()->getAffectation()->getPartner()->getUsers();
+        /** @var AcceptAffectation $acceptAffectation */
+        $acceptAffectation = $builder->getData();
+        $choicesAgents = $acceptAffectation->getAffectation()->getPartner()->getUsers();
 
         $builder->add('agents', EntityType::class, [
             'class' => User::class,
@@ -41,7 +43,7 @@ class AcceptAffectationType extends AbstractType
         return $html;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => AcceptAffectation::class,

@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserSignalementSubscriptionRepository::class)]
 #[ORM\UniqueConstraint(name: 'unique_user_signalement_subscription', columns: ['user_id', 'signalement_id'])]
-class UserSignalementSubscription
+class UserSignalementSubscription implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

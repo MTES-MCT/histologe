@@ -172,8 +172,7 @@ class AffectationController extends AbstractController
             foreach ($acceptAffectation->getAgents() as $agent) {
                 $subscription = $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
                 $userSignalementSubscriptionManager->flush();
-                $description = $user->getNomComplet().' vous a attribué le dossier #'.$signalement->getReference().'. Vous recevrez les mises à jour pour ce dossier.';
-                $notificationAndMailSender->sendNewSubscription($subscription, $affectation, $description);
+                $notificationAndMailSender->sendNewSubscription($subscription, $affectation);
             }
             $this->affectationManager->updateAffectation(affectation: $affectation, user: $user, status: AffectationStatus::ACCEPTED);
             $this->addFlash('success', 'Affectation acceptée avec succès !');

@@ -204,6 +204,12 @@ users:
     statut: "INACTIVE"
     is_mailing_active: 0
   -
+    email: user-13-14@signal-logement.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 13-01"
+    statut: "INACTIVE"
+    is_mailing_active: 0
+  -
     email: user-2A-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 2A-01"

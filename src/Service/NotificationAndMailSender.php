@@ -62,14 +62,25 @@ class NotificationAndMailSender
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVELLE_AFFECTATION, affectation: $affectation);
     }
 
-    public function sendNewSubscription(UserSignalementSubscription $subscription, Affectation $affectation, string $description): void
+    public function sendNewSubscription(UserSignalementSubscription $subscription, Affectation $affectation): void
     {
         if ($subscription->getUser() !== $subscription->getCreatedBy()) {
+            $currentUser = $subscription->getCreatedBy();
             $this->signalement = $affectation->getSignalement();
+            $description = sprintf(
+                '%s vous a attribué le dossier #%s. Vous recevrez les mises à jour pour ce dossier.',
+                $currentUser->getNomComplet(),
+                $this->signalement->getReference()
+            );
             $recipients = new ArrayCollection();
             $recipients->add($subscription->getUser());
             // pas d'email unitaire pour ce type de notification (notification email uniquement pour les agents ayant l'option isMailingSummary)
-            $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEL_ABONNEMENT, affectation: $affectation, description: $description);
+            $this->createInAppNotifications(
+                recipients: $recipients,
+                type: NotificationType::NOUVEL_ABONNEMENT,
+                affectation: $affectation,
+                description: $description
+            );
         }
     }
 
