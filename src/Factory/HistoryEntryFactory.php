@@ -7,6 +7,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\HistoryEntry;
 use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use App\Security\User\SignalementUser;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -34,11 +35,11 @@ readonly class HistoryEntryFactory
             ->setEntityName(str_replace(self::ENTITY_PROXY_PREFIX, '', $entityHistory::class))
             ->setUser($user);
 
-        if ($entityHistory instanceof Affectation) {
+        if ($entityHistory instanceof Affectation || $entityHistory instanceof UserSignalementSubscription) {
             $historyEntry->setSignalement($entityHistory->getSignalement());
-            if (HistoryEntryEvent::CREATE === $historyEntryEvent) {
-                $historyEntry->setUser($entityHistory->getAffectedBy());
-            }
+        }
+        if ($entityHistory instanceof Affectation && HistoryEntryEvent::CREATE === $historyEntryEvent) {
+            $historyEntry->setUser($entityHistory->getAffectedBy());
         }
 
         return $historyEntry;

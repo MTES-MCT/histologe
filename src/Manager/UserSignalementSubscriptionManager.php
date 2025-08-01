@@ -6,12 +6,23 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
+use App\Repository\UserRepository;
+use App\Service\NotificationAndMailSender;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class UserSignalementSubscriptionManager extends AbstractManager
 {
-    public function __construct(ManagerRegistry $managerRegistry, string $entityName = UserSignalementSubscription::class)
-    {
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
+        private readonly Security $security,
+        private readonly UserRepository $userRepository,
+        #[Autowire(env: 'USER_SYSTEM_EMAIL')]
+        private readonly string $userSystemEmail,
+        string $entityName = UserSignalementSubscription::class,
+    ) {
         parent::__construct($managerRegistry, $entityName);
     }
 
@@ -19,6 +30,7 @@ class UserSignalementSubscriptionManager extends AbstractManager
         User $userToSubscribe,
         Signalement $signalement,
         User $createdBy,
+        ?Affectation $affectation = null,
         bool &$subscriptionCreated = false,
     ): UserSignalementSubscription {
         $subscription = $this->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]);
@@ -29,6 +41,9 @@ class UserSignalementSubscriptionManager extends AbstractManager
             ->setCreatedBy($createdBy);
 
             $this->persist($subscription);
+            if ($affectation) {
+                $this->notificationAndMailSender->sendNewSubscription($subscription, $affectation);
+            }
             $subscriptionCreated = true;
         }
 
@@ -38,8 +53,14 @@ class UserSignalementSubscriptionManager extends AbstractManager
     public function createDefaultSubscriptionsForAffectation(Affectation $affectation): void
     {
         $signalement = $affectation->getSignalement();
+        $user = $this->security->getUser();
+        /** @var ?User $createdBy */
+        $createdBy = $user ?: $this->userRepository->findOneBy(['email' => $this->userSystemEmail]);
         foreach ($affectation->getPartner()->getUsers() as $userPartner) {
-            $this->createOrGet(userToSubscribe: $userPartner, signalement: $signalement, createdBy: $userPartner);
+            if ($userPartner->isApiUser()) {
+                continue;
+            }
+            $this->createOrGet(userToSubscribe: $userPartner, signalement: $signalement, createdBy: $createdBy, affectation: $affectation);
         }
     }
 }
