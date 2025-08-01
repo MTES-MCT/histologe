@@ -52,8 +52,8 @@ use Symfony\Bundle\SecurityBundle\Security;
  */
 class SignalementRepository extends ServiceEntityRepository
 {
-    public const MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
-    private const DATE_FEEDBACK_USAGER_ONLINE = '2023-03-28';
+    public const int MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
+    private const string DATE_FEEDBACK_USAGER_ONLINE = '2023-03-28';
 
     public function __construct(
         ManagerRegistry $registry,
@@ -93,6 +93,10 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function countAll(
         ?Territory $territory,
         ?ArrayCollection $partners,
@@ -126,8 +130,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $partners);
         }
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -158,13 +161,20 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param array<int, Territory>                $territories
-     * @param ArrayCollection<int, Partner>        $partners
      * @param array<int, QualificationStatus>|null $qualificationStatuses
      *
      * @return array<int, array<string, mixed>>
+     *
+     * @throws QueryException
      */
-    public function countByStatus(array $territories, ?ArrayCollection $partners, ?int $year = null, bool $removeImported = false, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
-    {
+    public function countByStatus(
+        array $territories,
+        ?ArrayCollection $partners,
+        ?int $year = null,
+        bool $removeImported = false,
+        ?Qualification $qualification = null,
+        ?array $qualificationStatuses = null,
+    ): array {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
             ->addSelect('s.statut')
@@ -199,13 +209,15 @@ class SignalementRepository extends ServiceEntityRepository
             }
         }
 
-        $qb->indexBy('s', 's.statut')
-            ->groupBy('s.statut');
+        $qb->indexBy('s', 's.statut')->groupBy('s.statut');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function countValidated(bool $removeImported = false): int
     {
         $notStatus = [SignalementStatus::NEED_VALIDATION, SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED];
@@ -218,10 +230,13 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function countClosed(bool $removeImported = false): int
     {
         $qb = $this->createQueryBuilder('s');
@@ -233,10 +248,13 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function countRefused(): int
     {
         $qb = $this->createQueryBuilder('s');
@@ -246,8 +264,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -267,8 +284,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->groupBy('t.id');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -301,8 +317,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->orderBy('year')
             ->addOrderBy('month');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -331,8 +346,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->groupBy('sit.id');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -398,8 +412,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->orderBy('count', 'DESC')
             ->setMaxResults(5);
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -430,8 +443,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->groupBy('s.motifCloture');
         $qb->orderBy('s.motifCloture');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -685,6 +697,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     public function findOneByCodeForPublic(string $code): ?Signalement
     {
         $qb = $this->createQueryBuilder('s')
@@ -724,6 +739,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function getAverageCriticite(
         ?Territory $territory,
         ?ArrayCollection $partners,
@@ -750,25 +769,46 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $partners);
         }
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function getAverageDaysValidation(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false,
-        bool $removeDraft = true, ): ?float
-    {
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getAverageDaysValidation(
+        ?Territory $territory,
+        ?ArrayCollection $partners,
+        bool $removeImported = false,
+        bool $removeDraft = true,
+    ): ?float {
         return $this->getAverageDayResult('validatedAt', $territory, $partners, $removeImported, $removeDraft);
     }
 
-    public function getAverageDaysClosure(?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false,
-        bool $removeDraft = true, ): ?float
-    {
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getAverageDaysClosure(
+        ?Territory $territory,
+        ?ArrayCollection $partners,
+        bool $removeImported = false,
+        bool $removeDraft = true,
+    ): ?float {
         return $this->getAverageDayResult('closedAt', $territory, $partners, $removeImported, $removeDraft);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     private function getAverageDayResult(
-        string $field, ?Territory $territory, ?ArrayCollection $partners, bool $removeImported = false, bool $removeDraft = true): ?float
-    {
+        string $field,
+        ?Territory $territory,
+        ?ArrayCollection $partners,
+        bool $removeImported = false,
+        bool $removeDraft = true,
+    ): ?float {
         $qb = $this->createQueryBuilder('s');
         $qb->select('AVG(datediff(s.'.$field.', s.createdAt))');
 
@@ -790,10 +830,13 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $partners);
         }
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function countFiltered(StatisticsFilters $statisticsFilters): ?int
     {
         $qb = $this->createQueryBuilder('s');
@@ -801,8 +844,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id)');
         $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -821,10 +863,13 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->orderBy('year')
             ->addOrderBy('month');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function getAverageCriticiteFiltered(StatisticsFilters $statisticsFilters): ?float
     {
         $qb = $this->createQueryBuilder('s');
@@ -834,8 +879,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -852,8 +896,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->andWhere('sit.isActive = :isActive')->setParameter('isActive', true);
         $qb->groupBy('sit.id');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -870,12 +913,13 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->andWhere('crit.isArchive = :isArchive')->setParameter('isArchive', false);
         $qb->groupBy('crit.id');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @return array<int, array<string, mixed>>
+     *
+     * @throws QueryException
      */
     public function countByStatusFiltered(StatisticsFilters $statisticsFilters): array
     {
@@ -888,8 +932,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->indexBy('s', 's.statut');
         $qb->groupBy('s.statut');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -909,8 +952,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->groupBy('range');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -932,8 +974,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->groupBy('visite');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -951,8 +992,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->groupBy('s.motifCloture');
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     public static function addFiltersToQueryBuilder(QueryBuilder $qb, StatisticsFilters $filters): QueryBuilder
@@ -1158,8 +1198,6 @@ class SignalementRepository extends ServiceEntityRepository
      * @param array<int, int> $territories
      *
      * @throws NonUniqueResultException
-     * @throws NoResultException
-     * @throws QueryException
      */
     public function countSignalementByStatus(array $territories): CountSignalement
     {
@@ -1204,8 +1242,7 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -1444,39 +1481,6 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return array<int, Signalement>
      */
-    public function findSynchroIdoss(string $status): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('s.id', 's.uuid', 's.reference', 'j.action', 'j.response', 'j.createdAt', 'j.codeStatus', 'j.partnerId')
-            ->innerJoin(JobEvent::class, 'j', 'WITH', 's.id = j.signalementId')
-            ->where('j.signalementId = s.id')
-            ->andWhere('j.service = :service')
-            ->andWhere('j.status = :status')
-            ->setParameter('service', IdossService::TYPE_SERVICE)
-            ->setParameter('status', $status)
-            ->addOrderBy('j.createdAt', 'DESC')
-            ->indexBy('s', 's.id')
-            ->setMaxResults(100)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return array<int, Signalement>
-     */
-    public function findLogementSocialWithoutBailleurLink(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->where('s.isLogementSocial = 1')
-            ->andWhere('s.bailleur IS NULL')
-            ->andWhere('s.nomProprio IS NOT NULL')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return array<int, Signalement>
-     */
     public function findSignalementsBetweenDates(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -1582,6 +1586,9 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @return array<int, array<string, mixed>>
+     *
+     * @throws Exception
+     * @throws Exception
      */
     public function findSignalementsLastSuiviWithSuiviAuto(Territory $territory, int $limit): array
     {
@@ -1618,6 +1625,8 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @return array<int, array<string, mixed>>
+     *
+     * @throws Exception
      */
     public function findSignalementsLastSuiviByPartnerOlderThan(Territory $territory, int $limit, int $nbDays): array
     {
