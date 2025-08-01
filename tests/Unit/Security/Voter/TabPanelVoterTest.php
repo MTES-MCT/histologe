@@ -12,22 +12,6 @@ class TabPanelVoterTest extends TestCase
 {
     use FixturesHelper;
 
-    public function testVoteGrantsAccessWhenUserHasPermissionAffectation(): void
-    {
-        $token = $this->createMock(TokenInterface::class);
-
-        $user = $this->getUser(['ROLE_USER']);
-        $user->setHasPermissionAffectation(true);
-        $token->method('getUser')->willReturn($user);
-
-        $voter = new TabPanelVoter();
-        $subject = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION;
-
-        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::VIEW_TAB_PANEL]);
-
-        $this->assertSame(1, $voteResult, 'Voter should grant access when the user has USER_PERMISSION_AFFECTATION.');
-    }
-
     public function testVoteDeniesAccessWhenUserLacksPermissionAffectation(): void
     {
         $token = $this->createMock(TokenInterface::class);

@@ -2,18 +2,19 @@
 
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
-use App\Service\DashboardTabPanel\TabDossier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class DossiersFormUsagerTabBodyLoader extends AbstractTabBodyLoader
+class DossiersNewAffectationTabBodyLoader extends AbstractTabBodyLoader
 {
-    protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER;
+    protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NEW_AFFECTATION;
 
     public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
@@ -27,9 +28,21 @@ class DossiersFormUsagerTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $this->tabQueryParameters->createdFrom = TabDossier::CREATED_FROM_FORMULAIRE_USAGER;
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        if (null === $this->tabQueryParameters->territoireId) {
+            $this->tabQueryParameters->partenairesId = $user->getPartners()
+                ->map(fn ($partner) => $partner->getId())
+                ->toArray();
+        } else {
+            $territoire = $tabBody->getTerritoires()[$this->tabQueryParameters->territoireId];
+            $partner = $user->getPartnerInTerritory($territoire);
+            $this->tabQueryParameters->partenairesId = [$partner->getId()];
+        }
+
         $result = $this->tabDataManager->getNouveauxDossiersWithCount(
-            signalementStatus: SignalementStatus::NEED_VALIDATION,
+            affectationStatus: AffectationStatus::WAIT,
             tabQueryParameters: $this->tabQueryParameters
         );
 
@@ -39,9 +52,9 @@ class DossiersFormUsagerTabBodyLoader extends AbstractTabBodyLoader
         $filters = [
             ...$tabBody->getFilters(),
             'status' => SignalementStatus::NEED_VALIDATION->label(),
-            'createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
         ];
         $tabBody->setFilters($filters);
-        $tabBody->setTemplate('back/dashboard/tabs/dossiers_nouveaux/_body_dossier_usager.html.twig');
+
+        $tabBody->setTemplate('back/dashboard/tabs/dossiers_nouveaux/_body_dossier_new_affectation.html.twig');
     }
 }

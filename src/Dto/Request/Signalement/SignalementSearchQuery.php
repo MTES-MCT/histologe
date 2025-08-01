@@ -4,7 +4,6 @@ namespace App\Dto\Request\Signalement;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Service\Signalement\SearchFilter;
-use App\Service\UrlHelper;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SignalementSearchQuery
@@ -93,10 +92,10 @@ class SignalementSearchQuery
         #[Assert\Choice(['oui'])]
         private readonly ?string $nouveauSuivi = null,
         private readonly ?int $sansSuiviPeriode = null,
-        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant'])]
+        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'])]
         private readonly string $sortBy = 'reference',
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
-        private readonly string $orderBy = 'DESC',
+        private readonly string $direction = 'DESC',
         #[Assert\Choice([
             'abandon_de_procedure_absence_de_reponse',
             'depart_occupant',
@@ -115,6 +114,8 @@ class SignalementSearchQuery
             'autre',
         ])]
         private readonly ?string $motifCloture = null,
+        #[Assert\Choice(['formulaire-usager', 'formulaire-pro'])]
+        private readonly ?string $createdFrom = null,
         private readonly ?string $showMySignalementsOnly = null,
     ) {
     }
@@ -299,9 +300,14 @@ class SignalementSearchQuery
         return $this->sortBy;
     }
 
-    public function getOrderBy(): string
+    public function getDirection(): string
     {
-        return $this->orderBy;
+        return $this->direction;
+    }
+
+    public function getCreatedFrom(): ?string
+    {
+        return $this->createdFrom;
     }
 
     /**
@@ -391,28 +397,14 @@ class SignalementSearchQuery
         $filters['nouveau_suivi'] = $this->getNouveauSuivi();
         $filters['bailleurSocial'] = $this->getBailleurSocial();
         $filters['motifCloture'] = $this->getMotifCloture();
+        $filters['createdFrom'] = $this->getCreatedFrom();
         $filters['showMySignalementsOnly'] = 'oui' === $this->getShowMySignalementsOnly();
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         $filters['sortBy'] = $this->getSortBy();
-        $filters['orderBy'] = $this->getOrderBy();
+        $filters['orderBy'] = $this->getDirection();
 
         return array_filter($filters);
-    }
-
-    public function getQueryStringForUrl(): string
-    {
-        $params = [];
-        foreach (get_object_vars($this) as $key => $value) {
-            if (null !== $value) {
-                $params[$key] = $value;
-            }
-        }
-        if (isset($params['page']) && 1 === $params['page']) {
-            unset($params['page']);
-        }
-
-        return UrlHelper::arrayToQueryString($params);
     }
 }

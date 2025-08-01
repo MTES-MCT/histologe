@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Service\DashboardTabPanel;
-
-namespace App\Service\DashboardTabPanel;
+namespace App\Service\DashboardTabPanel\Kpi;
 
 class TabCountKpi
 {

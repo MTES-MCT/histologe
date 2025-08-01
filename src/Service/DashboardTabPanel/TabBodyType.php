@@ -11,6 +11,7 @@ class TabBodyType
     public const string TAB_DATA_TYPE_DOSSIERS_FORM_PRO = 'dossiers-form-pro';
     public const string TAB_DATA_TYPE_DOSSIERS_FORM_USAGER = 'dossiers-form-usager';
     public const string TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION = 'dossiers-non-affectation';
+    public const string TAB_DATA_TYPE_DOSSIERS_NEW_AFFECTATION = 'dossiers-new-affectation';
 
     // Tab A fermer
     public const string TAB_DATA_TYPE_DOSSIERS_FERME_PARTENAIRE_TOUS = 'dossiers-ferme-partenaire-tous';
