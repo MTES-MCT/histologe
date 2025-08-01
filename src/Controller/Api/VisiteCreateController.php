@@ -17,7 +17,6 @@ use App\Service\TimezoneProvider;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +24,6 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/api')]
 class VisiteCreateController extends AbstractController
@@ -36,8 +34,6 @@ class VisiteCreateController extends AbstractController
         private readonly VisiteFactory $interventionFactory,
         private readonly SignalementVisiteRequestFactory $signalementVisiteRequestFactory,
         private readonly ValidatorInterface $validator,
-        #[Autowire(service: 'state_machine.intervention_planning')]
-        private readonly WorkflowInterface $workflow,
     ) {
     }
 
