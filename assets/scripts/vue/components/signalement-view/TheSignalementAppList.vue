@@ -127,7 +127,7 @@ export default defineComponent({
       const [field, direction] = this.sharedState.input.order.split('-')
       removeQueryParameter(this, 'page')
       removeQueryParameter(this, 'sortBy')
-      removeQueryParameter(this, 'orderBy')
+      removeQueryParameter(this, 'direction')
 
       const url = new URL(window.location.toString())
       url.searchParams.delete('page')
@@ -136,7 +136,7 @@ export default defineComponent({
       window.history.pushState({}, '', url.toString())
 
       addQueryParameter(this, 'sortBy', field)
-      addQueryParameter(this, 'orderBy', direction)
+      addQueryParameter(this, 'direction', direction)
       buildUrl(this, initElements.dataset.ajaxurl)
       requests.getSignalements(this.handleSignalements)
     },
