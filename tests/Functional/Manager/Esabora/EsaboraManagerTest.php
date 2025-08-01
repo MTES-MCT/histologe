@@ -28,6 +28,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class EsaboraManagerTest extends KernelTestCase
 {
@@ -48,6 +49,8 @@ class EsaboraManagerTest extends KernelTestCase
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
 
+    private WorkflowInterface $workflow;
+
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
@@ -65,6 +68,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->fileFactory = self::getContainer()->get(FileFactory::class);
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->workflow = self::getContainer()->get('state_machine.intervention_planning');
     }
 
     /**
@@ -108,7 +112,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizerInterface,
+            $this->workflow,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -225,7 +230,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizerInterface,
+            $this->workflow,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);

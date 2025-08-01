@@ -28,6 +28,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class EsaboraManagerTest extends KernelTestCase
 {
@@ -49,7 +50,8 @@ class EsaboraManagerTest extends KernelTestCase
     private MockObject|ImageManipulationHandler $imageManipulationHandler;
     private MockObject|FileFactory $fileFactory;
     private MockObject|SignalementQualificationUpdater $signalementQualificationUpdater;
-    private HtmlSanitizerInterface $htmlSanitizerInterface;
+    private HtmlSanitizerInterface $htmlSanitizer;
+    private WorkflowInterface $workflow;
 
     protected function setUp(): void
     {
@@ -67,7 +69,8 @@ class EsaboraManagerTest extends KernelTestCase
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
         $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
-        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->htmlSanitizer = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->workflow = self::getContainer()->get('state_machine.intervention_planning');
     }
 
     /**
@@ -125,7 +128,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizer,
+            $this->workflow
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -206,10 +210,14 @@ class EsaboraManagerTest extends KernelTestCase
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizer,
+            $this->workflow
         );
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testUpdateFromDossierVisiteReturnsTrueWhenDataChanges(): void
     {
         $intervention = new Intervention();
@@ -254,12 +262,12 @@ class EsaboraManagerTest extends KernelTestCase
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizer,
+            $this->workflow
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
         $method = $reflector->getMethod('updateFromDossierVisite');
-        $method->setAccessible(true);
         $result = $method->invoke($esaboraManager, $intervention, $dossierVisite, $affectation);
 
         $this->assertTrue($result);
@@ -268,6 +276,9 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertEquals('SH', $intervention->getExternalOperator());
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testUpdateFromDossierVisiteReturnsFalseWhenNoChanges(): void
     {
         $intervention = new Intervention();
@@ -311,12 +322,12 @@ class EsaboraManagerTest extends KernelTestCase
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizer,
+            $this->workflow
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
         $method = $reflector->getMethod('updateFromDossierVisite');
-        $method->setAccessible(true);
         $result = $method->invoke($esaboraManager, $intervention, $dossierVisite, $affectation);
 
         $this->assertFalse($result);
