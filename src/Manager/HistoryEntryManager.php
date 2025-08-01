@@ -21,6 +21,7 @@ use App\Factory\HistoryEntryFactory;
 use App\Repository\AffectationRepository;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\TimezoneProvider;
 use Doctrine\Common\Collections\Collection;
@@ -41,6 +42,7 @@ class HistoryEntryManager extends AbstractManager
         private readonly HistoryEntryRepository $historyEntryRepository,
         private readonly AffectationRepository $affectationRepository,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        private readonly UserRepository $userRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly RequestStack $requestStack,
         private readonly CommandContext $commandContext,
@@ -211,7 +213,8 @@ class HistoryEntryManager extends AbstractManager
 
     private function getSubscriptionActionSummary(HistoryEntry $entry, string $userName): ?string
     {
-        $userTarget = $this->getTargetUserBySubscriptionId($entry->getEntityId());
+        $userTarget = $this->getTargetUserSubscribedByEntry($entry);
+        $userNameTarget = $userTarget ? $userTarget->getNomComplet() : 'N/A';
         $event = $entry->getEvent();
         switch ($event) {
             case HistoryEntryEvent::CREATE:
@@ -219,14 +222,14 @@ class HistoryEntryManager extends AbstractManager
                     return $userName.' a rejoint le dossier';
                 }
 
-                return $userName.' a attribué le dossier à '.$userTarget->getNomComplet();
+                return $userName.' a attribué le dossier à '.$userNameTarget;
 
             case HistoryEntryEvent::DELETE:
                 if ($entry->getUser() === $userTarget) {
                     return $userName.' a quitté le dossier';
                 }
 
-                return $userName.' a désattribué le dossier à '.$userTarget->getNomComplet();
+                return $userName.' a désattribué le dossier à '.$userNameTarget;
 
             default:
                 return null;
@@ -341,11 +344,36 @@ class HistoryEntryManager extends AbstractManager
         }
     }
 
-    private function getTargetUserBySubscriptionId(int $subscriptionId): ?User
+    private function getTargetUserSubscribedByEntry(HistoryEntry $entry): ?User
     {
-        $subscription = $this->userSignalementSubscriptionRepository->find($subscriptionId);
+        // sur du DELETE on va chercher l'utilisateur dans changes
+        if (HistoryEntryEvent::DELETE === $entry->getEvent()) {
+            return $this->getTargetUserByEntryInChanges($entry);
+        }
+        // sur du CREATE on va chercher l'utilisateur dans l'entité
+        $userSignalementSubscription = $this->userSignalementSubscriptionRepository->find($entry->getEntityId());
+        if ($userSignalementSubscription) {
+            return $userSignalementSubscription->getUser();
+        }
+        // Si l'entité CREATE n'existe pas on recherche via le delete correspondant
+        $deleteUserSignalementSubscriptionHistoryEntry = $this->historyEntryRepository->findOneBy(
+            [
+                'entityId' => $entry->getEntityId(),
+                'event' => HistoryEntryEvent::DELETE,
+                'entityName' => str_replace($this->historyEntryFactory::ENTITY_PROXY_PREFIX, '', UserSignalementSubscription::class),
+            ]
+        );
 
-        return $subscription ? $subscription->getUser() : null;
+        if ($deleteUserSignalementSubscriptionHistoryEntry) {
+            return $this->getTargetUserByEntryInChanges($deleteUserSignalementSubscriptionHistoryEntry);
+        }
+
+        return null;
+    }
+
+    private function getTargetUserByEntryInChanges(HistoryEntry $entry): ?User
+    {
+        return $this->userRepository->find($entry->getChanges()['user']);
     }
 
     private function getPartnerByEntityId(int $affectationId): ?Partner

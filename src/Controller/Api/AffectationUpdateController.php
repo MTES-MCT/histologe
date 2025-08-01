@@ -219,6 +219,7 @@ class AffectationUpdateController extends AbstractController
         $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
         if (AffectationStatus::ACCEPTED === $statut) {
             $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
+            $this->userSignalementSubscriptionManager->flush();
         }
 
         return $affectation;

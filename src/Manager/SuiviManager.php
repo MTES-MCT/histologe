@@ -73,7 +73,7 @@ class SuiviManager extends Manager
         }
         // abonnement au signalement si le suivi est crée par un agent non abonné
         if ($this->doesUserNeedSubscription($user, $suivi)) {
-            $subscription = $this->userSignalementSubscriptionManager->createOrGet(
+            $this->userSignalementSubscriptionManager->createOrGet(
                 userToSubscribe: $user,
                 signalement: $signalement,
                 createdBy: $user,

@@ -7,6 +7,7 @@ use App\Repository\HistoryEntryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HistoryEntryRepository::class)]
+#[ORM\Index(columns: ['entity_id', 'event', 'entity_name'], name: 'idx_history_entry_entityid_event_entityname')]
 class HistoryEntry
 {
     #[ORM\Id]
