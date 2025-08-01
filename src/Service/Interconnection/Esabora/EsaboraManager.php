@@ -39,6 +39,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class EsaboraManager
 {
@@ -61,6 +62,8 @@ class EsaboraManager
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
+        #[Autowire(service: 'state_machine.intervention_planning')]
+        private readonly WorkflowInterface $workflow,
     ) {
         $this->adminUser = $this->userManager->getSystemUser();
     }
@@ -177,7 +180,7 @@ class EsaboraManager
                         $affectation->getSignalement()->getTimezone()
                     ),
                     registeredAt: new \DateTimeImmutable(),
-                    status: Intervention::STATUS_DONE,
+                    status: Intervention::STATUS_PLANNED,
                     providerName: InterfacageType::ESABORA->value,
                     providerId: $dossierVisiteSISH->getVisiteId(),
                     doneBy: $dossierVisiteSISH->getVisitePar(),
@@ -187,6 +190,12 @@ class EsaboraManager
                     new InterventionCreatedEvent($newIntervention, $this->adminUser),
                     InterventionCreatedEvent::NAME
                 );
+
+                if ($this->workflow->can($newIntervention, 'confirm')) {
+                    $this->workflow->apply($newIntervention, 'confirm', [
+                        'esabora' => true,
+                    ]);
+                }
             }
         }
     }

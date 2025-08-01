@@ -5,8 +5,11 @@ namespace App\EventSubscriber;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
+use App\Entity\Model\InformationProcedure;
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
@@ -23,6 +26,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         private readonly Security $security,
         private readonly VisiteNotifier $visiteNotifier,
         private readonly SuiviManager $suiviManager,
+        private readonly SignalementManager $signalementManager,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         private readonly bool $featureNewDashboard,
     ) {
@@ -41,7 +45,8 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         $intervention = $event->getSubject();
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
-        if (InterventionType::VISITE === $intervention->getType()) {
+        $context = $event->getContext();
+        if (InterventionType::VISITE === $intervention->getType() && !isset($context['esabora'])) {
             $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $description = 'Après visite du logement';
             if ($intervention->getPartner()) {
@@ -91,5 +96,21 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 );
             }
         }
+
+        if (in_array($intervention->getType(), [InterventionType::VISITE_CONTROLE, InterventionType::VISITE], true)) {
+            $this->setBailleurPrevenu($intervention->getSignalement());
+        }
+    }
+
+    private function setBailleurPrevenu(Signalement $signalement): void
+    {
+        $informationProcedure = new InformationProcedure();
+        if (!empty($signalement->getInformationProcedure())) {
+            $informationProcedure = clone $signalement->getInformationProcedure();
+        }
+        $informationProcedure->setInfoProcedureBailleurPrevenu('oui');
+        $signalement->setInformationProcedure($informationProcedure);
+        $signalement->setIsProprioAverti(true);
+        $this->signalementManager->save($signalement);
     }
 }
