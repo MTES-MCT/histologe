@@ -47,7 +47,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             nouveauSuivi: 'oui',
             sansSuiviPeriode: 30,
             sortBy: 'reference',
-            orderBy: 'DESC',
+            direction: 'DESC',
             createdFrom: 'formulaire-pro',
         );
 
