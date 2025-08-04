@@ -4,9 +4,16 @@ namespace App\Factory;
 
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class UserFactory
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private bool $featureNewDashboard,
+    ) {
+    }
+
     public function createInstanceFrom(
         string $roleLabel,
         ?string $firstname,
@@ -16,7 +23,7 @@ class UserFactory
         ?bool $isActivateAccountNotificationEnabled = true,
         ?bool $hasPermissionAffectation = false,
     ): User {
-        return (new User())
+        $user = (new User())
             ->setRoles(\in_array($roleLabel, User::ROLES) ? [$roleLabel] : [User::ROLES[$roleLabel]])
             ->setPrenom($firstname)
             ->setNom($lastname)
@@ -25,6 +32,11 @@ class UserFactory
             ->setIsMailingActive($isMailActive)
             ->setIsActivateAccountNotificationEnabled($isActivateAccountNotificationEnabled)
             ->setHasPermissionAffectation($hasPermissionAffectation);
+        if ($this->featureNewDashboard) {
+            $user->setHasDoneSubscriptionsChoice(true);
+        }
+
+        return $user;
     }
 
     /**

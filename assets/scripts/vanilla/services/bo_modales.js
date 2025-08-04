@@ -68,3 +68,15 @@ if (modalPopNotification) {
     }
   }, 100);
 }
+
+const modalSubscriptionsChoice = document.getElementById('fr-modal-subscriptions-choice');
+if (modalSubscriptionsChoice && !modalPopNotification) {
+  //prevent error dsfr is not defined or null
+  const checkDsfrIntervalModalSubscriptionsChoice = setInterval(() => {
+    if (typeof dsfr !== 'undefined' && dsfr !== null) {
+      clearInterval(checkDsfrIntervalModalSubscriptionsChoice);
+      dsfr(modalSubscriptionsChoice).modal.disclose();
+      
+    }
+  }, 100);
+}

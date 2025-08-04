@@ -104,25 +104,3 @@ export default defineComponent({
   emits: ['update:modelValue']
 })
 </script>
-
-<style>
-  .signalement-form-only-choice .fr-fieldset__element {
-    width: 100%;
-    max-width: 500px;
-    padding: 1rem;
-    border: 1px solid var(--border-disabled-grey);
-    background-color: var(--grey-1000-50);
-  }
-  .signalement-form-only-choice .fr-fieldset__element:hover {
-    background-color: var(--grey-1000-50-hover);
-  }
-  .signalement-form-only-choice .fr-fieldset__element.is-checked {
-    border: 1px solid rgb(0, 0, 145);
-  }
-
-  @media (max-width: 48em) {
-    .signalement-form-only-choice .fr-fieldset__element.item-divided {
-      flex-basis: content;
-    }
-  }
-</style>
