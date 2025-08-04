@@ -65,7 +65,7 @@ class UserSignalementSubscriptionManager extends AbstractManager
         /** @var ?User $createdBy */
         $createdBy = $user ?: $this->userRepository->findOneBy(['email' => $this->userSystemEmail]);
         foreach ($affectation->getPartner()->getUsers() as $userPartner) {
-            if ($userPartner->isApiUser() || $userPartner->isSuperAdmin()) {
+            if ($userPartner->isApiUser()) {
                 continue;
             }
             $this->createOrGet(userToSubscribe: $userPartner, signalement: $signalement, createdBy: $createdBy, affectation: $affectation);
