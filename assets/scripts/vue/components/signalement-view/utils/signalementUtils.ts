@@ -224,7 +224,7 @@ export function handleFilters (context: any, ajaxurl: string): any {
   url.searchParams.set('sortBy', field)
   url.searchParams.set('direction', direction)
   addQueryParameter(context, 'sortBy', field)
-  addQueryParameter(context, 'orderBy', direction)
+  addQueryParameter(context, 'direction', direction)
 
   window.history.pushState({}, '', decodeURIComponent(url.toString()))
   buildUrl(context, ajaxurl)

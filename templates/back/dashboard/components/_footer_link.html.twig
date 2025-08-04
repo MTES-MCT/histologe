@@ -1,5 +1,5 @@
 {% if count > MAX_ITEMS_LIST %}
     <div class="fr-text--right">
-        <a href="" class="fr-text-label--blue-france">Afficher la liste complète<span class="fr-fi-arrow-right-line"></span></a>
+        <a href="{{ path('back_signalements_index', filters) }}" class="fr-text-label--blue-france">Afficher la liste complète<span class="fr-fi-arrow-right-line"></span></a>
     </div>
 {% endif %}

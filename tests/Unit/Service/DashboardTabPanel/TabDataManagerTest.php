@@ -10,9 +10,11 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
 use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabDossier;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,6 +29,8 @@ class TabDataManagerTest extends TestCase
     protected MockObject|TerritoryRepository $territoryRepository;
     protected MockObject|UserRepository $userRepository;
     protected MockObject|PartnerRepository $partnerRepository;
+    protected MockObject|SignalementRepository $signalementRepository;
+    protected MockObject|TabCountKpiBuilder $tabCountKpiBuilder;
 
     protected function setUp(): void
     {
@@ -36,6 +40,8 @@ class TabDataManagerTest extends TestCase
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
         $this->userRepository = $this->createMock(UserRepository::class);
         $this->partnerRepository = $this->createMock(PartnerRepository::class);
+        $this->signalementRepository = $this->createMock(SignalementRepository::class);
+        $this->tabCountKpiBuilder = $this->createMock(TabCountKpiBuilder::class);
     }
 
     public function testGetDernierActionDossiersReturnsExpectedTabDossier(): void
@@ -67,7 +73,9 @@ class TabDataManagerTest extends TestCase
             $this->suiviRepository,
             $this->territoryRepository,
             $this->userRepository,
-            $this->partnerRepository
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
         );
 
         $result = $tabDataManager->getDernierActionDossiers();
@@ -97,7 +105,9 @@ class TabDataManagerTest extends TestCase
             $this->suiviRepository,
             $this->territoryRepository,
             $this->userRepository,
-            $this->partnerRepository
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
         );
 
         $result = $tabDataManager->countUsersPendingToArchive();
@@ -116,7 +126,9 @@ class TabDataManagerTest extends TestCase
             $this->suiviRepository,
             $this->territoryRepository,
             $this->userRepository,
-            $this->partnerRepository
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
         );
 
         $result = $tabDataManager->countPartenairesNonNotifiables();
@@ -133,7 +145,9 @@ class TabDataManagerTest extends TestCase
             $this->suiviRepository,
             $this->territoryRepository,
             $this->userRepository,
-            $this->partnerRepository
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
         );
 
         $result = $tabDataManager->countPartenairesInterfaces();
@@ -153,7 +167,9 @@ class TabDataManagerTest extends TestCase
             $this->suiviRepository,
             $this->territoryRepository,
             $this->userRepository,
-            $this->partnerRepository
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
         );
 
         $result = $tabDataManager->getInterconnexions();

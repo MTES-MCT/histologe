@@ -20,4 +20,10 @@
             Chargement...
         </div>
     {% endif %}
+
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-new-affectation') %}
+        <div id="dossiers-new-affectation" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-new-affectation' }) }}">
+            Chargement...
+        </div>
+    {% endif %}
 </div>

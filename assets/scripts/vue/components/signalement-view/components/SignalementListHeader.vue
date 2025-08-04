@@ -82,7 +82,9 @@ export default defineComponent({
         { Id: 'lastSuiviAt-DESC', Text: 'Suivi le plus récent' },
         { Id: 'lastSuiviAt-ASC', Text: 'Suivi le plus ancien' },
         { Id: 'villeOccupant-ASC', Text: 'Nom de commune (A -> Z)' },
-        { Id: 'villeOccupant-DESC', Text: 'Nom de commune (Z -> A)' }
+        { Id: 'villeOccupant-DESC', Text: 'Nom de commune (Z -> A)' },
+        { Id: 'createdAt-DESC', Text: 'Date la plus récente (du plus récent au plus ancien)' },
+        { Id: 'createdAt-ASC', Text: 'Date la plus ancienne (de la plus ancienne à la plus récente)' }
       ]
     }
   },

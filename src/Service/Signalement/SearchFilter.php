@@ -19,6 +19,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
+use App\Service\DashboardTabPanel\TabDossier;
 use App\Utils\CommuneHelper;
 use App\Utils\ImportCommune;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -454,6 +455,14 @@ class SearchFilter
             $qb->leftJoin('s.userSignalementSubscriptions', 'ust');
             $qb->andWhere('ust.user = :currentUser')
                 ->setParameter('currentUser', $user);
+        }
+
+        if (!empty($filters['createdFrom'])) {
+            if (TabDossier::CREATED_FROM_FORMULAIRE_USAGER === $filters['createdFrom']) {
+                $qb->andWhere('s.createdBy IS NULL');
+            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $filters['createdFrom']) {
+                $qb->andWhere('s.createdBy IS NOT NULL');
+            }
         }
 
         return $qb;

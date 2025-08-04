@@ -4,12 +4,14 @@ namespace App\Service\DashboardTabPanel;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class TabQueryParameters
+class TabQueryParameters
 {
     public function __construct(
         public ?int $territoireId = null,
         public ?string $communeCodePostal = null,
-        /** @var array<int> */
+        #[Assert\Choice([TabDossier::CREATED_FROM_FORMULAIRE_USAGER, TabDossier::CREATED_FROM_FORMULAIRE_PRO])]
+        public ?string $createdFrom = null,
+        /** @var array<int|string> */
         public ?array $partenairesId = null,
         #[Assert\Choice(['createdAt', 'closedAt', 'nbRelanceFeedbackUsager', 'nbDay', 'nomOccupant'])]
         public ?string $sortBy = null,

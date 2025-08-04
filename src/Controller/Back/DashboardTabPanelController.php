@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Back;
 
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
 use App\Service\DashboardTabPanel\TabBody;
@@ -26,7 +27,7 @@ class DashboardTabPanelController extends AbstractController
     public function getTabBody(
         string $tabBodyType,
         TabBodyLoaderCollection $tabBodyLoaderCollection,
-        #[MapQueryString] ?TabQueryParameters $tabQueryParameter = null,
+        #[MapQueryString] TabQueryParameters $tabQueryParameter,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
     ): Response {
         if (!$featureNewDashboard) {
@@ -35,33 +36,49 @@ class DashboardTabPanelController extends AbstractController
 
         /** @var ?User $user */
         $user = $this->getUser();
-        $territoires = [];
-        $authorizedTerritories = $user?->getPartnersTerritories();
-        $territoireId = $tabQueryParameter?->territoireId;
-        if ($territoireId && ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoireId]))) {
-            $territory = $this->territoryRepository->find($territoireId);
-            if ($territory) {
-                $territoires[$territory->getId()] = $territory;
-            }
-        } elseif ($territoireId) {
-            $tabQueryParameter = new TabQueryParameters(
-                territoireId: null,
-                communeCodePostal: $tabQueryParameter->communeCodePostal,
-                partenairesId: $tabQueryParameter->partenairesId,
-                sortBy: $tabQueryParameter->sortBy,
-                orderBy: $tabQueryParameter->orderBy,
-            );
-            $territoireId = null;
-        } elseif (!$this->isGranted('ROLE_ADMIN')) {
-            $territoires = $user?->getPartnersTerritories() ?? [];
-        }
+        $territoires = $this->resolveTerritoires($tabQueryParameter, $user);
 
         $tab = new TabBody(type: $tabBodyType, territoires: $territoires, tabQueryParameters: $tabQueryParameter);
         $tabBodyLoaderCollection->load($tab);
 
         return $this->render($tab->getTemplate(), [
             'items' => $tab->getData(),
-            'count' => count($tab->getData() ?? []),
+            'count' => $tab->getCount(),
+            'filters' => $tab->getFilters(),
         ]);
+    }
+
+    /** @return array<int, Territory> */
+    private function resolveTerritoires(TabQueryParameters $tabQueryParameter, User $user): array
+    {
+        $territoires = [];
+
+        $authorizedTerritories = $user->getPartnersTerritories();
+        $territoireId = $tabQueryParameter->territoireId;
+
+        if ($territoireId) {
+            if ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoireId])) {
+                $territory = $this->territoryRepository->find($territoireId);
+                if ($territory) {
+                    $territoires[$territory->getId()] = $territory;
+
+                    return $territoires;
+                }
+            }
+
+            $tabQueryParameter->territoireId = $territoireId = null;
+        }
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $territoires = $authorizedTerritories;
+            $firstTerritory = current($territoires);
+            if (1 === count($territoires)) {
+                $tabQueryParameter->territoireId = $firstTerritory->getId();
+            } else {
+                $tabQueryParameter->territoireId = null;
+            }
+        }
+
+        return $territoires;
     }
 }

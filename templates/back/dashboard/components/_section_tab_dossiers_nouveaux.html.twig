@@ -1,16 +1,16 @@
 {% set columns = [
+    { class: 'fr-col-md-3', title: 'Profil déclarant' },
     { class: 'fr-col-md-4', title: 'Référence' },
     { class: 'fr-col-md-2', title: 'Déposé le' },
-    { class: 'fr-col-md-3', title: 'Déposé par' },
-    { class: 'fr-col-md-2', title: 'Parc' },
+    { class: 'fr-col-md-2', title: 'Parc' }
 ] %}
 <section class="fr-mb-5v">
     <header class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-md-9">
-            <h3 class="fr-text-label--blue-france tab-panel-title-with-document-icon">Dossiers déposés depuis le formulaire pro ({{ count }})</h3>
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-press-card-icon">{{ title }} ({{ count }})</h3>
         </div>
         {% include 'back/dashboard/components/_select_sort_dossiers_nouveaux.html.twig' with {
-            data_sort_body: 'dossiers-form-pro'
+            data_sort_body: data_sort_body
         } %}
     </header>
     <hr class="hr--blue-france">
@@ -19,12 +19,12 @@
             {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
+                    '<span class="fr-badge fr-badge--no-icon fr-badge--yellow-tournesol">' ~ item.profilDeclarant.label() ~ '</span>',
                     '<div class="fr-text-label--blue-france">
                         <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                         <div>' ~ item.adresse ~ '</div>
                     </div>',
                     '<div>' ~ item.depotAt|date('d/m/Y') ~ '</div>',
-                    '<div><strong>' ~ item.depotBy ~ '</strong><br>' ~ item.depotPartenaireBy ~' </div>',
                     '<span class="fr-badge fr-badge--info fr-badge--no-icon">' ~ item.parc ~ '</span>'
                 ],
                 link: path('back_signalement_view', {'uuid' : item.uuid})
