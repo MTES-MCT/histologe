@@ -6,8 +6,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Entity\UserSignalementSubscription;
-use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -314,23 +312,10 @@ class SignalementListControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
-        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $signalement = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
-        $subscription = new UserSignalementSubscription();
-        $subscription
-            ->setUser($user)
-            ->setSignalement($signalement)
-            ->setCreatedBy($user)
-            ->setIsLegacy(true);
-
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $entityManager->persist($subscription);
-        $entityManager->flush();
-
         $route = $generatorUrl->generate('back_signalements_list_json');
         $client->request('GET', $route, ['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertEquals(2, $result['pagination']['total_items']);
+        $this->assertEquals(1, $result['pagination']['total_items']);
     }
 }

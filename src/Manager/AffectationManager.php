@@ -20,6 +20,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 class AffectationManager extends Manager
 {
@@ -74,6 +75,9 @@ class AffectationManager extends Manager
         return $affectation;
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     public function createAffectationFrom(Signalement $signalement, Partner $partner, ?User $user): Affectation|bool
     {
         $hasAffectation = $signalement
@@ -100,6 +104,9 @@ class AffectationManager extends Manager
         return $this->createAffectation($signalement, $partner, $user);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     public function createAffectation(
         Signalement $signalement,
         Partner $partner,
@@ -216,7 +223,7 @@ class AffectationManager extends Manager
         $this->remove($affectation);
     }
 
-    private function removeSubscriptionsOfAffectation(Affectation $affectation): void
+    public function removeSubscriptionsOfAffectation(Affectation $affectation): void
     {
         if (!$this->featureNewDashboard) {
             return;

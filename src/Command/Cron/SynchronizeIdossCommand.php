@@ -7,7 +7,9 @@ use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
@@ -25,7 +27,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
-    name: 'app:synchronize-idoss',
+    name: 'app:sync-idoss',
     description: 'Update idoss status and upload files'
 )]
 class SynchronizeIdossCommand extends AbstractCronCommand
@@ -46,12 +48,17 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
         private readonly IdossService $idossService,
+        private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        private readonly AffectationManager $affectationManager,
     ) {
         parent::__construct($this->parameterBag);
         $this->partners = $this->entityManager->getRepository(Partner::class)->findBy(['isIdossActive' => true]);
         $this->adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
     }
 
+    /**
+     * @throws FilesystemException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -128,19 +135,22 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                         case IdossService::STATUS_ACCEPTED:
                         case IdossService::STATUS_IN_PROGRESS:
                             $description = 'Le signalement a été accepté par IDOSS';
+                            $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
+                            $this->userSignalementSubscriptionManager->flush();
                             break;
                         case IdossService::STATUS_CLOSED:
                             $description = 'Le signalement a été clôturé par IDOSS avec le motif suivant : "'.$item['motif'].'"';
+                            $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                             break;
                         default:
                             $description = 'Le signalement a été mis à jour ("'.$item['statut'].'") par IDOSS';
                     }
                     $suivi = $this->suiviManager->createSuivi(
-                        user: $this->adminUser,
                         signalement: $signalement,
                         description: $description,
                         type: Suivi::TYPE_TECHNICAL,
                         category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
+                        user: $this->adminUser,
                         flush: false
                     );
                     $this->entityManager->persist($suivi);

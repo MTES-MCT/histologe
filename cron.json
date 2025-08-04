@@ -16,7 +16,7 @@
       "command": "0 5 * * * php bin/console app:notify-visits"
     },
     {
-      "command": "0 22 * * * php bin/console app:synchronize-idoss"
+      "command": "0 22 * * * php bin/console app:sync-idoss"
     },
     {
       "command": "0 20 * * * php bin/console app:retry-failed-push-esabora-sish"

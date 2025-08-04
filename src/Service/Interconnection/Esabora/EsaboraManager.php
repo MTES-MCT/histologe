@@ -20,6 +20,7 @@ use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\InterventionRepository;
 use App\Service\Files\ZipHelper;
 use App\Service\ImageManipulationHandler;
@@ -64,6 +65,7 @@ class EsaboraManager
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         #[Autowire(service: 'state_machine.intervention_planning')]
         private readonly WorkflowInterface $workflow,
+        private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
     ) {
         $this->adminUser = $this->userManager->getSystemUser();
     }
@@ -103,17 +105,21 @@ class EsaboraManager
             case EsaboraStatus::ESABORA_WAIT->value:
                 if (AffectationStatus::WAIT !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::WAIT);
+                    $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                     $description = 'remis en attente par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
                 if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED);
+                    $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
+                    $this->userSignalementSubscriptionManager->flush();
                     $description = 'accepté par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED);
+                    $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                     $description = 'cloturé par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;

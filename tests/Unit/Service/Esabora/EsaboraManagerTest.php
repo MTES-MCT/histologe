@@ -12,6 +12,7 @@ use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\InterventionRepository;
 use App\Service\Files\ZipHelper;
 use App\Service\ImageManipulationHandler;
@@ -52,6 +53,7 @@ class EsaboraManagerTest extends KernelTestCase
     private MockObject|SignalementQualificationUpdater $signalementQualificationUpdater;
     private HtmlSanitizerInterface $htmlSanitizer;
     private WorkflowInterface $workflow;
+    private MockObject|UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
 
     protected function setUp(): void
     {
@@ -71,6 +73,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
         $this->htmlSanitizer = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
         $this->workflow = self::getContainer()->get('state_machine.intervention_planning');
+        $this->userSignalementSubscriptionManager = $this->createMock(UserSignalementSubscriptionManager::class);
     }
 
     /**
@@ -129,7 +132,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizer,
-            $this->workflow
+            $this->workflow,
+            $this->userSignalementSubscriptionManager
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -211,7 +215,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizer,
-            $this->workflow
+            $this->workflow,
+            $this->userSignalementSubscriptionManager
         );
     }
 
@@ -263,7 +268,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizer,
-            $this->workflow
+            $this->workflow,
+            $this->userSignalementSubscriptionManager
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -323,7 +329,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->fileFactory,
             $this->signalementQualificationUpdater,
             $this->htmlSanitizer,
-            $this->workflow
+            $this->workflow,
+            $this->userSignalementSubscriptionManager
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
