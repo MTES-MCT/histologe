@@ -110,6 +110,7 @@ class SuiviManager extends Manager
             SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
             SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
             SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ])) {
             return false;
         }
