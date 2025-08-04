@@ -4,6 +4,7 @@ namespace App\Dto\Request\Signalement;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Service\Signalement\SearchFilter;
+use App\Service\UrlHelper;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SignalementSearchQuery
@@ -406,5 +407,20 @@ class SignalementSearchQuery
         $filters['orderBy'] = $this->getDirection();
 
         return array_filter($filters);
+    }
+
+    public function getQueryStringForUrl(): string
+    {
+        $params = [];
+        foreach (get_object_vars($this) as $key => $value) {
+            if (null !== $value) {
+                $params[$key] = $value;
+            }
+        }
+        if (isset($params['page']) && 1 === $params['page']) {
+            unset($params['page']);
+        }
+
+        return UrlHelper::arrayToQueryString($params);
     }
 }
