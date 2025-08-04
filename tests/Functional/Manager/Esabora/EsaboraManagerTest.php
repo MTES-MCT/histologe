@@ -11,6 +11,7 @@ use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\InterventionRepository;
 use App\Service\Files\ZipHelper;
 use App\Service\ImageManipulationHandler;
@@ -48,8 +49,8 @@ class EsaboraManagerTest extends KernelTestCase
     private FileFactory $fileFactory;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
-
     private WorkflowInterface $workflow;
+    private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
 
     protected function setUp(): void
     {
@@ -69,6 +70,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
         $this->workflow = self::getContainer()->get('state_machine.intervention_planning');
+        $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
     }
 
     /**
@@ -114,6 +116,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->htmlSanitizerInterface,
             $this->workflow,
+            $this->userSignalementSubscriptionManager,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -232,6 +235,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->htmlSanitizerInterface,
             $this->workflow,
+            $this->userSignalementSubscriptionManager,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);

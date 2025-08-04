@@ -21,7 +21,9 @@ class UserSignalementSubscriptionManager extends AbstractManager
         private readonly UserRepository $userRepository,
         #[Autowire(env: 'USER_SYSTEM_EMAIL')]
         private readonly string $userSystemEmail,
-        string $entityName = UserSignalementSubscription::class,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        private readonly bool $featureNewDashboard,
+        protected string $entityName = UserSignalementSubscription::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
     }
@@ -32,7 +34,10 @@ class UserSignalementSubscriptionManager extends AbstractManager
         User $createdBy,
         ?Affectation $affectation = null,
         bool &$subscriptionCreated = false,
-    ): UserSignalementSubscription {
+    ): ?UserSignalementSubscription {
+        if ($this->featureNewDashboard) {
+            return null;
+        }
         $subscription = $this->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]);
         if (null === $subscription) {
             $subscription = (new UserSignalementSubscription())
@@ -52,6 +57,9 @@ class UserSignalementSubscriptionManager extends AbstractManager
 
     public function createDefaultSubscriptionsForAffectation(Affectation $affectation): void
     {
+        if (!$this->featureNewDashboard) {
+            return;
+        }
         $signalement = $affectation->getSignalement();
         $user = $this->security->getUser();
         /** @var ?User $createdBy */
