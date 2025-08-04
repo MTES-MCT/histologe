@@ -23,11 +23,18 @@ class RemindPendingDraftsCommandTest extends KernelTestCase
 
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $connection = $entityManager->getConnection();
-        $sql = 'UPDATE signalement_draft SET created_at = \'2025-05-01 00:00:00\', updated_at = \'2025-05-01 00:00:00\' WHERE uuid LIKE :uuid';
-        $connection->prepare($sql)->executeQuery(['uuid' => '00000000-0000-0000-2023-tierspart002']);
+        $dateTest = (new \DateTimeImmutable())->modify('first day of this month')->setTime(0, 0, 0);
+
+        $sql = 'UPDATE signalement_draft SET created_at = :created_at, updated_at = :updated_at, payload = JSON_SET(payload, "$.info_procedure_bail_date", :bail_date) WHERE uuid LIKE :uuid';
+        $connection->prepare($sql)->executeQuery([
+            'created_at' => $dateTest->format('Y-m-d H:i:s'),
+            'updated_at' => $dateTest->format('Y-m-d H:i:s'),
+            'bail_date' => $dateTest->format('m/Y'),
+            'uuid' => '00000000-0000-0000-2023-tierspart002',
+        ]);
 
         $container = self::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable(date('2025-05-02')));
+        $mockClock = new MockClock($dateTest);
         $container->set(ClockInterface::class, $mockClock);
 
         $command = $application->find('app:remind-pending-drafts-bailleur-prevenu');
