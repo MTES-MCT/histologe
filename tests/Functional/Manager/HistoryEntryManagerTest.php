@@ -14,6 +14,7 @@ use App\Repository\AffectationRepository;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -30,18 +31,21 @@ class HistoryEntryManagerTest extends WebTestCase
     private HistoryEntryManager $historyEntryManager;
     private HistoryEntryRepository $historyEntryRepository;
     private AffectationRepository $affectationRepository;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private UserRepository $userRepository;
     private PartnerRepository $partnerRepository;
 
     protected ManagerRegistry $managerRegistry;
 
     protected function setUp(): void
     {
-        // $kernel = self::bootKernel();
         $this->client = static::createClient();
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->historyEntryFactory = static::getContainer()->get(HistoryEntryFactory::class);
         $this->historyEntryRepository = static::getContainer()->get(HistoryEntryRepository::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->requestStack = static::getContainer()->get(RequestStack::class);
         $this->commandContext = static::getContainer()->get(CommandContext::class);
@@ -50,6 +54,8 @@ class HistoryEntryManagerTest extends WebTestCase
             $this->historyEntryFactory,
             $this->historyEntryRepository,
             $this->affectationRepository,
+            $this->userSignalementSubscriptionRepository,
+            $this->userRepository,
             $this->partnerRepository,
             $this->requestStack,
             $this->commandContext,
@@ -184,7 +190,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $entry = $historyEntries[$affectations[0]->getPartner()->getNom()][0];
         $this->assertArrayHasKey('Date', $entry);
         $this->assertArrayHasKey('Action', $entry);
-        $this->assertStringContainsString('réouvert son affectation', $entry['Action']);
+        $this->assertStringContainsString('a réouvert l\'affectation pour le partenaire', $entry['Action']);
         $this->assertArrayHasKey('Id', $entry);
         $this->assertEquals($affectations[0]->getId(), $entry['Id']);
     }

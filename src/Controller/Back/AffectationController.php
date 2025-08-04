@@ -170,9 +170,8 @@ class AffectationController extends AbstractController
                 return $this->json($response, $response['code']);
             }
             foreach ($acceptAffectation->getAgents() as $agent) {
-                $subscription = $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
+                $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
                 $userSignalementSubscriptionManager->flush();
-                $notificationAndMailSender->sendNewSubscription($subscription, $affectation);
             }
             $this->affectationManager->updateAffectation(affectation: $affectation, user: $user, status: AffectationStatus::ACCEPTED);
             $this->addFlash('success', 'Affectation acceptée avec succès !');

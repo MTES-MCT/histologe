@@ -3,8 +3,12 @@
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\NotificationType;
+use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Tests\ApiHelper;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -16,6 +20,8 @@ class AffectationUpdateControllerTest extends WebTestCase
     use ApiHelper;
     private KernelBrowser $client;
     private SignalementRepository $signalementRepository;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private NotificationRepository $notificationRepository;
 
     private const string TRANSITION_ERROR_MESSAGE = 'Cette transition n\'est pas valide';
     private const string AFFECTATION_NOT_FOUND_ERROR_MESSAGE = 'Affectation introuvable';
@@ -27,6 +33,8 @@ class AffectationUpdateControllerTest extends WebTestCase
             'email' => 'api-01@signal-logement.fr',
         ]);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->notificationRepository = self::getContainer()->get(NotificationRepository::class);
 
         $this->client->loginUser($user, 'api');
     }
@@ -51,6 +59,12 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertEquals($statut, $affectation->getStatut()->value);
         $this->assertEmailCount($mailSent);
+        if (AffectationStatus::ACCEPTED->value === $statut) {
+            $subscriptions = $this->userSignalementSubscriptionRepository->findBy(['signalement' => $signalement]);
+            $this->assertCount(6, $subscriptions); // 6 utilisateurs du partenaire moins 1 User API + 1 RT déja abonné
+            $notification = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::NOUVEL_ABONNEMENT]);
+            $this->assertCount(5, $notification);
+        }
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
