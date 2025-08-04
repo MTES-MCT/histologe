@@ -16,6 +16,7 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -128,6 +129,8 @@ class SignalementFileController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         SuiviManager $suiviManager,
         SignalementRepository $signalementRepository,
+        #[Autowire(env: 'FEATURE_SUIVI_ACTION')]
+        bool $featureSuiviAction,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
@@ -161,8 +164,11 @@ class SignalementFileController extends AbstractController
         } else {
             $this->addFlash('error', 'Token CSRF invalide, veuillez recharger la page');
         }
+        if ($featureSuiviAction) {
+            return $this->redirectToRoute('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
+        }
 
-        return $this->redirectToRoute('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
+        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 
     #[Route('/{code}/file/export-pdf-usager', name: 'signalement_gen_pdf')]
