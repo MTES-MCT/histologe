@@ -7,10 +7,10 @@ use WireMock\Client\WireMock;
 
 class IdossMock
 {
-    protected const CONTENT_TYPE = 'application/json';
-    protected const REQUEST_AUTHORIZATION = 'Bearer';
+    protected const string CONTENT_TYPE = 'application/json';
+    protected const string REQUEST_AUTHORIZATION = 'Bearer';
 
-    protected const RESOURCES_DIR = 'Idoss/';
+    protected const string RESOURCES_DIR = 'Idoss/';
 
     public static function prepareMockForIdoss(WireMock $wireMock): void
     {
