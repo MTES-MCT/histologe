@@ -35,7 +35,7 @@ class UserSignalementSubscriptionManager extends AbstractManager
         ?Affectation $affectation = null,
         bool &$subscriptionCreated = false,
     ): ?UserSignalementSubscription {
-        if ($this->featureNewDashboard) {
+        if (!$this->featureNewDashboard) {
             return null;
         }
         $subscription = $this->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]);
@@ -65,7 +65,7 @@ class UserSignalementSubscriptionManager extends AbstractManager
         /** @var ?User $createdBy */
         $createdBy = $user ?: $this->userRepository->findOneBy(['email' => $this->userSystemEmail]);
         foreach ($affectation->getPartner()->getUsers() as $userPartner) {
-            if ($userPartner->isApiUser()) {
+            if ($userPartner->isApiUser() || $userPartner->isSuperAdmin()) {
                 continue;
             }
             $this->createOrGet(userToSubscribe: $userPartner, signalement: $signalement, createdBy: $createdBy, affectation: $affectation);

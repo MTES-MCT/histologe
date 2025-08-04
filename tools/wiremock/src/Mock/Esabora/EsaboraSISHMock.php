@@ -6,11 +6,11 @@ use WireMock\Client\WireMock;
 
 class EsaboraSISHMock extends AbstractEsaboraMock
 {
-    protected const BASE_PATH = '/ARS/ws/rest';
-    protected const RESOURCES_DIR = 'Esabora/sish/';
-    protected const SISH_ETAT_DOSSIER_SAS = 'SISH_ETAT_DOSSIER_SAS';
-    protected const SISH_VISITES_DOSSIER_SAS = 'SISH_VISITES_DOSSIER_SAS';
-    protected const SISH_ARRETES_DOSSIER_SAS = 'SISH_ARRETES_DOSSIER_SAS';
+    protected const string BASE_PATH = '/ARS/ws/rest';
+    protected const string RESOURCES_DIR = 'Esabora/sish/';
+    protected const string SISH_ETAT_DOSSIER_SAS = 'SISH_ETAT_DOSSIER_SAS';
+    protected const string SISH_VISITES_DOSSIER_SAS = 'SISH_VISITES_DOSSIER_SAS';
+    protected const string SISH_ARRETES_DOSSIER_SAS = 'SISH_ARRETES_DOSSIER_SAS';
 
     public static function prepareMockForEsabora(WireMock $wiremock): void
     {
