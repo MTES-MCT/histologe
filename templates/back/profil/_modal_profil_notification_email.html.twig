@@ -20,7 +20,6 @@
                             <br>
                             NB : s'il n'y a pas de nouvelle activité sur vos signalements, vous ne recevrez pas d'e-mail récapitulatif !
                         </p>
-                        {% form_theme notificationEmailForm 'form/dsfr_theme.html.twig' %}
                         {{form(notificationEmailForm, {'attr': {'id': 'notification_email_form', 'data-submit-type':'formData'}} )}}
                         <div class="fr-alert fr-alert--info fr-alert--sm">
                             <p>

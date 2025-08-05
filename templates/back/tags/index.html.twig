@@ -33,7 +33,6 @@
         </header>
     </section>
 
-    {% form_theme form 'form/dsfr_theme.html.twig' %}
     {{ form_start(form) }}
     <section class="fr-container--fluid">
         {{ form_errors(form) }}
@@ -78,7 +77,6 @@
                                     Ajouter une étiquette
                                 </h1>
                                 <p>Une fois créée, les agents pourront ajouter ou retirer l'étiquette aux signalements et l'utiliser pour filtrer la liste des signalements.</p>
-                                {% form_theme addForm 'form/dsfr_theme.html.twig' %}
                                 {{form(addForm, {'attr': {'id': 'form-add-tag'}} )}}
                             </div>
                             <div class="fr-modal__footer">

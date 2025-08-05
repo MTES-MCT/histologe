@@ -37,36 +37,21 @@ class UserType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'disabled' => !$options['can_edit_email'],
-                'row_attr' => [
-                    'class' => 'fr-input-group fr-col-6',
-                ], 'attr' => [
-                    'class' => 'fr-input',
-                ], 'label' => 'Adresse e-mail',
+                'label' => 'Adresse e-mail',
                 'required' => true,
             ])
             ->add('nom', TextType::class, [
-                'row_attr' => [
-                    'class' => 'fr-input-group fr-col-6',
-                ], 'attr' => [
-                    'class' => 'fr-input',
-                ], 'label' => 'Nom',
+                'label' => 'Nom',
                 'required' => true,
             ])
             ->add('prenom', TextType::class, [
-                'row_attr' => [
-                    'class' => 'fr-input-group fr-col-6',
-                ], 'attr' => [
-                    'class' => 'fr-input',
-                ], 'label' => 'Prénom',
+                'label' => 'Prénom',
                 'required' => true,
             ]);
 
         $builder->add('territory', TerritoryChoiceType::class, [
             'mapped' => false,
             'data' => $territory,
-            'attr' => [
-                'class' => 'fr-select', // Curieusement nécessaire dans la page de réactivation de compte
-            ],
         ]);
         $formModifier = function (FormInterface $form, ?Territory $territory = null) use ($user) {
             $partners = null === $territory ?
@@ -79,12 +64,6 @@ class UserType extends AbstractType
                 'mapped' => false,
                 'choice_label' => 'nom',
                 'placeholder' => 'Aucun partenaire',
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
-                'row_attr' => [
-                    'class' => 'fr-input-group',
-                ],
                 'label' => 'Partenaire',
                 'required' => false,
             ]);

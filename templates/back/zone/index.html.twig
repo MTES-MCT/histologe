@@ -30,7 +30,6 @@
         </header>
     </section>
 
-    {% form_theme form 'form/dsfr_theme.html.twig' %}
     {{ form_start(form) }}
 
     <section class="fr-container--fluid">
@@ -137,7 +136,6 @@
                                 <h1 id="fr-modal-title-zone-add" class="fr-modal__title">
                                     Ajouter une zone
                                 </h1>
-                                {% form_theme addForm 'form/dsfr_theme.html.twig' %}
                                 {{form(addForm, {'attr': {'id': 'form-add-zone'}} )}}
                             </div>
                             <div class="fr-modal__footer">
