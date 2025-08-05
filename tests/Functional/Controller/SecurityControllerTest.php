@@ -2,8 +2,10 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Security\User\SignalementUser;
 use App\Tests\ApiHelper;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
@@ -16,6 +18,33 @@ class SecurityControllerTest extends WebTestCase
     use ApiHelper;
     use SessionHelper;
     use UserHelper;
+
+    public function testFOLoginOnOccupantWithoutEmail(): void
+    {
+        $client = static::createClient();
+        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2022-1']);
+        $payload = [
+            'code' => $signalement->getCodeSuivi(),
+            'visitor-type' => 'occupant',
+            'login-first-letter-prenom' => mb_substr($signalement->getPrenomOccupant(), 0, 1),
+            'login-first-letter-nom' => mb_substr($signalement->getNomOccupant(), 0, 1),
+            'login-code-postal' => $signalement->getCpOccupant(),
+            '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+        ];
+        $client->request('POST', '/authentification/'.$signalement->getCodeSuivi(), $payload);
+        $this->assertResponseRedirects();
+
+        $container = $client->getContainer();
+        $tokenStorage = $container->get('security.token_storage');
+        $token = $tokenStorage->getToken();
+
+        $this->assertNotNull($token);
+        $this->assertInstanceOf(SignalementUser::class, $token->getUser());
+        $this->assertInstanceOf(User::class, $token->getUser()->getUser());
+        $this->assertEquals($signalement->getCodeSuivi(), $token->getUser()->getCodeSuivi());
+        $this->assertEquals('', $token->getUser()->getEmail());
+        $this->assertStringStartsWith('sl__', $token->getUser()->getUser()->getEmail());
+    }
 
     /** @dataProvider provideJsonLogin  */
     public function testJsonLogin(?int $status = null, ?string $email = null, ?string $password = null): void

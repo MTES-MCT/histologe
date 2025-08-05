@@ -190,11 +190,10 @@ class SignalementRepositoryTest extends KernelTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $emailExistingSignalements = $signalementRepository->findAllForEmailAndAddress(
-            'francis.cabrel@astaffort.com',
+            'admin-partenaire-13-01@signal-logement.fr',
             '3 rue Mars',
             '13015',
             'Marseille',
-            false
         );
         $this->assertEquals(1, \count($emailExistingSignalements));
     }

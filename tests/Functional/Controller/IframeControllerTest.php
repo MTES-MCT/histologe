@@ -15,7 +15,7 @@ class IframeControllerTest extends WebTestCase
         $client->request('GET', $generatorUrl->generate('iframe_demande_lien_signalement'));
 
         $client->submitForm('demande_lien_signalement_save', [
-            'demande_lien_signalement[email]' => 'francis.cabrel@astaffort.com',
+            'demande_lien_signalement[email]' => 'admin-partenaire-13-01@signal-logement.fr',
             'demande_lien_signalement[adresseHelper]' => '3 rue Mars 13015 Marseille',
             'demande_lien_signalement[adresse]' => '3 rue Mars',
             'demande_lien_signalement[codePostal]' => '13015',

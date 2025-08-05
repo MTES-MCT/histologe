@@ -312,6 +312,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
 
         $this->entityManager->persist($suivi);
 
+        $signalement->setMailOccupant('temp_for_test@signal-logement.fr');
         $expectedAdress = [$signalement->getMailOccupant()];
 
         $notificationAndMailSender = new NotificationAndMailSender(
