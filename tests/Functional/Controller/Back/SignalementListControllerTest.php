@@ -66,7 +66,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Partenaires affectés' => [['partenaires' => ['5'], 'isImported' => 'oui'], 2];
         yield 'Search by Statut de la visite' => [['visiteStatus' => 'Planifiée', 'isImported' => 'oui'], 5];
         yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 5];
-        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 3];
+        yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 2];
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse', 'isImported' => 'oui'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6, 'isImported' => 'oui'], 9];
         yield 'Search by Declarant' => [['typeDeclarant' => 'locataire', 'isImported' => 'oui'], 51];
@@ -81,8 +81,8 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 56];
         yield 'Search by Zones' => [['isImported' => 'oui', 'zones' => [1, 2, 3]], 5];
         yield 'Search by Zones on Territory 34' => [['isImported' => 'oui', 'zones' => [1, 2, 3], 'territoire' => '35'], 1];
-        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 7];
-        yield 'Search by dates depot and dates of last suivi' => [['isImported' => 'oui', 'dateDepotDebut' => '2023-01-01', 'dateDepotFin' => '2023-03-31', 'dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-12-31'], 3];
+        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 6];
+        yield 'Search by dates depot and dates of last suivi' => [['isImported' => 'oui', 'dateDepotDebut' => '2023-01-01', 'dateDepotFin' => '2023-03-31', 'dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-12-31'], 2];
         yield 'Search by Demande fermeture usager territoire 13' => [['territoire' => '13', 'usagerAbandonProcedure' => '1'], 1];
         yield 'Search by Demande fermeture usager all' => [['usagerAbandonProcedure' => '1'], 2];
         yield 'Search by created from ' => [['createdFrom' => 'formulaire-pro'], 1];
@@ -250,7 +250,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Status Fermé' => [['isImported' => 'oui', 'status' => 'ferme'], 3];
         yield 'Search by Status Fermé on Territory 1' => [['territoire' => '1', 'isImported' => 'oui', 'status' => 'ferme'], 1];
         yield 'Search by Status Fermé on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'ferme'], 2];
-        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 2];
+        yield 'Search by Sans suivi in territory 13' => [['isImported' => 'oui', 'sansSuiviPeriode' => 30, 'territoire' => '13'], 1];
     }
 
     /**

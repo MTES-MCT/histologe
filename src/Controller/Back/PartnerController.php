@@ -34,6 +34,7 @@ use App\Service\Sanitizer;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -394,6 +395,8 @@ class PartnerController extends AbstractController
         Request $request,
         Partner $partner,
         UserManager $userManager,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
     ): JsonResponse|RedirectResponse {
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $user = new User();
@@ -426,6 +429,9 @@ class PartnerController extends AbstractController
                 $userPartner->setUser($userExist);
                 $user = $userExist;
                 $userManager->sendAccountActivationNotification($user);
+            }
+            if (!$userExist && $featureNewDashboard) {
+                $user->setHasDoneSubscriptionsChoice(true);
             }
             $userManager->persist($userPartner);
             $userManager->save($user);

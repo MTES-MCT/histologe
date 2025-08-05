@@ -39,7 +39,7 @@ class PopNotificationController extends AbstractController
         $user = $this->getUser();
         $popNotification = $user->getPopNotifications()->count() ? $user->getPopNotifications()->first() : null;
         if ($popNotification) {
-            $popNotificationManager->remove($popNotification);
+            // $popNotificationManager->remove($popNotification);
         }
 
         return new JsonResponse(['success' => true]);

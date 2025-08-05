@@ -30,7 +30,7 @@ class UserFactoryTest extends KernelTestCase
     {
         $partner = new Partner();
 
-        $user = (new UserFactory())->createInstanceFrom(
+        $user = (new UserFactory(true))->createInstanceFrom(
             roleLabel: 'Agent',
             firstname: 'John',
             lastname: 'Doe',
@@ -49,7 +49,7 @@ class UserFactoryTest extends KernelTestCase
 
     public function testCreateUserAdminInstanceWithoutPartnerAndTerritory(): void
     {
-        $user = (new UserFactory())->createInstanceFrom(
+        $user = (new UserFactory(true))->createInstanceFrom(
             roleLabel: 'Super Admin',
             firstname: 'John',
             lastname: 'Doe',
@@ -80,7 +80,7 @@ class UserFactoryTest extends KernelTestCase
             'isMailingActive' => true,
         ];
 
-        $user = (new UserFactory())->createInstanceFromArray($data);
+        $user = (new UserFactory(true))->createInstanceFromArray($data);
         $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
         $user->addUserPartner($userPartner);
 

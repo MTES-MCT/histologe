@@ -14,6 +14,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -32,6 +33,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         private readonly TerritoryRepository $territoryRepository,
         private readonly UserRepository $userRepository,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         #[Autowire(env: 'USER_SYSTEM_EMAIL')]
         private readonly string $userSystemEmail,
     ) {
@@ -90,6 +92,10 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         if (AffectationStatus::ACCEPTED === $affectation->getStatut()) {
             foreach ($partner->getUsers() as $user) {
                 if (($user->isUserPartner() || $user->isPartnerAdmin()) && UserStatus::ARCHIVE !== $user->getStatut()) {
+                    $subscription = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $affectation->getSignalement()]);
+                    if ($subscription) {
+                        continue;
+                    }
                     $subscription = new UserSignalementSubscription();
                     $subscription
                         ->setUser($user)

@@ -109,3 +109,10 @@ suivis:
   type: 3
   context: signalementClosed
   category: "SIGNALEMENT_IS_CLOSED"
+- 
+  created_by: user-13-05@signal-logement.fr
+  description: "Un message sur le 2023-15 qui m'abonne avec participation"
+  is_public: 0
+  signalement: "2023-13"
+  type: 3
+  category: "MESSAGE_PARTNER"

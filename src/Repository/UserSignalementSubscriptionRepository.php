@@ -6,6 +6,8 @@ use App\Entity\Affectation;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
+use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -57,6 +59,21 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('JSON_CONTAINS(u.roles, :role_admin_territory) = 0')
             ->setParameter('role_admin_territory', '"ROLE_ADMIN_TERRITORY"');
         }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @return array<UserSignalementSubscription>
+     */
+    public function findLegacyForUserInactiveOnSignalement(User $user): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->leftJoin(Suivi::class, 'suivi', 'WITH', 'suivi.signalement = s.signalement AND suivi.createdBy = s.user')
+            ->where('s.user = :user')
+            ->andWhere('suivi.id IS NULL')
+            ->andWhere('s.isLegacy = true')
+            ->setParameter('user', $user);
 
         return $queryBuilder->getQuery()->getResult();
     }
