@@ -28,9 +28,9 @@
                    {% if app.request.get('consent_donnees_cgu') %}checked{% endif %}>
             <label class="fr-label" for="consent-cgu">
                 Je certifie avoir pris connaissance et accepter les&nbsp;
-                <a href="{{ path('front_cgu_agents') }}" target="_blank" rel="noopener">conditions générales d'utilisation</a>&nbsp;
+                <a href="{{ sites_faciles_url }}cgu-agents" target="_blank" rel="noopener">conditions générales d'utilisation</a>&nbsp;
                 et la&nbsp;
-                <a href="{{ path('politique_de_confidentialite') }}" target="_blank" rel="noopener">politique de confidentialité</a>&nbsp;
+                <a href="{{ sites_faciles_url }}politique-de-confidentialite" target="_blank" rel="noopener">politique de confidentialité</a>&nbsp;
                 du service Signal Logement.
             </label>
         </div>
