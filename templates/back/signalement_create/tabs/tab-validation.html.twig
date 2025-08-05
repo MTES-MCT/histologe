@@ -5,6 +5,27 @@
         <p>{{ error }}</p>
     </div>
 {% endfor %}
+<form id="bo-form-signalement-validation" method="post" action="{{ path('back_signalement_draft_form_validation', {uuid: signalement.uuid}) }}">
+    <div id="consentements-wrapper" class="fr-select-group {{ null != hasConsentError and hasConsentError ? 'fr-select-group--error' : '' }}">
+        <div class="fr-checkbox-group fr-mb-3v">
+            <input type="checkbox" id="consent-signalement-tiers" name="consent_signalement_tiers"
+                   {% if app.request.get('consent_signalement_tiers') %}checked{% endif %}>
+            <label class="fr-label" for="consent-signalement-tiers">
+                Je certifie avoir le droit de déposer un signalement pour le compte d'un tiers.
+            </label>
+        </div>
+
+        <div class="fr-checkbox-group fr-mb-3v">
+            <input type="checkbox" id="consent-donnees-sante" name="consent_donnees_sante"
+                   {% if app.request.get('consent_donnees_sante') %}checked{% endif %}>
+            <label class="fr-label" for="consent-donnees-sante">
+                Je certifie ne pas avoir partagé de données personnelles de santé concernant les personnes occupant le logement.
+            </label>
+        </div>
+        <p id="consentements-error" class="fr-error-text {{ null != hasConsentError and hasConsentError ? '' : 'fr-hidden' }}">
+            Veuillez cocher toutes les cases de consentement.
+        </p>
+    </div>
 
 {% if is_granted('ROLE_ADMIN_TERRITORY') %}
     <p>
@@ -61,7 +82,6 @@
     </div>
 </div>
 
-<form id="bo-form-signalement-validation" method="post" action="{{ path('back_signalement_draft_form_validation', {uuid: signalement.uuid}) }}">
     <input type="hidden" name="_token" value="{{ csrf_token('form_signalement_validation') }}">
     {% if assignablePartners|length %}
         <div class="fr-callout">

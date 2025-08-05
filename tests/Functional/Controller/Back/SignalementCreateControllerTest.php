@@ -316,6 +316,8 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
         $this->client->request('POST', $route, [
+            'consent_signalement_tiers' => 'on',
+            'consent_donnees_sante' => 'on',
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
         ]);
 
@@ -347,6 +349,8 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
         $this->client->request('POST', $route, [
+            'consent_signalement_tiers' => 'on',
+            'consent_donnees_sante' => 'on',
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
             'partner-ids' => $partner1->getId().','.$partner2->getId(),
         ]);
@@ -377,6 +381,8 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
         $this->client->request('POST', $route, [
+            'consent_signalement_tiers' => 'on',
+            'consent_donnees_sante' => 'on',
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
         ]);
 
@@ -406,6 +412,8 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
         $this->client->request('POST', $route, [
+            'consent_signalement_tiers' => 'on',
+            'consent_donnees_sante' => 'on',
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
         ]);
 
@@ -435,6 +443,8 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
         $this->client->request('POST', $route, [
+            'consent_signalement_tiers' => 'on',
+            'consent_donnees_sante' => 'on',
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
         ]);
 
