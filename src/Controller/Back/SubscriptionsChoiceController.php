@@ -26,13 +26,11 @@ class SubscriptionsChoiceController extends AbstractController
         if (!$this->isCsrfTokenValid('subscriptions_choice', $token)) {
             $errorMsg = 'Le token CSRF est invalide, veuillez recharger la page.';
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => ['custom' => ['errors' => [$errorMsg]]]];
-
-            return $this->json($response, $response['code']);
-        }
-        if (null === $choice) {
+        } elseif (null === $choice) {
             $errorMsg = 'Veuillez faire un choix.';
             $response = ['code' => Response::HTTP_BAD_REQUEST,  'errors' => ['custom' => ['errors' => [$errorMsg]]]];
-
+        }
+        if (isset($response) && isset($errorMsg)) {
             return $this->json($response, $response['code']);
         }
 
