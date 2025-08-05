@@ -20,7 +20,7 @@
                             <div class="fr-select-group">
                                 Vous êtes sur le point de supprimer le document <b><span class="fr-modal-file-delete-filename"></span></b>. <br>
                                 Une fois supprimé, le fichier ne sera plus visible dans le signalement. <br>
-                                {% if app.request.get('_route') != 'front_suivi_signalement' %}
+                                {% if app.request.get('_route') not in ['front_suivi_signalement', 'front_suivi_signalement_messages', 'front_suivi_signalement_documents'] %}
                                     Si vous avez partagé le document à l'usager, il n'y aura plus accès.
                                 {% endif %}
                             </div>
