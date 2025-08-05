@@ -22,19 +22,6 @@
                 Je certifie ne pas avoir partagé de données personnelles de santé concernant les personnes occupant le logement.
             </label>
         </div>
-
-        <div class="fr-checkbox-group fr-mb-3v">
-            <input type="checkbox" id="consent-cgu" name="consent_donnees_cgu"
-                   {% if app.request.get('consent_donnees_cgu') %}checked{% endif %}>
-            <label class="fr-label" for="consent-cgu">
-                Je certifie avoir pris connaissance et accepter les&nbsp;
-                <a href="{{ sites_faciles_url }}cgu-agents" target="_blank" rel="noopener">conditions générales d'utilisation</a>&nbsp;
-                et la&nbsp;
-                <a href="{{ sites_faciles_url }}politique-de-confidentialite" target="_blank" rel="noopener">politique de confidentialité</a>&nbsp;
-                du service Signal Logement.
-            </label>
-        </div>
-
         <p id="consentements-error" class="fr-error-text {{ null != hasConsentError and hasConsentError ? '' : 'fr-hidden' }}">
             Veuillez cocher toutes les cases de consentement.
         </p>

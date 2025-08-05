@@ -542,7 +542,6 @@ class SignalementCreateController extends AbstractController
     private function hasConsentError(Request $request): bool
     {
         return !$request->get('consent_signalement_tiers')
-            || !$request->get('consent_donnees_sante')
-            || !$request->get('consent_donnees_cgu');
+            || !$request->get('consent_donnees_sante');
     }
 }
