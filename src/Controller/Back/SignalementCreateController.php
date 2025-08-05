@@ -442,7 +442,11 @@ class SignalementCreateController extends AbstractController
 
         $token = $request->request->get('_token');
         $partnerIds = $request->request->get('partner-ids');
-        if (!count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
+        $hasConsentError = null;
+        if (Request::METHOD_POST === $request->getMethod()) {
+            $hasConsentError = $this->hasConsentError($request);
+        }
+        if (!$hasConsentError && !count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
             $entityManager->beginTransaction();
 
             /** @var User $user */
@@ -529,8 +533,16 @@ class SignalementCreateController extends AbstractController
             'partners' => $partners,
             'assignablePartners' => $assignablePartners,
             'errorMsgs' => $errorMsgs,
+            'hasConsentError' => $hasConsentError,
         ]);
 
         return $this->json(['tabContent' => $tabContent]);
+    }
+
+    private function hasConsentError(Request $request): bool
+    {
+        return !$request->get('consent_signalement_tiers')
+            || !$request->get('consent_donnees_sante')
+            || !$request->get('consent_donnees_cgu');
     }
 }
