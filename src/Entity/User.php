@@ -201,6 +201,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column]
     private ?bool $hasDoneSubscriptionsChoice = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $duplicateModalDismissedAt = null;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -988,6 +991,18 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function setHasDoneSubscriptionsChoice(bool $hasDoneSubscriptionsChoice): static
     {
         $this->hasDoneSubscriptionsChoice = $hasDoneSubscriptionsChoice;
+
+        return $this;
+    }
+
+    public function isDuplicateModalDismissed(): bool
+    {
+        return null !== $this->duplicateModalDismissedAt;
+    }
+
+    public function setDuplicateModalDismissed(): static
+    {
+        $this->duplicateModalDismissedAt = new \DateTimeImmutable();
 
         return $this;
     }
