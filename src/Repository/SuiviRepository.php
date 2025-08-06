@@ -509,19 +509,20 @@ class SuiviRepository extends ServiceEntityRepository
         return $indexed;
     }
 
-    public function findLastPublicSuivi(Signalement $signalement, ?User $userToExclude = null): ?Suivi
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findLastPublicSuivi(Signalement $signalement): ?Suivi
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.signalement = :signalement')
             ->andWhere('s.isPublic = 1')
             ->andWhere('s.deletedBy IS NULL')
-            ->setParameter('signalement', $signalement);
-        if (null !== $userToExclude) {
-            $qb->andWhere('s.createdBy != :userToExclude')
-                ->setParameter('userToExclude', $userToExclude);
-        }
-        $qb->orderBy('s.createdAt', 'DESC')
-            ->setMaxResults(1);
+            ->setParameter('signalement', $signalement)
+            ->andWhere('s.category NOT IN (:excludedCategories)')// ignore suivi usager
+            ->setParameter('excludedCategories', [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DOCUMENT_DELETED_BY_USAGER]);
+
+        $qb->orderBy('s.createdAt', 'DESC')->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
