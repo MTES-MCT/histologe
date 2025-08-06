@@ -140,7 +140,8 @@
 				(
 				signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR 
 				and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
-				)  
+				)
+			and not signalement.isProprioAverti
 			%}
 				<div class="fr-callout fr-icon-information-line">
 					<h2 class="fr-callout__title">Prévenez le propriétaire (bailleur)</h2>
