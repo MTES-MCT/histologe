@@ -147,11 +147,11 @@ class SignalementFileController extends AbstractController
                 $description .= 'par l\'usager :';
                 $description .= '<ul><li>'.$filename.'</li></ul>';
                 $suiviManager->createSuivi(
-                    user: $signalementUser->getUser(),
                     signalement: $signalement,
                     description: $description,
                     type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
+                    user: $signalementUser->getUser(),
                 );
                 $message = $file->isTypeDocument() ? 'Le document a bien été supprimé.' : 'La photo a bien été supprimée.';
                 $this->addFlash('success', $message);

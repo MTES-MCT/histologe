@@ -7,9 +7,9 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 
-class SuiviCategorizerService
+class SuiviCategoryMapper
 {
-    private const SUIVI_CATEGORIES_CONFIGURATION = [
+    private const array SUIVI_CATEGORIES_CONFIGURATION = [
         SuiviCategory::ASK_DOCUMENT->name => [
             'label' => 'A faire',
             'labelClass' => 'fr-badge--info',
@@ -64,13 +64,19 @@ class SuiviCategorizerService
             'title' => 'Fermeture de votre dossier',
             'icon' => 'conclusion.svg',
         ],
+        SuiviCategory::DEMANDE_ABANDON_PROCEDURE->name => [
+            'label' => 'Important',
+            'labelClass' => 'fr-badge--warning',
+            'title' => 'Votre demande a été enregistrée',
+            'icon' => 'success.svg',
+        ],
     ];
 
     public function __construct(
     ) {
     }
 
-    public function getSuiviCategoryFromSuivi(Suivi $suivi): SuiviCategoryDto
+    public function mapFromSuivi(Suivi $suivi): SuiviCategoryDto
     {
         if ($suivi->getCategory() && isset(self::SUIVI_CATEGORIES_CONFIGURATION[$suivi->getCategory()->name])) {
             $configuration = self::SUIVI_CATEGORIES_CONFIGURATION[$suivi->getCategory()->name];

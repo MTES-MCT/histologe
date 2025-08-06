@@ -35,9 +35,10 @@ use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDuplicateChecker;
 use App\Service\Signalement\SuiviSeenMarker;
-use App\Service\SuiviCategorizerService;
+use App\Service\SuiviCategoryMapper;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -525,13 +526,16 @@ class SignalementController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     #[Route('/suivre-mon-signalement/{code}', name: 'front_suivi_signalement', methods: ['GET', 'POST'])]
     public function suiviSignalement(
         string $code,
         SignalementRepository $signalementRepository,
         SuiviRepository $suiviRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
-        SuiviCategorizerService $suiviCategorizerService,
+        SuiviCategoryMapper $suiviCategoryMapper,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
@@ -546,13 +550,13 @@ class SignalementController extends AbstractController
         ]);
 
         if ($this->featureSuiviAction) {
-            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement, $user);
+            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement);
             $suiviCategory = null;
             if (!$lastSuiviPublic && SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $lastSuiviPublic = (new Suivi())->setSignalement($signalement)->setCategory(SuiviCategory::SIGNALEMENT_IS_CLOSED);
             }
             if ($lastSuiviPublic) {
-                $suiviCategory = $suiviCategorizerService->getSuiviCategoryFromSuivi($lastSuiviPublic);
+                $suiviCategory = $suiviCategoryMapper->mapFromSuivi($lastSuiviPublic);
             }
 
             return $this->render('front/suivi_signalement_dashboard.html.twig', [
