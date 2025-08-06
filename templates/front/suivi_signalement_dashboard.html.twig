@@ -81,7 +81,11 @@
 									</div>    
 								{% endif %}   
 							{% else %}
-							  	<p class="fr-tile__detail">Votre signalement est en cours de validation.</p>            
+							  	<p class="fr-tile__detail">
+									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
+										Votre signalement est en cours de validation.
+									</a>
+								</p>            
 								<div class="fr-tile__start">
 									<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info">Validation en cours</p>           
 								</div>

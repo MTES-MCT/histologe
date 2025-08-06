@@ -14,13 +14,13 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-modal-delete-file" class="fr-modal__title">
-                                Supprimer le document</span>
+                                Supprimer le document
                             </h1>
 
                             <div class="fr-select-group">
                                 Vous êtes sur le point de supprimer le document <b><span class="fr-modal-file-delete-filename"></span></b>. <br>
-                                Une fois supprimé, le fichier ne sera plus visible dans le signalement. <br>
-                                {% if app.request.get('_route') != 'front_suivi_signalement' %}
+                                Une fois supprimé, le fichier ne sera plus visible dans le {{ is_granted('ROLE_USER_PARTNER') ? 'signalement' : 'dossier' }}. <br>
+                                {% if is_granted('ROLE_USER_PARTNER') %}
                                     Si vous avez partagé le document à l'usager, il n'y aura plus accès.
                                 {% endif %}
                             </div>

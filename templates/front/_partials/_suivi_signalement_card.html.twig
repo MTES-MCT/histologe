@@ -37,7 +37,7 @@
 		</div>
 		{% if link is not defined or link is same as true %}
 			<div class="fr-col-12 fr-text--right">
-				<a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{{ path('front_suivi_signalement_dossier',{code:signalement.codeSuivi}) }}">Accéder au dossier</a>
+				<a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}">Retour à l'accueil du dossier</a>
 			</div>
 		{% endif %}
 	</div>	
