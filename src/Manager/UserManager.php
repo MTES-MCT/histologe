@@ -104,6 +104,7 @@ class UserManager extends AbstractManager
 
     public function createUsagerFromSignalement(Signalement $signalement, string $type = self::OCCUPANT): ?User
     {
+        $user = null;
         $mail = (self::OCCUPANT === $type)
             ? $signalement->getMailOccupant()
             : $signalement->getMailDeclarant();
@@ -116,7 +117,10 @@ class UserManager extends AbstractManager
             ? $signalement->getNomOccupant()
             : $signalement->getNomDeclarant();
 
-        if (null !== $mail) {
+        if (!$mail && self::OCCUPANT === $type) {
+            $mail = 'sl__'.uniqid().'@signal-logement.fr';
+        }
+        if ($mail) {
             /** @var ?User $user */
             $user = $this->findOneBy(['email' => $mail]);
             if (null === $user) {
@@ -130,47 +134,15 @@ class UserManager extends AbstractManager
                 $user->setIsMailingActive(true);
                 $this->save($user);
             }
-
-            if (self::OCCUPANT === $type) {
-                $this->signalementUsagerManager->createOrUpdate($signalement, $user, null);
-            } else {
-                $this->signalementUsagerManager->createOrUpdate($signalement, null, $user);
-            }
-
-            return $user;
         }
 
-        return null;
-    }
-
-    public function getOrCreateUserForSignalementAndEmail(Signalement $signalement, ?string $email): ?User
-    {
-        /** @var User $userOccupant */
-        $userOccupant = $this->createUsagerFromSignalement($signalement, self::OCCUPANT);
-        /** @var User $userDeclarant */
-        $userDeclarant = $this->createUsagerFromSignalement($signalement, self::DECLARANT);
-        if ($userOccupant && $email === $userOccupant->getEmail()) {
-            return $userOccupant;
-        } elseif ($userDeclarant && $email === $userDeclarant->getEmail()) {
-            return $userDeclarant;
+        if (self::OCCUPANT === $type) {
+            $this->signalementUsagerManager->createOrUpdate($signalement, $user, null);
+        } else {
+            $this->signalementUsagerManager->createOrUpdate($signalement, null, $user);
         }
 
-        return null;
-    }
-
-    public function getUserTypeForSignalementAndUser(Signalement $signalement, ?User $user): ?string
-    {
-        if (!$user) {
-            return null;
-        }
-
-        if ($user->getEmail() === $signalement->getMailOccupant()) {
-            return self::OCCUPANT;
-        } elseif ($user->getEmail() === $signalement->getMailDeclarant()) {
-            return self::DECLARANT;
-        }
-
-        return null;
+        return $user;
     }
 
     public function getSystemUser(): ?User

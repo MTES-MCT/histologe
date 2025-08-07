@@ -4,6 +4,7 @@ namespace App\Controller\Security;
 
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\Files\ImageVariantProvider;
 use Nelmio\ApiDocBundle\Attribute\Security;
@@ -113,6 +114,7 @@ class SecurityController extends AbstractController
         string $code,
         AuthenticationUtils $authenticationUtils,
         SignalementRepository $signalementRepository,
+        UserManager $userManager,
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
@@ -123,6 +125,9 @@ class SecurityController extends AbstractController
         }
         if ($this->getUser()) {
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $code]);
+        }
+        if (!$signalement->getSignalementUsager()?->getOccupant()) {
+            $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
         }
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();

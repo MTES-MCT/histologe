@@ -93,30 +93,16 @@ class UserManagerTest extends KernelTestCase
         return $userRepository->findOneBy(['email' => $userEmail]);
     }
 
-    public function testGetUserAndTypeForSignalementAndEmail(): void
+    public function testCreateUsagerOccupantFromSignalementWithoutMailOccupant(): void
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-120']);
+        $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
 
-        $user = $this->userManager->getOrCreateUserForSignalementAndEmail($signalement, $signalement->getMailOccupant());
-        $this->assertEquals($signalement->getMailOccupant(), $user->getEmail());
-        $type = $this->userManager->getUserTypeForSignalementAndUser($signalement, $user);
-        $this->assertEquals(UserManager::OCCUPANT, $type);
+        $user = $this->userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
 
-        $user = $this->userManager->getOrCreateUserForSignalementAndEmail($signalement, $signalement->getMailDeclarant());
-        $this->assertEquals($signalement->getMailDeclarant(), $user->getEmail());
-        $type = $this->userManager->getUserTypeForSignalementAndUser($signalement, $user);
-        $this->assertEquals(UserManager::DECLARANT, $type);
-
-        $user = $this->userManager->getOrCreateUserForSignalementAndEmail($signalement, 'lalala@nanani.fr');
-        $this->assertNull($user);
-        $type = $this->userManager->getUserTypeForSignalementAndUser($signalement, $user);
-        $this->assertNull($type);
-
-        $signalement->setMailDeclarant($signalement->getMailOccupant());
-        $user = $this->userManager->getOrCreateUserForSignalementAndEmail($signalement, $signalement->getMailDeclarant());
-        $type = $this->userManager->getUserTypeForSignalementAndUser($signalement, $user);
-        $this->assertEquals(UserManager::OCCUPANT, $type);
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals('sl__', substr($user->getEmail(), 0, 4));
+        $this->assertEquals($user, $signalement->getSignalementUsager()->getOccupant());
     }
 }
