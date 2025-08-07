@@ -931,12 +931,12 @@ class SignalementManager extends AbstractManager
         $this->persist($signalement);
         $subscriptionCreated = false;
         $suivi = $this->suiviManager->createSuivi(
-            user: $adminUser,
             signalement: $signalement,
             description: 'Signalement validé',
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             isPublic: true,
+            user: $adminUser,
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             flush: false,
             subscriptionCreated: $subscriptionCreated
