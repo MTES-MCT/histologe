@@ -2,7 +2,6 @@
 
 namespace App\Service\Signalement;
 
-use App\Dto\NotificationSuiviUser;
 use App\Entity\Signalement;
 use App\Repository\NotificationRepository;
 
@@ -15,9 +14,8 @@ readonly class SuiviSeenMarker
 
     public function markSeenByUsager(Signalement $signalement): void
     {
-        $suiviLastUserSeen = $this->getLastSeenSuivi($signalement);
+        $lastSeenDate = $this->getLastSeenAt($signalement);
 
-        $lastSeenDate = $suiviLastUserSeen && $suiviLastUserSeen->isSeen ? $suiviLastUserSeen->seenAt : null;
         foreach ($signalement->getSuivis() as $suivi) {
             if (!$suivi->getIsPublic()) {
                 continue;
@@ -28,15 +26,35 @@ readonly class SuiviSeenMarker
         }
     }
 
-    private function getLastSeenSuivi(Signalement $signalement): ?NotificationSuiviUser
+    private function getLastSeenAt(Signalement $signalement): ?\DateTimeImmutable
     {
         $notificationsSuiviUser = $this->notificationRepository->getNotificationsFrom($signalement);
         foreach ($notificationsSuiviUser as $notificationSuiviUser) {
             if ($notificationSuiviUser->isSeen) {
-                return $notificationSuiviUser;
+                return $notificationSuiviUser->seenAt;
             }
         }
 
-        return null;
+        return $this->getLastUsagerReplyDate($signalement);
+    }
+
+    private function getLastUsagerReplyDate(Signalement $signalement): ?\DateTimeImmutable
+    {
+        $lastDate = null;
+
+        foreach ($signalement->getSuivis() as $suivi) {
+            $createdBy = $suivi->getCreatedBy();
+            if (null === $createdBy) {
+                continue;
+            }
+            if (in_array($createdBy->getId(), $signalement->getUsagerIds())) {
+                $createdAt = $suivi->getCreatedAt();
+                if (null === $lastDate || $createdAt > $lastDate) {
+                    $lastDate = $createdAt;
+                }
+            }
+        }
+
+        return $lastDate;
     }
 }
