@@ -289,3 +289,11 @@ affectations:
     affected_by: "admin-01@signal-logement.fr"
     motif_cloture: ""
     territory: "Gard"
+  -
+    signalement: 2025-04
+    partner: "partenaire-30-02@signal-logement.fr"
+    statut: "EN_COURS"
+    answered_by: ""
+    affected_by: "admin-01@signal-logement.fr"
+    motif_cloture: ""
+    territory: "Gard"

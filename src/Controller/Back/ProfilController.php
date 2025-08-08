@@ -369,4 +369,17 @@ class ProfilController extends AbstractController
 
         return $this->json($response, $response['code']);
     }
+
+    #[Route('/dismiss-modal-duplicate-addresses', name: 'dismiss_modal_duplicate_addresses', methods: ['POST'])]
+    public function dismissModalDuplicateAddresses(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('modal_duplicate_addresses', $request->request->get('_token'))) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $user->setDuplicateModalDismissed();
+            $entityManager->flush();
+        }
+
+        return $this->json(['status' => 'success']);
+    }
 }

@@ -107,6 +107,14 @@
                     </div>
                 {% endif %}
 
+                {% if signalementOnSameAddress|length > 0 %}
+                    {% set routeForListOfSignalementOnAddress = path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': signalement.adresseOccupant, 'communes[]': signalement.cpOccupant }) %}
+                    {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}
+                    {% else %}
+                        {% include '_partials/_modal-duplicate-addresses.html.twig' %}
+                    {% endif %}
+                {% endif %}
+
                 <div class="fr-mt-3v">
                     <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
                         {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
@@ -130,13 +138,19 @@
                                 </button>
                             </li>
                         {% endif %}
-                        {% if is_granted('ROLE_ADMIN_TERRITORY') and signalementOnSameAddress|length > 0 %}
+                        {% if signalementOnSameAddress|length > 0 %}
                             <li>
-                                <a href="{{ path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': signalement.adresseOccupant, 'communes[]': signalement.cpOccupant }) }}" class="fr-btn fr-icon-alarm-warning-line">
-                                    {{ signalementOnSameAddress|length > 1 ? signalementOnSameAddress|length ~ ' signalements à la même adresse' : signalementOnSameAddress|length ~  ' signalement à la même adresse' }}
-                                </a>
+                                {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}
+                                    <a href="{{ routeForListOfSignalementOnAddress }}" class="fr-btn fr-icon-alarm-warning-line">
+                                        {{ signalementOnSameAddress|length > 1 ? signalementOnSameAddress|length ~ ' signalements à la même adresse' : signalementOnSameAddress|length ~  ' signalement à la même adresse' }}
+                                    </a>
+                                {% else %}
+                                    <button class="fr-btn fr-icon-alarm-warning-line" aria-controls="fr-modal-duplicate-addresses" data-fr-opened="false"  type="button">
+                                        {{ signalementOnSameAddress|length > 1 ? signalementOnSameAddress|length ~ ' signalements à la même adresse' : signalementOnSameAddress|length ~  ' signalement à la même adresse' }}
+                                    </button>
+                                {% endif %}
                             </li>
-                        {% endif %}
+                        {% endif %}    
                     </ul>
                 </div>
             </div>

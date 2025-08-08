@@ -1,0 +1,43 @@
+<dialog aria-labelledby="fr-modal-duplicate-addresses-title" id="fr-modal-duplicate-addresses" class="fr-modal" >
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                       <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-duplicate-addresses">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 class="fr-modal__title">Dossiers à la même adresse</h1>
+                        <p>
+                            Vous allez être redirigé vers la liste des dossiers à la même adresse.
+                        </p>
+                        <p>
+                            Attention, vous verrez uniquement les dossiers auxquels votre partenaire {{app.user.getPartnerInTerritory(signalement.territory).nom}} a été affecté.
+                        </p>
+                        <form action="{{ path('dismiss_modal_duplicate_addresses') }}" method="POST" id="form-modal-duplicate-addresses">
+                            <div class="fr-checkbox-group">
+                                <input name="dismiss" type="checkbox" id="dismiss-modal-duplicate-addresses" class="fr-checkbox" value="1" >
+                                <label class="fr-label" for="dismiss-modal-duplicate-addresses">Ne plus afficher ce message</label>
+                            </div>
+                            <input type="hidden" name="_token" value="{{ csrf_token('modal_duplicate_addresses') }}">
+                        </form>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button type="button" class="fr-btn fr-icon-check-line" id="btn-submit-modal-duplicate-addresses" data-url="{{ routeForListOfSignalementOnAddress }}">
+                                    Voir la liste
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-duplicate-addresses">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

@@ -84,7 +84,7 @@ class BackStatistiquesControllerTest extends WebTestCase
             ['result' => 0, 'label' => 'count_signalement_archives'],
         ]];
         yield 'User partenaire multi territories' => ['back_statistiques_filter', [], self::USER_USER_PARTNER_MULTI_TERRITORIES, [
-            ['result' => 3, 'label' => 'count_signalement'],
+            ['result' => 4, 'label' => 'count_signalement'],
             ['result' => 0, 'label' => 'count_signalement_refuses'],
             ['result' => 0, 'label' => 'count_signalement_archives'],
         ]];
