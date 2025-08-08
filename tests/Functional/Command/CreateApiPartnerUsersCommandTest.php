@@ -80,4 +80,24 @@ class CreateApiPartnerUsersCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('User already exists with BO e-mail', $output, $output);
     }
+
+    public function testTooManyOptions(): void
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+
+        $command = $application->find('app:create-api-partner-users');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            '--api_email' => 'api-too-many-options@signal-logement.fr',
+            '--partner_id' => 1,
+            '--zip' => 13,
+            '--partner_name' => 'Nouveau partenaire',
+            '--bo_email' => 'user-13-02-signal-logement.fr',
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Too many options', $output, $output);
+    }
 }

@@ -55,6 +55,18 @@ class CreateApiPartnerUsersCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        if ($input->getOption('partner_id')
+            && (
+                $input->getOption('zip')
+                || $input->getOption('partner_name')
+                || $input->getOption('bo_email')
+            )
+        ) {
+            $io->error('Too many options, you cannot use the --partner_id option with the --zip, --partner_name or --bo_email options.');
+
+            return Command::FAILURE;
+        }
+
         $apiEmail = $input->getOption('api_email');
 
         if (empty($apiEmail) || !EmailFormatValidator::validate($apiEmail)) {
@@ -176,7 +188,13 @@ class CreateApiPartnerUsersCommand extends Command
         $this->userManager->persist($userPartner);
         $this->userManager->save($user);
 
-        $io->success('API account was created for '.$apiEmail.' with password '.$password);
+        $io->success(sprintf(
+            'API account was created for %s with password %s.'.\PHP_EOL.
+            'Please send the password securely via https://vaultwarden.incubateur.net/#/login'.\PHP_EOL.
+            'Documentation: https://github.com/MTES-MCT/histologe/wiki/API-Signal-Logement',
+            $apiEmail,
+            $password,
+        ));
 
         return Command::SUCCESS;
     }
