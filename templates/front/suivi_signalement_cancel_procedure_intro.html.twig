@@ -19,7 +19,7 @@
 		<div class="fr-col-12 fr-col-md-8">		
 			<h1 class="title-blue-france">Demander l'arrêt de la procédure</h1>
 			<div class="fr-my-3w">
-				{% if usager.email == signalement.mailDeclarant %}
+				{% if usager.email == signalement.mailDeclarant and signalement.isNotOccupant %}
 					Si vous demandez l'arrêt de la procédure, c'est que vous souhaitez <b>fermer ce dossier</b> sur {{ platform.name }}. <br>
 					Une fois le dossier fermé : <br>
 					<ul>
