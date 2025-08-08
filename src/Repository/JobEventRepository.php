@@ -67,12 +67,29 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     private function createJobEventByTerritoryQueryBuilder(
         int $dayPeriod,
         SearchInterconnexion $searchInterconnexion,
+        bool $count = false,
     ): QueryBuilder {
-        $qb = $this->createQueryBuilder('j');
-        $qb
-            ->leftJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
-            ->leftJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
-            ->where('j.createdAt >= :date_limit');
+        $qb = $this
+            ->createQueryBuilder('j')
+            ->where('j.createdAt >= :date_limit')
+            ->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
+
+        $needsPartnerJoin =
+            null !== $searchInterconnexion->getTerritory()
+            || null !== $searchInterconnexion->getPartner()
+            || !$count;
+
+        $needsSignalementJoin =
+            null !== $searchInterconnexion->getReference()
+            || !$count;
+
+        if ($needsPartnerJoin) {
+            $qb->leftJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId');
+        }
+
+        if ($needsSignalementJoin) {
+            $qb->leftJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
+        }
 
         if ($searchInterconnexion->getTerritory()) {
             $qb->andWhere('p.territory = :territory')->setParameter('territory', $searchInterconnexion->getTerritory());
@@ -93,8 +110,6 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         if ($searchInterconnexion->getService()) {
             $qb->andWhere('j.service = :service')->setParameter('service', $searchInterconnexion->getService());
         }
-
-        $qb->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'));
 
         return $qb;
     }
@@ -134,7 +149,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         int $dayPeriod,
         SearchInterconnexion $searchInterconnexion,
     ): int {
-        $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion);
+        $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion, true);
         $qb->select('COUNT(j.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();

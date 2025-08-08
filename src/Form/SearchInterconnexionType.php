@@ -140,7 +140,9 @@ class SearchInterconnexionType extends AbstractType
         $builder->add('partner', EntityType::class, [
             'class' => Partner::class,
             'choices' => $choicesPartners,
-            'choice_label' => 'nom',
+            'choice_label' => function (Partner $partner) {
+                return sprintf('%s (%s)', $partner->getNom(), str_pad($partner->getTerritory()->getZip(), 2, '0'));
+            },
             'required' => false,
             'label' => 'Partenaire',
             'placeholder' => 'Tous les partenaires',
