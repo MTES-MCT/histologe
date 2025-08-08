@@ -55,6 +55,7 @@ export default defineComponent({
     const urlParams = new URLSearchParams(window.location.search)
     const sortBy = urlParams.get('sortBy')
     const direction = urlParams.get('direction')
+    this.sharedState.input.order = 'reference-DESC'
     if (sortBy && direction) {
       const orderValue = `${sortBy}-${direction.toUpperCase()}`
       if (this.orderList.some(item => item.Id === orderValue)) {
