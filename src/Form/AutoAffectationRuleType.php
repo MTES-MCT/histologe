@@ -33,13 +33,7 @@ class AutoAffectationRuleType extends AbstractType
                 'choice_label' => function ($choice) {
                     return $choice->label();
                 },
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
                 'placeholder' => 'Sélectionner le type de partenaire concerné par cette règle',
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
                 'label' => 'Type de partenaire',
                 'help' => 'Si type Bailleur Social, le partenaire ne sera affecté au signalement que s\'il est rattaché à la même dénomination officielle de bailleur social.',
                 'help_attr' => [
@@ -51,27 +45,15 @@ class AutoAffectationRuleType extends AbstractType
                 'choice_label' => function ($choice) {
                     return $choice;
                 },
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
                 'placeholder' => 'Choisissez un profil de déclarant parmi la liste ci-dessous.',
                 'multiple' => false,
                 'expanded' => false,
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
             ])
             ->add('status', ChoiceType::class, [
                 'label' => 'Statut',
                 'choices' => [
                     'Règle active' => 'ACTIVE',
                     'Règle archivée' => 'ARCHIVED',
-                ],
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
-                'attr' => [
-                    'class' => 'fr-select',
                 ],
                 'disabled' => true,
                 'data' => 'ACTIVE',
@@ -85,12 +67,6 @@ class AutoAffectationRuleType extends AbstractType
                     'Parc public' => 'public',
                     'Parc non renseigné' => 'non_renseigne',
                 ],
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
             ])
             ->add('allocataire', ChoiceType::class, [
                 'label' => 'Allocataire',
@@ -103,18 +79,9 @@ class AutoAffectationRuleType extends AbstractType
                     'Allocataires MSA' => 'msa',
                     'Situation allocataire inconnue' => 'nsp',
                 ],
-                'row_attr' => [
-                    'class' => 'fr-select-group',
-                ],
-                'attr' => [
-                    'class' => 'fr-select',
-                ],
             ])
             ->add('inseeToInclude', TextType::class, [
                 'label' => 'Code insee à inclure (facultatif)',
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
                 'required' => false,
                 'help' => 'Une liste de codes insee séparés par des virgules.',
                 'help_attr' => [
@@ -124,25 +91,13 @@ class AutoAffectationRuleType extends AbstractType
             ])
             ->add('inseeToExclude', TextType::class, [
                 'label' => 'Codes insee à exclure (facultatif)',
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
                 'required' => false,
                 'help' => 'Une liste de codes insee séparés par des virgules.',
-                'help_attr' => [
-                    'class' => 'fr-hint-text',
-                ],
             ])
             ->add('partnerToExclude', TextType::class, [
                 'label' => 'IDs partenaire à exclure (facultatif)',
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
                 'required' => false,
                 'help' => 'Une liste d\'id de partenaires séparés par des virgules.',
-                'help_attr' => [
-                    'class' => 'fr-hint-text',
-                ],
             ])
             ->add('proceduresSuspectees', SearchCheckboxEnumType::class, [
                 'class' => Qualification::class,
@@ -160,9 +115,6 @@ class AutoAffectationRuleType extends AbstractType
                 'noselectionlabel' => 'Sélectionner une ou plusieurs procédures',
                 'nochoiceslabel' => 'Aucune procédure disponible',
                 'help' => 'Choisissez une ou plusieurs procédures parmi la liste ci-dessous.',
-                'help_attr' => [
-                    'class' => 'fr-hint-text',
-                ],
                 'required' => false,
             ])
         ;

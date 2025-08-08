@@ -5,7 +5,6 @@
     <p> Renseigner l'adresse e-mail de la personne occupant le logement ou d'un tiers est recommandé pour un meilleur suivi du dossier. Si vous ne renseignez pas de coordonnées, l'adresse e-mail de votre compte sera associée au dossier.</p>
 </div>
 
-{% form_theme formCoordonnees 'form/dsfr_theme.html.twig' %}
 {{ form_start(formCoordonnees, {'attr': {'id': 'bo-form-signalement-coordonnees'}}) }}
 {{ form_errors(formCoordonnees) }}
 <div class="fr-grid-row fr-grid-row--gutters">

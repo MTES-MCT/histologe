@@ -11,7 +11,6 @@
                             Refus signalement #{{ signalement.reference }}
                         </h1>
                         
-                        {% form_theme refusSignalementForm 'form/dsfr_theme.html.twig' %}
                         {{ form_start(refusSignalementForm, {'attr': {'id': 'signalement-validation-response-deny-form', 'data-submit-type':'formData'}}) }}
                         {{ form_errors(refusSignalementForm) }}
                         {{ form_row(refusSignalementForm.motifRefus) }}

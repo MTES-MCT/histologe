@@ -9,7 +9,6 @@
                     <div class="fr-modal__content">
                         <h1 id="cloture-modal-title" class="fr-modal__title">Clôture signalement #{{ signalement.reference }}</h1>
 
-                        {% form_theme clotureForm 'form/dsfr_theme.html.twig' %}
                         {{ form_start(clotureForm, {'attr': {'id': 'cloture_form', 'data-submit-type':'formData'}}) }}
                         {{ form_errors(clotureForm) }}
                         {{ form_row(clotureForm.motifCloture) }}
