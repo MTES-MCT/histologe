@@ -16,6 +16,7 @@ use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
 use App\Service\ListFilters\SearchInterconnexion;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -260,7 +261,7 @@ class TabDataManager
                 prenomDeclarant: 'Karim',
                 reference: '#2022-150',
                 adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '05/06/2026 à 15:21',
+                clotureAt: new \DateTimeImmutable('2026-06-05 15:21'),
                 messageAt: '06/06/2025 à 07:13',
                 messageSuiviByNom: 'Abdallah',
                 messageSuiviByPrenom: 'Karim',
@@ -271,7 +272,7 @@ class TabDataManager
                 prenomDeclarant: 'Karim',
                 reference: '#2022-151',
                 adresse: '9 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '05/06/2026 à 15:21',
+                clotureAt: new \DateTimeImmutable('2026-06-05 15:21'),
                 messageAt: '06/06/2025 à 07:13',
                 messageSuiviByNom: 'Abdallah',
                 messageSuiviByPrenom: 'Karim',
@@ -291,7 +292,7 @@ class TabDataManager
                 prenomDeclarant: 'Karim',
                 reference: '#2022-150',
                 adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '05/06/2026 à 15:21',
+                clotureAt: new \DateTimeImmutable('2026-06-05 15:21'),
                 messageDaysAgo: 577,
                 messageSuiviByNom: 'Abdallah',
                 messageSuiviByPrenom: 'Karim',
@@ -302,7 +303,7 @@ class TabDataManager
                 prenomDeclarant: 'Karim',
                 reference: '#2022-151',
                 adresse: '9 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '05/06/2026 à 15:21',
+                clotureAt: new \DateTimeImmutable('2026-06-05 15:21'),
                 messageDaysAgo: 504,
                 messageSuiviByNom: 'Abdallah',
                 messageSuiviByPrenom: 'Karim',
@@ -345,81 +346,51 @@ class TabDataManager
     }
 
     /**
-     * @return TabDossier[]
+     * @throws \DateMalformedStringException
+     * @throws NonUniqueResultException
+     * @throws NoResultException
      */
-    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): array
+    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                demandeFermetureUsagerDaysAgo: 497,
-                demandeFermetureUsagerProfileDeclarant: 'OCCUPANT',
-                demandeFermetureUsagerAt: '07/12/2023'
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                demandeFermetureUsagerDaysAgo: 497,
-                demandeFermetureUsagerProfileDeclarant: 'OCCUPANT',
-                demandeFermetureUsagerAt: '07/12/2023'
-            ),
-        ];
+        $dossiers = $this->signalementRepository->findDossiersDemandesFermetureByUsager(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersDemandesFermetureByUsager(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
     }
 
     /**
-     * @return TabDossier[]
+     * @throws \DateMalformedStringException
+     * @throws Exception
      */
-    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): array
+    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                nbRelanceDossier: 14,
-                premiereRelanceDossierAt: '17/12/2024',
-                dernierSuiviPublicAt: '29/09/2024',
-                dernierTypeSuivi: 'Suivi automatique',
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                nbRelanceDossier: 14,
-                premiereRelanceDossierAt: '17/12/2024',
-                dernierSuiviPublicAt: '29/09/2024',
-                dernierTypeSuivi: 'Suivi automatique',
-            ),
-        ];
+        $dossiers = $this->signalementRepository->findSignalementsAvecRelancesSansReponse(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countSignalementsAvecRelancesSansReponse(tabQueryParameters: $tabQueryParameters);
+
+        return new TabDossierResult($dossiers, $count);
     }
 
     /**
-     * @return TabDossier[]
+     * @throws \DateMalformedStringException
      */
-    public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): array
+    public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '17/12/2024',
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '17/12/2024',
-            ),
-        ];
+        $dossiers = $this->signalementRepository->findDossiersFermePartenaireTous(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersFermePartenaireTous(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
     }
 }

@@ -44,7 +44,28 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
             new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
             new TwigFilter('phone', [$this, 'formatPhone']),
+            new TwigFilter('badge_class', [$this, 'getBadgeClass']),
+            new TwigFilter('badge_relance_class', [$this, 'getRelanceBadgeClass']),
         ];
+    }
+
+    public function getBadgeClass(?int $days): string
+    {
+        return match (true) {
+            $days > 365 => 'fr-badge--error',
+            $days >= 181 => 'fr-badge--warning',
+            null === $days, $days >= 91 => 'fr-badge--info',
+            default => 'fr-badge--success',
+        };
+    }
+
+    public function getRelanceBadgeClass(int $count): string
+    {
+        return match (true) {
+            $count > 10 => 'fr-badge--error',
+            $count >= 4 => 'fr-badge--warning',
+            default => 'fr-badge--new',
+        };
     }
 
     /**

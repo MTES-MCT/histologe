@@ -15,7 +15,7 @@
             </label>
             <select id="order-type-dossiers-relance-usager-sans-reponse" class="fr-select" data-sort-body="dossiers-relance-usager-sans-reponse">
                 <option value="nbRelanceFeedbackUsager-DESC" selected="selected">Nombre de relances décroissant (du plus grand au plus petit) = tri par défaut</option>
-                <option value="nbRelanceFeedbackUsager-ASC">Nombre de relances décroissant (du plus petite au plus grand)</option>
+                <option value="nbRelanceFeedbackUsager-ASC">Nombre de relances croissant (du plus petite au plus grand)</option>
             </select>
         </div>
     </header>
@@ -25,21 +25,22 @@
             {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
-                    '<div><span class="fr-badge fr-badge--no-icon fr-badge--error">' ~ item.nbRelanceDossier  ~ ' JOURS</span></div>',
+                    '<div><span class="fr-badge fr-badge--no-icon ' ~ (item.nbRelanceDossier | badge_relance_class) ~ '">' ~ item.nbRelanceDossier  ~ '</span></div>',
                     '<div class="fr-text-label--blue-france">
-                            <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
-                            <div>' ~ item.adresse ~ '</div>
-                        </div>',
-                    '<div>
-                        <span>' ~ item.premiereRelanceDossierAt ~ '</span>
+                        <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                        <div>' ~ item.adresse ~ '</div>
                     </div>',
                     '<div>
-                        <strong>' ~ item.dernierSuiviPublicAt ~ '</strong><br>
-                        <span>' ~ item.dernierTypeSuivi ~ '<span>
+                        <span>' ~ item.premiereRelanceDossierAt|date('d/m/Y') ~ '</span>
+                    </div>',
+                    '<div>
+                        <strong>' ~ item.dernierSuiviPublicAt|date('d/m/Y') ~ '</strong><br>
+                        <span>Suivi ' ~ (item.dernierTypeSuivi == 3 ? 'partenaire' : 'automatique') ~ '</span>
                     </div>'
                 ],
-                link: item.lien
+                link: path('back_signalement_view', {'uuid' : item.uuid})
             } %}
+
         {% else %}
             <p>Aucun dossier trouvé.</p>
         {% endfor %}
