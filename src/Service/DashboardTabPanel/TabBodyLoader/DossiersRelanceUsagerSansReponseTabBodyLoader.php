@@ -5,6 +5,7 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
+use Doctrine\DBAL\Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoader
@@ -16,10 +17,16 @@ class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoade
         parent::__construct($this->security);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws Exception
+     */
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getDossiersRelanceSansReponse($this->tabQueryParameters));
+        $result = $this->tabDataManager->getDossiersRelanceSansReponse($this->tabQueryParameters);
+        $tabBody->setData($result->dossiers);
+        $tabBody->setCount($result->count);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_fermer/_body_dossier_relance_usager_sans_reponse.html.twig');
     }
 }

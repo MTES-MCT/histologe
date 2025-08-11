@@ -46,7 +46,8 @@ class TabCountKpiBuilder
         }
 
         $this->tabCountKpi = new TabCountKpi(
-            countNouveauxDossiers: $countNouveauxDossiers->total()
+            countNouveauxDossiers: $countNouveauxDossiers->total(),
+            countDossiersAFermer: 56
         );
 
         return $this;
