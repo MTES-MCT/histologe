@@ -255,7 +255,7 @@ class SignalementController extends AbstractController
             'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),
             'canSeePartnerAffectation' => $this->isGranted(AffectationVoter::SEE, $signalement),
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
-            'signalementOnSameAddress' => $signalementsOnSameAddress,
+            'signalementsOnSameAddress' => $signalementsOnSameAddress,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);
