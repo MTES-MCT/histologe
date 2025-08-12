@@ -74,7 +74,6 @@ export function handleSettings (context: any, requestResponse: any): any {
   context.sharedState.user.canSeeMySignalementsButton = requestResponse.isFeatureNewDashboard // TODO: FEATURE_NEW_DASHBOARD feature flipping, remove when not needed
   context.sharedState.user.partnerIds = requestResponse.partnerIds
   context.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
-  context.sharedState.input.order = 'reference-DESC'
   context.sharedState.input.filters.isImported = 'oui'
 
   context.sharedState.territories = []
