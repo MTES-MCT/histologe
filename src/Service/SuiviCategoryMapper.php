@@ -70,6 +70,12 @@ class SuiviCategoryMapper
             'title' => 'Votre demande a été enregistrée',
             'icon' => 'success.svg',
         ],
+        SuiviCategory::DEMANDE_POURSUITE_PROCEDURE->name => [
+            'label' => 'Important',
+            'labelClass' => 'fr-badge--warning',
+            'title' => 'Votre demande a été enregistrée',
+            'icon' => 'success.svg',
+        ],
     ];
 
     public function __construct(
