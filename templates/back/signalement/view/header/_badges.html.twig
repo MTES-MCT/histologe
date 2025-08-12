@@ -1,0 +1,62 @@
+<div class="fr-mb-4v">  
+    {% if feature_new_dashboard %}
+        <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
+            {% if signalement.profileDeclarant %}
+                {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                    tiers bailleur
+                {% else %}
+                    {{ signalement.profileDeclarant.label }}
+                {% endif %}
+            {% else %}
+                {% if signalement.isNotOccupant %}
+                    tiers déclarant
+                {% else %}
+                    occupant
+                {% endif %}
+            {% endif %}
+        </span>
+    {% endif %}
+
+    <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
+        {% if signalement.isLogementSocial is null %}
+            Parc non renseigné
+        {% elseif signalement.isLogementSocial %}
+            Parc public
+        {% else %}
+            Parc privé
+        {% endif %}
+    </span>
+
+    <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
+        {% if signalement.isAllocataire in [null, ''] %}
+            Allocataire non renseigné
+        {% elseif signalement.isAllocataire in ['oui', '1'] %}
+            Allocataire
+        {% elseif signalement.isAllocataire in ['non', '0'] %}
+            Non allocataire
+        {% elseif signalement.isAllocataire %}
+            Allocataire {{ signalement.isAllocataire }}
+        {% endif %}
+    </span>
+
+    <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
+        {% if signalement.isProprioAverti is null %}
+            Bailleur averti : NSP
+        {% elseif signalement.isProprioAverti %}
+            Bailleur averti
+        {% else %}
+            Bailleur non-averti
+        {% endif %}
+    </span>
+
+    {% if signalement.isLogementVacant %}
+        <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
+            Logement vacant
+        </span>
+    {% endif %}
+    
+    {% for zone in zones %}
+        <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">{{zone.name}}</span>
+    {% endfor %}
+
+</div>

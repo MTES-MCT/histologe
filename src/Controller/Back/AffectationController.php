@@ -17,7 +17,6 @@ use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Service\FormHelper;
-use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -142,12 +141,11 @@ class AffectationController extends AbstractController
         return new RedirectResponse($this->generateUrl('back_signalement_view', ['uuid' => $affectation->getSignalement()->getUuid()]));
     }
 
-    #[Route('/affectation/{affectation}/accept', name: 'back_signalement_affectation_accept', methods: 'POST')]
+    #[Route('/affectation/{affectation}/accept', name: 'back_signalement_affectation_accept')]
     public function affectationResponseSignalement(
         Affectation $affectation,
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
-        NotificationAndMailSender $notificationAndMailSender,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         bool $featureNewDashboard,
     ): Response {

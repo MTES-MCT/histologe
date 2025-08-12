@@ -24,94 +24,37 @@
     <div class="fr-container--fluid">
         <div class="fr-grid-row fr-grid-row--gutters">
             {% for partnerAffectation in signalement.affectations %}
-                <div class="fr-col-12 fr-col-md-6 partner-row">
-                    <div class="fr-mb-3v fr-p-3v fr-background-alt--grey">
-                        <div class="fr-grid-row fr-grid-row--middle">
-                            <div class="fr-col-12 fr-col-lg-7">
-                                {{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}
-                                <br>
-                                {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
-                                    <span class="fr-hint-text">
-                                        Cloturé le {{ partnerAffectation.answeredAt|date('d/m/Y') }}
-                                        <br>
-                                        {{ partnerAffectation.answeredBy ? 'par ' ~ partnerAffectation.answeredBy.nomComplet }}
-                                    </span>
-                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
-                                    <span class="fr-hint-text">
-                                        Accepté le {{ partnerAffectation.answeredAt|date('d/m/Y') }}
-                                        <br>
-                                        {{ partnerAffectation.answeredBy ? 'par ' ~ partnerAffectation.answeredBy.nomComplet }}
-                                    </span>
-                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
-                                    <span class="fr-hint-text">
-                                        Refusé le {{ partnerAffectation.answeredAt|date('d/m/Y') }}
-                                        <br>
-                                        {{ partnerAffectation.answeredBy ? 'par ' ~ partnerAffectation.answeredBy.nomComplet }}
-                                    </span>
-                                {% else %}
-                                    <span class="fr-hint-text">
-                                        Affecté le {{ partnerAffectation.createdAt|date('d/m/Y') }}
-                                        <br>
-                                        {{ partnerAffectation.affectedBy ? 'par ' ~ partnerAffectation.affectedBy.nomComplet }}
-                                    </span>
-                                {% endif %}
-                            </div>
-                            <div class="fr-col-10 fr-col-lg-3">
-                                {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
-                                    <span class="fr-badge fr-badge--info fr-badge--sm">En attente</span>
-                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
-                                    <span class="fr-badge fr-badge--success fr-badge--sm">Acceptée</span>
-                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
-                                    <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">Refusée</span>
-                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
-                                    <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
-                                {% endif %}
-                                {% if not partnerAffectation.partner.receiveEmailNotifications %}
-                                    <span class="fr-badge fr-badge--warning fr-badge--sm">Notif. e-mail désactivées</span>
-                                {% endif %}
-                            </div>
-                            <div class="fr-col-2 fr-text--right">
-                                {% if is_granted('AFFECTATION_REINIT', partnerAffectation) %}
-                                    <button 
-                                        title="Réaffecter le partenaire" 
-                                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-refresh-line open-modal-reinit-affectation"
-                                        data-fr-opened="false" 
-                                        aria-controls="fr-modal-reinit-affectation"
-                                        data-partner-nom="{{ partnerAffectation.partner.nom }}"
-                                        data-action="{{ path('back_signalement_affectation_reinit', {affectation: partnerAffectation.id}) }}"
-                                        >
-                                    </button>
-                                {% endif %}
-                                {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
-                                    <button title="Désaffecter le partenaire"
-                                            data-delete="{{ path('back_signalement_remove_partner',{uuid:signalement.uuid,affectation:partnerAffectation.id}) }}"
-                                            data-token="{{ csrf_token('signalement_remove_partner_'~signalement.id) }}"
-                                            class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line partner-row-delete"></button>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% include 'back/signalement/view/affectation/_item-with-action.html.twig' %}
             {% endfor %}
         </div>
+        {% if subscriptionsInMyPartner|length %}
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12">
+                    {% include 'back/signalement/view/affectation/_subscriptions-list.html.twig' with {'title': 'Agents du partenaire en charge du dossier'} %}
+                </div>
+            </div>
+        {% endif %}
     </div>
 
-{% elseif
-        not isClosedForMe
-        and isAffectationAccepted %}
-    <div class="fr-my-3w">
+{% elseif not isClosedForMe and isAffectationAccepted %}
+    {% if feature_new_dashboard %}
+        <div class="fr-container--fluid">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-6">
+                    <h3 class="fr-h5">Tous les partenaires impliqués</h3>
+                    {% for partnerAffectation in signalement.affectations %}
+                        {% include 'back/signalement/view/affectation/_item.html.twig' %}
+                    {% endfor %}
+                </div>
+                <div class="fr-col-12 fr-col-md-6">
+                    {% include 'back/signalement/view/affectation/_subscriptions-list.html.twig' with {'title': 'Agents en charge du dossier (mon partenaire)'} %}
+                </div>
+            </div>
+        </div>
+    {% else %}
         <h3 class="fr-h5">Partenaires impliqués</h3>
         {% for partnerAffectation in signalement.affectations %}
-            {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
-                <span class="fr-badge fr-badge--info fr-badge--sm">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
-                <span class="fr-badge fr-badge--success fr-badge--sm">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
-                <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
-            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
-                <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
-            {% endif %}
+            {% include 'back/signalement/view/affectation/_item.html.twig' %}
         {% endfor %}
-    </div>
-
+    {% endif %}
 {% endif %}

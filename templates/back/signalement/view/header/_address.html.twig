@@ -1,0 +1,69 @@
+<div data-ajax-form>
+    {% if canEditSignalement %}
+        {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
+    {% endif %}
+</div>
+
+<span class="fr-h5">
+    {{ signalement.adresseOccupant }}
+    {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
+    {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|capitalize }}
+    {% if canEditSignalement %}
+    <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line fr-a-edit">
+        Modifier
+    </a>
+    {% endif %}
+</span>
+
+{% if signalement.manualAddressOccupant %}
+    <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
+        Cette adresse a été éditée manuellement.
+    </div>
+{% endif %}
+
+{% if signalementsOnSameAddress|length > 0 %}
+    {% set routeForListOfSignalementOnAddress = path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': signalement.adresseOccupant, 'communes[]': signalement.cpOccupant }) %}
+    {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}
+    {% else %}
+        {% include '_partials/_modal-duplicate-addresses.html.twig' %}
+    {% endif %}
+{% endif %}
+
+<div class="fr-mt-3v">
+    <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
+        {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
+            <li>
+                <button 
+                    class="fr-btn fr-icon-france-line" 
+                    data-fr-opened="false" 
+                    aria-controls="fr-modal-localisation"
+                >
+                    Voir sur la carte
+                </button>
+            </li>
+        {% elseif is_granted('SIGN_EDIT', signalement) %}
+            <li>
+                <button 
+                    class="fr-btn fr-icon-map-pin-2-line" 
+                    data-fr-opened="false" 
+                    aria-controls="fr-modal-pick-localisation"
+                >
+                    Sélectionner le bâtiment sur la carte
+                </button>
+            </li>
+        {% endif %}
+        {% if signalementsOnSameAddress|length > 0 %}
+            <li>
+                {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}
+                    <a href="{{ routeForListOfSignalementOnAddress }}" class="fr-btn fr-icon-alarm-warning-line">
+                        {{ signalementsOnSameAddress|length > 1 ? signalementsOnSameAddress|length ~ ' signalements à la même adresse' : signalementsOnSameAddress|length ~  ' signalement à la même adresse' }}
+                    </a>
+                {% else %}
+                    <button class="fr-btn fr-icon-alarm-warning-line" aria-controls="fr-modal-duplicate-addresses" data-fr-opened="false"  type="button">
+                        {{ signalementsOnSameAddress|length > 1 ? signalementsOnSameAddress|length ~ ' signalements à la même adresse' : signalementsOnSameAddress|length ~  ' signalement à la même adresse' }}
+                    </button>
+                {% endif %}
+            </li>
+        {% endif %}    
+    </ul>
+</div>

@@ -1,0 +1,95 @@
+<nav role="navigation" class="fr-translate menu-actions-signalement fr-nav fr-mb-3v fr-mt-3v">
+    <div class="fr-nav__item">
+        <button aria-controls="header-menu" aria-expanded="false" type="button" class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-settings-5-line">
+            Actions
+        </button>
+        <div class="fr-collapse fr-translate__menu fr-menu" id="header-menu">
+            <ul class="fr-menu__list">
+                {% if canCancelRefusedAffectation %}
+                    <li>
+                        <a href="#"
+                            data-fr-opened="false" 
+                            aria-controls="accept-affectation-modal"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill">
+                            Annuler le refus de l'affectation
+                        </a>
+                    </li>
+                {% elseif is_granted('SIGN_REOPEN', signalement) %}
+                    <li>
+                        <a href="#" 
+                            class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
+                            aria-controls="reopen-all-signalement-modal" 
+                            data-fr-opened="false"
+                            >
+                            Rouvrir pour tous
+                        </a>
+                    </li>
+                {% elseif canReopenAffectation %}
+                    <li>
+                        <a href="#" 
+                            class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
+                            aria-controls="reopen-signalement-modal" 
+                            data-fr-opened="false">
+                            Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
+                        </a>
+                    </li>
+                {% elseif is_granted('SIGN_CLOSE', signalement) %}
+                    <li>
+                        <a href="#" 
+                            id="test-bouton-cloturer" 
+                            class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
+                            aria-controls="cloture-modal" 
+                            data-fr-opened="false">
+                            Clôturer
+                        </a>
+                    </li>
+                {% elseif affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
+                    <li>
+                        <a href="#" 
+                            id="link-bouton-cloturer"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
+                            aria-controls="cloture-modal" 
+                            data-fr-opened="false">
+                            Clôturer
+                        </a>
+                    </li>
+                {% endif %}
+                {% if is_granted('SIGN_VIEW', signalement) %}
+                    <li>
+                        <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-file-download-line"
+                            title="Télécharger le PDF">
+                            Télécharger le PDF
+                        </a>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li>
+                        <a href="#" 
+                            class="fr-nav__link fr-btn--icon-left fr-icon-send-plane-fill" 
+                            aria-controls="send-lien-suivi-modal" 
+                            data-fr-opened="false" 
+                            title="Envoyer le lien de suivi">
+                            Envoyer le lien de suivi
+                        </a>
+                    </li>
+                {% endif %}
+                {% if isUserSubscribed %}
+                    <li>
+                        <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
+                            Se retirer du dossier
+                        </a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ path('back_signalement_subscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('subscribe') }}"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-eye-line">
+                            Rejoindre le dossier
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
