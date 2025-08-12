@@ -5,4 +5,18 @@
             moins 30 jours. Accédez aux dossier, relancez les partenaires ou effectuez les actions nécessaires à
             l'avancée du dossier.</p>
     </div>
+    <div class="fr-col-md-4 fr-text--right">
+        {% set isPressed = mesDossiersAverifier is not null
+            ? (mesDossiersAverifier == '1')
+            : (is_granted('ROLE_ADMIN_PARTNER') ? false : true)
+        %}
+
+        <button
+            class="fr-tag"
+            id="mySignalementsAverifierButton"
+            aria-pressed="{{ isPressed ? 'true' : 'false' }}"
+        >
+            Afficher uniquement mes dossiers
+        </button>
+    </div>
 </div>
