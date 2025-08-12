@@ -213,14 +213,11 @@ class SignalementController extends AbstractController
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $suiviSeenMarker->markSeenByUsager($signalement);
-        $signalementsOnSameAddress = [];
-        if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(
-                signalement: $signalement,
-                exclusiveStatus: [],
-                excludedStatus: [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
-            );
-        }
+        $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(
+            signalement: $signalement,
+            exclusiveStatus: [],
+            excludedStatus: [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
+        );
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -258,7 +255,7 @@ class SignalementController extends AbstractController
             'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),
             'canSeePartnerAffectation' => $this->isGranted(AffectationVoter::SEE, $signalement),
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
-            'signalementOnSameAddress' => $signalementsOnSameAddress,
+            'signalementsOnSameAddress' => $signalementsOnSameAddress,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);
