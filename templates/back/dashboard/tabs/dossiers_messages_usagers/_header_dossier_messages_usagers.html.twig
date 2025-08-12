@@ -5,4 +5,18 @@
             n'a pas encore eu de réponse. N'hésitez pas à consulter le détail des dossiers et à répondre aux usagers
             !</p>
     </div>
+    <div class="fr-col-md-4 fr-text--right">
+        {% set isPressed = mesDossiersMessagesUsagers is not null
+            ? (mesDossiersMessagesUsagers == '1')
+            : (is_granted('ROLE_ADMIN_PARTNER') ? false : true)
+        %}
+
+        <button
+            class="fr-tag"
+            id="mySignalementsMessagesUsagersButton"
+            aria-pressed="{{ isPressed ? 'true' : 'false' }}"
+        >
+            Afficher uniquement mes dossiers
+        </button>
+    </div>
 </div>

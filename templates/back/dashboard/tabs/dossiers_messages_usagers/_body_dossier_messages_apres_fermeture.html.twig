@@ -25,8 +25,8 @@
             {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
-                    '<div>' ~ item.messageAt ~ '</div>',
-                    '<div>' ~ item.clotureAt ~ '</div>',
+                    '<div>' ~ item.messageAt|date('d/m/Y à H:i') ~ '</div>',
+                    '<div>' ~ item.clotureAt|date('d/m/Y à H:i') ~ '</div>',
                     '<div class="fr-text-label--blue-france">
                             <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                             <div>' ~ item.adresse ~ '</div>
