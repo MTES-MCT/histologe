@@ -825,7 +825,7 @@ ul + p {
         display: none;
         overflow: auto;
         height: auto;
-        max-height: 190px;
+        max-height: 270px;
         border: 1px solid var(--border-default-grey);
         border-top: 0;
         padding: 0.5rem;
@@ -833,6 +833,13 @@ ul + p {
         position: absolute;
         width: 100%;
         z-index: 10;
+        background: white;
+    }
+    .fr-btn--close {
+        position: absolute;
+        top: 4.5rem;
+        right: 15px;
+        z-index: 11;
         background: white;
     }
 }

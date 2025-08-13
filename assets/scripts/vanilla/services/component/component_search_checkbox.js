@@ -3,6 +3,7 @@ window.addEventListener('refreshSearchCheckboxContainerEvent', () => {
     searchCheckboxCompleteInputValue(element);
     const input = element.querySelector('input[type="text"]');
     const checkboxesContainer = element.querySelector('.search-checkbox');
+    const closeBtn = element.querySelector('.fr-btn--close');
     // init values
     const initialValues = [];
     checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
@@ -26,6 +27,7 @@ window.addEventListener('refreshSearchCheckboxContainerEvent', () => {
       checkboxesContainer.scrollTop = 0;
       searchCheckboxOrderCheckboxes(element);
       input.value = '';
+      closeBtn.classList.remove('fr-hidden');
     });
     // filter choices on input keyup
     input.addEventListener('keyup', function () {
@@ -49,16 +51,17 @@ window.addEventListener('refreshSearchCheckboxContainerEvent', () => {
         }
       });
     });
-    // hide choices on click outside
+    // hide choices on click outside and on close button
     document.addEventListener('click', function (event) {
       if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
-        checkboxesContainer.style.display = 'none';
-        searchCheckboxCompleteInputValue(element);
-        searchCheckboxTriggerChange(element, initialValues);
+        searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
       }
     });
     element.addEventListener('click', function (event) {
       event.stopPropagation();
+    });
+    closeBtn.addEventListener('click', function (event) {
+       searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
     });
     // reorder on uncheck
     checkboxesContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
@@ -124,4 +127,11 @@ function searchCheckboxTriggerChange(element, initialValues) {
   if (JSON.stringify(currentValues) !== JSON.stringify(initialValues)) {
     element.dispatchEvent(new CustomEvent('searchCheckboxChange'));
   }
+}
+
+function searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues) {
+  checkboxesContainer.style.display = 'none';
+  searchCheckboxCompleteInputValue(element);
+  searchCheckboxTriggerChange(element, initialValues);
+  closeBtn.classList.add('fr-hidden');
 }
