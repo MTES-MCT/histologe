@@ -141,7 +141,7 @@ class AffectationController extends AbstractController
         return new RedirectResponse($this->generateUrl('back_signalement_view', ['uuid' => $affectation->getSignalement()->getUuid()]));
     }
 
-    #[Route('/affectation/{affectation}/accept', name: 'back_signalement_affectation_accept')]
+    #[Route('/affectation/{affectation}/accept', name: 'back_signalement_affectation_accept', methods: 'POST')]
     public function affectationResponseSignalement(
         Affectation $affectation,
         Request $request,
