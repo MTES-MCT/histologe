@@ -26,7 +26,6 @@ class DossiersMessagesApresFermetureTabBodyLoader extends AbstractTabBodyLoader
 
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
-        // TODO : il faut aussi ajouter le filtre sur "mes signalements" showMySignalementsOnly -> oui
         $filters = [
             ...$tabBody->getFilters(),
             'isMessagePostCloture' => 'oui',

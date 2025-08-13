@@ -38,6 +38,8 @@ export const store = {
         showMyAffectationOnly: null as 'oui' | null,
         showMySignalementsOnly: null as 'oui' | null,
         isMessagePostCloture: null as 'oui' | null,
+        isNouveauMessage: null as 'oui' | null,
+        isMessageWithoutResponse: null as 'oui' | null,
         showWithoutAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,
