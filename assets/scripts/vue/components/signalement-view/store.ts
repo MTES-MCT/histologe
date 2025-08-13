@@ -37,6 +37,7 @@ export const store = {
         isZonesDisplayed: null as 'oui' | null,
         showMyAffectationOnly: null as 'oui' | null,
         showMySignalementsOnly: null as 'oui' | null,
+        isMessagePostCloture: null as 'oui' | null,
         showWithoutAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,

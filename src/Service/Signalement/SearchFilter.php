@@ -465,6 +465,12 @@ class SearchFilter
             }
         }
 
+        if (!empty($filters['isMessagePostCloture']) && $this->featureNewDashboard) {
+            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisPostCloture(null);
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $signalementIds);
+        }
+
         return $qb;
     }
 

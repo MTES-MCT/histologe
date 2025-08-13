@@ -119,6 +119,7 @@ class SignalementSearchQuery
         private readonly ?string $createdFrom = null,
         private readonly ?string $showMySignalementsOnly = null,
         private readonly ?string $relanceUsagerSansReponse = null,
+        private readonly ?string $isMessagePostCloture = null,
     ) {
     }
 
@@ -296,6 +297,11 @@ class SignalementSearchQuery
     {
         return $this->relanceUsagerSansReponse;
     }
+    
+    public function getIsMessagePostCloture(): ?string
+    {
+        return $this->isMessagePostCloture;
+    }
 
     public function getPage(): ?int
     {
@@ -407,6 +413,7 @@ class SignalementSearchQuery
         $filters['createdFrom'] = $this->getCreatedFrom();
         $filters['showMySignalementsOnly'] = 'oui' === $this->getShowMySignalementsOnly();
         $filters['relanceUsagerSansReponse'] = 'oui' === $this->getRelanceUsagerSansReponse();
+        $filters['isMessagePostCloture'] = 'oui' === $this->getIsMessagePostCloture();
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
