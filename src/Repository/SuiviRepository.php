@@ -658,10 +658,20 @@ class SuiviRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    private function addSelectAndOrder(QueryBuilder $qb, ?TabQueryParameters $params, bool $countOnly = false): QueryBuilder
-    {
+    private function addSelectAndOrder(
+        QueryBuilder $qb,
+        ?TabQueryParameters $params,
+        bool $countOnly = false,
+        bool $idsOnly = false,
+    ): QueryBuilder {
         if ($countOnly) {
             $qb->select('COUNT(DISTINCT signalement.id)');
+
+            return $qb;
+        }
+
+        if ($idsOnly) {
+            $qb->select('DISTINCT signalement.id');
 
             return $qb;
         }
@@ -740,6 +750,22 @@ class SuiviRepository extends ServiceEntityRepository
         $qb = $this->addSelectAndOrder($qb, $params, true);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return array<int>
+     */
+    public function getSignalementsIdWithSuivisPostCloture(?TabQueryParameters $params): array
+    {
+        $qb = $this->buildBaseQb($params, [SuiviCategory::MESSAGE_USAGER]); // TODO : utiliser category MESSAGE_USAGER_POST_CLOTURE cf #4471
+        $qb->andWhere('s.type = :type')
+            ->setParameter('type', Suivi::TYPE_USAGER_POST_CLOTURE); // TODO : à supprimer quand on aura une catégorie MESSAGE_USAGER_POST_CLOTURE
+
+        $qb->andWhere('signalement.statut = :statut')
+            ->setParameter('statut', SignalementStatus::CLOSED);
+        $qb = $this->addSelectAndOrder($qb, $params, false, true);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**

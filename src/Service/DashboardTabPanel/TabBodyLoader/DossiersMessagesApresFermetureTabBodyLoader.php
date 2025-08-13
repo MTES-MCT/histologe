@@ -26,6 +26,13 @@ class DossiersMessagesApresFermetureTabBodyLoader extends AbstractTabBodyLoader
 
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
+        // TODO : il faut aussi ajouter le filtre sur "mes signalements" showMySignalementsOnly -> oui
+        $filters = [
+            ...$tabBody->getFilters(),
+            'isMessagePostCloture' => 'oui',
+            'showMySignalementsOnly' => '1' === $this->tabQueryParameters->mesDossiersMessagesUsagers ? 'oui' : null,
+        ];
+        $tabBody->setFilters($filters);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_messages_usagers/_body_dossier_messages_apres_fermeture.html.twig');
     }
 }
