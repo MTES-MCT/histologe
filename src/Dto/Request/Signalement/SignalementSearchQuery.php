@@ -120,6 +120,8 @@ class SignalementSearchQuery
         private readonly ?string $showMySignalementsOnly = null,
         private readonly ?string $relanceUsagerSansReponse = null,
         private readonly ?string $isMessagePostCloture = null,
+        private readonly ?string $isNouveauMessage = null,
+        private readonly ?string $isMessageWithoutResponse = null,
     ) {
     }
 
@@ -298,9 +300,19 @@ class SignalementSearchQuery
         return $this->relanceUsagerSansReponse;
     }
     
+    public function getIsNouveauMessage(): ?string
+    {
+        return $this->isNouveauMessage;
+    }
+
     public function getIsMessagePostCloture(): ?string
     {
         return $this->isMessagePostCloture;
+    }
+
+    public function getIsMessageWithoutResponse(): ?string
+    {
+        return $this->isMessageWithoutResponse;
     }
 
     public function getPage(): ?int
@@ -413,8 +425,9 @@ class SignalementSearchQuery
         $filters['createdFrom'] = $this->getCreatedFrom();
         $filters['showMySignalementsOnly'] = 'oui' === $this->getShowMySignalementsOnly();
         $filters['relanceUsagerSansReponse'] = 'oui' === $this->getRelanceUsagerSansReponse();
+        $filters['isNouveauMessage'] = 'oui' === $this->getIsNouveauMessage();
         $filters['isMessagePostCloture'] = 'oui' === $this->getIsMessagePostCloture();
-
+        $filters['isMessageWithoutResponse'] = 'oui' === $this->getIsMessageWithoutResponse();
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         $filters['sortBy'] = $this->getSortBy();

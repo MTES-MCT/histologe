@@ -25,6 +25,12 @@ class DossiersMessagesNouveauxTabBodyLoader extends AbstractTabBodyLoader
 
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
+        $filters = [
+            ...$tabBody->getFilters(),
+            'isNouveauMessage' => 'oui',
+            'showMySignalementsOnly' => '1' === $this->tabQueryParameters->mesDossiersMessagesUsagers ? 'oui' : null,
+        ];
+        $tabBody->setFilters($filters);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_messages_usagers/_body_dossier_messages_nouveaux.html.twig');
     }
 }

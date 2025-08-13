@@ -732,6 +732,18 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int>
+     */
+    public function getSignalementsIdWithSuivisUsagersWithoutAskFeedbackBefore(?TabQueryParameters $params): array
+    {
+        $qb = $this->buildBaseQb($params, [SuiviCategory::MESSAGE_USAGER]);
+        $qb = $this->addFilterNoPreviousAskFeedback($qb);
+        $qb = $this->addSelectAndOrder($qb, $params, false, true);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @return array<int, array<string, mixed>>
      */
     public function findSuivisUsagersWithoutAskFeedbackBefore(?TabQueryParameters $params): array
@@ -831,6 +843,18 @@ class SuiviRepository extends ServiceEntityRepository
            ->setParameter('askFeedbackCategory', SuiviCategory::ASK_FEEDBACK_SENT);
 
         return $qb;
+    }
+
+    /**
+     * @return array<int>
+     */
+    public function getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore(?TabQueryParameters $params): array
+    {
+        $qb = $this->buildBaseQb($params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false);
+        $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
+        $qb = $this->addSelectAndOrder($qb, $params, false, true);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
