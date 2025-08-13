@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -308,7 +309,12 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         UserSignalementSubscriptionManager $signalementSubscriptionManager,
         Request $request,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
     ): Response {
+        if (!$featureNewDashboard) {
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('subscribe', $token)) {
@@ -336,7 +342,12 @@ class SignalementActionController extends AbstractController
         UserSignalementSubscriptionManager $signalementSubscriptionManager,
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         Request $request,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
     ): Response {
+        if (!$featureNewDashboard) {
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
