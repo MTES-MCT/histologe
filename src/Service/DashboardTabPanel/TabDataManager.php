@@ -228,7 +228,8 @@ class TabDataManager
      */
     public function getMessagesUsagersNouveauxMessages(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $suivis = $this->suiviRepository->getLastMessageUsagerWithoutAskFeedbackBefore(params: $tabQueryParameters);
+        // Regroupe les signalements dont le dernier suivi est un message usager spontané, c'est-à-dire qui ne fait pas immédiatement suite à une relance auto.
+        $suivis = $this->suiviRepository->findSuivisUsagersWithoutAskFeedbackBefore(params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -245,7 +246,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countLastMessageUsagerWithoutAskFeedbackBefore(params: $tabQueryParameters);
+        $count = $this->suiviRepository->countSuivisUsagersWithoutAskFeedbackBefore(params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -256,7 +257,8 @@ class TabDataManager
      */
     public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $suivis = $this->suiviRepository->getLastMessageUsagerIsPostCloture(params: $tabQueryParameters);
+        // Signalements fermés dont l'usager a fait un dernier suivi après fermeture
+        $suivis = $this->suiviRepository->findSuivisPostCloture(params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -274,7 +276,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countLastMessageUsagerIsPostCloture(params: $tabQueryParameters);
+        $count = $this->suiviRepository->countSuivisPostCloture(params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -285,7 +287,8 @@ class TabDataManager
      */
     public function getMessagesUsagersMessagesSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $suivis = $this->suiviRepository->getLastMessageUsagerWithAskFeedbackBefore(params: $tabQueryParameters);
+        // signalements ayant un message usager ou demande de poursuite de procédure sans suivis partenaires public depuis la demande de feedback
+        $suivis = $this->suiviRepository->findSuivisUsagerOrPoursuiteWithAskFeedbackBefore(params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -303,7 +306,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countLastMessageUsagerWithAskFeedbackBefore(params: $tabQueryParameters);
+        $count = $this->suiviRepository->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
