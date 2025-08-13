@@ -10,6 +10,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\DashboardTabPanel\Kpi\CountDossiersMessagesUsagers;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -785,5 +786,16 @@ class SuiviRepository extends ServiceEntityRepository
         $qb = $this->addSelectAndOrder($qb, $params, true);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function countAllMessagesUsagers(?int $territoryId, ?string $mesDossiersMessagesUsagers, ?User $user = null): CountDossiersMessagesUsagers
+    {
+        $params = new TabQueryParameters($territoryId, null, null, null, null, null, $mesDossiersMessagesUsagers);
+
+        return new CountDossiersMessagesUsagers(
+            $this->countLastMessageUsagerWithoutAskFeedbackBefore($params),
+            $user ? 0 : $this->countLastMessageUsagerIsPostCloture($params),
+            $this->countLastMessageUsagerWithAskFeedbackBefore($params)
+        );
     }
 }

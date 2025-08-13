@@ -212,10 +212,11 @@ class TabDataManager
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countDataKpi(array $territories): TabCountKpi
+    public function countDataKpi(array $territories, ?int $territoryId, ?string $mesDossiersMessagesUsagers): TabCountKpi
     {
         return $this->tabCountKpiBuilder
-            ->setTerritories($territories)
+            ->setTerritories($territories, $territoryId)
+            ->setMesDossiers($mesDossiersMessagesUsagers)
             ->withTabCountKpi()
             ->build();
     }
