@@ -18,7 +18,6 @@ twig:
         mise_en_berne: '%env(MISE_EN_BERNE_ENABLE)%'
         feature_banner_histologe: '%env(bool:FEATURE_BANNER_HISTOLOGE)%'
         sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
-        feature_suivi_action: '%env(bool:FEATURE_SUIVI_ACTION)%'
         feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
         MAX_ITEMS_LIST: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST
     paths:
