@@ -65,6 +65,7 @@
         </legend>
         <div class="search-checkbox-container fr-input-group fr-w-100">
             <input id="visite-{{ formType }}[concludeProcedure]_input" type="text" placeholder="Sélectionner une ou plusieurs conclusions" class="fr-input">
+            <button type="button" class="fr-btn--close fr-btn fr-hidden" style="top:2.5rem;">Fermer</button>
             <div class="search-checkbox" class="fr-hidden">
                 {% set listProceduresTypes = enum('\\App\\Entity\\Enum\\ProcedureType') %}
                 {% for type in listProceduresTypes.cases() %}
