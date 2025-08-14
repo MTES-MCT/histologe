@@ -19,7 +19,18 @@ class DossiersMessagesUsagersSansReponseTabBodyLoader extends AbstractTabBodyLoa
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getMessagesUsagersMessagesSansReponse($this->tabQueryParameters));
+        $result = $this->tabDataManager->getMessagesUsagersMessagesSansReponse(
+            $this->tabQueryParameters
+        );
+
+        $tabBody->setData($result->dossiers);
+        $tabBody->setCount($result->count);
+        $filters = [
+            ...$tabBody->getFilters(),
+            'isMessageWithoutResponse' => 'oui',
+            'showMySignalementsOnly' => '1' === $this->tabQueryParameters->mesDossiersMessagesUsagers ? 'oui' : null,
+        ];
+        $tabBody->setFilters($filters);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_messages_usagers/_body_dossier_messages_usagers_sans_reponse.html.twig');
     }
 }

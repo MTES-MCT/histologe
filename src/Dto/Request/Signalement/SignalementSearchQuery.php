@@ -118,6 +118,9 @@ class SignalementSearchQuery
         #[Assert\Choice(['formulaire-usager', 'formulaire-pro'])]
         private readonly ?string $createdFrom = null,
         private readonly ?string $showMySignalementsOnly = null,
+        private readonly ?string $isMessagePostCloture = null,
+        private readonly ?string $isNouveauMessage = null,
+        private readonly ?string $isMessageWithoutResponse = null,
     ) {
     }
 
@@ -291,6 +294,21 @@ class SignalementSearchQuery
         return $this->showMySignalementsOnly;
     }
 
+    public function getIsNouveauMessage(): ?string
+    {
+        return $this->isNouveauMessage;
+    }
+
+    public function getIsMessagePostCloture(): ?string
+    {
+        return $this->isMessagePostCloture;
+    }
+
+    public function getIsMessageWithoutResponse(): ?string
+    {
+        return $this->isMessageWithoutResponse;
+    }
+
     public function getPage(): ?int
     {
         return $this->page;
@@ -400,7 +418,9 @@ class SignalementSearchQuery
         $filters['motifCloture'] = $this->getMotifCloture();
         $filters['createdFrom'] = $this->getCreatedFrom();
         $filters['showMySignalementsOnly'] = 'oui' === $this->getShowMySignalementsOnly();
-
+        $filters['isNouveauMessage'] = 'oui' === $this->getIsNouveauMessage();
+        $filters['isMessagePostCloture'] = 'oui' === $this->getIsMessagePostCloture();
+        $filters['isMessageWithoutResponse'] = 'oui' === $this->getIsMessageWithoutResponse();
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         $filters['sortBy'] = $this->getSortBy();

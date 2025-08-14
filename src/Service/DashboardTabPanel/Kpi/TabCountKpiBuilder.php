@@ -4,6 +4,7 @@ namespace App\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -14,9 +15,12 @@ class TabCountKpiBuilder
 
     /** @var array<int, mixed> */
     private array $territories = [];
+    private ?int $territoryId = null;
+    private ?string $mesDossiersMessagesUsagers = null;
 
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
+        private readonly SuiviRepository $suiviRepository,
         private readonly Security $security,
     ) {
     }
@@ -24,9 +28,17 @@ class TabCountKpiBuilder
     /**
      * @param array<int, mixed> $territories
      */
-    public function setTerritories(array $territories): self
+    public function setTerritories(array $territories, ?int $territoryId): self
     {
         $this->territories = $territories;
+        $this->territoryId = $territoryId;
+
+        return $this;
+    }
+
+    public function setMesDossiers(?string $mesDossiersMessagesUsagers): self
+    {
+        $this->mesDossiersMessagesUsagers = $mesDossiersMessagesUsagers;
 
         return $this;
     }
@@ -41,12 +53,15 @@ class TabCountKpiBuilder
         $user = $this->security->getUser();
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             $countNouveauxDossiers = $this->signalementRepository->countNouveauxDossiersKpi($this->territories);
+            $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($this->territoryId, $this->mesDossiersMessagesUsagers);
         } else {
             $countNouveauxDossiers = $this->signalementRepository->countNouveauxDossiersKpi($this->territories, $user);
+            $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($this->territoryId, $this->mesDossiersMessagesUsagers, $user);
         }
 
         $this->tabCountKpi = new TabCountKpi(
-            countNouveauxDossiers: $countNouveauxDossiers->total()
+            countNouveauxDossiers: $countNouveauxDossiers->total(),
+            countDossiersMessagesUsagers: $countDossiersMessagesUsagers->total(),
         );
 
         return $this;

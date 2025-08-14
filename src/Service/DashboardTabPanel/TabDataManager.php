@@ -212,41 +212,42 @@ class TabDataManager
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countDataKpi(array $territories): TabCountKpi
+    public function countDataKpi(array $territories, ?int $territoryId, ?string $mesDossiersMessagesUsagers): TabCountKpi
     {
         return $this->tabCountKpiBuilder
-            ->setTerritories($territories)
+            ->setTerritories($territories, $territoryId)
+            ->setMesDossiers($mesDossiersMessagesUsagers)
             ->withTabCountKpi()
             ->build();
     }
 
     /**
-     * @return TabDossier[]
+     * @throws NonUniqueResultException
+     * @throws NoResultException
      */
-    public function getMessagesUsagersNouveauxMessages(?TabQueryParameters $tabQueryParameters = null): array
+    public function getMessagesUsagersNouveauxMessages(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'JFKDLJFKDLJKLFD',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                messageAt: new \DateTimeImmutable('06/06/2025 07:13'),
-                messageSuiviByNom: 'Abdallah',
-                messageSuiviByPrenom: 'Karim',
-                messageByProfileDeclarant: 'OCCUPANT'
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-151',
-                adresse: '9 rue du Péronnet, 63390 Vernaison',
-                messageAt: new \DateTimeImmutable('05/06/2026 15:21'),
-                messageSuiviByNom: 'Abdallah',
-                messageSuiviByPrenom: 'Karim',
-                messageByProfileDeclarant: 'TIERS DECLARANT'
-            ),
-        ];
+        // Regroupe les signalements dont le dernier suivi est un message usager spontané, c'est-à-dire qui ne fait pas immédiatement suite à une relance auto.
+        $suivis = $this->suiviRepository->findSuivisUsagersWithoutAskFeedbackBefore(params: $tabQueryParameters);
+        $tabDossiers = [];
+        for ($i = 0; $i < \count($suivis); ++$i) {
+            $suivi = $suivis[$i];
+            $tabDossiers[] = new TabDossier(
+                nomDeclarant: $suivi['nomOccupant'],
+                prenomDeclarant: $suivi['prenomOccupant'],
+                reference: '#'.$suivi['reference'],
+                adresse: $suivi['adresse'],
+                messageAt: $suivi['messageAt'],
+                messageSuiviByNom: $suivi['messageSuiviByNom'],
+                messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
+                messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
+                lien: '/bo/signalements/'.$suivi['uuid'],
+            );
+        }
+
+        $count = $this->suiviRepository->countSuivisUsagersWithoutAskFeedbackBefore(params: $tabQueryParameters);
+
+        return new TabDossierResult($tabDossiers, $count);
     }
 
     /**
@@ -255,7 +256,8 @@ class TabDataManager
      */
     public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $suivis = $this->suiviRepository->findSuivisUsagersPostCloture(tabQueryParameters: $tabQueryParameters);
+        // Signalements fermés dont l'usager a fait un dernier suivi après fermeture
+        $suivis = $this->suiviRepository->findSuivisPostCloture(params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -273,40 +275,39 @@ class TabDataManager
             );
         }
 
-        $count = \count($suivis);
+        $count = $this->suiviRepository->countSuivisPostCloture(params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
 
     /**
-     * @return TabDossier[]
+     * @throws NonUniqueResultException
+     * @throws NoResultException
      */
-    public function getMessagesUsagersMessagesSansReponse(?TabQueryParameters $tabQueryParameters = null): array
+    public function getMessagesUsagersMessagesSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: new \DateTimeImmutable('05/06/2026 15:21'),
-                messageDaysAgo: 577,
-                messageSuiviByNom: 'Abdallah',
-                messageSuiviByPrenom: 'Karim',
-                messageByProfileDeclarant: 'OCCUPANT'
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-151',
-                adresse: '9 rue du Péronnet, 63390 Vernaison',
-                clotureAt: new \DateTimeImmutable('05/06/2026 15:21'),
-                messageDaysAgo: 504,
-                messageSuiviByNom: 'Abdallah',
-                messageSuiviByPrenom: 'Karim',
-                messageByProfileDeclarant: 'TIERS DECLARANT'
-            ),
-        ];
+        // signalements ayant un message usager ou demande de poursuite de procédure sans suivis partenaires public depuis la demande de feedback
+        $suivis = $this->suiviRepository->findSuivisUsagerOrPoursuiteWithAskFeedbackBefore(params: $tabQueryParameters);
+        $tabDossiers = [];
+        for ($i = 0; $i < \count($suivis); ++$i) {
+            $suivi = $suivis[$i];
+            $tabDossiers[] = new TabDossier(
+                nomDeclarant: $suivi['nomOccupant'],
+                prenomDeclarant: $suivi['prenomOccupant'],
+                reference: '#'.$suivi['reference'],
+                adresse: $suivi['adresse'],
+                messageAt: $suivi['messageAt'],
+                messageSuiviByNom: $suivi['messageSuiviByNom'],
+                messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
+                messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
+                messageDaysAgo: $suivi['messageDaysAgo'],
+                lien: '/bo/signalements/'.$suivi['uuid'],
+            );
+        }
+
+        $count = $this->suiviRepository->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(params: $tabQueryParameters);
+
+        return new TabDossierResult($tabDossiers, $count);
     }
 
     /**

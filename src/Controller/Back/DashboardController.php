@@ -50,7 +50,7 @@ class DashboardController extends AbstractController
             return $this->render('back/dashboard/index.html.twig', [
                 'territoireSelectedId' => $territoireId,
                 'settings' => $widgetSettingsFactory->createInstanceFrom($user, $territory),
-                'tab_count_kpi' => $tabDataManager->countDataKpi($territories),
+                'tab_count_kpi' => $tabDataManager->countDataKpi($territories, $territoireId, $mesDossiersMessagesUsagers),
                 'territory' => $territory,
                 'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers,
                 'mesDossiersAverifier' => $mesDossiersAverifier,

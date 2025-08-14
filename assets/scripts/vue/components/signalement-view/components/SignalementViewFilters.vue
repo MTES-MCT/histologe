@@ -416,7 +416,7 @@ export default defineComponent({
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
-        if (['isImported', 'isZonesDisplayed', 'showMyAffectationOnly', 'showMySignalementsOnly', 'showWithoutAffectationOnly'].includes(key)) {
+        if (['isImported', 'isZonesDisplayed', 'showMyAffectationOnly', 'showMySignalementsOnly', 'showWithoutAffectationOnly', 'isMessagePostCloture', 'isNouveauMessage', 'isMessageWithoutResponse'].includes(key)) {
           return false
         }
         if (value !== null) {
@@ -606,6 +606,9 @@ export default defineComponent({
         isZonesDisplayed: null,
         showMyAffectationOnly: null,
         showMySignalementsOnly: null,
+        isMessagePostCloture: null,
+        isNouveauMessage: null,
+        isMessageWithoutResponse: null,
         showWithoutAffectationOnly: null,
         statusAffectation: null,
         criticiteScoreMin: null,
