@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# Sauvegarde la sortie standard réelle dans le descripteur 3
+exec 3>&1
+
+# Diagnostic : log d'environnement, date, utilisateur, répertoire courant, PID 
+LOGFILE="/tmp/sync-db-$(date +%Y%m%d-%H%M%S)-$$.log"
+{
+  echo "==== Début exécution sync-db.sh ===="
+  echo "Date : $(date)"
+  echo "Utilisateur : $(whoami)"
+  echo "PID : $$"
+  echo "Répertoire courant : $(pwd)"
+  echo "Variables d'environnement :"
+  env
+  echo "==== Fin diagnostic initial ===="
+} >> "$LOGFILE" 2>&1
+
+# Redirige toute la sortie du script vers le log (stdout+stderr)
+exec >> "$LOGFILE" 2>&1
+set -x
+
 if [ "${APP}" = "histologe" ]; then
     echo "This script cannot run in production."
     exit 1
@@ -38,7 +58,7 @@ scalingo --app "${DUPLICATE_SOURCE_APP}" --addon "${addon_id}" \
     backups-download --output "${archive_name}"
 
 # Extract the archive containing the downloaded backup:
-echo ">>> Extraction the archive containing the downloaded backup"
+echo ">>> Extract the archive containing the downloaded backup"
 backup_file_name="$( tar --extract --verbose --file="${archive_name}" --directory="/app/" \
                      | cut -d " " -f 2 | cut -d "/" -f 2 )"
 
@@ -51,21 +71,67 @@ sed -i '/CREATE DATABASE/d' "${backup_file_name}"
 sed -i '/^USE/d' "${backup_file_name}"
 sed -i '/DEFINER/d' "${backup_file_name}"
 
+# Avoids missing silent errors
+#echo ">>> Avoids missing silent errors"
+#set -e
+#set -o pipefail
+
+### TESTS
+#echo ">>> Test with cat"
+#cat "$backup_file_name" | grep -v '^--' | grep -v '^/' | mysql --no-defaults --force --user="${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
+#      --host="${DATABASE_HOST}" --port="${DATABASE_PORT}" "${DATABASE_NAME}" 2> mysql_error.log
+#line=$(tail -n 1 mysql_error.log)
+#echo "> mysql log with cat"
+#echo $line
+
+# Test import ligne par ligne pour traquer l'erreur
+line_number=0
+> mysql_line_errors_detailed.log
+while IFS= read -r line; do
+    line_number=$((line_number+1))
+    # Try to import the line, capture error
+    ERROR_MSG=$(echo "$line" | mysql -u "${DATABASE_USER}" --password="${DATABASE_PASSWORD}" \
+         -h "${DATABASE_HOST}" -P "${DATABASE_PORT}" "${DATABASE_NAME}" 2>&1 1>/dev/null)
+    if [ $? -ne 0 ]; then
+        echo "[Line $line_number] SQL: $line" >> mysql_line_errors_detailed.log
+        echo "[Line $line_number] Error: $ERROR_MSG" >> mysql_line_errors_detailed.log
+        echo "---" >> mysql_line_errors_detailed.log
+    fi
+done < "$backup_file_name"
+
 # Loading database
 echo ">>> Loading database"
-mysql -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}"
+mysql --connect-timeout=10 --verbose --show-warnings -u ${DATABASE_USER} --password=${DATABASE_PASSWORD} -h ${DATABASE_HOST} -P ${DATABASE_PORT} ${DATABASE_NAME} < "${backup_file_name}" > mysql_full_output.log 2>&1
 EXIT_CODE=$?
 
 TITLE="[Metabase] Synchronisation de Bdd"
 if [ $EXIT_CODE -ne 0 ]; then
     echo ">>> ERROR: Database sync failed!"
 
+    echo ">>> Import échoué. Dernières lignes du log :"
+    grep -Ei 'error|fail|denied|syntax' mysql_full_output.log | tail -n 10 > mysql_filtered_errors.log
+    
+    if [ -s mysql_filtered_errors.log ]; then
+        echo ">>> Erreurs détectées :"
+        cat mysql_filtered_errors.log
+        ERROR_DETAILS=$(tr '\n' ' ' < mysql_filtered_errors.log | sed 's/"/\\"/g')
+    else
+        echo ">>> Aucune erreur explicite trouvée."
+        ERROR_DETAILS="Aucune erreur explicite trouvée. Dernières lignes : $(tail -n 5 mysql_full_output.log | tr '\n' ' ' | sed 's/"/\\"/g')"
+    fi
+
+    # Show detailed line-by-line errors if any
+    if [ -s mysql_line_errors_detailed.log ]; then
+        echo ">>> Détail des erreurs ligne par ligne :"
+        tail -n 30 mysql_line_errors_detailed.log
+    fi
+
     # Capture les logs MySQL pour le diagnostic
-    ERROR_MESSAGE="La synchronisation de la bdd a échoué avec le code $EXIT_CODE"
+    ERROR_MESSAGE="La synchronisation de la bdd a échoué avec le code $EXIT_CODE. Détails : $ERROR_DETAILS"
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
     HOSTNAME=$(hostname)
     
-    # En cas d'erreur  envoi de mail via une route sur la prod
+    # If error, call prod env to send email
     curl -X POST "${SIGNAL_LOGEMENT_PROD_URL}/send-email" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
@@ -77,7 +143,7 @@ else
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
     HOSTNAME=$(hostname)
     
-    # A la fin envoi de mail via une route sur la prod
+    # If success, call prod env to send email
     curl -X POST "${SIGNAL_LOGEMENT_PROD_URL}/send-email" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
@@ -86,4 +152,14 @@ else
     echo ">>> Success reported to API."
 fi
 
+# À la toute fin du script, avant le dernier echo
+# Copie le fichier de log dans le dossier courant pour qu'il soit récupérable
+cp "$LOGFILE" ./sync-db-latest.log
+
+# Affiche l'emplacement du log sur la sortie standard d'origine (console)
+# On suppose que le descripteur 3 a été sauvegardé avant la redirection
+# (à ajouter en début de script)
+echo "Le log complet de l'exécution est disponible dans : $LOGFILE et ./sync-db-latest.log" >&3
+
+# Affiche le message de fin
 echo ">>> Done, thank you"
