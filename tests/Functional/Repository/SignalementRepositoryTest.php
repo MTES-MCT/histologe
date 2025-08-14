@@ -334,9 +334,4 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $this->assertTrue(11 === $countDossiers);
     }
-
-    public function testFindDossierDemandeFermetureUsager(): void
-    {
-        self::assertTrue(1 === 0 + 1);
-    }
 }
