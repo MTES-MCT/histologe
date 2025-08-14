@@ -35,6 +35,7 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
@@ -79,6 +80,7 @@ class SignalementController extends AbstractController
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
         SuiviSeenMarker $suiviSeenMarker,
+        UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         bool $featureNewDashboard,
@@ -152,7 +154,7 @@ class SignalementController extends AbstractController
         }
 
         $acceptAffectationForm = null;
-        if ($featureNewDashboard && $canAnswerAffectation) {
+        if ($featureNewDashboard && ($canAnswerAffectation || $canCancelRefusedAffectation)) {
             $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation)->setAgents([$user]);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $acceptAffectationForm = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
@@ -218,6 +220,15 @@ class SignalementController extends AbstractController
             exclusiveStatus: [],
             excludedStatus: [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
         );
+        $isUserSubscribed = false;
+        if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
+            $isUserSubscribed = true;
+        }
+        $canSeePartnerAffectation = $this->isGranted(AffectationVoter::SEE, $signalement);
+        $subscriptionsInMyPartner = [];
+        if ($featureNewDashboard && ($canSeePartnerAffectation || (!$isClosedForMe && $isAffectationAccepted))) {
+            $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
+        }
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -253,9 +264,11 @@ class SignalementController extends AbstractController
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'allPhotosOrdered' => $allPhotosOrdered,
             'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),
-            'canSeePartnerAffectation' => $this->isGranted(AffectationVoter::SEE, $signalement),
+            'canSeePartnerAffectation' => $canSeePartnerAffectation,
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
             'signalementsOnSameAddress' => $signalementsOnSameAddress,
+            'isUserSubscribed' => $isUserSubscribed,
+            'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);

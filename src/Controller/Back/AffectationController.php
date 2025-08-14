@@ -17,7 +17,6 @@ use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Service\FormHelper;
-use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -147,7 +146,6 @@ class AffectationController extends AbstractController
         Affectation $affectation,
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
-        NotificationAndMailSender $notificationAndMailSender,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         bool $featureNewDashboard,
     ): Response {

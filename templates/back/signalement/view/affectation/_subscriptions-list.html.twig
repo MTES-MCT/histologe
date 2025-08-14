@@ -1,0 +1,6 @@
+<h3 class="fr-h5">{{title}}</h3>
+<ul>
+    {% for subscription in subscriptionsInMyPartner %}
+        <li>{{ subscription.user.nomComplet(true) }} ({{ subscription.user.email }})</li>
+    {% endfor %}
+</ul>

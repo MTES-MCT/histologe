@@ -8,6 +8,7 @@ use App\Entity\Suivi;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Gouv\Rnb\Response\RnbBuilding;
 use App\Service\Gouv\Rnb\RnbService;
 use App\Tests\SessionHelper;
@@ -23,6 +24,7 @@ class SignalementActionControllerTest extends WebTestCase
     private UserRepository $userRepository;
     private SignalementRepository $signalementRepository;
     private SuiviRepository $suiviRepository;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
     private RouterInterface $router;
 
     protected function setUp(): void
@@ -32,6 +34,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->suiviRepository = static::getContainer()->get(SuiviRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -296,5 +299,53 @@ class SignalementActionControllerTest extends WebTestCase
     {
         yield 'Signalement without geoloc' => ['00000000-0000-0000-2025-000000000004', true];
         yield 'Signalement with geoloc' => ['00000000-0000-0000-2025-000000000003', false];
+    }
+
+    public function testSubscribeAndUnsubscribe(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-12']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-05@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_subscribe', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'subscribe'),
+            ]
+        );
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        $this->assertNotNull($sub);
+
+        $route = $this->router->generate('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'unsubscribe'),
+            ]
+        );
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        $this->assertNull($sub);
+    }
+
+    public function testSubscribeOnUnaffected(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-120']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-05@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_subscribe', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'subscribe'),
+            ]
+        );
+        $this->assertResponseStatusCodeSame(403);
     }
 }

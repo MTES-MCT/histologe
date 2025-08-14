@@ -1,0 +1,9 @@
+{% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
+    <span class="fr-badge fr-badge--info fr-badge--sm">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
+{% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
+    <span class="fr-badge fr-badge--success fr-badge--sm">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
+{% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
+    <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
+{% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
+    <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">{{ partnerAffectation.partner ? partnerAffectation.partner.nom : 'AUCUN' }}</span>
+{% endif %}

@@ -14,14 +14,17 @@ use App\Form\AddSuiviType;
 use App\Form\RefusSignalementType;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\FormHelper;
 use App\Service\Gouv\Rnb\RnbService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -297,6 +300,71 @@ class SignalementActionController extends AbstractController
             $signalementManager->flush();
             $this->addFlash('success', 'Le bâtiment a été mis à jour avec succès.');
         }
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid:signalement}/subscribe', name: 'back_signalement_subscribe', methods: 'GET')]
+    public function subscribe(
+        Signalement $signalement,
+        UserSignalementSubscriptionManager $signalementSubscriptionManager,
+        Request $request,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
+    ): Response {
+        if (!$featureNewDashboard) {
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $token = $request->get('_token');
+        if (!$this->isCsrfTokenValid('subscribe', $token)) {
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $signalementSubscriptionManager->createOrGet($user, $signalement, $user);
+        $signalementSubscriptionManager->flush();
+
+        $msg = 'Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents en charge du dossier.
+        Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.';
+        $this->addFlash('success', $msg);
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid:signalement}/unsubscribe', name: 'back_signalement_unsubscribe', methods: 'GET')]
+    public function unsubscribe(
+        Signalement $signalement,
+        UserSignalementSubscriptionManager $signalementSubscriptionManager,
+        UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
+        Request $request,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
+    ): Response {
+        if (!$featureNewDashboard) {
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $token = $request->get('_token');
+        if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $subscription = $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        if ($subscription) {
+            $signalementSubscriptionManager->remove($subscription);
+        }
+
+        $msg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents en charge du dossier et vous ne recevrez plus les mises à jour du dossier.';
+        $this->addFlash('success', $msg);
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }

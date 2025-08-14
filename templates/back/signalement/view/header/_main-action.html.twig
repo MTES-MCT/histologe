@@ -1,0 +1,57 @@
+{% if canAnswerAffectation or canCancelRefusedAffectation %}
+    <div data-ajax-form class="fr-display-inline">
+        {% include '_partials/_modal_accept_affectation.html.twig' %}
+    </div>
+{% endif %}
+{% if canAnswerAffectation %}
+    <div data-ajax-form class="fr-display-inline">
+        {% include '_partials/_modal_refus_affectation.html.twig' %}
+    </div>
+    <div class="fr-notice fr-notice--info fr-my-4v fr-text--left">
+        <div class="fr-pl-3v">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title">Vous devez accepter l'affectation pour pouvoir traiter le dossier.</span>
+                </p>
+            </div>
+        </div>
+    </div>                
+    <button 
+        class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" 
+        id="open-accept-affectation-modal" 
+        data-fr-opened="false" 
+        aria-controls="accept-affectation-modal">
+        Accepter l'affectation
+    </button>
+    <a href="#" 
+        class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-close-circle-fill fr-btn--danger"
+        data-fr-opened="false" 
+        aria-controls="refus-affectation-modal">
+        Refuser l'affectation
+    </a>
+{% elseif canValidateOrRefuseSignalement %}
+    <div class="fr-notice fr-notice--info fr-my-4v fr-text--left">
+        <div class="fr-pl-3v">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title">En tant que responsable de territoire, vous devez valider ou refuser ce signalement.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div data-ajax-form class="fr-display-inline">
+        {% include '_partials/_modal_refus_signalement.html.twig' %}
+    </div>
+    <div class="admin-territory-validation">
+        <form id="signalement-validation-response-form" action="{{ path('back_signalement_accept',{uuid:signalement.uuid}) }}" class="inline-form">
+            <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" name="signalement-validation-response[accept]" value="1">
+                Valider le signalement
+            </button>
+            <input type="hidden" name="_token" value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
+        </form>
+        <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
+            aria-controls="refus-signalement-modal" data-fr-opened="false">
+            Refuser le signalement
+        </a>
+    </div>
+{% endif %}

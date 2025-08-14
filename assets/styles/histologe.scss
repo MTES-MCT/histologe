@@ -1028,3 +1028,8 @@ ul + p {
         @include tab-panel-title-icon('../../public/img/picto-dsfr/connection-lost.svg');
     }
 }
+
+.menu-actions-signalement a.fr-nav__link {
+    color: #000091;
+    justify-content: flex-start;
+}
