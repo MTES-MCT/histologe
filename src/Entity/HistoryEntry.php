@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['entity_id', 'event', 'entity_name'], name: 'idx_history_entry_entityid_event_entityname')]
 class HistoryEntry
 {
+    public const string EXPIRATION_PERIOD = '- 1 year';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
