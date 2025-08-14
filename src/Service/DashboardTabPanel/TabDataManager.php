@@ -227,11 +227,11 @@ class TabDataManager
     {
         return [
             new TabDossier(
-                nomDeclarant: 'Abdallah',
+                nomDeclarant: 'JFKDLJFKDLJKLFD',
                 prenomDeclarant: 'Karim',
                 reference: '#2022-150',
                 adresse: '8 rue du Péronnet, 63390 Vernaison',
-                messageAt: '06/06/2025 à 07:13',
+                messageAt: new \DateTimeImmutable('06/06/2025 07:13'),
                 messageSuiviByNom: 'Abdallah',
                 messageSuiviByPrenom: 'Karim',
                 messageByProfileDeclarant: 'OCCUPANT'
@@ -241,7 +241,7 @@ class TabDataManager
                 prenomDeclarant: 'Karim',
                 reference: '#2022-151',
                 adresse: '9 rue du Péronnet, 63390 Vernaison',
-                messageAt: '06/06/2025 à 07:13',
+                messageAt: new \DateTimeImmutable('05/06/2026 15:21'),
                 messageSuiviByNom: 'Abdallah',
                 messageSuiviByPrenom: 'Karim',
                 messageByProfileDeclarant: 'TIERS DECLARANT'
@@ -250,34 +250,32 @@ class TabDataManager
     }
 
     /**
-     * @return TabDossier[]
+     * @throws NonUniqueResultException
+     * @throws NoResultException
      */
-    public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): array
+    public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '05/06/2026 à 15:21',
-                messageAt: '06/06/2025 à 07:13',
-                messageSuiviByNom: 'Abdallah',
-                messageSuiviByPrenom: 'Karim',
-                messageByProfileDeclarant: 'OCCUPANT'
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-151',
-                adresse: '9 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '05/06/2026 à 15:21',
-                messageAt: '06/06/2025 à 07:13',
-                messageSuiviByNom: 'Abdallah',
-                messageSuiviByPrenom: 'Karim',
-                messageByProfileDeclarant: 'TIERS DECLARANT'
-            ),
-        ];
+        $suivis = $this->suiviRepository->findSuivisUsagersPostCloture(tabQueryParameters: $tabQueryParameters);
+        $tabDossiers = [];
+        for ($i = 0; $i < \count($suivis); ++$i) {
+            $suivi = $suivis[$i];
+            $tabDossiers[] = new TabDossier(
+                nomDeclarant: $suivi['nomOccupant'],
+                prenomDeclarant: $suivi['prenomOccupant'],
+                reference: '#'.$suivi['reference'],
+                adresse: $suivi['adresse'],
+                clotureAt: $suivi['clotureAt'],
+                messageAt: $suivi['messageAt'],
+                messageSuiviByNom: $suivi['messageSuiviByNom'],
+                messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
+                messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
+                lien: '/bo/signalements/'.$suivi['uuid'],
+            );
+        }
+
+        $count = \count($suivis);
+
+        return new TabDossierResult($tabDossiers, $count);
     }
 
     /**
@@ -291,7 +289,7 @@ class TabDataManager
                 prenomDeclarant: 'Karim',
                 reference: '#2022-150',
                 adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '05/06/2026 à 15:21',
+                clotureAt: new \DateTimeImmutable('05/06/2026 15:21'),
                 messageDaysAgo: 577,
                 messageSuiviByNom: 'Abdallah',
                 messageSuiviByPrenom: 'Karim',
@@ -302,7 +300,7 @@ class TabDataManager
                 prenomDeclarant: 'Karim',
                 reference: '#2022-151',
                 adresse: '9 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '05/06/2026 à 15:21',
+                clotureAt: new \DateTimeImmutable('05/06/2026 15:21'),
                 messageDaysAgo: 504,
                 messageSuiviByNom: 'Abdallah',
                 messageSuiviByPrenom: 'Karim',
@@ -411,14 +409,14 @@ class TabDataManager
                 prenomDeclarant: 'Karim',
                 reference: '#2022-150',
                 adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '17/12/2024',
+                clotureAt: new \DateTimeImmutable('07/12/2024'),
             ),
             new TabDossier(
                 nomDeclarant: 'Abdallah',
                 prenomDeclarant: 'Karim',
                 reference: '#2022-150',
                 adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: '17/12/2024',
+                clotureAt: new \DateTimeImmutable('05/06/2026 15:21'),
             ),
         ];
     }

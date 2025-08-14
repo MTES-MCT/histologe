@@ -72,8 +72,12 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
+        $listRouteBOParameters = [];
+        if (!$user->isPartnerAdmin() && !$user->isTerritoryAdmin() && !$user->isSuperAdmin()) {
+            $listRouteBOParameters = ['mesDossiersMessagesUsagers' => '1', 'mesDossiersAverifier' => '1'];
+        }
 
-        return new RedirectResponse($this->urlGenerator->generate('back_dashboard'));
+        return new RedirectResponse($this->urlGenerator->generate('back_dashboard', $listRouteBOParameters));
     }
 
     protected function getLoginUrl(Request $request): string
