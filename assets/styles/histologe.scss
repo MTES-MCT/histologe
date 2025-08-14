@@ -369,6 +369,7 @@ a.fr-btn.fr-btn--icon-left.fr-fi-file-pdf-fill.ignore-blank-style::before {
 }
 
 @media (max-width: 48em) {
+    #suivi-files { order: -1; }
     .signalement-form-only-choice .fr-fieldset__element.item-divided {
         flex-basis: content;
     }
