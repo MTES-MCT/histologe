@@ -10,20 +10,30 @@
                         <h1 id="fr-modal-add-suivi-title" class="fr-modal__title">
                             Ajouter un suivi
                         </h1>
-
                         {{ form_start(addSuiviForm, {'attr': {'id': 'signalement-add-suivi-form', 'data-submit-type':'formData'}}) }}
-                        <div class="fr-input-group">
-                            <span class="no-field-errors"></span>
+                        <div class="fr-container">
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12">
+                                    <div class="fr-input-group">
+                                        <span class="no-field-errors"></span>
+                                    </div>
+                                    {{ form_errors(addSuiviForm) }}
+                                    {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
+                                        <p class="fr-badge fr-badge--error">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
+                                    {% endif %}
+                                </div>
+                                <div class="fr-col-12">
+                                    {{ form_row(addSuiviForm.isPublic) }}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-7" id="suivi-description">
+                                    {{ form_row(addSuiviForm.description) }}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-5" id="suivi-files">
+                                    {{ form_row(addSuiviForm.files) }}
+                                </div>
+                            </div>
                         </div>
-                        {{ form_errors(addSuiviForm) }}
-                        {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
-                            <p class="fr-badge fr-badge--error">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
-                        {% endif %}
-                        {{ form_row(addSuiviForm.isPublic) }}
-                        {{ form_row(addSuiviForm.description) }}
-                        {{ form_row(addSuiviForm.files) }}
                         {{ form_end(addSuiviForm) }}
-
                     </div>
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
