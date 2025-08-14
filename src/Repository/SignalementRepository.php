@@ -2105,12 +2105,12 @@ class SignalementRepository extends ServiceEntityRepository
             )
         SQL;
 
-        if (null !== $tabQueryParameters?->territoireId) {
+        if (null !== $tabQueryParameters->territoireId) {
             $sql .= ' AND si.territory_id = :territory_id';
             $params['territory_id'] = $tabQueryParameters->territoireId;
         }
 
-        if (null !== $tabQueryParameters?->sortBy
+        if (null !== $tabQueryParameters->sortBy
             && 'nbRelanceFeedbackUsager' === $tabQueryParameters->sortBy
             && 'DESC' === $tabQueryParameters->orderBy
         ) {
@@ -2178,7 +2178,7 @@ class SignalementRepository extends ServiceEntityRepository
                 )
         SQL;
 
-        if (null !== $tabQueryParameters?->territoireId) {
+        if (null !== $tabQueryParameters->territoireId) {
             $sql .= ' AND si.territory_id = :territory_id';
             $params['territory_id'] = $tabQueryParameters->territoireId;
         }
