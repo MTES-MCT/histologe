@@ -16,6 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['created_at'], name: 'idx_suivi_created_at')]
 #[ORM\Index(columns: ['signalement_id', 'type', 'created_at'], name: 'idx_suivi_signalement_type_created_at')]
 #[ORM\Index(columns: ['context'], name: 'idx_suivi_context')]
+#[ORM\Index(columns: ['category', 'signalement_id', 'created_at'], name: 'idx_suivi_category_signalement_created_at')]
+#[ORM\Index(columns: ['is_public', 'signalement_id', 'created_at'], name: 'idx_suivi_is_public_signalement_created_at')]
 class Suivi implements EntityHistoryInterface
 {
     public const int TYPE_AUTO = 1;
