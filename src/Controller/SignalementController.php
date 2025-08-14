@@ -37,13 +37,10 @@ use App\Service\Signalement\SignalementDuplicateChecker;
 use App\Service\Signalement\SuiviSeenMarker;
 use App\Service\SuiviCategoryMapper;
 use App\Service\UploadHandlerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -57,8 +54,6 @@ class SignalementController extends AbstractController
 {
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
-        #[Autowire(env: 'FEATURE_SUIVI_ACTION')]
-        private readonly bool $featureSuiviAction,
     ) {
     }
 
@@ -413,11 +408,6 @@ class SignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
-        SuiviManager $suiviManager,
-        EntityManagerInterface $entityManager,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
-        HtmlSanitizerInterface $htmlSanitizer,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
@@ -426,104 +416,24 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-
-        /** @var SignalementUser $signalementUser */
-        $signalementUser = $this->getUser();
-
         $suiviAuto = $request->get('suiviAuto');
-        // TODO : route à supprimer quelques semaines/mois après la suppression du feature flipping featureSuiviAction
+        // TODO : route à supprimer quelques semaines/mois après la suppression du feature flipping featureSuiviAction (aout 2025)
         // pour ne pas avoir des liens cassés dans les anciens mails
-        // et mettre à jour le 3è mail de demande de feedback usager pour rediriger vers les bonnes routes
-        if ($this->featureSuiviAction) {
-            if (Suivi::ARRET_PROCEDURE == $suiviAuto) {
-                return $this->redirectToRoute(
-                    'front_suivi_signalement_procedure',
-                    [
-                        'code' => $signalement->getCodeSuivi(),
-                    ]
-                );
-            }
-
+        if (Suivi::ARRET_PROCEDURE == $suiviAuto) {
             return $this->redirectToRoute(
-                'front_suivi_signalement_procedure_poursuite',
+                'front_suivi_signalement_procedure',
                 [
                     'code' => $signalement->getCodeSuivi(),
                 ]
             );
         }
 
-        $user = $signalementUser->getUser();
-        $type = $signalementUser->getType();
-        if (!$user
-        || !\in_array($suiviAuto, [Suivi::POURSUIVRE_PROCEDURE, Suivi::ARRET_PROCEDURE])
-        || \in_array($signalement->getStatut(), [SignalementStatus::CLOSED, SignalementStatus::REFUSED])) {
-            $this->addFlash('error', 'Le lien utilisé est invalide.');
-
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-
-        if ($signalement->getIsUsagerAbandonProcedure()) {
-            $this->addFlash('error', 'Les services ont déjà été informés de votre volonté d\'arrêter la procédure.
-                    Si vous le souhaitez, vous pouvez préciser la raison de l\'arrêt de procédure
-                    en envoyant un message via le formulaire ci-dessous.');
-
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-
-        if (Suivi::POURSUIVRE_PROCEDURE === $suiviAuto) {
-            $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
-            $suiviPoursuivreProcedure = $suiviManager->findOneBy([
-                'description' => $htmlSanitizer->sanitize($description),
-                'signalement' => $signalement,
-            ]);
-            if (null !== $suiviPoursuivreProcedure) {
-                $this->addFlash('error', 'Les services ont déjà été informés de votre volonté de continuer la procédure.
-                        Si vous le souhaitez, vous pouvez envoyer un message via le formulaire ci-dessous.');
-
-                return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-            }
-        }
-
-        $token = $request->get('_token');
-        $tokenValid = $this->isCsrfTokenValid('suivi_procedure', $token);
-        if ($token && !$tokenValid) {
-            $this->addFlash('error', 'Token CSRF invalide, merci de réessayer.');
-        }
-        if ($token && $tokenValid) {
-            if (Suivi::ARRET_PROCEDURE === $suiviAuto) {
-                $description = $user->getNomComplet().' ('.$type.') a demandé l\'arrêt de la procédure.';
-                $signalement->setIsUsagerAbandonProcedure(true);
-                $categorySuivi = SuiviCategory::DEMANDE_ABANDON_PROCEDURE;
-                $entityManager->persist($signalement);
-                $this->addFlash('success', "Les services ont été informés de votre volonté d'arrêter la procédure.
-                Si vous le souhaitez, vous pouvez préciser la raison de l'arrêt de procédure
-                en envoyant un message via le formulaire ci-dessous.");
-            } else {
-                $categorySuivi = SuiviCategory::DEMANDE_POURSUITE_PROCEDURE;
-                $description = $user->getNomComplet().' ('.$type.') a indiqué vouloir poursuivre la procédure.';
-                $this->addFlash('success', "Les services ont été informés de votre volonté de poursuivre la procédure.
-                N'hésitez pas à mettre à jour votre situation en envoyant un message via le formulaire ci-dessous.");
-            }
-
-            $suiviManager->createSuivi(
-                signalement: $signalement,
-                description: $description,
-                type: Suivi::TYPE_USAGER,
-                category: $categorySuivi,
-                isPublic: true,
-                user: $user,
-            );
-
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-
-        $infoDesordres = $signalementDesordresProcessor->process($signalement);
-
-        return $this->render('front/suivi_signalement.html.twig', [
-            'signalement' => $signalement,
-            'suiviAuto' => $suiviAuto,
-            'infoDesordres' => $infoDesordres,
-        ]);
+        return $this->redirectToRoute(
+            'front_suivi_signalement_procedure_poursuite',
+            [
+                'code' => $signalement->getCodeSuivi(),
+            ]
+        );
     }
 
     /**
@@ -534,48 +444,29 @@ class SignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         SuiviRepository $suiviRepository,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
         SuiviCategoryMapper $suiviCategoryMapper,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
-
-        /** @var SignalementUser $signalementUser */
-        $signalementUser = $this->getUser();
-        $user = $signalementUser->getUser();
 
         $demandeLienSignalement = new DemandeLienSignalement();
         $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
             'action' => $this->generateUrl('front_demande_lien_signalement'),
         ]);
 
-        if ($this->featureSuiviAction) {
-            $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement);
-            $suiviCategory = null;
-            if (!$lastSuiviPublic && SignalementStatus::CLOSED === $signalement->getStatut()) {
-                $lastSuiviPublic = (new Suivi())->setSignalement($signalement)->setCategory(SuiviCategory::SIGNALEMENT_IS_CLOSED);
-            }
-            if ($lastSuiviPublic) {
-                $suiviCategory = $suiviCategoryMapper->mapFromSuivi($lastSuiviPublic);
-            }
-
-            return $this->render('front/suivi_signalement_dashboard.html.twig', [
-                'signalement' => $signalement,
-                'formDemandeLienSignalement' => $formDemandeLienSignalement,
-                'suiviCategory' => $suiviCategory,
-            ]);
+        $lastSuiviPublic = $suiviRepository->findLastPublicSuivi($signalement);
+        $suiviCategory = null;
+        if (!$lastSuiviPublic && SignalementStatus::CLOSED === $signalement->getStatut()) {
+            $lastSuiviPublic = (new Suivi())->setSignalement($signalement)->setCategory(SuiviCategory::SIGNALEMENT_IS_CLOSED);
+        }
+        if ($lastSuiviPublic) {
+            $suiviCategory = $suiviCategoryMapper->mapFromSuivi($lastSuiviPublic);
         }
 
-        $infoDesordres = $signalementDesordresProcessor->process($signalement);
-        $this->eventDispatcher->dispatch(
-            new SuiviViewedEvent($signalement, $signalementUser),
-            SuiviViewedEvent::NAME
-        );
-
-        return $this->render('front/suivi_signalement.html.twig', [
+        return $this->render('front/suivi_signalement_dashboard.html.twig', [
             'signalement' => $signalement,
-            'infoDesordres' => $infoDesordres,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
+            'suiviCategory' => $suiviCategory,
         ]);
     }
 
@@ -585,9 +476,6 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
-        if (!$this->featureSuiviAction) {
-            throw $this->createNotFoundException();
-        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
 
@@ -616,9 +504,6 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
         SuiviSeenMarker $suiviSeenMarker,
     ): Response {
-        if (!$this->featureSuiviAction) {
-            throw $this->createNotFoundException();
-        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         /** @var SignalementUser $signalementUser */
@@ -691,9 +576,6 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
         Request $request,
     ): Response {
-        if (!$this->featureSuiviAction) {
-            throw $this->createNotFoundException();
-        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         /** @var SignalementUser $signalementUser */
@@ -750,9 +632,6 @@ class SignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
     ): Response {
-        if (!$this->featureSuiviAction) {
-            throw $this->createNotFoundException();
-        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
@@ -777,9 +656,6 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
     ): Response {
-        if (!$this->featureSuiviAction) {
-            throw $this->createNotFoundException();
-        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         if ($signalement->getIsUsagerAbandonProcedure()) {
@@ -835,9 +711,6 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
     ): Response {
-        if (!$this->featureSuiviAction) {
-            throw $this->createNotFoundException();
-        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         if (false === $signalement->getIsUsagerAbandonProcedure()) {
@@ -884,83 +757,5 @@ class SignalementController extends AbstractController
             'signalement' => $signalement,
             'form' => $form->createView(),
         ]);
-    }
-
-    #[Route('/suivre-mon-signalement/{code}/response', name: 'front_suivi_signalement_user_response', methods: 'POST')]
-    public function postUserResponse(
-        string $code,
-        SignalementRepository $signalementRepository,
-        Request $request,
-        EntityManagerInterface $entityManager,
-        SuiviManager $suiviManager,
-        UploadHandlerService $uploadHandlerService,
-        ValidatorInterface $validator,
-    ): Response {
-        if ($this->featureSuiviAction) {
-            throw $this->createNotFoundException();
-        }
-        $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
-            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
-
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-        if (!$this->isCsrfTokenValid('signalement_front_response_'.$signalement->getUuid(), $request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide');
-
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-        /** @var SignalementUser $signalementUser */
-        $signalementUser = $this->getUser();
-        $user = $signalementUser->getUser();
-
-        $errors = $validator->validate($request->get('signalement_front_response')['content'], [
-            new \Symfony\Component\Validator\Constraints\NotBlank(),
-            new \Symfony\Component\Validator\Constraints\Length(['min' => 10]),
-        ]);
-        foreach ($errors as $error) {
-            $this->addFlash('error', $error->getMessage());
-        }
-        if (\count($errors)) {
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-
-        $description = nl2br(htmlspecialchars(
-            $request->get('signalement_front_response')['content'],
-            \ENT_QUOTES,
-            'UTF-8'
-        ));
-
-        $docs = $entityManager->getRepository(File::class)->findBy(['signalement' => $signalement, 'isTemp' => true, 'uploadedBy' => $user]);
-        $filesToAttach = [];
-        if (\count($docs)) {
-            foreach ($docs as $doc) {
-                if ($uploadHandlerService->deleteIfExpiredFile($doc)) {
-                    continue;
-                }
-                $doc->setIsTemp(false);
-                $filesToAttach[] = $doc;
-            }
-        }
-
-        $typeSuivi = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
-        $suiviManager->createSuivi(
-            signalement: $signalement,
-            description: $description,
-            type: $typeSuivi,
-            category: SuiviCategory::MESSAGE_USAGER,
-            isPublic: true,
-            files: $filesToAttach,
-            user: $user,
-        );
-
-        $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
-        'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
-        'Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour.
-                N\'hésitez pas à consulter votre page de suivi !';
-        $this->addFlash('success', $messageRetour);
-
-        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 }

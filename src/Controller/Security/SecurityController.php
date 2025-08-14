@@ -11,7 +11,6 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,12 +24,6 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 class SecurityController extends AbstractController
 {
     use TargetPathTrait;
-
-    public function __construct(
-        #[Autowire(env: 'FEATURE_SUIVI_ACTION')]
-        private readonly bool $featureSuiviAction,
-    ) {
-    }
 
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     #[Security(name: null)]
@@ -187,9 +180,6 @@ class SecurityController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
     ): Response {
-        if (!$this->featureSuiviAction) {
-            throw $this->createAccessDeniedException();
-        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
 

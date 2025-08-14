@@ -22,7 +22,6 @@ env:
   CLAMAV_HOST: 127.0.0.1
   CLAMAV_PORT: 3310
   PLATFORM_NAME: 'Signal Logement'
-  FEATURE_SUIVI_ACTION: 1
   MAIL_TEST_ENABLE: 0
   MAIL_TEST_EMAIL: 'mailcatcher@signal-logement.fr'
   FEATURE_NEW_DASHBOARD: 1
