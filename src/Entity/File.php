@@ -13,6 +13,7 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
+#[ORM\Index(columns: ['is_standalone'], name: 'idx_is_standalone')]
 class File implements EntityHistoryInterface
 {
     public const STANDALONE_FILES = [
