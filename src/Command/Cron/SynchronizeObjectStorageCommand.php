@@ -36,6 +36,12 @@ class SynchronizeObjectStorageCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        if ('histologe' !== getenv('APP') && 'test' !== getenv('APP') && 'dev' !== $_ENV['APP_ENV']) {
+            $io->error('This command is only available on production environment, test environment and dev environment');
+
+            return Command::FAILURE;
+        }
+
         $source = 'ovh_s3:'.$this->sourceBucketName.'/';
         $destination = 'scaleway_s3:'.$this->destinationBucketName.'/';
         $command = ['rclone', 'sync', $source, $destination, '--progress'];
