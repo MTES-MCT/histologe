@@ -30,7 +30,6 @@ class SignalementListController extends AbstractController
         #[MapQueryString] ?SignalementSearchQuery $signalementSearchQuery = null,
     ): JsonResponse {
         $session->set('signalementSearchQuery', $signalementSearchQuery);
-        $session->save();
         /** @var User $user */
         $user = $this->getUser();
         $filters = null !== $signalementSearchQuery
@@ -43,11 +42,15 @@ class SignalementListController extends AbstractController
             ];
         $signalements = $signalementManager->findSignalementAffectationList($user, $filters);
 
-        return $this->json(
+        $response = $this->json(
             $signalements,
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
             ['groups' => ['signalements:read']]
         );
+
+        $session->save();
+
+        return $response;
     }
 }
