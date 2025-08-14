@@ -22,11 +22,13 @@
     </div>
 
     <div class="fr-container--fluid">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            {% for partnerAffectation in signalement.affectations %}
-                {% include 'back/signalement/view/affectation/_item-with-action.html.twig' %}
-            {% endfor %}
-        </div>
+        {% if signalement.affectations|length %}
+            <div class="fr-grid-row fr-grid-row--gutters">
+                {% for partnerAffectation in signalement.affectations %}
+                    {% include 'back/signalement/view/affectation/_item-with-action.html.twig' %}
+                {% endfor %}
+            </div>
+        {% endif %}
         {% if subscriptionsInMyPartner|length %}
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12">
