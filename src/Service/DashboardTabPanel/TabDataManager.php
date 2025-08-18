@@ -228,8 +228,11 @@ class TabDataManager
      */
     public function getMessagesUsagersNouveauxMessages(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
         // Regroupe les signalements dont le dernier suivi est un message usager spontané, c'est-à-dire qui ne fait pas immédiatement suite à une relance auto.
-        $suivis = $this->suiviRepository->findSuivisUsagersWithoutAskFeedbackBefore(params: $tabQueryParameters);
+        $suivis = $this->suiviRepository->findSuivisUsagersWithoutAskFeedbackBefore(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -246,7 +249,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countSuivisUsagersWithoutAskFeedbackBefore(params: $tabQueryParameters);
+        $count = $this->suiviRepository->countSuivisUsagersWithoutAskFeedbackBefore(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -257,8 +260,11 @@ class TabDataManager
      */
     public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
         // Signalements fermés dont l'usager a fait un dernier suivi après fermeture
-        $suivis = $this->suiviRepository->findSuivisPostCloture(params: $tabQueryParameters);
+        $suivis = $this->suiviRepository->findSuivisPostCloture(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -276,7 +282,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countSuivisPostCloture(params: $tabQueryParameters);
+        $count = $this->suiviRepository->countSuivisPostCloture(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -287,8 +293,11 @@ class TabDataManager
      */
     public function getMessagesUsagersMessagesSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
         // signalements ayant un message usager ou demande de poursuite de procédure sans suivis partenaires public depuis la demande de feedback
-        $suivis = $this->suiviRepository->findSuivisUsagerOrPoursuiteWithAskFeedbackBefore(params: $tabQueryParameters);
+        $suivis = $this->suiviRepository->findSuivisUsagerOrPoursuiteWithAskFeedbackBefore(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -306,7 +315,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(params: $tabQueryParameters);
+        $count = $this->suiviRepository->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }

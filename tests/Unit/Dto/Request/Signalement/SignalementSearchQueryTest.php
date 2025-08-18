@@ -50,6 +50,9 @@ class SignalementSearchQueryTest extends KernelTestCase
             direction: 'DESC',
             createdFrom: 'formulaire-pro',
             relanceUsagerSansReponse: 'oui',
+            isNouveauMessage: 'oui',
+            isMessagePostCloture: 'oui',
+            isMessageWithoutResponse: 'oui',
         );
 
         $expectedFilters = [
@@ -92,6 +95,9 @@ class SignalementSearchQueryTest extends KernelTestCase
             'nouveau_suivi' => 'oui',
             'createdFrom' => 'formulaire-pro',
             'relanceUsagerSansReponse' => true,
+            'isNouveauMessage' => true,
+            'isMessagePostCloture' => true,
+            'isMessageWithoutResponse' => true,
             'page' => 1,
             'maxItemsPerPage' => 25,
             'sortBy' => 'reference',

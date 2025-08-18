@@ -466,19 +466,19 @@ class SearchFilter
         }
 
         if (!empty($filters['isNouveauMessage']) && $this->featureNewDashboard) {
-            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagersWithoutAskFeedbackBefore(null);
+            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagersWithoutAskFeedbackBefore($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($filters['isMessagePostCloture']) && $this->featureNewDashboard) {
-            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisPostCloture(null);
+            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisPostCloture($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($filters['isMessageWithoutResponse']) && $this->featureNewDashboard) {
-            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore(null);
+            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }

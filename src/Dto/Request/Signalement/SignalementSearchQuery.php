@@ -299,7 +299,7 @@ class SignalementSearchQuery
     {
         return $this->relanceUsagerSansReponse;
     }
-    
+
     public function getIsNouveauMessage(): ?string
     {
         return $this->isNouveauMessage;
