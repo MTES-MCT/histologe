@@ -213,10 +213,10 @@ class TabDataManager
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countDataKpi(array $territories): TabCountKpi
+    public function countDataKpi(array $territories, ?int $territoryId): TabCountKpi
     {
         return $this->tabCountKpiBuilder
-            ->setTerritories($territories)
+            ->setTerritories($territories, $territoryId)
             ->withTabCountKpi()
             ->build();
     }

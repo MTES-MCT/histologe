@@ -27,6 +27,16 @@ class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoade
         $result = $this->tabDataManager->getDossiersRelanceSansReponse($this->tabQueryParameters);
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
+        if (null === $this->tabQueryParameters->orderBy) {
+            $this->tabQueryParameters->orderBy = 'ASC';
+        }
+        $filters = [
+            ...$tabBody->getFilters(),
+            'relanceUsagerSansReponse' => 'oui',
+            // 'sortBy' => 'lastSuiviAt',
+            // 'direction' => $this->tabQueryParameters->orderBy,
+        ];
+        $tabBody->setFilters($filters);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_fermer/_body_dossier_relance_usager_sans_reponse.html.twig');
     }
 }

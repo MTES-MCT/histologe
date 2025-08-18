@@ -610,7 +610,8 @@ export default defineComponent({
         statusAffectation: null,
         criticiteScoreMin: null,
         criticiteScoreMax: null,
-        motifCloture: null
+        motifCloture: null,
+        relanceUsagerSansReponse: null
       }
       this.sharedState.currentTerritoryId = ''
 

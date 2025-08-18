@@ -39,5 +39,6 @@ export const SEARCH_FILTERS = [
   { type: 'collection', name: 'partenaires', showOptions: true, defaultValue: null },
   { type: 'date', name: 'dateDepotDebut', showOptions: true, defaultValue: null },
   { type: 'date', name: 'dateDernierSuiviDebut', showOptions: true, defaultValue: null },
-  { type: 'text', name: 'motifCloture', showOptions: true, defaultValue: null }
+  { type: 'text', name: 'motifCloture', showOptions: true, defaultValue: null },
+  { type: 'text', name: 'relanceUsagerSansReponse', showOptions: false, defaultValue: null }
 ]

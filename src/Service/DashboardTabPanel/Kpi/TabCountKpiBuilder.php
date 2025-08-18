@@ -14,6 +14,7 @@ class TabCountKpiBuilder
 
     /** @var array<int, mixed> */
     private array $territories = [];
+    private ?int $territoryId = null;
 
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
@@ -24,9 +25,10 @@ class TabCountKpiBuilder
     /**
      * @param array<int, mixed> $territories
      */
-    public function setTerritories(array $territories): self
+    public function setTerritories(array $territories, ?int $territoryId): self
     {
         $this->territories = $territories;
+        $this->territoryId = $territoryId;
 
         return $this;
     }
@@ -44,10 +46,11 @@ class TabCountKpiBuilder
         } else {
             $countNouveauxDossiers = $this->signalementRepository->countNouveauxDossiersKpi($this->territories, $user);
         }
+        $countDossiersAFermer = $this->signalementRepository->countAllDossiersAferme($user, $this->territoryId);
 
         $this->tabCountKpi = new TabCountKpi(
             countNouveauxDossiers: $countNouveauxDossiers->total(),
-            countDossiersAFermer: 56
+            countDossiersAFermer: $countDossiersAFermer->total()
         );
 
         return $this;

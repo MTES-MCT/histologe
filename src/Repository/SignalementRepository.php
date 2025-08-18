@@ -21,6 +21,7 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\View\ViewLatestIntervention;
+use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -545,6 +546,12 @@ class SignalementRepository extends ServiceEntityRepository
         }
         $qb->setParameter('statusList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
+
+        if (!empty($options['relanceUsagerSansReponse'])) {
+            $signalementIds = $this->getSignalementIdsAvecRelancesSansReponse();
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $signalementIds);
+        }
 
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
@@ -2050,102 +2057,9 @@ class SignalementRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @return TabDossier[]
-     *
-     * @throws \DateMalformedStringException
-     * @throws Exception
-     */
-    public function findSignalementsAvecRelancesSansReponse(TabQueryParameters $tabQueryParameters): array
+    private function getBaseSignalementsAvecRelancesSansReponseSql(): string
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $params = [];
-
-        $sql = <<<SQL
-        SELECT
-            si.uuid,
-            si.id,
-            si.reference,
-            si.nom_occupant,
-            si.prenom_occupant,
-            CONCAT_WS(', ', si.adresse_occupant, CONCAT(si.cp_occupant, ' ', si.ville_occupant)) AS fullAddress,
-            relances_usager.nb_relances,
-            relances_usager.first_relance_at,
-            last_usager_suivi.shared_usager_at AS last_suivi_shared_usager_at,
-            last_usager_suivi.type AS last_suivi_type
-        FROM (
-            SELECT
-                s.signalement_id,
-                MIN(s.created_at) AS first_relance_at,
-                COUNT(*) AS nb_relances,
-                MAX(s.type) AS type_suivi
-            FROM suivi s
-            WHERE s.category = 'ASK_FEEDBACK_SENT'
-            GROUP BY s.signalement_id
-            HAVING COUNT(*) >= 3
-        ) relances_usager
-        INNER JOIN signalement si ON si.id = relances_usager.signalement_id
-        INNER JOIN (
-            SELECT
-                s.signalement_id,
-                MAX(s.created_at) AS shared_usager_at,
-                MAX(s.type) AS type
-            FROM suivi s
-            WHERE s.is_public = 1
-            GROUP BY s.signalement_id
-        ) last_usager_suivi ON last_usager_suivi.signalement_id = si.id
-        WHERE
-            si.statut = 'ACTIVE'
-            AND NOT EXISTS (
-                SELECT 1
-                FROM suivi s2
-                WHERE s2.signalement_id = relances_usager.signalement_id
-                  AND s2.type = 2
-                  AND s2.created_at > relances_usager.first_relance_at
-            )
-        SQL;
-
-        if (null !== $tabQueryParameters->territoireId) {
-            $sql .= ' AND si.territory_id = :territory_id';
-            $params['territory_id'] = $tabQueryParameters->territoireId;
-        }
-
-        if (null !== $tabQueryParameters->sortBy
-            && 'nbRelanceFeedbackUsager' === $tabQueryParameters->sortBy
-            && 'DESC' === $tabQueryParameters->orderBy
-        ) {
-            $sql .= ' ORDER BY relances_usager.nb_relances DESC, relances_usager.first_relance_at DESC LIMIT 5';
-        } else {
-            $sql .= ' ORDER BY relances_usager.nb_relances ASC, relances_usager.first_relance_at DESC LIMIT 5';
-        }
-
-        $rows = $conn->executeQuery($sql, $params)->fetchAllAssociative();
-
-        return array_map(/**
-         * @throws \DateMalformedStringException
-         */ function (array $row): TabDossier {
-            return new TabDossier(
-                uuid: $row['uuid'],
-                reference: $row['reference'],
-                nomDeclarant: $row['nom_occupant'],
-                prenomDeclarant: $row['prenom_occupant'],
-                adresse: $row['fullAddress'],
-                nbRelanceDossier: (int) $row['nb_relances'],
-                premiereRelanceDossierAt: new \DateTimeImmutable($row['first_relance_at']),
-                dernierSuiviPublicAt: new \DateTimeImmutable($row['last_suivi_shared_usager_at']),
-                dernierTypeSuivi: (string) $row['last_suivi_type'],
-            );
-        }, $rows);
-    }
-
-    public function countSignalementsAvecRelancesSansReponse(TabQueryParameters $tabQueryParameters): int
-    {
-        $conn = $this->getEntityManager()->getConnection();
-        $params = [];
-
-        $sql = <<<SQL
-        SELECT COUNT(*) FROM (
-            SELECT relances_usager.signalement_id
+        return <<<SQL
             FROM (
                 SELECT
                     s.signalement_id,
@@ -2176,15 +2090,89 @@ class SignalementRepository extends ServiceEntityRepository
                       AND s2.type = 2
                       AND s2.created_at > relances_usager.first_relance_at
                 )
+                AND (:territory_id IS NULL OR si.territory_id = :territory_id)
         SQL;
+    }
 
-        if (null !== $tabQueryParameters->territoireId) {
-            $sql .= ' AND si.territory_id = :territory_id';
-            $params['territory_id'] = $tabQueryParameters->territoireId;
+    /**
+     * @return TabDossier[]
+     *
+     * @throws \DateMalformedStringException
+     * @throws Exception
+     */
+    public function findSignalementsAvecRelancesSansReponse(TabQueryParameters $tabQueryParameters): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+            SELECT
+                si.uuid,
+                si.id,
+                si.reference,
+                si.nom_occupant,
+                si.prenom_occupant,
+                CONCAT_WS(', ', si.adresse_occupant, CONCAT(si.cp_occupant, ' ', si.ville_occupant)) AS fullAddress,
+                relances_usager.nb_relances,
+                relances_usager.first_relance_at,
+                last_usager_suivi.shared_usager_at AS last_suivi_shared_usager_at,
+                last_usager_suivi.type AS last_suivi_type
+        SQL;
+        $sql .= $this->getBaseSignalementsAvecRelancesSansReponseSql();
+
+        if ('ASC' === $tabQueryParameters->orderBy && 'nbRelanceFeedbackUsager' === $tabQueryParameters->sortBy) {
+            $sql .= ' ORDER BY relances_usager.nb_relances ASC, relances_usager.first_relance_at DESC LIMIT 5';
+        } else {
+            $sql .= ' ORDER BY relances_usager.nb_relances DESC, relances_usager.first_relance_at DESC LIMIT 5';
         }
 
-        $sql .= ') AS signalements_count';
+        $rows = $conn->executeQuery($sql, ['territory_id' => $tabQueryParameters->territoireId])->fetchAllAssociative();
 
-        return (int) $conn->executeQuery($sql, $params)->fetchOne();
+        return array_map(/**
+         * @throws \DateMalformedStringException
+         */ function (array $row): TabDossier {
+            return new TabDossier(
+                uuid: $row['uuid'],
+                reference: $row['reference'],
+                nomDeclarant: $row['nom_occupant'],
+                prenomDeclarant: $row['prenom_occupant'],
+                adresse: $row['fullAddress'],
+                nbRelanceDossier: (int) $row['nb_relances'],
+                premiereRelanceDossierAt: new \DateTimeImmutable($row['first_relance_at']),
+                dernierSuiviPublicAt: new \DateTimeImmutable($row['last_suivi_shared_usager_at']),
+                dernierTypeSuivi: (string) $row['last_suivi_type'],
+            );
+        }, $rows);
+    }
+
+    public function countSignalementsAvecRelancesSansReponse(TabQueryParameters $tabQueryParameters): int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT COUNT(*) FROM (SELECT relances_usager.signalement_id '.$this->getBaseSignalementsAvecRelancesSansReponseSql().') AS signalements_count';
+
+        return (int) $conn->executeQuery($sql, ['territory_id' => $tabQueryParameters->territoireId])->fetchOne();
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getSignalementIdsAvecRelancesSansReponse(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT si.id '.$this->getBaseSignalementsAvecRelancesSansReponseSql();
+
+        return array_map('intval', $conn->executeQuery($sql, ['territory_id' => null])->fetchFirstColumn());
+    }
+
+    public function countAllDossiersAferme(User $user, ?int $territoryId): CountAfermer
+    {
+        $params = new TabQueryParameters($territoryId);
+
+        return new CountAfermer(
+            countDemandesFermetureByUsager: $this->countDossiersDemandesFermetureByUsager($params),
+            countDossiersRelanceSansReponse: $this->countSignalementsAvecRelancesSansReponse($params),
+            countDossiersFermePartenaireTous: $this->countDossiersFermePartenaireTous($params)
+        );
     }
 }
