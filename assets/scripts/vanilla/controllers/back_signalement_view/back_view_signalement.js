@@ -436,25 +436,26 @@ document
       });
   });
 
-  const submitModalDuplicateAddresses = document.getElementById('btn-submit-modal-duplicate-addresses');
-  if (submitModalDuplicateAddresses) {
-    submitModalDuplicateAddresses.addEventListener('click', function (event) {
-      event.preventDefault();
-      const urlToRedirect = this.dataset.url;
-      const dismissCheckbox = document.getElementById('dismiss-modal-duplicate-addresses');
-      if (dismissCheckbox && dismissCheckbox.checked) {
-        this.setAttribute('disabled', 'disabled');
-        const form = document.getElementById('form-modal-duplicate-addresses');
-        const formData = new FormData(form);
-        fetch(form.action, {
-          method: 'POST',
-          body: formData,
-        })
-        .then((response) => {
-          window.location.href = urlToRedirect;
-        })
-      } else {
+const submitModalDuplicateAddresses = document.getElementById(
+  'btn-submit-modal-duplicate-addresses'
+);
+if (submitModalDuplicateAddresses) {
+  submitModalDuplicateAddresses.addEventListener('click', function (event) {
+    event.preventDefault();
+    const urlToRedirect = this.dataset.url;
+    const dismissCheckbox = document.getElementById('dismiss-modal-duplicate-addresses');
+    if (dismissCheckbox && dismissCheckbox.checked) {
+      this.setAttribute('disabled', 'disabled');
+      const form = document.getElementById('form-modal-duplicate-addresses');
+      const formData = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+      }).then((response) => {
         window.location.href = urlToRedirect;
-      }
-    });
-  }
+      });
+    } else {
+      window.location.href = urlToRedirect;
+    }
+  });
+}

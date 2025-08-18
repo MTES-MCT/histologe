@@ -47,6 +47,13 @@ class DashboardController extends AbstractController
                 $territories = $authorizedTerritories;
             }
 
+            if (null === $mesDossiersMessagesUsagers && $user->isUserPartner()) {
+                $mesDossiersMessagesUsagers = '1';
+            }
+            if (null === $mesDossiersAverifier && $user->isUserPartner()) {
+                $mesDossiersAverifier = '1';
+            }
+
             return $this->render('back/dashboard/index.html.twig', [
                 'territoireSelectedId' => $territoireId,
                 'settings' => $widgetSettingsFactory->createInstanceFrom($user, $territory),

@@ -76,7 +76,6 @@ if (modalSubscriptionsChoice && !modalPopNotification) {
     if (typeof dsfr !== 'undefined' && dsfr !== null) {
       clearInterval(checkDsfrIntervalModalSubscriptionsChoice);
       dsfr(modalSubscriptionsChoice).modal.disclose();
-      
     }
   }, 100);
 }
