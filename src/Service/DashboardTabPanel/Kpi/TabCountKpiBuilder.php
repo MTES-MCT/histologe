@@ -53,10 +53,8 @@ class TabCountKpiBuilder
         $user = $this->security->getUser();
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             $countNouveauxDossiers = $this->signalementRepository->countNouveauxDossiersKpi($this->territories);
-            $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($this->territoryId, $this->mesDossiersMessagesUsagers);
         } else {
             $countNouveauxDossiers = $this->signalementRepository->countNouveauxDossiersKpi($this->territories, $user);
-            $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($this->territoryId, $this->mesDossiersMessagesUsagers, $user);
         }
         $countDossiersAFermer = $this->signalementRepository->countAllDossiersAferme($user, $this->territoryId);
         $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($user, $this->territoryId, $this->mesDossiersMessagesUsagers);
