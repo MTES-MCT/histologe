@@ -712,12 +712,12 @@ class SuiviRepository extends ServiceEntityRepository
         // on vérifie que l'avant-dernier suivi n'est pas une demande de feedback
         $qb->andWhere("NOT EXISTS (
             SELECT 1
-            FROM App\Entity\Suivi s3
+            FROM " . Suivi::class . " s3
             WHERE s3.signalement = signalement
             AND s3.category = :askFeedbackCategory
             AND s3.createdAt = (
                 SELECT MAX(s4.createdAt)
-                FROM App\Entity\Suivi s4
+                FROM " . Suivi::class . " s4
                 WHERE s4.signalement = signalement
                 AND s4.createdAt < s.createdAt
             )
@@ -810,17 +810,18 @@ class SuiviRepository extends ServiceEntityRepository
 
     private function addFilterAskFeedbackBeforeAndNoPublicAfter(QueryBuilder $qb): QueryBuilder
     {
+        // TODO : essayer d'améliorer les perfs
         // une demande de feedback avant le message usager ou demande poursuite procedure
         // mais pas de suivi public entre les deux
         $qb->andWhere('EXISTS (
             SELECT 1
-            FROM App\Entity\Suivi s_ask
+            FROM ' . Suivi::class . ' s_ask
             WHERE s_ask.signalement = signalement
               AND s_ask.category = :askFeedbackCategory
               AND s_ask.createdAt < s.createdAt
               AND NOT EXISTS (
                   SELECT 1
-                  FROM App\Entity\Suivi s_pub_before
+                  FROM ' . Suivi::class . ' s_pub_before
                   WHERE s_pub_before.signalement = signalement
                     AND s_pub_before.isPublic = 1
                     AND s_pub_before.createdAt > s_ask.createdAt
@@ -831,7 +832,7 @@ class SuiviRepository extends ServiceEntityRepository
         // aucun suivi public depuis ce message usager ou demande poursuite procedure
         $qb->andWhere('NOT EXISTS (
             SELECT 1
-            FROM App\Entity\Suivi s_pub
+            FROM ' . Suivi::class . ' s_pub
             WHERE s_pub.signalement = signalement
               AND s_pub.isPublic = true
               AND s_pub.createdAt > s.createdAt
