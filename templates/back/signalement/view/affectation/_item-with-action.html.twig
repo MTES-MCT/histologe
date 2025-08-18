@@ -6,7 +6,7 @@
                 <br>
                 {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
                     <span class="fr-hint-text">
-                        Cloturé le {{ partnerAffectation.answeredAt|date('d/m/Y') }}
+                        Clôturé le {{ partnerAffectation.answeredAt|date('d/m/Y') }}
                         <br>
                         {{ partnerAffectation.answeredBy ? 'par ' ~ partnerAffectation.answeredBy.nomComplet }}
                     </span>
