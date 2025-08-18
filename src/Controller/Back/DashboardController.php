@@ -35,6 +35,15 @@ class DashboardController extends AbstractController
             $territories = [];
             /** @var User $user */
             $user = $this->getUser();
+
+            if ($user->isUserPartner() && (null === $mesDossiersMessagesUsagers || null === $mesDossiersAverifier)) {
+                return $this->redirectToRoute('back_dashboard', [
+                    'territoireId' => $territoireId,
+                    'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers ?? '1',
+                    'mesDossiersAverifier' => $mesDossiersAverifier ?? '1',
+                ]);
+            }
+
             $authorizedTerritories = $user->getPartnersTerritories();
 
             $territory = null;
@@ -45,13 +54,6 @@ class DashboardController extends AbstractController
                 }
             } elseif (!$this->isGranted('ROLE_ADMIN')) {
                 $territories = $authorizedTerritories;
-            }
-
-            if (null === $mesDossiersMessagesUsagers && $user->isUserPartner()) {
-                $mesDossiersMessagesUsagers = '1';
-            }
-            if (null === $mesDossiersAverifier && $user->isUserPartner()) {
-                $mesDossiersAverifier = '1';
             }
 
             return $this->render('back/dashboard/index.html.twig', [
