@@ -1,0 +1,30 @@
+<div class="fr-display-inline-flex fr-align-items-center">
+    <h1 class="fr-h2">#{{ signalement.reference }} {{ signalement.nomOccupant|upper }} {{ signalement.prenomOccupant }}</h1>
+    <div class="fr-h2 fr-ml-3v">
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
+                <span class="fr-badge fr-badge--warning fr-badge--no-icon"><span class="fr-icon-warning-line" aria-hidden="true"></span> Nouveau</span>
+            {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
+                <span class="fr-badge fr-badge--success fr-badge--no-icon"><span class="fr-icon-message-2-line" aria-hidden="true"></span> En cours</span>
+            {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED %}
+                <span class="fr-badge fr-badge--new fr-badge--no-icon"><span class="fr-icon-close-line" aria-hidden="true"></span> Refusé</span>
+            {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
+                <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Fermé</span>
+            {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %} <!-- NE DOIT PAS ARRIVER -->
+                <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Archivé</span>
+            {% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').DRAFT %} <!-- NE DOIT PAS ARRIVER -->
+                <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Brouillon</span>
+            {% endif %}
+        {% else %}
+            {% if affectation and not isAffectationAccepted and not isAffectationRefused and not isSignalementClosed and not isClosedForMe %}
+                <span class="fr-badge fr-badge--warning fr-badge--no-icon"><span class="fr-icon-warning-line" aria-hidden="true"></span> Nouveau</span>
+            {% elseif isAffectationAccepted %}
+                <span class="fr-badge fr-badge--success fr-badge--no-icon"><span class="fr-icon-message-2-line" aria-hidden="true"></span> En cours</span>
+            {% elseif isAffectationRefused %}
+                <span class="fr-badge fr-badge--new fr-badge--no-icon"><span class="fr-icon-close-line" aria-hidden="true"></span> Refusé</span>
+            {% elseif isClosedForMe %}
+                <span class="fr-badge fr-badge--error fr-badge--no-icon"><span class="fr-icon-checkbox-circle-line" aria-hidden="true"></span> Clôturé</span>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

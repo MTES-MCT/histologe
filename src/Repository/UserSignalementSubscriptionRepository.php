@@ -36,18 +36,18 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
     /**
      * @return array<UserSignalementSubscription>
      */
-    public function findForIntervention(Intervention $intervention, bool $excludeRT = false): array
+    public function findForIntervention(Intervention $intervention): array
     {
         $signalement = $intervention->getSignalement();
         $partner = $intervention->getPartner();
 
-        return $this->findForSignalementAndPartner($signalement, $partner, $excludeRT);
+        return $this->findForSignalementAndPartner($signalement, $partner);
     }
 
     /**
      * @return array<UserSignalementSubscription>
      */
-    public function findForSignalementAndPartner(Signalement $signalement, Partner $partner, bool $excludeRT): array
+    public function findForSignalementAndPartner(Signalement $signalement, Partner $partner, bool $excludeRT = false): array
     {
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s', 'u')
