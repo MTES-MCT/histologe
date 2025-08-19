@@ -72,7 +72,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         $createdAt = new \DateTimeImmutable();
         if (isset($row['created_at'])) {
             $createdAt = new \DateTimeImmutable($row['created_at']);
-        } elseif (Suivi::TYPE_USAGER_POST_CLOTURE === $row['type']) {
+        } elseif (SuiviCategory::MESSAGE_USAGER_POST_CLOTURE->value === $row['category']) {
             $createdAt = $signalement->getClosedAt()->modify('+3 days');
         }
         $context = null;

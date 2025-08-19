@@ -86,7 +86,7 @@ suivis:
   is_public: 1
   signalement: "2022-2"
   type: 5
-  category: "MESSAGE_USAGER"
+  category: "MESSAGE_USAGER_POST_CLOTURE"
 - 
   created_by: api-02@signal-logement.fr
   description: "Nous vous confirmons la prise en charge de votre signalement."

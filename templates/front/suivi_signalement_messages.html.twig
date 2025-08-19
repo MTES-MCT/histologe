@@ -112,7 +112,9 @@
 							{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
 								Suivi automatique
 							{% elseif suivi.createdBy is not null %}
-								{% if suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER %}
+								{% if suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER
+											or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE
+											or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER %}
 									{{ suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT' }}
 								{% else %}
 									{{suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A'}}
