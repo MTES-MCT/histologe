@@ -87,6 +87,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Demande fermeture usager all' => [['usagerAbandonProcedure' => '1'], 2];
         yield 'Search by created from ' => [['createdFrom' => 'formulaire-pro'], 1];
         yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 1];
+        yield 'Search by relanceUsagerSansReponse' => [['relanceUsagerSansReponse' => 'oui', 'isImported' => 'oui'], 0];
     }
 
     /**

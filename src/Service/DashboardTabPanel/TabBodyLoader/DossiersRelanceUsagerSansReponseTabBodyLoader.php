@@ -33,8 +33,6 @@ class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoade
         $filters = [
             ...$tabBody->getFilters(),
             'relanceUsagerSansReponse' => 'oui',
-            // 'sortBy' => 'lastSuiviAt',
-            // 'direction' => $this->tabQueryParameters->orderBy,
         ];
         $tabBody->setFilters($filters);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_fermer/_body_dossier_relance_usager_sans_reponse.html.twig');

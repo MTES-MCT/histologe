@@ -128,4 +128,72 @@ class AppExtensionTest extends WebTestCase
             '+31612345678',
         ];
     }
+
+    public function testGetFilters(): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        $appExtension = $container->get(AppExtension::class);
+
+        $filters = $appExtension->getFilters();
+
+        $filterNames = array_map(fn ($f) => $f->getName(), $filters);
+
+        $expectedFilters = [
+            'date',
+            'status_to_css',
+            'signalement_lien_declarant_occupant',
+            'image64',
+            'truncate_filename',
+            'clean_tagged_text',
+            'phone',
+            'badge_class',
+            'badge_relance_class',
+        ];
+
+        $this->assertEqualsCanonicalizing($expectedFilters, $filterNames);
+    }
+
+    /**
+     * @dataProvider provideBadgeClass
+     */
+    public function testGetBadgeClass(?int $days, string $expected): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        $appExtension = $container->get(AppExtension::class);
+
+        $this->assertSame($expected, $appExtension->getBadgeClass($days));
+    }
+
+    public function provideBadgeClass(): \Generator
+    {
+        yield 'More than 365 days' => [366, 'fr-badge--error'];
+        yield 'Exactly 365 days' => [365, 'fr-badge--warning'];
+        yield 'Between 181 and 364 days' => [200, 'fr-badge--warning'];
+        yield 'Null days' => [null, 'fr-badge--info'];
+        yield 'Between 91 and 180 days' => [100, 'fr-badge--info'];
+        yield 'Less than 91 days' => [30, 'fr-badge--success'];
+    }
+
+    /**
+     * @dataProvider provideRelanceBadgeClass
+     */
+    public function testGetRelanceBadgeClass(int $count, string $expected): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        $appExtension = $container->get(AppExtension::class);
+
+        $this->assertSame($expected, $appExtension->getRelanceBadgeClass($count));
+    }
+
+    public function provideRelanceBadgeClass(): \Generator
+    {
+        yield 'More than 10 relances' => [11, 'fr-badge--error'];
+        yield 'Exactly 10 relances' => [10, 'fr-badge--warning'];
+        yield 'Between 4 and 9 relances' => [5, 'fr-badge--warning'];
+        yield 'Less than 4 relances' => [2, 'fr-badge--new'];
+        yield 'Zero relance' => [0, 'fr-badge--new'];
+    }
 }
