@@ -16,6 +16,7 @@ use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
 use App\Service\ListFilters\SearchInterconnexion;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -212,10 +213,10 @@ class TabDataManager
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countDataKpi(array $territories): TabCountKpi
+    public function countDataKpi(array $territories, ?int $territoryId): TabCountKpi
     {
         return $this->tabCountKpiBuilder
-            ->setTerritories($territories)
+            ->setTerritories($territories, $territoryId)
             ->withTabCountKpi()
             ->build();
     }
@@ -343,81 +344,51 @@ class TabDataManager
     }
 
     /**
-     * @return TabDossier[]
+     * @throws \DateMalformedStringException
+     * @throws NonUniqueResultException
+     * @throws NoResultException
      */
-    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): array
+    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                demandeFermetureUsagerDaysAgo: 497,
-                demandeFermetureUsagerProfileDeclarant: 'OCCUPANT',
-                demandeFermetureUsagerAt: '07/12/2023'
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                demandeFermetureUsagerDaysAgo: 497,
-                demandeFermetureUsagerProfileDeclarant: 'OCCUPANT',
-                demandeFermetureUsagerAt: '07/12/2023'
-            ),
-        ];
+        $dossiers = $this->signalementRepository->findDossiersDemandesFermetureByUsager(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersDemandesFermetureByUsager(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
     }
 
     /**
-     * @return TabDossier[]
+     * @throws \DateMalformedStringException
+     * @throws Exception
      */
-    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): array
+    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                nbRelanceDossier: 14,
-                premiereRelanceDossierAt: '17/12/2024',
-                dernierSuiviPublicAt: '29/09/2024',
-                dernierTypeSuivi: 'Suivi automatique',
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                nbRelanceDossier: 14,
-                premiereRelanceDossierAt: '17/12/2024',
-                dernierSuiviPublicAt: '29/09/2024',
-                dernierTypeSuivi: 'Suivi automatique',
-            ),
-        ];
+        $dossiers = $this->signalementRepository->findSignalementsAvecRelancesSansReponse(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countSignalementsAvecRelancesSansReponse(tabQueryParameters: $tabQueryParameters);
+
+        return new TabDossierResult($dossiers, $count);
     }
 
     /**
-     * @return TabDossier[]
+     * @throws \DateMalformedStringException
      */
-    public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): array
+    public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: new \DateTimeImmutable('07/12/2024'),
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                clotureAt: new \DateTimeImmutable('05/06/2026 15:21'),
-            ),
-        ];
+        $dossiers = $this->signalementRepository->findDossiersFermePartenaireTous(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersFermePartenaireTous(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
     }
 }

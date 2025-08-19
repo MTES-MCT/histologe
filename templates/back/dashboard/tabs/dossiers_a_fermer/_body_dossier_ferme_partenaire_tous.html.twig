@@ -29,7 +29,7 @@
                             <div>' ~ item.adresse ~ '</div>
                     </div>',
                 ],
-                link: item.lien
+                link: path('back_signalement_view', {'uuid' : item.uuid})
             } %}
         {% else %}
             <p>Aucun dossier trouvé.</p>

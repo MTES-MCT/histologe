@@ -13,7 +13,7 @@ class TabQueryParameters
         public ?string $createdFrom = null,
         /** @var array<int|string> */
         public ?array $partenairesId = null,
-        #[Assert\Choice(['createdAt', 'closedAt', 'nbRelanceFeedbackUsager', 'nbDay', 'nomOccupant'])]
+        #[Assert\Choice(['createdAt', 'closedAt', 'nbRelanceFeedbackUsager', 'nbDay', 'nomOccupant', 'demandeFermetureUsagerAt'])]
         public ?string $sortBy = null,
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
         public ?string $orderBy = null,

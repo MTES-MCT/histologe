@@ -49,6 +49,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             sortBy: 'reference',
             direction: 'DESC',
             createdFrom: 'formulaire-pro',
+            relanceUsagerSansReponse: 'oui',
         );
 
         $expectedFilters = [
@@ -90,6 +91,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             'delays' => 30,
             'nouveau_suivi' => 'oui',
             'createdFrom' => 'formulaire-pro',
+            'relanceUsagerSansReponse' => true,
             'page' => 1,
             'maxItemsPerPage' => 25,
             'sortBy' => 'reference',

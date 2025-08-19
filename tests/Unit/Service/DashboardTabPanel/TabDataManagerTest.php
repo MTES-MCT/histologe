@@ -17,6 +17,8 @@ use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
 use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabDossier;
+use App\Service\DashboardTabPanel\TabDossierResult;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -182,5 +184,103 @@ class TabDataManagerTest extends TestCase
         $this->assertInstanceOf(\DateTimeImmutable::class, $result['LastSyncAt']);
         $this->assertEquals('2024-06-11 11:00:00', $result['firstErrorLastDayAt']->format('Y-m-d H:i:s'));
         $this->assertEquals('2024-06-10 10:00:00', $result['LastSyncAt']->format('Y-m-d H:i:s'));
+    }
+
+    public function testGetDossiersDemandesFermetureByUsagerReturnsExpectedResult(): void
+    {
+        $expectedDossiers = [['id' => 1], ['id' => 2]];
+        $expectedCount = 2;
+
+        $this->signalementRepository
+            ->method('findDossiersDemandesFermetureByUsager')
+            ->with(null)
+            ->willReturn($expectedDossiers);
+        $this->signalementRepository
+            ->method('countDossiersDemandesFermetureByUsager')
+            ->with(null)
+            ->willReturn($expectedCount);
+
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+
+        $result = $tabDataManager->getDossiersDemandesFermetureByUsager();
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
+    }
+
+    public function testGetDossiersRelanceSansReponseReturnsExpectedResult(): void
+    {
+        $expectedDossiers = [['id' => 10]];
+        $expectedCount = 1;
+        $params = new TabQueryParameters(null, null);
+
+        $this->signalementRepository
+            ->method('findSignalementsAvecRelancesSansReponse')
+            ->with($params)
+            ->willReturn($expectedDossiers);
+        $this->signalementRepository
+            ->method('countSignalementsAvecRelancesSansReponse')
+            ->with($params)
+            ->willReturn($expectedCount);
+
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+
+        $result = $tabDataManager->getDossiersRelanceSansReponse($params);
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
+    }
+
+    public function testGetDossiersFermePartenaireTousReturnsExpectedResult(): void
+    {
+        $expectedDossiers = [['id' => 99]];
+        $expectedCount = 1;
+        $params = new TabQueryParameters(null, null);
+
+        $this->signalementRepository
+            ->method('findDossiersFermePartenaireTous')
+            ->with($params)
+            ->willReturn($expectedDossiers);
+        $this->signalementRepository
+            ->method('countDossiersFermePartenaireTous')
+            ->with($params)
+            ->willReturn($expectedCount);
+
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+
+        $result = $tabDataManager->getDossiersFermePartenaireTous($params);
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
     }
 }

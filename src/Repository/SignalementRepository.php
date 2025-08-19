@@ -14,12 +14,14 @@ use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\View\ViewLatestIntervention;
+use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -544,6 +546,12 @@ class SignalementRepository extends ServiceEntityRepository
         }
         $qb->setParameter('statusList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
+
+        if (!empty($options['relanceUsagerSansReponse'])) {
+            $signalementIds = $this->getSignalementIdsAvecRelancesSansReponse();
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $signalementIds);
+        }
 
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
@@ -1879,5 +1887,292 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getSingleResult();
+    }
+
+    /**
+     * @return TabDossier[]
+     *
+     * @throws \DateMalformedStringException
+     */
+    public function findDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters): array
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: SignalementStatus::ACTIVE,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select("
+            s.uuid,
+            s.nomOccupant,
+            s.prenomOccupant,
+            s.reference,
+            CONCAT_WS(', ', s.adresseOccupant, CONCAT(s.cpOccupant, ' ', s.villeOccupant)) AS fullAddress,
+            MAX(a.answeredAt) AS lastClosedAt
+        ")
+            ->innerJoin('s.affectations', 'a')
+            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, s.adresseOccupant, s.cpOccupant, s.villeOccupant')
+            ->having('COUNT(a.id) = SUM(CASE WHEN a.statut = :closed THEN 1 ELSE 0 END)')
+            ->setParameter('closed', AffectationStatus::CLOSED);
+
+        if (null !== $tabQueryParameters
+            && 'closedAt' === $tabQueryParameters->sortBy
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $qb->orderBy('MAX(a.answeredAt)', $tabQueryParameters->orderBy);
+        } else {
+            $qb->orderBy('MAX(a.answeredAt)', 'ASC');
+        }
+
+        $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+
+        $rows = $qb->getQuery()->getArrayResult();
+
+        return array_map(
+            fn (array $row) => new TabDossier(
+                uuid: $row['uuid'],
+                nomDeclarant: $row['nomOccupant'],
+                prenomDeclarant: $row['prenomOccupant'],
+                reference: $row['reference'],
+                adresse: $row['fullAddress'],
+                clotureAt: $row['lastClosedAt'] ? new \DateTimeImmutable($row['lastClosedAt']) : null,
+            ),
+            $rows
+        );
+    }
+
+    public function countDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters): int
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $subQueryBuilder = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: SignalementStatus::ACTIVE,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $subQueryBuilder
+            ->select('s.uuid')
+            ->innerJoin('s.affectations', 'a')
+            ->groupBy('s.uuid')
+            ->having('COUNT(a.id) = SUM(CASE WHEN a.statut = :closed THEN 1 ELSE 0 END)')
+            ->setParameter('closed', AffectationStatus::CLOSED);
+
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+
+        $qb->select('COUNT(s2.uuid) AS nbDossiers')
+            ->from(Signalement::class, 's2')
+            ->where('s2.uuid IN ('.$subQueryBuilder->getDQL().')')
+            ->setParameters($subQueryBuilder->getParameters());
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return TabDossier[]
+     *
+     * @throws \DateMalformedStringException
+     */
+    public function findDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters): array
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: SignalementStatus::ACTIVE,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select("
+            s.uuid,
+            s.nomOccupant,
+            s.prenomOccupant,
+            s.reference,
+            CONCAT_WS(', ', s.adresseOccupant, CONCAT(s.cpOccupant, ' ', s.villeOccupant)) AS fullAddress,
+            MAX(su.createdAt) AS demandeFermetureUsagerAt,
+            DATEDIFF(CURRENT_DATE(), MAX(su.createdAt)) AS demandeFermetureUsagerDaysAgo,
+            CASE WHEN s.isNotOccupant = 1 THEN 'TIERS DÉCLARANT' ELSE 'OCCUPANT' END AS demandeFermetureUsagerProfileDeclarant
+        ")
+            ->innerJoin('s.suivis', 'su', 'WITH', 'su.category = :suivi_category_abandon_procedure')
+            ->andWhere('s.isUsagerAbandonProcedure = 1')
+            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, s.adresseOccupant, s.cpOccupant, s.villeOccupant, s.isNotOccupant')
+            ->orderBy('MAX(su.createdAt)', 'DESC')
+            ->setParameter('suivi_category_abandon_procedure', SuiviCategory::DEMANDE_ABANDON_PROCEDURE);
+
+        if (null !== $tabQueryParameters
+            && 'demandeFermetureUsagerAt' === $tabQueryParameters->sortBy
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $qb->orderBy('MAX(su.createdAt)', $tabQueryParameters->orderBy);
+        } else {
+            $qb->orderBy('MAX(su.createdAt)', 'ASC');
+        }
+
+        $qb->setMaxResults($tabQueryParameters?->limit ?? TabDossier::MAX_ITEMS_LIST);
+
+        $rows = $qb->getQuery()->getArrayResult();
+
+        return array_map(
+            fn (array $row) => new TabDossier(
+                uuid: $row['uuid'],
+                nomDeclarant: $row['nomOccupant'] ?? null,
+                prenomDeclarant: $row['prenomOccupant'] ?? null,
+                reference: $row['reference'] ?? null,
+                adresse: $row['fullAddress'] ?? null,
+                demandeFermetureUsagerDaysAgo: isset($row['demandeFermetureUsagerDaysAgo']) ? (int) $row['demandeFermetureUsagerDaysAgo'] : null,
+                demandeFermetureUsagerProfileDeclarant: $row['demandeFermetureUsagerProfileDeclarant'] ?? null,
+                demandeFermetureUsagerAt: null !== $row['demandeFermetureUsagerAt'] ? new \DateTimeImmutable($row['demandeFermetureUsagerAt']) : null
+            ),
+            $rows
+        );
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters): int
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: SignalementStatus::ACTIVE,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb
+            ->select('COUNT(DISTINCT s.uuid)')
+            ->innerJoin('s.suivis', 'su', 'WITH', 'su.category = :suivi_category_abandon_procedure')
+            ->andWhere('s.isUsagerAbandonProcedure = 1')
+            ->setParameter('suivi_category_abandon_procedure', SuiviCategory::DEMANDE_ABANDON_PROCEDURE);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function getBaseSignalementsAvecRelancesSansReponseSql(): string
+    {
+        return <<<SQL
+            FROM (
+                SELECT
+                    s.signalement_id,
+                    MIN(s.created_at) AS first_relance_at,
+                    COUNT(*) AS nb_relances,
+                    MAX(s.type) AS type_suivi
+                FROM suivi s
+                WHERE s.category = 'ASK_FEEDBACK_SENT'
+                GROUP BY s.signalement_id
+                HAVING COUNT(*) >= 3
+            ) relances_usager
+            INNER JOIN signalement si ON si.id = relances_usager.signalement_id
+            INNER JOIN (
+                SELECT
+                    s.signalement_id,
+                    MAX(s.created_at) AS shared_usager_at,
+                    MAX(s.type) AS type
+                FROM suivi s
+                WHERE s.is_public = 1
+                GROUP BY s.signalement_id
+            ) last_usager_suivi ON last_usager_suivi.signalement_id = si.id
+            WHERE
+                si.statut = 'ACTIVE'
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM suivi s2
+                    WHERE s2.signalement_id = relances_usager.signalement_id
+                      AND s2.type = 2
+                      AND s2.created_at > relances_usager.first_relance_at
+                )
+                AND (:territory_id IS NULL OR si.territory_id = :territory_id)
+        SQL;
+    }
+
+    /**
+     * @return TabDossier[]
+     *
+     * @throws \DateMalformedStringException
+     * @throws Exception
+     */
+    public function findSignalementsAvecRelancesSansReponse(TabQueryParameters $tabQueryParameters): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+            SELECT
+                si.uuid,
+                si.id,
+                si.reference,
+                si.nom_occupant,
+                si.prenom_occupant,
+                CONCAT_WS(', ', si.adresse_occupant, CONCAT(si.cp_occupant, ' ', si.ville_occupant)) AS fullAddress,
+                relances_usager.nb_relances,
+                relances_usager.first_relance_at,
+                last_usager_suivi.shared_usager_at AS last_suivi_shared_usager_at,
+                last_usager_suivi.type AS last_suivi_type
+        SQL;
+        $sql .= $this->getBaseSignalementsAvecRelancesSansReponseSql();
+
+        if ('ASC' === $tabQueryParameters->orderBy && 'nbRelanceFeedbackUsager' === $tabQueryParameters->sortBy) {
+            $sql .= ' ORDER BY relances_usager.nb_relances ASC, relances_usager.first_relance_at DESC LIMIT 5';
+        } else {
+            $sql .= ' ORDER BY relances_usager.nb_relances DESC, relances_usager.first_relance_at DESC LIMIT 5';
+        }
+
+        $rows = $conn->executeQuery($sql, ['territory_id' => $tabQueryParameters->territoireId])->fetchAllAssociative();
+
+        return array_map(/**
+         * @throws \DateMalformedStringException
+         */ function (array $row): TabDossier {
+            return new TabDossier(
+                uuid: $row['uuid'],
+                reference: $row['reference'],
+                nomDeclarant: $row['nom_occupant'],
+                prenomDeclarant: $row['prenom_occupant'],
+                adresse: $row['fullAddress'],
+                nbRelanceDossier: (int) $row['nb_relances'],
+                premiereRelanceDossierAt: new \DateTimeImmutable($row['first_relance_at']),
+                dernierSuiviPublicAt: new \DateTimeImmutable($row['last_suivi_shared_usager_at']),
+                dernierTypeSuivi: (string) $row['last_suivi_type'],
+            );
+        }, $rows);
+    }
+
+    public function countSignalementsAvecRelancesSansReponse(TabQueryParameters $tabQueryParameters): int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT COUNT(*) FROM (SELECT relances_usager.signalement_id '.$this->getBaseSignalementsAvecRelancesSansReponseSql().') AS signalements_count';
+
+        return (int) $conn->executeQuery($sql, ['territory_id' => $tabQueryParameters->territoireId])->fetchOne();
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getSignalementIdsAvecRelancesSansReponse(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT si.id '.$this->getBaseSignalementsAvecRelancesSansReponseSql();
+
+        return array_map('intval', $conn->executeQuery($sql, ['territory_id' => null])->fetchFirstColumn());
+    }
+
+    public function countAllDossiersAferme(User $user, ?int $territoryId): CountAfermer
+    {
+        $params = new TabQueryParameters($territoryId);
+
+        return new CountAfermer(
+            countDemandesFermetureByUsager: $this->countDossiersDemandesFermetureByUsager($params),
+            countDossiersRelanceSansReponse: $this->countSignalementsAvecRelancesSansReponse($params),
+            countDossiersFermePartenaireTous: $this->countDossiersFermePartenaireTous($params)
+        );
     }
 }

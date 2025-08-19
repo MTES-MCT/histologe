@@ -41,7 +41,8 @@ export const store = {
         statusAffectation: null,
         criticiteScoreMin: null,
         criticiteScoreMax: null,
-        motifCloture: null
+        motifCloture: null,
+        relanceUsagerSansReponse: null as 'oui' | null
       }
     },
     user: {

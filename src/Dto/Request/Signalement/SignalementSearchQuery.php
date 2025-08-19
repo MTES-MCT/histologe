@@ -118,6 +118,7 @@ class SignalementSearchQuery
         #[Assert\Choice(['formulaire-usager', 'formulaire-pro'])]
         private readonly ?string $createdFrom = null,
         private readonly ?string $showMySignalementsOnly = null,
+        private readonly ?string $relanceUsagerSansReponse = null,
     ) {
     }
 
@@ -291,6 +292,11 @@ class SignalementSearchQuery
         return $this->showMySignalementsOnly;
     }
 
+    public function getRelanceUsagerSansReponse(): ?string
+    {
+        return $this->relanceUsagerSansReponse;
+    }
+
     public function getPage(): ?int
     {
         return $this->page;
@@ -400,6 +406,7 @@ class SignalementSearchQuery
         $filters['motifCloture'] = $this->getMotifCloture();
         $filters['createdFrom'] = $this->getCreatedFrom();
         $filters['showMySignalementsOnly'] = 'oui' === $this->getShowMySignalementsOnly();
+        $filters['relanceUsagerSansReponse'] = 'oui' === $this->getRelanceUsagerSansReponse();
 
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;

@@ -123,6 +123,10 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     }
   }
 
+  if (key === 'relanceUsagerSansReponse') {
+    return 'Relances usager restées sans réponse'
+  }
+
   return buildStaticBadge(value)
 }
 

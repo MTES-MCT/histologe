@@ -40,10 +40,10 @@ readonly class TabDossier
         public ?string $messageByProfileDeclarant = null,
         public ?int $demandeFermetureUsagerDaysAgo = null,
         public ?string $demandeFermetureUsagerProfileDeclarant = null,
-        public ?string $demandeFermetureUsagerAt = null,
+        public ?\DateTimeImmutable $demandeFermetureUsagerAt = null,
         public ?int $nbRelanceDossier = null,
-        public ?string $premiereRelanceDossierAt = null,
-        public ?string $dernierSuiviPublicAt = null,
+        public ?\DateTimeImmutable $premiereRelanceDossierAt = null,
+        public ?\DateTimeImmutable $dernierSuiviPublicAt = null,
         public ?string $dernierTypeSuivi = null,
         public ?string $lien = null,
     ) {

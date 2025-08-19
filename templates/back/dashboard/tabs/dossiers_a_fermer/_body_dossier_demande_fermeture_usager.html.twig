@@ -13,8 +13,8 @@
                 Trier par
             </label>
             <select id="order-type-dossiers-demandes-fermeture-usager" class="fr-select" data-sort-body="dossiers-demandes-fermeture-usager">
-                <option value="closedAt-ASC" selected="selected">Demande la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
-                <option value="closedAt-DESC">Demande la plus récente (du plus récent au plus ancien)</option>
+                <option value="demandeFermetureUsagerAt-ASC" selected="selected">Demande la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
+                <option value="demandeFermetureUsagerAt-DESC">Demande la plus récente (du plus récent au plus ancien)</option>
             </select>
         </div>
     </header>
@@ -22,19 +22,21 @@
     <section class="fr-container--fluid">
         {% for item in items %}
             {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+            {% set days = item.demandeFermetureUsagerDaysAgo %}
+            {% set daysLabel = days is not null ? ' ' ~ (days < 2 ? 'JOUR' : 'JOURS') : '—' %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
-                    '<div><span class="fr-badge fr-badge--no-icon fr-badge--error">' ~ item.demandeFermetureUsagerDaysAgo  ~ ' JOURS</span></div>',
+                    '<div><span class="fr-badge fr-badge--no-icon ' ~ days|badge_class ~ '">' ~ item.demandeFermetureUsagerDaysAgo  ~ daysLabel   ~ '</span></div>',
                     '<div class="fr-text-label--blue-france">
                             <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                             <div>' ~ item.adresse ~ '</div>
                         </div>',
                     '<div>
                         <strong>' ~ item.demandeFermetureUsagerProfileDeclarant ~ '</strong><br>
-                        <span>' ~ item.demandeFermetureUsagerAt ~ '</span>
+                        <span>' ~ item.demandeFermetureUsagerAt|date('d/m/Y') ~ '</span>
                     </div>'
                 ],
-                link: item.lien
+                link: path('back_signalement_view', {'uuid' : item.uuid})
             } %}
         {% else %}
             <p>Aucun dossier trouvé.</p>
