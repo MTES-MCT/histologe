@@ -30,6 +30,8 @@ class DossiersMessagesApresFermetureTabBodyLoader extends AbstractTabBodyLoader
             ...$tabBody->getFilters(),
             'isMessagePostCloture' => 'oui',
             'showMySignalementsOnly' => '1' === $this->tabQueryParameters->mesDossiersMessagesUsagers ? 'oui' : null,
+            'sortBy' => 'lastSuiviAt',
+            'direction' => $this->tabQueryParameters->orderBy ?? 'ASC',
         ];
         $tabBody->setFilters($filters);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_messages_usagers/_body_dossier_messages_apres_fermeture.html.twig');
