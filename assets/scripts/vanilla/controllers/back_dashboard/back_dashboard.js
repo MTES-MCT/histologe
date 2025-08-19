@@ -1,4 +1,4 @@
-import initFilterTerritoryHandler from './filter_territory_handler';
+import initFilterHandler from './filter_handler';
 import initTabsLoader from './tabs_loader';
 import * as Sentry from '@sentry/browser';
 
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  initFilterTerritoryHandler();
+  initFilterHandler();
   initTabsLoader();
 
   window._paq = window._paq || [];

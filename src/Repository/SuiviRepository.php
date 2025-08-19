@@ -10,12 +10,16 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
+use App\Service\DashboardTabPanel\TabDossier;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -30,6 +34,7 @@ class SuiviRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         #[Autowire(env: 'LIMIT_DAILY_RELANCES_BY_REQUEST')]
         private int $limitDailyRelancesByRequest,
+        private readonly Security $security,
     ) {
         parent::__construct($registry, Suivi::class);
     }
@@ -605,5 +610,74 @@ class SuiviRepository extends ServiceEntityRepository
         $stmt = $connection->prepare($sql);
 
         return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function findSuivisUsagersPostCloture(
+        ?TabQueryParameters $tabQueryParameters = null, ): array
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createQueryBuilder('s')
+            ->leftJoin('s.signalement', 'signalement')
+            ->leftJoin('s.createdBy', 'user')
+            ->where('s.type = :type')
+            ->setParameter('type', Suivi::TYPE_USAGER_POST_CLOTURE); // TODO : utiliser category ?
+
+        if ($tabQueryParameters?->territoireId) {
+            $qb
+                ->andWhere('signalement.territory = :territoireId')
+                ->setParameter('territoireId', $tabQueryParameters->territoireId);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->andWhere('signalement.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        if (
+            $tabQueryParameters?->mesDossiersMessagesUsagers
+            && '1' === $tabQueryParameters->mesDossiersMessagesUsagers
+        ) {
+            $qb
+                ->innerJoin(
+                    UserSignalementSubscription::class,
+                    'uss',
+                    'WITH',
+                    'uss.signalement = signalement AND uss.user = :currentUser'
+                )
+                ->setParameter('currentUser', $user);
+        }
+
+        $qb->select(
+            'signalement.uuid AS uuid',
+            'signalement.nomOccupant AS nomOccupant',
+            'signalement.prenomOccupant AS prenomOccupant',
+            'signalement.reference AS reference',
+            "CONCAT_WS(', ', signalement.adresseOccupant, CONCAT(signalement.cpOccupant, ' ', signalement.villeOccupant)) AS adresse",
+            'signalement.closedAt AS clotureAt',
+            's.createdAt AS messageAt',
+            'DATE_DIFF(CURRENT_DATE(), s.createdAt) AS messageDaysAgo',
+            'user.nom AS messageSuiviByNom',
+            'user.prenom AS messageSuiviByPrenom',
+            "CASE
+                WHEN user.email = signalement.mailOccupant THEN 'OCCUPANT'
+                WHEN user.email = signalement.mailDeclarant THEN 'TIERS DECLARANT'
+                ELSE 'OCCUPANT OU DECLARANT'
+             END AS messageByProfileDeclarant"
+        );
+
+        if (null !== $tabQueryParameters
+            && in_array($tabQueryParameters->sortBy, ['createdAt'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $qb->orderBy('s.'.$tabQueryParameters->sortBy, $tabQueryParameters->orderBy);
+        } else {
+            $qb->orderBy('s.createdAt', 'ASC');
+        }
+
+        $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -76,8 +76,13 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(route: 'back_auto_affectation_rule_edit'))
         ;
 
+        $listRouteBOParameters = [];
+        if (!$this->currentRoute->isGranted(User::ROLE_ADMIN_PARTNER)) {
+            $listRouteBOParameters = ['mesDossiersMessagesUsagers' => '1', 'mesDossiersAverifier' => '1'];
+        }
+
         return (new MenuItem(label: 'root', route: ''))
-            ->addChild(new MenuItem(label: 'Tableau de bord', route: 'back_dashboard', icon: 'fr-icon-home-4-fill', roleGranted: User::ROLE_USER))
+            ->addChild(new MenuItem(label: 'Tableau de bord', route: 'back_dashboard', icon: 'fr-icon-home-4-fill', roleGranted: User::ROLE_USER, routeParameters: $listRouteBOParameters))
             ->addChild($signalementsSubMenu)
             ->addChild($donneesChiffreesSubMenu)
             ->addChild($adminToolsSubItem)

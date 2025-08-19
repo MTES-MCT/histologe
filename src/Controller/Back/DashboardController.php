@@ -28,11 +28,22 @@ class DashboardController extends AbstractController
         TabDataManager $tabDataManager,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
         #[MapQueryParameter('territoireId')] ?int $territoireId = null,
+        #[MapQueryParameter('mesDossiersMessagesUsagers')] ?string $mesDossiersMessagesUsagers = null,
+        #[MapQueryParameter('mesDossiersAverifier')] ?string $mesDossiersAverifier = null,
     ): Response {
         if ($featureNewDashboard) {
             $territories = [];
             /** @var User $user */
             $user = $this->getUser();
+
+            if ($user->isUserPartner() && (null === $mesDossiersMessagesUsagers || null === $mesDossiersAverifier)) {
+                return $this->redirectToRoute('back_dashboard', [
+                    'territoireId' => $territoireId,
+                    'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers ?? '1',
+                    'mesDossiersAverifier' => $mesDossiersAverifier ?? '1',
+                ]);
+            }
+
             $authorizedTerritories = $user->getPartnersTerritories();
 
             $territory = null;
@@ -50,6 +61,8 @@ class DashboardController extends AbstractController
                 'settings' => $widgetSettingsFactory->createInstanceFrom($user, $territory),
                 'tab_count_kpi' => $tabDataManager->countDataKpi($territories),
                 'territory' => $territory,
+                'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers,
+                'mesDossiersAverifier' => $mesDossiersAverifier,
             ]);
         }
 

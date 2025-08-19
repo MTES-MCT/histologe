@@ -17,6 +17,8 @@ class TabQueryParameters
         public ?string $sortBy = null,
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
         public ?string $orderBy = null,
+        public ?string $mesDossiersMessagesUsagers = null,
+        public ?string $mesDossiersAverifier = null,
     ) {
     }
 }

@@ -61,7 +61,7 @@ window.addEventListener('refreshSearchCheckboxContainerEvent', () => {
       event.stopPropagation();
     });
     closeBtn.addEventListener('click', function (event) {
-       searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+      searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
     });
     // reorder on uncheck
     checkboxesContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
