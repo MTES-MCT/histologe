@@ -738,8 +738,6 @@ class SuiviRepository extends ServiceEntityRepository
             )
         )')
         ->setParameter('askFeedbackCategory', SuiviCategory::ASK_FEEDBACK_SENT)
-        ->andWhere('s.category != :category')
-        ->setParameter('category', SuiviCategory::MESSAGE_USAGER_POST_CLOTURE)
         ->andWhere('signalement.statut = :statut')
         ->setParameter('statut', SignalementStatus::ACTIVE);
 
@@ -848,8 +846,6 @@ class SuiviRepository extends ServiceEntityRepository
         )');
         $qb->andWhere('signalement.statut = :statut')
            ->setParameter('statut', SignalementStatus::ACTIVE)
-           ->andWhere('s.category != :category')
-           ->setParameter('category', SuiviCategory::MESSAGE_USAGER_POST_CLOTURE)
            ->setParameter('askFeedbackCategory', SuiviCategory::ASK_FEEDBACK_SENT);
 
         return $qb;
