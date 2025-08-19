@@ -23,6 +23,7 @@ class VisiteRequest
         private readonly ?string $timezone = TimezoneProvider::TIMEZONE_EUROPE_PARIS,
         private readonly ?int $idPartner = null,
         private readonly ?string $externalOperator = null,
+        private readonly ?string $commentBeforeVisite = null,
         private readonly ?string $details = null,
         private readonly ?array $concludeProcedure = [],
         private readonly ?bool $isVisiteDone = null,
@@ -95,6 +96,11 @@ class VisiteRequest
     public function getDetails(): ?string
     {
         return $this->details;
+    }
+
+    public function getCommentBeforeVisite(): ?string
+    {
+        return $this->commentBeforeVisite;
     }
 
     /** @return array<mixed> */

@@ -52,6 +52,14 @@ class Visite
     public ?Partner $partner;
 
     #[OA\Property(
+        description: 'Informations sur la future visite à destination de l\'usager.',
+        type: 'string',
+        example: 'Merci de préparer votre bail.',
+        nullable: true
+    )]
+    public ?string $commentBeforeVisite;
+
+    #[OA\Property(
         description: 'Détails additionnels relatifs à l\'intervention.',
         type: 'string',
         example: 'Travaux à prévoir.',

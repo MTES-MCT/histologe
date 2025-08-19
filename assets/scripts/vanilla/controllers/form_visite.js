@@ -10,12 +10,15 @@ const localDateString = formatter.format(todayDate);
 
 dateFields.forEach((dateField) => {
   dateField.addEventListener('change', () => {
-    const fieldToToggle = dateField.dataset.fields;
+    const fieldToDisplay = dateField.dataset.displayfields;
+    const fieldToHide = dateField.dataset.hidefields;
 
     if (dateField.value && dateField.value <= localDateString) {
-      document.querySelector('#' + fieldToToggle).classList.remove('fr-hidden');
+      document.querySelector('#' + fieldToDisplay).classList.remove('fr-hidden');
+      document.querySelector('#' + fieldToHide).classList.add('fr-hidden');
     } else {
-      document.querySelector('#' + fieldToToggle).classList.add('fr-hidden');
+      document.querySelector('#' + fieldToDisplay).classList.add('fr-hidden');
+      document.querySelector('#' + fieldToHide).classList.remove('fr-hidden');
     }
   });
   dateField.dispatchEvent(new Event('change'));

@@ -79,6 +79,10 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
     public array $concludeProcedure = [];
 
     #[Assert\Type('string')]
+    #[OA\Property(description: 'Informations sur la future visite', example: '<p>Merci de prévoir...</p>')]
+    public ?string $commentBeforeVisite = null;
+
+    #[Assert\Type('string')]
     #[OA\Property(description: 'Détails de la visite', example: '<p>Compte rendu de visite...</p>')]
     public ?string $details = null;
 

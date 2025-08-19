@@ -68,13 +68,13 @@
     <div class="fr-col-12">
         <strong>Commentaire du partenaire :</strong>
         <div class="fr-highlight fr-background--white fr-py-3v fr-my-3v fr-ml-0">
-            <p>
-            {% if signalement.interventions is empty or intervention.details is empty %}
-                Non renseigné
+            {% if signalement.interventions is empty or (intervention.details is empty and intervention.commentBeforeVisite is empty) %}
+                <p>Non renseigné</p>
+            {% elseif intervention.commentBeforeVisite is not empty %}
+                {{ intervention.commentBeforeVisite|raw }}
             {% else %}
                 {{ intervention.details|raw }}
             {% endif %}
-            </p>
         </div>
     </div>
 </div>

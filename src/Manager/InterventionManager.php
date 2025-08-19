@@ -71,6 +71,7 @@ class InterventionManager extends AbstractManager
             ->setExternalOperator($visiteRequest->getExternalOperator())
             ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()))
             ->setType(InterventionType::VISITE)
+            ->setCommentBeforeVisite($visiteRequest->getCommentBeforeVisite())
             ->setStatus(Intervention::STATUS_PLANNED);
 
         $this->save($intervention);
@@ -135,7 +136,8 @@ class InterventionManager extends AbstractManager
         $intervention
             ->setPartner($partnerFound)
             ->setExternalOperator($visiteRequest->getExternalOperator())
-            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()));
+            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()))
+            ->setCommentBeforeVisite($visiteRequest->getCommentBeforeVisite());
         $this->save($intervention);
 
         if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
