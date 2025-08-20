@@ -888,7 +888,7 @@ class SuiviRepository extends ServiceEntityRepository
 
         return new CountDossiersMessagesUsagers(
             $this->countSuivisUsagersWithoutAskFeedbackBefore($user, $params),
-            $user->isTerritoryAdmin() ? $this->countSuivisPostCloture($user, $params) : 0,
+            ($user->isSuperAdmin() || $user->isTerritoryAdmin()) ? $this->countSuivisPostCloture($user, $params) : 0,
             $this->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, $params)
         );
     }
