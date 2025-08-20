@@ -148,6 +148,12 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
                         ->addViolation();
                 }
             }
+
+            if (null !== $object->commentBeforeVisite && '' !== $object->commentBeforeVisite) {
+                $context->buildViolation('Le champ "commentBeforeVisite" ne peut être renseigné que si la visite a été effectuée.')
+                    ->atPath('commentBeforeVisite')
+                    ->addViolation();
+            }
         }
     }
 }
