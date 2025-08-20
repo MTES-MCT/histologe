@@ -65,7 +65,7 @@
             {% endif %}
         </div>
     </div>
-    {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
+    {% if signalement.interventions is not empty and intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
         <div class="fr-col-12">
             <strong>Commentaire d'avant visite :</strong>
             <div class="fr-highlight fr-background--white fr-py-3v fr-my-3v fr-ml-0">
