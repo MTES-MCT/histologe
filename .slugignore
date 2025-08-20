@@ -2,7 +2,6 @@
 .env.sample
 .gitignore
 .php-cs-fixer.dist.php
-cypress.config.js
 docker-compose.yml
 docker-compose.tools.yml
 grumphp.yml
@@ -16,7 +15,6 @@ scripts/upload-s3.sh
 .docker
 .github
 assets
-cypress
 tools
 node_modules
 vendor/node
