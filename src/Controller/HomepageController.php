@@ -121,12 +121,6 @@ class HomepageController extends AbstractController
         return $this->redirect($this->sitesFacilesUrl.'cgu', Response::HTTP_MOVED_PERMANENTLY);
     }
 
-    #[Route('/cgu-agents', name: 'front_cgu_agents')]
-    public function cguPro(): Response
-    {
-        return $this->redirect($this->sitesFacilesUrl.'cgu-agents/', Response::HTTP_MOVED_PERMANENTLY);
-    }
-
     #[Route('/politique-de-confidentialite', name: 'politique_de_confidentialite')]
     public function politiqueConfidentialite(): Response
     {

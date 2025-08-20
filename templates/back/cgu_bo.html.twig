@@ -14,15 +14,11 @@
 
     <h2>2 – Objet</h2>
     <p>
-        {{ platform.name }} a pour objectif de permettre aux habitants de logements de repérer et de signaler les problèmes d’habitats,
-        mais également d’accélérer l’apport de solutions à ces problèmes.
+        {{ platform.name }} permet aux habitants de repérer et signaler leurs problèmes de logement et d’accélérer la mise en place
+        de solutions à ces problèmes de mal logement en mesurant la criticité du signalement comme une classe d’étiquette énergie.
         <br>
         Pour cela, {{ platform.name }} met à disposition des partenaires une interface d’administration (ci-après « Back-Office »)
         dans laquelle ils pourront gérer les signalements saisis par les usagers.
-        <br><br>
-        Il vise notamment à mesurer la criticité d’un signalement concernant son logement. La mesure de cette criticité,
-        établie comme une classe d’étiquette énergie, permettra d’identifier facilement les actions à mettre en œuvre
-        ainsi que leur degré de criticité.
     </p>
 
     <h2>3 – Définitions</h2>
@@ -31,8 +27,8 @@
             « L’usager » est la personne habitant un logement privé ou public qui signale un problème lié à son habitat.
         </li>
         <li>
-            « L’Administrateur» ou « L’agent » est la personne travaillant dans la structure (collectivité territoriale ou
-            services de l’Etat) habilitée à hiérarchiser les signalements et les transférer aux partenaires pour traitement des désordres.
+            « L’Administrateur» est la personne travaillant dans la structure (collectivité territoriale ou services de l’Etat)
+            habilitée à hiérarchiser les signalements et à les transférer aux partenaires pour traitement des désordres.
         </li>
         <li>
             « Les partenaires » sont les autres services de l’Etat, les collectivités territoriales, les opérateurs et
@@ -45,10 +41,10 @@
             « Le Back-Office » est l’interface d’administration mise à disposition des agents et partenaires.
         </li>
         <li>
-            « Le responsable de traitement » est la personne qui, au sens de l’article 4 du règlement UE) n°2016/679 du
-            Parlement européen et du Conseil du 27 avril 2016 relatif à la protection des personnes physiques à l’égard
-            du traitement des données à caractère personnel et à la libre circulation de ces données détermine les
-            finalités et les moyens des traitements de données à caractère personnel.
+            « Le responsable de traitement » est la personne qui, au sens de l’article 4 du règlement UE) n°2016/679
+            du Parlement européen et du Conseil du 27 avril 2016 relatif à la protection des personnes physiques
+            à l’égard du traitement des données à caractère personnel et à la libre circulation de ces données détermine
+            les finalités et les moyens des traitements de données à caractère personnel.
         </li>
         <li>
             « L’éditeur » est la startup d'État {{ platform.name }}.
@@ -62,12 +58,12 @@
     </p>
     <ul>
         <li>Aux partenaires des territoires sur lesquels la plateforme {{ platform.name }} est déployée.</li>
-        <li>Aux agents des territoires</li>
+        <li>Aux administrateurs des territoires</li>
     </ul>
 
     <h3>4.2 – Activation du compte partenaire</h3>
     <p>
-        Les agents créent les comptes partenaires sur le Back-Office à partir des informations suivantes :
+        Les administrateurs créent les comptes partenaires sur le Back-Office à partir des informations suivantes :
     </p>
     <ul>
         <li>Nom et prénom du partenaire</li>
@@ -79,7 +75,7 @@
         son inscription. La finalisation du compte partenaire est soumise à activation du compte par
         le partenaire et acceptation des présentes CGU.
         <br>
-        <strong>NB :</strong> la création des comptes partenaires peut-être confiée à l’éditeur.
+        NB : la création des comptes partenaires peut-être confiée à l’éditeur.
     </p>
 
     <h3>4.3 – Acceptation des CGU</h3>
@@ -92,69 +88,73 @@
     <h2>5 – Fonctionnalités</h2>
     <h3>5.1 – Accès aux signalements</h3>
     <p>
-        En accédant au Back-Office, chaque agent a accès à l’intégralité des signalements saisis par les 
+        En accédant au Back-Office, chaque administrateur a accès à l’intégralité des signalements saisis par les 
         usagers sur le territoire.
         <br>
-        En accédant au Back-Office, chaque partenaire a accès aux signalements qui lui sont affectés par les agents.
+        En accédant au Back-Office, chaque partenaire a accès aux signalements qui lui sont affectés par les administrateurs.
         <br><br>
-        Chaque signalement contient des informations saisies par les utilisateurs :
+        Chaque signalement contient des informations saisies par les usagers :
     </p>
     <ul>
         <li>Le type de problème rencontré dans le logement et sa gravité</li>
         <li>Les informations sur le logement : adresse, nombre d’habitants, type de logement.</li>
-        <li>Les coordonnées de l'utilisateur et du propriétaire du logement</li>
+        <li>Les coordonnées de l’usager et du propriétaire du logement</li>
         <li>Les documents joints au signalement</li>
     </ul>
     <p>
         Les signalements peuvent aussi contenir des informations complémentaires renseignées par les partenaires dans le Back-Office.
     </p>
     
-    <h3>5.2 – Transfert et mise à jour du signalement</h3>
+    <h3>5.2 – Saisie de signalements</h3>
     <p>
-        L’agent détermine la criticité du signalement en fonction des informations fournies par l'utilisateur.
+        A la demande d’un usager ou dans une optique de numérisation des services, l’administrateur
+        peut être amené à saisir un signalement depuis le Back-Office.
         <br>
-        Une fois la criticité déterminée, l’agent détermine le ou les partenaires ou services compétents.
+        De la même manière, le partenaire peut être amené à saisir un signalement depuis le Back-Office.
+        <br><br>
+        Chaque signalement peut contenir les informations suivantes :
+    </p>
+    <ul>
+        <li>Le type de problème rencontré dans le logement et sa gravité</li>
+        <li>Les informations sur le logement : adresse, nombre d’habitants, type de logement</li>
+        <li>Les coordonnées de l’usager et du propriétaire du logement</li>
+        <li>Les documents joints au signalement</li>
+    </ul>
+    
+    <h3>5.3 – Transfert et mise à jour du signalement</h3>
+    <p>
+        L’administrateur détermine la criticité du signalement en fonction des informations fournies par l’usager.
+        <br>
+        Une fois la criticité déterminée, l’administrateur détermine le ou les partenaires ou services compétents.
+        <br>
         Il transfère sur la plateforme et par e-mail au partenaire :
     </p>
     <ul>
-        <li>l’ensemble du signalement réalisé par l’Utilisateur,</li>
+        <li>l’ensemble du signalement réalisé par l'usager,</li>
         <li>l’évaluation de la criticité du signalement.</li>
     </ul>
     <p>
-        L’utilisateur est informé par courriel de cet envoi.
+        L’usager est informé par courriel de cet envoi.
         <br><br>
         Chaque partenaire concerné peut ensuite mettre à jour le signalement en y ajoutant des informations.
-        Ces informations sont visibles par tous les agents et les partenaires à qui le signalement a été transféré.
+        Ces informations sont visibles par tous les administrateurs et les partenaires à qui le signalement a été transféré.
         <br>
-        Sur décision du partenaire, ces mises à jour peuvent être envoyées par courriel à l’utilisateur.
+        Sur décision du partenaire, ces mises à jour peuvent être envoyées par courriel à l'usager.
     </p>
     
-    <h3>5.3 – Clôture du signalement</h3>
+    <h3>5.4 – Clôture du signalement</h3>
     <p>
         Chaque partenaire peut clôturer le signalement, signifiant qu’il a réalisé toutes les actions dans son
-        domaine de compétence pour apporter une solution au problème signalé par l’utilisateur.
+        domaine de compétence pour apporter une solution au problème signalé par l’usager.
         <br>
-        Les agents peuvent clôturer un signalement pour l’intégralité des partenaires concernés par le signalement.
+        Les administrateurs peuvent clôturer un signalement pour l’intégralité des partenaires concernés par le signalement.
         <br>
-        Les clôtures sont visibles par les partenaires concernés et les agents dans le Back-Office.
+        Les clôtures sont visibles par les partenaires concernés et les administrateurs dans le Back-Office.
         <br>
         Les partenaires concernés sont prévenus par e-mail et / ou par notification dans le Back-Office.
         <br>
-        L’utilisateur est prévenu par courriel de la clôture de son signalement.
+        L'usager est prévenu par courriel de la clôture de son signalement.
     </p>
-    
-    <h3>5.4 – Envoi de feedback</h3>
-    <p>
-        Les partenaires ont accès à une fonctionnalité d’envoi de feedback leur permettant de remonter à l’éditeur
-        les problèmes éventuels rencontrés sur la plateforme.
-        <br>
-        l’éditeur reçoit alors :
-    </p>
-    <ul>
-        <li>Une capture d’écran de la page depuis laquelle est saisie le feedback</li>
-        <li>La description du feedback renseignée par le partenaire</li>
-        <li>Le nom du partenaire envoyant le feedback</li>
-    </ul>
     
     <h3>5.5 – Autres fonctionnalités</h3>
     <p>
@@ -171,25 +171,25 @@
         <br>
         L’éditeur s’autorise à suspendre ou révoquer un compte et toutes les actions réalisées par ce biais, s’il estime
         que l’usage réalisé du service porte préjudice à son image ou ne correspond pas aux exigences de sécurité.
-        <br>
+        <br><br>
         L’éditeur fournit les moyens nécessaires et raisonnables pour assurer un accès continu, sans contrepartie
         financière, à la plateforme. Il se réserve la liberté de faire évoluer, de modifier ou de suspendre, sans
         préavis, la plateforme pour des raisons de maintenance ou pour tout autre motif jugé nécessaire.
-        <br>
+        <br><br>
         En cas de modification, et pour pouvoir continuer à exercer les droits d'accès au service qui lui sont dévolus,
         l’utilisateur devra valider la nouvelle version des lignes directrices, en cochant la case prévue à cet effet.
         Les présentes règles d’utilisation sont accessibles à tout moment par l’utilisateur sur la plateforme.
     </p>
     
-    <h3>6.2 – L’Agent</h3>
+    <h3>6.2 – L’Administrateur</h3>
     <p>
-        L’Agent s’assure de garder son mot de passe secret. Toute divulgation du mot de passe, quelle que soit sa forme,
+        L’Administrateur s’assure de garder son mot de passe secret. Toute divulgation du mot de passe, quelle que soit sa forme,
         est interdite. Il assume les risques liés à l’utilisation de son identifiant et mot de passe.
         <br>
-        Toute information transmise par l’Agent est de sa seule responsabilité. Il est rappelé que toute personne
+        Toute information transmise par l’Administrateur est de sa seule responsabilité. Il est rappelé que toute personne
         procédant à une fausse déclaration pour elle-même ou pour autrui s’expose à des sanctions.
         <br>
-        L’Agent s’engage à ne pas mettre en ligne de contenus ou informations contraires aux dispositions légales et
+        L’Administrateur s’engage à ne pas mettre en ligne de contenus ou informations contraires aux dispositions légales et
         réglementaires en vigueur. Tout contenu contraire à l’utilisation de la plateforme ou aux dispositions légales
         et réglementaires en vigueur sera supprimé, sans préavis.
     </p>

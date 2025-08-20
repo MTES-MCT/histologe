@@ -3,6 +3,29 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
+    <dialog aria-labelledby="fr-modal-cgu-bo-title" id="fr-modal-cgu-bo" class="fr-modal">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button aria-controls="fr-modal-cgu-bo" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <div>
+                                <p>
+                                    Les conditions générales d'utilisation du service ont été mises à jour le {{platform.cgu_current_version}}.
+                                </p>
+                            </div>
+
+                            {% include 'back/cgu_bo.html.twig' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+        
     <main class="fr-container fr-py-5w" id="content">
         <section class="fr-grid-row fr-grid-row--center">
             <header class="fr-callout bg-light fr-col-12">
@@ -54,6 +77,11 @@
                             Garder ma session ouverte pendant 1 mois.
                         </label>
                     </p>
+                </div>
+                <div class="fr-grid-row fr-grid-row--middle">
+                    <p class="fr-text--sm">
+                        En utilisant Signal Logement, vous acceptez les <button class="fr-link" type="button" data-fr-opened="false" aria-controls="fr-modal-cgu-bo">conditions d'utilisation</button> de la plateforme.
+                    <p>
                 </div>
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                 <div class="fr-form-group">

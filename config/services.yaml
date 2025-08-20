@@ -40,7 +40,7 @@ parameters:
     idoss_username: '%env(resolve:IDOSS_USERNAME)%'
     idoss_password: '%env(resolve:IDOSS_PASSWORD)%'
     feature_anonymize_expired_account: '%env(bool:FEATURE_ANONYMIZE_EXPIRED_ACCOUNT)%'
-    cgu_current_version: '05/06/2024'
+    cgu_current_version: '20/08/2025'
     delay_min_check_new_signalement_files: '%env(DELAY_MIN_CHECK_NEW_SIGNALEMENT_FILES)%'
     albert_api_key: '%env(ALBERT_API_KEY)%'
     standard_max_list_pagination: 50

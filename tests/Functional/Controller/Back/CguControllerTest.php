@@ -33,7 +33,7 @@ class CguControllerTest extends WebTestCase
             content: json_encode($payload)
         );
 
-        $this->assertEquals('05/06/2024', $user->getCguVersionChecked());
+        $this->assertEquals('20/08/2025', $user->getCguVersionChecked());
         $this->assertResponseIsSuccessful();
     }
 }
