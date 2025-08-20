@@ -37,9 +37,6 @@ services:
     ports:
       - 3007:3000
 
-  cypress:
-    image: cypress/base:latest
-
 volumes:
   dbmatomo:
   matomo:
