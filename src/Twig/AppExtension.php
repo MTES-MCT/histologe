@@ -54,7 +54,8 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         return match (true) {
             $days > 365 => 'fr-badge--error',
             $days >= 181 => 'fr-badge--warning',
-            null === $days, $days >= 91 => 'fr-badge--info',
+            $days >= 91 => 'fr-badge--new',
+            null === $days => 'fr-badge--info',
             default => 'fr-badge--success',
         };
     }
