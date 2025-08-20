@@ -483,12 +483,6 @@ class SearchFilter
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
-        if (!empty($filters['isMessageWithoutResponse']) && $this->featureNewDashboard) {
-            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, null);
-            $qb->andWhere('s.id IN (:signalement_ids)')
-                ->setParameter('signalement_ids', $signalementIds);
-        }
-
         return $qb;
     }
 
