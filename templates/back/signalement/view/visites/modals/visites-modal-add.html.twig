@@ -35,7 +35,8 @@
                                         <label class="fr-label" for="visite-add[date]">Date de la visite <span class="fr-text-default--error">*</span></label>
                                         <input type="date"
                                                class="fr-input add-fields-if-past-date"
-                                               data-fields="visite-add-past-date-complementary-fields"
+                                               data-displayfields="visite-add-past-date-complementary-fields"
+                                               data-hidefields="visite-add-future-date-complementary-fields"
                                                name="visite-add[date]" required>
                                     </div>
 
@@ -44,7 +45,8 @@
                                         <input type="time"
                                                class="fr-input"
                                                data-territory-timezone="{{ territory_timezone }}"
-                                               data-fields="visite-add-past-date-complementary-fields"
+                                               data-displayfields="visite-add-past-date-complementary-fields"
+                                               data-hidefields="visite-add-future-date-complementary-fields"
                                                name="visite-add[time]">
                                     </div>
                                     
@@ -81,6 +83,14 @@
                                     {% else %}
                                         <input type="hidden" name="visite-add[partner]" value="{{ app.user.partnerInTerritory(signalement.territory).id }}">
                                     {% endif %}
+
+                                    <div class="fr-input-group" id="visite-add-future-date-complementary-fields">
+                                        <label class="fr-label" for="visite-add[commentBeforeVisite]">
+                                            Commentaire (facultatif)
+                                            <span class="fr-hint-text">Le commentaire sera visible de l'usager</span>
+                                        </label>
+                                        <textarea class="fr-input fr-input--no-resize editor field-visite-details" id="visite-add[commentBeforeVisite]" name="visite-add[commentBeforeVisite]" minlength="10"></textarea>
+                                    </div>
 
                                     <div id="visite-add-past-date-complementary-fields" class="fr-hidden">
                                         {% set formType = 'add' %}

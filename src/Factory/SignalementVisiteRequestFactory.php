@@ -28,6 +28,7 @@ readonly class SignalementVisiteRequestFactory
             time: $visiteRequest->time,
             timezone: $signalement->getTimezone(),
             idPartner: $affectation->getPartner()->getId(),
+            commentBeforeVisite: $visiteRequest->commentBeforeVisite,
             details: $this->descriptionFilesBuilder->build($signalement, $visiteRequest),
             concludeProcedure: $visiteRequest->concludeProcedure,
             isVisiteDone: $visiteRequest->visiteEffectuee,

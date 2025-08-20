@@ -65,18 +65,29 @@
             {% endif %}
         </div>
     </div>
-    <div class="fr-col-12">
-        <strong>Commentaire du partenaire :</strong>
-        <div class="fr-highlight fr-background--white fr-py-3v fr-my-3v fr-ml-0">
-            <p>
-            {% if signalement.interventions is empty or intervention.details is empty %}
-                Non renseigné
-            {% else %}
-                {{ intervention.details|raw }}
-            {% endif %}
-            </p>
+    {% if signalement.interventions is not empty and intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
+        <div class="fr-col-12">
+            <strong>Commentaire d'avant visite :</strong>
+            <div class="fr-highlight fr-background--white fr-py-3v fr-my-3v fr-ml-0">
+                {% if signalement.interventions is not empty and intervention.commentBeforeVisite is not empty %}
+                    <p>Non renseigné</p>
+                {% else %}
+                    {{ intervention.commentBeforeVisite|raw }}
+                {% endif %}
+            </div>
         </div>
-    </div>
+    {% else %}
+        <div class="fr-col-12">
+            <strong>Commentaire du partenaire :</strong>
+            <div class="fr-highlight fr-background--white fr-py-3v fr-my-3v fr-ml-0">
+                {% if signalement.interventions is empty or intervention.details is empty %}
+                    <p>Non renseigné</p>
+                {% else %}
+                    {{ intervention.details|raw }}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 </div>
 
 {% if intervention is defined and isForBO is defined and isForBO %}

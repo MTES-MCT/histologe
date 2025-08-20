@@ -56,7 +56,7 @@ enum SuiviCategory: string
             'INTERVENTION_IS_CREATED' => 'Visite programmée',
             'INTERVENTION_IS_CANCELED' => 'Annulation de la visite programmée',
             'INTERVENTION_IS_ABORTED' => 'La visite n\'a pas pu avoir lieu',
-            'INTERVENTION_HAS_CONCLUSION' => 'Conclusion da visite ajoutée',
+            'INTERVENTION_HAS_CONCLUSION' => 'Conclusion de visite ajoutée',
             'INTERVENTION_HAS_CONCLUSION_EDITED' => 'Edition de la conclusion de visite',
             'INTERVENTION_IS_RESCHEDULED' => 'Changement de date de visite',
             'INTERVENTION_PLANNED_REMINDER' => 'Rappel de visite envoyé',

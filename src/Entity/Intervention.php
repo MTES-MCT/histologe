@@ -59,6 +59,9 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     private ?string $status = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $commentBeforeVisite = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $details = null;
 
     /** @var array<ProcedureType> $concludeProcedure */
@@ -207,6 +210,18 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     public function setStatus(string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCommentBeforeVisite(): ?string
+    {
+        return $this->commentBeforeVisite;
+    }
+
+    public function setCommentBeforeVisite(?string $commentBeforeVisite): self
+    {
+        $this->commentBeforeVisite = $commentBeforeVisite;
 
         return $this;
     }

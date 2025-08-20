@@ -79,6 +79,10 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
     public array $concludeProcedure = [];
 
     #[Assert\Type('string')]
+    #[OA\Property(description: 'Informations sur la future visite', example: '<p>Merci de prévoir...</p>')]
+    public ?string $commentBeforeVisite = null;
+
+    #[Assert\Type('string')]
     #[OA\Property(description: 'Détails de la visite', example: '<p>Compte rendu de visite...</p>')]
     public ?string $details = null;
 
@@ -143,6 +147,12 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
                         ->atPath($fieldName)
                         ->addViolation();
                 }
+            }
+
+            if (null !== $object->commentBeforeVisite && '' !== $object->commentBeforeVisite) {
+                $context->buildViolation('Le champ "commentBeforeVisite" ne peut être renseigné que si la visite n\'a pas encore été effectuée.')
+                    ->atPath('commentBeforeVisite')
+                    ->addViolation();
             }
         }
     }

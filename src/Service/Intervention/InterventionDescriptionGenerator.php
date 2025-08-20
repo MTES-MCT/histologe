@@ -33,9 +33,10 @@ class InterventionDescriptionGenerator
         $today = new \DateTimeImmutable();
         $isInPast = $today > $intervention->getScheduledAt()
             && Intervention::STATUS_DONE === $intervention->getStatus();
+        $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
 
         return \sprintf(
-            '%s %s : une %s du logement situé %s %s le %s.<br>La %s %s par %s.',
+            '%s %s : une %s du logement situé %s %s le %s.<br>La %s %s par %s.%s',
             ucfirst($labelVisite),
             $isInPast ? 'réalisée' : 'programmée',
             $labelVisite,
@@ -44,21 +45,27 @@ class InterventionDescriptionGenerator
             $intervention->getScheduledAt()->format('d/m/Y'),
             $labelVisite,
             $isInPast ? 'a été réalisée' : 'sera effectuée',
-            $partnerName
+            $partnerName,
+            $commentBeforeVisite ? '<br>Informations complémentaires : '.$commentBeforeVisite : '',
         );
     }
 
     public static function buildDescriptionVisiteUpdated(Intervention $intervention): string
     {
         $labelVisite = strtolower($intervention->getType()->label());
+        $today = new \DateTimeImmutable();
+        $isInPast = $today > $intervention->getScheduledAt()
+            && Intervention::STATUS_DONE === $intervention->getStatus();
+        $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
 
         // Pour l'instant le seul besoin remonté par SISH est celui de la modification de date
         // Mais l'opérateur pourrait aussi être modifié (que ce soit ARS ou un opérateur externe)
         return \sprintf(
-            'La date de %s dans %s a été modifiée ; La nouvelle date est le %s.',
+            'La date de %s dans %s a été modifiée ; La nouvelle date est le %s.%s',
             $labelVisite,
             EsaboraSISHService::NAME_SI,
             $intervention->getScheduledAt()->format('d/m/Y'),
+            $commentBeforeVisite ? '<br>Informations complémentaires : '.$commentBeforeVisite : '',
         );
     }
 

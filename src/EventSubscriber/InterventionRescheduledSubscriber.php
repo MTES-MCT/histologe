@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Event\InterventionRescheduledEvent;
 use App\Manager\SuiviManager;
@@ -33,6 +34,10 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getIntervention();
         if (InterventionType::VISITE === $intervention->getType()) {
+            $today = new \DateTimeImmutable();
+            $isInPast = $today > $intervention->getScheduledAt()
+                && Intervention::STATUS_DONE === $intervention->getStatus();
+            $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
             $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $description = 'Changement de date de visite : la visite du logement initialement prévue le ';
             $description .= $event->getPreviousDate()->format('d/m/Y');
@@ -40,6 +45,9 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $description .= $intervention->getScheduledAt()->format('d/m/Y').'.';
             $description .= '<br>';
             $description .= 'La visite sera effectuée par '.$partnerName.'.';
+            if (!empty($commentBeforeVisite)) {
+                $description .= '<br>Informations complémentaires : '.$commentBeforeVisite;
+            }
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
