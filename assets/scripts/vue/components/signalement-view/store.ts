@@ -40,6 +40,7 @@ export const store = {
         isMessagePostCloture: null as 'oui' | null,
         isNouveauMessage: null as 'oui' | null,
         isMessageWithoutResponse: null as 'oui' | null,
+        isDossiersSansActivite: null as 'oui' | null,
         showWithoutAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,

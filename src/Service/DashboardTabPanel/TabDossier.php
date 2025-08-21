@@ -7,6 +7,7 @@ use App\Entity\Enum\ProfileDeclarant;
 readonly class TabDossier
 {
     public const int MAX_ITEMS_LIST = 5;
+    public const int MAX_ITEMS_LIST_LONG = 10;
     public const string CREATED_FROM_FORMULAIRE_USAGER = 'formulaire-usager';
     public const string CREATED_FROM_FORMULAIRE_PRO = 'formulaire-pro';
 
@@ -26,7 +27,7 @@ readonly class TabDossier
         public ?\DateTimeImmutable $clotureAt = null,
         public ?string $statut = null,
         public ?string $derniereAction = null,
-        public ?string $derniereActionAt = null,
+        public ?\DateTimeImmutable $derniereActionAt = null,
         public ?string $derniereActionTypeSuivi = null,
         public ?int $derniereActionPartenaireDaysAgo = null,
         public ?string $derniereActionPartenaireNom = null,
