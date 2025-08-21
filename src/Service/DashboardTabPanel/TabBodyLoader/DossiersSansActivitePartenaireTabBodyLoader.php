@@ -19,7 +19,17 @@ class DossiersSansActivitePartenaireTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $tabBody->setData($this->tabDataManager->getDossiersAVerifierSansActivitePartenaires($this->tabQueryParameters));
+        $result = $this->tabDataManager->getDossiersAVerifierSansActivitePartenaires($this->tabQueryParameters);
+        $tabBody->setData($result->dossiers);
+        $tabBody->setCount($result->count);
+        $filters = [
+            ...$tabBody->getFilters(),
+            'isDossiersSansActivite' => 'oui',
+            'showMySignalementsOnly' => '1' === $this->tabQueryParameters->mesDossiersAverifier ? 'oui' : null,
+            'sortBy' => 'lastSuiviAt',
+            'direction' => $this->tabQueryParameters->orderBy ?? 'ASC',
+        ];
+        $tabBody->setFilters($filters);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_verifier/_body_dossier_sans_activite_partenaire.html.twig');
     }
 }

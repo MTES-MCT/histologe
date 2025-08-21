@@ -135,7 +135,10 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'isMessageWithoutResponse') {
     return 'Messages usagers sans réponse'
   }
-
+  if (key === 'isDossiersSansActivite') {
+    return 'Dossiers sans activité partenaire'
+  }
+    
   return buildStaticBadge(value)
 }
 

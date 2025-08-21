@@ -73,7 +73,7 @@ class TabCountKpiBuilderTest extends TestCase
 
         $tabCountKpi = $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
-            ->setMesDossiers($mesDossiers)
+            ->setMesDossiers($mesDossiers, $mesDossiers)
             ->withTabCountKpi()
             ->build();
 
@@ -122,7 +122,7 @@ class TabCountKpiBuilderTest extends TestCase
 
         $tabCountKpi = $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
-            ->setMesDossiers($mesDossiers)
+            ->setMesDossiers($mesDossiers, $mesDossiers)
             ->withTabCountKpi()
             ->build();
 

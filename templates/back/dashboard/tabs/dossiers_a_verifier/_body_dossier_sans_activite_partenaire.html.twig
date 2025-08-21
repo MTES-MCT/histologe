@@ -14,8 +14,8 @@
                 Trier par
             </label>
             <select id="order-type-dossiers-sans-activite-partenaire" class="fr-select" data-sort-body="dossiers-sans-activite-partenaire">
-                <option value="nbDay-ASC" selected="selected">Activité la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
-                <option value="nbDay-DESC">Activité la plus récente (du plus récent au plus ancien)</option>
+                <option value="createdAt-ASC" selected="selected">Activité la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
+                <option value="createdAt-DESC">Activité la plus récente (du plus récent au plus ancien)</option>
             </select>
         </div>
     </header>
@@ -25,12 +25,12 @@
             {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
-                    '<div><span class="fr-badge fr-badge--no-icon fr-badge--error">' ~ item.derniereActionPartenaireDaysAgo  ~ ' JOURS</span></div>',
+                    '<div><span class="fr-badge fr-badge--no-icon ' ~ (item.derniereActionPartenaireDaysAgo | badge_class) ~ '">' ~ item.derniereActionPartenaireDaysAgo  ~ ' JOURS</span></div>',
                     '<div class="fr-text-label--blue-france">
                             <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                             <div>' ~ item.adresse ~ '</div>
                         </div>',
-                    '<div><strong>' ~ item.derniereActionTypeSuivi ~ '</strong><br> le ' ~ item.derniereActionAt ~ '</div>',
+                    '<div><strong>' ~ item.derniereActionTypeSuivi ~ '</strong><br> le ' ~ item.derniereActionAt|date('d/m/Y à H:i') ~ '</div>',
                     '<div>
                         <strong>' ~ item.derniereActionPartenairePrenomAgent ~ ' ' ~ item.derniereActionPartenaireNomAgent ~ '</strong><br>
                         <span>' ~ item.derniereActionPartenaireNom ~ '</span>

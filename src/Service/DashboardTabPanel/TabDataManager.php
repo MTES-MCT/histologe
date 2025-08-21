@@ -65,7 +65,7 @@ class TabDataManager
                 adresse: $signalement['adresseOccupant'],
                 statut: $signalement['statut']->label(),
                 derniereAction: $derniereAction,
-                derniereActionAt: $signalement['suiviCreatedAt']->format('d/m/Y'),
+                derniereActionAt: $signalement['suiviCreatedAt'],
                 actionDepuis: $signalement['hasNewerSuivi'] ? 'OUI' : 'NON',
                 lien: '/bo/signalements/'.$signalement['uuid'],
             );
@@ -213,11 +213,11 @@ class TabDataManager
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countDataKpi(array $territories, ?int $territoryId, ?string $mesDossiersMessagesUsagers): TabCountKpi
+    public function countDataKpi(array $territories, ?int $territoryId, ?string $mesDossiersMessagesUsagers, ?string $mesDossiersAverifier): TabCountKpi
     {
         return $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
-            ->setMesDossiers($mesDossiersMessagesUsagers)
+            ->setMesDossiers($mesDossiersMessagesUsagers, $mesDossiersAverifier)
             ->withTabCountKpi()
             ->build();
     }
@@ -321,36 +321,35 @@ class TabDataManager
     }
 
     /**
-     * @return TabDossier[]
+     * @throws NonUniqueResultException
+     * @throws NoResultException
      */
-    public function getDossiersAVerifierSansActivitePartenaires(?TabQueryParameters $tabQueryParameters = null): array
+    public function getDossiersAVerifierSansActivitePartenaires(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        return [
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                derniereActionAt: '01/12/2023',
-                derniereActionTypeSuivi: 'Suivi interne',
-                derniereActionPartenaireDaysAgo: 497,
-                derniereActionPartenaireNom: 'Commune de Vandoeuvre',
-                derniereActionPartenaireNomAgent: 'Dumas',
-                derniereActionPartenairePrenomAgent: 'Mireille',
-            ),
-            new TabDossier(
-                nomDeclarant: 'Abdallah',
-                prenomDeclarant: 'Karim',
-                reference: '#2022-150',
-                adresse: '8 rue du Péronnet, 63390 Vernaison',
-                derniereActionAt: '01/12/2023',
-                derniereActionTypeSuivi: 'Suivi interne',
-                derniereActionPartenaireDaysAgo: 497,
-                derniereActionPartenaireNom: 'Commune de Vandoeuvre',
-                derniereActionPartenaireNomAgent: 'Dumas',
-                derniereActionPartenairePrenomAgent: 'Mireille',
-            ),
-        ];
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $signalements = $this->signalementRepository->findSignalementsSansSuiviPartenaireDepuis60Jours(user: $user, params: $tabQueryParameters);
+        $tabDossiers = [];
+        for ($i = 0; $i < \count($signalements); ++$i) {
+            $signalement = $signalements[$i];
+            $tabDossiers[] = new TabDossier(
+                nomDeclarant: $signalement['nomOccupant'],
+                prenomDeclarant: $signalement['prenomOccupant'],
+                reference: '#'.$signalement['reference'],
+                adresse: $signalement['adresse'],
+                derniereActionAt: new \DateTimeImmutable($signalement['dernierSuiviAt']),
+                derniereActionPartenaireDaysAgo: $signalement['nbJoursDepuisDernierSuivi'],
+                derniereActionTypeSuivi: SuiviCategory::from($signalement['suiviCategory'])->label(),
+                derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
+                derniereActionPartenaireNomAgent: $signalement['derniereActionPartenaireNomAgent'] ?? 'N/A',
+                derniereActionPartenairePrenomAgent: $signalement['derniereActionPartenairePrenomAgent'] ?? 'N/A',
+                lien: '/bo/signalements/'.$signalement['uuid'],
+            );
+        }
+
+        $count = $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours(user: $user, params: $tabQueryParameters);
+
+        return new TabDossierResult($tabDossiers, $count);
     }
 
     /**

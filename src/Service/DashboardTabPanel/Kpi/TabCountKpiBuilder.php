@@ -5,6 +5,7 @@ namespace App\Service\DashboardTabPanel\Kpi;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -17,6 +18,7 @@ class TabCountKpiBuilder
     private array $territories = [];
     private ?int $territoryId = null;
     private ?string $mesDossiersMessagesUsagers = null;
+    private ?string $mesDossiersAverifier = null;
 
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
@@ -36,9 +38,10 @@ class TabCountKpiBuilder
         return $this;
     }
 
-    public function setMesDossiers(?string $mesDossiersMessagesUsagers): self
+    public function setMesDossiers(?string $mesDossiersMessagesUsagers, ?string $mesDossiersAverifier): self
     {
         $this->mesDossiersMessagesUsagers = $mesDossiersMessagesUsagers;
+        $this->mesDossiersAverifier = $mesDossiersAverifier;
 
         return $this;
     }
@@ -49,6 +52,7 @@ class TabCountKpiBuilder
      */
     public function withTabCountKpi(): static
     {
+        $params = new TabQueryParameters(territoireId: $this->territoryId, mesDossiersMessagesUsagers: $this->mesDossiersMessagesUsagers, mesDossiersAverifier: $this->mesDossiersAverifier);
         /** @var User $user */
         $user = $this->security->getUser();
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
@@ -58,11 +62,13 @@ class TabCountKpiBuilder
         }
         $countDossiersAFermer = $this->signalementRepository->countAllDossiersAferme($user, $this->territoryId);
         $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($user, $this->territoryId, $this->mesDossiersMessagesUsagers);
+        $countDossiersAVerifier = $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
 
         $this->tabCountKpi = new TabCountKpi(
             countNouveauxDossiers: $countNouveauxDossiers->total(),
             countDossiersAFermer: $countDossiersAFermer->total(),
             countDossiersMessagesUsagers: $countDossiersMessagesUsagers->total(),
+            countDossiersAVerifier: $countDossiersAVerifier,
         );
 
         return $this;
