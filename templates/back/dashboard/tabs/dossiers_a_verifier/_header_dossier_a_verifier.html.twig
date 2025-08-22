@@ -1,9 +1,13 @@
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-md-8 fr-pr-10v">
         <h2 class="fr-mb-3v tab-panel-title-with-icon">Dossiers à vérifier</h2>
-        <p class="fr-mt-1v fr-ml-1v fr-text--lg">Consultez les dossiers en cours, sans activité partenaire depuis au
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+            <p class="fr-mt-1v fr-ml-1v fr-text--lg">Consultez les dossiers en cours, sans activité partenaire depuis au
             moins 60 jours. Accédez aux dossiers, relancez les partenaires ou effectuez les actions nécessaires à
             l'avancée du dossier.</p>
+        {% else %}
+            <p class="fr-mt-1v fr-ml-1v fr-text--lg">Consultez les dossiers en cours où vous n'avez effectué aucune action depuis au moins 60 jours. Accédez aux dossiers et effectuez les actions nécessaires à leur avancée ! </p>
+        {% endif %}
     </div>
     <div class="fr-col-md-4 fr-text--right">
         {% set isPressed = mesDossiersAverifier is not null
@@ -18,5 +22,25 @@
         >
             Afficher uniquement mes dossiers
         </button>
+    </div>
+
+</div>
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12">
+        {{ form_start(formSearchAverifier, {'method': 'get'}) }}
+
+        {{ form_errors(formSearchAverifier) }}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-6 fr-col-md-4">
+                {{ form_row(formSearchAverifier.queryCommune) }}
+            </div>
+            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                <div class="fr-col-6 fr-col-md-4">
+                    {{ form_row(formSearchAverifier.partners) }}
+                </div>
+            {% endif %}
+        </div>
+
+        {{ form_end(formSearchAverifier) }}
     </div>
 </div>

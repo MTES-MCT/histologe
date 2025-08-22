@@ -2214,9 +2214,6 @@ class SignalementRepository extends ServiceEntityRepository
             'SIGNALEMENT_EDITED_BO',
             'SIGNALEMENT_IS_ACTIVE',
             'SIGNALEMENT_IS_REOPENED',
-            'AFFECTATION_IS_ACCEPTED',
-            'AFFECTATION_IS_REFUSED',
-            'AFFECTATION_IS_CLOSED',
             'INTERVENTION_IS_CREATED',
             'INTERVENTION_IS_CANCELED',
             'INTERVENTION_IS_ABORTED',
@@ -2226,18 +2223,23 @@ class SignalementRepository extends ServiceEntityRepository
             'NEW_DOCUMENT',
         ];
 
-        // On transforme le tableau en string SQL
+        $paramsToBind = [];
+        $types = [];
         $categoryList = "'".implode("','", $categories)."'";
         $sql = <<<SQL
             FROM signalement si
             INNER JOIN suivi s ON s.signalement_id = si.id
         SQL;
-
-        if ($withJoins) {
+        if ($withJoins || ($params->partners && count($params->partners) > 0)) {
             $sql .= <<<SQL
                 LEFT JOIN user u ON u.id = s.created_by_id
                 LEFT JOIN user_partner up ON up.user_id = u.id
                 LEFT JOIN partner p ON p.id = up.partner_id
+            SQL;
+        }
+        if ($user->isPartnerAdmin() || $user->isUserPartner()) {
+            $sql .= <<<SQL
+                LEFT JOIN affectation aff ON aff.signalement_id = si.id
             SQL;
         }
 
@@ -2255,6 +2257,11 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
             $sql .= ' AND aff.partner_id IN (:partners)';
+            $paramsToBind['partners'] = array_map(
+                fn ($partner) => $partner->getId(),
+                $user->getPartners()->toArray()
+            );
+            $types['partners'] = ArrayParameterType::INTEGER;
         }
 
         if ($params->territoireId) {
@@ -2271,16 +2278,27 @@ class SignalementRepository extends ServiceEntityRepository
               AND uss.user_id = '.$user->getId().'
         )';
         }
-        $paramsToBind = [
-            'dateLimit' => (new \DateTimeImmutable('-60 days'))->format('Y-m-d H:i:s'),
-        ];
+
+        $paramsToBind['dateLimit'] = (new \DateTimeImmutable('-60 days'))->format('Y-m-d H:i:s');
+
+        if ($params->partners && count($params->partners) > 0) {
+            $sql .= ' AND p.id IN (:partnersId)';
+            $paramsToBind['partnersId'] = $params->partners;
+            $types['partnersId'] = ArrayParameterType::INTEGER;
+        }
+        if ($params->queryCommune) {
+            $query = '%'.$params->queryCommune.'%';
+            $sql .= ' AND (si.cp_occupant LIKE :query OR si.ville_occupant LIKE :query)';
+            $paramsToBind['query'] = $query;
+        }
 
         if (!empty($excludedIds)) {
             $sql .= ' AND si.id NOT IN (:excludedIds)';
             $paramsToBind['excludedIds'] = $excludedIds;
+            $types['excludedIds'] = ArrayParameterType::INTEGER;
         }
 
-        return [$sql, $paramsToBind];
+        return [$sql, $paramsToBind, $types];
     }
 
     public function countSignalementsSansSuiviPartenaireDepuis60Jours(User $user, ?TabQueryParameters $params): int
@@ -2288,17 +2306,8 @@ class SignalementRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = 'SELECT COUNT(DISTINCT si.id) ';
-        [$sqlPrincipal, $paramsToBind] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params);
+        [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params);
         $sql .= $sqlPrincipal;
-
-        $params = [
-            'dateLimit' => (new \DateTimeImmutable('-60 days'))->format('Y-m-d H:i:s'),
-        ];
-
-        $types = [];
-        if (!empty($paramsToBind['excludedIds'])) {
-            $types['excludedIds'] = ArrayParameterType::INTEGER;
-        }
 
         return (int) $conn->executeQuery($sql, $paramsToBind, $types)->fetchOne();
     }
@@ -2311,10 +2320,10 @@ class SignalementRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = 'SELECT DISTINCT si.id ';
-        [$sqlPrincipal, $paramsToBind] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params);
+        [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params);
         $sql .= $sqlPrincipal;
 
-        return array_map('intval', $conn->executeQuery($sql, $paramsToBind)->fetchFirstColumn());
+        return array_map('intval', $conn->executeQuery($sql, $paramsToBind, $types)->fetchFirstColumn());
     }
 
     /**
@@ -2339,7 +2348,7 @@ class SignalementRepository extends ServiceEntityRepository
             u.nom AS derniereActionPartenaireNomAgent,
             u.prenom AS derniereActionPartenairePrenomAgent
         SQL;
-        [$sqlPrincipal, $paramsToBind] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params, true);
+        [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params, true);
         $sql .= $sqlPrincipal;
 
         if ($params && in_array($params->sortBy, ['createdAt'], true)
@@ -2351,11 +2360,6 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $sql .= ' LIMIT '.TabDossier::MAX_ITEMS_LIST_LONG;
-
-        $types = [];
-        if (!empty($paramsToBind['excludedIds'])) {
-            $types['excludedIds'] = ArrayParameterType::INTEGER;
-        }
 
         return $conn->executeQuery($sql, $paramsToBind, $types)->fetchAllAssociative();
     }
