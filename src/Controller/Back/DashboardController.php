@@ -4,12 +4,15 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Factory\WidgetSettingsFactory;
+use App\Form\SearchDashboardAverifierType;
 use App\Repository\TerritoryRepository;
 use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\ListFilters\SearchDashboardAverifier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,6 +26,7 @@ class DashboardController extends AbstractController
      */
     #[Route('/', name: 'back_dashboard')]
     public function index(
+        Request $request,
         TerritoryRepository $territoryRepository,
         WidgetSettingsFactory $widgetSettingsFactory,
         TabDataManager $tabDataManager,
@@ -56,6 +60,17 @@ class DashboardController extends AbstractController
                 $territories = $authorizedTerritories;
             }
 
+            $searchDashboardAverifier = new SearchDashboardAverifier($user);
+            $formSearchAverifier = $this->createForm(SearchDashboardAverifierType::class, $searchDashboardAverifier, [
+                'method' => 'GET',
+                'territory' => $territory,
+                'mesDossiersAverifier' => $mesDossiersAverifier,
+            ]);
+            $formSearchAverifier->handleRequest($request);
+            if ($formSearchAverifier->isSubmitted() && !$formSearchAverifier->isValid()) {
+                $searchDashboardAverifier = new SearchDashboardAverifier($user);
+            }
+
             return $this->render('back/dashboard/index.html.twig', [
                 'territoireSelectedId' => $territoireId,
                 'settings' => $widgetSettingsFactory->createInstanceFrom($user, $territory),
@@ -63,6 +78,7 @@ class DashboardController extends AbstractController
                 'territory' => $territory,
                 'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers,
                 'mesDossiersAverifier' => $mesDossiersAverifier,
+                'formSearchAverifier' => $formSearchAverifier,
             ]);
         }
 
