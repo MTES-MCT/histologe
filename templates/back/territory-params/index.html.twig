@@ -1,0 +1,97 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Gérer mon territoire{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Gérer mon territoire',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-mb-0">Gérer mon territoire</h1>
+                    <p>
+                        Personnalisez les informations transmises à vos partenaires et facilitez la gestion des dossiers.
+                    </p>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section>
+        <div class="fr-grid-row fr-grid-row--gutters territory-params-tiles">
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-enlarge-link fr-tile--horizontal">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="{{ path('back_tags_index') }}">Etiquettes</a>
+                            </h3>
+                            <p class="fr-tile__desc">Créer, modifier et supprimer les étiquettes pour votre territoire</p>
+                            <p class="fr-tile__detail">
+                                <span class="fr-icon-bookmark-line" aria-hidden="true"></span>
+                                {{ singular_or_plural(countTags, 'étiquette', 'étiquettes') }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('build/dsfr/artwork/pictograms/digital/search.svg') }}" aria-hidden="true" class="fr-artwork" alt="" width="40" height="40">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if feature_new_document_space %}
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-enlarge-link fr-tile--horizontal">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="{{ path('back_territory_files_index') }}">Documents types</a>
+                            </h3>
+                            <p class="fr-tile__desc">Ajouter des documents types et les mettre à disposition des partenaires</p>
+                            <p class="fr-tile__detail">
+                                <span class="fr-icon-file-text-line" aria-hidden="true"></span>
+                                TODO documents
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('build/dsfr/artwork/pictograms/document/document.svg') }}" aria-hidden="true" class="fr-artwork" alt="" width="40" height="40">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-tile fr-enlarge-link fr-tile--horizontal">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="{{ path('back_zone_index') }}">Zones du territoire</a>
+                            </h3>
+                            <p class="fr-tile__desc">Délimiter les zones du territoire et y associer des partenaires</p>
+                            <p class="fr-tile__detail">
+                                <span class="fr-icon-road-map-line" aria-hidden="true"></span>
+                                {{ singular_or_plural(countZones, 'zone', 'zones') }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('build/dsfr/artwork/pictograms/map/map.svg') }}" aria-hidden="true" class="fr-artwork" alt="" width="40" height="40">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
