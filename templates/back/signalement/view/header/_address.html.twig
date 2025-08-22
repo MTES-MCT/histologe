@@ -22,7 +22,7 @@
 {% endif %}
 
 {% if signalementsOnSameAddress|length > 0 %}
-    {% set routeForListOfSignalementOnAddress = path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': signalement.adresseOccupant, 'communes[]': signalement.cpOccupant }) %}
+    {% set routeForListOfSignalementOnAddress = path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': signalement.adresseOccupant|trim, 'communes[]': signalement.cpOccupant }) %}
     {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}
     {% else %}
         {% include '_partials/_modal-duplicate-addresses.html.twig' %}

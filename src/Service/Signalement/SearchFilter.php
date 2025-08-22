@@ -115,7 +115,7 @@ class SearchFilter
                 OR LOWER(s.adresseOccupant) LIKE :searchterms
                 OR LOWER(s.villeOccupant) LIKE :searchterms
                 OR LOWER(s.nomProprio) LIKE :searchterms');
-                $qb->setParameter('searchterms', '%'.strtolower($filters['searchterms']).'%');
+                $qb->setParameter('searchterms', '%'.mb_trim(strtolower($filters['searchterms'])).'%');
             }
         }
         if (!empty($filters['affectations']) && (bool) empty($filters['partners'])) {
