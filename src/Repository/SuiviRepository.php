@@ -619,12 +619,16 @@ class SuiviRepository extends ServiceEntityRepository
         ?TabQueryParameters $params,
         array $categories,
         bool $onlyLastSuivi = true,
+        bool $forCount = false,
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('s')
-            ->leftJoin('s.signalement', 'signalement')
-            ->leftJoin('s.createdBy', 'user')
+            ->innerJoin('s.signalement', 'signalement')
             ->where('s.category IN (:categories)')
             ->setParameter('categories', $categories);
+
+        if (!$forCount) {
+            $qb->leftJoin('s.createdBy', 'user');
+        }
 
         if ($onlyLastSuivi) {
             $subQb = $this->_em->createQueryBuilder()
@@ -645,16 +649,24 @@ class SuiviRepository extends ServiceEntityRepository
         }
 
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
-            $qb
-                ->innerJoin('signalement.affectations', 'affectations')
-                ->andWhere('affectations.partner IN (:partners)')
+            $existsAffectation = $this->_em->createQueryBuilder()
+                ->select('1')
+                ->from('App\\Entity\\Affectation', 'af')
+                ->where('af.signalement = signalement')
+                ->andWhere('af.partner IN (:partners)')
+                ->getDQL();
+            $qb->andWhere($qb->expr()->exists($existsAffectation))
                 ->setParameter('partners', $user->getPartners());
         }
 
         if ($params?->mesDossiersMessagesUsagers && '1' === $params->mesDossiersMessagesUsagers) {
-            $qb
-                ->innerJoin('signalement.userSignalementSubscriptions', 'uss')
+            $existsSubscription = $this->_em->createQueryBuilder()
+                ->select('1')
+                ->from('App\\Entity\\UserSignalementSubscription', 'uss')
+                ->where('uss.signalement = signalement')
                 ->andWhere('uss.user = :currentUser')
+                ->getDQL();
+            $qb->andWhere($qb->expr()->exists($existsSubscription))
                 ->setParameter('currentUser', $user);
         }
 
@@ -739,7 +751,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function getSignalementsIdWithSuivisUsagersWithoutAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER]);
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER], true, true);
         $qb = $this->addFilterNoPreviousAskFeedback($qb);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
@@ -751,7 +763,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function findSuivisUsagersWithoutAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER]);
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER], true, false);
         $qb = $this->addFilterNoPreviousAskFeedback($qb);
         $qb = $this->addSelectAndOrder($qb, $params);
 
@@ -760,9 +772,7 @@ class SuiviRepository extends ServiceEntityRepository
 
     public function countSuivisUsagersWithoutAskFeedbackBefore(User $user, ?TabQueryParameters $params): int
     {
-        // TODO : améliorer les perfs (1016.34 ms pour le compteur de l'onglet sur la base de prod)
-        // et améliorer les 2 autres au-dessus
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER]);
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER], true, true);
         $qb = $this->addFilterNoPreviousAskFeedback($qb);
         $qb = $this->addSelectAndOrder($qb, $params, true);
 
@@ -774,7 +784,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function getSignalementsIdWithSuivisPostCloture(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER]); // TODO : utiliser category MESSAGE_USAGER_POST_CLOTURE cf #4471
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER], false, true); // TODO : utiliser category MESSAGE_USAGER_POST_CLOTURE cf #4471
         $qb->andWhere('s.type = :type')
             ->setParameter('type', Suivi::TYPE_USAGER_POST_CLOTURE); // TODO : à supprimer quand on aura une catégorie MESSAGE_USAGER_POST_CLOTURE
 
@@ -790,7 +800,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function findSuivisPostCloture(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER]); // TODO : utiliser category MESSAGE_USAGER_POST_CLOTURE cf #4471
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER], false, false); // TODO : utiliser category MESSAGE_USAGER_POST_CLOTURE cf #4471
         $qb->andWhere('s.type = :type')
             ->setParameter('type', Suivi::TYPE_USAGER_POST_CLOTURE); // TODO : à supprimer quand on aura une catégorie MESSAGE_USAGER_POST_CLOTURE
 
@@ -803,7 +813,7 @@ class SuiviRepository extends ServiceEntityRepository
 
     public function countSuivisPostCloture(User $user, ?TabQueryParameters $params): int
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER]); // TODO : utiliser category MESSAGE_USAGER_POST_CLOTURE cf #4471
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER], false, true); // TODO : utiliser category MESSAGE_USAGER_POST_CLOTURE cf #4471
         $qb->andWhere('s.type = :type')
             ->setParameter('type', Suivi::TYPE_USAGER_POST_CLOTURE); // TODO : à supprimer quand on aura une catégorie MESSAGE_USAGER_POST_CLOTURE
         $qb->andWhere('signalement.statut = :statut')
@@ -856,7 +866,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false);
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, false);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
@@ -868,7 +878,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function findSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false);
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, false);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params);
 
@@ -877,9 +887,9 @@ class SuiviRepository extends ServiceEntityRepository
 
     public function countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): int
     {
-        // TODO : améliorer les perfs (5290.84 ms pour le compteur de l'onglet sur la base de prod)
+        // TODO : améliorer les perfs (3715.15 ms pour le compteur de l'onglet sur la base de prod)
         // et améliorer les 2 autres au-dessus
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false);
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, true);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params, true);
 
