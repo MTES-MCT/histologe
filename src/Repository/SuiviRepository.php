@@ -760,6 +760,8 @@ class SuiviRepository extends ServiceEntityRepository
 
     public function countSuivisUsagersWithoutAskFeedbackBefore(User $user, ?TabQueryParameters $params): int
     {
+        // TODO : améliorer les perfs (1016.34 ms pour le compteur de l'onglet sur la base de prod)
+        // et améliorer les 2 autres au-dessus
         $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER]);
         $qb = $this->addFilterNoPreviousAskFeedback($qb);
         $qb = $this->addSelectAndOrder($qb, $params, true);
@@ -875,6 +877,8 @@ class SuiviRepository extends ServiceEntityRepository
 
     public function countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): int
     {
+        // TODO : améliorer les perfs (5290.84 ms pour le compteur de l'onglet sur la base de prod)
+        // et améliorer les 2 autres au-dessus
         $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params, true);
