@@ -36,7 +36,6 @@ class DashboardController extends AbstractController
         #[MapQueryParameter('mesDossiersAverifier')] ?string $mesDossiersAverifier = null,
     ): Response {
         if ($featureNewDashboard) {
-            $territories = [];
             /** @var User $user */
             $user = $this->getUser();
 
@@ -48,18 +47,14 @@ class DashboardController extends AbstractController
                 ]);
             }
 
-            $authorizedTerritories = $user->getPartnersTerritories();
+            // Résolution du territoire et des territoires autorisés
+            [$territory, $territories] = $this->resolveTerritoryAndTerritories(
+                $user,
+                $territoryRepository,
+                $territoireId
+            );
 
-            $territory = null;
-            if ($territoireId && ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoireId]))) {
-                $territory = $territoryRepository->find($territoireId);
-                if ($territory) {
-                    $territories[$territory->getId()] = $territory;
-                }
-            } elseif (!$this->isGranted('ROLE_ADMIN')) {
-                $territories = $authorizedTerritories;
-            }
-
+            // Création du formulaire de recherche pour l'onglet "A vérifier"
             $searchDashboardAverifier = new SearchDashboardAverifier($user);
             $formSearchAverifier = $this->createForm(SearchDashboardAverifierType::class, $searchDashboardAverifier, [
                 'method' => 'GET',
@@ -67,6 +62,8 @@ class DashboardController extends AbstractController
                 'mesDossiersAverifier' => $mesDossiersAverifier,
             ]);
             $formSearchAverifier->handleRequest($request);
+            
+            // Réinitialisation si le formulaire est invalide
             if ($formSearchAverifier->isSubmitted() && !$formSearchAverifier->isValid()) {
                 $searchDashboardAverifier = new SearchDashboardAverifier($user);
             }
@@ -83,5 +80,52 @@ class DashboardController extends AbstractController
         }
 
         return $this->render('back/dashboard/index.html.twig');
+    }
+
+    /**
+     * Résout le territoire sélectionné et la liste des territoires autorisés
+     * 
+     * @return array{0: Territory|null, 1: array<int, Territory>}
+     */
+    private function resolveTerritoryAndTerritories(
+        User $user,
+        TerritoryRepository $territoryRepository,
+        ?int $territoireId
+    ): array {
+        $territories = [];
+        $authorizedTerritories = $user->getPartnersTerritories();
+        $territory = null;
+
+        // Cas 1: Un territoire spécifique est demandé
+        if ($territoireId) {
+            // Vérifier si l'utilisateur a accès à ce territoire
+            if ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoireId])) {
+                $territory = $territoryRepository->find($territoireId);
+                if ($territory && $territory->isIsActive()) {
+                    $territories[$territory->getId()] = $territory;
+                } else {
+                    // Le territoire n'existe pas ou n'est pas actif, on le remet à null
+                    $territory = null;
+                }
+            }
+        }
+        
+        // Cas 2: Aucun territoire spécifique ou territoire non autorisé
+        if (null === $territory) {
+            if ($this->isGranted('ROLE_ADMIN')) {
+                // Les admins voient tous les territoires actifs
+                $territories = $territoryRepository->findAllList();
+            } else {
+                // Les autres utilisateurs voient leurs territoires autorisés
+                $territories = $authorizedTerritories;
+                
+                // Pour les responsables territoire, définir le territoire par défaut
+                if (!empty($territories)) {
+                    $territory = $user->getFirstTerritory();
+                }
+            }
+        }
+
+        return [$territory, $territories];
     }
 }

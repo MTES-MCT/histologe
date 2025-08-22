@@ -36,13 +36,13 @@ class SearchDashboardAverifierType extends AbstractType
         $builder->add('territoireId', HiddenType::class, [
             'mapped' => false,
             'required' => false,
-            'empty_data' => $options['territory']?->getId() ?? '',
+            'data' => $options['territory']?->getId() ?? '',
         ]);
 
         $builder->add('mesDossiersAverifier', HiddenType::class, [
             'mapped' => false,
             'required' => false,
-            'empty_data' => $options['mesDossiersAverifier'] ?? '',
+            'data' => $options['mesDossiersAverifier'] ?? '',
         ]);
 
         $builder->add('mesDossiersMessagesUsagers', HiddenType::class, [
@@ -50,7 +50,7 @@ class SearchDashboardAverifierType extends AbstractType
             'required' => false,
         ]);
 
-        if ($this->security->isGranted('ROLE_SUPER_ADMIN') || $this->security->isGranted('ROLE_RT')) {
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN') || $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             $this->addPartnersField($builder, $options['territory']);
         }
     }
