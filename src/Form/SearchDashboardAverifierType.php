@@ -37,6 +37,9 @@ class SearchDashboardAverifierType extends AbstractType
             'mapped' => false,
             'required' => false,
             'data' => $options['territory']?->getId() ?? '',
+            'attr' => [
+                'disabled' => $options['territory'] ? false : true,
+            ],
         ]);
 
         $builder->add('mesDossiersAverifier', HiddenType::class, [

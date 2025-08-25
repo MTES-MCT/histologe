@@ -19,6 +19,9 @@ class TabCountKpiBuilder
     private ?int $territoryId = null;
     private ?string $mesDossiersMessagesUsagers = null;
     private ?string $mesDossiersAverifier = null;
+    private ?string $queryCommune = null;
+    /** @var array<int, int> */
+    private array $partners = [];
 
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
@@ -47,12 +50,29 @@ class TabCountKpiBuilder
     }
 
     /**
+     * @param array<int, int> $partners
+     */
+    public function setSearchAverifier(?string $queryCommune, ?array $partners): self
+    {
+        $this->queryCommune = $queryCommune;
+        $this->partners = $partners;
+
+        return $this;
+    }
+
+    /**
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
     public function withTabCountKpi(): static
     {
-        $params = new TabQueryParameters(territoireId: $this->territoryId, mesDossiersMessagesUsagers: $this->mesDossiersMessagesUsagers, mesDossiersAverifier: $this->mesDossiersAverifier);
+        $params = new TabQueryParameters(
+            territoireId: $this->territoryId,
+            mesDossiersMessagesUsagers: $this->mesDossiersMessagesUsagers,
+            mesDossiersAverifier: $this->mesDossiersAverifier,
+            queryCommune: $this->queryCommune,
+            partners: $this->partners
+        );
         /** @var User $user */
         $user = $this->security->getUser();
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
@@ -60,8 +80,8 @@ class TabCountKpiBuilder
         } else {
             $countNouveauxDossiers = $this->signalementRepository->countNouveauxDossiersKpi($this->territories, $user);
         }
-        $countDossiersAFermer = $this->signalementRepository->countAllDossiersAferme($user, $this->territoryId);
-        $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($user, $this->territoryId, $this->mesDossiersMessagesUsagers);
+        $countDossiersAFermer = $this->signalementRepository->countAllDossiersAferme($user, $params);
+        $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($user, $params);
         $countDossiersAVerifier = $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
 
         $this->tabCountKpi = new TabCountKpi(
