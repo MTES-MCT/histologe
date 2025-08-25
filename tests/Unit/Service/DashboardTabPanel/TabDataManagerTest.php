@@ -199,6 +199,42 @@ class TabDataManagerTest extends TestCase
             ->method('countDossiersDemandesFermetureByUsager')
             ->with(null)
             ->willReturn($expectedCount);
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+        $result = $tabDataManager->getDossiersDemandesFermetureByUsager();
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
+    }
+
+    public function testGetMessagesUsagersNouveauxMessagesReturnsExpectedResult(): void
+    {
+        /** @var MockObject&User $user */
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+        $this->suiviRepository->method('findSuivisUsagersWithoutAskFeedbackBefore')->with($user)->willReturn([
+            [
+                'nomOccupant' => 'Martin',
+                'prenomOccupant' => 'Alice',
+                'reference' => '2024-001',
+                'adresse' => '10 rue Victor Hugo',
+                'messageAt' => new \DateTimeImmutable('2024-06-15 14:00:00'),
+                'messageSuiviByNom' => 'Dupont',
+                'messageSuiviByPrenom' => 'Jean',
+                'messageByProfileDeclarant' => true,
+                'uuid' => 'uuid-456',
+            ],
+        ]);
+        $this->suiviRepository->method('countSuivisUsagersWithoutAskFeedbackBefore')->with($user)->willReturn(1);
 
         $tabDataManager = new TabDataManager(
             $this->security,
@@ -210,12 +246,13 @@ class TabDataManagerTest extends TestCase
             $this->signalementRepository,
             $this->tabCountKpiBuilder
         );
-
-        $result = $tabDataManager->getDossiersDemandesFermetureByUsager();
-
-        $this->assertInstanceOf(TabDossierResult::class, $result);
-        $this->assertSame($expectedDossiers, $result->dossiers);
-        $this->assertSame($expectedCount, $result->count);
+        $result = $tabDataManager->getMessagesUsagersNouveauxMessages();
+        $this->assertCount(1, $result->dossiers);
+        $this->assertSame(1, $result->count);
+        $this->assertSame('Martin', $result->dossiers[0]->nomDeclarant);
+        $this->assertSame('Alice', $result->dossiers[0]->prenomDeclarant);
+        $this->assertSame('#2024-001', $result->dossiers[0]->reference);
+        $this->assertSame('/bo/signalements/uuid-456', $result->dossiers[0]->lien);
     }
 
     public function testGetDossiersRelanceSansReponseReturnsExpectedResult(): void
@@ -232,6 +269,42 @@ class TabDataManagerTest extends TestCase
             ->method('countSignalementsAvecRelancesSansReponse')
             ->with($params)
             ->willReturn($expectedCount);
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+        $result = $tabDataManager->getDossiersRelanceSansReponse($params);
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
+    }
+
+    public function testGetMessagesUsagersMessageApresFermetureReturnsExpectedResult(): void
+    {
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+        $this->suiviRepository->method('findSuivisPostCloture')->with($user)->willReturn([
+            [
+                'nomOccupant' => 'Durand',
+                'prenomOccupant' => 'Paul',
+                'reference' => '2024-002',
+                'adresse' => '20 avenue République',
+                'clotureAt' => new \DateTimeImmutable('2024-05-01 09:00:00'),
+                'messageAt' => new \DateTimeImmutable('2024-06-01 10:00:00'),
+                'messageSuiviByNom' => 'Martin',
+                'messageSuiviByPrenom' => 'Lucie',
+                'messageByProfileDeclarant' => false,
+                'uuid' => 'uuid-789',
+            ],
+        ]);
+        $this->suiviRepository->method('countSuivisPostCloture')->with($user)->willReturn(1);
 
         $tabDataManager = new TabDataManager(
             $this->security,
@@ -243,12 +316,13 @@ class TabDataManagerTest extends TestCase
             $this->signalementRepository,
             $this->tabCountKpiBuilder
         );
-
-        $result = $tabDataManager->getDossiersRelanceSansReponse($params);
-
-        $this->assertInstanceOf(TabDossierResult::class, $result);
-        $this->assertSame($expectedDossiers, $result->dossiers);
-        $this->assertSame($expectedCount, $result->count);
+        $result = $tabDataManager->getMessagesUsagersMessageApresFermeture();
+        $this->assertCount(1, $result->dossiers);
+        $this->assertSame(1, $result->count);
+        $this->assertSame('#2024-002', $result->dossiers[0]->reference);
+        $this->assertSame('Durand', $result->dossiers[0]->nomDeclarant);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->clotureAt);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
     }
 
     public function testGetDossiersFermePartenaireTousReturnsExpectedResult(): void
@@ -265,6 +339,42 @@ class TabDataManagerTest extends TestCase
             ->method('countDossiersFermePartenaireTous')
             ->with($params)
             ->willReturn($expectedCount);
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+        $result = $tabDataManager->getDossiersFermePartenaireTous($params);
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
+    }
+
+    public function testGetMessagesUsagersMessagesSansReponseReturnsExpectedResult(): void
+    {
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+        $this->suiviRepository->method('findSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn([
+            [
+                'nomOccupant' => 'Lemoine',
+                'prenomOccupant' => 'Claire',
+                'reference' => '2024-003',
+                'adresse' => '30 boulevard Nation',
+                'messageAt' => new \DateTimeImmutable('2024-06-20 12:00:00'),
+                'messageSuiviByNom' => 'Robert',
+                'messageSuiviByPrenom' => 'Sophie',
+                'messageByProfileDeclarant' => true,
+                'messageDaysAgo' => 3,
+                'uuid' => 'uuid-999',
+            ],
+        ]);
+        $this->suiviRepository->method('countSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn(1);
 
         $tabDataManager = new TabDataManager(
             $this->security,
@@ -277,10 +387,13 @@ class TabDataManagerTest extends TestCase
             $this->tabCountKpiBuilder
         );
 
-        $result = $tabDataManager->getDossiersFermePartenaireTous($params);
-
-        $this->assertInstanceOf(TabDossierResult::class, $result);
-        $this->assertSame($expectedDossiers, $result->dossiers);
-        $this->assertSame($expectedCount, $result->count);
+        $result = $tabDataManager->getMessagesUsagersMessagesSansReponse();
+        $this->assertCount(1, $result->dossiers);
+        $this->assertSame(1, $result->count);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomDeclarant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
+        $this->assertSame('#2024-003', $result->dossiers[0]->reference);
+        $this->assertSame(3, $result->dossiers[0]->messageDaysAgo);
+        $this->assertSame('/bo/signalements/uuid-999', $result->dossiers[0]->lien);
     }
 }

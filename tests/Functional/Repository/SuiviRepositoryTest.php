@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\SuiviRepository;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -61,5 +62,103 @@ class SuiviRepositoryTest extends KernelTestCase
             $this->assertArrayHasKey('suiviIsPublic', $row);
             $this->assertArrayHasKey('hasNewerSuivi', $row);
         }
+    }
+
+    public function testCountSuivisUsagersWithoutAskFeedbackBefore(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '1',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+
+        $result = $this->suiviRepository->countSuivisUsagersWithoutAskFeedbackBefore($user, $tabQueryParameter);
+        $this->assertIsInt($result);
+        $this->assertGreaterThanOrEqual(0, $result);
+    }
+
+    public function testFindSuivisUsagersWithoutAskFeedbackBefore(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '1',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->findSuivisUsagersWithoutAskFeedbackBefore($user, $tabQueryParameter);
+        $this->assertIsArray($result);
+
+        if (count($result) > 0) {
+            $this->assertInstanceOf(Suivi::class, $result[0]);
+        }
+    }
+
+    public function testCountSuivisPostCloture(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '1',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->countSuivisPostCloture($user, $tabQueryParameter);
+        $this->assertIsInt($result);
+        $this->assertGreaterThanOrEqual(0, $result);
+    }
+
+    public function testFindSuivisPostCloture(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '1',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->findSuivisPostCloture($user, $tabQueryParameter);
+        $this->assertIsArray($result);
+
+        if (count($result) > 0) {
+            $this->assertInstanceOf(Suivi::class, $result[0]);
+        }
+    }
+
+    public function testCountSuivisUsagerOrPoursuiteWithAskFeedbackBefore(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '1',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, $tabQueryParameter);
+        $this->assertIsInt($result);
+        $this->assertGreaterThanOrEqual(0, $result);
+    }
+
+    public function testFindSuivisUsagerOrPoursuiteWithAskFeedbackBefore(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '1',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->findSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, $tabQueryParameter);
+        $this->assertIsArray($result);
+
+        if (count($result) > 0) {
+            $this->assertInstanceOf(Suivi::class, $result[0]);
+        }
+    }
+
+    public function testCountAllMessagesUsagers(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $territoryId = null;
+        $mesDossiers = null;
+        $result = $this->suiviRepository->countAllMessagesUsagers($user, $territoryId, $mesDossiers);
+        $this->assertIsObject($result);
+        $this->assertTrue(method_exists($result, 'total'));
     }
 }

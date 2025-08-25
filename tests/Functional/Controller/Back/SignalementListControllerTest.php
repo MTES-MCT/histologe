@@ -88,6 +88,9 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by created from ' => [['createdFrom' => 'formulaire-pro'], 1];
         yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by relanceUsagerSansReponse' => [['relanceUsagerSansReponse' => 'oui', 'isImported' => 'oui'], 0];
+        yield 'Search by Messages usagers après fermeture' => [['isMessagePostCloture' => 'oui', 'isImported' => 'oui'], 1];
+        yield 'Search by Nouveaux messages usagers' => [['isNouveauMessage' => 'oui', 'isImported' => 'oui'], 1];
+        yield 'Search by Messages usagers sans réponse' => [['isMessageWithoutResponse' => 'oui', 'isImported' => 'oui'], 0];
     }
 
     /**

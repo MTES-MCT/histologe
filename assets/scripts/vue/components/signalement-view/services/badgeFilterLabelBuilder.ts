@@ -126,6 +126,15 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'relanceUsagerSansReponse') {
     return 'Relances usager restées sans réponse'
   }
+  if (key === 'isMessagePostCloture') {
+    return 'Messages usagers après fermeture'
+  }
+  if (key === 'isNouveauMessage') {
+    return 'Nouveaux messages usagers'
+  }
+  if (key === 'isMessageWithoutResponse') {
+    return 'Messages usagers sans réponse'
+  }
 
   return buildStaticBadge(value)
 }

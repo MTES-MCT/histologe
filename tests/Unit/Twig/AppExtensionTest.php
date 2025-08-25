@@ -172,7 +172,7 @@ class AppExtensionTest extends WebTestCase
         yield 'Exactly 365 days' => [365, 'fr-badge--warning'];
         yield 'Between 181 and 364 days' => [200, 'fr-badge--warning'];
         yield 'Null days' => [null, 'fr-badge--info'];
-        yield 'Between 91 and 180 days' => [100, 'fr-badge--info'];
+        yield 'Between 91 and 180 days' => [100, 'fr-badge--new'];
         yield 'Less than 91 days' => [30, 'fr-badge--success'];
     }
 

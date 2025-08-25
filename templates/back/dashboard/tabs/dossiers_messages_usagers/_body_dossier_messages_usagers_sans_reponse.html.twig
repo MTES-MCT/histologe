@@ -1,5 +1,5 @@
 {% set columns = [
-    { class: 'fr-col-md-3', title: 'Message reçu il y\'a' },
+    { class: 'fr-col-md-3', title: 'Message reçu il y a' },
     { class: 'fr-col-md-4', title: 'Référence' },
     { class: 'fr-col-md-4', title: 'Message envoyé par' },
 ] %}
@@ -22,9 +22,10 @@
     <section class="fr-container--fluid">
         {% for item in items %}
             {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
-                    '<div><span class="fr-badge fr-badge--no-icon fr-badge--error">' ~ item.messageDaysAgo ~ ' JOURS</span></div>',
+                    '<div><span class="fr-badge fr-badge--no-icon ' ~ item.messageDaysAgo|badge_class ~ '">' ~ item.messageDaysAgo ~ ' JOURS</span></div>',
                     '<div class="fr-text-label--blue-france">
                             <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                             <div>' ~ item.adresse ~ '</div>

@@ -1949,26 +1949,32 @@ class SignalementRepository extends ServiceEntityRepository
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $subQueryBuilder = $this->createSignalementQueryBuilder(
+        $qb = $this->createSignalementQueryBuilder(
             user: $user,
             signalementStatus: SignalementStatus::ACTIVE,
             tabQueryParameters: $tabQueryParameters
         );
 
-        $subQueryBuilder
-            ->select('s.uuid')
-            ->innerJoin('s.affectations', 'a')
-            ->groupBy('s.uuid')
-            ->having('COUNT(a.id) = SUM(CASE WHEN a.statut = :closed THEN 1 ELSE 0 END)')
-            ->setParameter('closed', AffectationStatus::CLOSED);
-
         $em = $this->getEntityManager();
-        $qb = $em->createQueryBuilder();
 
-        $qb->select('COUNT(s2.uuid) AS nbDossiers')
-            ->from(Signalement::class, 's2')
-            ->where('s2.uuid IN ('.$subQueryBuilder->getDQL().')')
-            ->setParameters($subQueryBuilder->getParameters());
+        $existsAtLeastOneAffectation = $em->createQueryBuilder()
+            ->select('1')
+            ->from(Affectation::class, 'a1')
+            ->where('a1.signalement = s')
+            ->getDQL();
+
+        $existsAffectationNotClosed = $em->createQueryBuilder()
+            ->select('1')
+            ->from(Affectation::class, 'a2')
+            ->where('a2.signalement = s')
+            ->andWhere('a2.statut != :closed')
+            ->getDQL();
+
+        $qb->andWhere($qb->expr()->exists($existsAtLeastOneAffectation));
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($existsAffectationNotClosed)));
+
+        $qb->select('COUNT(DISTINCT s.id)');
+        $qb->setParameter('closed', AffectationStatus::CLOSED);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
@@ -2059,15 +2065,21 @@ class SignalementRepository extends ServiceEntityRepository
 
     private function getBaseSignalementsAvecRelancesSansReponseSql(): string
     {
+        // TODO : améliorer les perfs (2270.55 ms pour le compteur de l'onglet sur la base de prod)
         return <<<SQL
             FROM (
                 SELECT
                     s.signalement_id,
                     MIN(s.created_at) AS first_relance_at,
-                    COUNT(*) AS nb_relances,
-                    MAX(s.type) AS type_suivi
-                FROM suivi s
+                    COUNT(*) AS nb_relances
+                FROM suivi s USE INDEX (idx_suivi_category_signalement_created_at)
                 WHERE s.category = 'ASK_FEEDBACK_SENT'
+                  AND EXISTS (
+                    SELECT 1 FROM signalement si2
+                    WHERE si2.id = s.signalement_id
+                      AND si2.statut = 'ACTIVE'
+                      AND (:territory_id IS NULL OR si2.territory_id = :territory_id)
+                  )
                 GROUP BY s.signalement_id
                 HAVING COUNT(*) >= 3
             ) relances_usager
@@ -2077,15 +2089,21 @@ class SignalementRepository extends ServiceEntityRepository
                     s.signalement_id,
                     MAX(s.created_at) AS shared_usager_at,
                     MAX(s.type) AS type
-                FROM suivi s
+                FROM suivi s USE INDEX (idx_suivi_is_public_signalement_created_at)
                 WHERE s.is_public = 1
+                  AND EXISTS (
+                    SELECT 1 FROM signalement si3
+                    WHERE si3.id = s.signalement_id
+                      AND si3.statut = 'ACTIVE'
+                      AND (:territory_id IS NULL OR si3.territory_id = :territory_id)
+                  )
                 GROUP BY s.signalement_id
             ) last_usager_suivi ON last_usager_suivi.signalement_id = si.id
             WHERE
                 si.statut = 'ACTIVE'
                 AND NOT EXISTS (
                     SELECT 1
-                    FROM suivi s2
+                    FROM suivi s2 USE INDEX (idx_suivi_signalement_type_created_at)
                     WHERE s2.signalement_id = relances_usager.signalement_id
                       AND s2.type = 2
                       AND s2.created_at > relances_usager.first_relance_at
