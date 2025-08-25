@@ -24,6 +24,12 @@ enum DocumentType: string
     case PHOTO_SITUATION = 'PHOTO_SITUATION';
     case PHOTO_VISITE = 'PHOTO_VISITE';
     case EXPORT = 'EXPORT';
+    case GRILLE_DE_VISITE = 'GRILLE_DE_VISITE';
+    case PROCEDURE = 'PROCEDURE';
+    case MODELE_DE_COURRIER = 'MODELE_DE_COURRIER';
+    case GUIDES_ET_AIDE = 'GUIDES_ET_AIDE';
+    case COMM_INFORMATION_AUX_USAGERS = 'COMM_INFORMATION_AUX_USAGERS';
+    case ANNUAIRE = 'ANNUAIRE';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -40,10 +46,17 @@ enum DocumentType: string
             self::PROCEDURE_SAISINE->name => 'Saisine',
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => 'Devis pour travaux',
             self::BAILLEUR_REPONSE_BAILLEUR->name => 'Réponse bailleur',
-            self::AUTRE->name => 'Autre',
             self::AUTRE_PROCEDURE->name => 'Autre procédure',
             self::PHOTO_SITUATION->name => 'Photo de désordre',
             self::PHOTO_VISITE->name => 'Photo de visite',
+            self::EXPORT->name => 'Export',
+            self::GRILLE_DE_VISITE->name => 'Grille de visite',
+            self::PROCEDURE->name => 'Procédure',
+            self::MODELE_DE_COURRIER->name => 'Modèle de courrier',
+            self::GUIDES_ET_AIDE->name => 'Guides et aide',
+            self::COMM_INFORMATION_AUX_USAGERS->name => 'Comm / information aux usagers',
+            self::ANNUAIRE->name => 'Annuaire',
+            self::AUTRE->name => 'Autre',
         ];
     }
 
@@ -82,6 +95,20 @@ enum DocumentType: string
             self::BAILLEUR_REPONSE_BAILLEUR->name => self::BAILLEUR_REPONSE_BAILLEUR->label(),
             self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
             self::AUTRE_PROCEDURE->name => self::AUTRE_PROCEDURE->label(),
+        ];
+    }
+
+    /** @return array<string> */
+    public static function getTerritoryFilesList(): array
+    {
+        return [
+            self::GRILLE_DE_VISITE->name => self::GRILLE_DE_VISITE->label(),
+            self::PROCEDURE->name => self::PROCEDURE->label(),
+            self::MODELE_DE_COURRIER->name => self::MODELE_DE_COURRIER->label(),
+            self::GUIDES_ET_AIDE->name => self::GUIDES_ET_AIDE->label(),
+            self::COMM_INFORMATION_AUX_USAGERS->name => self::COMM_INFORMATION_AUX_USAGERS->label(),
+            self::ANNUAIRE->name => self::ANNUAIRE->label(),
+            self::AUTRE->name => self::AUTRE->label(),
         ];
     }
 }
