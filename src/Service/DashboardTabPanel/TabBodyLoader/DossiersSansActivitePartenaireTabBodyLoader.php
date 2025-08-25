@@ -29,6 +29,12 @@ class DossiersSansActivitePartenaireTabBodyLoader extends AbstractTabBodyLoader
             'sortBy' => 'lastSuiviAt',
             'direction' => $this->tabQueryParameters->orderBy ?? 'ASC',
         ];
+        if ($this->tabQueryParameters->partners && \count($this->tabQueryParameters->partners) > 0) {
+            $filters['partenaires'] = $this->tabQueryParameters->partners;
+        }
+        if (null !== $this->tabQueryParameters->queryCommune && '' !== $this->tabQueryParameters->queryCommune) {
+            $filters['communes[]'] = $this->tabQueryParameters->queryCommune;
+        }
         $tabBody->setFilters($filters);
         $tabBody->setTemplate('back/dashboard/tabs/dossiers_a_verifier/_body_dossier_sans_activite_partenaire.html.twig');
     }

@@ -42,8 +42,18 @@
             <p>Aucun dossier trouvé.</p>
         {% endfor %}
         {% if count > MAX_ITEMS_LIST_LONG %}
+            {% set paramsSansPartenaires = filters|merge({'partenaires': null}) %}
+            {% set url = path('back_signalements_index', paramsSansPartenaires) %}
+            {% if filters.partenaires is defined and filters.partenaires|length %}
+                {% set url = url ~ (('?' in url) ? '&' : '?') %}
+                {% for id in filters.partenaires %}
+                    {% set url = url ~ 'partenaires[]=' ~ id ~ (not loop.last ? '&' : '') %}
+                {% endfor %}
+            {% endif %}
             <div class="fr-text--right">
-                <a href="{{ path('back_signalements_index', filters) }}" class="fr-text-label--blue-france">Afficher la liste complète<span class="fr-fi-arrow-right-line"></span></a>
+                <a href="{{ url }}" class="fr-text-label--blue-france">
+                Afficher la liste complète<span class="fr-fi-arrow-right-line"></span>
+                </a>
             </div>
         {% endif %}
     </section>

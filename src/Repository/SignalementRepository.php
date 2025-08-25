@@ -554,6 +554,13 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
+        if (!empty($options['isDossiersSansActivite'])) {
+            $params = new TabQueryParameters();
+            $signalementIds = $this->getSignalementIdsSansSuiviPartenaireDepuis60Jours($user, $params);
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $signalementIds);
+        }
+
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
                 case 'reference':
@@ -2314,7 +2321,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return int[]
      */
-    public function getSignalementIdsSansSuiviPartenaireDepuis60Jours(User $user, ?TabQueryParameters $params): array
+    public function getSignalementIdsSansSuiviPartenaireDepuis60Jours(User $user, TabQueryParameters $params): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
