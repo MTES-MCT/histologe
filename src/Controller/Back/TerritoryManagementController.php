@@ -11,10 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/gerer-territoire')]
+#[IsGranted('ROLE_ADMIN_TERRITORY')]
 class TerritoryManagementController extends AbstractController
 {
     #[Route('/', name: 'back_territory_management_index', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         TagRepository $tagRepository,
         ZoneRepository $zoneRepository,

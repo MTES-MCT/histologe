@@ -1,0 +1,120 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Documents types{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Mon territoire',
+            'level3Link': 'back_admin_territory_files_index',
+            'level4Title': 'Documents types',
+            'level4Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-8 fr-text--left">
+                    <h1 class="fr-mb-0">Documents types</h1>
+                    <p>
+                        Vous pouvez ajouter des documents types pour vos partenaires et choisir pour quel(s) type(s) de partenaires vous les afficher.
+                    </p>
+                </div>
+                <div class="fr-col-4 fr-text--right">
+                    <button class="fr-btn fr-btn--icon-left fr-icon-add-line"
+                        title="Ajouter un document"
+                        data-fr-opened="false" aria-controls="fr-modal-document-add"
+                        >Ajouter un document</button>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    {{ form_start(form) }}
+
+    <section class="fr-container--fluid">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.queryName) }}
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12 fr-col-lg-3">
+                    {{ form_row(form.territory) }}
+                </div>
+            {% endif %}
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.type) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                <a href="{{ path('back_admin_territory_files_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-py-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(files|length, 'document trouvé', 'documents trouvés') }}</h2>
+    </section>
+    
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form) }}
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col" class="number">ID</th>
+            <th scope="col">Document</th>
+            <th scope="col">Date d'ajout</th>
+            <th scope="col">Type</th>
+            {# <th scope="col">Territoire</th> #}
+            <th scope="col" class="fr-text--right">Actions</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for item in files %}
+                <tr class="file-row">
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.createdAt.format('d/m/Y') }}</td>
+                    {#<td>
+                        {% if item.territory %}
+                            {{ item.territory.zip }} - {{ item.territory.name }}
+                        {% endif %}
+                    </td>#}
+                    <td>{{ item.documentType.label }}</td>
+                    <td class="fr-text--right fr-ws-nowrap">
+                        <a href="" class="fr-btn fr-icon-arrow-right-line" title="Voir les détails du document {{item.title}}">
+                            Voir les détails du document {{ item.title }}
+                        </a>
+                        <a href="" class="fr-btn fr-icon-edit-line" title="Editer le document {{item.title}}">
+                            Editer le document {{item.title}}
+                        </a>
+                        <a href="" class="fr-btn fr-icon-download-line" title="Ouvrir le document {{item.title}}">
+                            Ouvrir le document {{item.title}}
+                        </a>
+                        <button 
+                            class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-zone-delete" 
+                            title="Supprimer le document {{item.title}}" 
+                            data-fr-opened="false" 
+                            aria-controls="fr-modal-document-delete"
+                            data-url=""
+                            data-name="{{item.title}}"
+                            >Supprimer le document {{item.title}}</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des documents', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_admin_territory_files_index', searchTerritoryFiles.urlParams) }}
+        </div>
+    </section>
+
+{% endblock %}
