@@ -19,6 +19,7 @@ twig:
         feature_banner_histologe: '%env(bool:FEATURE_BANNER_HISTOLOGE)%'
         sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
         feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
+        feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
         MAX_ITEMS_LIST: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST
     paths:
         # point this wherever your images live

@@ -12,6 +12,8 @@ readonly class MenuBuilder
         private readonly Security $currentRoute,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         private readonly bool $featureNewDashboard,
+        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
+        private readonly bool $featureNewDocumentSpace,
     ) {
     }
 
@@ -44,15 +46,24 @@ readonly class MenuBuilder
             $partnerName = $user->getPartners()->count() > 1 ? ' '.$partner->getNom() : '';
             $adminToolsSubItem->addChild(new MenuItem(label: 'Mon partenaire'.$partnerName, route: 'back_partner_view', routeParameters: ['id' => $partner->getId()], roleGranted: User::ROLE_ADMIN_PARTNER, roleNotGranted: User::ROLE_ADMIN_TERRITORY));
         }
-        $adminToolsSubItem->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
-        ->addChild(new MenuItem(label: 'Etiquettes', route: 'back_tags_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
-        ->addChild(new MenuItem(label: 'Zones', route: 'back_zone_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
-        ->addChild(new MenuItem(route: 'back_partner_new'))
+        $adminToolsSubItem->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        if ($this->featureNewDocumentSpace) {
+            $adminToolsSubItem->addChild(new MenuItem(label: $user->isSuperAdmin() ? 'Gérer les territoires' : 'Gérer mon territoire', route: 'back_territory_management_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        } else {
+            $adminToolsSubItem->addChild(new MenuItem(label: 'Etiquettes', route: 'back_tags_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
+                ->addChild(new MenuItem(label: 'Zones', route: 'back_zone_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        }
+        $adminToolsSubItem->addChild(new MenuItem(route: 'back_partner_new'))
             ->addChild(new MenuItem(route: 'back_partner_edit'))
             ->addChild(new MenuItem(route: 'back_partner_edit_perimetre'))
-        ->addChild(new MenuItem(route: 'back_zone_show'))
-        ->addChild(new MenuItem(route: 'back_zone_edit'))
+            ->addChild(new MenuItem(route: 'back_zone_show'))
+            ->addChild(new MenuItem(route: 'back_zone_edit'))
         ;
+
+        $territoryFilesSubMenu = null;
+        if ($this->featureNewDocumentSpace && !$user->isTerritoryAdmin() && !$user->isSuperAdmin()) {
+            $territoryFilesSubMenu = (new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
+        }
 
         $superAdminToolsSubItem = (new MenuItem(label: 'Outils SA', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Partenaires archivés', route: 'back_archived_partner_index', roleGranted: User::ROLE_ADMIN))
@@ -81,11 +92,17 @@ readonly class MenuBuilder
             $listRouteBOParameters = ['mesDossiersMessagesUsagers' => '1', 'mesDossiersAverifier' => '1'];
         }
 
-        return (new MenuItem(label: 'root', route: ''))
+        $menu = (new MenuItem(label: 'root', route: ''))
             ->addChild(new MenuItem(label: 'Tableau de bord', route: 'back_dashboard', icon: 'fr-icon-home-4-fill', roleGranted: User::ROLE_USER, routeParameters: $listRouteBOParameters))
             ->addChild($signalementsSubMenu)
             ->addChild($donneesChiffreesSubMenu)
             ->addChild($adminToolsSubItem)
-            ->addChild($superAdminToolsSubItem);
+        ;
+        if (null !== $territoryFilesSubMenu) {
+            $menu->addChild($territoryFilesSubMenu);
+        }
+        $menu->addChild($superAdminToolsSubItem);
+
+        return $menu;
     }
 }

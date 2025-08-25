@@ -49,6 +49,7 @@ parameters:
     proconnect_scheme_protocol: '%env(resolve:PROCONNECT_SCHEME_PROTOCOL)%'
     proconnect_domain: '%env(resolve:PROCONNECT_DOMAIN)%'
     feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
+    feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
 
 services:
     # default configuration for services in *this* file
