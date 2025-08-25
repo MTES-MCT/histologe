@@ -614,7 +614,9 @@
                                         {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
                                         <br>
                                         <small>
-                                        {% if suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER %}
+                                        {% if suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER
+                                                        or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE
+                                                        or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER %}
 							                {{
                                                 (suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT')
                                                 ~ '\n' ~ suivi.createdBy.nomComplet(true)

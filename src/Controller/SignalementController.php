@@ -528,12 +528,15 @@ class SignalementController extends AbstractController
                 }
             }
 
-            $typeSuivi = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
+            $suiviType = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
+            $suiviCategory = SignalementStatus::CLOSED === $signalement->getStatut() ?
+                SuiviCategory::MESSAGE_USAGER_POST_CLOTURE :
+                SuiviCategory::MESSAGE_USAGER;
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,
-                type: $typeSuivi,
-                category: SuiviCategory::MESSAGE_USAGER,
+                type: $suiviType,
+                category: $suiviCategory,
                 isPublic: true,
                 user: $signalementUser->getUser(),
                 files: $filesToAttach
