@@ -2184,10 +2184,8 @@ class SignalementRepository extends ServiceEntityRepository
         return array_map('intval', $conn->executeQuery($sql, ['territory_id' => null])->fetchFirstColumn());
     }
 
-    public function countAllDossiersAferme(User $user, ?int $territoryId): CountAfermer
+    public function countAllDossiersAferme(User $user, ?TabQueryParameters $params): CountAfermer
     {
-        $params = new TabQueryParameters($territoryId);
-
         return new CountAfermer(
             countDemandesFermetureByUsager: $this->countDossiersDemandesFermetureByUsager($params),
             countDossiersRelanceSansReponse: $this->countSignalementsAvecRelancesSansReponse($params),
@@ -2230,14 +2228,14 @@ class SignalementRepository extends ServiceEntityRepository
             FROM signalement si
             INNER JOIN suivi s ON s.signalement_id = si.id
         SQL;
-        if ($withJoins || ($params->partners && count($params->partners) > 0)) {
+        if ($withJoins) {
             $sql .= <<<SQL
                 LEFT JOIN user u ON u.id = s.created_by_id
                 LEFT JOIN user_partner up ON up.user_id = u.id
                 LEFT JOIN partner p ON p.id = up.partner_id
             SQL;
         }
-        if ($user->isPartnerAdmin() || $user->isUserPartner()) {
+        if ($user->isPartnerAdmin() || $user->isUserPartner() || ($params->partners && count($params->partners) > 0)) {
             $sql .= <<<SQL
                 LEFT JOIN affectation aff ON aff.signalement_id = si.id
             SQL;
@@ -2282,10 +2280,11 @@ class SignalementRepository extends ServiceEntityRepository
         $paramsToBind['dateLimit'] = (new \DateTimeImmutable('-60 days'))->format('Y-m-d H:i:s');
 
         if ($params->partners && count($params->partners) > 0) {
-            $sql .= ' AND p.id IN (:partnersId)';
+            $sql .= ' AND aff.partner_id IN (:partnersId)';
             $paramsToBind['partnersId'] = $params->partners;
             $types['partnersId'] = ArrayParameterType::INTEGER;
         }
+
         if ($params->queryCommune) {
             $query = '%'.$params->queryCommune.'%';
             $sql .= ' AND (si.cp_occupant LIKE :query OR si.ville_occupant LIKE :query)';
@@ -2341,22 +2340,23 @@ class SignalementRepository extends ServiceEntityRepository
             si.nom_occupant AS nomOccupant,
             si.prenom_occupant AS prenomOccupant,
             CONCAT_WS(', ', si.adresse_occupant, CONCAT(si.cp_occupant, ' ', si.ville_occupant)) AS adresse,
-            s.created_at AS dernierSuiviAt,
-            DATEDIFF(CURRENT_DATE(), s.created_at) AS nbJoursDepuisDernierSuivi,
-            s.category AS suiviCategory,
-            p.nom AS derniereActionPartenaireNom,
-            u.nom AS derniereActionPartenaireNomAgent,
-            u.prenom AS derniereActionPartenairePrenomAgent
+            MAX(s.created_at) AS dernierSuiviAt,
+            DATEDIFF(CURRENT_DATE(), MAX(s.created_at)) AS nbJoursDepuisDernierSuivi,
+            MAX(s.category) AS suiviCategory,
+            MAX(p.nom) AS derniereActionPartenaireNom,
+            MAX(u.nom) AS derniereActionPartenaireNomAgent,
+            MAX(u.prenom) AS derniereActionPartenairePrenomAgent
         SQL;
         [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params, true);
         $sql .= $sqlPrincipal;
+        $sql .= ' GROUP BY si.id, si.uuid, si.reference, si.nom_occupant, si.prenom_occupant, si.adresse_occupant, si.cp_occupant, si.ville_occupant';
 
         if ($params && in_array($params->sortBy, ['createdAt'], true)
             && in_array($params->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
         ) {
-            $sql .= ' ORDER BY s.created_at '.$params->orderBy;
+            $sql .= ' ORDER BY MAX(s.created_at) '.$params->orderBy;
         } else {
-            $sql .= ' ORDER BY s.created_at ASC';
+            $sql .= ' ORDER BY MAX(s.created_at) ASC';
         }
 
         $sql .= ' LIMIT '.TabDossier::MAX_ITEMS_LIST_LONG;

@@ -209,15 +209,23 @@ class TabDataManager
 
     /**
      * @param array<int, mixed> $territories
+     * @param array<int, int>   $partners
      *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countDataKpi(array $territories, ?int $territoryId, ?string $mesDossiersMessagesUsagers, ?string $mesDossiersAverifier): TabCountKpi
-    {
+    public function countDataKpi(
+        array $territories,
+        ?int $territoryId,
+        ?string $mesDossiersMessagesUsagers,
+        ?string $mesDossiersAverifier,
+        ?string $queryCommune,
+        ?array $partners,
+    ): TabCountKpi {
         return $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
             ->setMesDossiers($mesDossiersMessagesUsagers, $mesDossiersAverifier)
+            ->setSearchAverifier($queryCommune, $partners)
             ->withTabCountKpi()
             ->build();
     }

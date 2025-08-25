@@ -41,6 +41,10 @@
         {% else %}
             <p>Aucun dossier trouvé.</p>
         {% endfor %}
-        {% include 'back/dashboard/components/_footer_link.html.twig' %}
+        {% if count > MAX_ITEMS_LIST_LONG %}
+            <div class="fr-text--right">
+                <a href="{{ path('back_signalements_index', filters) }}" class="fr-text-label--blue-france">Afficher la liste complète<span class="fr-fi-arrow-right-line"></span></a>
+            </div>
+        {% endif %}
     </section>
 </section>
