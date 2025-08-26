@@ -5,7 +5,7 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 use App\Entity\Enum\SignalementStatus;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -14,7 +14,7 @@ class DossierDemandesFermetureUsagerTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_DEMANDE_FERMETURE_USAGER;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManagerInterface $TabDataManagerInterface)
     {
         parent::__construct($this->security);
     }
@@ -27,7 +27,7 @@ class DossierDemandesFermetureUsagerTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->tabDataManager->getDossiersDemandesFermetureByUsager($this->tabQueryParameters);
+        $result = $this->TabDataManagerInterface->getDossiersDemandesFermetureByUsager($this->tabQueryParameters);
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
         if (null === $this->tabQueryParameters->orderBy) {

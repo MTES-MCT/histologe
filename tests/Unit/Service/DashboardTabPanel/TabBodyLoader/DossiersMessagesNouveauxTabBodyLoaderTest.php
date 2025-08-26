@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersMessagesNouveauxTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -28,8 +28,8 @@ class DossiersMessagesNouveauxTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManager&MockObject $tabDataManager */
-        $tabDataManager = $this->createMock(TabDataManager::class);
+        /** @var TabDataManagerInterface&MockObject $TabDataManagerInterface */
+        $TabDataManagerInterface = $this->createMock(TabDataManagerInterface::class);
 
         $tabQueryParameters = new TabQueryParameters(mesDossiersMessagesUsagers: '0');
         $expectedResult = new TabDossierResult(
@@ -37,12 +37,12 @@ class DossiersMessagesNouveauxTabBodyLoaderTest extends TestCase
             count: 2,
         );
 
-        $tabDataManager->expects($this->once())
+        $TabDataManagerInterface->expects($this->once())
             ->method('getMessagesUsagersNouveauxMessages')
             ->with($tabQueryParameters)
             ->willReturn($expectedResult);
 
-        $loader = new DossiersMessagesNouveauxTabBodyLoader($security, $tabDataManager);
+        $loader = new DossiersMessagesNouveauxTabBodyLoader($security, $TabDataManagerInterface);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_NOUVEAUX,
             tabQueryParameters: $tabQueryParameters

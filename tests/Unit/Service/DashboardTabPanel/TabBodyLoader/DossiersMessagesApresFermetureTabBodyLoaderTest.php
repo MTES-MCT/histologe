@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersMessagesApresFermetureTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -28,8 +28,8 @@ class DossiersMessagesApresFermetureTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManager&MockObject $tabDataManager */
-        $tabDataManager = $this->createMock(TabDataManager::class);
+        /** @var TabDataManagerInterface&MockObject $TabDataManagerInterface */
+        $TabDataManagerInterface = $this->createMock(TabDataManagerInterface::class);
 
         $tabQueryParameters = new TabQueryParameters(mesDossiersMessagesUsagers: '1');
         $expectedResult = new TabDossierResult(
@@ -37,12 +37,12 @@ class DossiersMessagesApresFermetureTabBodyLoaderTest extends TestCase
             count: 2,
         );
 
-        $tabDataManager->expects($this->once())
+        $TabDataManagerInterface->expects($this->once())
             ->method('getMessagesUsagersMessageApresFermeture')
             ->with($tabQueryParameters)
             ->willReturn($expectedResult);
 
-        $loader = new DossiersMessagesApresFermetureTabBodyLoader($security, $tabDataManager);
+        $loader = new DossiersMessagesApresFermetureTabBodyLoader($security, $TabDataManagerInterface);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_APRES_FERMETURE,
             tabQueryParameters: $tabQueryParameters

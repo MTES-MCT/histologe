@@ -4,14 +4,14 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class DossiersMessagesNouveauxTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_NOUVEAUX;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManagerInterface $TabDataManagerInterface)
     {
         parent::__construct($this->security);
     }
@@ -19,7 +19,7 @@ class DossiersMessagesNouveauxTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->tabDataManager->getMessagesUsagersNouveauxMessages(
+        $result = $this->TabDataManagerInterface->getMessagesUsagersNouveauxMessages(
             $this->tabQueryParameters
         );
 

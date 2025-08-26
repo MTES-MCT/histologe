@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersFermePartenaireTousTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -29,20 +29,20 @@ class DossiersFermePartenaireTousTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManager&MockObject $tabDataManager */
-        $tabDataManager = $this->createMock(TabDataManager::class);
+        /** @var TabDataManagerInterface&MockObject $TabDataManagerInterface */
+        $TabDataManagerInterface = $this->createMock(TabDataManagerInterface::class);
         $tabQueryParameters = new TabQueryParameters(territoireId: 42);
 
         $expectedDossiers = [new TabDossier(), new TabDossier()];
         $expectedCount = 2;
         $tabDossierResult = new TabDossierResult($expectedDossiers, $expectedCount);
 
-        $tabDataManager->expects($this->once())
+        $TabDataManagerInterface->expects($this->once())
             ->method('getDossiersFermePartenaireTous')
             ->with($tabQueryParameters)
             ->willReturn($tabDossierResult);
 
-        $loader = new DossiersFermePartenaireTousTabBodyLoader($security, $tabDataManager);
+        $loader = new DossiersFermePartenaireTousTabBodyLoader($security, $TabDataManagerInterface);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DOSSIERS_RELANCE_USAGER_SANS_REPONSE,
             tabQueryParameters: $tabQueryParameters
@@ -67,20 +67,20 @@ class DossiersFermePartenaireTousTabBodyLoaderTest extends TestCase
         $security = $this->createMock(Security::class);
         $security->method('isGranted')->willReturn(true);
 
-        /** @var TabDataManager&MockObject $tabDataManager */
-        $tabDataManager = $this->createMock(TabDataManager::class);
+        /** @var TabDataManagerInterface&MockObject $TabDataManagerInterface */
+        $TabDataManagerInterface = $this->createMock(TabDataManagerInterface::class);
         $tabQueryParameters = new TabQueryParameters(territoireId: 99, orderBy: 'DESC');
 
         $expectedDossiers = [new TabDossier()];
         $expectedCount = 1;
         $tabDossierResult = new TabDossierResult($expectedDossiers, $expectedCount);
 
-        $tabDataManager->expects($this->once())
+        $TabDataManagerInterface->expects($this->once())
             ->method('getDossiersFermePartenaireTous')
             ->with($tabQueryParameters)
             ->willReturn($tabDossierResult);
 
-        $loader = new DossiersFermePartenaireTousTabBodyLoader($security, $tabDataManager);
+        $loader = new DossiersFermePartenaireTousTabBodyLoader($security, $TabDataManagerInterface);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DOSSIERS_RELANCE_USAGER_SANS_REPONSE,
             tabQueryParameters: $tabQueryParameters
