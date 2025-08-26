@@ -73,6 +73,10 @@ class Territory implements EntityHistoryInterface
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Zone::class, orphanRemoval: true)]
     private Collection $zones;
 
+    /** @var Collection<int, File> $files */
+    #[ORM\OneToMany(mappedBy: 'territory', targetEntity: File::class, orphanRemoval: true)]
+    private Collection $files;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $grilleVisiteFilename = null;
 
@@ -89,6 +93,7 @@ class Territory implements EntityHistoryInterface
         $this->autoAffectationRules = new ArrayCollection();
         $this->communes = new ArrayCollection();
         $this->zones = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -395,6 +400,36 @@ class Territory implements EntityHistoryInterface
             // set the owning side to null (unless already changed)
             if ($zone->getTerritory() === $this) {
                 $zone->setTerritory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, File>
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(File $file): static
+    {
+        if (!$this->files->contains($file)) {
+            $this->files->add($file);
+            $file->setTerritory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(File $file): static
+    {
+        if ($this->files->removeElement($file)) {
+            // set the owning side to null (unless already changed)
+            if ($file->getTerritory() === $this) {
+                $file->setTerritory(null);
             }
         }
 

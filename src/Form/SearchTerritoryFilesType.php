@@ -32,6 +32,7 @@ class SearchTerritoryFilesType extends AbstractType
             'label' => 'Zone',
             'attr' => ['placeholder' => 'Taper le nom du document'],
         ]);
+
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder->add('territory', TerritoryChoiceType::class);
         }

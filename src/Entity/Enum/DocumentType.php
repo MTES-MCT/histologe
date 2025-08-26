@@ -19,7 +19,6 @@ enum DocumentType: string
     case PROCEDURE_SAISINE = 'PROCEDURE_SAISINE';
     case BAILLEUR_DEVIS_POUR_TRAVAUX = 'BAILLEUR_DEVIS_POUR_TRAVAUX';
     case BAILLEUR_REPONSE_BAILLEUR = 'BAILLEUR_REPONSE_BAILLEUR';
-    case AUTRE = 'AUTRE';
     case AUTRE_PROCEDURE = 'AUTRE_PROCEDURE';
     case PHOTO_SITUATION = 'PHOTO_SITUATION';
     case PHOTO_VISITE = 'PHOTO_VISITE';
@@ -30,6 +29,7 @@ enum DocumentType: string
     case GUIDES_ET_AIDE = 'GUIDES_ET_AIDE';
     case COMM_INFORMATION_AUX_USAGERS = 'COMM_INFORMATION_AUX_USAGERS';
     case ANNUAIRE = 'ANNUAIRE';
+    case AUTRE = 'AUTRE';
 
     /** @return array<string, string> */
     public static function getLabelList(): array

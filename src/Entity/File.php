@@ -155,6 +155,10 @@ class File implements EntityHistoryInterface
     #[ORM\Column()]
     private ?bool $isStandalone = null;
 
+    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'files')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Territory $territory = null;
+
     public function __construct()
     {
         $this->uuid = Uuid::v4();
@@ -466,6 +470,18 @@ class File implements EntityHistoryInterface
     public function setIsStandalone(?bool $isStandalone): static
     {
         $this->isStandalone = $isStandalone;
+
+        return $this;
+    }
+
+    public function getTerritory(): ?Territory
+    {
+        return $this->territory;
+    }
+
+    public function setTerritory(?Territory $territory): static
+    {
+        $this->territory = $territory;
 
         return $this;
     }

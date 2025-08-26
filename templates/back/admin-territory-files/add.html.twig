@@ -1,0 +1,48 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Documents types{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Mon territoire',
+            'level3Link': 'back_territory_management_index',
+            'level4Title': 'Documents types',
+            'level4Link': 'back_admin_territory_files_index',
+            'level5Title': 'Ajout'
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-mb-0">Ajouter des documents</h1>
+                    <p>
+                        Choisissez les documents sur votre appareil puis renseignez les détails et conditions d'affichage des documents.
+                    </p>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-col-12 fr-px-5v">
+        {{ form_start(addForm) }}
+        {{ form_widget(addForm) }}
+        <div class="fr-grid-row fr-mt-4w">
+            <div class="fr-col-6 fr-text--left">
+                <a href="{{ path('back_admin_territory_files_index') }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-close-line">
+                    Annuler
+                </a>
+            </div>
+            <div class="fr-col-6 fr-text--right">
+                <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line">
+                    Ajouter le document
+                </button>
+            </div>
+        </div>
+        {{ form_end(addForm) }}
+    </section>
+
+{% endblock %}
