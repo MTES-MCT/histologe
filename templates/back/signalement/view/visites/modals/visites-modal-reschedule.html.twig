@@ -67,7 +67,7 @@
                                                         {{ partner.nom|upper }}
                                                     </option>
                                                 {% endfor %}
-                                                <option value="extern" {% if intervention.partner.id is null %}selected="selected"{% endif %}>Opérateur Externe</option>
+                                                <option value="extern" {% if intervention.partner is null or intervention.partner.id is null %}selected="selected"{% endif %}>Opérateur Externe</option>
                                             </select>
                                             <p id="signalement-reschedule-visite-partner-double-error" class="fr-error-text fr-hidden fr-my-3v">
                                                 Ce partenaire a déjà une visite en cours.

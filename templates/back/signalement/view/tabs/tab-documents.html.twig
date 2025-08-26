@@ -7,7 +7,7 @@
 {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
     <div class="fr-mt-5v"></div>
     {% include 'back/signalement/view/photos-documents.html.twig' with {
-        'zonetitle': "Photos et documents de la visite du " ~ intervention.scheduledAt|date('d/m/Y') ~ " par " ~ intervention.partner.nom,
+        'zonetitle': "Photos et documents de la visite du " ~ intervention.scheduledAt|date('d/m/Y') ~ " par " ~ (intervention.partner ? intervention.partner.nom : 'Opérateur Externe'),
         'filesFilter': 'visite',
         'interventionId': intervention.id
         } 
