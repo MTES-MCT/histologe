@@ -609,6 +609,7 @@ export default defineComponent({
         isMessagePostCloture: null,
         isNouveauMessage: null,
         isMessageWithoutResponse: null,
+        isDossiersSansActivite: null,
         showWithoutAffectationOnly: null,
         statusAffectation: null,
         criticiteScoreMin: null,

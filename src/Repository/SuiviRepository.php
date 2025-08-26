@@ -886,10 +886,8 @@ class SuiviRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countAllMessagesUsagers(User $user, ?int $territoryId, ?string $mesDossiersMessagesUsagers): CountDossiersMessagesUsagers
+    public function countAllMessagesUsagers(User $user, ?TabQueryParameters $params): CountDossiersMessagesUsagers
     {
-        $params = new TabQueryParameters($territoryId, null, null, null, null, null, $mesDossiersMessagesUsagers);
-
         return new CountDossiersMessagesUsagers(
             $this->countSuivisUsagersWithoutAskFeedbackBefore($user, $params),
             ($user->isSuperAdmin() || $user->isTerritoryAdmin()) ? $this->countSuivisPostCloture($user, $params) : 0,

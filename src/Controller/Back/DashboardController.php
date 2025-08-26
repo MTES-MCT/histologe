@@ -2,14 +2,18 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\WidgetSettingsFactory;
+use App\Form\SearchDashboardAverifierType;
 use App\Repository\TerritoryRepository;
 use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\ListFilters\SearchDashboardAverifier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,16 +27,18 @@ class DashboardController extends AbstractController
      */
     #[Route('/', name: 'back_dashboard')]
     public function index(
+        Request $request,
         TerritoryRepository $territoryRepository,
         WidgetSettingsFactory $widgetSettingsFactory,
         TabDataManager $tabDataManager,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
-        #[MapQueryParameter('territoireId')] ?int $territoireId = null,
+        #[MapQueryParameter('territoireId')] ?string $territoireIdRaw = null,
         #[MapQueryParameter('mesDossiersMessagesUsagers')] ?string $mesDossiersMessagesUsagers = null,
         #[MapQueryParameter('mesDossiersAverifier')] ?string $mesDossiersAverifier = null,
     ): Response {
+        $territoireId = (is_numeric($territoireIdRaw) ? (int) $territoireIdRaw : null);
+
         if ($featureNewDashboard) {
-            $territories = [];
             /** @var User $user */
             $user = $this->getUser();
 
@@ -44,28 +50,79 @@ class DashboardController extends AbstractController
                 ]);
             }
 
-            $authorizedTerritories = $user->getPartnersTerritories();
+            [$territory, $territories] = $this->resolveTerritoryAndTerritories(
+                $user,
+                $territoryRepository,
+                $territoireId
+            );
 
-            $territory = null;
-            if ($territoireId && ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoireId]))) {
-                $territory = $territoryRepository->find($territoireId);
-                if ($territory) {
-                    $territories[$territory->getId()] = $territory;
-                }
-            } elseif (!$this->isGranted('ROLE_ADMIN')) {
-                $territories = $authorizedTerritories;
+            $searchDashboardAverifier = new SearchDashboardAverifier($user);
+            $formSearchAverifier = $this->createForm(SearchDashboardAverifierType::class, $searchDashboardAverifier, [
+                'method' => 'GET',
+                'territory' => $territory,
+                'mesDossiersAverifier' => $mesDossiersAverifier,
+            ]);
+            $formSearchAverifier->handleRequest($request);
+
+            if ($formSearchAverifier->isSubmitted() && !$formSearchAverifier->isValid()) {
+                $searchDashboardAverifier = new SearchDashboardAverifier($user);
             }
 
             return $this->render('back/dashboard/index.html.twig', [
                 'territoireSelectedId' => $territoireId,
                 'settings' => $widgetSettingsFactory->createInstanceFrom($user, $territory),
-                'tab_count_kpi' => $tabDataManager->countDataKpi($territories, $territoireId, $mesDossiersMessagesUsagers),
+                'tab_count_kpi' => $tabDataManager->countDataKpi(
+                    $territories,
+                    $territory?->getId(),
+                    $mesDossiersMessagesUsagers,
+                    $mesDossiersAverifier,
+                    $searchDashboardAverifier->getQueryCommune(),
+                    $searchDashboardAverifier->getPartners()->map(fn ($p) => $p->getId())->toArray()
+                ),
                 'territory' => $territory,
                 'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers,
                 'mesDossiersAverifier' => $mesDossiersAverifier,
+                'formSearchAverifier' => $formSearchAverifier,
             ]);
         }
 
         return $this->render('back/dashboard/index.html.twig');
+    }
+
+    /**
+     * @return array{0: Territory|null, 1: array<int, Territory>}
+     */
+    private function resolveTerritoryAndTerritories(
+        User $user,
+        TerritoryRepository $territoryRepository,
+        ?int $territoireId,
+    ): array {
+        $territories = [];
+        $authorizedTerritories = $user->getPartnersTerritories();
+        $territory = null;
+
+        if ($territoireId) {
+            if ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoireId])) {
+                $territory = $territoryRepository->find($territoireId);
+                if ($territory && $territory->isIsActive()) {
+                    $territories[$territory->getId()] = $territory;
+                } else {
+                    $territory = null;
+                }
+            }
+        }
+
+        if (null === $territory) {
+            if ($this->isGranted('ROLE_ADMIN')) {
+                $territories = $territoryRepository->findAllList();
+            } else {
+                $territories = $authorizedTerritories;
+            }
+            if (1 === \count($territories)) {
+                $territory = $user->getFirstTerritory();
+            }
+        }
+
+        return [$territory, $territories];
     }
 }

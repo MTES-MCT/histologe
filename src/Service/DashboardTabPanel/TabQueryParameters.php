@@ -13,12 +13,15 @@ class TabQueryParameters
         public ?string $createdFrom = null,
         /** @var array<int|string> */
         public ?array $partenairesId = null,
+        /** @var array<int|string> */
+        public ?array $partners = null,
         #[Assert\Choice(['createdAt', 'closedAt', 'nbRelanceFeedbackUsager', 'nbDay', 'nomOccupant', 'demandeFermetureUsagerAt'])]
         public ?string $sortBy = null,
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
         public ?string $orderBy = null,
         public ?string $mesDossiersMessagesUsagers = null,
         public ?string $mesDossiersAverifier = null,
+        public ?string $queryCommune = null,
     ) {
     }
 }

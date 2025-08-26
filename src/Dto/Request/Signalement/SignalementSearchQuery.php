@@ -122,6 +122,7 @@ class SignalementSearchQuery
         private readonly ?string $isMessagePostCloture = null,
         private readonly ?string $isNouveauMessage = null,
         private readonly ?string $isMessageWithoutResponse = null,
+        private readonly ?string $isDossiersSansActivite = null,
     ) {
     }
 
@@ -315,6 +316,11 @@ class SignalementSearchQuery
         return $this->isMessageWithoutResponse;
     }
 
+    public function getIsDossiersSansActivite(): ?string
+    {
+        return $this->isDossiersSansActivite;
+    }
+
     public function getPage(): ?int
     {
         return $this->page;
@@ -428,6 +434,7 @@ class SignalementSearchQuery
         $filters['isNouveauMessage'] = 'oui' === $this->getIsNouveauMessage();
         $filters['isMessagePostCloture'] = 'oui' === $this->getIsMessagePostCloture();
         $filters['isMessageWithoutResponse'] = 'oui' === $this->getIsMessageWithoutResponse();
+        $filters['isDossiersSansActivite'] = 'oui' === $this->getIsDossiersSansActivite();
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         $filters['sortBy'] = $this->getSortBy();

@@ -155,9 +155,8 @@ class SuiviRepositoryTest extends KernelTestCase
     public function testCountAllMessagesUsagers(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
-        $territoryId = null;
-        $mesDossiers = null;
-        $result = $this->suiviRepository->countAllMessagesUsagers($user, $territoryId, $mesDossiers);
+        $params = new TabQueryParameters();
+        $result = $this->suiviRepository->countAllMessagesUsagers($user, $params);
         $this->assertIsObject($result);
         $this->assertTrue(method_exists($result, 'total'));
     }
