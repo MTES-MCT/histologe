@@ -7,8 +7,10 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\ListFilters\SearchTerritoryFiles;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -140,5 +142,36 @@ class FileRepository extends ServiceEntityRepository
             ->indexBy('f', 'f.id')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findFilteredPaginated(SearchTerritoryFiles $searchTerritoryFiles, int $maxListPagination): Paginator
+    {
+        $qb = $this->createQueryBuilder('f')
+            // ->andWhere('f.territory IS NOT NULL')
+            ->andWhere('f.signalement IS NULL');
+
+        if ($searchTerritoryFiles->getQueryName()) {
+            $qb->andWhere('f.title LIKE :queryName')
+                ->setParameter('queryName', '%'.$searchTerritoryFiles->getQueryName().'%');
+        }
+        /*if ($searchTerritoryFiles->getTerritory()) {
+            $qb->andWhere('f.territory = :territory')
+                ->setParameter('territory', $searchTerritoryFiles->getTerritory());
+        }*/
+        if ($searchTerritoryFiles->getType()) {
+            $qb->andWhere('f.documentType = :documentType')
+                ->setParameter('documentType', $searchTerritoryFiles->getType());
+        }
+        if ($searchTerritoryFiles->getOrderType()) {
+            [$field, $direction] = explode('-', $searchTerritoryFiles->getOrderType());
+            $qb->orderBy($field, $direction);
+        } else {
+            $qb->orderBy('f.title', 'ASC');
+        }
+
+        $qb->setFirstResult(($searchTerritoryFiles->getPage() - 1) * $maxListPagination)
+            ->setMaxResults($maxListPagination);
+
+        return new Paginator($qb->getQuery());
     }
 }
