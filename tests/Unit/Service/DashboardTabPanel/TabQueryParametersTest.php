@@ -22,6 +22,10 @@ class TabQueryParametersTest extends KernelTestCase
             territoireId: 1,
             communeCodePostal: '13001',
             partenairesId: [12, 14],
+            partners: [12, 14],
+            mesDossiersMessagesUsagers: 'oui',
+            mesDossiersAverifier: 'oui',
+            queryCommune: '72000',
             sortBy: 'createdAt',
             orderBy: 'ASC'
         );
@@ -37,6 +41,10 @@ class TabQueryParametersTest extends KernelTestCase
             territoireId: 1,
             communeCodePostal: '13001',
             partenairesId: [12],
+            partners: [12, 14],
+            mesDossiersMessagesUsagers: 'oui',
+            mesDossiersAverifier: 'oui',
+            queryCommune: '72000',
             sortBy: 'invalidSortBy',
             orderBy: 'ASC'
         );
@@ -53,6 +61,10 @@ class TabQueryParametersTest extends KernelTestCase
             territoireId: 1,
             communeCodePostal: '13012',
             partenairesId: [55, 12],
+            partners: [12, 14],
+            mesDossiersMessagesUsagers: 'oui',
+            mesDossiersAverifier: 'oui',
+            queryCommune: '72000',
             sortBy: 'createdAt',
             orderBy: 'INVALID'
         );
@@ -69,6 +81,10 @@ class TabQueryParametersTest extends KernelTestCase
             territoireId: null,
             communeCodePostal: null,
             partenairesId: null,
+            partners: null,
+            mesDossiersMessagesUsagers: null,
+            mesDossiersAverifier: null,
+            queryCommune: null,
             sortBy: null,
             orderBy: null
         );

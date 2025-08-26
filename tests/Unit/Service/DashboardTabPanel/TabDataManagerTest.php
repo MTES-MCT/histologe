@@ -14,6 +14,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
 use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabDossier;
@@ -395,5 +396,75 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('#2024-003', $result->dossiers[0]->reference);
         $this->assertSame(3, $result->dossiers[0]->messageDaysAgo);
         $this->assertSame('/bo/signalements/uuid-999', $result->dossiers[0]->lien);
+    }
+
+    public function testGetDossiersAVerifierSansActivitePartenaires(): void
+    {
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+        $this->signalementRepository->method('findSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn([
+            [
+                'nomOccupant' => 'Lemoine',
+                'prenomOccupant' => 'Claire',
+                'reference' => '2024-003',
+                'adresse' => '30 boulevard Nation',
+                'dernierSuiviAt' => '2024-06-20 12:00:00',
+                'derniereActionPartenaireNom' => 'SUPER PARTENAIRE',
+                'derniereActionPartenaireNomAgent' => 'Robert',
+                'derniereActionPartenairePrenomAgent' => 'Sophie',
+                'messageByProfileDeclarant' => true,
+                'nbJoursDepuisDernierSuivi' => 3,
+                'suiviCategory' => 'MESSAGE_PARTNER',
+                'uuid' => 'uuid-999',
+            ],
+        ]);
+        $this->signalementRepository->method('countSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn(1);
+
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+
+        $result = $tabDataManager->getDossiersAVerifierSansActivitePartenaires();
+        $this->assertCount(1, $result->dossiers);
+        $this->assertSame(1, $result->count);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomDeclarant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
+        $this->assertSame('#2024-003', $result->dossiers[0]->reference);
+        $this->assertSame(3, $result->dossiers[0]->derniereActionPartenaireDaysAgo);
+        $this->assertSame(SuiviCategory::MESSAGE_PARTNER->label(), $result->dossiers[0]->derniereActionTypeSuivi);
+        $this->assertSame('/bo/signalements/uuid-999', $result->dossiers[0]->lien);
+        $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereActionAt);
+    }
+
+    public function testCountDataKpi(): void
+    {
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+
+        $result = $tabDataManager->countDataKpi(
+            territories: [],
+            territoryId: 1,
+            mesDossiersMessagesUsagers: 'oui',
+            mesDossiersAverifier: null,
+            queryCommune: null,
+            partners: null
+        );
+
+        $this->assertInstanceOf(TabCountKpi::class, $result);
     }
 }
