@@ -7,7 +7,7 @@ use App\Entity\User;
 use App\Factory\WidgetSettingsFactory;
 use App\Form\SearchDashboardAverifierType;
 use App\Repository\TerritoryRepository;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use App\Service\ListFilters\SearchDashboardAverifier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -30,7 +30,7 @@ class DashboardController extends AbstractController
         Request $request,
         TerritoryRepository $territoryRepository,
         WidgetSettingsFactory $widgetSettingsFactory,
-        TabDataManager $tabDataManager,
+        TabDataManagerInterface $tabDataManager,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
         #[MapQueryParameter('territoireId')] ?string $territoireIdRaw = null,
         #[MapQueryParameter('mesDossiersMessagesUsagers')] ?string $mesDossiersMessagesUsagers = null,

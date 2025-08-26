@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersMessagesUsagersSansReponseTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -28,8 +28,8 @@ class DossiersMessagesUsagersSansReponseTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManager&MockObject $tabDataManager */
-        $tabDataManager = $this->createMock(TabDataManager::class);
+        /** @var TabDataManagerInterface&MockObject $TabDataManagerInterface */
+        $TabDataManagerInterface = $this->createMock(TabDataManagerInterface::class);
 
         $tabQueryParameters = new TabQueryParameters(mesDossiersMessagesUsagers: '1');
         $expectedResult = new TabDossierResult(
@@ -37,12 +37,12 @@ class DossiersMessagesUsagersSansReponseTabBodyLoaderTest extends TestCase
             count: 2,
         );
 
-        $tabDataManager->expects($this->once())
+        $TabDataManagerInterface->expects($this->once())
             ->method('getMessagesUsagersMessagesSansReponse')
             ->with($tabQueryParameters)
             ->willReturn($expectedResult);
 
-        $loader = new DossiersMessagesUsagersSansReponseTabBodyLoader($security, $tabDataManager);
+        $loader = new DossiersMessagesUsagersSansReponseTabBodyLoader($security, $TabDataManagerInterface);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_USAGERS_SANS_REPONSE,
             tabQueryParameters: $tabQueryParameters

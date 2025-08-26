@@ -7,7 +7,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -16,7 +16,7 @@ class DossiersNewAffectationTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NEW_AFFECTATION;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManagerInterface $TabDataManagerInterface)
     {
         parent::__construct($this->security);
     }
@@ -41,7 +41,7 @@ class DossiersNewAffectationTabBodyLoader extends AbstractTabBodyLoader
             $this->tabQueryParameters->partenairesId = [$partner->getId()];
         }
 
-        $result = $this->tabDataManager->getNouveauxDossiersWithCount(
+        $result = $this->TabDataManagerInterface->getNouveauxDossiersWithCount(
             affectationStatus: AffectationStatus::WAIT,
             tabQueryParameters: $this->tabQueryParameters
         );

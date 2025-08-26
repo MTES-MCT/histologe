@@ -5,7 +5,7 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 use App\Entity\Enum\SignalementStatus;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDataManagerInterface;
 use App\Service\DashboardTabPanel\TabDossier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -15,7 +15,7 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManagerInterface $TabDataManagerInterface)
     {
         parent::__construct($this->security);
     }
@@ -29,7 +29,7 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
         parent::load($tabBody);
         $this->tabQueryParameters->createdFrom = TabDossier::CREATED_FROM_FORMULAIRE_PRO;
 
-        $result = $this->tabDataManager->getNouveauxDossiersWithCount(
+        $result = $this->TabDataManagerInterface->getNouveauxDossiersWithCount(
             signalementStatus: SignalementStatus::NEED_VALIDATION,
             tabQueryParameters: $this->tabQueryParameters
         );
