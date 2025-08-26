@@ -83,6 +83,7 @@
                     <td>{{ file.id }}</td>
                     <td>{{ file.title }}</td>
                     <td>{{ file.createdAt.format('d/m/Y') }}</td>
+                    <td>{{ file.documentType.label }}</td>
                     {% if is_granted('ROLE_ADMIN') %}
                     <td>
                         {% if file.territory %}
@@ -92,7 +93,6 @@
                         {% endif %}
                     </td>
                     {% endif %}
-                    <td>{{ file.documentType.label }}</td>
                     <td class="fr-text--right fr-ws-nowrap">
                         <a href="" class="fr-btn fr-icon-eye-line" title="Voir les détails du document {{file.title}}">
                             Voir les détails du document {{ file.title }}
