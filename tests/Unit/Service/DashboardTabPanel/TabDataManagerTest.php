@@ -90,7 +90,7 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('1 rue de Paris', $result[0]->adresse);
         $this->assertSame('en cours', $result[0]->statut);
         $this->assertSame('Suivi visible par l\'usager', $result[0]->derniereAction);
-        $this->assertSame('10/06/2024', $result[0]->derniereActionAt);
+        $this->assertSame('10/06/2024', $result[0]->derniereActionAt->format('d/m/Y'));
         $this->assertSame('OUI', $result[0]->actionDepuis);
         $this->assertSame('/bo/signalements/uuid-123', $result[0]->lien);
     }
