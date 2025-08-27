@@ -28,8 +28,8 @@ class DossiersMessagesNouveauxTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManager&MockObject $TabDataManager */
-        $TabDataManager = $this->createMock(TabDataManager::class);
+        /** @var TabDataManager&MockObject $tabDataManager */
+        $tabDataManager = $this->createMock(TabDataManager::class);
 
         $tabQueryParameters = new TabQueryParameters(mesDossiersMessagesUsagers: '0');
         $expectedResult = new TabDossierResult(
@@ -37,12 +37,12 @@ class DossiersMessagesNouveauxTabBodyLoaderTest extends TestCase
             count: 2,
         );
 
-        $TabDataManager->expects($this->once())
+        $tabDataManager->expects($this->once())
             ->method('getMessagesUsagersNouveauxMessages')
             ->with($tabQueryParameters)
             ->willReturn($expectedResult);
 
-        $loader = new DossiersMessagesNouveauxTabBodyLoader($security, $TabDataManager);
+        $loader = new DossiersMessagesNouveauxTabBodyLoader($security, $tabDataManager);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_NOUVEAUX,
             tabQueryParameters: $tabQueryParameters

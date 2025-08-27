@@ -11,7 +11,7 @@ class DossiersSansActivitePartenaireTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -19,7 +19,7 @@ class DossiersSansActivitePartenaireTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->TabDataManager->getDossiersAVerifierSansActivitePartenaires($this->tabQueryParameters);
+        $result = $this->tabDataManager->getDossiersAVerifierSansActivitePartenaires($this->tabQueryParameters);
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
         $filters = [

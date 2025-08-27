@@ -28,8 +28,8 @@ class DossiersSansActivitePartenaireTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManager&MockObject $TabDataManager */
-        $TabDataManager = $this->createMock(TabDataManager::class);
+        /** @var TabDataManager&MockObject $tabDataManager */
+        $tabDataManager = $this->createMock(TabDataManager::class);
 
         $tabQueryParameters = new TabQueryParameters(mesDossiersAverifier: '1');
         $expectedResult = new TabDossierResult(
@@ -37,12 +37,12 @@ class DossiersSansActivitePartenaireTabBodyLoaderTest extends TestCase
             count: 2,
         );
 
-        $TabDataManager->expects($this->once())
+        $tabDataManager->expects($this->once())
             ->method('getDossiersAVerifierSansActivitePartenaires')
             ->with($tabQueryParameters)
             ->willReturn($expectedResult);
 
-        $loader = new DossiersSansActivitePartenaireTabBodyLoader($security, $TabDataManager);
+        $loader = new DossiersSansActivitePartenaireTabBodyLoader($security, $tabDataManager);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE,
             tabQueryParameters: $tabQueryParameters

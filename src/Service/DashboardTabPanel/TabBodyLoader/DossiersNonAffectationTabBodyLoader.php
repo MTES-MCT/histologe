@@ -14,7 +14,7 @@ class DossiersNonAffectationTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -27,7 +27,7 @@ class DossiersNonAffectationTabBodyLoader extends AbstractTabBodyLoader
     {
         parent::load($tabBody);
 
-        $result = $this->TabDataManager->getDossierNonAffectationWithCount(
+        $result = $this->tabDataManager->getDossierNonAffectationWithCount(
             SignalementStatus::ACTIVE,
             $this->tabQueryParameters
         );

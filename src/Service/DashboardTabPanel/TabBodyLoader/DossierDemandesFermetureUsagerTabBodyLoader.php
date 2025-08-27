@@ -14,7 +14,7 @@ class DossierDemandesFermetureUsagerTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_DEMANDE_FERMETURE_USAGER;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -27,7 +27,7 @@ class DossierDemandesFermetureUsagerTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->TabDataManager->getDossiersDemandesFermetureByUsager($this->tabQueryParameters);
+        $result = $this->tabDataManager->getDossiersDemandesFermetureByUsager($this->tabQueryParameters);
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
         if (null === $this->tabQueryParameters->orderBy) {
