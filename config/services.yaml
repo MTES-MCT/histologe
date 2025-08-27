@@ -130,12 +130,6 @@ services:
     App\Service\DashboardWidget\WidgetDataManagerCache:
         decorates: App\Service\DashboardWidget\WidgetDataManager
 
-    App\Service\DashboardTabPanel\TabDataManagerInterface:
-        alias: App\Service\DashboardTabPanel\TabDataManager
-
-    App\Service\DashboardTabPanel\TabDataManagerCache:
-        decorates: App\Service\DashboardTabPanel\TabDataManager
-
     App\Service\Interconnection\Esabora\EsaboraSCHSService:
         arguments:
             - '@App\Service\Interconnection\JobEventHttpClient'

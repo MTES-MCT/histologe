@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersDernierActionTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManagerInterface;
+use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -26,8 +26,8 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManagerInterface&MockObject $TabDataManagerInterface */
-        $TabDataManagerInterface = $this->createMock(TabDataManagerInterface::class);
+        /** @var TabDataManager&MockObject $TabDataManager */
+        $TabDataManager = $this->createMock(TabDataManager::class);
         $tabQueryParameters = new TabQueryParameters(territoireId: 42);
 
         $expectedData = ['foo' => 'bar'];
@@ -38,28 +38,28 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
         ];
         $expectedInterconnexion = ['hasErrorsLastDay' => false];
 
-        $TabDataManagerInterface->expects($this->once())
+        $TabDataManager->expects($this->once())
             ->method('getDernierActionDossiers')
             ->with($tabQueryParameters)
             ->willReturn($expectedData);
-        $TabDataManagerInterface->expects($this->once())
+        $TabDataManager->expects($this->once())
             ->method('countUsersPendingToArchive')
             ->with($tabQueryParameters)
             ->willReturn($expectedKpi['comptes_en_attente']);
-        $TabDataManagerInterface->expects($this->once())
+        $TabDataManager->expects($this->once())
             ->method('countPartenairesNonNotifiables')
             ->with($tabQueryParameters)
             ->willReturn($expectedKpi['partenaires_non_notifiables']);
-        $TabDataManagerInterface->expects($this->once())
+        $TabDataManager->expects($this->once())
             ->method('countPartenairesInterfaces')
             ->with($tabQueryParameters)
             ->willReturn($expectedKpi['partenaires_interfaces']);
-        $TabDataManagerInterface->expects($this->once())
+        $TabDataManager->expects($this->once())
             ->method('getInterconnexions')
             ->with($tabQueryParameters)
             ->willReturn($expectedInterconnexion);
 
-        $loader = new DossiersDernierActionTabBodyLoader($security, $TabDataManagerInterface);
+        $loader = new DossiersDernierActionTabBodyLoader($security, $TabDataManager);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
             tabQueryParameters: $tabQueryParameters
@@ -87,18 +87,18 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManagerInterface&MockObject $TabDataManagerInterface */
-        $TabDataManagerInterface = $this->createMock(TabDataManagerInterface::class);
+        /** @var TabDataManager&MockObject $TabDataManager */
+        $TabDataManager = $this->createMock(TabDataManager::class);
         $tabQueryParameters = new TabQueryParameters(territoireId: 42);
 
         $expectedData = ['foo' => 'bar'];
 
-        $TabDataManagerInterface->expects($this->once())
+        $TabDataManager->expects($this->once())
             ->method('getDernierActionDossiers')
             ->with($tabQueryParameters)
             ->willReturn($expectedData);
 
-        $loader = new DossiersDernierActionTabBodyLoader($security, $TabDataManagerInterface);
+        $loader = new DossiersDernierActionTabBodyLoader($security, $TabDataManager);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
             tabQueryParameters: $tabQueryParameters

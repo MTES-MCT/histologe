@@ -4,7 +4,7 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManagerInterface;
+use App\Service\DashboardTabPanel\TabDataManager;
 use Doctrine\DBAL\Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -12,7 +12,7 @@ class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoade
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_RELANCE_USAGER_SANS_REPONSE;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManagerInterface $TabDataManagerInterface)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -24,7 +24,7 @@ class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoade
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->TabDataManagerInterface->getDossiersRelanceSansReponse($this->tabQueryParameters);
+        $result = $this->TabDataManager->getDossiersRelanceSansReponse($this->tabQueryParameters);
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
         if (null === $this->tabQueryParameters->orderBy) {
