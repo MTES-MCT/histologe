@@ -4,14 +4,14 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
-use App\Service\DashboardTabPanel\TabDataManagerInterface;
+use App\Service\DashboardTabPanel\TabDataManager;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class DossiersMessagesApresFermetureTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_APRES_FERMETURE;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManagerInterface $TabDataManagerInterface)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -20,7 +20,7 @@ class DossiersMessagesApresFermetureTabBodyLoader extends AbstractTabBodyLoader
     {
         parent::load($tabBody);
 
-        $result = $this->TabDataManagerInterface->getMessagesUsagersMessageApresFermeture(
+        $result = $this->TabDataManager->getMessagesUsagersMessageApresFermeture(
             $this->tabQueryParameters
         );
 
