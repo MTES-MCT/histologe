@@ -12,7 +12,7 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -24,16 +24,16 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
         parent::load($tabBody);
 
         $data = [];
-        $data['data'] = $this->TabDataManager->getDernierActionDossiers($this->tabQueryParameters);
+        $data['data'] = $this->tabDataManager->getDernierActionDossiers($this->tabQueryParameters);
         if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
             $data['data_kpi'] = [
-                'comptes_en_attente' => $this->TabDataManager->countUsersPendingToArchive($this->tabQueryParameters),
-                'partenaires_non_notifiables' => $this->TabDataManager->countPartenairesNonNotifiables($this->tabQueryParameters),
-                'partenaires_interfaces' => $this->TabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
+                'comptes_en_attente' => $this->tabDataManager->countUsersPendingToArchive($this->tabQueryParameters),
+                'partenaires_non_notifiables' => $this->tabDataManager->countPartenairesNonNotifiables($this->tabQueryParameters),
+                'partenaires_interfaces' => $this->tabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
             ];
         }
         if ($user->isSuperAdmin()) {
-            $data['data_interconnexion'] = $this->TabDataManager->getInterconnexions($this->tabQueryParameters);
+            $data['data_interconnexion'] = $this->tabDataManager->getInterconnexions($this->tabQueryParameters);
         }
         $data['territory_id'] = $this->tabQueryParameters ? $this->tabQueryParameters->territoireId : null;
 

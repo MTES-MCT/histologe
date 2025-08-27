@@ -11,7 +11,7 @@ class DossiersMessagesNouveauxTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_NOUVEAUX;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -19,7 +19,7 @@ class DossiersMessagesNouveauxTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->TabDataManager->getMessagesUsagersNouveauxMessages(
+        $result = $this->tabDataManager->getMessagesUsagersNouveauxMessages(
             $this->tabQueryParameters
         );
 

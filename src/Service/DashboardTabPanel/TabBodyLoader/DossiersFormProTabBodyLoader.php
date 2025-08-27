@@ -15,7 +15,7 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -29,7 +29,7 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
         parent::load($tabBody);
         $this->tabQueryParameters->createdFrom = TabDossier::CREATED_FROM_FORMULAIRE_PRO;
 
-        $result = $this->TabDataManager->getNouveauxDossiersWithCount(
+        $result = $this->tabDataManager->getNouveauxDossiersWithCount(
             signalementStatus: SignalementStatus::NEED_VALIDATION,
             tabQueryParameters: $this->tabQueryParameters
         );

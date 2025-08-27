@@ -28,8 +28,8 @@ class DossiersMessagesApresFermetureTabBodyLoaderTest extends TestCase
         $security->method('isGranted')->willReturn(true);
         $security->method('getUser')->willReturn($user);
 
-        /** @var TabDataManager&MockObject $TabDataManager */
-        $TabDataManager = $this->createMock(TabDataManager::class);
+        /** @var TabDataManager&MockObject $tabDataManager */
+        $tabDataManager = $this->createMock(TabDataManager::class);
 
         $tabQueryParameters = new TabQueryParameters(mesDossiersMessagesUsagers: '1');
         $expectedResult = new TabDossierResult(
@@ -37,12 +37,12 @@ class DossiersMessagesApresFermetureTabBodyLoaderTest extends TestCase
             count: 2,
         );
 
-        $TabDataManager->expects($this->once())
+        $tabDataManager->expects($this->once())
             ->method('getMessagesUsagersMessageApresFermeture')
             ->with($tabQueryParameters)
             ->willReturn($expectedResult);
 
-        $loader = new DossiersMessagesApresFermetureTabBodyLoader($security, $TabDataManager);
+        $loader = new DossiersMessagesApresFermetureTabBodyLoader($security, $tabDataManager);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_APRES_FERMETURE,
             tabQueryParameters: $tabQueryParameters

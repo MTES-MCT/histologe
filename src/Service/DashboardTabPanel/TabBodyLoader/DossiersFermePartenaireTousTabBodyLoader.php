@@ -12,7 +12,7 @@ class DossiersFermePartenaireTousTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_FERME_PARTENAIRE_TOUS;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -23,7 +23,7 @@ class DossiersFermePartenaireTousTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->TabDataManager->getDossiersFermePartenaireTous($this->tabQueryParameters);
+        $result = $this->tabDataManager->getDossiersFermePartenaireTous($this->tabQueryParameters);
 
         $filters = [
             ...$tabBody->getFilters(),

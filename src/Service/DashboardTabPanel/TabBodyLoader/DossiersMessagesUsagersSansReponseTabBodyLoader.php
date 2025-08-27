@@ -11,7 +11,7 @@ class DossiersMessagesUsagersSansReponseTabBodyLoader extends AbstractTabBodyLoa
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_USAGERS_SANS_REPONSE;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -19,7 +19,7 @@ class DossiersMessagesUsagersSansReponseTabBodyLoader extends AbstractTabBodyLoa
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->TabDataManager->getMessagesUsagersMessagesSansReponse(
+        $result = $this->tabDataManager->getMessagesUsagersMessagesSansReponse(
             $this->tabQueryParameters
         );
 

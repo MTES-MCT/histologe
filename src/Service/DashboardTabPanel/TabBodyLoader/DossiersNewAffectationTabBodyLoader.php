@@ -16,7 +16,7 @@ class DossiersNewAffectationTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NEW_AFFECTATION;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -41,7 +41,7 @@ class DossiersNewAffectationTabBodyLoader extends AbstractTabBodyLoader
             $this->tabQueryParameters->partenairesId = [$partner->getId()];
         }
 
-        $result = $this->TabDataManager->getNouveauxDossiersWithCount(
+        $result = $this->tabDataManager->getNouveauxDossiersWithCount(
             affectationStatus: AffectationStatus::WAIT,
             tabQueryParameters: $this->tabQueryParameters
         );

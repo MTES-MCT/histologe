@@ -11,7 +11,7 @@ class DossiersMessagesApresFermetureTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_MESSAGES_APRES_FERMETURE;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -20,7 +20,7 @@ class DossiersMessagesApresFermetureTabBodyLoader extends AbstractTabBodyLoader
     {
         parent::load($tabBody);
 
-        $result = $this->TabDataManager->getMessagesUsagersMessageApresFermeture(
+        $result = $this->tabDataManager->getMessagesUsagersMessageApresFermeture(
             $this->tabQueryParameters
         );
 

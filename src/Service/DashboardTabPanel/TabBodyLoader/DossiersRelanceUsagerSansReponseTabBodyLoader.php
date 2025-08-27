@@ -12,7 +12,7 @@ class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoade
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_RELANCE_USAGER_SANS_REPONSE;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $TabDataManager)
+    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
         parent::__construct($this->security);
     }
@@ -24,7 +24,7 @@ class DossiersRelanceUsagerSansReponseTabBodyLoader extends AbstractTabBodyLoade
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $result = $this->TabDataManager->getDossiersRelanceSansReponse($this->tabQueryParameters);
+        $result = $this->tabDataManager->getDossiersRelanceSansReponse($this->tabQueryParameters);
         $tabBody->setData($result->dossiers);
         $tabBody->setCount($result->count);
         if (null === $this->tabQueryParameters->orderBy) {
