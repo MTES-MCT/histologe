@@ -10,6 +10,7 @@ use App\Service\DashboardTabPanel\Kpi\CountDossiersMessagesUsagers;
 use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
+use App\Service\DashboardTabPanel\Kpi\TabCountKpiCacheHelper;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -21,17 +22,20 @@ class TabCountKpiBuilderTest extends TestCase
     protected MockObject|SuiviRepository $suiviRepository;
     protected MockObject|Security $security;
     protected MockObject|TabCountKpiBuilder $tabCountKpiBuilder;
+    protected MockObject|TabCountKpiCacheHelper $tabCountKpiCacheHelper;
 
     protected function setUp(): void
     {
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
         $this->suiviRepository = $this->createMock(SuiviRepository::class);
         $this->security = $this->createMock(Security::class);
+        $this->tabCountKpiCacheHelper = $this->createMock(TabCountKpiCacheHelper::class);
 
         $this->tabCountKpiBuilder = new TabCountKpiBuilder(
             $this->signalementRepository,
             $this->suiviRepository,
-            $this->security
+            $this->security,
+            $this->tabCountKpiCacheHelper,
         );
     }
 
