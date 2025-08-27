@@ -228,7 +228,7 @@ class TabDataManagerTest extends TestCase
                 'prenomOccupant' => 'Alice',
                 'reference' => '2024-001',
                 'adresse' => '10 rue Victor Hugo',
-                'messageAt' => new \DateTimeImmutable('2024-06-15 14:00:00'),
+                'messageAt' => '2024-06-15 14:00:00',
                 'messageSuiviByNom' => 'Dupont',
                 'messageSuiviByPrenom' => 'Jean',
                 'messageByProfileDeclarant' => true,
@@ -254,6 +254,7 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('Alice', $result->dossiers[0]->prenomDeclarant);
         $this->assertSame('#2024-001', $result->dossiers[0]->reference);
         $this->assertSame('/bo/signalements/uuid-456', $result->dossiers[0]->lien);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
     }
 
     public function testGetDossiersRelanceSansReponseReturnsExpectedResult(): void
@@ -298,7 +299,7 @@ class TabDataManagerTest extends TestCase
                 'reference' => '2024-002',
                 'adresse' => '20 avenue République',
                 'clotureAt' => new \DateTimeImmutable('2024-05-01 09:00:00'),
-                'messageAt' => new \DateTimeImmutable('2024-06-01 10:00:00'),
+                'messageAt' => '2024-06-01 10:00:00',
                 'messageSuiviByNom' => 'Martin',
                 'messageSuiviByPrenom' => 'Lucie',
                 'messageByProfileDeclarant' => false,
@@ -367,7 +368,7 @@ class TabDataManagerTest extends TestCase
                 'prenomOccupant' => 'Claire',
                 'reference' => '2024-003',
                 'adresse' => '30 boulevard Nation',
-                'messageAt' => new \DateTimeImmutable('2024-06-20 12:00:00'),
+                'messageAt' => '2024-06-20 12:00:00',
                 'messageSuiviByNom' => 'Robert',
                 'messageSuiviByPrenom' => 'Sophie',
                 'messageByProfileDeclarant' => true,
@@ -396,6 +397,7 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('#2024-003', $result->dossiers[0]->reference);
         $this->assertSame(3, $result->dossiers[0]->messageDaysAgo);
         $this->assertSame('/bo/signalements/uuid-999', $result->dossiers[0]->lien);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
     }
 
     public function testGetDossiersAVerifierSansActivitePartenaires(): void
