@@ -5,6 +5,7 @@ namespace App\Service\DashboardTabPanel;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
+use App\Repository\TerritoryRepository;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -20,158 +21,16 @@ class TabDataManagerCache implements TabDataManagerInterface
     public function __construct(
         private readonly TabDataManager $tabDataManager,
         private readonly TagAwareCacheInterface $dashboardCache,
-        private readonly TabCacheCommonKeyGenerator $cacheCommonKeyGenerator,
         private readonly Security $security,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly TerritoryRepository $territoryRepository,
     ) {
         $this->initKeyCache();
     }
 
     private function initKeyCache(): void
     {
-        // TODO : à voir si on veut utiliser ça
-        $this->commonKey = $this->cacheCommonKeyGenerator->generate().'-tab-';
-    }
-
-    /**
-     * @return TabDossier[]
-     */
-    public function getDernierActionDossiers(?TabQueryParameters $tabQueryParameters = null): array
-    {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_dossier_cache_expired_after'));
-
-                return $this->tabDataManager->getDernierActionDossiers($tabQueryParameters);
-            }
-        );
-    }
-
-    public function countUsersPendingToArchive(?TabQueryParameters $tabQueryParameters = null): int
-    {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_kpi_cache_expired_after'));
-
-                return $this->tabDataManager->countUsersPendingToArchive($tabQueryParameters);
-            }
-        );
-    }
-
-    public function countPartenairesNonNotifiables(?TabQueryParameters $tabQueryParameters = null): int
-    {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_kpi_cache_expired_after'));
-
-                return $this->tabDataManager->countPartenairesNonNotifiables($tabQueryParameters);
-            }
-        );
-    }
-
-    public function countPartenairesInterfaces(?TabQueryParameters $tabQueryParameters = null): int
-    {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_kpi_cache_expired_after'));
-
-                return $this->tabDataManager->countPartenairesInterfaces($tabQueryParameters);
-            }
-        );
-    }
-
-    /**
-     * @return array<string, bool|\DateTimeImmutable|null>
-     *
-     * @throws \DateMalformedStringException
-     */
-    public function getInterconnexions(?TabQueryParameters $tabQueryParameters = null): array
-    {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_kpi_cache_expired_after'));
-
-                return $this->tabDataManager->getInterconnexions($tabQueryParameters);
-            }
-        );
-    }
-
-    public function getNouveauxDossiersWithCount(?SignalementStatus $signalementStatus = null, ?AffectationStatus $affectationStatus = null, ?TabQueryParameters $tabQueryParameters = null): TabDossierResult
-    {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey.'-'.($signalementStatus?->value ?? 'null').'-'.($affectationStatus?->value ?? 'null');
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $signalementStatus, $affectationStatus, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_dossier_cache_expired_after'));
-
-                return $this->tabDataManager->getNouveauxDossiersWithCount($signalementStatus, $affectationStatus, $tabQueryParameters);
-            }
-        );
-    }
-
-    public function getDossierNonAffectationWithCount(SignalementStatus $signalementStatus, ?TabQueryParameters $tabQueryParameters = null): TabDossierResult
-    {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey.'-'.($signalementStatus?->value ?? 'null');
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $signalementStatus, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_dossier_cache_expired_after'));
-
-                return $this->tabDataManager->getDossierNonAffectationWithCount($signalementStatus, $tabQueryParameters);
-            }
-        );
+        $this->commonKey = 'dashboard-tab';
     }
 
     /**
@@ -185,7 +44,6 @@ class TabDataManagerCache implements TabDataManagerInterface
     {
         /** @var User|null $user */
         $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
 
         $tabQueryParameters = new TabQueryParameters(
             territoireId: $territoryId,
@@ -195,24 +53,23 @@ class TabDataManagerCache implements TabDataManagerInterface
             partners: $partners
         );
 
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
+        return $this->tabDataManager->countDataKpi(
+            $territories,
+            $tabQueryParameters->territoireId,
+            $tabQueryParameters->mesDossiersMessagesUsagers,
+            $tabQueryParameters->mesDossiersAverifier,
+            $tabQueryParameters->queryCommune,
+            $tabQueryParameters->partners
+        );
 
-        // $paramsKey = implode('_', [
-        //     implode('-', $territories),
-        //     $territoryId ?? 'null',
-        //     $mesDossiersMessagesUsagers ?? 'null',
-        //     $mesDossiersAverifier ?? 'null',
-        //     $queryCommune ?? 'null',
-        //     is_array($partners) ? implode('-', $partners) : $partners,
-        // ]);
-        // $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
+        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
+        $key = $this->commonKey.'-'.__FUNCTION__.'-'.$paramsKey;
 
         return $this->dashboardCache->get(
             $key,
-            function (ItemInterface $item) use ($user, $territories, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_kpi_cache_expired_after'));
+            function (ItemInterface $item) use ($territories, $tabQueryParameters) {
+                // $item->expiresAfter($this->parameterBag->get('tab_data_kpi_cache_expired_after'));
+                $item->expiresAfter(1);
 
                 return $this->tabDataManager->countDataKpi(
                     $territories,
@@ -226,173 +83,148 @@ class TabDataManagerCache implements TabDataManagerInterface
         );
     }
 
-    public function getMessagesUsagersNouveauxMessages(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    /**
+     * @return TabDossier[]
+     */
+    public function getDernierActionDossiers(?TabQueryParameters $tabQueryParameters = null): array
     {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_suivis_cache_expired_after'));
-
-                return $this->tabDataManager->getMessagesUsagersNouveauxMessages($tabQueryParameters);
-            }
-        );
+        return $this->tabDataManager->getDernierActionDossiers($tabQueryParameters);
     }
 
-    public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    public function countUsersPendingToArchive(?TabQueryParameters $tabQueryParameters = null): int
     {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_suivis_cache_expired_after'));
-
-                return $this->tabDataManager->getMessagesUsagersMessageApresFermeture($tabQueryParameters);
-            }
-        );
+        return $this->tabDataManager->countUsersPendingToArchive($tabQueryParameters);
     }
 
-    public function getMessagesUsagersMessagesSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    public function countPartenairesNonNotifiables(?TabQueryParameters $tabQueryParameters = null): int
     {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_suivis_cache_expired_after'));
-
-                return $this->tabDataManager->getMessagesUsagersMessagesSansReponse($tabQueryParameters);
-            }
-        );
+        return $this->tabDataManager->countPartenairesNonNotifiables($tabQueryParameters);
     }
 
-    public function getDossiersAVerifierSansActivitePartenaires(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    public function countPartenairesInterfaces(?TabQueryParameters $tabQueryParameters = null): int
     {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_dossier_cache_expired_after'));
-
-                return $this->tabDataManager->getDossiersAVerifierSansActivitePartenaires($tabQueryParameters);
-            }
-        );
+        return $this->tabDataManager->countPartenairesInterfaces($tabQueryParameters);
     }
 
-    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    /**
+     * @return array<string, bool|\DateTimeImmutable|null>
+     *
+     * @throws \DateMalformedStringException
+     */
+    public function getInterconnexions(?TabQueryParameters $tabQueryParameters = null): array
     {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_dossier_cache_expired_after'));
-
-                return $this->tabDataManager->getDossiersDemandesFermetureByUsager($tabQueryParameters);
-            }
-        );
+        return $this->tabDataManager->getInterconnexions($tabQueryParameters);
     }
 
-    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    public function getNouveauxDossiersWithCount(?SignalementStatus $signalementStatus = null, ?AffectationStatus $affectationStatus = null, ?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
+        return $this->tabDataManager->getNouveauxDossiersWithCount($signalementStatus, $affectationStatus, $tabQueryParameters);
+    }
 
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_dossier_cache_expired_after'));
-
-                return $this->tabDataManager->getDossiersRelanceSansReponse($tabQueryParameters);
-            }
-        );
+    public function getDossierNonAffectationWithCount(SignalementStatus $signalementStatus, ?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        return $this->tabDataManager->getDossierNonAffectationWithCount($signalementStatus, $tabQueryParameters);
     }
 
     public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        /** @var User|null $user */
-        $user = $this->security->getUser();
-        $roleKey = $user ? implode('-', $user->getRoles()) : 'anonymous';
-        $paramsKey = $this->getTabQueryParametersKey($user, $tabQueryParameters);
-        $key = __FUNCTION__.'-'.$this->commonKey.$roleKey.'-'.$paramsKey;
-
-        return $this->dashboardCache->get(
-            $key,
-            function (ItemInterface $item) use ($user, $tabQueryParameters) {
-                $this->addTagTerritory($item, $user, $tabQueryParameters);
-                $item->expiresAfter($this->parameterBag->get('tab_data_dossier_cache_expired_after'));
-
-                return $this->tabDataManager->getDossiersFermePartenaireTous($tabQueryParameters);
-            }
-        );
+        return $this->tabDataManager->getDossiersFermePartenaireTous($tabQueryParameters);
     }
 
-    private function addTagTerritory(ItemInterface $item, ?User $user, ?TabQueryParameters $tabQueryParameters): void
+    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $tags = [];
+        return $this->tabDataManager->getDossiersDemandesFermetureByUsager($tabQueryParameters);
+    }
+
+    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        return $this->tabDataManager->getDossiersRelanceSansReponse($tabQueryParameters);
+    }
+
+    public function getMessagesUsagersNouveauxMessages(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        return $this->tabDataManager->getMessagesUsagersNouveauxMessages($tabQueryParameters);
+    }
+
+    public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        return $this->tabDataManager->getMessagesUsagersMessageApresFermeture($tabQueryParameters);
+    }
+
+    public function getMessagesUsagersMessagesSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        return $this->tabDataManager->getMessagesUsagersMessagesSansReponse($tabQueryParameters);
+    }
+
+    public function getDossiersAVerifierSansActivitePartenaires(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        return $this->tabDataManager->getDossiersAVerifierSansActivitePartenaires($tabQueryParameters);
+    }
+
+    private function getTerritoryKey(User $user, ?TabQueryParameters $tabQueryParameters): string
+    {
+        $territories = [];
         if (1 === count($user->getPartnersTerritories()) || ($tabQueryParameters && $tabQueryParameters->territoireId)) {
-            $tags[] = 'territory-'.($tabQueryParameters->territoireId ?? $user->getFirstTerritory()->getId());
+            $territories[] = 'territory_'.($tabQueryParameters->territoireId ?? $user->getFirstTerritory()->getId());
+        } elseif ($this->security->isGranted('ROLE_ADMIN')) {
+            $territories[] = 'territory_all';
         } else {
             foreach ($user->getPartnersTerritories() as $territory) {
-                $tags[] = 'territory-'.$territory->getId();
+                $territories[] = 'territory_'.$territory->getId();
             }
         }
-        if ($tags) {
-            $item->tag($tags);
+        asort($territories);
+
+        return implode('-', $territories);
+    }
+
+    private function getPartnerKey(User $user, ?TabQueryParameters $tabQueryParameters): string
+    {
+        $partners = [];
+        if ($tabQueryParameters && $tabQueryParameters->partners) {
+            foreach ($tabQueryParameters->partners as $partner) {
+                $partners[] = 'partner_'.$partner;
+            }
+        } elseif ($tabQueryParameters && $tabQueryParameters->partenairesId) {
+            foreach ($tabQueryParameters->partenairesId as $partnerId) {
+                $partners[] = 'partner_'.$partnerId;
+            }
+        } elseif ($this->security->isGranted('ROLE_ADMIN')) {
+            $partners[] = 'partner_all';
+        } elseif ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $partners[] = 'partner_'.$user->getFirstTerritory().'-all';
+        } else {
+            foreach ($user->getPartners() as $partner) {
+                $partners[] = 'partner_'.$partner->getId();
+            }
         }
+        asort($partners);
+
+        return implode('-', $partners);
     }
 
     private function getTabQueryParametersKey(User $user, ?TabQueryParameters $params): string
     {
-        // TODO : ajouter la liste des territoires de l'utilisateur ici ? (de l'utilisateur connecté)
-        if (!$params) {
-            return 'noparams';
+        $roleKey = implode('-', array_filter($user->getRoles(), fn ($role) => 'ROLE_USER' !== $role));
+        $territoryKey = $this->getTerritoryKey($user, $params);
+        $partnerKey = $this->getPartnerKey($user, $params);
+        if ($params) {
+            $otherParams = [
+                'commune' => $params->communeCodePostal,
+                'mesDossiersMessagesUsagers' => $params->mesDossiersMessagesUsagers,
+                'mesDossiersAverifier' => $params->mesDossiersAverifier,
+            ];
+            $otherParamsKey = implode(
+                '-',
+                array_map(
+                    fn ($k, $v) => null !== $v && '' !== $v ? $k.'-'.$v : null,
+                    array_keys($otherParams),
+                    array_values($otherParams)
+                )
+            );
+            $otherParamsKey = trim(preg_replace('/-+/', '-', $otherParamsKey), '-');
         }
-        $data = [
-            $params->territoireId,
-            $params->communeCodePostal,
-            $params->createdFrom,
-            is_array($params->partenairesId) ? implode('-', $params->partenairesId) : $params->partenairesId,
-            is_array($params->partners) ? implode('-', $params->partners) : $params->partners,
-            $params->sortBy,
-            $params->orderBy,
-            $params->mesDossiersMessagesUsagers,
-            $params->mesDossiersAverifier,
-            $params->queryCommune,
-        ];
 
-        return implode('_', array_map(fn ($v) => $v ?? 'null', $data));
+        return $roleKey.'-'.$territoryKey.'-'.$partnerKey.'-'.$otherParamsKey;
     }
 }
