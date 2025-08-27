@@ -66,28 +66,40 @@ class TabCountKpiBuilderTest extends TestCase
         $countAverifier = 4;
 
         $this->signalementRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('countNouveauxDossiersKpi')
             ->with($territories)
             ->willReturn($countNouveaux);
 
         $this->signalementRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('countAllDossiersAferme')
             ->with($user, $params)
             ->willReturn($countAfermer);
 
         $this->suiviRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('countAllMessagesUsagers')
             ->with($user, $params)
             ->willReturn($countMessages);
 
         $this->signalementRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('countSignalementsSansSuiviPartenaireDepuis60Jours')
             ->with($user, $params)
             ->willReturn($countAverifier);
+
+        $this->tabCountKpiCacheHelper
+            ->method('getOrSet')
+            ->willReturnCallback(function ($kpiName) use ($countNouveaux, $countAfermer, $countMessages, $countAverifier) {
+                return match ($kpiName) {
+                    TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS => $countNouveaux,
+                    TabCountKpiCacheHelper::DOSSIERS_A_FERMER => $countAfermer,
+                    TabCountKpiCacheHelper::DOSSIERS_MESSAGES_USAGERS => $countMessages,
+                    TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER => $countAverifier,
+                    default => null,
+                };
+            });
 
         $tabCountKpi = $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
@@ -130,29 +142,40 @@ class TabCountKpiBuilderTest extends TestCase
         $countAverifier = 4;
 
         $this->signalementRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('countNouveauxDossiersKpi')
             ->with($territories, $user)
             ->willReturn($countNouveaux);
 
         $this->suiviRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('countAllMessagesUsagers')
             ->with($user, $params)
             ->willReturn($countMessages);
 
         $this->signalementRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('countAllDossiersAferme')
             ->with($user, $params)
             ->willReturn($countAfermer);
 
         $this->signalementRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('countSignalementsSansSuiviPartenaireDepuis60Jours')
             ->with($user, $params)
             ->willReturn($countAverifier);
 
+        $this->tabCountKpiCacheHelper
+            ->method('getOrSet')
+            ->willReturnCallback(function ($kpiName) use ($countNouveaux, $countAfermer, $countMessages, $countAverifier) {
+                return match ($kpiName) {
+                    TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS => $countNouveaux,
+                    TabCountKpiCacheHelper::DOSSIERS_A_FERMER => $countAfermer,
+                    TabCountKpiCacheHelper::DOSSIERS_MESSAGES_USAGERS => $countMessages,
+                    TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER => $countAverifier,
+                    default => null,
+                };
+            });
         $tabCountKpi = $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
             ->setMesDossiers($mesDossiers, $mesDossiers)

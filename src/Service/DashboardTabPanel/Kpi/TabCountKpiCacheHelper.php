@@ -4,6 +4,7 @@ namespace App\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
 use App\Service\DashboardTabPanel\TabQueryParameters;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -15,16 +16,17 @@ class TabCountKpiCacheHelper
     public const string DOSSIERS_A_VERIFIER = 'dossiers_a_verifier';
 
     public function __construct(
-        private readonly TagAwareCacheInterface $cache)
+        private readonly TagAwareCacheInterface $cache,
+        private readonly ParameterBagInterface $parameterBag, )
     {
     }
 
-    public function getOrSet(string $kpiName, User $user, ?TabQueryParameters $params, callable $callback, int $ttl = 300): mixed
+    public function getOrSet(string $kpiName, User $user, ?TabQueryParameters $params, callable $callback): mixed
     {
         $key = $this->generateKey($kpiName, $user, $params);
 
-        return $this->cache->get($key, function (ItemInterface $item) use ($callback, $ttl) {
-            $item->expiresAfter($ttl);
+        return $this->cache->get($key, function (ItemInterface $item) use ($callback) {
+            $item->expiresAfter($this->parameterBag->get('tab_data_kpi_cache_expired_after'));
 
             return $callback();
         });
@@ -46,13 +48,13 @@ class TabCountKpiCacheHelper
                     break;
                 case self::DOSSIERS_MESSAGES_USAGERS:
                     $otherParams = [
-                        'mesDossiersMessagesUsagers' => $params->mesDossiersMessagesUsagers,
+                        'mesDossiersMessagesUsagers' => '1' === $params->mesDossiersMessagesUsagers ? $user->getId() : 'null',
                     ];
                     break;
                 case self::DOSSIERS_A_VERIFIER:
                     $otherParams = [
                         'commune' => $params->queryCommune,
-                        'mesDossiersAverifier' => $params->mesDossiersAverifier,
+                        'mesDossiersAverifier' => '1' === $params->mesDossiersAverifier ? $user->getId() : 'null',
                     ];
                     break;
                 default:
