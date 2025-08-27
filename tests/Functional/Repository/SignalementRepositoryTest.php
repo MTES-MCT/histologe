@@ -344,7 +344,7 @@ class SignalementRepositoryTest extends KernelTestCase
 
     /**
      * @covers \App\Repository\SignalementRepository::countSignalementsSansSuiviPartenaireDepuis60Jours
-     * @covers \App\Repository\SignalementRepository::getSignalementIdsSansSuiviPartenaireDepuis60Jours
+     * @covers \App\Repository\SignalementRepository::getSignalementsIdSansSuiviPartenaireDepuis60Jours
      * @covers \App\Repository\SignalementRepository::findSignalementsSansSuiviPartenaireDepuis60Jours
      */
     public function testSignalementsSansSuiviPartenaireDepuis60Jours(): void
@@ -367,7 +367,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertIsInt($count);
         $this->assertGreaterThanOrEqual(0, $count);
 
-        $ids = $signalementRepository->getSignalementIdsSansSuiviPartenaireDepuis60Jours($user, $params);
+        $ids = $signalementRepository->getSignalementsIdSansSuiviPartenaireDepuis60Jours($user, $params);
         $this->assertIsArray($ids);
         foreach ($ids as $id) {
             $this->assertIsInt($id);

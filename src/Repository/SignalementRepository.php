@@ -549,14 +549,14 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
 
         if (!empty($options['relanceUsagerSansReponse'])) {
-            $signalementIds = $this->getSignalementIdsAvecRelancesSansReponse();
+            $signalementIds = $this->getSignalementsIdAvecRelancesSansReponse();
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($options['isDossiersSansActivite'])) {
             $params = new TabQueryParameters();
-            $signalementIds = $this->getSignalementIdsSansSuiviPartenaireDepuis60Jours($user, $params);
+            $signalementIds = $this->getSignalementsIdSansSuiviPartenaireDepuis60Jours($user, $params);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
@@ -2182,7 +2182,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return int[]
      */
-    private function getSignalementIdsAvecRelancesSansReponse(): array
+    private function getSignalementsIdAvecRelancesSansReponse(): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -2211,7 +2211,7 @@ class SignalementRepository extends ServiceEntityRepository
         /** @var SuiviRepository $suiviRepository */
         $suiviRepository = $this->_em->getRepository(Suivi::class);
         $excludedIds = array_merge(
-            $this->getSignalementIdsAvecRelancesSansReponse(),
+            $this->getSignalementsIdAvecRelancesSansReponse(),
             $suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, $params)
         );
         $categories = [
@@ -2321,7 +2321,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return int[]
      */
-    public function getSignalementIdsSansSuiviPartenaireDepuis60Jours(User $user, TabQueryParameters $params): array
+    public function getSignalementsIdSansSuiviPartenaireDepuis60Jours(User $user, TabQueryParameters $params): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
