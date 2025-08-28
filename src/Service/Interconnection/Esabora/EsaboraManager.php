@@ -192,16 +192,17 @@ class EsaboraManager
                     doneBy: $dossierVisiteSISH->getVisitePar(),
                 );
                 $this->interventionRepository->save($newIntervention, true);
-                $this->eventDispatcher->dispatch(
-                    new InterventionCreatedEvent($newIntervention, $this->adminUser),
-                    InterventionCreatedEvent::NAME
-                );
 
                 if ($this->workflow->can($newIntervention, 'confirm')) {
                     $this->workflow->apply($newIntervention, 'confirm', [
                         'esabora' => true,
                     ]);
                 }
+
+                $this->eventDispatcher->dispatch(
+                    new InterventionCreatedEvent($newIntervention, $this->adminUser),
+                    InterventionCreatedEvent::NAME
+                );
             }
         }
     }

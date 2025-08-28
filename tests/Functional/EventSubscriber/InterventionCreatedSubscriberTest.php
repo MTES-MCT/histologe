@@ -12,6 +12,7 @@ use App\Manager\SuiviManager;
 use App\Repository\InterventionRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
+use App\Service\Interconnection\Esabora\DateParser;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -67,6 +68,44 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         $nbSuiviInterventionPlanned = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::INTERVENTION_IS_CREATED, 'signalement' => $intervention->getSignalement()]);
         $this->assertEquals(1, $nbSuiviInterventionPlanned);
         $this->assertStringContainsString('Visite programmée :', $intervention->getSignalement()->getSuivis()->last()->getDescription());
+    }
+
+    public function testBuildVisiteDescriptionTimezone(): void
+    {
+        $eventDispatcher = new EventDispatcher();
+        $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        $suiviManager = static::getContainer()->get(SuiviManager::class);
+
+        /** @var InterventionRepository $interventionRepository */
+        $interventionRepository = $this->entityManager->getRepository(Intervention::class);
+        $interventions = $interventionRepository->findBy([
+            'status' => Intervention::STATUS_PLANNED,
+            'type' => InterventionType::VISITE,
+        ]);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+        $interventionCreatedSubscriber = new InterventionCreatedSubscriber($visiteNotifier, $suiviManager, true);
+        $eventDispatcher->addSubscriber($interventionCreatedSubscriber);
+
+        $intervention = $interventions[0];
+        $dateDay = '14/08/2025';
+        $dateHour = '00:00';
+        $date = $dateDay.' '.$dateHour;
+
+        $scheduledAt = DateParser::parse(
+            $date,
+            $intervention->getSignalement()->getTimezone()
+        );
+        $intervention->setScheduledAt($scheduledAt);
+
+        $eventDispatcher->dispatch(
+            new InterventionCreatedEvent($intervention, $user),
+            InterventionCreatedEvent::NAME
+        );
+
+        $this->assertStringContainsString($dateDay, $intervention->getSignalement()->getSuivis()->last()->getDescription());
     }
 
     public function testInterventionVisitInPast(): void

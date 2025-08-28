@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Manager\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Factory\FileFactory;
@@ -258,5 +259,48 @@ class EsaboraManagerTest extends KernelTestCase
 
         // on vérifie qu'aucun suivi n'a été créé
         $this->assertEquals(3, \count($signalement->getSuivis()));
+    }
+
+    /**
+     * Vérifie que le workflow 'confirm' est appliqué lors de la création d'une intervention avec une date passée.
+     */
+    public function testCreateVisiteWithPastDateAppliesConfirmTransition(): void
+    {
+        $referenceSignalement = '2022-2';
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => $referenceSignalement,
+        ]);
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->interventionRepository,
+            new InterventionFactory(),
+            $this->eventDispatcher, // @phpstan-ignore-line
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHander,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizerInterface,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+        );
+
+        $dossierVisite = $this->getDossierVisiteSISHCollectionResponse()->getCollection()[0];
+        $affectation = $signalement->getAffectations()->first();
+
+        $esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
+        $this->entityManager->flush();
+        $this->entityManager->refresh($signalement);
+        $suivi = $signalement->getSuivis()->last();
+        $intervention = $signalement->getInterventions()->first();
+
+        $this->assertStringContainsString('Visite de contrôle réalisée', $suivi->getDescription());
+        $this->assertEquals(Intervention::STATUS_DONE, $intervention->getStatus(), 'Le statut doit être DONE après application du workflow confirm');
     }
 }
