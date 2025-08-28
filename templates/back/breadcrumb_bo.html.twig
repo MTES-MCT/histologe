@@ -24,6 +24,7 @@
                     {% if level3Link == path('back_territory_management_zone_index') %} data-filter-list-zone {% endif %}
                     {% if level3Link == path('back_territories_index') %} data-filter-list-territory {% endif %}
                     {% if level3Link == path('back_bailleur_index') %} data-filter-list-bailleur {% endif %}
+                    {% if level3Link == path('back_territory_management_document') %} data-filter-list-territory-files {% endif %}
 
                     {% if level3Label is defined %}aria-label="{{ level3Label }}"{% endif %}
                     >{{ level3Title }}</a>
