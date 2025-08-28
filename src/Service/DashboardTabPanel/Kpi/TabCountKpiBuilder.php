@@ -27,6 +27,7 @@ class TabCountKpiBuilder
         private readonly SignalementRepository $signalementRepository,
         private readonly SuiviRepository $suiviRepository,
         private readonly Security $security,
+        private readonly TabCountKpiCacheHelper $tabCountKpiCacheHelper,
     ) {
     }
 
@@ -76,13 +77,38 @@ class TabCountKpiBuilder
         /** @var User $user */
         $user = $this->security->getUser();
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $countNouveauxDossiers = $this->signalementRepository->countNouveauxDossiersKpi($this->territories);
+            $countNouveauxDossiers = $this->tabCountKpiCacheHelper->getOrSet(
+                TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
+                $user,
+                $params,
+                fn () => $this->signalementRepository->countNouveauxDossiersKpi($this->territories)
+            );
         } else {
-            $countNouveauxDossiers = $this->signalementRepository->countNouveauxDossiersKpi($this->territories, $user);
+            $countNouveauxDossiers = $this->tabCountKpiCacheHelper->getOrSet(
+                TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
+                $user,
+                $params,
+                fn () => $this->signalementRepository->countNouveauxDossiersKpi($this->territories, $user)
+            );
         }
-        $countDossiersAFermer = $this->signalementRepository->countAllDossiersAferme($user, $params);
-        $countDossiersMessagesUsagers = $this->suiviRepository->countAllMessagesUsagers($user, $params);
-        $countDossiersAVerifier = $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
+        $countDossiersAFermer = $this->tabCountKpiCacheHelper->getOrSet(
+            TabCountKpiCacheHelper::DOSSIERS_A_FERMER,
+            $user,
+            $params,
+            fn () => $this->signalementRepository->countAllDossiersAferme($user, $params)
+        );
+        $countDossiersMessagesUsagers = $this->tabCountKpiCacheHelper->getOrSet(
+            TabCountKpiCacheHelper::DOSSIERS_MESSAGES_USAGERS,
+            $user,
+            $params,
+            fn () => $this->suiviRepository->countAllMessagesUsagers($user, $params)
+        );
+        $countDossiersAVerifier = $this->tabCountKpiCacheHelper->getOrSet(
+            TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER,
+            $user,
+            $params,
+            fn () => $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params)
+        );
 
         $this->tabCountKpi = new TabCountKpi(
             countNouveauxDossiers: $countNouveauxDossiers->total(),

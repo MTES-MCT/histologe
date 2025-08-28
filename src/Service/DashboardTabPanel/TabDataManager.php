@@ -38,6 +38,29 @@ class TabDataManager
     }
 
     /**
+     * @param array<int, mixed> $territories
+     * @param array<int, int>   $partners
+     *
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countDataKpi(
+        array $territories,
+        ?int $territoryId,
+        ?string $mesDossiersMessagesUsagers,
+        ?string $mesDossiersAverifier,
+        ?string $queryCommune,
+        ?array $partners,
+    ): TabCountKpi {
+        return $this->tabCountKpiBuilder
+            ->setTerritories($territories, $territoryId)
+            ->setMesDossiers($mesDossiersMessagesUsagers, $mesDossiersAverifier)
+            ->setSearchAverifier($queryCommune, $partners)
+            ->withTabCountKpi()
+            ->build();
+    }
+
+    /**
      * @return TabDossier[]
      */
     public function getDernierActionDossiers(?TabQueryParameters $tabQueryParameters = null): array
@@ -208,26 +231,52 @@ class TabDataManager
     }
 
     /**
-     * @param array<int, mixed> $territories
-     * @param array<int, int>   $partners
-     *
+     * @throws \DateMalformedStringException
+     */
+    public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        $dossiers = $this->signalementRepository->findDossiersFermePartenaireTous(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersFermePartenaireTous(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countDataKpi(
-        array $territories,
-        ?int $territoryId,
-        ?string $mesDossiersMessagesUsagers,
-        ?string $mesDossiersAverifier,
-        ?string $queryCommune,
-        ?array $partners,
-    ): TabCountKpi {
-        return $this->tabCountKpiBuilder
-            ->setTerritories($territories, $territoryId)
-            ->setMesDossiers($mesDossiersMessagesUsagers, $mesDossiersAverifier)
-            ->setSearchAverifier($queryCommune, $partners)
-            ->withTabCountKpi()
-            ->build();
+    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        $dossiers = $this->signalementRepository->findDossiersDemandesFermetureByUsager(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersDemandesFermetureByUsager(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     * @throws Exception
+     */
+    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        $dossiers = $this->signalementRepository->findSignalementsAvecRelancesSansReponse(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countSignalementsAvecRelancesSansReponse(tabQueryParameters: $tabQueryParameters);
+
+        return new TabDossierResult($dossiers, $count);
     }
 
     /**
@@ -358,54 +407,5 @@ class TabDataManager
         $count = $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
-    }
-
-    /**
-     * @throws \DateMalformedStringException
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
-    {
-        $dossiers = $this->signalementRepository->findDossiersDemandesFermetureByUsager(
-            tabQueryParameters: $tabQueryParameters
-        );
-
-        $count = $this->signalementRepository->countDossiersDemandesFermetureByUsager(
-            tabQueryParameters: $tabQueryParameters
-        );
-
-        return new TabDossierResult($dossiers, $count);
-    }
-
-    /**
-     * @throws \DateMalformedStringException
-     * @throws Exception
-     */
-    public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
-    {
-        $dossiers = $this->signalementRepository->findSignalementsAvecRelancesSansReponse(
-            tabQueryParameters: $tabQueryParameters
-        );
-
-        $count = $this->signalementRepository->countSignalementsAvecRelancesSansReponse(tabQueryParameters: $tabQueryParameters);
-
-        return new TabDossierResult($dossiers, $count);
-    }
-
-    /**
-     * @throws \DateMalformedStringException
-     */
-    public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
-    {
-        $dossiers = $this->signalementRepository->findDossiersFermePartenaireTous(
-            tabQueryParameters: $tabQueryParameters
-        );
-
-        $count = $this->signalementRepository->countDossiersFermePartenaireTous(
-            tabQueryParameters: $tabQueryParameters
-        );
-
-        return new TabDossierResult($dossiers, $count);
     }
 }
