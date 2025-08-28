@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\File;
 use App\Form\Type\TerritoryChoiceType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -34,6 +35,12 @@ class AddTerritoryFileType extends AbstractType
                     'message' => 'Veuillez sélectionner un fichier à télécharger.',
                 ]),
                 new Assert\Valid(),
+                new Assert\File([
+                    'maxSize' => '10M',
+                    'mimeTypes' => File::DOCUMENT_MIME_TYPES,
+                    'maxSizeMessage' => 'Le fichier ne doit pas dépasser 10 Mo.',
+                    'mimeTypesMessage' => 'Seuls les fichiers {{ types }} sont autorisés.',
+                ]),
             ],
         ]);
 

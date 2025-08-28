@@ -14,10 +14,16 @@
                 {# Élément de menu avec sous-menus #}
                 <li class="fr-nav__item">
                 {% if item.getChildren is not empty and is_granted(item.roleGranted) %}
+                    {% set isCurrent = 'false' %}
+                    {% for child in item.getChildren %}
+                        {% if app.request.get('_route') == child.route or child.getBaseRoute() in app.request.get('_route') %}
+                            {% set isCurrent = 'true' %}
+                        {% endif %}
+                    {% endfor %}
                     <button class="fr-nav__btn"
                             aria-expanded="false"
                             aria-controls="submenu-{{ loop.index }}"
-                            aria-current="{{ app.request.get('_route') in item.getChildren|map(child => child.route) ? 'true' : 'false' }}"
+                            aria-current="{{ isCurrent }}"
                     >{{ item.label }}</button>
                 {% endif %}
                     <div class="fr-collapse fr-menu" id="submenu-{{ loop.index }}">
