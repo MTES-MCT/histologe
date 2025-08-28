@@ -69,7 +69,7 @@
         <div class="fr-col-12">
             <strong>Commentaire d'avant visite :</strong>
             <div class="fr-highlight fr-background--white fr-py-3v fr-my-3v fr-ml-0">
-                {% if signalement.interventions is not empty and intervention.commentBeforeVisite is not empty %}
+                {% if intervention.commentBeforeVisite is empty %}
                     <p>Non renseigné</p>
                 {% else %}
                     {{ intervention.commentBeforeVisite|raw }}
