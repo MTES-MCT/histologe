@@ -54,6 +54,7 @@ class SignalementVisitesControllerTest extends WebTestCase
                     'time' => '',
                     'partner' => $partner->getId(),
                     'externalOperator' => '',
+                    'commentBeforeVisite' => 'Commentaire avant visite',
                 ],
                 '_token' => $this->generateCsrfToken(
                     $this->client,
@@ -68,6 +69,12 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
         $this->assertEquals('La date de visite a bien été définie.', $successMessages[0]);
+
+        $this->client->followRedirect();
+        $crawler = $this->client->getCrawler();
+        $highlights = $crawler->filter('.fr-highlight');
+        $this->assertCount(2, $highlights);
+        $this->assertStringContainsString('Commentaire avant visite', $highlights->eq(1)->text());
     }
 
     public function testAddFutureVisiteOnExternalOperator(): void

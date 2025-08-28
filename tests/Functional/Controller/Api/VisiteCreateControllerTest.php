@@ -59,6 +59,12 @@ class VisiteCreateControllerTest extends WebTestCase
             $links = $crawler->filter('a.fr-link');
             $this->assertCount(2, $links, 'Il doit y avoir exactement 2 liens dans le contenu HTML.');
         }
+        if ('visite_planned' === $type) {
+            $content = json_decode($this->client->getResponse()->getContent(), true);
+            $this->assertArrayHasKey('commentBeforeVisite', $content);
+            $this->assertEquals('commentaire avant visite ', $content['commentBeforeVisite']);
+        }
+
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
@@ -171,6 +177,7 @@ class VisiteCreateControllerTest extends WebTestCase
             [
                 'date' => '2125-01-01',
                 'time' => '12:00',
+                'commentBeforeVisite' => 'commentaire avant visite <script>alert("XSS")</script>',
             ],
             1,
         ];

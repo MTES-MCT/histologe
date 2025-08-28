@@ -397,10 +397,13 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 
-    public function sanitizeDescription(HtmlSanitizerInterface $htmlSanitizer): void
+    public function sanitize(HtmlSanitizerInterface $htmlSanitizer): void
     {
         if (!empty($this->details)) {
             $this->details = $htmlSanitizer->sanitize($this->details);
+        }
+        if (!empty($this->commentBeforeVisite)) {
+            $this->commentBeforeVisite = $htmlSanitizer->sanitize($this->commentBeforeVisite);
         }
     }
 

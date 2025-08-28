@@ -6,7 +6,6 @@ use App\Entity\Behaviour\EntitySanitizerInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
@@ -17,7 +16,6 @@ readonly class EntitySanitizerListener
     public function __construct(
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private HtmlSanitizerInterface $htmlSanitizer,
-        private LoggerInterface $logger,
     ) {
     }
 
@@ -25,7 +23,7 @@ readonly class EntitySanitizerListener
     {
         $entity = $eventArgs->getObject();
         if ($entity instanceof EntitySanitizerInterface) {
-            $this->sanitize($entity, 'prePersist');
+            $entity->sanitize($this->htmlSanitizer);
         }
     }
 
@@ -33,22 +31,7 @@ readonly class EntitySanitizerListener
     {
         $entity = $eventArgs->getObject();
         if ($entity instanceof EntitySanitizerInterface) {
-            $this->sanitize($entity, 'preUpdate');
+            $entity->sanitize($this->htmlSanitizer);
         }
-    }
-
-    private function sanitize(EntitySanitizerInterface $entity, string $eventType): void
-    {
-        $this->logger->info("[$eventType] Before sanitization", [
-            'class' => $entity::class,
-            'description' => $entity->getDescription(),
-        ]);
-
-        $entity->sanitizeDescription($this->htmlSanitizer);
-
-        $this->logger->info("[$eventType] After sanitization", [
-            'class' => $entity::class,
-            'description' => $entity->getDescription(),
-        ]);
     }
 }
