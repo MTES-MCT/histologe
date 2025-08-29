@@ -8,8 +8,10 @@
             'level2Title': 'Outils admin',
             'level2Link': '',
             'level2Label': '',
-            'level3Title': 'Zones',
-            'level3Link': '',
+            'level3Title': 'Mon territoire',
+            'level3Link': path('back_territory_management_index'),
+            'level4Title': 'Zones',
+            'level4Link': '',
         } %}
 
         <header>
@@ -47,7 +49,7 @@
                 {{ form_row(form.type) }}
             </div>
             <div class="fr-col-12 fr-col-lg-3">
-                <a href="{{ path('back_zone_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+                <a href="{{ path('back_territory_management_zone_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
     </section>
@@ -95,10 +97,10 @@
                     </td>
                     <td>{{ item.type.label }}</td>
                     <td class="fr-text--right fr-ws-nowrap">
-                        <a href="{{path('back_zone_show', {zone: item.id})}}" class="fr-btn fr-icon-arrow-right-line" title="Visualiser la zone {{item.name}}">
+                        <a href="{{path('back_territory_management_zone_show', {zone: item.id})}}" class="fr-btn fr-icon-arrow-right-line" title="Visualiser la zone {{item.name}}">
                             Visualiser la zone {{ item.name }}
                         </a>
-                        <a href="{{path('back_zone_edit', {zone: item.id})}}" class="fr-btn fr-icon-edit-line" title="Editer la zone {{item.name}}">
+                        <a href="{{path('back_territory_management_zone_edit', {zone: item.id})}}" class="fr-btn fr-icon-edit-line" title="Editer la zone {{item.name}}">
                             Editer la zone {{ item.name }}
                         </a>
                         <button 
@@ -118,7 +120,7 @@
 
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, searchZone.page, 'back_zone_index', searchZone.urlParams) }}
+            {{ macros.customPagination(pages, searchZone.page, 'back_territory_management_zone_index', searchZone.urlParams) }}
         </div>
     </section>
 

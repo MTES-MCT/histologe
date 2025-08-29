@@ -33,7 +33,7 @@
                 {{ form_row(form.isActive) }}
             </div>
             <div class="fr-col-12 fr-col-lg-4">
-                <a href="{{ path('back_territory_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+                <a href="{{ path('back_territories_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
     </section>
@@ -93,7 +93,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{path('back_territory_edit', {territory:territory.id})}}"></a>
+                        <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{path('back_territories_edit', {territory:territory.id})}}"></a>
                     </td>
                 </tr>
             {% endfor %}
@@ -103,7 +103,7 @@
 
         <div id="territory-pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, searchTerritory.page, 'back_territory_index', searchTerritory.urlParams) }}
+            {{ macros.customPagination(pages, searchTerritory.page, 'back_territories_index', searchTerritory.urlParams) }}
         </div>
     </section>
 

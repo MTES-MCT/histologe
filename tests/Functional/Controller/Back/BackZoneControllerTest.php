@@ -28,7 +28,7 @@ class BackZoneControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $route = $router->generate('back_zone_index');
+        $route = $router->generate('back_territory_management_zone_index');
         $client->request('GET', $route, $params);
 
         $this->assertSelectorTextContains('h2', $nb.' zone');
@@ -55,7 +55,7 @@ class BackZoneControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_zone_show', ['zone' => $zones[0]->getId()]);
+        $route = $router->generate('back_territory_management_zone_show', ['zone' => $zones[0]->getId()]);
         $client->request('GET', $route);
 
         $this->assertSelectorTextContains('.fr-badge', 'Partenaire Zone Agde');
@@ -77,7 +77,7 @@ class BackZoneControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_zone_edit', ['zone' => $zone->getId()]);
+        $route = $router->generate('back_territory_management_zone_edit', ['zone' => $zone->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'zone_type');
         $client->request('POST', $route, [

@@ -25,7 +25,7 @@ class BackTerritoryControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
 
-        $route = $router->generate('back_territory_index');
+        $route = $router->generate('back_territories_index');
         $client->request('GET', $route, $params);
 
         if ($nb > 1) {

@@ -22,10 +22,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
-#[Route('/bo/etiquettes')]
+#[Route('/bo/gerer-territoire/etiquettes')]
 class TagController extends AbstractController
 {
-    #[Route('/', name: 'back_tags_index', methods: ['GET', 'POST'])]
+    #[Route('/', name: 'back_territory_management_tags_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         Request $request,
@@ -135,11 +135,11 @@ class TagController extends AbstractController
             $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
             $this->addFlash('success', 'L\'étiquette a bien été supprimée.');
 
-            return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_territory_management_tags_index', [], Response::HTTP_SEE_OTHER);
         }
 
         $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
 
-        return $this->redirectToRoute('back_tags_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_territory_management_tags_index', [], Response::HTTP_SEE_OTHER);
     }
 }
