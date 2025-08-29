@@ -298,7 +298,7 @@ class File implements EntityHistoryInterface
         return $this->documentType;
     }
 
-    public function setDocumentType(DocumentType $documentType): self
+    public function setDocumentType(?DocumentType $documentType): self
     {
         $this->documentType = $documentType;
 

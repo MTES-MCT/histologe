@@ -74,7 +74,7 @@ class AdminTerritoryFilesController extends AbstractController
     }
 
     #[Route('/ajouter', name: 'back_territory_management_document_add', methods: ['GET'])]
-    public function addTerritoryFile(): Response
+    public function add(): Response
     {
         $file = new File();
         /** @var User $user */
@@ -178,22 +178,70 @@ class AdminTerritoryFilesController extends AbstractController
     }
 
     #[Route('/editer/{file}', name: 'back_territory_management_document_edit', methods: ['GET'])]
-    public function edit(): Response
-    {
-        // TODO : prochain ticket
-        $file = new File();
+    public function edit(
+        File $file,
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
         if (!$this->isGranted('ROLE_ADMIN')) {
             $file->setTerritory($user->getFirstTerritory());
         }
 
-        /** @var Form $form */
-        $form = $this->createForm(AddTerritoryFileType::class, $file, ['action' => $this->generateUrl('back_territory_management_document_add_ajax')]);
-
-        return $this->render('back/admin-territory-files/add.html.twig', [
-            'addForm' => $form,
+        $form = $this->createForm(AddTerritoryFileType::class, $file, [
+            'action' => $this->generateUrl('back_territory_management_document_edit_ajax', ['file' => $file->getId()]),
         ]);
+
+        return $this->render('back/admin-territory-files/edit.html.twig', [
+            'editForm' => $form,
+            'file' => $file,
+        ]);
+    }
+
+    #[Route('/editer-ajax/{file}', name: 'back_territory_management_document_edit_ajax', methods: ['POST'])]
+    public function editAjax(
+        File $file,
+        Request $request,
+        EntityManagerInterface $em,
+        HtmlSanitizerInterface $htmlSanitizer,
+    ): JsonResponse|RedirectResponse {
+        $form = $this->createForm(AddTerritoryFileType::class, $file, [
+            'action' => $this->generateUrl('back_territory_management_document_edit_ajax', ['file' => $file->getId()]),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $documentType = $form->get('documentType')->getData();
+            if (null === $documentType) {
+                $form->get('documentType')->addError(new FormError('Veuillez sélectionner un type de document.'));
+            }
+        }
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Vérification grille de visite unique (sauf si on édite la même)
+            $documentType = $form->get('documentType')->getData();
+            if ($documentType && DocumentType::GRILLE_DE_VISITE === $documentType) {
+                $existingVisitGrid = $em->getRepository(File::class)->findOneBy([
+                    'territory' => $file->getTerritory(),
+                    'documentType' => DocumentType::GRILLE_DE_VISITE,
+                ]);
+                if ($existingVisitGrid && $existingVisitGrid->getId() !== $file->getId()) {
+                    $form->get('documentType')->addError(new FormError('Une grille de visite existe déjà pour ce territoire. Vous ne pouvez en ajouter qu\'une seule.'));
+
+                    return new JsonResponse([
+                        'success' => false,
+                        'errors' => FormHelper::getErrorsFromForm($form),
+                    ], Response::HTTP_BAD_REQUEST);
+                }
+            }
+            $file->setDescription($htmlSanitizer->sanitize($file->getDescription()));
+            $em->flush();
+            $this->addFlash('success', 'Le document a bien été modifié.');
+
+            return $this->redirectToRoute('back_territory_management_document');
+        }
+
+        $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
+
+        return $this->json($response, $response['code']);
     }
 
     #[Route('/supprimer/{file}', name: 'back_territory_management_document_delete_ajax', methods: ['GET'])]

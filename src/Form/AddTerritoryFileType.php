@@ -23,27 +23,33 @@ class AddTerritoryFileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('file', FileType::class, [
-            'label' => 'Fichier <span class="fr-text-default--error">*</span>',
-            'label_html' => true,
-            'help' => 'Sélectionnez un fichier à télécharger.',
-            'multiple' => false,
-            'required' => false,
-            'mapped' => false,
-            'constraints' => [
-                new Assert\NotBlank([
-                    'message' => 'Veuillez sélectionner un fichier à télécharger.',
-                ]),
-                new Assert\Valid(),
-                new Assert\File([
-                    'maxSize' => '10M',
-                    'mimeTypes' => File::DOCUMENT_MIME_TYPES,
-                    'maxSizeMessage' => 'Le fichier ne doit pas dépasser 10 Mo.',
-                    'mimeTypesMessage' => 'Seuls les fichiers {{ types }} sont autorisés.',
-                ]),
-            ],
-        ]);
-
+        // On retire le champ file si on est en édition (l'entité a un id)
+        $isEdit = false;
+        if (isset($options['data']) && $options['data'] instanceof File && $options['data']->getId()) {
+            $isEdit = true;
+        }
+        if (!$isEdit) {
+            $builder->add('file', FileType::class, [
+                'label' => 'Fichier <span class="fr-text-default--error">*</span>',
+                'label_html' => true,
+                'help' => 'Sélectionnez un fichier à télécharger.',
+                'multiple' => false,
+                'required' => false,
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Veuillez sélectionner un fichier à télécharger.',
+                    ]),
+                    new Assert\Valid(),
+                    new Assert\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => File::DOCUMENT_MIME_TYPES,
+                        'maxSizeMessage' => 'Le fichier ne doit pas dépasser 10 Mo.',
+                        'mimeTypesMessage' => 'Seuls les fichiers {{ types }} sont autorisés.',
+                    ]),
+                ],
+            ]);
+        }
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder->add('territory', TerritoryChoiceType::class);
         }

@@ -1,0 +1,67 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Documents types{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Mon territoire',
+            'level3Link': path('back_territory_management'),
+            'level4Title': 'Documents types',
+            'level4Link': path('back_territory_management_document'),
+            'level5Title': 'Édition'
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-mb-0">Éditer un document</h1>
+                    <p>
+                        Modifiez les informations du document puis validez pour enregistrer les changements.
+                    </p>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-col-12 fr-px-5v" data-ajax-form>
+        <div class="single-ajax-form-container">
+            {{ form_start(editForm, {'attr': {'id': 'form-edit-file', 'data-submit-type': 'formData'}}) }}
+            <div class="fr-grid-row fr-grid-row--gutters">
+                {% if is_granted('ROLE_ADMIN') and editForm.territory is defined %}
+                <div class="fr-col-12">
+                    {{ form_row(editForm.territory) }}
+                </div>
+                {% endif %}
+                <div class="fr-col-6">
+                    {{ form_row(editForm.title) }}
+                </div>
+                <div class="fr-col-6">
+                    {{ form_row(editForm.documentType) }}
+                </div>
+                <div class="fr-col-12">
+                    {{ form_row(editForm.description) }}
+                </div>
+            </div>
+            <div class="fr-grid-row fr-mt-4w">
+                <div class="fr-col-6 fr-text--left">
+                    <a href="{{ path('back_territory_management_document') }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-close-line">
+                        Annuler
+                    </a>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line">
+                        Enregistrer les modifications
+                    </button>
+                </div>
+            </div>
+            {# On retire explicitement le champ 'file' du rendu automatique de form_end #}
+            {{ form_rest(editForm) }}
+            {{ form_end(editForm, {'render_rest': false}) }}
+        </div>
+    </section>
+
+{% endblock %}
