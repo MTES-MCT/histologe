@@ -46,7 +46,6 @@ readonly class TabDossier
         public ?\DateTimeImmutable $premiereRelanceDossierAt = null,
         public ?\DateTimeImmutable $dernierSuiviPublicAt = null,
         public ?string $dernierTypeSuivi = null,
-        public ?string $lien = null,
     ) {
     }
 }

@@ -93,7 +93,7 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('Suivi visible par l\'usager', $result[0]->derniereAction);
         $this->assertSame('10/06/2024', $result[0]->derniereActionAt->format('d/m/Y'));
         $this->assertSame('OUI', $result[0]->actionDepuis);
-        $this->assertSame('/bo/signalements/uuid-123', $result[0]->lien);
+        $this->assertSame('uuid-123', $result[0]->uuid);
     }
 
     public function testCountUsersPendingToArchiveReturnsCount(): void
@@ -253,7 +253,7 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('Martin', $result->dossiers[0]->nomDeclarant);
         $this->assertSame('Alice', $result->dossiers[0]->prenomDeclarant);
         $this->assertSame('#2024-001', $result->dossiers[0]->reference);
-        $this->assertSame('/bo/signalements/uuid-456', $result->dossiers[0]->lien);
+        $this->assertSame('uuid-456', $result->dossiers[0]->uuid);
         $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
     }
 
@@ -396,7 +396,7 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
         $this->assertSame('#2024-003', $result->dossiers[0]->reference);
         $this->assertSame(3, $result->dossiers[0]->messageDaysAgo);
-        $this->assertSame('/bo/signalements/uuid-999', $result->dossiers[0]->lien);
+        $this->assertSame('uuid-999', $result->dossiers[0]->uuid);
         $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
     }
 
@@ -441,7 +441,7 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('#2024-003', $result->dossiers[0]->reference);
         $this->assertSame(3, $result->dossiers[0]->derniereActionPartenaireDaysAgo);
         $this->assertSame(SuiviCategory::MESSAGE_PARTNER->label(), $result->dossiers[0]->derniereActionTypeSuivi);
-        $this->assertSame('/bo/signalements/uuid-999', $result->dossiers[0]->lien);
+        $this->assertSame('uuid-999', $result->dossiers[0]->uuid);
         $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereActionAt);
     }
 

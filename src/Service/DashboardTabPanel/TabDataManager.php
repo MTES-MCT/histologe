@@ -90,7 +90,7 @@ class TabDataManager
                 derniereAction: $derniereAction,
                 derniereActionAt: $signalement['suiviCreatedAt'],
                 actionDepuis: $signalement['hasNewerSuivi'] ? 'OUI' : 'NON',
-                lien: '/bo/signalements/'.$signalement['uuid'],
+                uuid: $signalement['uuid'],
             );
         }
 
@@ -302,7 +302,7 @@ class TabDataManager
                 messageSuiviByNom: $suivi['messageSuiviByNom'],
                 messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
                 messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
-                lien: '/bo/signalements/'.$suivi['uuid'],
+                uuid: $suivi['uuid'],
             );
         }
 
@@ -335,7 +335,7 @@ class TabDataManager
                 messageSuiviByNom: $suivi['messageSuiviByNom'],
                 messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
                 messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
-                lien: '/bo/signalements/'.$suivi['uuid'],
+                uuid: $suivi['uuid'],
             );
         }
 
@@ -368,7 +368,7 @@ class TabDataManager
                 messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
                 messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
                 messageDaysAgo: $suivi['messageDaysAgo'],
-                lien: '/bo/signalements/'.$suivi['uuid'],
+                uuid: $suivi['uuid'],
             );
         }
 
@@ -400,7 +400,7 @@ class TabDataManager
                 derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
                 derniereActionPartenaireNomAgent: $signalement['derniereActionPartenaireNomAgent'] ?? 'N/A',
                 derniereActionPartenairePrenomAgent: $signalement['derniereActionPartenairePrenomAgent'] ?? 'N/A',
-                lien: '/bo/signalements/'.$signalement['uuid'],
+                uuid: $signalement['uuid'],
             );
         }
 
