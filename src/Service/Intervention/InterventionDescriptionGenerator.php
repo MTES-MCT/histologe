@@ -34,6 +34,7 @@ class InterventionDescriptionGenerator
         $isInPast = $today > $intervention->getScheduledAt()
             && Intervention::STATUS_DONE === $intervention->getStatus();
         $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
+        $timezone = $intervention->getSignalement()->getTimezone() ?? 'Europe/Paris';
 
         return \sprintf(
             '%s %s : une %s du logement situé %s %s le %s.<br>La %s %s par %s.%s',
@@ -42,7 +43,7 @@ class InterventionDescriptionGenerator
             $labelVisite,
             $intervention->getSignalement()->getAdresseOccupant(),
             $isInPast ? 'a été effectuée' : 'est prévue',
-            $intervention->getScheduledAt()->format('d/m/Y'),
+            $intervention->getScheduledAt()->setTimezone(new \DateTimeZone($timezone))->format('d/m/Y'),
             $labelVisite,
             $isInPast ? 'a été réalisée' : 'sera effectuée',
             $partnerName,
@@ -57,6 +58,7 @@ class InterventionDescriptionGenerator
         $isInPast = $today > $intervention->getScheduledAt()
             && Intervention::STATUS_DONE === $intervention->getStatus();
         $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
+        $timezone = $intervention->getSignalement()->getTimezone() ?? 'Europe/Paris';
 
         // Pour l'instant le seul besoin remonté par SISH est celui de la modification de date
         // Mais l'opérateur pourrait aussi être modifié (que ce soit ARS ou un opérateur externe)
@@ -64,7 +66,7 @@ class InterventionDescriptionGenerator
             'La date de %s dans %s a été modifiée ; La nouvelle date est le %s.%s',
             $labelVisite,
             EsaboraSISHService::NAME_SI,
-            $intervention->getScheduledAt()->format('d/m/Y'),
+            $intervention->getScheduledAt()->setTimezone(new \DateTimeZone($timezone))->format('d/m/Y'),
             $commentBeforeVisite ? '<br>Informations complémentaires : '.$commentBeforeVisite : '',
         );
     }
