@@ -14,8 +14,8 @@
                 Trier par
             </label>
             <select id="order-type-dossiers-sans-activite-partenaire" class="fr-select" data-sort-body="dossiers-sans-activite-partenaire">
-                <option value="nbDay-ASC" selected="selected">Activité la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
-                <option value="nbDay-DESC">Activité la plus récente (du plus récent au plus ancien)</option>
+                <option value="createdAt-ASC" selected="selected">Activité la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
+                <option value="createdAt-DESC">Activité la plus récente (du plus récent au plus ancien)</option>
             </select>
         </div>
     </header>
@@ -25,22 +25,36 @@
             {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
-                    '<div><span class="fr-badge fr-badge--no-icon fr-badge--error">' ~ item.derniereActionPartenaireDaysAgo  ~ ' JOURS</span></div>',
+                    '<div><span class="fr-badge fr-badge--no-icon ' ~ (item.derniereActionPartenaireDaysAgo | badge_class) ~ '">' ~ item.derniereActionPartenaireDaysAgo  ~ ' JOURS</span></div>',
                     '<div class="fr-text-label--blue-france">
                             <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                             <div>' ~ item.adresse ~ '</div>
                         </div>',
-                    '<div><strong>' ~ item.derniereActionTypeSuivi ~ '</strong><br> le ' ~ item.derniereActionAt ~ '</div>',
+                    '<div><strong>' ~ item.derniereActionTypeSuivi ~ '</strong><br> le ' ~ item.derniereActionAt|date('d/m/Y à H:i') ~ '</div>',
                     '<div>
                         <strong>' ~ item.derniereActionPartenairePrenomAgent ~ ' ' ~ item.derniereActionPartenaireNomAgent ~ '</strong><br>
                         <span>' ~ item.derniereActionPartenaireNom ~ '</span>
                     </div>'
                 ],
-                link: item.lien
+                link: path('back_signalement_view', {'uuid' : item.uuid})
             } %}
         {% else %}
             <p>Aucun dossier trouvé.</p>
         {% endfor %}
-        {% include 'back/dashboard/components/_footer_link.html.twig' %}
+        {% if count > MAX_ITEMS_LIST_LONG %}
+            {% set paramsSansPartenaires = filters|merge({'partenaires': null}) %}
+            {% set url = path('back_signalements_index', paramsSansPartenaires) %}
+            {% if filters.partenaires is defined and filters.partenaires|length %}
+                {% set url = url ~ (('?' in url) ? '&' : '?') %}
+                {% for id in filters.partenaires %}
+                    {% set url = url ~ 'partenaires[]=' ~ id ~ (not loop.last ? '&' : '') %}
+                {% endfor %}
+            {% endif %}
+            <div class="fr-text--right">
+                <a href="{{ url }}" class="fr-text-label--blue-france">
+                Afficher la liste complète<span class="fr-fi-arrow-right-line"></span>
+                </a>
+            </div>
+        {% endif %}
     </section>
 </section>

@@ -31,10 +31,10 @@
                                     <span class="fr-badge ' ~ statutClass ~ ' fr-badge--no-icon">' ~ item.statut ~ '</span>
                                 </div>
                             </div>',
-                            '<div><strong class="fr-text--lg">' ~ item.derniereAction ~ '</strong></div><div>' ~ item.derniereActionAt ~ '</div>',
+                            '<div><strong class="fr-text--lg">' ~ item.derniereAction ~ '</strong></div><div>' ~ item.derniereActionAt|date('d/m/Y à H:i') ~ '</div>',
                             '<span class="fr-badge ' ~ actionClass ~ ' fr-badge--no-icon">' ~ item.actionDepuis ~ '</span>'
                         ],
-                        link: item.lien
+                        link: path('back_signalement_view', {'uuid' : item.uuid})
                     } %}
                 {% endfor %}
             </div>

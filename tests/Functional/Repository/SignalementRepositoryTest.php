@@ -12,15 +12,22 @@ use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class SignalementRepositoryTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
+    private const USER_ADMIN = 'admin-01@signal-logement.fr';
+    private const USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
+    private const USER_ADMIN_MULTI_13 = 'admin-partenaire-multi-ter-13-01@signal-logement.fr';
+    private const USER_AGENT_MULTI_34 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
 
     protected function setUp(): void
     {
@@ -224,12 +231,12 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function provideSearchWithGeoData(): \Generator
     {
-        yield 'Search all for super admin' => ['admin-01@signal-logement.fr', [], 47];
-        yield 'Search in Marseille for super admin' => ['admin-01@signal-logement.fr', ['cities' => ['Marseille']], 25];
-        yield 'Search all for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@signal-logement.fr', [], 6];
-        yield 'Search in Ain for admin partner multi territories' => ['admin-partenaire-multi-ter-13-01@signal-logement.fr', ['territories' => 1], 1];
-        yield 'Search all for user partner multi territories' => ['user-partenaire-multi-ter-34-30@signal-logement.fr', [], 2];
-        yield 'Search in Hérault for user partner multi territories' => ['user-partenaire-multi-ter-34-30@signal-logement.fr', ['territories' => 35], 1];
+        yield 'Search all for super admin' => [self::USER_ADMIN, [], 47];
+        yield 'Search in Marseille for super admin' => [self::USER_ADMIN, ['cities' => ['Marseille']], 25];
+        yield 'Search all for admin partner multi territories' => [self::USER_ADMIN_MULTI_13, [], 6];
+        yield 'Search in Ain for admin partner multi territories' => [self::USER_ADMIN_MULTI_13, ['territories' => 1], 1];
+        yield 'Search all for user partner multi territories' => [self::USER_AGENT_MULTI_34, [], 2];
+        yield 'Search in Hérault for user partner multi territories' => [self::USER_AGENT_MULTI_34, ['territories' => 35], 1];
     }
 
     public function testfindSignalementsLastSuiviWithSuiviAuto(): void
@@ -333,5 +340,151 @@ class SignalementRepositoryTest extends KernelTestCase
         );
 
         $this->assertTrue(11 === $countDossiers);
+    }
+
+    /**
+     * @covers \App\Repository\SignalementRepository::countSignalementsSansSuiviPartenaireDepuis60Jours
+     * @covers \App\Repository\SignalementRepository::getSignalementsIdSansSuiviPartenaireDepuis60Jours
+     * @covers \App\Repository\SignalementRepository::findSignalementsSansSuiviPartenaireDepuis60Jours
+     */
+    public function testSignalementsSansSuiviPartenaireDepuis60Jours(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
+
+        $this->assertNotNull($user, 'User partenaire doit exister en base de test');
+
+        // On fabrique des params simples (sans tri ni filtre particulier)
+        $params = new TabQueryParameters();
+        $params->partners = [];
+        $params->mesDossiersAverifier = null;
+        $params->queryCommune = null;
+
+        $count = $signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
+        $this->assertIsInt($count);
+        $this->assertGreaterThanOrEqual(0, $count);
+
+        $ids = $signalementRepository->getSignalementsIdSansSuiviPartenaireDepuis60Jours($user, $params);
+        $this->assertIsArray($ids);
+        foreach ($ids as $id) {
+            $this->assertIsInt($id);
+        }
+
+        $results = $signalementRepository->findSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
+        $this->assertIsArray($results);
+
+        foreach ($results as $row) {
+            $this->assertArrayHasKey('id', $row);
+            $this->assertArrayHasKey('uuid', $row);
+            $this->assertArrayHasKey('reference', $row);
+            $this->assertArrayHasKey('adresse', $row);
+            $this->assertArrayHasKey('dernierSuiviAt', $row);
+            $this->assertArrayHasKey('nbJoursDepuisDernierSuivi', $row);
+        }
+    }
+
+    public function testFindSignalementsSansSuiviPartenaireAvecFiltreCommune(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+
+        $user = $userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
+        $params = new TabQueryParameters();
+        $params->queryCommune = 'Marseille';
+
+        $results = $signalementRepository->findSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
+        foreach ($results as $row) {
+            $this->assertStringContainsStringIgnoringCase('Marseille', $row['adresse']);
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $userConfig
+     * @param array<string, mixed> $options
+     * @param array<int, string>   $expectedDqlParts
+     * @param array<string, mixed> $expectedParams
+     *
+     * @dataProvider userOptionsProvider
+     */
+    public function testFindSignalementAffectationQueryBuilder(
+        array $userConfig,
+        array $options,
+        array $expectedDqlParts,
+        array $expectedParams,
+    ): void {
+        /** @var User&MockObject $user */
+        $user = $this->createMock(User::class);
+        $user->method('isUserPartner')->willReturn($userConfig['isUserPartner']);
+        $user->method('isPartnerAdmin')->willReturn($userConfig['isPartnerAdmin']);
+        $user->method('isTerritoryAdmin')->willReturn($userConfig['isTerritoryAdmin']);
+        $user->method('getPartners')->willReturn(new ArrayCollection($userConfig['partners'] ?? []));
+        $user->method('getPartnersTerritories')->willReturn($userConfig['territories'] ?? []);
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $qb = $signalementRepository->findSignalementAffectationQueryBuilder($user, $options);
+
+        $this->assertInstanceOf(QueryBuilder::class, $qb);
+
+        $dql = $qb->getDQL();
+        $params = $qb->getParameters();
+
+        // Vérifie que les morceaux de DQL attendus sont présents
+        foreach ($expectedDqlParts as $part) {
+            $this->assertStringContainsString($part, $dql);
+        }
+
+        // Vérifie que les paramètres sont bien définis
+        $getParamValue = fn (string $name) => array_reduce(
+            $params->toArray(),
+            fn ($carry, $param) => $param->getName() === $name ? $param->getValue() : $carry,
+            null
+        );
+
+        foreach ($expectedParams as $paramName => $expectedValue) {
+            $value = $getParamValue($paramName);
+            $this->assertNotNull($value, "Param $paramName should exist");
+            $this->assertEquals($expectedValue, $value);
+        }
+    }
+
+    /**
+     * @return array<string, array<mixed, mixed>>
+     */
+    public function userOptionsProvider(): array
+    {
+        return [
+            'Partner user, simple options' => [
+                ['isUserPartner' => true, 'isPartnerAdmin' => false, 'isTerritoryAdmin' => false, 'partners' => [], 'territories' => []],
+                ['statuses' => [SignalementStatus::ACTIVE->value], 'sortBy' => 'reference', 'orderBy' => 'ASC'],
+                ['LEFT JOIN s.affectations', 'LEFT JOIN a.partner', 's.id IN'],
+                ['statusList' => [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]],
+            ],
+            'Partner admin with bailleur' => [
+                ['isUserPartner' => false, 'isPartnerAdmin' => true, 'isTerritoryAdmin' => false, 'partners' => [], 'territories' => []],
+                ['bailleurSocial' => 'LOGEMENT1', 'statuses' => [SignalementStatus::ACTIVE->value]],
+                ['AND s.bailleur = :bailleur', 'LEFT JOIN s.affectations', 'DISTINCT IDENTITY(a2.signalement)'],
+                [
+                    'statusList' => [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED],
+                    'bailleur' => 'LOGEMENT1',
+                    'partners' => new ArrayCollection([]),
+                    'statut_affectation' => [SignalementStatus::ACTIVE->mapAffectationStatus()],
+                ],
+            ],
+            'Territory admin with empty territories' => [
+                ['isUserPartner' => false, 'isPartnerAdmin' => false, 'isTerritoryAdmin' => true, 'partners' => [], 'territories' => [1, 2]],
+                [],
+                ['s.territory IN (:territories)'],
+                [
+                    'statusList' => [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED],
+                    'territories' => [1, 2],
+                ],
+            ],
+        ];
     }
 }

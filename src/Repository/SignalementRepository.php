@@ -34,6 +34,7 @@ use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NonUniqueResultException;
@@ -548,7 +549,14 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
 
         if (!empty($options['relanceUsagerSansReponse'])) {
-            $signalementIds = $this->getSignalementIdsAvecRelancesSansReponse();
+            $signalementIds = $this->getSignalementsIdAvecRelancesSansReponse();
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $signalementIds);
+        }
+
+        if (!empty($options['isDossiersSansActivite'])) {
+            $params = new TabQueryParameters();
+            $signalementIds = $this->getSignalementsIdSansSuiviPartenaireDepuis60Jours($user, $params);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
@@ -2174,7 +2182,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return int[]
      */
-    private function getSignalementIdsAvecRelancesSansReponse(): array
+    private function getSignalementsIdAvecRelancesSansReponse(): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -2183,14 +2191,183 @@ class SignalementRepository extends ServiceEntityRepository
         return array_map('intval', $conn->executeQuery($sql, ['territory_id' => null])->fetchFirstColumn());
     }
 
-    public function countAllDossiersAferme(User $user, ?int $territoryId): CountAfermer
+    public function countAllDossiersAferme(User $user, ?TabQueryParameters $params): CountAfermer
     {
-        $params = new TabQueryParameters($territoryId);
-
         return new CountAfermer(
             countDemandesFermetureByUsager: $this->countDossiersDemandesFermetureByUsager($params),
             countDossiersRelanceSansReponse: $this->countSignalementsAvecRelancesSansReponse($params),
             countDossiersFermePartenaireTous: $this->countDossiersFermePartenaireTous($params)
         );
+    }
+
+    /**
+     * @return array<int, string|array<string, string>>
+     */
+    private function getBaseSignalementsSansSuiviPartenaireDepuis60JSql(
+        User $user,
+        TabQueryParameters $params,
+        ?bool $withJoins = false,
+    ): array {
+        /** @var SuiviRepository $suiviRepository */
+        $suiviRepository = $this->_em->getRepository(Suivi::class);
+        $excludedIds = array_merge(
+            $this->getSignalementsIdAvecRelancesSansReponse(),
+            $suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, $params)
+        );
+        $categories = [
+            'MESSAGE_PARTNER',
+            'SIGNALEMENT_EDITED_BO',
+            'SIGNALEMENT_IS_ACTIVE',
+            'SIGNALEMENT_IS_REOPENED',
+            'INTERVENTION_IS_CREATED',
+            'INTERVENTION_IS_CANCELED',
+            'INTERVENTION_IS_ABORTED',
+            'INTERVENTION_HAS_CONCLUSION',
+            'INTERVENTION_HAS_CONCLUSION_EDITED',
+            'INTERVENTION_IS_RESCHEDULED',
+            'NEW_DOCUMENT',
+        ];
+
+        $paramsToBind = [];
+        $types = [];
+        $categoryList = "'".implode("','", $categories)."'";
+        $sql = <<<SQL
+            FROM signalement si
+            INNER JOIN suivi s ON s.signalement_id = si.id
+        SQL;
+        if ($withJoins) {
+            $sql .= <<<SQL
+                LEFT JOIN user u ON u.id = s.created_by_id
+                LEFT JOIN user_partner up ON up.user_id = u.id
+                LEFT JOIN partner p ON p.id = up.partner_id
+            SQL;
+        }
+        if ($user->isPartnerAdmin() || $user->isUserPartner() || ($params->partners && count($params->partners) > 0)) {
+            $sql .= <<<SQL
+                LEFT JOIN affectation aff ON aff.signalement_id = si.id
+            SQL;
+        }
+
+        $sql .= <<<SQL
+            WHERE s.category IN ($categoryList)
+            AND s.created_at = (
+                SELECT MAX(s2.created_at)
+                FROM suivi s2
+                WHERE s2.signalement_id = si.id
+                AND s2.category IN ($categoryList)
+            )
+            AND s.created_at < :dateLimit
+            AND si.statut = 'ACTIVE'
+        SQL;
+
+        if ($user->isPartnerAdmin() || $user->isUserPartner()) {
+            $sql .= ' AND aff.partner_id IN (:partners)';
+            $paramsToBind['partners'] = array_map(
+                fn ($partner) => $partner->getId(),
+                $user->getPartners()->toArray()
+            );
+            $types['partners'] = ArrayParameterType::INTEGER;
+        }
+
+        if ($params->territoireId) {
+            $sql .= ' AND si.territory_id = '.$params->territoireId;
+        } elseif (!$user->isSuperAdmin()) {
+            $sql .= ' AND si.territory_id IN ('.implode(',', array_keys($user->getPartnersTerritories())).')';
+        }
+
+        if ($params->mesDossiersAverifier && '1' === $params->mesDossiersAverifier) {
+            $sql .= ' AND EXISTS (
+            SELECT 1
+            FROM user_signalement_subscription uss
+            WHERE uss.signalement_id = si.id
+              AND uss.user_id = '.$user->getId().'
+        )';
+        }
+
+        $paramsToBind['dateLimit'] = (new \DateTimeImmutable('-60 days'))->format('Y-m-d H:i:s');
+
+        if ($params->partners && count($params->partners) > 0) {
+            $sql .= ' AND aff.partner_id IN (:partnersId)';
+            $paramsToBind['partnersId'] = $params->partners;
+            $types['partnersId'] = ArrayParameterType::INTEGER;
+        }
+
+        if ($params->queryCommune) {
+            $query = '%'.$params->queryCommune.'%';
+            $sql .= ' AND (si.cp_occupant LIKE :query OR si.ville_occupant LIKE :query)';
+            $paramsToBind['query'] = $query;
+        }
+
+        if (!empty($excludedIds)) {
+            $sql .= ' AND si.id NOT IN (:excludedIds)';
+            $paramsToBind['excludedIds'] = $excludedIds;
+            $types['excludedIds'] = ArrayParameterType::INTEGER;
+        }
+
+        return [$sql, $paramsToBind, $types];
+    }
+
+    public function countSignalementsSansSuiviPartenaireDepuis60Jours(User $user, ?TabQueryParameters $params): int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT COUNT(DISTINCT si.id) ';
+        [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params);
+        $sql .= $sqlPrincipal;
+
+        return (int) $conn->executeQuery($sql, $paramsToBind, $types)->fetchOne();
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getSignalementsIdSansSuiviPartenaireDepuis60Jours(User $user, TabQueryParameters $params): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT DISTINCT si.id ';
+        [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params);
+        $sql .= $sqlPrincipal;
+
+        return array_map('intval', $conn->executeQuery($sql, $paramsToBind, $types)->fetchFirstColumn());
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function findSignalementsSansSuiviPartenaireDepuis60Jours(User $user, ?TabQueryParameters $params): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+        SELECT
+            si.id,
+            si.uuid AS uuid,
+            si.reference AS reference,
+            si.nom_occupant AS nomOccupant,
+            si.prenom_occupant AS prenomOccupant,
+            CONCAT_WS(', ', si.adresse_occupant, CONCAT(si.cp_occupant, ' ', si.ville_occupant)) AS adresse,
+            MAX(s.created_at) AS dernierSuiviAt,
+            DATEDIFF(CURRENT_DATE(), MAX(s.created_at)) AS nbJoursDepuisDernierSuivi,
+            MAX(s.category) AS suiviCategory,
+            MAX(p.nom) AS derniereActionPartenaireNom,
+            MAX(u.nom) AS derniereActionPartenaireNomAgent,
+            MAX(u.prenom) AS derniereActionPartenairePrenomAgent
+        SQL;
+        [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params, true);
+        $sql .= $sqlPrincipal;
+        $sql .= ' GROUP BY si.id, si.uuid, si.reference, si.nom_occupant, si.prenom_occupant, si.adresse_occupant, si.cp_occupant, si.ville_occupant';
+
+        if ($params && in_array($params->sortBy, ['createdAt'], true)
+            && in_array($params->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $sql .= ' ORDER BY MAX(s.created_at) '.$params->orderBy;
+        } else {
+            $sql .= ' ORDER BY MAX(s.created_at) ASC';
+        }
+
+        $sql .= ' LIMIT '.TabDossier::MAX_ITEMS_LIST_LONG;
+
+        return $conn->executeQuery($sql, $paramsToBind, $types)->fetchAllAssociative();
     }
 }

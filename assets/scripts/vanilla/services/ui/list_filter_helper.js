@@ -50,13 +50,17 @@ if (filterForms.length > 0) {
             input.checked = false;
           });
         }
-        document.getElementById('page').value = 1;
+        if (null != document.getElementById('page')){
+          document.getElementById('page').value = 1;
+        }        
         filterForm.submit();
       });
     });
     filterForm.querySelectorAll('.search-checkbox-container').forEach((select) => {
       select.addEventListener('searchCheckboxChange', function () {
-        document.getElementById('page').value = 1;
+        if (null != document.getElementById('page')){
+          document.getElementById('page').value = 1;
+        }        
         filterForm.submit();
       });
     });

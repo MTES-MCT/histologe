@@ -33,7 +33,7 @@
                         </div>',
                     '<div><strong class="fr-text--lg">' ~ item.messageByProfileDeclarant|upper ~ '</strong><br>' ~ item.messageSuiviByNom|upper ~ ' ' ~  item.messageSuiviByPrenom|capitalize ~ '</div>',
                 ],
-                link: item.lien
+                link: path('back_signalement_view', {'uuid' : item.uuid})
             } %}
         {% else %}
             <p>Aucun dossier trouvé.</p>

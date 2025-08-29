@@ -697,14 +697,14 @@ class SuiviRepository extends ServiceEntityRepository
             'signalement.prenomOccupant AS prenomOccupant',
             'signalement.reference AS reference',
             "CONCAT_WS(', ', signalement.adresseOccupant, CONCAT(signalement.cpOccupant, ' ', signalement.villeOccupant)) AS adresse",
-            's.createdAt AS messageAt',
-            'DATE_DIFF(CURRENT_DATE(), s.createdAt) AS messageDaysAgo',
+            'MAX(s.createdAt) AS messageAt',
+            'DATE_DIFF(CURRENT_DATE(), MAX(s.createdAt)) AS messageDaysAgo',
             'signalement.closedAt AS clotureAt',
-            'user.nom AS messageSuiviByNom',
-            'user.prenom AS messageSuiviByPrenom',
+            'MAX(user.nom) AS messageSuiviByNom',
+            'MAX(user.prenom) AS messageSuiviByPrenom',
             "CASE
-                WHEN user.email = signalement.mailOccupant THEN 'OCCUPANT'
-                WHEN user.email = signalement.mailDeclarant THEN 'TIERS DECLARANT'
+                WHEN MAX(user.email) = signalement.mailOccupant THEN 'OCCUPANT'
+                WHEN MAX(user.email) = signalement.mailDeclarant THEN 'TIERS DECLARANT'
                 ELSE 'OCCUPANT OU DECLARANT'
             END AS messageByProfileDeclarant"
         );
@@ -712,12 +712,13 @@ class SuiviRepository extends ServiceEntityRepository
         if ($params && in_array($params->sortBy, ['createdAt'], true)
             && in_array($params->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
         ) {
-            $qb->orderBy('s.'.$params->sortBy, $params->orderBy);
+            $qb->orderBy('messageAt', $params->orderBy);
         } else {
-            $qb->orderBy('s.createdAt', 'ASC');
+            $qb->orderBy('messageAt', 'ASC');
         }
 
         $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+        $qb->groupBy('signalement.id');
 
         return $qb;
     }
@@ -753,7 +754,7 @@ class SuiviRepository extends ServiceEntityRepository
         $qb = $this->addFilterNoPreviousAskFeedback($qb);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getSingleColumnResult();
     }
 
     /**
@@ -788,7 +789,7 @@ class SuiviRepository extends ServiceEntityRepository
             ->setParameter('statut', SignalementStatus::CLOSED);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getSingleColumnResult();
     }
 
     /**
@@ -842,11 +843,14 @@ class SuiviRepository extends ServiceEntityRepository
             FROM '.Suivi::class.' s_pub
             WHERE s_pub.signalement = signalement
               AND s_pub.isPublic = true
+              AND s_pub.category NOT IN (:usagerCategory, :poursuiteCategory)
               AND s_pub.createdAt > s.createdAt
         )');
         $qb->andWhere('signalement.statut = :statut')
            ->setParameter('statut', SignalementStatus::ACTIVE)
-           ->setParameter('askFeedbackCategory', SuiviCategory::ASK_FEEDBACK_SENT);
+           ->setParameter('askFeedbackCategory', SuiviCategory::ASK_FEEDBACK_SENT)
+           ->setParameter('usagerCategory', SuiviCategory::MESSAGE_USAGER)
+           ->setParameter('poursuiteCategory', SuiviCategory::DEMANDE_POURSUITE_PROCEDURE);
 
         return $qb;
     }
@@ -860,7 +864,7 @@ class SuiviRepository extends ServiceEntityRepository
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getSingleColumnResult();
     }
 
     /**
@@ -886,10 +890,8 @@ class SuiviRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countAllMessagesUsagers(User $user, ?int $territoryId, ?string $mesDossiersMessagesUsagers): CountDossiersMessagesUsagers
+    public function countAllMessagesUsagers(User $user, ?TabQueryParameters $params): CountDossiersMessagesUsagers
     {
-        $params = new TabQueryParameters($territoryId, null, null, null, null, null, $mesDossiersMessagesUsagers);
-
         return new CountDossiersMessagesUsagers(
             $this->countSuivisUsagersWithoutAskFeedbackBefore($user, $params),
             ($user->isSuperAdmin() || $user->isTerritoryAdmin()) ? $this->countSuivisPostCloture($user, $params) : 0,

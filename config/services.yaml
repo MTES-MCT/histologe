@@ -50,6 +50,7 @@ parameters:
     proconnect_domain: '%env(resolve:PROCONNECT_DOMAIN)%'
     feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
     feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
+    tab_data_kpi_cache_expired_after: '%env(int:TAB_DATA_KPI_CACHE_EXPIRED_AFTER)%'
 
 services:
     # default configuration for services in *this* file

@@ -14,6 +14,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpiBuilder;
 use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabDossier;
@@ -90,9 +91,9 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('1 rue de Paris', $result[0]->adresse);
         $this->assertSame('en cours', $result[0]->statut);
         $this->assertSame('Suivi visible par l\'usager', $result[0]->derniereAction);
-        $this->assertSame('10/06/2024', $result[0]->derniereActionAt);
+        $this->assertSame('10/06/2024', $result[0]->derniereActionAt->format('d/m/Y'));
         $this->assertSame('OUI', $result[0]->actionDepuis);
-        $this->assertSame('/bo/signalements/uuid-123', $result[0]->lien);
+        $this->assertSame('uuid-123', $result[0]->uuid);
     }
 
     public function testCountUsersPendingToArchiveReturnsCount(): void
@@ -227,7 +228,7 @@ class TabDataManagerTest extends TestCase
                 'prenomOccupant' => 'Alice',
                 'reference' => '2024-001',
                 'adresse' => '10 rue Victor Hugo',
-                'messageAt' => new \DateTimeImmutable('2024-06-15 14:00:00'),
+                'messageAt' => '2024-06-15 14:00:00',
                 'messageSuiviByNom' => 'Dupont',
                 'messageSuiviByPrenom' => 'Jean',
                 'messageByProfileDeclarant' => true,
@@ -252,7 +253,8 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('Martin', $result->dossiers[0]->nomDeclarant);
         $this->assertSame('Alice', $result->dossiers[0]->prenomDeclarant);
         $this->assertSame('#2024-001', $result->dossiers[0]->reference);
-        $this->assertSame('/bo/signalements/uuid-456', $result->dossiers[0]->lien);
+        $this->assertSame('uuid-456', $result->dossiers[0]->uuid);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
     }
 
     public function testGetDossiersRelanceSansReponseReturnsExpectedResult(): void
@@ -297,7 +299,7 @@ class TabDataManagerTest extends TestCase
                 'reference' => '2024-002',
                 'adresse' => '20 avenue République',
                 'clotureAt' => new \DateTimeImmutable('2024-05-01 09:00:00'),
-                'messageAt' => new \DateTimeImmutable('2024-06-01 10:00:00'),
+                'messageAt' => '2024-06-01 10:00:00',
                 'messageSuiviByNom' => 'Martin',
                 'messageSuiviByPrenom' => 'Lucie',
                 'messageByProfileDeclarant' => false,
@@ -366,7 +368,7 @@ class TabDataManagerTest extends TestCase
                 'prenomOccupant' => 'Claire',
                 'reference' => '2024-003',
                 'adresse' => '30 boulevard Nation',
-                'messageAt' => new \DateTimeImmutable('2024-06-20 12:00:00'),
+                'messageAt' => '2024-06-20 12:00:00',
                 'messageSuiviByNom' => 'Robert',
                 'messageSuiviByPrenom' => 'Sophie',
                 'messageByProfileDeclarant' => true,
@@ -394,6 +396,77 @@ class TabDataManagerTest extends TestCase
         $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
         $this->assertSame('#2024-003', $result->dossiers[0]->reference);
         $this->assertSame(3, $result->dossiers[0]->messageDaysAgo);
-        $this->assertSame('/bo/signalements/uuid-999', $result->dossiers[0]->lien);
+        $this->assertSame('uuid-999', $result->dossiers[0]->uuid);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
+    }
+
+    public function testGetDossiersAVerifierSansActivitePartenaires(): void
+    {
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+        $this->signalementRepository->method('findSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn([
+            [
+                'nomOccupant' => 'Lemoine',
+                'prenomOccupant' => 'Claire',
+                'reference' => '2024-003',
+                'adresse' => '30 boulevard Nation',
+                'dernierSuiviAt' => '2024-06-20 12:00:00',
+                'derniereActionPartenaireNom' => 'SUPER PARTENAIRE',
+                'derniereActionPartenaireNomAgent' => 'Robert',
+                'derniereActionPartenairePrenomAgent' => 'Sophie',
+                'messageByProfileDeclarant' => true,
+                'nbJoursDepuisDernierSuivi' => 3,
+                'suiviCategory' => 'MESSAGE_PARTNER',
+                'uuid' => 'uuid-999',
+            ],
+        ]);
+        $this->signalementRepository->method('countSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn(1);
+
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+
+        $result = $tabDataManager->getDossiersAVerifierSansActivitePartenaires();
+        $this->assertCount(1, $result->dossiers);
+        $this->assertSame(1, $result->count);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomDeclarant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
+        $this->assertSame('#2024-003', $result->dossiers[0]->reference);
+        $this->assertSame(3, $result->dossiers[0]->derniereActionPartenaireDaysAgo);
+        $this->assertSame(SuiviCategory::MESSAGE_PARTNER->label(), $result->dossiers[0]->derniereActionTypeSuivi);
+        $this->assertSame('uuid-999', $result->dossiers[0]->uuid);
+        $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereActionAt);
+    }
+
+    public function testCountDataKpi(): void
+    {
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+
+        $result = $tabDataManager->countDataKpi(
+            territories: [],
+            territoryId: 1,
+            mesDossiersMessagesUsagers: 'oui',
+            mesDossiersAverifier: null,
+            queryCommune: null,
+            partners: null
+        );
+
+        $this->assertInstanceOf(TabCountKpi::class, $result);
     }
 }

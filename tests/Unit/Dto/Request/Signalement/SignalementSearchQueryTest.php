@@ -53,6 +53,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             isNouveauMessage: 'oui',
             isMessagePostCloture: 'oui',
             isMessageWithoutResponse: 'oui',
+            isDossiersSansActivite: 'oui',
         );
 
         $expectedFilters = [
@@ -98,6 +99,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             'isNouveauMessage' => true,
             'isMessagePostCloture' => true,
             'isMessageWithoutResponse' => true,
+            'isDossiersSansActivite' => true,
             'page' => 1,
             'maxItemsPerPage' => 25,
             'sortBy' => 'reference',
