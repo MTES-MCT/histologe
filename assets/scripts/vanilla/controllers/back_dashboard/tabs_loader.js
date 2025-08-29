@@ -2,6 +2,8 @@ import * as Sentry from '@sentry/browser';
 import sortHandler from './sort_handler';
 
 export default function initTabsLoader() {
+  let currentAbortController = null;
+
   if (window.location.hash) {
     const hash = window.location.hash.substring(1);
     const targetPanel = document.getElementById(hash);
@@ -29,7 +31,14 @@ export default function initTabsLoader() {
       loadPanelContent(panel);
     });
   });
+
   async function loadPanelContent(panelOrBody) {
+    if (currentAbortController) {
+      currentAbortController.abort();
+    }
+    currentAbortController = new AbortController();
+    const { signal } = currentAbortController;
+
     let loaders = [];
     if (panelOrBody.dataset?.url) {
       loaders = [panelOrBody];
@@ -59,6 +68,7 @@ export default function initTabsLoader() {
       try {
         const response = await fetch(url, {
           headers: { Accept: 'text/html' },
+          signal,
         });
 
         if (!response.ok) {
@@ -73,10 +83,16 @@ export default function initTabsLoader() {
 
         loader.innerHTML = await response.text();
       } catch (err) {
+        if (err.name === 'AbortError') {
+          console.debug('Requête annulée pour:', url);
+          continue;
+        }
+
         if (err.message.includes('403')) {
           loader.innerHTML =
             '<div class="fr-text--error">Accès refusé, vos droits sont insuffisants pour accéder à ce contenu. Merci de contacter un administrateur.</div>';
         }
+
         console.error('Erreur chargement:', err);
         Sentry.captureException(err);
         setTimeout(() => {
@@ -85,5 +101,6 @@ export default function initTabsLoader() {
       }
     }
   }
+
   sortHandler(loadPanelContent);
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\DashboardTabPanel\Kpi;
+namespace App\Tests\Unit\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
 use App\Repository\SignalementRepository;
