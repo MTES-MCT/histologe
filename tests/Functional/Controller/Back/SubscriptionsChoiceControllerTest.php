@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Tests\Functional\Controller\Back;
+
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use App\Repository\SignalementRepository;
