@@ -2073,14 +2073,13 @@ class SignalementRepository extends ServiceEntityRepository
 
     private function getBaseSignalementsAvecRelancesSansReponseSql(): string
     {
-        // TODO : améliorer les perfs (2270.55 ms pour le compteur de l'onglet sur la base de prod)
         return <<<SQL
             FROM (
                 SELECT
                     s.signalement_id,
                     MIN(s.created_at) AS first_relance_at,
                     COUNT(*) AS nb_relances
-                FROM suivi s USE INDEX (idx_suivi_category_signalement_created_at)
+                FROM suivi s
                 WHERE s.category = 'ASK_FEEDBACK_SENT'
                   AND EXISTS (
                     SELECT 1 FROM signalement si2
@@ -2097,7 +2096,7 @@ class SignalementRepository extends ServiceEntityRepository
                     s.signalement_id,
                     MAX(s.created_at) AS shared_usager_at,
                     MAX(s.type) AS type
-                FROM suivi s USE INDEX (idx_suivi_is_public_signalement_created_at)
+                FROM suivi s
                 WHERE s.is_public = 1
                   AND EXISTS (
                     SELECT 1 FROM signalement si3
@@ -2111,7 +2110,7 @@ class SignalementRepository extends ServiceEntityRepository
                 si.statut = 'ACTIVE'
                 AND NOT EXISTS (
                     SELECT 1
-                    FROM suivi s2 USE INDEX (idx_suivi_signalement_type_created_at)
+                    FROM suivi s2
                     WHERE s2.signalement_id = relances_usager.signalement_id
                       AND s2.type = 2
                       AND s2.created_at > relances_usager.first_relance_at

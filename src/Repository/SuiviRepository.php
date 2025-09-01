@@ -860,7 +860,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, false);
+        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, true);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
@@ -881,8 +881,6 @@ class SuiviRepository extends ServiceEntityRepository
 
     public function countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): int
     {
-        // TODO : améliorer les perfs (3715.15 ms pour le compteur de l'onglet sur la base de prod)
-        // et améliorer les 2 autres au-dessus
         $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, true);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params, true);
