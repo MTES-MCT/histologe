@@ -63,8 +63,8 @@ readonly class MenuBuilder
         ;
 
         $territoryFilesSubMenu = null;
-        if ($this->featureNewDocumentSpace && !$user->isTerritoryAdmin() && !$user->isSuperAdmin()) {
-            $territoryFilesSubMenu = (new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
+        if ($this->featureNewDocumentSpace) {
+            $territoryFilesSubMenu = (new MenuItem(label: 'Espace documentaire', route: 'back_territories_files_index', roleGranted: User::ROLE_USER));
         }
 
         $superAdminToolsSubItem = (new MenuItem(label: 'Outils SA', roleGranted: User::ROLE_ADMIN))
@@ -99,11 +99,11 @@ readonly class MenuBuilder
             ->addChild($signalementsSubMenu)
             ->addChild($donneesChiffreesSubMenu)
             ->addChild($adminToolsSubItem)
+            ->addChild($superAdminToolsSubItem)
         ;
         if (null !== $territoryFilesSubMenu) {
             $menu->addChild($territoryFilesSubMenu);
         }
-        $menu->addChild($superAdminToolsSubItem);
 
         return $menu;
     }
