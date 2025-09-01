@@ -74,6 +74,7 @@
             {% if is_granted('ROLE_ADMIN') %}
                 <th scope="col">Territoire</th>
             {% endif %}
+            <th scope="col">Visible par</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
@@ -93,6 +94,13 @@
                         {% endif %}
                     </td>
                     {% endif %}
+                    <td>
+                    {% if file.partnerCompetence|length > 0 or file.partnerType|length > 0 %}                        
+                        <span class="fr-badge fr-badge--no-icon fr-badge--info">CERTAINS</span>
+                    {% else %}
+                        <span class="fr-badge fr-badge--no-icon fr-badge--success">TOUS</span>
+                    {% endif %}
+                    </td>
                     <td class="fr-text--right fr-ws-nowrap">
                         <button
                             class="fr-btn fr-icon-eye-line open-modal-document-view"
