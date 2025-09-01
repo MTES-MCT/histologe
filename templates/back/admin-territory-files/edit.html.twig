@@ -49,6 +49,7 @@
                 <div class="fr-col-12">
                     {{ form_row(editForm.description) }}
                 </div>
+                <input type="hidden" name="file" value="">
             </div>
             <div class="fr-grid-row fr-mt-4w">
                 <div class="fr-col-6 fr-text--left">
@@ -62,9 +63,7 @@
                     </button>
                 </div>
             </div>
-            {# On retire explicitement le champ 'file' du rendu automatique de form_end #}
-            {{ form_rest(editForm) }}
-            {{ form_end(editForm, {'render_rest': false}) }}
+            {{ form_end(editForm) }}
         </div>
     </section>
 

@@ -14,7 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class AddTerritoryFileType extends AbstractType
+class TerritoryFileType extends AbstractType
 {
     public function __construct(
         private readonly Security $security,

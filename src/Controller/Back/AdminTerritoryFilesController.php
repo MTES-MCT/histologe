@@ -5,8 +5,8 @@ namespace App\Controller\Back;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\User;
-use App\Form\AddTerritoryFileType;
 use App\Form\SearchTerritoryFilesType;
+use App\Form\TerritoryFileType;
 use App\Repository\FileRepository;
 use App\Security\Voter\FileVoter;
 use App\Service\FormHelper;
@@ -84,7 +84,7 @@ class AdminTerritoryFilesController extends AbstractController
         }
 
         /** @var Form $form */
-        $form = $this->createForm(AddTerritoryFileType::class, $file, ['action' => $this->generateUrl('back_territory_management_document_add_ajax')]);
+        $form = $this->createForm(TerritoryFileType::class, $file, ['action' => $this->generateUrl('back_territory_management_document_add_ajax')]);
 
         return $this->render('back/admin-territory-files/add.html.twig', [
             'addForm' => $form,
@@ -108,18 +108,14 @@ class AdminTerritoryFilesController extends AbstractController
         }
 
         /** @var Form $form */
-        $form = $this->createForm(AddTerritoryFileType::class, $file, ['action' => $this->generateUrl('back_territory_management_document_add_ajax')]);
+        $form = $this->createForm(TerritoryFileType::class, $file, ['action' => $this->generateUrl('back_territory_management_document_add_ajax')]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // Check to add a single Grille de visite
             $existingVisitGrid = false;
             $documentType = $form->get('documentType')->getData();
             if ($documentType && DocumentType::GRILLE_DE_VISITE === $documentType) {
-                $existingVisitGrid = $em->getRepository(File::class)->findOneBy([
-                    'territory' => $file->getTerritory(),
-                    'documentType' => DocumentType::GRILLE_DE_VISITE,
-                ]);
-                if ($existingVisitGrid) {
+                if ($existingVisitGrid = $this->hasExistingVisitGrid($em, $file)) {
                     $form->get('documentType')->addError(new FormError('Une grille de visite existe déjà pour ce territoire. Vous ne pouvez en ajouter qu\'une seule.'));
                 }
             }
@@ -187,7 +183,7 @@ class AdminTerritoryFilesController extends AbstractController
             $file->setTerritory($user->getFirstTerritory());
         }
 
-        $form = $this->createForm(AddTerritoryFileType::class, $file, [
+        $form = $this->createForm(TerritoryFileType::class, $file, [
             'action' => $this->generateUrl('back_territory_management_document_edit_ajax', ['file' => $file->getId()]),
         ]);
 
@@ -204,26 +200,15 @@ class AdminTerritoryFilesController extends AbstractController
         EntityManagerInterface $em,
         HtmlSanitizerInterface $htmlSanitizer,
     ): JsonResponse|RedirectResponse {
-        $form = $this->createForm(AddTerritoryFileType::class, $file, [
+        $form = $this->createForm(TerritoryFileType::class, $file, [
             'action' => $this->generateUrl('back_territory_management_document_edit_ajax', ['file' => $file->getId()]),
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            $documentType = $form->get('documentType')->getData();
-            if (null === $documentType) {
-                $form->get('documentType')->addError(new FormError('Veuillez sélectionner un type de document.'));
-            }
-        }
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification grille de visite unique (sauf si on édite la même)
             $documentType = $form->get('documentType')->getData();
             if ($documentType && DocumentType::GRILLE_DE_VISITE === $documentType) {
-                $existingVisitGrid = $em->getRepository(File::class)->findOneBy([
-                    'territory' => $file->getTerritory(),
-                    'documentType' => DocumentType::GRILLE_DE_VISITE,
-                ]);
-                if ($existingVisitGrid && $existingVisitGrid->getId() !== $file->getId()) {
+                if ($this->hasExistingVisitGrid($em, $file)) {
                     $form->get('documentType')->addError(new FormError('Une grille de visite existe déjà pour ce territoire. Vous ne pouvez en ajouter qu\'une seule.'));
 
                     return new JsonResponse([
@@ -232,7 +217,7 @@ class AdminTerritoryFilesController extends AbstractController
                     ], Response::HTTP_BAD_REQUEST);
                 }
             }
-            $file->setDescription($htmlSanitizer->sanitize($file->getDescription()));
+            $file->setDescription($htmlSanitizer->sanitize($file->getDescription() ?? ''));
             $em->flush();
             $this->addFlash('success', 'Le document a bien été modifié.');
 
@@ -259,5 +244,25 @@ class AdminTerritoryFilesController extends AbstractController
         }
 
         return $this->redirectToRoute('back_territory_management_document');
+    }
+
+    private function hasExistingVisitGrid(EntityManagerInterface $em, File $file): bool
+    {
+        $existingVisitGrid = $em->getRepository(File::class)->findOneBy([
+            'territory' => $file->getTerritory(),
+            'documentType' => DocumentType::GRILLE_DE_VISITE,
+        ]);
+
+        // Si c'est une création, on vérifie simplement l'existence d'une auttre grille de visite
+        if (empty($file->getId())) {
+            return null !== $existingVisitGrid;
+        }
+
+        // Si c'est une édition, on vérifie que la grille de visite trouvée n'est pas celle en cours d'édition
+        if ($existingVisitGrid && $existingVisitGrid->getId() !== $file->getId()) {
+            return true;
+        }
+
+        return false;
     }
 }
