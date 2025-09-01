@@ -40,6 +40,7 @@ export const updateLocalStorageOnEvent = (eventType, idItem, localStorageName) =
   item?.addEventListener(eventType, () => updateLocalStorageWithFormParams(localStorageName));
 };
 
+const elementPage = document.getElementById('page')
 const filterForms = document.getElementsByClassName('bo-filter-form');
 if (filterForms.length > 0) {
   for (const filterForm of filterForms) {
@@ -50,22 +51,24 @@ if (filterForms.length > 0) {
             input.checked = false;
           });
         }
-        if (null != document.getElementById('page')) {
-          document.getElementById('page').value = 1;
+        if (elementPage) {
+          elementPage.value = 1;
         }
         filterForm.submit();
       });
     });
     filterForm.querySelectorAll('.search-checkbox-container').forEach((select) => {
       select.addEventListener('searchCheckboxChange', function () {
-        if (null != document.getElementById('page')) {
-          document.getElementById('page').value = 1;
+        if (elementPage) {
+          elementPage.value = 1;
         }
         filterForm.submit();
       });
     });
     filterForm.addEventListener('submit', function () {
-      document.getElementById('page').value = 1;
+      if (elementPage) {
+        elementPage.value = 1;
+      }
     });
   }
 }

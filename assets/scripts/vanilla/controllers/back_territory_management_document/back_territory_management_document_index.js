@@ -6,6 +6,21 @@ import {
 const searchFilesForm = document.getElementById('search-territory-files-type-form');
 
 if (searchFilesForm) {
+  document.querySelectorAll('#form-field-type-tag-list .fr-tag').forEach((tag) => {
+    tag.addEventListener('click', (e) => {
+      document.querySelectorAll('#form-field-type-tag-list .fr-tag').forEach((otherTag) => {
+        if (otherTag !== e.target) {
+          otherTag.setAttribute('aria-pressed', 'false');
+        }
+      })
+      const input = document.getElementById('form-field-type-value');
+      if (input) {
+        input.value = e.target.dataset.value;
+      }
+      searchFilesForm.submit();
+    });
+  });
+
   document.querySelectorAll('.open-modal-document-view').forEach((button) => {
     button.addEventListener('click', (e) => {
       document.getElementById('fr-modal-document-view-document-created-at').textContent = e.target.dataset.createdat;

@@ -387,6 +387,11 @@ class File implements EntityHistoryInterface
         return $this->isTypeDocument() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
     }
 
+    public function isImageExtension(): bool
+    {
+        return in_array($this->getExtension(), self::IMAGE_EXTENSION);
+    }
+
     public function isTemp(): ?bool
     {
         return $this->isTemp;
