@@ -31,6 +31,8 @@ if (searchFilesForm) {
       document.getElementById('fr-modal-document-view-document-created-by').textContent = e.target.dataset.createdby;
       document.getElementById('fr-modal-document-view-document-title').textContent = e.target.dataset.title;
       document.getElementById('fr-modal-document-view-document-description').innerText = e.target.dataset.description;
+      document.getElementById('fr-modal-document-view-document-partner-type').innerHTML = e.target.dataset.partnertype;
+      document.getElementById('fr-modal-document-view-document-partner-competence').innerHTML = e.target.dataset.partnercompetence;
       document.getElementById('fr-modal-document-edit-btn-submit').href = e.target.dataset.url;
     });
   });
