@@ -30,7 +30,7 @@ class BackTagControllerTest extends WebTestCase
 
     public function testSearchNewTag(): void
     {
-        $route = $this->router->generate('back_tags_index', [
+        $route = $this->router->generate('back_territory_management_tags_index', [
             'territory' => 13,
             'queryTag' => 'Urgent',
         ]);

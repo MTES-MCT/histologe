@@ -144,20 +144,23 @@ class FileRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findFilteredPaginated(SearchTerritoryFiles $searchTerritoryFiles, int $maxListPagination): Paginator
+    public function findFilteredPaginated(SearchTerritoryFiles $searchTerritoryFiles, ?Territory $territory, int $maxListPagination): Paginator
     {
         $qb = $this->createQueryBuilder('f')
-            // ->andWhere('f.territory IS NOT NULL')
+            ->andWhere('f.isStandalone = true')
             ->andWhere('f.signalement IS NULL');
 
         if ($searchTerritoryFiles->getQueryName()) {
             $qb->andWhere('f.title LIKE :queryName')
                 ->setParameter('queryName', '%'.$searchTerritoryFiles->getQueryName().'%');
         }
-        /*if ($searchTerritoryFiles->getTerritory()) {
+
+        $territory = $territory ?: $searchTerritoryFiles->getTerritory();
+        if ($territory) {
             $qb->andWhere('f.territory = :territory')
-                ->setParameter('territory', $searchTerritoryFiles->getTerritory());
-        }*/
+                ->setParameter('territory', $territory);
+        }
+
         if ($searchTerritoryFiles->getType()) {
             $qb->andWhere('f.documentType = :documentType')
                 ->setParameter('documentType', $searchTerritoryFiles->getType());

@@ -9,7 +9,7 @@
             'level2Link': '',
             'level2Label': '',
             'level3Title': 'Mon territoire',
-            'level3Link': 'back_admin_territory_files_index',
+            'level3Link': path('back_territory_management_index'),
             'level4Title': 'Documents types',
             'level4Link': '',
         } %}
@@ -19,14 +19,15 @@
                 <div class="fr-col-8 fr-text--left">
                     <h1 class="fr-mb-0">Documents types</h1>
                     <p>
-                        Vous pouvez ajouter des documents types pour vos partenaires et choisir pour quel(s) type(s) de partenaires vous les afficher.
+                        Vous pouvez ajouter des documents types pour vos partenaires et choisir pour quel(s) type(s) de partenaires vous les affichez.
                     </p>
                 </div>
                 <div class="fr-col-4 fr-text--right">
-                    <button class="fr-btn fr-btn--icon-left fr-icon-add-line"
+                    <a
+                        href="{{ path('back_territory_management_document_add') }}"
+                        class="fr-btn fr-btn--icon-left fr-icon-add-line"
                         title="Ajouter un document"
-                        data-fr-opened="false" aria-controls="fr-modal-document-add"
-                        >Ajouter un document</button>
+                        >Ajouter un document</a>
                 </div>
             </div>
         </header>
@@ -49,7 +50,7 @@
                 {{ form_row(form.type) }}
             </div>
             <div class="fr-col-12 fr-col-lg-3">
-                <a href="{{ path('back_admin_territory_files_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+                <a href="{{ path('back_territory_management_document') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
     </section>
@@ -70,40 +71,47 @@
             <th scope="col">Document</th>
             <th scope="col">Date d'ajout</th>
             <th scope="col">Type</th>
-            {# <th scope="col">Territoire</th> #}
+            {% if is_granted('ROLE_ADMIN') %}
+                <th scope="col">Territoire</th>
+            {% endif %}
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
         {% set tableBody %}
-            {% for item in files %}
+            {% for file in files %}
                 <tr class="file-row">
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.createdAt.format('d/m/Y') }}</td>
-                    {#<td>
-                        {% if item.territory %}
-                            {{ item.territory.zip }} - {{ item.territory.name }}
+                    <td>{{ file.id }}</td>
+                    <td>{{ file.title }}</td>
+                    <td>{{ file.createdAt.format('d/m/Y') }}</td>
+                    <td>{{ file.documentType.label }}</td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <td>
+                        {% if file.territory %}
+                            {{ file.territory.zip }} - {{ file.territory.name }}
+                        {% else %}
+                            Tous
                         {% endif %}
-                    </td>#}
-                    <td>{{ item.documentType.label }}</td>
+                    </td>
+                    {% endif %}
                     <td class="fr-text--right fr-ws-nowrap">
-                        <a href="" class="fr-btn fr-icon-arrow-right-line" title="Voir les détails du document {{item.title}}">
-                            Voir les détails du document {{ item.title }}
-                        </a>
-                        <a href="" class="fr-btn fr-icon-edit-line" title="Editer le document {{item.title}}">
-                            Editer le document {{item.title}}
-                        </a>
-                        <a href="" class="fr-btn fr-icon-download-line" title="Ouvrir le document {{item.title}}">
-                            Ouvrir le document {{item.title}}
-                        </a>
+                        <a href="" class="fr-btn fr-icon-eye-line" title="Voir les détails du document {{file.title}}"
+                            >Voir les détails du document {{ file.title }}</a>
+                        <a href="" class="fr-btn fr-icon-edit-line" title="Editer le document {{file.title}}"
+                            >Editer le document {{file.title}}</a>
+                        <a href="{{ sign_url(path('show_file', {uuid: file.uuid})) }}"
+                                class="fr-btn fr-icon-download-line"
+                                title="Ouvrir le document {{file.title}} - Ouvre une nouvelle fenêtre"
+                                target="_blank"
+                                rel="noopener"
+                            >Ouvrir le document {{file.title}}</a>
                         <button 
                             class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-zone-delete" 
-                            title="Supprimer le document {{item.title}}" 
+                            title="Supprimer le document {{file.title}}" 
                             data-fr-opened="false" 
                             aria-controls="fr-modal-document-delete"
                             data-url=""
-                            data-name="{{item.title}}"
-                            >Supprimer le document {{item.title}}</button>
+                            data-name="{{file.title}}"
+                            >Supprimer le document {{file.title}}</button>
                     </td>
                 </tr>
             {% endfor %}
@@ -113,7 +121,7 @@
 
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_admin_territory_files_index', searchTerritoryFiles.urlParams) }}
+            {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_territory_management_document', searchTerritoryFiles.urlParams) }}
         </div>
     </section>
 

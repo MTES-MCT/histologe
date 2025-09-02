@@ -8,8 +8,10 @@
             'level2Title': 'Outils admin',
             'level2Link': '',
             'level2Label': '',
-            'level3Title': 'Etiquettes',
-            'level3Link': '',
+            'level3Title': 'Mon territoire',
+            'level3Link': path('back_territory_management_index'),
+            'level4Title': 'Etiquettes',
+            'level4Link': '',
         } %}
 
         <header>
@@ -46,7 +48,7 @@
                 </div>
             {% endif %}
             <div class="fr-col-12 fr-col-lg-4">
-                <a href="{{ path('back_tags_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+                <a href="{{ path('back_territory_management_tags_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
     </section>
@@ -218,7 +220,7 @@
 
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, searchTag.page, 'back_tags_index', searchTag.urlParams) }}
+            {{ macros.customPagination(pages, searchTag.page, 'back_territory_management_tags_index', searchTag.urlParams) }}
         </div>
     </section>
 {% endblock %}

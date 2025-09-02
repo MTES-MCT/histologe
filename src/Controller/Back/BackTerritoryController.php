@@ -23,10 +23,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/bo/territoire')]
+#[Route('/bo/territoires')]
 class BackTerritoryController extends AbstractController
 {
-    #[Route('/', name: 'back_territory_index', methods: ['GET'])]
+    #[Route('/', name: 'back_territories_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
@@ -50,7 +50,7 @@ class BackTerritoryController extends AbstractController
         ]);
     }
 
-    #[Route('/{territory}', name: 'back_territory_edit', methods: ['GET', 'POST'])]
+    #[Route('/{territory}', name: 'back_territories_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Territory $territory,
@@ -71,7 +71,7 @@ class BackTerritoryController extends AbstractController
                 if (!$fileScanner->isClean($file->getPathname())) {
                     $this->addFlash('error', 'Par mesure de sécurité, le fichier '.$file->getClientOriginalName().' a été rejeté car il contient du code exécutable.');
 
-                    return $this->redirectToRoute('back_territory_edit', ['territory' => $territory->getId()]);
+                    return $this->redirectToRoute('back_territories_edit', ['territory' => $territory->getId()]);
                 }
                 if ($territory->getGrilleVisiteFilename()) {
                     $uploadHandlerService->deleteSingleFile($territory->getGrilleVisiteFilename());
@@ -86,7 +86,7 @@ class BackTerritoryController extends AbstractController
             $em->flush();
             $this->addFlash('success', 'Le territoire a bien été modifié.');
 
-            return $this->redirectToRoute('back_territory_edit', ['territory' => $territory->getId()]);
+            return $this->redirectToRoute('back_territories_edit', ['territory' => $territory->getId()]);
         }
 
         return $this->render('back/territory/edit.html.twig', [

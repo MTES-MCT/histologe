@@ -24,11 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/bo/zone')]
+#[Route('/bo/gerer-territoire/zone')]
 #[IsGranted('ROLE_ADMIN_TERRITORY')]
 class BackZoneController extends AbstractController
 {
-    #[Route('/', name: 'back_zone_index', methods: ['GET'])]
+    #[Route('/', name: 'back_territory_management_zone_index', methods: ['GET'])]
     public function index(
         Request $request,
         ZoneRepository $zoneRepository,
@@ -49,7 +49,7 @@ class BackZoneController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $zone->setTerritory($user->getFirstTerritory());
         }
-        $addForm = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_zone_add')]);
+        $addForm = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_territory_management_zone_add')]);
 
         return $this->render('back/zone/index.html.twig', [
             'form' => $form,
@@ -60,7 +60,7 @@ class BackZoneController extends AbstractController
         ]);
     }
 
-    #[Route('/ajouter', name: 'back_zone_add', methods: 'POST')]
+    #[Route('/ajouter', name: 'back_territory_management_zone_add', methods: 'POST')]
     public function add(Request $request, EntityManagerInterface $em, CsvParser $csvParser): JsonResponse|RedirectResponse
     {
         $zone = new Zone();
@@ -70,7 +70,7 @@ class BackZoneController extends AbstractController
             $zone->setTerritory($user->getFirstTerritory());
         }
         /** @var Form $form */
-        $form = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_zone_add')]);
+        $form = $this->createForm(ZoneType::class, $zone, ['action' => $this->generateUrl('back_territory_management_zone_add')]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
@@ -94,13 +94,13 @@ class BackZoneController extends AbstractController
 
             $this->addFlash('success', 'La zone a bien été ajoutée.');
 
-            return $this->redirectToRoute('back_zone_show', ['zone' => $zone->getId()]);
+            return $this->redirectToRoute('back_territory_management_zone_show', ['zone' => $zone->getId()]);
         }
 
         return $this->json(['code' => Response::HTTP_OK]);
     }
 
-    #[Route('/editer/{zone}', name: 'back_zone_edit', methods: ['GET', 'POST'])]
+    #[Route('/editer/{zone}', name: 'back_territory_management_zone_edit', methods: ['GET', 'POST'])]
     public function edit(Zone $zone, Request $request, EntityManagerInterface $em, CsvParser $csvParser): Response
     {
         $this->denyAccessUnlessGranted(ZoneVoter::MANAGE, $zone);
@@ -118,7 +118,7 @@ class BackZoneController extends AbstractController
                 $em->flush();
                 $this->addFlash('success', 'La zone a bien été modifiée.');
 
-                return $this->redirectToRoute('back_zone_show', ['zone' => $zone->getId()]);
+                return $this->redirectToRoute('back_territory_management_zone_show', ['zone' => $zone->getId()]);
             }
         }
 
@@ -128,7 +128,7 @@ class BackZoneController extends AbstractController
         ]);
     }
 
-    #[Route('/{zone}', name: 'back_zone_show', methods: ['GET'])]
+    #[Route('/{zone}', name: 'back_territory_management_zone_show', methods: ['GET'])]
     public function show(Zone $zone, ZoneRepository $zoneRepository): Response
     {
         $this->denyAccessUnlessGranted(ZoneVoter::MANAGE, $zone);
@@ -148,13 +148,13 @@ class BackZoneController extends AbstractController
         if (!$this->isCsrfTokenValid('zone_delete', $request->query->get('_token'))) {
             $this->addFlash('error', 'Le token CSRF est invalide.');
 
-            return $this->redirectToRoute('back_zone_index');
+            return $this->redirectToRoute('back_territory_management_zone_index');
         }
         $em->remove($zone);
         $em->flush();
         $this->addFlash('success', 'La zone a bien été supprimée.');
 
-        return $this->redirectToRoute('back_zone_index');
+        return $this->redirectToRoute('back_territory_management_zone_index');
     }
 
     private function manageCsvFileFormErrors(File $file, Zone $zone, Form $form, CsvParser $csvParser): void

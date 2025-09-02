@@ -31,7 +31,7 @@
                     <div class="fr-tile__body">
                         <div class="fr-tile__content">
                             <h3 class="fr-tile__title">
-                                <a href="{{ path('back_tags_index') }}">Etiquettes</a>
+                                <a href="{{ path('back_territory_management_tags_index') }}">Etiquettes</a>
                             </h3>
                             <p class="fr-tile__desc">Créer, modifier et supprimer les étiquettes pour votre territoire</p>
                             <p class="fr-tile__detail">
@@ -53,12 +53,12 @@
                     <div class="fr-tile__body">
                         <div class="fr-tile__content">
                             <h3 class="fr-tile__title">
-                                <a href="{{ path('back_admin_territory_files_index') }}">Documents types</a>
+                                <a href="{{ path('back_territory_management_document') }}">Documents types</a>
                             </h3>
                             <p class="fr-tile__desc">Ajouter des documents types et les mettre à disposition des partenaires</p>
                             <p class="fr-tile__detail">
                                 <span class="fr-icon-file-text-line" aria-hidden="true"></span>
-                                TODO documents
+                                {{ singular_or_plural(countDocuments, 'document', 'documents') }}
                             </p>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                     <div class="fr-tile__body">
                         <div class="fr-tile__content">
                             <h3 class="fr-tile__title">
-                                <a href="{{ path('back_zone_index') }}">Zones du territoire</a>
+                                <a href="{{ path('back_territory_management_zone_index') }}">Zones du territoire</a>
                             </h3>
                             <p class="fr-tile__desc">Délimiter les zones du territoire et y associer des partenaires</p>
                             <p class="fr-tile__detail">

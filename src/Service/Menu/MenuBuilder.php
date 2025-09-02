@@ -49,15 +49,17 @@ readonly class MenuBuilder
         $adminToolsSubItem->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
         if ($this->featureNewDocumentSpace) {
             $adminToolsSubItem->addChild(new MenuItem(label: $user->isSuperAdmin() ? 'Gérer les territoires' : 'Gérer mon territoire', route: 'back_territory_management_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+            $adminToolsSubItem->addChild(new MenuItem(route: 'back_territory_management_zone_index'))
+                ->addChild(new MenuItem(route: 'back_territory_management_tags_index'));
         } else {
-            $adminToolsSubItem->addChild(new MenuItem(label: 'Etiquettes', route: 'back_tags_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
-                ->addChild(new MenuItem(label: 'Zones', route: 'back_zone_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+            $adminToolsSubItem->addChild(new MenuItem(label: 'Etiquettes', route: 'back_territory_management_tags_index', roleGranted: User::ROLE_ADMIN_TERRITORY))
+                ->addChild(new MenuItem(label: 'Zones', route: 'back_territory_management_zone_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
         }
         $adminToolsSubItem->addChild(new MenuItem(route: 'back_partner_new'))
             ->addChild(new MenuItem(route: 'back_partner_edit'))
             ->addChild(new MenuItem(route: 'back_partner_edit_perimetre'))
-            ->addChild(new MenuItem(route: 'back_zone_show'))
-            ->addChild(new MenuItem(route: 'back_zone_edit'))
+            ->addChild(new MenuItem(route: 'back_territory_management_zone_show'))
+            ->addChild(new MenuItem(route: 'back_territory_management_zone_edit'))
         ;
 
         $territoryFilesSubMenu = null;
@@ -71,7 +73,7 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Signalement archivés', route: 'back_archived_signalements_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Règles d\'auto-affectation', route: 'back_auto_affectation_rule_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Territoires', route: 'back_territory_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Territoires', route: 'back_territories_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Connexions SI externes', route: 'back_interconnexion_index', roleGranted: User::ROLE_ADMIN));
@@ -81,7 +83,7 @@ readonly class MenuBuilder
         }
         $superAdminToolsSubItem
             ->addChild(new MenuItem(route: 'back_archived_users_reactiver'))
-            ->addChild(new MenuItem(route: 'back_territory_edit'))
+            ->addChild(new MenuItem(route: 'back_territories_edit'))
             ->addChild(new MenuItem(route: 'back_bailleur_edit'))
             ->addChild(new MenuItem(route: 'back_auto_affectation_rule_new'))
             ->addChild(new MenuItem(route: 'back_auto_affectation_rule_edit'))

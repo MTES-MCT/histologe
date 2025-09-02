@@ -8,14 +8,14 @@
             'level2Title': 'Outils admin',
             'level2Link': '',
             'level2Label': '',
-            'level3Title': 'Zones',
-            'level3Link': path('back_zone_index'),
-            'level4Title': 'Zone '~ zone.name,
-            'level4Link': path('back_zone_show', {zone: zone.id}),
-            'level4Label': 'Retour à la zone',
-            'level5Title': 'Modifier la zone ' ~ zone.name,
-            'level5Link': '',
-            'level5Label': '',
+            'level3Title': 'Mon territoire',
+            'level3Link': path('back_territory_management_index'),
+            'level4Title': 'Zones',
+            'level4Link': path('back_territory_management_zone_index'),
+            'level5Title': 'Zone '~ zone.name,
+            'level5Link': path('back_territory_management_zone_show', {zone: zone.id}),
+            'level5Label': 'Retour à la zone',
+            'level6Title': 'Modifier la zone ' ~ zone.name,
         } %}
         <header>
             <div class="fr-grid-row">
@@ -50,7 +50,7 @@
                     {{ form_row(form.area) }}
                 </div>
                 <div class="fr-col-6">
-                    <a href="{{path('back_zone_index')}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line" type="button">Annuler</a>
+                    <a href="{{path('back_territory_management_zone_index')}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line" type="button">Annuler</a>
                 </div>
                 <div class="fr-col-6">
                     {{ form_row(form.save) }}
