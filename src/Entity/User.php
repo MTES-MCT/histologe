@@ -204,6 +204,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $duplicateModalDismissedAt = null;
 
+    /**
+     * @var Collection<int, UserApiPermission>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserApiPermission::class, orphanRemoval: true)]
+    private Collection $userApiPermissions;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -219,6 +225,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->isMailingSummary = true;
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->hasDoneSubscriptionsChoice = false;
+        $this->userApiPermissions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1003,6 +1010,36 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function setDuplicateModalDismissed(): static
     {
         $this->duplicateModalDismissedAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserApiPermission>
+     */
+    public function getUserApiPermissions(): Collection
+    {
+        return $this->userApiPermissions;
+    }
+
+    public function addUserApiPermission(UserApiPermission $userApiPermission): static
+    {
+        if (!$this->userApiPermissions->contains($userApiPermission)) {
+            $this->userApiPermissions->add($userApiPermission);
+            $userApiPermission->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserApiPermission(UserApiPermission $userApiPermission): static
+    {
+        if ($this->userApiPermissions->removeElement($userApiPermission)) {
+            // set the owning side to null (unless already changed)
+            if ($userApiPermission->getUser() === $this) {
+                $userApiPermission->setUser(null);
+            }
+        }
 
         return $this;
     }

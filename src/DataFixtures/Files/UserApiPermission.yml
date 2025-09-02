@@ -1,0 +1,28 @@
+user_api_permissions:
+  -
+    user: "api-reunion-epci@signal-logement.fr"
+    territory: "La Réunion"
+    partner_type: "EPCI"
+  -
+    user: "api-oilhi@signal-logement.fr"
+    partner_type: "COMMUNE_SCHS"
+  -
+    user: "api-34-01@signal-logement.fr"
+    territory: "Hérault"
+    partner_type: "EPCI"
+  -
+    user: "api-34-01@signal-logement.fr"
+    territory: "Hérault"
+    partner_type: "CAF_MSA"
+  -
+    user: "api-34-01@signal-logement.fr"
+    partner: "Ville de Montpellier"
+  -
+    user: "api-34-01@signal-logement.fr"
+    partner: "CD 34"
+  -
+    user: "api-01@signal-logement.fr"
+    partner: "Partenaire 13-01"
+  -
+    user: "api-02@signal-logement.fr"
+    partner: "Alès Agglomération"
