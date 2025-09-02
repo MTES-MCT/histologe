@@ -103,7 +103,7 @@
                             data-createdat="{{ file.createdAt|date('d/m/Y') }}"
                             data-createdby="{{ file.uploadedBy ? file.uploadedBy.fullName : 'Admin' }}"
                             data-title="{{ file.title }}"
-                            data-description="{{ file.description and file.description is not same as '' ? file.description|nl2br : '/' }}"
+                            data-description="{{ file.description ?? '/' }}"
                             >Voir les détails du document {{ file.title }}</button>
                         <a href="" class="fr-btn fr-icon-edit-line" title="Editer le document {{ file.title }}"
                             >Editer le document {{ file.title }}</a>

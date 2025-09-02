@@ -21,7 +21,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -100,7 +99,6 @@ class AdminTerritoryFilesController extends AbstractController
         FileScanner $fileScanner,
         LoggerInterface $logger,
         ImageManipulationHandler $imageManipulationHandler,
-        HtmlSanitizerInterface $htmlSanitizer,
     ): JsonResponse {
         $file = new File();
         /** @var User $user */
@@ -157,7 +155,7 @@ class AdminTerritoryFilesController extends AbstractController
                         $file->setScannedAt(new \DateTimeImmutable());
                         $file->setIsStandalone(true);
                         $file->setUploadedBy($user);
-                        $file->setDescription($htmlSanitizer->sanitize($file->getDescription()));
+                        $file->setDescription($file->getDescription());
                         $em->persist($file);
                         $em->flush();
 
