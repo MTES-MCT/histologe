@@ -24,6 +24,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -154,6 +155,7 @@ class AdminTerritoryFilesController extends AbstractController
                         $file->setScannedAt(new \DateTimeImmutable());
                         $file->setIsStandalone(true);
                         $file->setUploadedBy($user);
+                        $file->setDescription($file->getDescription());
                         $em->persist($file);
                         $em->flush();
 
@@ -173,6 +175,25 @@ class AdminTerritoryFilesController extends AbstractController
         $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
 
         return $this->json($response, $response['code']);
+    }
+
+    #[Route('/editer/{file}', name: 'back_territory_management_document_edit', methods: ['GET'])]
+    public function edit(): Response
+    {
+        // TODO : prochain ticket
+        $file = new File();
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $file->setTerritory($user->getFirstTerritory());
+        }
+
+        /** @var Form $form */
+        $form = $this->createForm(AddTerritoryFileType::class, $file, ['action' => $this->generateUrl('back_territory_management_document_add_ajax')]);
+
+        return $this->render('back/admin-territory-files/add.html.twig', [
+            'addForm' => $form,
+        ]);
     }
 
     #[Route('/supprimer/{file}', name: 'back_territory_management_document_delete_ajax', methods: ['GET'])]

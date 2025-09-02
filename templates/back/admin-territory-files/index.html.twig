@@ -94,24 +94,33 @@
                     </td>
                     {% endif %}
                     <td class="fr-text--right fr-ws-nowrap">
-                        <a href="" class="fr-btn fr-icon-eye-line" title="Voir les détails du document {{file.title}}"
-                            >Voir les détails du document {{ file.title }}</a>
-                        <a href="" class="fr-btn fr-icon-edit-line" title="Editer le document {{file.title}}"
-                            >Editer le document {{file.title}}</a>
+                        <button
+                            class="fr-btn fr-icon-eye-line open-modal-document-view"
+                            title="Voir les détails du document {{ file.title }}"
+                            data-fr-opened="false" 
+                            aria-controls="fr-modal-document-view"
+                            data-url="{{ path('back_territory_management_document_edit', { file: file.id }) }}"
+                            data-createdat="{{ file.createdAt|date('d/m/Y') }}"
+                            data-createdby="{{ file.uploadedBy ? file.uploadedBy.fullName : 'Admin' }}"
+                            data-title="{{ file.title }}"
+                            data-description="{{ file.description ?? '/' }}"
+                            >Voir les détails du document {{ file.title }}</button>
+                        <a href="" class="fr-btn fr-icon-edit-line" title="Editer le document {{ file.title }}"
+                            >Editer le document {{ file.title }}</a>
                         <a href="{{ sign_url(path('show_file', {uuid: file.uuid})) }}"
                                 class="fr-btn fr-icon-download-line"
-                                title="Ouvrir le document {{file.title}} - Ouvre une nouvelle fenêtre"
+                                title="Ouvrir le document {{ file.title }} - Ouvre une nouvelle fenêtre"
                                 target="_blank"
                                 rel="noopener"
-                            >Ouvrir le document {{file.title}}</a>
-                        <button 
-                            class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-document-delete" 
-                            title="Supprimer le document {{file.title}}" 
-                            data-fr-opened="false" 
+                            >Ouvrir le document {{ file.title }}</a>
+                        <button
+                            class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-document-delete"
+                            title="Supprimer le document {{ file.title }}"
+                            data-fr-opened="false"
                             aria-controls="fr-modal-document-delete"
-                            data-url="{{ path('back_territory_management_document_delete_ajax', {file: file.id}) }}?_token={{ csrf_token('document_delete') }}"
-                            data-title="{{file.title}}"
-                            >Supprimer le document {{file.title}}</button>
+                            data-url="{{ path('back_territory_management_document_delete_ajax', { file: file.id }) }}?_token={{ csrf_token('document_delete') }}"
+                            data-title="{{ file.title }}"
+                            >Supprimer le document {{ file.title }}</button>
                     </td>
                 </tr>
             {% endfor %}
@@ -124,6 +133,39 @@
             {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_territory_management_document', searchTerritoryFiles.urlParams) }}
         </div>
     </section>
+
+    {# Modale de visualisation #}
+    <dialog aria-labelledby="fr-modal-title-document-view" id="fr-modal-document-view" class="fr-modal">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-document-view">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-document-view" class="fr-modal__title">
+                                Détails du document
+                            </h1>
+                            <p class="fr-pb-5v"><i>Ajouté le <span id="fr-modal-document-view-document-created-at"></span> par <span id="fr-modal-document-view-document-created-by"></span></i></p>
+                            <p><strong>Titre :</strong> <span id="fr-modal-document-view-document-title"></span></p>
+                            <p>
+                                <strong>Description :</strong>
+                                <br><br>
+                                <span id="fr-modal-document-view-document-description"></span>
+                            </p>
+                        </div>
+                        <div class="fr-modal__footer">
+                            <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <a href="#" class="fr-btn fr-btn--secondary fr-icon-edit-line" id="fr-modal-document-edit-btn-submit">Editer le document</a>
+                                <button class="fr-btn fr-icon-close-line" type="button" aria-controls="fr-modal-document-delete">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     {# Modale de suppression #}
     <dialog aria-labelledby="fr-modal-title-document-delete" id="fr-modal-document-delete" class="fr-modal">
