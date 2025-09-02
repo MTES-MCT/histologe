@@ -156,7 +156,7 @@ class UploadHandlerService
         return $this->moveFilePath($tmpFilepath);
     }
 
-    private function movePhotoVariants(string $filename): void
+    public function movePhotoVariants(string $filename): void
     {
         $variantNames = ImageManipulationHandler::getVariantNames($filename);
         $distantFolder = $this->parameterBag->get('bucket_tmp_dir');

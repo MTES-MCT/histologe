@@ -9,19 +9,20 @@ use App\Form\AddTerritoryFileType;
 use App\Form\SearchTerritoryFilesType;
 use App\Repository\FileRepository;
 use App\Service\FormHelper;
+use App\Service\ImageManipulationHandler;
 use App\Service\ListFilters\SearchTerritoryFiles;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,6 +32,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN_TERRITORY')]
 class AdminTerritoryFilesController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
+        private readonly bool $featureNewDocumentSpace,
+    ) {
+        if (!$this->featureNewDocumentSpace) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     #[Route('/', name: 'back_territory_management_document', methods: ['GET'])]
     public function index(
         Request $request,
@@ -86,7 +96,8 @@ class AdminTerritoryFilesController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         FileScanner $fileScanner,
         LoggerInterface $logger,
-    ): JsonResponse|RedirectResponse {
+        ImageManipulationHandler $imageManipulationHandler,
+    ): JsonResponse {
         $file = new File();
         /** @var User $user */
         $user = $this->getUser();
@@ -125,10 +136,20 @@ class AdminTerritoryFilesController extends AbstractController
                             throw new \Exception($res['error']);
                         }
 
-                        $uploadHandlerService->moveFilePath($res['filePath']);
                         $file->setFilename($res['file']);
+                        // Move main file
+                        $uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
+                        $variantsGenerated = false;
+                        if (\in_array($uploadedFile->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
+                            $imageManipulationHandler->resize($file->getFilename())->thumbnail();
+                            // Move variants
+                            $uploadHandlerService->movePhotoVariants($file->getFilename());
+                            $variantsGenerated = true;
+                        }
+
                         $extension = strtolower(pathinfo($res['file'], \PATHINFO_EXTENSION));
                         $file->setExtension(strtolower($extension));
+                        $file->setIsVariantsGenerated($variantsGenerated);
                         $file->setScannedAt(new \DateTimeImmutable());
                         $file->setIsStandalone(true);
                         $file->setUploadedBy($user);
@@ -137,7 +158,9 @@ class AdminTerritoryFilesController extends AbstractController
 
                         $this->addFlash('success', 'Le document a bien été ajouté.');
 
-                        return $this->redirectToRoute('back_territory_management_document');
+                        $url = $this->generateUrl('back_territory_management_document');
+
+                        return $this->json(['redirect' => true, 'url' => $url]);
                     } catch (FileException $e) {
                         $logger->error($e->getMessage());
                         $form->get('file')->addError(new FormError('Échec du téléchargement du document.'));
