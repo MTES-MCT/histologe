@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\AddTerritoryFileType;
 use App\Form\SearchTerritoryFilesType;
 use App\Repository\FileRepository;
+use App\Security\Voter\FileVoter;
 use App\Service\FormHelper;
 use App\Service\ImageManipulationHandler;
 use App\Service\ListFilters\SearchTerritoryFiles;
@@ -172,5 +173,22 @@ class AdminTerritoryFilesController extends AbstractController
         $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
 
         return $this->json($response, $response['code']);
+    }
+
+    #[Route('/supprimer/{file}', name: 'back_territory_management_document_delete_ajax', methods: ['GET'])]
+    public function deleteAjax(
+        File $file,
+        Request $request,
+        UploadHandlerService $uploadHandlerService,
+    ): RedirectResponse {
+        $this->denyAccessUnlessGranted(FileVoter::DELETE_DOCUMENT, $file);
+        if (!$this->isCsrfTokenValid('document_delete', $request->query->get('_token'))) {
+            $this->addFlash('error', 'Le token CSRF est invalide.');
+        } else {
+            $uploadHandlerService->deleteFile($file);
+            $this->addFlash('success', 'Le fichier a bien été supprimé.');
+        }
+
+        return $this->redirectToRoute('back_territory_management_document');
     }
 }

@@ -105,12 +105,12 @@
                                 rel="noopener"
                             >Ouvrir le document {{file.title}}</a>
                         <button 
-                            class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-zone-delete" 
+                            class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-document-delete" 
                             title="Supprimer le document {{file.title}}" 
                             data-fr-opened="false" 
                             aria-controls="fr-modal-document-delete"
-                            data-url=""
-                            data-name="{{file.title}}"
+                            data-url="{{ path('back_territory_management_document_delete_ajax', {file: file.id}) }}?_token={{ csrf_token('document_delete') }}"
+                            data-title="{{file.title}}"
                             >Supprimer le document {{file.title}}</button>
                     </td>
                 </tr>
@@ -124,5 +124,39 @@
             {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_territory_management_document', searchTerritoryFiles.urlParams) }}
         </div>
     </section>
+
+    {# Modale de suppression #}
+    <dialog aria-labelledby="fr-modal-title-document-delete" id="fr-modal-document-delete" class="fr-modal">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-document-delete">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-document-delete" class="fr-modal__title">
+                                Supprimer le document : "<span id="fr-modal-document-delete-document-title"></span>"
+                            </h1>
+                            <p>Vous êtes sur le point de supprimer le document "<span id="fr-modal-document-delete-document-title-reminder"></span>" de l'espace documentaire.</p>
+                            <p>Une fois le document supprimé :</p>
+                            <ul>
+                                <li>Il ne sera plus visible pour les partenaires dans leur espace documentaire</li>
+                                <li>Il ne pourra pas être partagé dans des suivis internes ou des suivis à l'usager</li>
+                                <li>Il sera indiqué comme "document supprimé" dans les suivis dans lesquels il a déjà été partagé</li>
+                            </ul>
+                            <p>Voulez-vous vraiment supprimer le document ?</p>
+                        </div>
+                        <div class="fr-modal__footer">
+                            <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <a href="#" class="fr-btn fr-icon-check-line" id="fr-modal-document-delete-btn-submit">Oui, supprimer</a>
+                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-document-delete">Non, annuler</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
 {% endblock %}

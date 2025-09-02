@@ -16,10 +16,11 @@ class FileVoter extends Voter
     public const string DELETE = 'FILE_DELETE';
     public const string EDIT = 'FILE_EDIT';
     public const string FRONT_DELETE = 'FRONT_FILE_DELETE';
+    public const string DELETE_DOCUMENT = 'FILE_DELETE_DOCUMENT';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE]) && $subject instanceof File;
+        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE, self::DELETE_DOCUMENT]) && $subject instanceof File;
     }
 
     /**
@@ -42,6 +43,7 @@ class FileVoter extends Voter
         return match ($attribute) {
             self::DELETE => $this->canDelete($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
+            self::DELETE_DOCUMENT => $this->canDeleteDocument($subject, $user),
             default => false,
         };
     }
@@ -97,6 +99,21 @@ class FileVoter extends Voter
         }
 
         return $this->canCreate($file, $user) && ($this->isFileUploadedByUser($file, $user) || $this->isPartnerFileDeletableByAdmin($file, $user));
+    }
+
+    private function canDeleteDocument(File $file, User $user): bool
+    {
+        if (!$file->getIsStandalone()) {
+            return false;
+        }
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($file->getTerritory())) {
+            return true;
+        }
+
+        return false;
     }
 
     private function isPartnerFileDeletableByAdmin(File $file, User $user): bool
