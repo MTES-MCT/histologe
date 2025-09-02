@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\User;
 use App\Form\SearchTerritoryFilesType;
@@ -111,59 +110,48 @@ class AdminTerritoryFilesController extends AbstractController
         $form = $this->createForm(TerritoryFileType::class, $file, ['action' => $this->generateUrl('back_territory_management_document_add_ajax')]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // Check to add a single Grille de visite
-            $existingVisitGrid = false;
-            $documentType = $form->get('documentType')->getData();
-            if ($documentType && DocumentType::GRILLE_DE_VISITE === $documentType) {
-                if ($existingVisitGrid = $this->hasExistingVisitGrid($em, $file)) {
-                    $form->get('documentType')->addError(new FormError('Une grille de visite existe déjà pour ce territoire. Vous ne pouvez en ajouter qu\'une seule.'));
-                }
-            }
+            /** @var UploadedFile $uploadedFile */
+            $uploadedFile = $form->get('file')->getData();
 
-            if (!$existingVisitGrid) {
-                /** @var UploadedFile $uploadedFile */
-                $uploadedFile = $form->get('file')->getData();
+            if (!$fileScanner->isClean($uploadedFile->getPathname())) {
+                $form->get('file')->addError(new FormError('Le fichier est infecté'));
+            } else {
+                try {
+                    $res = $uploadHandlerService->toTempFolder($uploadedFile);
 
-                if (!$fileScanner->isClean($uploadedFile->getPathname())) {
-                    $form->get('file')->addError(new FormError('Le fichier est infecté'));
-                } else {
-                    try {
-                        $res = $uploadHandlerService->toTempFolder($uploadedFile);
-
-                        if (isset($res['error'])) {
-                            throw new \Exception($res['error']);
-                        }
-
-                        $file->setFilename($res['file']);
-                        // Move main file
-                        $uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
-                        $variantsGenerated = false;
-                        if (\in_array($uploadedFile->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
-                            $imageManipulationHandler->resize($file->getFilename())->thumbnail();
-                            // Move variants
-                            $uploadHandlerService->movePhotoVariants($file->getFilename());
-                            $variantsGenerated = true;
-                        }
-
-                        $extension = strtolower(pathinfo($res['file'], \PATHINFO_EXTENSION));
-                        $file->setExtension(strtolower($extension));
-                        $file->setIsVariantsGenerated($variantsGenerated);
-                        $file->setScannedAt(new \DateTimeImmutable());
-                        $file->setIsStandalone(true);
-                        $file->setUploadedBy($user);
-                        $file->setDescription($file->getDescription());
-                        $em->persist($file);
-                        $em->flush();
-
-                        $this->addFlash('success', 'Le document a bien été ajouté.');
-
-                        $url = $this->generateUrl('back_territory_management_document');
-
-                        return $this->json(['redirect' => true, 'url' => $url]);
-                    } catch (FileException $e) {
-                        $logger->error($e->getMessage());
-                        $form->get('file')->addError(new FormError('Échec du téléchargement du document.'));
+                    if (isset($res['error'])) {
+                        throw new \Exception($res['error']);
                     }
+
+                    $file->setFilename($res['file']);
+                    // Move main file
+                    $uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
+                    $variantsGenerated = false;
+                    if (\in_array($uploadedFile->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
+                        $imageManipulationHandler->resize($file->getFilename())->thumbnail();
+                        // Move variants
+                        $uploadHandlerService->movePhotoVariants($file->getFilename());
+                        $variantsGenerated = true;
+                    }
+
+                    $extension = strtolower(pathinfo($res['file'], \PATHINFO_EXTENSION));
+                    $file->setExtension(strtolower($extension));
+                    $file->setIsVariantsGenerated($variantsGenerated);
+                    $file->setScannedAt(new \DateTimeImmutable());
+                    $file->setIsStandalone(true);
+                    $file->setUploadedBy($user);
+                    $file->setDescription($file->getDescription());
+                    $em->persist($file);
+                    $em->flush();
+
+                    $this->addFlash('success', 'Le document a bien été ajouté.');
+
+                    $url = $this->generateUrl('back_territory_management_document');
+
+                    return $this->json(['redirect' => true, 'url' => $url]);
+                } catch (FileException $e) {
+                    $logger->error($e->getMessage());
+                    $form->get('file')->addError(new FormError('Échec du téléchargement du document.'));
                 }
             }
         }
@@ -177,12 +165,7 @@ class AdminTerritoryFilesController extends AbstractController
     public function edit(
         File $file,
     ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $file->setTerritory($user->getFirstTerritory());
-        }
-
+        $this->denyAccessUnlessGranted(FileVoter::EDIT_DOCUMENT, $file);
         $form = $this->createForm(TerritoryFileType::class, $file, [
             'action' => $this->generateUrl('back_territory_management_document_edit_ajax', ['file' => $file->getId()]),
         ]);
@@ -198,30 +181,20 @@ class AdminTerritoryFilesController extends AbstractController
         File $file,
         Request $request,
         EntityManagerInterface $em,
-        HtmlSanitizerInterface $htmlSanitizer,
-    ): JsonResponse|RedirectResponse {
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted(FileVoter::EDIT_DOCUMENT, $file);
         $form = $this->createForm(TerritoryFileType::class, $file, [
             'action' => $this->generateUrl('back_territory_management_document_edit_ajax', ['file' => $file->getId()]),
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $documentType = $form->get('documentType')->getData();
-            if ($documentType && DocumentType::GRILLE_DE_VISITE === $documentType) {
-                if ($this->hasExistingVisitGrid($em, $file)) {
-                    $form->get('documentType')->addError(new FormError('Une grille de visite existe déjà pour ce territoire. Vous ne pouvez en ajouter qu\'une seule.'));
-
-                    return new JsonResponse([
-                        'success' => false,
-                        'errors' => FormHelper::getErrorsFromForm($form),
-                    ], Response::HTTP_BAD_REQUEST);
-                }
-            }
-            $file->setDescription($htmlSanitizer->sanitize($file->getDescription() ?? ''));
             $em->flush();
             $this->addFlash('success', 'Le document a bien été modifié.');
 
-            return $this->redirectToRoute('back_territory_management_document');
+            $url = $this->generateUrl('back_territory_management_document');
+
+            return $this->json(['redirect' => true, 'url' => $url]);
         }
 
         $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
@@ -244,25 +217,5 @@ class AdminTerritoryFilesController extends AbstractController
         }
 
         return $this->redirectToRoute('back_territory_management_document');
-    }
-
-    private function hasExistingVisitGrid(EntityManagerInterface $em, File $file): bool
-    {
-        $existingVisitGrid = $em->getRepository(File::class)->findOneBy([
-            'territory' => $file->getTerritory(),
-            'documentType' => DocumentType::GRILLE_DE_VISITE,
-        ]);
-
-        // Si c'est une création, on vérifie simplement l'existence d'une auttre grille de visite
-        if (empty($file->getId())) {
-            return null !== $existingVisitGrid;
-        }
-
-        // Si c'est une édition, on vérifie que la grille de visite trouvée n'est pas celle en cours d'édition
-        if ($existingVisitGrid && $existingVisitGrid->getId() !== $file->getId()) {
-            return true;
-        }
-
-        return false;
     }
 }
