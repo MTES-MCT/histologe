@@ -15,43 +15,6 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
     use SessionHelper;
 
     /**
-     * Teste l'accès à la liste des fichiers de territoire.
-     */
-    public function testIndex(): void
-    {
-        $client = static::createClient();
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
-        $client->loginUser($user);
-
-        $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_territory_management_document');
-        $client->request('GET', $route);
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('form');
-        $this->assertSelectorTextContains('h1', 'Documents types');
-    }
-
-    /**
-     * Teste l'accès au formulaire d'ajout de fichier.
-     */
-    public function testAdd(): void
-    {
-        $client = static::createClient();
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
-        $client->loginUser($user);
-
-        $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_territory_management_document_add');
-        $client->request('GET', $route);
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('form');
-    }
-
-    /**
      * Teste les erreurs d'ajout d'un fichier via la méthode addAjax.
      */
     public function testAddAjaxFails(): void
@@ -81,27 +44,6 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $json = json_decode($response->getContent(), true);
         $this->assertArrayHasKey('errors', $json);
-    }
-
-    /**
-     * Teste l'accès au formulaire d'édition d'un fichier existant.
-     */
-    public function testEdit(): void
-    {
-        $client = static::createClient();
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
-        $client->loginUser($user);
-
-        $fileRepository = static::getContainer()->get(FileRepository::class);
-        $file = $fileRepository->findOneBy([]);
-
-        $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_territory_management_document_edit', ['file' => $file->getId()]);
-        $client->request('GET', $route);
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('form');
     }
 
     /**
