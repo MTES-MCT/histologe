@@ -47,7 +47,7 @@ class RemindPendingDraftsCommandTest extends KernelTestCase
         $this->assertStringContainsString('0 usagers have been notified', $output);
         $this->assertEmailCount(1);
 
-        $mockClock->modify('+3 months');
+        $mockClock->modify('+3 months +1 day');
 
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
