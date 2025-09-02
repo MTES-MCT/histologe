@@ -5,7 +5,10 @@ namespace App\Service\Signalement\Export;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use Doctrine\DBAL\Exception;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 readonly class SignalementExportLoader
 {
@@ -34,14 +37,36 @@ readonly class SignalementExportLoader
         }
         $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
         $sheet->fromArray([$headers]);
+        $sheet->getStyle('B:B')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
 
         $rowIndex = 2;
+        $hasFormattedDateColumns = false;
         foreach ($this->getDataChunks($user, $filters) as $chunk) {
             foreach ($chunk as $signalementExportItem) {
                 $rowArray = get_object_vars($signalementExportItem);
 
                 foreach ($keysToRemove as $index) {
                     unset($rowArray[$index]);
+                }
+
+                foreach (['createdAt', 'dateVisite', 'modifiedAt', 'closedAt'] as $key) {
+                    if (!empty($rowArray[$key])) {
+                        $dateTime = \DateTimeImmutable::createFromFormat('d/m/Y', $rowArray[$key]);
+                        if ($dateTime) {
+                            $rowArray[$key] = ExcelDate::PHPToExcel($dateTime);
+                        }
+                    }
+                }
+
+                if (!$hasFormattedDateColumns) {
+                    $keys = array_keys($rowArray);
+                    foreach (['dateVisite', 'modifiedAt', 'closedAt'] as $key) {
+                        if (($i = array_search($key, $keys, true)) !== false) {
+                            $columnIndex = Coordinate::stringFromColumnIndex($i + 1);
+                            $sheet->getStyle("$columnIndex:$columnIndex")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
+                        }
+                    }
+                    $hasFormattedDateColumns = true;
                 }
 
                 $sheet->fromArray([$rowArray], null, 'A'.$rowIndex++);
