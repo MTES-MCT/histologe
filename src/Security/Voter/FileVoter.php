@@ -103,6 +103,9 @@ class FileVoter extends Voter
 
     private function canDeleteDocument(File $file, User $user): bool
     {
+        if (!$file->getIsStandalone()) {
+            return false;
+        }
         if ($user->isSuperAdmin()) {
             return true;
         }
