@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Form\Type\TerritoryChoiceType;
+use App\Repository\FileRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
@@ -12,38 +13,47 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class AddTerritoryFileType extends AbstractType
+class TerritoryFileType extends AbstractType
 {
     public function __construct(
         private readonly Security $security,
+        private readonly FileRepository $fileRepository,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('file', FileType::class, [
-            'label' => 'Fichier <span class="fr-text-default--error">*</span>',
-            'label_html' => true,
-            'help' => 'Sélectionnez un fichier à télécharger.',
-            'multiple' => false,
-            'required' => false,
-            'mapped' => false,
-            'constraints' => [
-                new Assert\NotBlank([
-                    'message' => 'Veuillez sélectionner un fichier à télécharger.',
-                ]),
-                new Assert\Valid(),
-                new Assert\File([
-                    'maxSize' => '10M',
-                    'mimeTypes' => File::DOCUMENT_MIME_TYPES,
-                    'maxSizeMessage' => 'Le fichier ne doit pas dépasser 10 Mo.',
-                    'mimeTypesMessage' => 'Seuls les fichiers {{ types }} sont autorisés.',
-                ]),
-            ],
-        ]);
-
+        // On retire le champ file si on est en édition (l'entité a un id)
+        $isEdit = false;
+        if (isset($options['data']) && $options['data'] instanceof File && $options['data']->getId()) {
+            $isEdit = true;
+        }
+        if (!$isEdit) {
+            $builder->add('file', FileType::class, [
+                'label' => 'Fichier <span class="fr-text-default--error">*</span>',
+                'label_html' => true,
+                'help' => 'Sélectionnez un fichier à télécharger.',
+                'multiple' => false,
+                'required' => false,
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Veuillez sélectionner un fichier à télécharger.',
+                    ]),
+                    new Assert\Valid(),
+                    new Assert\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => File::DOCUMENT_MIME_TYPES,
+                        'maxSizeMessage' => 'Le fichier ne doit pas dépasser 10 Mo.',
+                        'mimeTypesMessage' => 'Seuls les fichiers {{ types }} sont autorisés.',
+                    ]),
+                ],
+            ]);
+        }
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder->add('territory', TerritoryChoiceType::class);
         }
@@ -101,5 +111,41 @@ class AddTerritoryFileType extends AbstractType
                 ]),
             ],
         ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'constraints' => [
+                new Assert\Callback([$this, 'validateDocumentType']),
+            ],
+        ]);
+    }
+
+    public function validateDocumentType(mixed $value, ExecutionContextInterface $context): void
+    {
+        if ($value instanceof File) {
+            $file = $value;
+
+            if (DocumentType::GRILLE_DE_VISITE !== $file->getDocumentType()) {
+                return;
+            }
+
+            $existingVisitGrid = $this->fileRepository->findOneBy([
+                'territory' => $file->getTerritory(),
+                'documentType' => DocumentType::GRILLE_DE_VISITE,
+            ]);
+
+            if (
+                // Si c'est une création, on vérifie simplement l'existence d'une auttre grille de visite
+                (empty($file->getId()) && null !== $existingVisitGrid)
+                // Si c'est une édition, on vérifie que la grille de visite trouvée n'est pas celle en cours d'édition
+                || ($existingVisitGrid && $existingVisitGrid->getId() !== $file->getId())
+            ) {
+                $context->buildViolation('Il existe déjà une grille de visite pour ce territoire.')
+                    ->atPath('documentType')
+                    ->addViolation();
+            }
+        }
     }
 }
