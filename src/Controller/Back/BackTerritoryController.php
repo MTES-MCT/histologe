@@ -2,11 +2,13 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Form\SearchTerritoryType;
 use App\Form\TerritoryType;
 use App\Repository\BailleurRepository;
+use App\Repository\FileRepository;
 use App\Repository\TerritoryRepository;
 use App\Security\Voter\TerritoryVoter;
 use App\Service\ListFilters\SearchTerritory;
@@ -95,13 +97,32 @@ class BackTerritoryController extends AbstractController
     }
 
     #[Route('/{territory}/grille-visite', name: 'back_territory_grille_visite', methods: ['GET'])]
-    public function grilleVisite(Territory $territory): BinaryFileResponse
-    {
+    public function grilleVisite(
+        Territory $territory,
+        FileRepository $fileRepository,
+        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
+        bool $featureNewDocumentSpace,
+    ): BinaryFileResponse {
         $this->denyAccessUnlessGranted(TerritoryVoter::GET_DOCUMENT, $territory);
-        if ($territory->getIsGrilleVisiteDisabled()) {
-            throw $this->createNotFoundException();
+
+        $filename = null;
+
+        if ($featureNewDocumentSpace) {
+            $existingVisitGrid = $fileRepository->findOneBy([
+                'territory' => $territory,
+                'documentType' => DocumentType::GRILLE_DE_VISITE,
+            ]);
+
+            if ($existingVisitGrid) {
+                $filename = $existingVisitGrid->getFilename();
+            }
+        } else {
+            if ($territory->getIsGrilleVisiteDisabled()) {
+                throw $this->createNotFoundException();
+            }
+            $filename = $territory->getGrilleVisiteFilename();
         }
-        $filename = $territory->getGrilleVisiteFilename();
+
         if ($filename) {
             $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
             $bucketFilepath = $this->getParameter('url_bucket').'/'.$filename;
@@ -111,6 +132,7 @@ class BackTerritoryController extends AbstractController
 
             return new BinaryFileResponse($file);
         }
+
         $filePath = $this->getParameter('file_dir').'Grille-visite.pdf';
         $file = new SymfonyFile($filePath);
 
