@@ -27,6 +27,11 @@ users:
     statut: "ACTIVE"
     is_mailing_active: 0
   -
+    email: api-full-63@signal-logement.fr
+    roles: "[\"ROLE_API_USER\"]"
+    statut: "ACTIVE"
+    is_mailing_active: 0
+  -
     email: admin-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN\"]"
     partner: "Administrateurs Signal-logement"

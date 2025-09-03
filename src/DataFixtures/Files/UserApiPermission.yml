@@ -7,6 +7,9 @@ user_api_permissions:
     user: "api-oilhi@signal-logement.fr"
     partner_type: "COMMUNE_SCHS"
   -
+    user: "api-full-63@signal-logement.fr"
+    territory: "Puy-de-Dôme"
+  -
     user: "api-34-01@signal-logement.fr"
     territory: "Hérault"
     partner_type: "EPCI"
