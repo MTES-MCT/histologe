@@ -64,7 +64,7 @@ readonly class MenuBuilder
 
         $territoryFilesSubMenu = null;
         if ($this->featureNewDocumentSpace) {
-            $territoryFilesSubMenu = (new MenuItem(label: 'Espace documentaire', route: 'back_territories_files_index', roleGranted: User::ROLE_USER));
+            $territoryFilesSubMenu = (new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
         }
 
         $superAdminToolsSubItem = (new MenuItem(label: 'Outils SA', roleGranted: User::ROLE_ADMIN))

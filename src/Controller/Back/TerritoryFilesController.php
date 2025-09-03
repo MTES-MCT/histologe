@@ -17,7 +17,7 @@ class TerritoryFilesController extends AbstractController
 {
     public const MAX_LIST_PAGINATION = 20;
 
-    #[Route('/', name: 'back_territories_files_index', methods: ['GET'])]
+    #[Route('/', name: 'back_territory_files_index', methods: ['GET'])]
     public function index(
         Request $request,
         FileRepository $fileRepository,
