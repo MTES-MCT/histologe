@@ -61,8 +61,8 @@ class SearchTerritoryFilesType extends AbstractType
             'Ordre alphabétique inversé (Z -> A)' => 'f.title-DESC',
         ];
         if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $choices['Ordre croissant'] = 'f.id-ASC';
-            $choices['Ordre décroissant'] = 'f.id-DESC';
+            $choices['Date d\'ajout (du plus ancien au plus récent)'] = 'f.id-ASC';
+            $choices['Date d\'ajout (du plus récent au plus ancien)'] = 'f.id-DESC';
         }
         $builder->add('orderType', ChoiceType::class, [
             'choices' => $choices,
