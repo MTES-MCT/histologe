@@ -314,11 +314,13 @@ class SearchFilter
                         break;
                     case VisiteStatus::PLANIFIEE->value:
                         $todayDatetime = new \DateTime();
-                        $queryVisites .= '(intervSearch.status = \''.Intervention::STATUS_PLANNED.'\' AND intervSearch.scheduledAt > '.$todayDatetime->format('Y-m-d').')';
+                        $queryVisites .= '(intervSearch.status = \''.Intervention::STATUS_PLANNED.'\' AND intervSearch.scheduledAt > :interventionScheduledAt)';
+                        $qb->setParameter('interventionScheduledAt', $todayDatetime->format('Y-m-d'));
                         break;
                     case VisiteStatus::CONCLUSION_A_RENSEIGNER->value:
                         $todayDatetime = new \DateTime();
-                        $queryVisites .= '(intervSearch.status = \''.Intervention::STATUS_PLANNED.'\' AND intervSearch.scheduledAt <= '.$todayDatetime->format('Y-m-d').')';
+                        $queryVisites .= '(intervSearch.status = \''.Intervention::STATUS_PLANNED.'\' AND intervSearch.scheduledAt <= :interventionScheduledAt)';
+                        $qb->setParameter('interventionScheduledAt', $todayDatetime->format('Y-m-d'));
                         break;
                     case VisiteStatus::TERMINEE->value:
                         $queryVisites .= '(intervSearch.status = \''.Intervention::STATUS_DONE.'\')';
