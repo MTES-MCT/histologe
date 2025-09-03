@@ -44,6 +44,9 @@ class TerritoryType extends AbstractType
             ->add('timezone', null, [
                 'disabled' => true,
             ]);
+
+        // TODO : Supprimer avec le feature flipping FEATURE_NEW_DOCUMENT_SPACE
+        // et faire une migration pour supprimer les champs de la table territory (sans supprimer les fichiers)
         $labelGrilleFile = 'Ajouter la grille de visite spécifique au territoire';
         if ($territory->getGrilleVisiteFilename()) {
             $labelGrilleFile = 'Remplacer la grille de visite spécifique au territoire';
