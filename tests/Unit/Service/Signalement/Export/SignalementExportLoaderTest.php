@@ -7,7 +7,7 @@ use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\Export\SignalementExportLoader;
 use App\Tests\UserHelper;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +15,8 @@ class SignalementExportLoaderTest extends TestCase
 {
     use UserHelper;
 
-    public function testLoad(): void
+    /** @dataProvider provideFileFormat */
+    public function testLoad(string $formatExtension, string $formatCell): void
     {
         /** @var MockObject|SignalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);
@@ -33,10 +34,17 @@ class SignalementExportLoaderTest extends TestCase
             ->willReturn($this->getSignalementExportGenerator($signalementExports));
 
         $loader = new SignalementExportLoader($signalementManager);
-        $spreadsheet = $loader->load($user, $filters);
-        $this->assertInstanceOf(Spreadsheet::class, $spreadsheet);
+        $spreadsheet = $loader->load($user, $formatExtension, $filters);
         $this->assertEquals('Référence', $spreadsheet->getActiveSheet()->getCell('A1')->getValue());
         $this->assertEquals('2023-01', $spreadsheet->getActiveSheet()->getCell('A2')->getValue());
+        $style = $spreadsheet->getActiveSheet()->getStyle('A2');
+        $formatCode = $style->getNumberFormat()->getFormatCode();
+        $this->assertEquals('General', $formatCode);
+
+        $this->assertEquals('Déposé le', $spreadsheet->getActiveSheet()->getCell('B1')->getValue());
+        $style = $spreadsheet->getActiveSheet()->getStyle('B2');
+        $formatCode = $style->getNumberFormat()->getFormatCode();
+        $this->assertEquals($formatCell, $formatCode);
     }
 
     /**
@@ -47,5 +55,11 @@ class SignalementExportLoaderTest extends TestCase
         foreach ($signalements as $signalement) {
             yield $signalement;
         }
+    }
+
+    protected function provideFileFormat(): \Generator
+    {
+        yield 'export with xlsx' => ['xlsx', NumberFormat::FORMAT_DATE_DDMMYYYY];
+        yield 'export with csv' => ['csv', 'General'];
     }
 }

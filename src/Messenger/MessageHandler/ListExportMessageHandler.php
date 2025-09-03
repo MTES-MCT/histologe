@@ -41,10 +41,10 @@ readonly class ListExportMessageHandler
             $selectedColumns = $listExportMessage->getSelectedColumns();
             $format = $listExportMessage->getFormat();
 
-            $spreadsheet = $this->signalementExportLoader->load($user, $filters, $selectedColumns);
-            if ('csv' === $format) {
+            $spreadsheet = $this->signalementExportLoader->load($user, $format, $filters, $selectedColumns);
+            if (ListExportMessage::FORMAT_CSV === $format) {
                 $writer = new Csv($spreadsheet);
-            } elseif ('xlsx' === $format) {
+            } elseif (ListExportMessage::FORMAT_XLSX === $format) {
                 $writer = new Xlsx($spreadsheet);
             }
 

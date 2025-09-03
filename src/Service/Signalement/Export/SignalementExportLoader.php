@@ -4,6 +4,7 @@ namespace App\Service\Signalement\Export;
 
 use App\Entity\User;
 use App\Manager\SignalementManager;
+use App\Messenger\Message\ListExportMessage;
 use Doctrine\DBAL\Exception;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
@@ -13,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 readonly class SignalementExportLoader
 {
     public const int CHUNK_SIZE = 1000;
+    public const array DATE_COLUMNS = ['createdAt', 'dateVisite', 'modifiedAt', 'closedAt', 'infoProcedureBailDate'];
 
     public function __construct(
         private SignalementManager $signalementManager,
@@ -25,7 +27,7 @@ readonly class SignalementExportLoader
      *
      * @throws Exception
      */
-    public function load(User $user, ?array $filters, ?array $selectedColumns = null): Spreadsheet
+    public function load(User $user, string $format, ?array $filters, ?array $selectedColumns = null): Spreadsheet
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -37,7 +39,6 @@ readonly class SignalementExportLoader
         }
         $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
         $sheet->fromArray([$headers]);
-        $sheet->getStyle('B:B')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
 
         $rowIndex = 2;
         $hasFormattedDateColumns = false;
@@ -49,24 +50,26 @@ readonly class SignalementExportLoader
                     unset($rowArray[$index]);
                 }
 
-                foreach (['createdAt', 'dateVisite', 'modifiedAt', 'closedAt'] as $key) {
-                    if (!empty($rowArray[$key])) {
-                        $dateTime = \DateTimeImmutable::createFromFormat('d/m/Y', $rowArray[$key]);
-                        if ($dateTime) {
-                            $rowArray[$key] = ExcelDate::PHPToExcel($dateTime);
+                if (ListExportMessage::FORMAT_XLSX === $format) {
+                    foreach (self::DATE_COLUMNS as $key) {
+                        if (!empty($rowArray[$key])) {
+                            $dateTime = \DateTimeImmutable::createFromFormat('d/m/Y', $rowArray[$key]);
+                            if ($dateTime) {
+                                $rowArray[$key] = ExcelDate::PHPToExcel($dateTime);
+                            }
                         }
                     }
-                }
 
-                if (!$hasFormattedDateColumns) {
-                    $keys = array_keys($rowArray);
-                    foreach (['dateVisite', 'modifiedAt', 'closedAt'] as $key) {
-                        if (($i = array_search($key, $keys, true)) !== false) {
-                            $columnIndex = Coordinate::stringFromColumnIndex($i + 1);
-                            $sheet->getStyle("$columnIndex:$columnIndex")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
+                    if (!$hasFormattedDateColumns) {
+                        $keys = array_keys($rowArray);
+                        foreach (self::DATE_COLUMNS as $key) {
+                            if (($i = array_search($key, $keys, true)) !== false) {
+                                $columnIndex = Coordinate::stringFromColumnIndex($i + 1);
+                                $sheet->getStyle($columnIndex)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
+                            }
                         }
+                        $hasFormattedDateColumns = true;
                     }
-                    $hasFormattedDateColumns = true;
                 }
 
                 $sheet->fromArray([$rowArray], null, 'A'.$rowIndex++);
