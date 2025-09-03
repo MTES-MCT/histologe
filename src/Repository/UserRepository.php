@@ -510,6 +510,40 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb;
     }
 
+    public function findUsersApiQueryBuilder(SearchUser $searchUser): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $qb->select('u', 'uap')
+            ->leftJoin('u.userApiPermissions', 'uap')
+            ->andWhere('JSON_CONTAINS(u.roles, :roles) = 1')
+            ->andWhere('u.statut = :statutActive OR u.statut = :statutInactive')
+            ->setParameter('statutActive', UserStatus::ACTIVE)
+            ->setParameter('statutInactive', UserStatus::INACTIVE)
+            ->setParameter('roles', '"ROLE_API_USER"');
+
+        if ($searchUser->getQueryUser()) {
+            $qb->andWhere('LOWER(u.email) LIKE :queryUser');
+            $qb->setParameter('queryUser', '%'.strtolower($searchUser->getQueryUser()).'%');
+        }
+
+        if (null !== $searchUser->getStatut()) {
+            $qb->andWhere('u.statut = :statut')->setParameter('statut', $searchUser->getStatut());
+        }
+
+        return $qb;
+    }
+
+    public function findUsersApiPaginator(SearchUser $searchUser, int $maxResult = 20): Paginator
+    {
+        $queryBuilder = $this->findUsersApiQueryBuilder($searchUser);
+
+        $firstResult = ($searchUser->getPage() - 1) * $maxResult;
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($queryBuilder->getQuery(), false);
+    }
+
     public function findAgentByEmail(string $email, ?UserStatus $userStatus = null, bool $acceptRoleApi = true): ?User
     {
         $queryBuilder = $this->createQueryBuilder('u')

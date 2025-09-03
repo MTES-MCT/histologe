@@ -9,7 +9,7 @@ use App\Repository\AutoAffectationRuleRepository;
 use App\Service\ListFilters\SearchAutoAffectationRule;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +25,7 @@ class AutoAffectationRuleController extends AbstractController
     public function index(
         Request $request,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         $searchAutoAffectationRule = new SearchAutoAffectationRule();
         $form = $this->createForm(SearchAutoAffectationRuleType::class, $searchAutoAffectationRule);
@@ -33,7 +33,6 @@ class AutoAffectationRuleController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchAutoAffectationRule = new SearchAutoAffectationRule();
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedAutoAffectationRule = $autoAffectationRuleRepository->findFilteredPaginated($searchAutoAffectationRule, $maxListPagination);
 
         return $this->render('back/auto-affectation-rule/index.html.twig', [

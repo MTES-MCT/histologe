@@ -26,7 +26,7 @@ use App\Service\Signalement\SignalementBoManager;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +47,7 @@ class SignalementCreateController extends AbstractController
     public function showDrafts(
         Request $request,
         SignalementRepository $signalementRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -57,7 +57,6 @@ class SignalementCreateController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchDraft = new SearchDraft($user);
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedDrafts = $signalementRepository->findFilteredPaginatedDrafts($searchDraft, $maxListPagination);
 
         return $this->render('back/signalement_drafts/index.html.twig', [

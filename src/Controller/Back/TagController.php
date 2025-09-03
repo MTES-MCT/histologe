@@ -14,7 +14,7 @@ use App\Service\ListFilters\SearchTag;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +30,7 @@ class TagController extends AbstractController
     public function index(
         Request $request,
         TagRepository $tagRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -40,7 +40,6 @@ class TagController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchTag = new SearchTag($user);
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedTags = $tagRepository->findFilteredPaginated($searchTag, $maxListPagination);
 
         $addForm = $this->createForm(AddTagType::class, null, ['action' => $this->generateUrl('back_tags_add')]);

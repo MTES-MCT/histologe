@@ -8,7 +8,7 @@ use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,7 +29,7 @@ class InterconnexionController extends AbstractController
     public function index(
         Request $request,
         JobEventRepository $jobEventRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         $searchInterconnexion = new SearchInterconnexion();
         $form = $this->createForm(SearchInterconnexionType::class, $searchInterconnexion);
@@ -38,7 +38,6 @@ class InterconnexionController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchInterconnexion = new SearchInterconnexion();
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
 
         $page = $searchInterconnexion->getPage();
         $limit = $maxListPagination;

@@ -1,0 +1,109 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Liste des utilisateurs API{% endblock %}
+
+{% block content %}
+    {% include '_partials/_modal_user_edit.html.twig' %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Permissions utilisateurs API',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1>Liste des utilisateurs API</h1>
+                    <p>
+                        La liste des utilisateurs API ayant un compte sur {{ platform.name }}.
+                    </p>
+                </div>
+            </div>
+        </header>
+    </section>
+    {{ form_start(form) }}
+
+    <section class="fr-container--fluid overflow-visible">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.queryUser) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.statut) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                <a href="{{ path('back_permissions_users_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-py-5v">
+        <div class="fr-col-12 fr-col-md-6">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'utilisateur trouvé', 'utilisateurs trouvés') }}</h2>
+        </div>
+    </section>
+    {{ form_end(form) }}
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">Rôle</th>
+            <th scope="col">E-mail</th>
+            <th scope="col">Statut du compte</th>
+            <th scope="col">Dernière connexion</th>
+            <th>Permissions</th>
+            <th scope="col" class="fr-text--right">Actions</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for user in users %}
+                <tr class="signalement-row">
+                    <td>{{ user.roleLabel() }}</td>
+                    <td>
+                        {{ user.email }}
+                    </td>
+                    <td>
+                        {% if user.statut is same as enum('App\\Entity\\Enum\\UserStatus').INACTIVE %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Non activé</span>
+                        {% elseif user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Activé</span>
+                        {% else %}
+                            {{ user.statut.label }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-' }}
+                    </td>
+                    <td>
+                        {% for permission in user.userApiPermissions %}
+                            <ul>
+                                {% if permission.territory is not null %}
+                                    <li><strong>Territoire :</strong> {{ permission.territory.zip ~ ' - ' ~ permission.territory.name }}</li>
+                                {% endif %}
+
+                                {% if permission.partner is not null %}
+                                    <li><strong>Partenaire :</strong> <a href="{{ path('back_partner_view', {id: permission.partner.id}) }}">{{ permission.partner.nom }}</a></li>
+                                {% endif %}
+
+                                {% if permission.partnerType is not null %}
+                                    <li><strong>Type de partenaire :</strong> {{ permission.partnerType.label()}}</li>
+                                {% endif %}
+                            </ul>
+                        {% endfor %}
+                    </td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des utilisateurs API', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchUser.page, 'back_permissions_users_index', searchUser.urlParams) }}
+        </div>
+
+    </section>
+{% endblock %}

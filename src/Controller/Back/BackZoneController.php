@@ -13,7 +13,7 @@ use App\Service\Import\CsvParser;
 use App\Service\ListFilters\SearchZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\File;
@@ -32,7 +32,7 @@ class BackZoneController extends AbstractController
     public function index(
         Request $request,
         ZoneRepository $zoneRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -42,7 +42,6 @@ class BackZoneController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchZone = new SearchZone($user);
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedZones = $zoneRepository->findFilteredPaginated($searchZone, $maxListPagination);
 
         $zone = new Zone();

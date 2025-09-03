@@ -18,7 +18,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -47,7 +46,7 @@ class AdminTerritoryFilesController extends AbstractController
     public function index(
         Request $request,
         FileRepository $fileRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -58,7 +57,6 @@ class AdminTerritoryFilesController extends AbstractController
             $searchTerritoryFiles = new SearchTerritoryFiles($user);
         }
 
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $territory = null;
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territory = $user->getFirstTerritory();

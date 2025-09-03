@@ -68,6 +68,7 @@ readonly class MenuBuilder
         }
 
         $superAdminToolsSubItem = (new MenuItem(label: 'Outils SA', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Permissions utilisateurs API', route: 'back_permissions_users_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Partenaires archivés', route: 'back_archived_partner_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Comptes archivés', route: 'back_archived_users_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Signalement archivés', route: 'back_archived_signalements_index', roleGranted: User::ROLE_ADMIN))
@@ -95,7 +96,7 @@ readonly class MenuBuilder
         }
 
         $menu = (new MenuItem(label: 'root', route: ''))
-            ->addChild(new MenuItem(label: 'Tableau de bord', route: 'back_dashboard', icon: 'fr-icon-home-4-fill', roleGranted: User::ROLE_USER, routeParameters: $listRouteBOParameters))
+            ->addChild(new MenuItem(label: 'Tableau de bord', route: 'back_dashboard', routeParameters: $listRouteBOParameters, icon: 'fr-icon-home-4-fill', roleGranted: User::ROLE_USER))
             ->addChild($signalementsSubMenu)
             ->addChild($donneesChiffreesSubMenu)
             ->addChild($adminToolsSubItem)
