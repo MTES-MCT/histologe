@@ -15,7 +15,11 @@ if (searchFilesForm) {
       })
       const input = document.getElementById('form-field-type-value');
       if (input) {
-        input.value = e.target.dataset.value;
+        if (input.value === e.target.dataset.value) {
+          input.value = '';
+        } else {
+          input.value = e.target.dataset.value;
+        }
       }
       searchFilesForm.submit();
     });
