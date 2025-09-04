@@ -3,8 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\Qualification;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\File;
 use App\Form\Type\SearchCheckboxEnumType;
 use App\Form\Type\TerritoryChoiceType;
