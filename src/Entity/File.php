@@ -387,7 +387,7 @@ class File implements EntityHistoryInterface
 
     public function isProcedureImage(): bool
     {
-        return $this->isTypeImage() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
+        return $this->isTypeImage() && $this->isProcedure();
     }
 
     public function isSituationDocument(): bool
@@ -397,7 +397,12 @@ class File implements EntityHistoryInterface
 
     public function isProcedureDocument(): bool
     {
-        return $this->isTypeDocument() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
+        return $this->isTypeDocument() && $this->isProcedure();
+    }
+
+    public function isProcedure(): bool
+    {
+        return \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
     }
 
     public function isImageExtension(): bool
