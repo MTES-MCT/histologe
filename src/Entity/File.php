@@ -155,7 +155,7 @@ class File implements EntityHistoryInterface
     #[ORM\Column()]
     private ?bool $isStandalone = null;
 
-    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'files')]
+    #[ORM\ManyToOne(targetEntity: Territory::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?Territory $territory = null;
 
