@@ -36,7 +36,7 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserList(): \Generator
     {
-        yield 'Search without params' => [[], 68];
+        yield 'Search without params' => [[], 72];
         yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 22];
         yield 'Search with territory 13' => [['territory' => 13], 17];
         yield 'Search with territory 13 and partner 6 and 7' => [['territory' => 13, 'partners' => [6, 7]], 2];
@@ -99,7 +99,7 @@ class BackUserControllerTest extends WebTestCase
 
         $client->request('GET', $route, ['role' => 'ROLE_API_USER']);
 
-        $this->assertSelectorTextContains('h1', 'Exporter la liste des 2 utilisateurs');
+        $this->assertSelectorTextContains('h1', 'Exporter la liste des 6 utilisateurs');
     }
 
     public function testInactiveAccounts(): void

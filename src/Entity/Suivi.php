@@ -111,6 +111,9 @@ class Suivi implements EntityHistoryInterface
     #[ORM\OneToMany(mappedBy: 'suivi', targetEntity: SuiviFile::class, orphanRemoval: true)]
     private Collection $suiviFiles;
 
+    #[ORM\ManyToOne]
+    private ?Partner $partner = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -380,6 +383,18 @@ class Suivi implements EntityHistoryInterface
                 $suiviFile->setSuivi(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPartner(): ?Partner
+    {
+        return $this->partner;
+    }
+
+    public function setPartner(?Partner $partner): static
+    {
+        $this->partner = $partner;
 
         return $this;
     }

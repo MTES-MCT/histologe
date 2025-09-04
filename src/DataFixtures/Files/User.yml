@@ -2,13 +2,33 @@ users:
   -
     email: api-01@signal-logement.fr
     roles: "[\"ROLE_API_USER\"]"
-    partner: "Partenaire 13-01"
+    partner: "Partenaire 13-01" #TODO remove partner (managed in UserApiPermission)
     statut: "ACTIVE"
     is_mailing_active: 0
   -
     email: api-02@signal-logement.fr
     roles: "[\"ROLE_API_USER\"]"
-    partner: "Alès Agglomération"
+    partner: "Alès Agglomération" #TODO remove partner (managed in UserApiPermission)
+    statut: "ACTIVE"
+    is_mailing_active: 0
+  -
+    email: api-reunion-epci@signal-logement.fr
+    roles: "[\"ROLE_API_USER\"]"
+    statut: "ACTIVE"
+    is_mailing_active: 0
+  -
+    email: api-oilhi@signal-logement.fr
+    roles: "[\"ROLE_API_USER\"]"
+    statut: "ACTIVE"
+    is_mailing_active: 0
+  -
+    email: api-34-01@signal-logement.fr
+    roles: "[\"ROLE_API_USER\"]"
+    statut: "ACTIVE"
+    is_mailing_active: 0
+  -
+    email: api-full-63@signal-logement.fr
+    roles: "[\"ROLE_API_USER\"]"
     statut: "ACTIVE"
     is_mailing_active: 0
   -

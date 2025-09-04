@@ -159,6 +159,9 @@ class File implements EntityHistoryInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?Territory $territory = null;
 
+    #[ORM\ManyToOne]
+    private ?Partner $partner = null;
+
     public function __construct()
     {
         $this->uuid = Uuid::v4();
@@ -490,5 +493,17 @@ class File implements EntityHistoryInterface
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    public function getPartner(): ?Partner
+    {
+        return $this->partner;
+    }
+
+    public function setPartner(?Partner $partner): static
+    {
+        $this->partner = $partner;
+
+        return $this;
     }
 }
