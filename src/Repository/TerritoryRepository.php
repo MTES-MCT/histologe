@@ -105,4 +105,16 @@ class TerritoryRepository extends ServiceEntityRepository
 
         return new Paginator($qb->getQuery());
     }
+
+    /**
+     * @return array<int, Territory>
+     */
+    public function findAllWithGridFile(): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->where('t.grilleVisiteFilename IS NOT NULL')
+            ->andWhere('t.isGrilleVisiteDisabled = 0');
+
+        return $qb->getQuery()->getResult();
+    }
 }
