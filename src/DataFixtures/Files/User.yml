@@ -2,13 +2,11 @@ users:
   -
     email: api-01@signal-logement.fr
     roles: "[\"ROLE_API_USER\"]"
-    partner: "Partenaire 13-01" #TODO remove partner (managed in UserApiPermission)
     statut: "ACTIVE"
     is_mailing_active: 0
   -
     email: api-02@signal-logement.fr
     roles: "[\"ROLE_API_USER\"]"
-    partner: "Alès Agglomération" #TODO remove partner (managed in UserApiPermission)
     statut: "ACTIVE"
     is_mailing_active: 0
   -

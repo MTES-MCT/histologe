@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Service\Security\UserApiPermissionService;
 use App\Tests\SessionHelper;
 use Faker\Factory;
 use Faker\Generator;
@@ -368,7 +369,7 @@ class PartnerControllerTest extends WebTestCase
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'api-02@signal-logement.fr']);
-        $partner = $partnerUser->getPartners()->first();
+        $partner = (new UserApiPermissionService())->getUniquePartner($partnerUser);
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
         $this->client->request(

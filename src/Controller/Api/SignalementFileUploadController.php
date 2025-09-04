@@ -7,7 +7,10 @@ use App\Dto\Api\Request\FilesUploadRequest;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\FileUploadedEvent;
+use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\FileFactory;
+use App\Security\Voter\Api\ApiSignalementPartnerVoter;
+use App\Service\Security\UserApiPermissionService;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -35,6 +38,7 @@ class SignalementFileUploadController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly FileFactory $fileFactory,
+        private readonly UserApiPermissionService $userApiPermissionService,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -137,7 +141,17 @@ class SignalementFileUploadController extends AbstractController
                 Response::HTTP_NOT_FOUND
             );
         }
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $this->userApiPermissionService->getUniquePartner($user);
+        if (!$partner) {
+            throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
+        }
+        $this->denyAccessUnlessGranted(
+            ApiSignalementPartnerVoter::API_EDIT_SIGNALEMENT,
+            ['signalement' => $signalement, 'partner' => $partner],
+            SecurityApiExceptionListener::ACCESS_DENIED
+        );
         $data['files'] = $request->files->all();
         $filesUploadRequest = new FilesUploadRequest();
         try {
@@ -151,8 +165,6 @@ class SignalementFileUploadController extends AbstractController
             throw new ValidationFailedException($filesUploadRequest, $errors);
         }
 
-        /** @var User $user */
-        $user = $this->getUser();
         $fileList = $this->signalementFileProcessor->process($filesUploadRequest->files);
         $this->signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,

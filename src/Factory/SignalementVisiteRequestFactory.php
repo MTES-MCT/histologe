@@ -5,23 +5,20 @@ namespace App\Factory;
 use App\Dto\Api\Request\VisiteRequest as VisiteRequestApi;
 use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Affectation;
-use App\Entity\Signalement;
-use App\Entity\User;
 use App\Service\Signalement\DescriptionFilesBuilder;
-use Symfony\Bundle\SecurityBundle\Security;
 
 readonly class SignalementVisiteRequestFactory
 {
-    public function __construct(private DescriptionFilesBuilder $descriptionFilesBuilder, private Security $security)
+    public function __construct(private DescriptionFilesBuilder $descriptionFilesBuilder)
     {
     }
 
     /**
      * @throws \Exception
      */
-    public function createFrom(VisiteRequestApi $visiteRequest, Signalement $signalement): VisiteRequest
+    public function createFrom(VisiteRequestApi $visiteRequest, Affectation $affectation): VisiteRequest
     {
-        $affectation = $this->getAffectation($signalement);
+        $signalement = $affectation->getSignalement();
 
         return new VisiteRequest(
             date: $visiteRequest->date,
@@ -36,18 +33,5 @@ readonly class SignalementVisiteRequestFactory
             isProprietairePresent: $visiteRequest->proprietairePresent,
             isUsagerNotified: $visiteRequest->notifyUsager
         );
-    }
-
-    private function getAffectation(Signalement $signalement): Affectation
-    {
-        /** @var User $user */
-        $user = $this->security->getUser();
-
-        return $signalement
-            ->getAffectations()
-            ->filter(function (Affectation $affectation) use ($user) {
-                return $user->hasPartner($affectation->getPartner());
-            })
-            ->current();
     }
 }

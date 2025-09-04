@@ -13,6 +13,8 @@ use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\VisiteFactory;
 use App\Factory\SignalementVisiteRequestFactory;
 use App\Manager\InterventionManager;
+use App\Security\Voter\Api\ApiSignalementPartnerVoter;
+use App\Service\Security\UserApiPermissionService;
 use App\Service\TimezoneProvider;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -34,6 +36,7 @@ class VisiteCreateController extends AbstractController
         private readonly VisiteFactory $interventionFactory,
         private readonly SignalementVisiteRequestFactory $signalementVisiteRequestFactory,
         private readonly ValidatorInterface $validator,
+        private readonly UserApiPermissionService $userApiPermissionService,
     ) {
     }
 
@@ -172,10 +175,15 @@ class VisiteCreateController extends AbstractController
                 Response::HTTP_NOT_FOUND
             );
         }
-
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $this->userApiPermissionService->getUniquePartner($user);
+        if (!$partner) {
+            throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
+        }
         $this->denyAccessUnlessGranted(
-            'SIGN_ADD_VISITE',
-            $signalement,
+            ApiSignalementPartnerVoter::API_ADD_INTERVENTION,
+            ['signalement' => $signalement, 'partner' => $partner],
             SecurityApiExceptionListener::ACCESS_DENIED
         );
 
@@ -184,9 +192,6 @@ class VisiteCreateController extends AbstractController
             throw new ValidationFailedException($visiteRequest, $errors);
         }
 
-        /** @var User $user */
-        $user = $this->getUser();
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
         $interventionVisitePlanned = $this->getInterventionVisitePlanned($signalement, $partner);
         if (false !== $interventionVisitePlanned) {
             $message = sprintf(
@@ -201,7 +206,10 @@ class VisiteCreateController extends AbstractController
             );
         }
 
-        $signalementVisiteRequest = $this->signalementVisiteRequestFactory->createFrom($visiteRequest, $signalement);
+        $signalementVisiteRequest = $this->signalementVisiteRequestFactory->createFrom(
+            $visiteRequest,
+            $signalement->getAffectationForPartner($partner)
+        );
         $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $signalementVisiteRequest);
 
         $timezone = $signalement->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
