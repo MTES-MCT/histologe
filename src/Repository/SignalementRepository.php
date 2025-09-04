@@ -1590,7 +1590,13 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findForAPIQueryBuilder(User $user): QueryBuilder
     {
-        $partners = $user->getPartners();
+        // TODO permission API : récupérer la liste des partenaires depuis le service de saidi (ou le filtre si directement spécifié ?)
+        $partners = [];
+        foreach ($user->getUserApiPermissions() as $permission) {
+            if ($permission->getPartner()) {
+                $partners[] = $permission->getPartner();
+            }
+        }
         $qb = $this->createQueryBuilder('s');
 
         return $qb->select('s', 'territory')

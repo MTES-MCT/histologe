@@ -25,7 +25,6 @@ class SignalementVoter extends Voter
     public const string DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
     public const string VIEW = 'SIGN_VIEW';
     public const string ADD_VISITE = 'SIGN_ADD_VISITE';
-    public const string ADD_ARRETE = 'SIGN_ADD_ARRETE';
     public const string EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SEE_NDE = 'SIGN_SEE_NDE';
 
@@ -46,7 +45,6 @@ class SignalementVoter extends Voter
                 self::CLOSE,
                 self::REOPEN,
                 self::ADD_VISITE,
-                self::ADD_ARRETE,
                 self::EDIT_NDE,
                 self::SEE_NDE,
                 self::DELETE_DRAFT,
@@ -65,7 +63,7 @@ class SignalementVoter extends Voter
             return false;
         }
 
-        if (in_array($attribute, [self::ADD_ARRETE, self::ADD_VISITE])) {
+        if (in_array($attribute, [self::ADD_VISITE])) {
             return $this->canAddVisite($subject, $user);
         }
 
