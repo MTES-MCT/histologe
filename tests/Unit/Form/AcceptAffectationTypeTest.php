@@ -7,6 +7,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Form\AcceptAffectationType;
+use App\Repository\AffectationRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -23,6 +24,7 @@ class AcceptAffectationTypeTest extends KernelTestCase
     public function testAgentLabelsFromFixtures(): void
     {
         $em = static::getContainer()->get('doctrine')->getManager();
+        /** @var AffectationRepository $affectationRepo */
         $affectationRepo = $em->getRepository(Affectation::class);
 
         $affectation = $affectationRepo->findOneBy(['statut' => 'NOUVEAU']);

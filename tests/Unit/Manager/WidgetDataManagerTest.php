@@ -18,9 +18,9 @@ use PHPUnit\Framework\TestCase;
 class WidgetDataManagerTest extends TestCase
 {
     private WidgetDataManager $widgetDataManager;
-    private SignalementRepository|MockObject $signalementRepositoryMock;
-    private JobEventRepository|MockObject $jobEventRepositoryMock;
-    private MockObject|AffectationRepository $affectationRepositoryMock;
+    private SignalementRepository&MockObject $signalementRepositoryMock;
+    private JobEventRepository&MockObject $jobEventRepositoryMock;
+    private MockObject&AffectationRepository $affectationRepositoryMock;
 
     protected function setUp(): void
     {

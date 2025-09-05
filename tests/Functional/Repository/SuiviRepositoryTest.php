@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Repository;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,6 +31,7 @@ class SuiviRepositoryTest extends KernelTestCase
     {
         $result = $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
         $this->assertCount(1, $result);
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->findOneBy(['id' => $result[0]]);
         $this->assertEquals('2023-15', $signalement->getReference());
