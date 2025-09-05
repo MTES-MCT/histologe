@@ -70,7 +70,7 @@
 									data-id={{ photo.id }} 
 									title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
 								></a>
-								{% if is_granted('FRONT_FILE_DELETE', photo) %}
+								{% if is_granted('FRONT_FILE_DELETE', photo) and is_granted('SIGN_USAGER_EDIT', signalement) %}
 									<button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
 										id="file_delete_{{ photo.id }}" 
 										title="Supprimer la photo {{ photo.filename }}"
