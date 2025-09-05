@@ -68,11 +68,11 @@ readonly class MenuBuilder
         }
 
         $superAdminToolsSubItem = (new MenuItem(label: 'Outils SA', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Permissions utilisateurs API', route: 'back_permissions_users_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Partenaires archivés', route: 'back_archived_partner_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Comptes archivés', route: 'back_archived_users_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Signalement archivés', route: 'back_archived_signalements_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Règles d\'auto-affectation', route: 'back_auto_affectation_rule_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Permissions utilisateurs API', route: 'back_user_api_permission_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Territoires', route: 'back_territories_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))

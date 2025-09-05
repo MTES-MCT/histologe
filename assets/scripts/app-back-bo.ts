@@ -25,6 +25,7 @@ import './vanilla/controllers/form_visite.js';
 import './vanilla/controllers/back_archived_signalements/back_archived_signalements_reactiver.js'
 import './vanilla/controllers/back_archived_users_index/back_archived_users_index.js'
 import './vanilla/controllers/back_auto_affectation_rule/form_auto_affectation_rule.js'
+import './vanilla/controllers/back_user_api_permission/user_api_permission.js'
 import './vanilla/controllers/back_bailleur_view/back_bailleur_index.js';
 import './vanilla/controllers/back_dashboard/back_dashboard.js';
 import './vanilla/controllers/back_partner_index/back_partner_index.js';
