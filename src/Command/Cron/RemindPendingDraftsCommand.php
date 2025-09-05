@@ -69,7 +69,7 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 message: $count > 1 ? 'usagers ont été notifiés' : 'usager a été notifié',
                 cronLabel: 'brouillon en attente de bailleur prévenu',
                 cronCount: $count,

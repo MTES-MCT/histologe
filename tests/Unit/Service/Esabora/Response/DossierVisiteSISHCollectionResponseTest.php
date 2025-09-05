@@ -10,7 +10,7 @@ class DossierVisiteSISHCollectionResponseTest extends TestCase
     public function testDossierVisiteSISHCollectionResponseSuccessfullyCreated(): void
     {
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/ws_visites_dossier_sas.json';
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
         $dossierVisiteCollectionResponse = new DossierVisiteSISHCollectionResponse($responseEsabora, 200);
         $dossiersVisiteSISH = $dossierVisiteCollectionResponse->getCollection();

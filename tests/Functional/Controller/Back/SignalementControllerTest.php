@@ -222,7 +222,7 @@ class SignalementControllerTest extends WebTestCase
         );
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
@@ -268,7 +268,7 @@ class SignalementControllerTest extends WebTestCase
         );
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
@@ -313,7 +313,7 @@ class SignalementControllerTest extends WebTestCase
         );
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
@@ -355,7 +355,7 @@ class SignalementControllerTest extends WebTestCase
         );
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
@@ -432,7 +432,7 @@ class SignalementControllerTest extends WebTestCase
         );
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('message', $response);
         $this->assertStringContainsString('a bien été supprimé.', $response['message']);
     }

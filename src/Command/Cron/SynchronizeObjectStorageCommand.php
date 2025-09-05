@@ -61,7 +61,7 @@ class SynchronizeObjectStorageCommand extends AbstractCronCommand
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_CRON,
-                    to: $this->parameterBag->get('admin_email'),
+                    to: (string) $this->parameterBag->get('admin_email'),
                     message: $message,
                     cronLabel: 'Synchronisation des buckets',
                 )
@@ -77,7 +77,7 @@ class SynchronizeObjectStorageCommand extends AbstractCronCommand
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 message: $errorMessage,
                 cronLabel: 'Synchronisation des buckets',
             )
