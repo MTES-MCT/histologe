@@ -88,7 +88,7 @@ class AdminTerritoryFilesController extends AbstractController
         ]);
     }
 
-    #[Route('/ajouter-ajax', name: 'back_territory_management_document_add_ajax', methods: 'POST')]
+    #[Route('/ajouter-ajax', name: 'back_territory_management_document_add_ajax', methods: ['POST'])]
     public function addAjax(
         Request $request,
         EntityManagerInterface $em,

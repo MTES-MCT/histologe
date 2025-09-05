@@ -3,7 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\File;
+use App\Form\Type\SearchCheckboxEnumType;
 use App\Form\Type\TerritoryChoiceType;
 use App\Repository\FileRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -110,6 +113,28 @@ class TerritoryFileType extends AbstractType
                     'minMessage' => 'La description du document doit contenir au moins {{ limit }} caractères.',
                 ]),
             ],
+        ]);
+        $builder->add('partnerType', SearchCheckboxEnumType::class, [
+            'class' => PartnerType::class,
+            'choice_label' => function ($choice) {
+                return $choice->label();
+            },
+            'label' => 'Type de partenaire (facultatif)',
+            'noselectionlabel' => 'Choisissez le ou les types de partenaires dans la liste',
+            'nochoiceslabel' => 'Aucun type de partenaire disponible',
+            'help' => 'Choisissez un ou plusieurs types de partenaire parmi la liste ci-dessous.',
+            'required' => false,
+        ]);
+        $builder->add('partnerCompetence', SearchCheckboxEnumType::class, [
+            'class' => Qualification::class,
+            'choice_label' => function ($choice) {
+                return $choice->label();
+            },
+            'label' => 'Compétences (facultatif)',
+            'noselectionlabel' => 'Choisissez la ou les compétences dans la liste',
+            'nochoiceslabel' => 'Aucune compétence disponible',
+            'help' => 'Choisissez une ou plusieurs compétences parmi la liste ci-dessous.',
+            'required' => false,
         ]);
     }
 

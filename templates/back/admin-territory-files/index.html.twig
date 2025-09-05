@@ -74,6 +74,7 @@
             {% if is_granted('ROLE_ADMIN') %}
                 <th scope="col">Territoire</th>
             {% endif %}
+            <th scope="col">Visible par</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
@@ -93,6 +94,13 @@
                         {% endif %}
                     </td>
                     {% endif %}
+                    <td>
+                    {% if file.partnerCompetence|length > 0 or file.partnerType|length > 0 %}                        
+                        <span class="fr-badge fr-badge--no-icon fr-badge--info">CERTAINS</span>
+                    {% else %}
+                        <span class="fr-badge fr-badge--no-icon fr-badge--success">TOUS</span>
+                    {% endif %}
+                    </td>
                     <td class="fr-text--right fr-ws-nowrap">
                         <button
                             class="fr-btn fr-icon-eye-line open-modal-document-view"
@@ -104,6 +112,20 @@
                             data-createdby="{{ file.uploadedBy ? file.uploadedBy.fullName : 'Admin' }}"
                             data-title="{{ file.title }}"
                             data-description="{{ file.description ?? '/' }}"
+                            data-partnertype="Type de partenaire : 
+                                {% if file.partnerType|length > 0 %}
+                                    {% for type in file.partnerType %}
+                                        <span class='fr-badge fr-badge--no-icon fr-badge--info'>{{ type.label() }}</span>
+                                    {% endfor %}
+                                {% else %}/
+                                {% endif %}"
+                            data-partnercompetence="Compétences : 
+                                {% if file.partnerCompetence|length > 0 %}
+                                    {% for competence in file.partnerCompetence %}
+                                        <span class='fr-badge fr-badge--no-icon fr-badge--info'>{{ competence.label() }}</span>
+                                    {% endfor %}
+                                {% else %}/
+                                {% endif %}"
                             >Voir les détails du document {{ file.title }}</button>
                         <a href="{{ path('back_territory_management_document_edit', { file: file.id }) }}" class="fr-btn fr-icon-edit-line" title="Editer le document {{ file.title }}"
                             >Editer le document {{ file.title }}</a>
@@ -153,6 +175,13 @@
                                 <strong>Description :</strong>
                                 <br><br>
                                 <span id="fr-modal-document-view-document-description"></span>
+                            </p>
+                            <p>
+                                <strong>Visibilité du document :</strong>
+                                <br><br>
+                                <span id="fr-modal-document-view-document-partner-type"></span>
+                                <br><br>
+                                <span id="fr-modal-document-view-document-partner-competence"></span>
                             </p>
                         </div>
                         <div class="fr-modal__footer">

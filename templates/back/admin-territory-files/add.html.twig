@@ -48,6 +48,16 @@
                 <div class="fr-col-12">
                     {{ form_row(addForm.description) }}
                 </div>
+                <div class="fr-col-12">
+                    <h2 class="fr-mb-0 fr-h3">Affichage du document aux partenaires</h2>
+                    Par défaut, le document est disponible pour tous les partenaires. Choisissez types et/ou compétences si vous souhaitez restreindre l'affichage du document.
+                </div>
+                <div class="fr-col-6">
+                    {{ form_row(addForm.partnerType) }}
+                </div>
+                <div class="fr-col-6">
+                    {{ form_row(addForm.partnerCompetence) }}
+                </div>
             </div>
             <div class="fr-grid-row fr-mt-4w">
                 <div class="fr-col-6 fr-text--left">

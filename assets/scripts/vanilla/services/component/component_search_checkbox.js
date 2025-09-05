@@ -1,83 +1,90 @@
 window.addEventListener('refreshSearchCheckboxContainerEvent', () => {
-  document.querySelectorAll('.search-checkbox-container')?.forEach((element) => {
-    searchCheckboxCompleteInputValue(element);
-    const input = element.querySelector('input[type="text"]');
-    const checkboxesContainer = element.querySelector('.search-checkbox');
-    const closeBtn = element.querySelector('.fr-btn--close');
-    // init values
-    const initialValues = [];
-    checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
-      initialValues.push(checkbox.value);
-    });
-    // init order
-    checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox, index) => {
-      checkbox.setAttribute('data-order', index);
-    });
-    // show choices on focus
-    input.addEventListener('focus', function () {
-      const elements = checkboxesContainer.querySelectorAll('.fr-fieldset__element');
-      if (!elements.length) {
-        checkboxesContainer.style.display = 'block';
-        return;
-      }
-      elements.forEach((checkbox) => {
-        checkbox.style.display = '';
-      });
-      checkboxesContainer.style.display = 'block';
-      checkboxesContainer.scrollTop = 0;
-      searchCheckboxOrderCheckboxes(element);
-      input.value = '';
-      closeBtn.classList.remove('fr-hidden');
-    });
-    // filter choices on input keyup
-    input.addEventListener('keyup', function () {
-      const value = input.value
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase();
-      checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox) => {
-        if (
-          checkbox.classList.contains('optgroup__element') ||
-          checkbox
-            .querySelector('label')
-            .textContent.normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase()
-            .includes(value)
-        ) {
-          checkbox.style.display = '';
-        } else {
-          checkbox.style.display = 'none';
-        }
-      });
-    });
-    // hide choices on click outside and on close button
-    document.addEventListener('click', function (event) {
-      if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
-        searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
-      }
-    });
-    element.addEventListener('click', function (event) {
-      event.stopPropagation();
-    });
-    closeBtn.addEventListener('click', function (event) {
-      searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
-    });
-    // reorder on uncheck
-    checkboxesContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-      checkbox.addEventListener('change', function () {
-        if (
-          !checkbox.checked &&
-          checkbox.closest('.fr-fieldset__element').classList.contains('topped')
-        ) {
-          searchCheckboxOrderCheckboxes(element);
-        }
-      });
-    });
-  });
+  initSearchCheckboxWidgets();
 });
-window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
-
+document.addEventListener('DOMContentLoaded', initSearchCheckboxWidgets);
+function initSearchCheckboxWidgets() {
+  const all = document.querySelectorAll('.search-checkbox-container');
+  Array.from(all).forEach((element, idx) => {
+    try {
+      searchCheckboxCompleteInputValue(element);
+      const input = element.querySelector('input[type="text"]');
+      const checkboxesContainer = element.querySelector('.search-checkbox');
+      const closeBtn = element.querySelector('.fr-btn--close');
+      // init values
+      const initialValues = [];
+      checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
+        initialValues.push(checkbox.value);
+      });
+      // init order
+      checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox, index) => {
+        checkbox.setAttribute('data-order', index);
+      });
+      // show choices on focus
+      input.addEventListener('focus', function () {
+        const elements = checkboxesContainer.querySelectorAll('.fr-fieldset__element');
+        if (!elements.length) {
+          checkboxesContainer.style.display = 'block';
+          return;
+        }
+        elements.forEach((checkbox) => {
+          checkbox.style.display = '';
+        });
+        checkboxesContainer.style.display = 'block';
+        checkboxesContainer.scrollTop = 0;
+        searchCheckboxOrderCheckboxes(element);
+        input.value = '';
+        closeBtn.classList.remove('fr-hidden');
+      });
+      // filter choices on input keyup
+      input.addEventListener('keyup', function () {
+        const value = input.value
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase();
+        checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox) => {
+          if (
+            checkbox.classList.contains('optgroup__element') ||
+            checkbox
+              .querySelector('label')
+              .textContent.normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .toLowerCase()
+              .includes(value)
+          ) {
+            checkbox.style.display = '';
+          } else {
+            checkbox.style.display = 'none';
+          }
+        });
+      });
+      // hide choices on click outside and on close button
+      document.addEventListener('click', function (event) {
+        if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
+          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+        }
+      });
+      element.addEventListener('click', function (event) {
+        event.stopPropagation();
+      });
+      closeBtn.addEventListener('click', function (event) {
+        searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+      });
+      // reorder on uncheck
+      checkboxesContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+        checkbox.addEventListener('change', function () {
+          if (
+            !checkbox.checked &&
+            checkbox.closest('.fr-fieldset__element').classList.contains('topped')
+          ) {
+            searchCheckboxOrderCheckboxes(element);
+          }
+        });
+      });
+    } catch (e) {
+      console.error('Erreur dans l\'init du widget', idx, e);
+    }
+  });
+}
 function searchCheckboxCompleteInputValue(element) {
   const input = element.querySelector('input[type="text"]');
   const checkboxesContainer = element.querySelector('.search-checkbox');
