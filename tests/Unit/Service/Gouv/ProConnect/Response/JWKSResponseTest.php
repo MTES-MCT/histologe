@@ -10,7 +10,7 @@ class JWKSResponseTest extends TestCase
     public function testDoNotFindPublicKey(): void
     {
         $data = __DIR__.'/../../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json';
-        $jwksResponse = json_decode(file_get_contents($data), true);
+        $jwksResponse = json_decode((string) file_get_contents($data), true);
         $jwksResponse['keys'][0]['kty'] = 'invalid';
         $jwksResponse['keys'][0]['alg'] = 'invalid';
 

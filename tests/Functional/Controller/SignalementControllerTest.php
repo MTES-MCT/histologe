@@ -447,7 +447,7 @@ class SignalementControllerTest extends WebTestCase
         $client->request('POST', $urlPutSignalement, [], [], [], $payloadLocataireSignalement);
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertNotEmpty($response['uuid']);
     }
 
@@ -475,7 +475,7 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $arrayResponse = json_decode($client->getResponse()->getContent(), true);
+        $arrayResponse = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('uuid', $arrayResponse);
         $this->assertArrayHasKey('signalementReference', $arrayResponse);
         $this->assertArrayHasKey('lienSuivi', $arrayResponse);
@@ -524,7 +524,7 @@ class SignalementControllerTest extends WebTestCase
         $client->request('GET', $urlSignalementDraft);
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertEquals($step, $response['signalement']['payload']['currentStep']);
     }
 

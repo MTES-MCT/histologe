@@ -30,7 +30,7 @@ trait ApiHelper
 
         $records = $testHandler->getRecords();
         $apiLogs = array_filter($records, function ($record) {
-            return str_starts_with($record['message'], 'API Request');
+            return str_starts_with((string) $record['message'], 'API Request');
         });
 
         $this->assertCount(1, $apiLogs, 'Il devrait y avoir exactement un log API Request');

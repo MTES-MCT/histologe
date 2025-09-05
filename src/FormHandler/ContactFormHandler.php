@@ -25,7 +25,7 @@ class ContactFormHandler
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CONTACT_FORM,
-                to: $this->parameterBag->get('contact_email'),
+                to: (string) $this->parameterBag->get('contact_email'),
                 fromEmail: $email,
                 fromFullname: $nom,
                 message: nl2br(strip_tags($message)),

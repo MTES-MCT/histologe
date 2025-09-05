@@ -36,7 +36,7 @@ class SignalementListControllerTest extends WebTestCase
         $route = $generatorUrl->generate('back_signalements_list_json');
 
         $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
-        $result = json_decode($client->getResponse()->getContent(), true);
+        $result = json_decode((string) $client->getResponse()->getContent(), true);
 
         $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
     }
@@ -148,7 +148,7 @@ class SignalementListControllerTest extends WebTestCase
         $route = $generatorUrl->generate('back_signalements_list_json');
         $client->request('GET', $route);
 
-        $content = json_decode($client->getResponse()->getContent(), true);
+        $content = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertEquals('2023-4', $content['list'][0]['reference']);
         $this->assertEquals('2023-3', $content['list'][1]['reference']);
         $this->assertEquals(2, $content['pagination']['total_items']);
@@ -167,7 +167,7 @@ class SignalementListControllerTest extends WebTestCase
         $route = $generatorUrl->generate('back_signalements_list_json');
         $client->request('GET', $route);
 
-        $content = json_decode($client->getResponse()->getContent(), true);
+        $content = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertEquals('2023-5', $content['list'][0]['reference']);
         $this->assertEquals('2023-2', $content['list'][1]['reference']);
         $this->assertEquals(2, $content['pagination']['total_items']);
@@ -238,7 +238,7 @@ class SignalementListControllerTest extends WebTestCase
         $route = $generatorUrl->generate('back_signalements_list_json');
 
         $client->request('GET', $route, [], [], ['HTTP_Accept' => 'application/json']);
-        $result = json_decode($client->getResponse()->getContent(), true);
+        $result = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('pagination', $result);
         $this->assertArrayHasKey('list', $result);
         $this->assertArrayHasKey('filters', $result);
@@ -279,7 +279,7 @@ class SignalementListControllerTest extends WebTestCase
         $route = $generatorUrl->generate('back_signalements_list_json');
 
         $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
-        $result = json_decode($client->getResponse()->getContent(), true);
+        $result = json_decode((string) $client->getResponse()->getContent(), true);
 
         $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
     }
@@ -300,7 +300,7 @@ class SignalementListControllerTest extends WebTestCase
         $route = $generatorUrl->generate('back_signalements_list_json');
 
         $client->request('GET', $route, [], [], ['HTTP_Accept' => 'application/json']);
-        $result = json_decode($client->getResponse()->getContent(), true);
+        $result = json_decode((string) $client->getResponse()->getContent(), true);
 
         if (\count($result['list']) > 0) {
             $this->assertGreaterThanOrEqual(1, \count($result['list']));
@@ -322,7 +322,7 @@ class SignalementListControllerTest extends WebTestCase
 
         $route = $generatorUrl->generate('back_signalements_list_json');
         $client->request('GET', $route, ['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], [], ['HTTP_Accept' => 'application/json']);
-        $result = json_decode($client->getResponse()->getContent(), true);
+        $result = json_decode((string) $client->getResponse()->getContent(), true);
 
         $this->assertEquals(0, $result['pagination']['total_items']);
     }

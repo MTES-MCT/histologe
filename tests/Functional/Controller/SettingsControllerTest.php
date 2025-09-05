@@ -21,7 +21,7 @@ class SettingsControllerTest extends WebTestCase
         $client->request('GET', $router->generate('back_settings'));
 
         $this->assertEquals('200', $client->getResponse()->getStatusCode());
-        $responseContent = json_decode($client->getResponse()->getContent(), true);
+        $responseContent = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('firstname', $responseContent);
         $this->assertArrayHasKey('lastname', $responseContent);
         $this->assertArrayHasKey('roleLabel', $responseContent);
@@ -42,7 +42,7 @@ class SettingsControllerTest extends WebTestCase
         $client->request('GET', $router->generate('back_settings', ['territoryId' => 13]));
 
         $this->assertEquals('200', $client->getResponse()->getStatusCode());
-        $responseContent = json_decode($client->getResponse()->getContent(), true);
+        $responseContent = json_decode((string) $client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('partners', $responseContent);
         $this->assertArrayHasKey('epcis', $responseContent);

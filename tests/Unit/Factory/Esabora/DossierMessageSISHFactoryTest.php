@@ -59,7 +59,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         );
 
         $signalement->setNumAppartOccupant('à gauche de l\'entrée principale, appart 11');
-        $signalement->getFiles()->first()->setTitle('un titre de fichier très long pour tester le tronquage à 100 caractères ce qui devrait donc être là le reste n\'apparait pas');
+        $signalement->getFiles()->first()?->setTitle('un titre de fichier très long pour tester le tronquage à 100 caractères ce qui devrait donc être là le reste n\'apparait pas');
         $signalement->setInseeOccupant(null);
 
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);

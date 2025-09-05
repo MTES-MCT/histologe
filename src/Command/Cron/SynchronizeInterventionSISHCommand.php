@@ -112,7 +112,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 cronLabel: '[ARS] Synchronisation des interventions depuis Esabora',
                 params: [
                     'count_success' => $countSuccess,

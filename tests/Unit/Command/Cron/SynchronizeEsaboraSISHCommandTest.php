@@ -27,7 +27,7 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
         $application = new Application($kernel);
 
         $filepath = __DIR__.self::PATH_MOCK.'ws_etat_dossier_sas/etat_importe.json';
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
         $dossierResponse = new DossierStateSISHResponse($responseEsabora, 200);
 
         $esaboraServiceMock = $this->createMock(EsaboraSISHService::class);

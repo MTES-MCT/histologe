@@ -48,7 +48,7 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 message: sprintf('%s fichiers et %s exports ont été supprimés', $nbFiles, $nbExports),
                 cronLabel: 'Suppression de fichier(s) temporaires s3://tmp',
                 cronCount: $nbFiles,

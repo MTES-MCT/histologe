@@ -65,7 +65,7 @@ class SignalementViewedSubscriberTest extends WebTestCase
 
         $signalementViewedEvent = new SignalementViewedEvent($this->signalement, $user);
 
-        $addressResult = json_decode(file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_item_response_13203.json'), true);
+        $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_item_response_13203.json'), true);
         $address = new Address($addressResult);
         $this->addressServiceMock
             ->expects($this->once())
