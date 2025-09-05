@@ -10,6 +10,7 @@ use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Esabora\Handler\DossierSISHHandlerInterface;
 use App\Tests\FixturesHelper;
 use Faker\Factory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -33,16 +34,18 @@ class DossierMessageHandlerTest extends TestCase
         $faker = Factory::create();
         $dossierMessage = $this->getDossierMessageSCHS();
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/schs/ws_import.json';
-        $mockResponse = new MockResponse(file_get_contents($filepath));
+        $mockResponse = new MockResponse((string) file_get_contents($filepath));
         $mockHttpClient = new MockHttpClient($mockResponse);
         $response = $mockHttpClient->request('POST', $faker->url());
 
+        /** @var MockObject&EsaboraSCHSService $esaboraServiceMock */
         $esaboraServiceMock = $this->createMock(EsaboraSCHSService::class);
         $esaboraServiceMock
             ->expects($this->once())
             ->method('pushDossier')
             ->willReturn($response);
 
+        /** @var MockObject&AffectationManager $affectationManagerMock */
         $affectationManagerMock = $this->createMock(AffectationManager::class);
         $affectationManagerMock
             ->expects($this->once())
@@ -61,6 +64,7 @@ class DossierMessageHandlerTest extends TestCase
     {
         $dossierMessageSISH = new DossierMessageSISH();
 
+        /** @var MockObject&DossierSISHHandlerInterface $dossierSISHHandlerMock */
         $dossierSISHHandlerMock = $this->createMock(DossierSISHHandlerInterface::class);
         $dossierSISHHandlerMock->expects($this->once())
             ->method('handle')
@@ -69,6 +73,7 @@ class DossierMessageHandlerTest extends TestCase
             ->method('canFlagAsSynchronized')
             ->willReturn(true);
 
+        /** @var MockObject&AffectationManager $affectationManagerMock */
         $affectationManagerMock = $this->createMock(AffectationManager::class);
         $affectationManagerMock->expects($this->once())
             ->method('flagAsSynchronized')

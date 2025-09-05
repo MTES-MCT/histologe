@@ -20,6 +20,7 @@ class UserAvatarTest extends WebTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
+        /** @var UserAvatar $userAvatar */
         $userAvatar = $container->get(UserAvatar::class);
 
         $user = (new User())
@@ -40,7 +41,7 @@ class UserAvatarTest extends WebTestCase
 
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = $this->createMock(ParameterBagInterface::class);
-        /** @var FilesystemOperator|MockObject $fileStorage */
+        /** @var FilesystemOperator&MockObject $fileStorage */
         $fileStorage = $this->createMock(FilesystemOperator::class);
         $fileStorage->expects($this->exactly(2))
             ->method('fileExists')

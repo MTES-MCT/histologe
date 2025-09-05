@@ -15,10 +15,10 @@ class DossierServiceHandlerTest extends TestCase
 {
     use FixturesHelper;
 
-    protected MockObject|EsaboraSISHService $esaboraSISHService;
-    protected MockObject|SerializerInterface $serializer;
-    protected MockObject|JobEventManager $jobEventManager;
-    protected MockObject|PartnerRepository $partnerRepository;
+    protected MockObject&EsaboraSISHService $esaboraSISHService;
+    protected MockObject&SerializerInterface $serializer;
+    protected MockObject&JobEventManager $jobEventManager;
+    protected MockObject&PartnerRepository $partnerRepository;
 
     protected function setUp(): void
     {

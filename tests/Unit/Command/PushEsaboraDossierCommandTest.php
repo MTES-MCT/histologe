@@ -18,10 +18,10 @@ class PushEsaboraDossierCommandTest extends TestCase
     use FixturesHelper;
     private const ENV = 'dev';
 
-    private MockObject|AffectationRepository $affectationRepository;
-    private MockObject|TerritoryRepository $territoryRepository;
+    private MockObject&AffectationRepository $affectationRepository;
+    private MockObject&TerritoryRepository $territoryRepository;
 
-    private MockObject|InterconnectionBus $esaboraBus;
+    private MockObject&InterconnectionBus $esaboraBus;
 
     protected function setUp(): void
     {

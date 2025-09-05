@@ -18,12 +18,14 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
     {
         $uuid = '00000000-0000-0000-2022-000000000008';
 
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'uuid' => $uuid,
         ]);
 
+        /** @var SignalementDraftRequestSerializer $serializer */
         $serializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
         $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
         /** @var SignalementDraftRequest $signalementDraftRequest */
@@ -39,6 +41,7 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getVilleOccupant());
         $signalementDraftRequest->setVosCoordonneesOccupantEmail($signalement->getMailOccupant());
 
+        /** @var SignalementDuplicateChecker $signalementDuplicateChecker */
         $signalementDuplicateChecker = static::getContainer()->get(SignalementDuplicateChecker::class);
         $result = $signalementDuplicateChecker->check($signalementDraftRequest);
 
@@ -52,12 +55,14 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
     {
         $uuid = '00000000-0000-0000-2022-000000000001';
 
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'uuid' => $uuid,
         ]);
 
+        /** @var SignalementDraftRequestSerializer $serializer */
         $serializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
         $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
         /** @var SignalementDraftRequest $signalementDraftRequest */
@@ -75,6 +80,7 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         $signalementDraftRequest->setCoordonneesOccupantNom($signalement->getNomOccupant());
         $signalementDraftRequest->setVosCoordonneesTiersEmail($signalement->getMailDeclarant());
 
+        /** @var SignalementDuplicateChecker $signalementDuplicateChecker */
         $signalementDuplicateChecker = static::getContainer()->get(SignalementDuplicateChecker::class);
         $result = $signalementDuplicateChecker->check($signalementDraftRequest);
 
@@ -88,12 +94,14 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
     {
         $uuid = '00000000-0000-0000-2023-locataire001';
 
+        /** @var SignalementDraftRepository $signalementDraftRepository */
         $signalementDraftRepository = static::getContainer()->get(SignalementDraftRepository::class);
         /** @var SignalementDraft $signalementDraft */
         $signalementDraft = $signalementDraftRepository->findOneBy([
             'uuid' => $uuid,
         ]);
 
+        /** @var SignalementDraftRequestSerializer $serializer */
         $serializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
         $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
         /** @var SignalementDraftRequest $signalementDraftRequest */
@@ -110,6 +118,7 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalementDraft->getPayload()['adresse_logement_adresse_detail_commune']);
         $signalementDraftRequest->setVosCoordonneesOccupantEmail($signalementDraft->getPayload()['vos_coordonnees_occupant_email']);
 
+        /** @var SignalementDuplicateChecker $signalementDuplicateChecker */
         $signalementDuplicateChecker = static::getContainer()->get(SignalementDuplicateChecker::class);
         $result = $signalementDuplicateChecker->check($signalementDraftRequest);
 

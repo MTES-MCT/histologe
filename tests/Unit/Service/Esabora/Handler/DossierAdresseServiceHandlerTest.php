@@ -14,9 +14,9 @@ class DossierAdresseServiceHandlerTest extends TestCase
 {
     use FixturesHelper;
 
-    protected MockObject|EsaboraSISHService $esaboraSISHService;
-    protected MockObject|SerializerInterface $serializer;
-    protected MockObject|PartnerRepository $partnerRepository;
+    protected MockObject&EsaboraSISHService $esaboraSISHService;
+    protected MockObject&SerializerInterface $serializer;
+    protected MockObject&PartnerRepository $partnerRepository;
 
     protected function setUp(): void
     {

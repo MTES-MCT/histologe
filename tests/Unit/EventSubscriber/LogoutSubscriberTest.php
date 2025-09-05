@@ -24,12 +24,12 @@ class LogoutSubscriberTest extends TestCase
 {
     use UserHelper;
 
-    private ProConnectAuthentication|MockObject $proConnectAuth;
-    private ProConnectContext|MockObject $proConnectContext;
-    private UrlGeneratorInterface|MockObject $urlGenerator;
-    private LoggerInterface|MockObject $logger;
-    private SessionInterface|MockObject $session;
-    private TokenInterface|MockObject $token;
+    private ProConnectAuthentication&MockObject $proConnectAuth;
+    private ProConnectContext&MockObject $proConnectContext;
+    private UrlGeneratorInterface&MockObject $urlGenerator;
+    private LoggerInterface&MockObject $logger;
+    private SessionInterface&MockObject $session;
+    private TokenInterface&MockObject $token;
     private ?User $user = null;
 
     protected function setUp(): void
@@ -85,6 +85,7 @@ class LogoutSubscriberTest extends TestCase
             );
 
         $request = new Request();
+        /** @var MockObject&FlashBagAwareSessionInterface $session */
         $session = $this->createMock(FlashBagAwareSessionInterface::class);
         $session->method('has')->willReturn(true);
         $session->method('getFlashBag')->willReturn($flashBag);
@@ -94,6 +95,7 @@ class LogoutSubscriberTest extends TestCase
 
         $this->proConnectAuth->method('getLogoutUrl')->willThrowException(new \RuntimeException('Network down'));
         $this->urlGenerator->method('generate')->willReturn('/login');
+        /** @var MockObject&LoggerInterface $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         $subscriber = new LogoutSubscriber(
@@ -112,10 +114,12 @@ class LogoutSubscriberTest extends TestCase
 
     public function testLogoutRedirectsForSignalementUser(): void
     {
+        /** @var MockObject&SignalementUser $user */
         $user = $this->createMock(SignalementUser::class);
         $user->method('getCodeSuivi')->willReturn('123456789');
         $user->method('getUserIdentifier')->willReturn('123456789:occupant');
 
+        /** @var MockObject&TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
