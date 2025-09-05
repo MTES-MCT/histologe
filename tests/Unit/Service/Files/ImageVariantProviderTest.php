@@ -11,8 +11,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImageVariantProviderTest extends KernelTestCase
 {
-    private FilesystemOperator|MockObject $fileStorageMock;
-    private ImageVariantProvider|MockObject $imageVariantProvider;
+    private FilesystemOperator&MockObject $fileStorageMock;
+    private ImageVariantProvider&MockObject $imageVariantProvider;
 
     protected function setUp(): void
     {

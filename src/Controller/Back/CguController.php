@@ -27,6 +27,7 @@ class CguController extends AbstractController
     ): Response {
         $decodedRequest = json_decode($request->getContent());
         if ($this->isCsrfTokenValid('cgu_bo_confirm', $decodedRequest->_token)) {
+            /** @var string $currentCguVersion */
             $currentCguVersion = $parameterBag->get('cgu_current_version');
             /** @var User $user */
             $user = $this->getUser();

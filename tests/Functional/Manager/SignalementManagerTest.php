@@ -135,6 +135,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testCloseSignalementForAllPartners(): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalementActive = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
 
@@ -166,6 +167,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testCreateSignalement(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
@@ -180,6 +182,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testUpdateSignalement(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
@@ -195,6 +198,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testUpdateSignalementImported(): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         /** @var Signalement $signalementImported */
         $signalementImported = $signalementRepository->findOneBy(['isImported' => true]);

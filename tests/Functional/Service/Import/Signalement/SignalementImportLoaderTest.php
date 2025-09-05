@@ -38,7 +38,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     private CriticiteCalculator $criticiteCalculator;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileManager $fileManager;
-    private MockObject|FilesystemOperator $filesystemOperator;
+    private MockObject&FilesystemOperator $filesystemOperator;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
 
