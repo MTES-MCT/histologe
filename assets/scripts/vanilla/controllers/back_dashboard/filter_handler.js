@@ -16,21 +16,31 @@ export default function initFilterHandler() {
     window.location.href = url.toString();
   });
 
-  const mySignalementsMessagesUsagersButton = document.getElementById(
-    'mySignalementsMessagesUsagersButton'
-  );
+  const mySignalementsMessagesUsagersButton = document.getElementById('mySignalementsMessagesUsagersButton');
   mySignalementsMessagesUsagersButton?.addEventListener('click', (e) => {
+    e.preventDefault();
     const url = new URL(window.location.href);
-    const isCurrentPressed = e.target.getAttribute('aria-pressed') !== 'true'; // event received after update of aria-pressed
-    url.searchParams.set('mesDossiersMessagesUsagers', isCurrentPressed ? '0' : '1');
-    window.location.href = url.toString();
+    const current = url.searchParams.get('mesDossiersMessagesUsagers');
+    const newValue = current === '1' ? '0' : '1';
+    url.searchParams.set('mesDossiersMessagesUsagers', newValue);
+    if (window.location.href === url.toString()) {
+      window.location.reload();
+    } else {
+      window.location.href = url.toString();
+    }
   });
 
   const mySignalementsAverifierButton = document.getElementById('mySignalementsAverifierButton');
   mySignalementsAverifierButton?.addEventListener('click', (e) => {
+    e.preventDefault();
     const url = new URL(window.location.href);
-    const isCurrentPressed = e.target.getAttribute('aria-pressed') !== 'true'; // event received after update of aria-pressed
-    url.searchParams.set('mesDossiersAverifier', isCurrentPressed ? '0' : '1');
-    window.location.href = url.toString();
+    const current = url.searchParams.get('mesDossiersAverifier');
+    const newValue = current === '1' ? '0' : '1';
+    url.searchParams.set('mesDossiersAverifier', newValue);
+    if (window.location.href === url.toString()) {
+      window.location.reload();
+    } else {
+      window.location.href = url.toString();
+    }
   });
 }
