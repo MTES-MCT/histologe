@@ -24,7 +24,7 @@ class DesordreTraitementPiecesTest extends KernelTestCase
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire_all_in.json'),
+            (string) file_get_contents(__DIR__.'../../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire_all_in.json'),
             true
         );
 

@@ -6,6 +6,7 @@ use App\Entity\ApiUserToken;
 use App\Entity\User;
 use App\Repository\ApiUserTokenRepository;
 use App\Security\Authenticator\TokenAuthenticator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +23,9 @@ class TokenAuthenticatorTest extends TestCase
 
     protected function setUp(): void
     {
+        /** @var MockObject&ApiUserTokenRepository $apiUserTokenRepository */
         $apiUserTokenRepository = $this->createMock(ApiUserTokenRepository::class);
+        /** @var MockObject&TranslatorInterface $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->method('trans')
             ->willReturnCallback(function ($key) {
@@ -77,6 +80,7 @@ class TokenAuthenticatorTest extends TestCase
     public function testOnAuthenticationSuccess(): void
     {
         $request = new Request();
+        /** @var MockObject&TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
 
         $response = $this->authenticator->onAuthenticationSuccess($request, $token, 'api');
@@ -89,7 +93,7 @@ class TokenAuthenticatorTest extends TestCase
         $exception = new AuthenticationException('Le token est invalide.');
 
         $response = $this->authenticator->onAuthenticationFailure($request, $exception);
-        $data = json_decode($response->getContent(), true);
+        $data = json_decode((string) $response->getContent(), true);
         $this->assertSame('Une exception d\'authentification s\'est produite.', $data['error']);
         $this->assertSame('Le token est invalide.', $data['message']);
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());

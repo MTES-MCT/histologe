@@ -29,11 +29,11 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
         $application = new Application($kernel);
 
         $filepath = __DIR__.self::PATH_MOCK.'ws_etat_dossier_sas/etat_non_importe.json';
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
         $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
 
         $fileEventPath = __DIR__.self::PATH_MOCK.'ws_get_dossier_events.json';
-        $responseEsaboraEvent = json_decode(file_get_contents($fileEventPath), true);
+        $responseEsaboraEvent = json_decode((string) file_get_contents($fileEventPath), true);
         $dossierEventResponse = new DossierEventsSCHSCollectionResponse($responseEsaboraEvent, 200);
 
         $affectation = (new Affectation())->setSignalement(new Signalement())->setPartner(new Partner());
