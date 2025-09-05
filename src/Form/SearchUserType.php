@@ -42,11 +42,11 @@ class SearchUserType extends AbstractType
     ) {
         $this->roleChoices = User::ROLES;
         unset($this->roleChoices['Usager']);
+        unset($this->roleChoices['API']);
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $this->isAdmin = true;
         } else {
             unset($this->roleChoices['Super Admin']);
-            unset($this->roleChoices['API']);
         }
     }
 

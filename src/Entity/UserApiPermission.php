@@ -5,8 +5,12 @@ namespace App\Entity;
 use App\Entity\Enum\PartnerType;
 use App\Repository\UserApiPermissionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: UserApiPermissionRepository::class)]
+#[UniqueEntity(['user', 'partner', 'territory', 'partnerType'], ignoreNull: false, errorPath: 'xx', message: 'Cette permission API existe déjà pour l\'utilisateur.')]
 class UserApiPermission
 {
     #[ORM\Id]
@@ -31,6 +35,20 @@ class UserApiPermission
         options: ['comment' => 'Value possible enum PartnerType']
     )]
     private ?PartnerType $partnerType = null;
+
+    /**
+     * @param ?array<mixed> $payload
+     */
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, ?array $payload): void
+    {
+        if (!$this->partner && !$this->partnerType && !$this->territory) {
+            $message = 'Vous devez renseigner au moins un des champs suivant : partenaire, type de partenaire ou territoire.';
+            $context->buildViolation($message)->atPath('partner')->addViolation();
+            $context->buildViolation($message)->atPath('partnerType')->addViolation();
+            $context->buildViolation($message)->atPath('territory')->addViolation();
+        }
+    }
 
     public function getId(): ?int
     {

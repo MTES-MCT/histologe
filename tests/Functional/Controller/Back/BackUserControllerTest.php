@@ -36,14 +36,14 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserList(): \Generator
     {
-        yield 'Search without params' => [[], 72];
+        yield 'Search without params' => [[], 66];
         yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 22];
-        yield 'Search with territory 13' => [['territory' => 13], 17];
+        yield 'Search with territory 13' => [['territory' => 13], 16];
         yield 'Search with territory 13 and partner 6 and 7' => [['territory' => 13, 'partners' => [6, 7]], 2];
         yield 'Search with status INACTIVE' => [['statut' => 'INACTIVE'], 11];
         yield 'Search with role ROLE_ADMIN' => [['role' => 'ROLE_ADMIN'], 3];
         yield 'Search with role ROLE_ADMIN and territory 13' => [['role' => 'ROLE_ADMIN', 'territory' => 13], 0];
-        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 15];
+        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 14];
         yield 'Search with territory 13 and partnerType Ars' => [['territory' => 13, 'partnerType' => 'ARS'], 1];
     }
 
@@ -95,11 +95,11 @@ class BackUserControllerTest extends WebTestCase
         $route = $router->generate('back_user_export');
         $client->request('GET', $route, ['territory' => 13]);
 
-        $this->assertSelectorTextContains('h1', 'Exporter la liste des 17 utilisateurs');
+        $this->assertSelectorTextContains('h1', 'Exporter la liste des 16 utilisateurs');
 
-        $client->request('GET', $route, ['role' => 'ROLE_API_USER']);
+        $client->request('GET', $route, ['role' => 'ROLE_ADMIN_PARTNER']);
 
-        $this->assertSelectorTextContains('h1', 'Exporter la liste des 6 utilisateurs');
+        $this->assertSelectorTextContains('h1', 'Exporter la liste des 3 utilisateurs');
     }
 
     public function testInactiveAccounts(): void

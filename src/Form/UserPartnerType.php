@@ -26,7 +26,6 @@ class UserPartnerType extends AbstractType
     ) {
         $this->roles = [];
         if ($security->isGranted('ROLE_ADMIN')) {
-            $this->roles['API'] = 'ROLE_API_USER';
             $this->roles['Super Admin'] = 'ROLE_ADMIN';
         }
         if ($security->isGranted('ROLE_ADMIN_TERRITORY')) {
