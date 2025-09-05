@@ -20,10 +20,10 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
 {
     use FixturesHelper;
 
-    private MockObject|SignalementRepository $signalementRepository;
-    private MockObject|SignalementUserProvider $signalementUserProvider;
-    private MockObject|UrlGeneratorInterface $urlGenerator;
-    private MockObject|EntityManagerInterface $entityManager;
+    private MockObject&SignalementRepository $signalementRepository;
+    private MockObject&SignalementUserProvider $signalementUserProvider;
+    private MockObject&UrlGeneratorInterface $urlGenerator;
+    private MockObject&EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {

@@ -111,6 +111,7 @@ class SignalementFileController extends AbstractController
         } else {
             $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         }
+        /** @var FileRepository $fileRepository */
         $fileRepository = $entityManager->getRepository(File::class);
         /** @var User $user */
         $user = $this->getUser();

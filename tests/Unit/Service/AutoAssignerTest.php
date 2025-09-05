@@ -207,9 +207,9 @@ class AutoAssignerTest extends KernelTestCase
             $signalement->removeAffectation($affectation);
         }
 
-        /** @var UserManager|MockObject $userManager */
+        /** @var UserManager&MockObject $userManager */
         $userManager = $this->createMock(UserManager::class);
-        /** @var ParameterBagInterface|MockObject $parameterBag */
+        /** @var ParameterBagInterface&MockObject $parameterBag */
         $parameterBag = $this->createMock(ParameterBagInterface::class);
         /** @var LoggerInterface $logger */
         $logger = $this->createMock(LoggerInterface::class);
