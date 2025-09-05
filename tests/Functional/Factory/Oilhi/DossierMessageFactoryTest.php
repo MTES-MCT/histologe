@@ -136,7 +136,7 @@ class DossierMessageFactoryTest extends KernelTestCase
 
         $response = $hookZapierService->pushDossier($dossierMessage);
 
-        $responseData = json_decode($response->getContent(), true);
+        $responseData = json_decode((string) $response->getContent(), true);
         $this->assertArrayHasKey('message', $responseData);
         $this->assertEquals('HTTP request failed', $responseData['message']);
     }

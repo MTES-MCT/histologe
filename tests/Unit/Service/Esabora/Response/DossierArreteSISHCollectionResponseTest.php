@@ -10,7 +10,7 @@ class DossierArreteSISHCollectionResponseTest extends TestCase
     public function testDossierArreteSISHCollectionResponseSuccessfullyCreated(): void
     {
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
         $dossierArreteSISHCollectionResponse = new DossierArreteSISHCollectionResponse($responseEsabora, 200);
         $dossiersArreteSISH = $dossierArreteSISHCollectionResponse->getCollection();

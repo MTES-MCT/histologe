@@ -23,7 +23,7 @@ class IframeControllerTest extends WebTestCase
         ]);
 
         $this->assertEmailCount(1);
-        $responseContent = json_decode($client->getResponse()->getContent(), true);
+        $responseContent = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertStringContainsString('Si un signalement correspond aux informations saisies', $responseContent['html']);
     }
 }
