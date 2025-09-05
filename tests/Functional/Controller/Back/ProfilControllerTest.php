@@ -23,9 +23,9 @@ class ProfilControllerTest extends WebTestCase
     private UserRepository $userRepository;
     private RouterInterface $router;
     private User $user;
-    private UploadHandlerService|MockObject $uploadHandlerServiceMock;
-    private FileScanner|MockObject $fileScannerMock;
-    private ImageManipulationHandler|MockObject $imageManipulationHandlerMock;
+    private UploadHandlerService&MockObject $uploadHandlerServiceMock;
+    private FileScanner&MockObject $fileScannerMock;
+    private ImageManipulationHandler&MockObject $imageManipulationHandlerMock;
 
     protected function setUp(): void
     {

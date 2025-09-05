@@ -38,7 +38,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
     public function testPushDossierToEsaboraSasSuccess(): void
     {
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_import.json';
-        $mockResponse = new MockResponse(file_get_contents($filepath));
+        $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $this->uploadHandlerService
@@ -73,7 +73,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
     public function testGetStateDossierFromEsaboraSas(): void
     {
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_etat_dossier_sas/etat_importe.json';
-        $mockResponse = new MockResponse(file_get_contents($filepath));
+        $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);
@@ -129,9 +129,9 @@ class EsaboraSCHSServiceTest extends KernelTestCase
     public function testGetDossierEventsEsaboraSas(): void
     {
         $filepathEvents = __DIR__.self::PATH_RESOURCE_JSON.'ws_get_dossier_events.json';
-        $mockResponse = new MockResponse(file_get_contents($filepathEvents));
+        $mockResponse = new MockResponse((string) file_get_contents($filepathEvents));
         $filepathEventFiles = __DIR__.self::PATH_RESOURCE_JSON.'ws_get_dossier_event_files.json';
-        $mockResponseEventFiles = new MockResponse(file_get_contents($filepathEventFiles));
+        $mockResponseEventFiles = new MockResponse((string) file_get_contents($filepathEventFiles));
 
         $mockHttpClient = new MockHttpClient([$mockResponse, $mockResponseEventFiles]);
         $esaboraService = new EsaboraSCHSService($mockHttpClient, $this->logger, $this->uploadHandlerService);

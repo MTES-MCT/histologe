@@ -15,11 +15,11 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImportBailleurCommandTest extends KernelTestCase
 {
-    private MockObject|CsvParser $csvParser;
-    private MockObject|BailleurLoader $bailleurLoader;
-    private MockObject|UploadHandlerService $uploadHandlerServiceMock;
-    private MockObject|FilesystemOperator $fileStorage;
-    private MockObject|ParameterBagInterface $parameterBag;
+    private MockObject&CsvParser $csvParser;
+    private MockObject&BailleurLoader $bailleurLoader;
+    private MockObject&UploadHandlerService $uploadHandlerServiceMock;
+    private MockObject&FilesystemOperator $fileStorage;
+    private MockObject&ParameterBagInterface $parameterBag;
 
     protected function setUp(): void
     {

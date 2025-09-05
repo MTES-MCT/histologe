@@ -28,12 +28,12 @@ class SignalementFileProcessorTest extends TestCase
         ],
     ];
 
-    private MockObject|UploadHandlerService $uploadHandlerService;
-    private MockObject|LoggerInterface $logger;
-    private MockObject|FilenameGenerator $filenameGenerator;
-    private MockObject|FileFactory $fileFactory;
-    private MockObject|ImageManipulationHandler $imageManipulationHandler;
-    private MockObject|FileScanner $fileScanner;
+    private MockObject&UploadHandlerService $uploadHandlerService;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&FilenameGenerator $filenameGenerator;
+    private MockObject&FileFactory $fileFactory;
+    private MockObject&ImageManipulationHandler $imageManipulationHandler;
+    private MockObject&FileScanner $fileScanner;
 
     protected function setUp(): void
     {

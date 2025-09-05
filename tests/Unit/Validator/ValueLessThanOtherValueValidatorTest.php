@@ -74,7 +74,7 @@ class ValueLessThanOtherValueValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @return SignalementDraftRequest|MockObject
+     * @return SignalementDraftRequest&MockObject
      */
     private function createDto(?string $children, ?string $people)
     {

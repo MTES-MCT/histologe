@@ -8,10 +8,12 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Messenger\MessageHandler\Idoss\DossierMessageHandler;
+use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Interconnection\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class DossierMessageHandlerTest extends KernelTestCase
@@ -26,8 +28,11 @@ class DossierMessageHandlerTest extends KernelTestCase
 
     public function testProcessDossierMessage(): void
     {
+        /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
+
+        /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $dossierMessage = new DossierMessage($affectation);
@@ -35,6 +40,7 @@ class DossierMessageHandlerTest extends KernelTestCase
         $jobEventMock = $this->createMock(JobEvent::class);
         $jobEventMock->expects($this->once())->method('getStatus')->willReturn(JobEvent::STATUS_SUCCESS);
 
+        /** @var MockObject&IdossService $idossServiceMock */
         $idossServiceMock = $this->createMock(IdossService::class);
         $idossServiceMock->method('pushDossier')->willReturn($jobEventMock);
         $idossServiceMock->expects($this->once())->method('pushDossier');

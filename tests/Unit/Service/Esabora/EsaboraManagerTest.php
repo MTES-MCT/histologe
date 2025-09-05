@@ -37,23 +37,23 @@ class EsaboraManagerTest extends KernelTestCase
     protected const string CREATE_ACTION = 'create';
     protected const string UPDATE_ACTION = 'update';
 
-    protected MockObject|AffectationManager $affectationManager;
-    protected MockObject|SuiviManager $suiviManager;
-    protected MockObject|InterventionRepository $interventionRepository;
-    protected MockObject|InterventionFactory $interventionFactory;
-    protected MockObject|EventDispatcherInterface $eventDispatcher;
-    protected MockObject|UserManager $userManager;
-    private MockObject|LoggerInterface $logger;
-    private MockObject|EntityManager $entityManager;
-    private MockObject|ZipHelper $zipHelper;
-    private MockObject|FileScanner $fileScanner;
-    private MockObject|UploadHandlerService $uploadHandler;
-    private MockObject|ImageManipulationHandler $imageManipulationHandler;
-    private MockObject|FileFactory $fileFactory;
-    private MockObject|SignalementQualificationUpdater $signalementQualificationUpdater;
+    protected MockObject&AffectationManager $affectationManager;
+    protected MockObject&SuiviManager $suiviManager;
+    protected MockObject&InterventionRepository $interventionRepository;
+    protected MockObject&InterventionFactory $interventionFactory;
+    protected MockObject&EventDispatcherInterface $eventDispatcher;
+    protected MockObject&UserManager $userManager;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&EntityManager $entityManager;
+    private MockObject&ZipHelper $zipHelper;
+    private MockObject&FileScanner $fileScanner;
+    private MockObject&UploadHandlerService $uploadHander;
+    private MockObject&ImageManipulationHandler $imageManipulationHandler;
+    private MockObject&FileFactory $fileFactory;
+    private MockObject&SignalementQualificationUpdater $signalementQualificationUpdater;
     private HtmlSanitizerInterface $htmlSanitizer;
     private WorkflowInterface $workflow;
-    private MockObject|UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
+    private MockObject&UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
 
     protected function setUp(): void
     {

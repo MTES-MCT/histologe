@@ -5,9 +5,11 @@ namespace App\Tests\Unit\Service\Signalement\Qualification;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Signalement;
 use App\Factory\SignalementQualificationFactory;
+use App\Repository\SignalementRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementQualificationUpdaterTest extends KernelTestCase
@@ -22,10 +24,14 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
 
     public function testUpdateFromProcedureInsalubrite(): void
     {
+        /** @var MockObject&SignalementQualificationFactory $signalementQualificationFactory */
         $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
+        /** @var MockObject&EntityManagerInterface $entityManager */
         $entityManager = $this->createMock(EntityManagerInterface::class);
+        /** @var MockObject&QualificationStatusService $qualificationStatusService */
         $qualificationStatusService = $this->createMock(QualificationStatusService::class);
 
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
         $procedureTypes = [ProcedureType::INSALUBRITE];
@@ -42,10 +48,14 @@ class SignalementQualificationUpdaterTest extends KernelTestCase
 
     public function testUpdateFromProcedureAutre(): void
     {
+        /** @var MockObject&SignalementQualificationFactory $signalementQualificationFactory */
         $signalementQualificationFactory = $this->createMock(SignalementQualificationFactory::class);
+        /** @var MockObject&EntityManagerInterface $entityManager */
         $entityManager = $this->createMock(EntityManagerInterface::class);
+        /** @var MockObject&QualificationStatusService $qualificationStatusService */
         $qualificationStatusService = $this->createMock(QualificationStatusService::class);
 
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);
         $procedureTypes = [ProcedureType::AUTRE];

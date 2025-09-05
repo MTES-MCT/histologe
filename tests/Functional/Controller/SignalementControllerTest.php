@@ -10,6 +10,8 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Repository\FileRepository;
+use App\Repository\SignalementDraftRepository;
 use App\Repository\SuiviRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
@@ -359,6 +361,7 @@ class SignalementControllerTest extends WebTestCase
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
+        /** @var FileRepository $fileRepository */
         $fileRepository = $entityManager->getRepository(File::class);
         $files = $fileRepository->findBy([], [], 2);
         foreach ($files as $file) {
@@ -407,6 +410,7 @@ class SignalementControllerTest extends WebTestCase
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
+        /** @var FileRepository $fileRepository */
         $fileRepository = $entityManager->getRepository(File::class);
         $files = $fileRepository->findBy([], [], 2);
 
@@ -480,6 +484,7 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertEmailCount($countEmailSent);
 
+        /** @var SignalementDraftRepository $signalementDraftRepository */
         $signalementDraftRepository = $entityManager->getRepository(SignalementDraft::class);
         $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => $uuidSignalement]);
 

@@ -29,14 +29,15 @@ class IdossServiceTest extends KernelTestCase
 
     protected function getIdossService(MockHttpClient $mockHttpClient): IdossService
     {
-        /** @var ContainerBagInterface|MockObject $containerBagInterface */
+        /** @var ContainerBagInterface&MockObject $containerBagInterface */
         $containerBagInterface = $this->createMock(ContainerBagInterface::class);
-        /** @var JobEventManager|MockObject $jobEventManager */
+        /** @var JobEventManager&MockObject $jobEventManager */
         $jobEventManager = $this->createMock(JobEventManager::class);
-        /** @var SerializerInterface|MockObject $serializerMock */
+        /** @var SerializerInterface&MockObject $serializerMock */
         $serializerMock = $this->createMock(SerializerInterface::class);
-        /** @var ImageManipulationHandler|MockObject $imageManipulationHandlerMock */
+        /** @var ImageManipulationHandler&MockObject $imageManipulationHandlerMock */
         $imageManipulationHandlerMock = $this->createMock(ImageManipulationHandler::class);
+        /** @var LoggerInterface&MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         return new IdossService(
@@ -54,6 +55,8 @@ class IdossServiceTest extends KernelTestCase
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
+
+        /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
 
@@ -77,6 +80,8 @@ class IdossServiceTest extends KernelTestCase
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
+
+        /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $affectation->getPartner()->setIdossToken('TEST');
@@ -99,6 +104,8 @@ class IdossServiceTest extends KernelTestCase
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
+
+        /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $affectation->getPartner()->setIdossToken('TEST');

@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class DoctrineListenerRemoverTraitTest extends TestCase
 {
-    private MockObject|EventManager $eventManagerMock;
+    private MockObject&EventManager $eventManagerMock;
 
     protected function setUp(): void
     {

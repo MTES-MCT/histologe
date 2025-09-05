@@ -23,6 +23,7 @@ class AgentsSelectionTypeTest extends KernelTestCase
     public function testAgentLabelsFromFixtures(): void
     {
         $em = static::getContainer()->get('doctrine')->getManager();
+        /** @var AffectationRepository $affectationRepo */
         $affectationRepo = $em->getRepository(Affectation::class);
 
         $affectation = $affectationRepo->findOneBy(['statut' => 'NOUVEAU']);

@@ -21,14 +21,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UpdateSignalementDocumentFieldsCommandTest extends TestCase
 {
-    private MockObject|TerritoryManager $territoryManager;
-    private MockObject|SignalementManager $signalementManager;
-    private MockObject|CsvParser $csvParser;
-    private MockObject|ParameterBagInterface $parameterBag;
-    private MockObject|FilesystemOperator $fileStorage;
-    private MockObject|UploadHandlerService $uploadHandlerService;
-    private MockObject|FileManager $fileManager;
-    private MockObject|LoggerInterface $logger;
+    private MockObject&TerritoryManager $territoryManager;
+    private MockObject&SignalementManager $signalementManager;
+    private MockObject&CsvParser $csvParser;
+    private MockObject&ParameterBagInterface $parameterBag;
+    private MockObject&FilesystemOperator $fileStorage;
+    private MockObject&UploadHandlerService $uploadHandlerService;
+    private MockObject&FileManager $fileManager;
+    private MockObject&LoggerInterface $logger;
     private Territory $territory;
 
     protected function setUp(): void

@@ -26,7 +26,7 @@ class SignalementViewedSubscriberTest extends WebTestCase
     private SignalementManager $signalementManager;
     private ?Signalement $signalement = null;
     private ?UserRepository $userRepository = null;
-    private AddressService|MockObject|null $addressServiceMock = null;
+    private MockObject&AddressService $addressServiceMock;
     private ?NotificationRepository $notificationRepository = null;
 
     protected function setUp(): void

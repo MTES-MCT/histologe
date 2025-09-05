@@ -16,11 +16,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadHandlerServiceTest extends KernelTestCase
 {
-    private MockObject|FilesystemOperator $filesystemOperator;
-    private MockObject|ParameterBagInterface $parameterBag;
-    private MockObject|LoggerInterface $logger;
-    private MockObject|FilenameGenerator $filenameGenerator;
-    private MockObject|FileRepository $fileRepository;
+    private MockObject&FilesystemOperator $filesystemOperator;
+    private MockObject&ParameterBagInterface $parameterBag;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&FilenameGenerator $filenameGenerator;
+    private MockObject&FileRepository $fileRepository;
 
     private string $projectDir = '';
     private string $fixturesPath = '/src/DataFixtures/Images/';

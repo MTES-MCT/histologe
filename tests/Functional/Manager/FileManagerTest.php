@@ -6,6 +6,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Signalement;
 use App\Factory\FileFactory;
 use App\Manager\FileManager;
+use App\Repository\SignalementRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -18,6 +19,7 @@ class FileManagerTest extends KernelTestCase
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $fileManager = new FileManager($fileFactory, $managerRegistry);
 
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $managerRegistry->getRepository(Signalement::class);
 
         $file = $fileManager->createOrUpdate(
@@ -41,6 +43,7 @@ class FileManagerTest extends KernelTestCase
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $fileManager = new FileManager($fileFactory, $managerRegistry);
 
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $managerRegistry->getRepository(Signalement::class);
 
         $desc = 'une photo de la cave plein de moisissure';

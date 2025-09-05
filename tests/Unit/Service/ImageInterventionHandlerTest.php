@@ -14,9 +14,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImageInterventionHandlerTest extends TestCase
 {
-    private MockObject|ParameterBagInterface $parameterBag;
-    private MockObject|FilesystemOperator $fileStorage;
-    private MockObject|ImageManager $imageManager;
+    private MockObject&ParameterBagInterface $parameterBag;
+    private MockObject&FilesystemOperator $fileStorage;
+    private MockObject&ImageManager $imageManager;
 
     protected function setUp(): void
     {

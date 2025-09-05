@@ -29,7 +29,7 @@ class ValidPartnerTypeValidatorTest extends ConstraintValidatorTestCase
             $this->assertNoViolation();
         } else {
             $this->buildViolation($message)
-                ->setParameter('{{ value }}', $type)
+                ->setParameter('{{ value }}', (string) $type)
                 ->assertRaised();
         }
     }
