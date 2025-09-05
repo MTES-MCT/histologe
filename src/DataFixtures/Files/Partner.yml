@@ -133,12 +133,12 @@ partners:
     territory: "La Réunion"
     type: "EPCI"
   -
-    nom: "Partenaire 974-EPCI-01"
-    email: "partenaire-epci-01-974@signal-logement.fr"
+    nom: "Partenaire 974-AUTRE"
+    email: "partenaire-autre-974@signal-logement.fr"
     is_archive: 0
     insee: "[\"\"]"
     territory: "La Réunion"
-    type: "EPCI"
+    type: "AUTRE"
   -
     nom: "Partenaire 974-EPCI-02"
     email: "partenaire-epci-02-974@signal-logement.fr"

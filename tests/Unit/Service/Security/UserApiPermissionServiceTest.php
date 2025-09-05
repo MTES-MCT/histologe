@@ -57,9 +57,9 @@ class UserApiPermissionServiceTest extends KernelTestCase
     public function testHasPermissionOnPartnerForPartnerTypeAndTerritoryPermission(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'api-reunion-epci@signal-logement.fr']);
-        $partnerOK1 = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 974-EPCI-01']);
+        $partnerOK1 = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 974-01']);
         $partnerOK2 = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 974-EPCI-02']);
-        $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 974-01']);
+        $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 974-AUTRE']);
 
         $this->assertInstanceOf(Partner::class, $partnerOK1);
         $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK1));
