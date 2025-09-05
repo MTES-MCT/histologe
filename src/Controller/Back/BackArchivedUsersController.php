@@ -16,7 +16,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +32,7 @@ class BackArchivedUsersController extends AbstractController
     public function index(
         Request $request,
         UserRepository $userRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         $searchArchivedUser = new SearchArchivedUser();
         $form = $this->createForm(SearchArchivedUserType::class, $searchArchivedUser);
@@ -40,7 +40,6 @@ class BackArchivedUsersController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchArchivedUser = new SearchArchivedUser();
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedArchivedUser = $userRepository->findArchivedFilteredPaginated($searchArchivedUser, $maxListPagination);
 
         return $this->render('back/user_archived/index.html.twig', [

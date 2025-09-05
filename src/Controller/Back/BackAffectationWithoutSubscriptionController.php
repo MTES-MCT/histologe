@@ -7,7 +7,6 @@ use App\Repository\AffectationRepository;
 use App\Service\ListFilters\SearchAffectationWithoutSubscription;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,7 +20,7 @@ class BackAffectationWithoutSubscriptionController extends AbstractController
     public function index(
         Request $request,
         AffectationRepository $affectationRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         bool $featureNewDashboard,
     ): Response {
@@ -34,7 +33,6 @@ class BackAffectationWithoutSubscriptionController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchAffectationWithoutSubscription = new SearchAffectationWithoutSubscription();
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedAffectations = $affectationRepository->findWithoutSubscriptionFilteredPaginated($searchAffectationWithoutSubscription, $maxListPagination);
 
         return $this->render('back/affectation-without-subscription/index.html.twig', [

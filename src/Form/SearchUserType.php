@@ -55,11 +55,29 @@ class SearchUserType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $showAllFields = $options['show_all_fields'];
+
         $builder->add('queryUser', SearchType::class, [
             'required' => false,
             'label' => 'Utilisateur',
-            'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un utilisateur'],
+            'attr' => ['placeholder' => $showAllFields ? 'Taper le nom ou l\'e-mail d\'un utilisateur' : 'Taper l\'e-mail d\'un utilisateur'],
         ]);
+
+        $builder->add('statut', ChoiceType::class, [
+            'choices' => [
+                'Activé' => UserStatus::ACTIVE->value,
+                'Non activé' => UserStatus::INACTIVE->value,
+            ],
+            'required' => false,
+            'placeholder' => 'Tous les statuts',
+            'label' => 'Statut',
+        ]);
+
+        $builder->add('page', HiddenType::class);
+
+        if (!$showAllFields) {
+            return;
+        }
         if ($this->isAdmin) {
             $builder->add('territory', TerritoryChoiceType::class);
         }
@@ -84,15 +102,6 @@ class SearchUserType extends AbstractType
                 isset($event->getData()['partners']) ? $event->getData()['partners'] : null
             );
         });
-        $builder->add('statut', ChoiceType::class, [
-            'choices' => [
-                'Activé' => UserStatus::ACTIVE->value,
-                'Non activé' => UserStatus::INACTIVE->value,
-            ],
-            'required' => false,
-            'placeholder' => 'Tous les statuts',
-            'label' => 'Statut',
-        ]);
         $builder->add('role', ChoiceType::class, [
             'choices' => $this->roleChoices,
             'required' => false,
@@ -120,8 +129,6 @@ class SearchUserType extends AbstractType
             'label' => 'Trier par',
             'data' => 'u.nom-ASC',
         ]);
-
-        $builder->add('page', HiddenType::class);
     }
 
     private function addPartnersField(FormInterface $builder, string|Territory|null $territory, mixed $partnerType): void
@@ -171,6 +178,7 @@ class SearchUserType extends AbstractType
             'csrf_protection' => false,
             'method' => 'GET',
             'attr' => ['id' => 'search-user-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'show_all_fields' => true,
         ]);
     }
 

@@ -10,7 +10,7 @@ use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchUser;
 use App\Service\UserExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -25,9 +25,8 @@ class BackUserController extends AbstractController
     public function index(
         Request $request,
         UserRepository $userRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);
 
         return $this->render('back/user/index.html.twig', [
@@ -43,11 +42,10 @@ class BackUserController extends AbstractController
         Request $request,
         UserRepository $userRepository,
         MessageBusInterface $messageBus,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $originalMethod = $request->getMethod();
         $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handlning the form
         [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);

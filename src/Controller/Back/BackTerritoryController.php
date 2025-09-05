@@ -14,7 +14,7 @@ use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +31,7 @@ class BackTerritoryController extends AbstractController
     public function index(
         Request $request,
         TerritoryRepository $territoryRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         $searchTerritory = new SearchTerritory();
         $form = $this->createForm(SearchTerritoryType::class, $searchTerritory);
@@ -39,7 +39,6 @@ class BackTerritoryController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchTerritory = new SearchTerritory();
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedTerritories = $territoryRepository->findFilteredPaginated($searchTerritory, $maxListPagination);
 
         return $this->render('back/territory/index.html.twig', [

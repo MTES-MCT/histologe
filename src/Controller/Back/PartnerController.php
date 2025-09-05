@@ -35,7 +35,6 @@ use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -55,7 +54,7 @@ class PartnerController extends AbstractController
     public function index(
         Request $request,
         PartnerRepository $partnerRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -65,7 +64,6 @@ class PartnerController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchPartner = new SearchPartner($user);
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedPartners = $partnerRepository->findFilteredPaginated($searchPartner, $maxListPagination);
 
         return $this->render('back/partner/index.html.twig', [

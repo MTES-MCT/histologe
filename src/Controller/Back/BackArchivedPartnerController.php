@@ -6,7 +6,7 @@ use App\Form\SearchArchivedPartnerType;
 use App\Repository\PartnerRepository;
 use App\Service\ListFilters\SearchArchivedPartner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,7 +20,7 @@ class BackArchivedPartnerController extends AbstractController
     public function index(
         Request $request,
         PartnerRepository $partnerRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         $searchArchivedPartner = new SearchArchivedPartner();
         $form = $this->createForm(SearchArchivedPartnerType::class, $searchArchivedPartner);
@@ -28,7 +28,6 @@ class BackArchivedPartnerController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchArchivedPartner = new SearchArchivedPartner();
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedArchivedPartners = $partnerRepository->findFilteredArchivedPaginated($searchArchivedPartner, $maxListPagination);
 
         return $this->render('back/partner_archived/index.html.twig', [

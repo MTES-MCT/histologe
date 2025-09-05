@@ -9,7 +9,7 @@ use App\Repository\BailleurRepository;
 use App\Service\ListFilters\SearchBailleur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +24,7 @@ class BackBailleurController extends AbstractController
     public function index(
         Request $request,
         BailleurRepository $bailleurRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         $searchBailleur = new SearchBailleur();
         $form = $this->createForm(SearchBailleurType::class, $searchBailleur);
@@ -32,7 +32,6 @@ class BackBailleurController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchBailleur = new SearchBailleur();
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedBailleurs = $bailleurRepository->findFilteredPaginated($searchBailleur, $maxListPagination);
 
         return $this->render('back/bailleur/index.html.twig', [

@@ -9,7 +9,7 @@ use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +24,7 @@ class ArchivedSignalementController extends AbstractController
     public function index(
         Request $request,
         SignalementRepository $signalementRepository,
-        ParameterBagInterface $parameterBag,
+        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         $searchArchivedSignalement = new SearchArchivedSignalement();
         $form = $this->createForm(SearchArchivedSignalementType::class, $searchArchivedSignalement);
@@ -32,7 +32,6 @@ class ArchivedSignalementController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchArchivedSignalement = new SearchArchivedSignalement();
         }
-        $maxListPagination = $parameterBag->get('standard_max_list_pagination');
         $paginatedArchivedSignalementPaginated = $signalementRepository->findFilteredArchivedPaginated($searchArchivedSignalement, $maxListPagination);
 
         return $this->render('back/signalement_archived/index.html.twig', [
