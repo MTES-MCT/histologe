@@ -131,7 +131,7 @@ partners:
     is_archive: 0
     insee: "[\"\"]"
     territory: "La Réunion"
-    type: "AUTRE"
+    type: "EPCI"
   -
     nom: "EMHA - Métropole de Lyon"
     email: "partenaire-01-69@signal-logement.fr"
