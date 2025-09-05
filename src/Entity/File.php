@@ -155,7 +155,7 @@ class File implements EntityHistoryInterface
     #[ORM\Column()]
     private ?bool $isStandalone = null;
 
-    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'files')]
+    #[ORM\ManyToOne(targetEntity: Territory::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?Territory $territory = null;
 
@@ -385,6 +385,11 @@ class File implements EntityHistoryInterface
     public function isProcedureDocument(): bool
     {
         return $this->isTypeDocument() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
+    }
+
+    public function isImageExtension(): bool
+    {
+        return in_array($this->getExtension(), self::IMAGE_EXTENSION);
     }
 
     public function isTemp(): ?bool

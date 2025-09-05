@@ -56,13 +56,16 @@ class SearchTerritoryFilesType extends AbstractType
             'label' => 'Type de document',
         ]);
 
+        $choices = [
+            'Ordre alphabétique (A -> Z)' => 'f.title-ASC',
+            'Ordre alphabétique inversé (Z -> A)' => 'f.title-DESC',
+        ];
+        if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $choices['Date d\'ajout (du plus ancien au plus récent)'] = 'f.id-ASC';
+            $choices['Date d\'ajout (du plus récent au plus ancien)'] = 'f.id-DESC';
+        }
         $builder->add('orderType', ChoiceType::class, [
-            'choices' => [
-                'Ordre alphabétique (A -> Z)' => 'f.title-ASC',
-                'Ordre alphabétique inversé (Z -> A)' => 'f.title-DESC',
-                'Ordre croissant' => 'f.id-ASC',
-                'Ordre décroissant' => 'f.id-DESC',
-            ],
+            'choices' => $choices,
             'required' => false,
             'placeholder' => false,
             'label' => 'Trier par',
