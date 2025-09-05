@@ -6,6 +6,7 @@ trait FileHelper
 {
     public function getTempFilepath(string $filename = 'random_', string $extension = '.txt'): string
     {
+        /** @var string $projectDir */
         $projectDir = static::getContainer()->getParameter('kernel.project_dir');
         $tempFilepath = tempnam($projectDir.'/tmp/', $filename).$extension;
         file_put_contents($tempFilepath, 'Hello world!');

@@ -45,7 +45,11 @@ trait SearchQueryTrait
                 }
                 $params[$key] = $value->map(fn ($partner) => $partner->getId())->toArray();
             } elseif (is_object($value)) {
-                $params[$key] = isset($value->value) ? $value->value : $value->getId();
+                if (isset($value->value)) {
+                    $params[$key] = $value->value;
+                } elseif (method_exists($value, 'getId')) {
+                    $params[$key] = $value->getId();
+                }
             } elseif (null !== $value) {
                 $params[$key] = $value;
             }

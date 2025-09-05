@@ -71,7 +71,7 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 message: sprintf('fichiers ont été traités dont %s fichiers introuvables sur un total de %s', $nbErrors, $count),
                 cronLabel: 'Suppression de fichier(s) originaux s3://',
                 cronCount: $nbFilesToProcess,

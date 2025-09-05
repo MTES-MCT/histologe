@@ -7,6 +7,7 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Security\Authenticator\JsonLoginAuthenticator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,9 @@ class JsonLoginAuthenticatorTest extends TestCase
 
     protected function setUp(): void
     {
+        /** @var MockObject&UserRepository $userRepository */
         $userRepository = $this->createMock(UserRepository::class);
+        /** @var MockObject&TranslatorInterface $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $this->authenticator = new JsonLoginAuthenticator($userRepository, $translator);
 
@@ -76,6 +79,7 @@ class JsonLoginAuthenticatorTest extends TestCase
 
         $apiUserToken = new ApiUserToken();
         $user->addApiUserToken($apiUserToken);
+        /** @var MockObject&TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')
             ->willReturn($user);
@@ -83,7 +87,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $request = new Request();
 
         $response = $this->authenticator->onAuthenticationSuccess($request, $token, 'api');
-        $data = json_decode($response->getContent(), true);
+        $data = json_decode((string) $response->getContent(), true);
 
         $this->assertEquals(64, strlen($data['token']));
         $this->assertSame($apiUserToken->getExpiresAt()->format(\DATE_ATOM), $data['expires_at']);
@@ -94,7 +98,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $request = new Request();
         $exception = new AuthenticationException('Identifiants invalides.');
         $response = $this->authenticator->onAuthenticationFailure($request, $exception);
-        $data = json_decode($response->getContent(), true);
+        $data = json_decode((string) $response->getContent(), true);
         $this->assertSame('Une exception d\'authentification s\'est produite.', $data['error']);
         $this->assertSame('Identifiants invalides.', $data['message']);
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());

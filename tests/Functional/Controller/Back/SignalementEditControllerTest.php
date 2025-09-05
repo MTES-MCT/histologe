@@ -80,7 +80,7 @@ class SignalementEditControllerTest extends WebTestCase
      */
     public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
     {
-        $addressResult = json_decode(file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
+        $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
         $addressMock = $this->createMock(AddressService::class);
         $addressMock->method('getAddress')->willReturn(new Address($addressResult));
         $this->client->getContainer()->set(AddressService::class, $addressMock);
