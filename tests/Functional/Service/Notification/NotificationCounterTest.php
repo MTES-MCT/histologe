@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Notification;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Repository\NotificationRepository;
+use App\Repository\UserRepository;
 use App\Service\Notification\NotificationCounter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -23,6 +24,7 @@ class NotificationCounterTest extends KernelTestCase
     {
         /** @var NotificationRepository $notificationRepository */
         $notificationRepository = $this->entityManager->getRepository(Notification::class);
+        /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
 
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);

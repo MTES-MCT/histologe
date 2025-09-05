@@ -7,6 +7,9 @@ use App\Entity\DesordrePrecision;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
+use App\Repository\CriticiteRepository;
+use App\Repository\DesordrePrecisionRepository;
+use App\Repository\SignalementRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -35,7 +38,9 @@ class QualificationServiceTest extends KernelTestCase
      */
     public function testInitQualification(int $score, array $listCriticites, array $qualificationsToCheck): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var CriticiteRepository $criticiteRepository */
         $criticiteRepository = $this->entityManager->getRepository(Criticite::class);
 
         /** @var Signalement $signalement */
@@ -113,7 +118,9 @@ class QualificationServiceTest extends KernelTestCase
         string $isAssuranceContactee = 'non',
         ?int $consoFinale = null,
     ): void {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var DesordrePrecisionRepository $desordrePrecisionRepository */
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
 
         /** @var Signalement $signalement */

@@ -26,14 +26,14 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class TabDataManagerTest extends TestCase
 {
-    protected MockObject|Security $security;
-    protected MockObject|JobEventRepository $jobEventRepository;
-    protected MockObject|SuiviRepository $suiviRepository;
-    protected MockObject|TerritoryRepository $territoryRepository;
-    protected MockObject|UserRepository $userRepository;
-    protected MockObject|PartnerRepository $partnerRepository;
-    protected MockObject|SignalementRepository $signalementRepository;
-    protected MockObject|TabCountKpiBuilder $tabCountKpiBuilder;
+    protected MockObject&Security $security;
+    protected MockObject&JobEventRepository $jobEventRepository;
+    protected MockObject&SuiviRepository $suiviRepository;
+    protected MockObject&TerritoryRepository $territoryRepository;
+    protected MockObject&UserRepository $userRepository;
+    protected MockObject&PartnerRepository $partnerRepository;
+    protected MockObject&SignalementRepository $signalementRepository;
+    protected MockObject&TabCountKpiBuilder $tabCountKpiBuilder;
 
     protected function setUp(): void
     {

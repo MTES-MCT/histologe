@@ -86,6 +86,7 @@ class SignalementTest extends KernelTestCase
 
     public function testHasSuiviUsagerPostCloture(): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-2']);
         $this->assertTrue($signalement->hasSuiviUsagerPostCloture());

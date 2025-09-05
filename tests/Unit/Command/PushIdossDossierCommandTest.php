@@ -15,8 +15,8 @@ class PushIdossDossierCommandTest extends TestCase
 {
     use FixturesHelper;
 
-    private MockObject|AffectationRepository $affectationRepository;
-    private MockObject|InterconnectionBus $interconnectionBus;
+    private MockObject&AffectationRepository $affectationRepository;
+    private MockObject&InterconnectionBus $interconnectionBus;
 
     protected function setUp(): void
     {

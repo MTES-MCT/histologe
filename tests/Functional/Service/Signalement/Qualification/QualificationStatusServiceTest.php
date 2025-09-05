@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
+use App\Repository\SignalementRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,6 +29,7 @@ class QualificationStatusServiceTest extends KernelTestCase
      */
     public function testUpdateNdeStatus(QualificationNDERequest $qualificationNDERequest, QualificationStatus $qualificationStatus): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         /** @var Signalement $signalement */

@@ -16,7 +16,7 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
 {
     private ParameterBagInterface $parameterBag;
     private FileRepository $fileRepository;
-    private MockObject|FilesystemOperator $fileStorage;
+    private MockObject&FilesystemOperator $fileStorage;
     private NotificationMailerRegistry $mailerRegistry;
 
     protected function setUp(): void
