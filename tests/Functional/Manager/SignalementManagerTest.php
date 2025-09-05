@@ -21,6 +21,8 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\SignalementRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -127,6 +129,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testCloseSignalementForAllPartners(): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalementActive = $signalementRepository->findOneBy(['statut' => SignalementStatus::ACTIVE->value]);
 
@@ -155,6 +158,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testCreateSignalement(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
@@ -169,6 +173,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testUpdateSignalement(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
@@ -184,6 +189,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testUpdateSignalementImported(): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         /** @var Signalement $signalementImported */
         $signalementImported = $signalementRepository->findOneBy(['isImported' => true]);

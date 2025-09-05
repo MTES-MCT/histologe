@@ -19,6 +19,7 @@ class AppExtensionTest extends WebTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
+        /** @var AppExtension $appExtension */
         $appExtension = $container->get(AppExtension::class);
 
         $outputDate = $appExtension->customDateFilter($inputDate, $format, $timezone);
@@ -99,6 +100,7 @@ class AppExtensionTest extends WebTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
+        /** @var AppExtension $appExtension */
         $appExtension = $container->get(AppExtension::class);
 
         $outputPhone = $appExtension->formatPhone($inputPhone);
@@ -133,6 +135,7 @@ class AppExtensionTest extends WebTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
+        /** @var AppExtension $appExtension */
         $appExtension = $container->get(AppExtension::class);
 
         $filters = $appExtension->getFilters();
@@ -161,6 +164,7 @@ class AppExtensionTest extends WebTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
+        /** @var AppExtension $appExtension */
         $appExtension = $container->get(AppExtension::class);
 
         $this->assertSame($expected, $appExtension->getBadgeClass($days));
@@ -183,6 +187,7 @@ class AppExtensionTest extends WebTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
+        /** @var AppExtension $appExtension */
         $appExtension = $container->get(AppExtension::class);
 
         $this->assertSame($expected, $appExtension->getRelanceBadgeClass($count));

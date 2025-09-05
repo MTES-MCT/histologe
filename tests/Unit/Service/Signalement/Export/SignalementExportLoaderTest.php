@@ -17,7 +17,7 @@ class SignalementExportLoaderTest extends TestCase
 
     public function testLoad(): void
     {
-        /** @var MockObject|SignalementManager */
+        /** @var MockObject&SignalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);
         $filters = [];
         $user = $this->getUserFromRole(User::ROLE_ADMIN);

@@ -18,9 +18,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SynchronizeObjectStorageCommandTest extends TestCase
 {
-    private MockObject|LoggerInterface $logger;
-    private MockObject|NotificationMailerRegistry $mailer;
-    private MockObject|ParameterBagInterface $params;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&NotificationMailerRegistry $mailer;
+    private MockObject&ParameterBagInterface $params;
 
     protected function setUp(): void
     {

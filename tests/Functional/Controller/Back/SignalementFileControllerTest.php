@@ -24,7 +24,7 @@ class SignalementFileControllerTest extends WebTestCase
     private RouterInterface $router;
     private ?User $user = null;
     private ?Signalement $signalement = null;
-    private SignalementFileProcessor|MockObject $signalementFileProcessorMock;
+    private SignalementFileProcessor&MockObject $signalementFileProcessorMock;
 
     protected function setUp(): void
     {
