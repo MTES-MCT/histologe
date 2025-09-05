@@ -4,7 +4,6 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Request\ArreteRequest;
 use App\Dto\Api\Response\ArreteResponse;
-use App\Entity\Affectation;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
@@ -12,6 +11,8 @@ use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\InterventionManager;
+use App\Security\Voter\Api\ApiSignalementPartnerVoter;
+use App\Service\Security\UserApiPermissionService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -32,6 +33,7 @@ class ArreteCreateController extends AbstractController
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterventionManager $interventionManager,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
+        private readonly UserApiPermissionService $userApiPermissionService,
     ) {
     }
 
@@ -170,11 +172,19 @@ class ArreteCreateController extends AbstractController
                 Response::HTTP_NOT_FOUND
             );
         }
-
-        $this->denyAccessUnlessGranted('SIGN_ADD_ARRETE', $signalement, SecurityApiExceptionListener::ACCESS_DENIED);
         /** @var User $user */
         $user = $this->getUser();
-        $affectation = $this->getAffectation($signalement, $user);
+        $partner = $this->userApiPermissionService->getUniquePartner($user);
+        if (!$partner) {
+            throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
+        }
+        $this->denyAccessUnlessGranted(
+            ApiSignalementPartnerVoter::API_ADD_INTERVENTION,
+            ['signalement' => $signalement, 'partner' => $partner],
+            SecurityApiExceptionListener::ACCESS_DENIED
+        );
+        $affectation = $signalement->getAffectationForPartner($partner);
+
         $errors = $this->validator->validate($arreteRequest);
         if (count($errors) > 0) {
             throw new ValidationFailedException($arreteRequest, $errors);
@@ -197,15 +207,5 @@ class ArreteCreateController extends AbstractController
         $suivi = $interventionCreatedEvent->getSuivi();
 
         return $this->json(new ArreteResponse($intervention, $suivi), Response::HTTP_CREATED);
-    }
-
-    private function getAffectation(Signalement $signalement, User $user): Affectation
-    {
-        return $signalement
-            ->getAffectations()
-            ->filter(function (Affectation $affectation) use ($user, $signalement) {
-                return $affectation->getPartner()->getNom() === $user->getPartnerInTerritory($signalement->getTerritory())->getNom();
-            })
-            ->first();
     }
 }
