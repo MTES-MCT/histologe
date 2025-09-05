@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 
 trait SessionHelper
@@ -16,6 +17,7 @@ trait SessionHelper
 
         // create a new session object
         $container = static::getContainer();
+        /** @var string|null $sessionSavePath */
         $sessionSavePath = $container->getParameter('session.save_path');
         $sessionStorage = new MockFileSessionStorage($sessionSavePath);
         $session = new Session($sessionStorage);
@@ -46,6 +48,7 @@ trait SessionHelper
     {
         $session = $this->getSession($client);
         $container = static::getContainer();
+        /** @var TokenGeneratorInterface $tokenGenerator */
         $tokenGenerator = $container->get('security.csrf.token_generator');
         $csrfToken = $tokenGenerator->generateToken();
         $session->set(SessionTokenStorage::SESSION_NAMESPACE."/{$tokenId}", $csrfToken);

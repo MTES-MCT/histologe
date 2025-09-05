@@ -24,7 +24,7 @@ class DesordreTraitementProcessorTest extends TestCase
         ->setLabelCategorie('test nuisibles');
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
 
@@ -64,7 +64,7 @@ class DesordreTraitementProcessorTest extends TestCase
         ->setLabelCategorie('test fdsoip');
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
 

@@ -43,7 +43,7 @@ class SignalementListControllerTest extends WebTestCase
         $client->request('GET', '/api/signalements?limit=2');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertCount(2, $response);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
@@ -61,7 +61,7 @@ class SignalementListControllerTest extends WebTestCase
         $client->request('GET', '/api/signalements/'.$uuid);
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('desordres', $response);
         $this->assertArrayHasKey('affectations', $response);
         $this->assertCount($nbDesordres, $response['desordres']);
@@ -91,7 +91,7 @@ class SignalementListControllerTest extends WebTestCase
         $client->request('GET', '/api/signalements?'.http_build_query($queryParameters));
         $this->assertEquals(400, $client->getResponse()->getStatusCode());
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertCount($countErrors, $response['errors']);
         $this->assertArrayHasKey('property', current($response['errors']));
         $this->assertArrayHasKey('message', current($response['errors']));
