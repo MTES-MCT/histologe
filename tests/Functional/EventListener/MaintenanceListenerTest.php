@@ -22,7 +22,7 @@ class MaintenanceListenerTest extends WebTestCase
         $client->request('POST', $generatorUrl->generate('api_login'));
 
         $this->assertSame(503, $client->getResponse()->getStatusCode());
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertSame('Maintenance en cours', $response['message']);
     }
 

@@ -41,7 +41,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         // Erreur d'absence de fichier en retour json
         $response = $client->getResponse();
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $json = json_decode($response->getContent(), true);
+        $json = json_decode((string) $response->getContent(), true);
         $this->assertArrayHasKey('errors', $json);
     }
 

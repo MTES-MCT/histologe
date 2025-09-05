@@ -54,7 +54,7 @@ class RetryFailedPushEsaboraSISHCommand extends AbstractCronCommand
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 message: \sprintf('%s dossier(s) ont été repoussé vers SI-SH', $nbAffectations),
                 cronLabel: '[ARS] Reprise de dossiers SI-SH en erreur'),
         );

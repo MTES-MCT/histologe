@@ -11,6 +11,7 @@ use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Interconnection\Esabora\Handler\InterventionArreteServiceHandler;
 use App\Service\Interconnection\Esabora\Response\DossierArreteSISHCollectionResponse;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -18,9 +19,9 @@ class InterventionArreteServiceHandlerTest extends TestCase
 {
     use FixturesHelper;
 
-    protected SerializerInterface $serializer;
-    protected EsaboraSISHService $esaboraSISHService;
-    protected EsaboraManager $esaboraManager;
+    protected SerializerInterface&MockObject $serializer;
+    protected EsaboraSISHService&MockObject $esaboraSISHService;
+    protected EsaboraManager&MockObject $esaboraManager;
     protected JobEventManager $jobEventManager;
     protected InterventionArreteServiceHandler $handler;
     protected Affectation $affectation;
@@ -39,7 +40,7 @@ class InterventionArreteServiceHandlerTest extends TestCase
     public function testHandle(): void
     {
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
         $this->serializer = $this->createMock(SerializerInterface::class);
         $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);

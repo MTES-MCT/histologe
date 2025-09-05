@@ -24,7 +24,7 @@ readonly class ClearEntitiesHandler
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 message: $countDeletedSuccess > 1
                     ? sprintf('%ss ont été supprimés', $entityName)
                     : sprintf('%s a été supprimé', $entityName),
