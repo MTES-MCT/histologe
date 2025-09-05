@@ -13,12 +13,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class SignalementFoVoter extends Voter
 {
     public const string SIGN_USAGER_VIEW = 'SIGN_USAGER_VIEW';
+    public const string SIGN_USAGER_ADD_SUIVI = 'SIGN_USAGER_ADD_SUIVI';
     public const string SIGN_USAGER_EDIT = 'SIGN_USAGER_EDIT';
-    public const string SIGN_USAGER_EDIT_PROCEDURE = 'SIGN_USAGER_EDIT_PROCEDURE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::SIGN_USAGER_EDIT, self::SIGN_USAGER_VIEW, self::SIGN_USAGER_EDIT_PROCEDURE]) && ($subject instanceof Signalement);
+        return \in_array($attribute, [self::SIGN_USAGER_ADD_SUIVI, self::SIGN_USAGER_VIEW, self::SIGN_USAGER_EDIT]) && ($subject instanceof Signalement);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -34,8 +34,8 @@ class SignalementFoVoter extends Voter
 
         return match ($attribute) {
             self::SIGN_USAGER_VIEW => $this->canUsagerView($subject, $user),
-            self::SIGN_USAGER_EDIT => $this->canUsagerEdit($subject, $user),
-            self::SIGN_USAGER_EDIT_PROCEDURE => $this->canUsagerEditProcedure($subject),
+            self::SIGN_USAGER_ADD_SUIVI => $this->canUsagerAddSuivi($subject, $user),
+            self::SIGN_USAGER_EDIT => $this->canUsagerEdit($subject),
             default => false,
         };
     }
@@ -45,7 +45,7 @@ class SignalementFoVoter extends Voter
         return $signalement->getCodeSuivi() === $user->getCodeSuivi();
     }
 
-    private function canUsagerEdit(Signalement $signalement, SignalementUser $user): bool
+    private function canUsagerAddSuivi(Signalement $signalement, SignalementUser $user): bool
     {
         if (!$this->canUsagerView($signalement, $user)) {
             return false;
@@ -67,7 +67,7 @@ class SignalementFoVoter extends Voter
         return false;
     }
 
-    private function canUsagerEditProcedure(Signalement $signalement): bool
+    private function canUsagerEdit(Signalement $signalement): bool
     {
         if (SignalementStatus::ACTIVE === $signalement->getStatut()
             || SignalementStatus::NEED_VALIDATION === $signalement->getStatut()

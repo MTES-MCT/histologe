@@ -4,7 +4,7 @@
 
 {% block body %}
 
-{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+{% if (is_granted('SIGN_USAGER_ADD_SUIVI', signalement)) %}
 	{% include '_partials/_modal_upload_files_usager.html.twig' with {'criteres': infoDesordres['criteres']} %}
 {% endif %}
 
@@ -25,7 +25,7 @@
 			{% include 'front/_partials/_suivi_signalement_card.html.twig' %}
 
 			<h2 class="title-blue-france fr-mb-1w">Envoyer un message</h2>
-			{% if (is_granted('SIGN_USAGER_EDIT', signalement)) %}
+			{% if (is_granted('SIGN_USAGER_ADD_SUIVI', signalement)) %}
 				{{ form_start(formMessage, {'attr': {'id': 'form-message-usager'}}) }}
 				{{ form_errors(formMessage) }}
 				<p>Nous vous rappelons que les échanges entre les agents en charge de votre dossier et vous doivent se faire dans le respect mutuel. Nous invitons chaque partie à adopter une attitude courtoise et bienveillante.</p>
