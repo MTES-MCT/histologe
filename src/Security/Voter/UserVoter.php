@@ -46,11 +46,16 @@ class UserVoter extends Voter
 
             return false;
         }
+        if ($subject->isApiUser()) {
+            $vote?->addReason('Action non autorisée sur un utilisateur API.');
+
+            return false;
+        }
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if ($subject->isSuperAdmin() || $subject->isApiUser()) {
-            $vote?->addReason('Action non autorisée sur un super administrateur ou un utilisateur API.');
+        if ($subject->isSuperAdmin()) {
+            $vote?->addReason('Action non autorisée sur un super administrateur.');
 
             return false;
         }

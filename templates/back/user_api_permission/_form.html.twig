@@ -1,0 +1,29 @@
+<div class="fr-container--fluid">
+	<div class="fr-grid-row fr-grid-row--gutters fr-text--center fr-mb-5w fr-mt-5w">
+		<div class="fr-col-5">
+			<strong>Sélectionner un partenaire spécifique</strong>
+		</div>
+		<div class="fr-col-2">
+			<strong>OU</strong>
+		</div>
+		<div class="fr-col-5">
+			<strong>Sélectionner un groupe de partenaires</strong>
+		</div>
+	</div>
+	{{ form_start(form) }}
+	{{ form_errors(form) }}
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-5">
+			{{ form_row(form.territoryFilter) }}
+			{{ form_row(form.partner) }}
+		</div>
+		<div class="fr-col-2">
+		</div>
+		<div class="fr-col-5">
+			{{ form_row(form.territory) }}
+			{{ form_row(form.partnerType) }}
+            {{ form_row(form.save) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+</div>
