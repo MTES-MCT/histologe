@@ -64,7 +64,7 @@ class SignalementFileController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_ADD_SUIVI', $signalement);
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
