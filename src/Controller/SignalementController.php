@@ -513,7 +513,7 @@ class SignalementController extends AbstractController
 
         $formMessage = $this->createForm(MessageUsagerType::class);
         $formMessage->handleRequest($request);
-        if ($this->isGranted('SIGN_USAGER_EDIT', $signalement) && $formMessage->isSubmitted() && $formMessage->isValid()) {
+        if ($this->isGranted('SIGN_USAGER_ADD_SUIVI', $signalement) && $formMessage->isSubmitted() && $formMessage->isValid()) {
             $description = nl2br(htmlspecialchars($formMessage->get('description')->getData(), \ENT_QUOTES, 'UTF-8'));
 
             $docs = $fileRepository->findTempForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
@@ -637,7 +637,7 @@ class SignalementController extends AbstractController
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
-        if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
+        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -666,7 +666,7 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
+        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -721,7 +721,7 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        if (!$this->isGranted('SIGN_USAGER_EDIT_PROCEDURE', $signalement)) {
+        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);

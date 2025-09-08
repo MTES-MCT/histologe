@@ -34,7 +34,7 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_ADD_SUIVI', $signalement);
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
@@ -64,7 +64,7 @@ class SignalementFileController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_ADD_SUIVI', $signalement);
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
@@ -102,7 +102,7 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_ADD_SUIVI', $signalement);
 
         $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
         if (!$file) {

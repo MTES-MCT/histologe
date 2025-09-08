@@ -57,7 +57,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $client->loginUser($user);
 
         $fileRepository = static::getContainer()->get(FileRepository::class);
-        $file = $fileRepository->findOneBy([]);
+        $file = $fileRepository->findOneBy(['isStandalone' => true]);
         $this->assertNotNull($file, 'Aucun fichier disponible pour le test.');
 
         $router = self::getContainer()->get(RouterInterface::class);
@@ -120,7 +120,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $client->loginUser($user);
 
         $fileRepository = static::getContainer()->get(FileRepository::class);
-        $file = $fileRepository->findOneBy([]);
+        $file = $fileRepository->findOneBy(['isStandalone' => true]);
 
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_management_document_delete_ajax', ['file' => $file->getId()]);
