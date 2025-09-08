@@ -48,6 +48,16 @@ class UserApiPermission
             $context->buildViolation($message)->atPath('partnerType')->addViolation();
             $context->buildViolation($message)->atPath('territory')->addViolation();
         }
+        if ($this->partner && ($this->partnerType || $this->territory)) {
+            $message = 'Vous ne pouvez pas renseigner un partenaire et un groupe de partenaires.';
+            $context->buildViolation($message)->atPath('partner')->addViolation();
+            if ($this->partnerType) {
+                $context->buildViolation($message)->atPath('partnerType')->addViolation();
+            }
+            if ($this->territory) {
+                $context->buildViolation($message)->atPath('territory')->addViolation();
+            }
+        }
     }
 
     public function getId(): ?int
