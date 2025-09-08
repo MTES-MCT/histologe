@@ -35,7 +35,7 @@ class FilesUploadRequest implements RequestInterface
     #[Assert\Count(
         min: 1,
         max: 5,
-        minMessage: 'Vous devez téléverser au moins un fichier.',
+        minMessage: 'Vous devez téléverser au moins un fichier et vous assurez d\'envoyer un tableau de fichiers (files[]).',
         maxMessage: 'Vous ne pouvez pas téléverser plus de {{ limit }} fichiers.',
         groups: ['multiple_documents', 'multiple_images']
     )]
