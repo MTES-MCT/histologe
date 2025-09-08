@@ -66,7 +66,7 @@ class PartnerControllerTest extends WebTestCase
         $this->client->submitForm(
             'Créer le partenaire',
             [
-                'partner[territory]' => 1,
+                'partner[territory]' => 13,
                 'partner[nom]' => $name,
                 'partner[email]' => $this->faker->companyEmail(),
                 'partner[type]' => PartnerType::ARS->value,
@@ -100,7 +100,7 @@ class PartnerControllerTest extends WebTestCase
         $this->client->submitForm(
             'Enregistrer',
             [
-                'partner[territory]' => 1,
+                'partner[territory]' => $partner->getTerritory()->getId(),
                 'partner[nom]' => $this->faker->company(),
                 'partner[email]' => $this->faker->companyEmail(),
                 'partner[type]' => PartnerType::ARS->value,

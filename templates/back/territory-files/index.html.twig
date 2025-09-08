@@ -22,4 +22,80 @@
         </header>
     </section>
 
+    {{ form_start(form) }}
+
+    <section class="fr-container--fluid">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-6">
+                {{ form_row(form.queryName) }}
+            </div>
+            {% if form.territory is defined %}
+            <div class="fr-col-12 fr-col-md-6">
+                {{ form_row(form.territory) }}
+            </div>
+            {% endif %}
+            <div class="fr-col-12">
+                <ul id="form-field-type-tag-list" class="fr-tags-group">
+                {% for label, value in field_choices(form.type) %}
+                    <li><button type="button" class="fr-tag" aria-pressed="{{ field_value(form.type) is same as value ? 'true' : 'false' }}" data-value="{{ value }}">{{ label }}</button></li>
+                {% endfor %}
+                </ul>
+                <input type="hidden" id="form-field-type-value" name="{{ form.type.vars.full_name }}" value="{{ field_value(form.type) }}">
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-py-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(files|length, 'document trouvé', 'documents trouvés') }}</h2>
+    </section>
+    
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form, {render_rest: false}) }}
+
+    <section class="fr-col-12 fr-py-5v">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            {% for file in files %}
+                <div class="fr-col fr-col-md-6">
+                    <div class="fr-tile fr-tile--horizontal">
+                        <div class="fr-tile__body">
+                            <div class="fr-tile__content">
+                                <h3 class="fr-tile__title"
+                                    >{{ file.title }}</h3>
+                                <p class="fr-tile__desc"
+                                    >{{ file.description and file.description is not same as '' ? file.description|nl2br : 'Aucune description' }}</p>
+                                
+                                <div class="fr-col-12 fr-tile__detail fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-btns-group--icon-right fr-btns-group--right">
+                                    {% if file.isImageExtension %}
+                                    <a href="{{ sign_url(path('show_file', {uuid: file.uuid})) }}"
+                                        class="fr-btn fr-btn--secondary fr-mr-3v"
+                                        target="_blank" rel="noopener noreferrer"
+                                        >Afficher</a>
+                                    {% endif %}
+                                    <a href="{{ sign_url(path('show_file', {uuid: file.uuid})) }}"
+                                        class="fr-btn fr-btn--secondary fr-icon-file-download-line"
+                                        download
+                                        >Télécharger</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fr-tile__header">
+                            <div class="fr-tile__pictogram">
+                                <img class="fr-responsive-img" src="{{ asset('img/picto-dsfr/document.svg') }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_territory_files_index', searchTerritoryFiles.urlParams) }}
+        </div>
+    </section>
+
+
 {% endblock %}

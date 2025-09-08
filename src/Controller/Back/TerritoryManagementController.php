@@ -30,11 +30,11 @@ class TerritoryManagementController extends AbstractController
         $allZones = $zoneRepository->findForUserAndTerritory($user, null);
 
         $searchTerritoryFiles = new SearchTerritoryFiles($user);
-        $territory = null;
+        $territories = null;
         if (!$this->isGranted('ROLE_ADMIN')) {
-            $territory = $user->getFirstTerritory();
+            $territories = $user->getPartnersTerritories();
         }
-        $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territory, $maxListPagination);
+        $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination);
 
         return $this->render('back/territory-management/index.html.twig', [
             'countTags' => \count($allTags),
