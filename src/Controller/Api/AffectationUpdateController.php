@@ -137,7 +137,7 @@ class AffectationUpdateController extends AbstractController
                             new OA\Property(
                                 property: 'invalidValue',
                                 type: 'string',
-                                example: 'NOUVEAddU'
+                                example: 'NOUVEAU'
                             ),
                         ],
                         type: 'object'
