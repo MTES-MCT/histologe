@@ -17,10 +17,12 @@ class RnbServiceTest extends TestCase
     protected function setUp(): void
     {
         $mockResponse = new MockResponse(
-            file_get_contents(__DIR__.'/../../../../files/betagouv/get_api_rnb_buildings_response.json')
+            (string) file_get_contents(__DIR__.'/../../../../files/betagouv/get_api_rnb_buildings_response.json')
         );
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $this->rnbService = new RnbService($mockHttpClient, $this->createMock(LoggerInterface::class));
+        /** @var MockObject&LoggerInterface $logger */
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->rnbService = new RnbService($mockHttpClient, $logger);
     }
 
     public function testGetBuildings(): void
