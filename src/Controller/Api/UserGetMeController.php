@@ -54,7 +54,7 @@ class UserGetMeController extends AbstractController
                                 example: 4567
                             ),
                             new OA\Property(
-                                property: 'zipCode',
+                                property: 'codeDepartement',
                                 description: 'Code département du partenaire',
                                 type: 'string',
                                 example: '13'
