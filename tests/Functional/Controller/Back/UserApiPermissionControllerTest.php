@@ -194,4 +194,50 @@ class UserApiPermissionControllerTest extends WebTestCase
         $userApiPermissions = $userApiPermissionRepository->findBy(['user' => $userApi]);
         $this->assertEquals(0, count($userApiPermissions));
     }
+
+    public function testAddUser(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_api_user_add');
+
+        $csrfToken = $this->generateCsrfToken($client, 'user_api');
+        $client->request('POST', $route, [
+            'user_api' => [
+                '_token' => $csrfToken,
+                'email' => 'add-user-api@signal-logement.fr',
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(302);
+        $user = $userRepository->findOneBy(['email' => 'add-user-api@signal-logement.fr']);
+        $this->assertNotNull($user);
+    }
+
+    public function testAddExistingUser(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_api_user_add');
+
+        $csrfToken = $this->generateCsrfToken($client, 'user_api');
+        $client->request('POST', $route, [
+            'user_api' => [
+                '_token' => $csrfToken,
+                'email' => 'api-01@signal-logement.fr ',
+            ],
+        ]);
+        $this->assertStringContainsString('&quot;api-01@signal-logement.fr&quot; existe déja, merci de saisir un nouvel e-mail', $client->getResponse()->getContent());
+    }
 }

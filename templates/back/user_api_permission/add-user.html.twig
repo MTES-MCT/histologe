@@ -1,0 +1,37 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Ajouter un utilisateur API{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Utilisateurs API',
+            'level3Link': path('back_api_user_index'),
+            'level3Label': 'Retour à la liste des utilisateurs API',
+            'level4Title': 'Ajouter un utilisateur API',
+            'level4Link': '',
+            'level4Label': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12">
+                    <h1 class="fr-mb-0">Ajouter un utilisateur API</h1>
+                </div>
+            </div>
+        </header>
+
+    </section>
+
+<div class="fr-container--fluid">
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-6">
+            {{ form(form) }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

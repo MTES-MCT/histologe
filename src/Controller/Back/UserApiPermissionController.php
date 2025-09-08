@@ -2,10 +2,13 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Entity\UserApiPermission;
 use App\Form\SearchUserType;
 use App\Form\UserApiPermissionType;
+use App\Form\UserApiType;
+use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchUser;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -103,5 +107,38 @@ final class UserApiPermissionController extends AbstractController
         }
 
         return $this->redirectToRoute('back_api_user_index');
+    }
+
+    #[Route(path: '/add', name: 'back_api_user_add', methods: ['GET', 'POST'])]
+    public function add(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserManager $userManager,
+        UserPasswordHasherInterface $hasher,
+    ): Response {
+        $user = new User();
+        $user->setStatut(UserStatus::ACTIVE);
+        $user->setRoles([User::ROLE_API_USER]);
+        $user->setIsMailingActive(false);
+        $user->setIsActivateAccountNotificationEnabled(false);
+        $form = $this->createForm(UserApiType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $userManager->getComplexRandomPassword();
+            $passwordHashed = $hasher->hashPassword($user, $password);
+            $user->setPassword($passwordHashed);
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Utilisateur "'.$user->getEmail().'" créé avec succès avec le mot de passe "'.$password.'".');
+
+            return $this->redirectToRoute('back_api_user_index');
+        }
+
+        return $this->render('back/user_api_permission/add-user.html.twig', [
+            'form' => $form,
+        ]);
     }
 }
