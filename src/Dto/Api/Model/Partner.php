@@ -16,17 +16,18 @@ class Partner
 {
     #[OA\Property(
         description: 'L\'identifiant du partenaire.',
-        example: '13'
+        example: '4567'
     )]
     #[Groups(['user:me'])]
     public int $id;
 
     #[OA\Property(
-        description: 'Le code zip du partenaire.',
+        description: 'Le code département du partenaire.',
         example: '13'
     )]
     #[Groups(['user:me'])]
-    public string $zipCode;
+    public string $codeDepartement;
+
     #[OA\Property(
         description: 'Le nom du partenaire.',
         example: 'ADIL 13'
@@ -40,6 +41,7 @@ class Partner
     )]
     #[Groups(['user:me'])]
     public PartnerType $type;
+
     /** @var array<Qualification> $competences */
     #[OA\Property(
         description: 'Liste des compétences associées au partenaire.',
@@ -78,7 +80,7 @@ class Partner
     ) {
         $this->id = $partner->getId();
         $this->nom = $partner->getNom();
-        $this->zipCode = $partner->getTerritory()->getZip();
+        $this->codeDepartement = $partner->getTerritory()->getZip();
         $this->type = $partner->getType();
         $this->competences = $partner->getCompetence() ?? [];
     }

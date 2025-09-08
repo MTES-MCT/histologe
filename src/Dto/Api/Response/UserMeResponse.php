@@ -14,7 +14,7 @@ class UserMeResponse
 {
     #[Groups(['user:me'])]
     #[OA\Property(
-        description: 'Email de l\'utilisateur api',
+        description: 'E-mail de l\'utilisateur api',
         format: 'string',
         example: 'email@example.com'
     )]
@@ -27,7 +27,7 @@ class UserMeResponse
         type: 'array',
         items: new OA\Items(ref: '#/components/schemas/Partner')
     )]
-    public array $authorizedPartners;
+    public array $partenairesAutorises;
 
     /**
      * @param Partner[] $partners
@@ -35,6 +35,6 @@ class UserMeResponse
     public function __construct(string $email, array $partners)
     {
         $this->email = $email;
-        $this->authorizedPartners = $partners;
+        $this->partenairesAutorises = $partners;
     }
 }

@@ -22,7 +22,7 @@ readonly class PartnerAuthorizedResolver
         $listPartner = [];
         foreach ($permissions as $permission) {
             if (null !== $permission->getPartner()) {
-                if ($partner = $this->partnerRepository->find($permission->getPartner()->getId())) {
+                if ($partner = $this->partnerRepository->findOneBy(['id' => $permission->getPartner()->getId(), 'isArchive' => false])) {
                     $listPartner[$partner->getId()] = $partner;
                 }
                 continue;

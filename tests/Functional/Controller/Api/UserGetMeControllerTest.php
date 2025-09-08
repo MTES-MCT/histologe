@@ -11,6 +11,8 @@ class UserGetMeControllerTest extends WebTestCase
 {
     /**
      * @dataProvider provideUserEmailApi
+     *
+     * @param array<int> $expectedPartnerIds
      */
     public function testUserGetMe(string $email, array $expectedPartnerIds, int $nbPartners): void
     {
@@ -27,10 +29,10 @@ class UserGetMeControllerTest extends WebTestCase
 
         $authorizedPartnerIds = array_map(
             fn ($partner) => $partner['id'],
-            $response['authorizedPartners']
+            $response['partenairesAutorises']
         );
 
-        $this->assertCount($nbPartners, $response['authorizedPartners']);
+        $this->assertCount($nbPartners, $response['partenairesAutorises']);
         foreach ($expectedPartnerIds as $expectedId) {
             $this->assertTrue(
                 in_array($expectedId, $authorizedPartnerIds, true),
