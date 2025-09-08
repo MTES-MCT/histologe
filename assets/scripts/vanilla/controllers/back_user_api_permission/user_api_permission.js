@@ -1,6 +1,7 @@
 document.querySelectorAll('.btn-delete-user-api-permission').forEach((btn) => {
   btn.addEventListener('click', () => {
     document.querySelector('#user_api_permission_delete_form').action = btn.dataset.url;
+    document.querySelector('#fr-modal-user-api-permission-delete-description').innerHTML = btn.dataset.description;
   });
 });
 

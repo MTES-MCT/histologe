@@ -10,10 +10,11 @@
                         <h1 id="fr-modal-user-api-permission-delete-title" class="fr-modal__title">
                             Suppression d'une permission API
                         </h1>   
+                        <div>
+                            Confirmez-vous la suppression de la permission API suivante :
+                            <div id="fr-modal-user-api-permission-delete-description"></div>
+                        </div>
                         <form action="#" name="user_api_permission_delete" id="user_api_permission_delete_form" method="POST">
-                            <div>
-                                Confirmez-vous la suppression de la permission API ?
-                            </div>
                             <input type="hidden" name="_token" value="{{ csrf_token('user_api_permission_delete') }}">
                         </form>
                     </div>
