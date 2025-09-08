@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use App\Repository\AffectationRepository;
 
 class IdossServiceTest extends KernelTestCase
 {

@@ -14,7 +14,7 @@ class JWKSResponseTest extends TestCase
         $jwksResponse['keys'][0]['kty'] = 'invalid';
         $jwksResponse['keys'][0]['alg'] = 'invalid';
 
-        $jwks = new JWKSResponse(json_encode($jwksResponse));
+        $jwks = new JWKSResponse((string) json_encode($jwksResponse));
 
         $this->assertNull($jwks->findPublicKey());
     }

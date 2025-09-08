@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -47,6 +48,7 @@ class JobEventHttpClientTest extends TestCase
             ),
         ];
 
+        /** @var string $mockResponseBody */
         $mockResponseBody = json_encode([
             'rowList' => [
                 [
@@ -60,11 +62,13 @@ class JobEventHttpClientTest extends TestCase
         ]);
         $mockHttpClient = new MockHttpClient($mockResponse);
 
+        /** @var MockObject&JobEventManager $jobEventManagerMock */
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
         $jobEventManagerMock
             ->expects($this->once())
             ->method('createJobEvent');
 
+        /** @var MockObject&LoggerInterface $loggerMock */
         $loggerMock = $this->createMock(LoggerInterface::class);
         $loggerMock->expects($this->exactly(2))
             ->method('info');
@@ -91,7 +95,10 @@ class JobEventHttpClientTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $mockHttpClient = new MockHttpClient();
+
+        /** @var MockObject&JobEventManager $jobEventManagerMock */
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
+        /** @var MockObject&LoggerInterface $loggerMock */
         $loggerMock = $this->createMock(LoggerInterface::class);
 
         $jobEventHttpClient = new JobEventHttpClient(
@@ -117,7 +124,10 @@ class JobEventHttpClientTest extends TestCase
         ]
         );
         $mockHttpClient = new MockHttpClient($mockResponse);
+
+        /** @var MockObject&JobEventManager $jobEventManagerMock */
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
+        /** @var MockObject&LoggerInterface $loggerMock */
         $loggerMock = $this->createMock(LoggerInterface::class);
 
         $jobEventHttpClient = new JobEventHttpClient(
@@ -146,12 +156,15 @@ class JobEventHttpClientTest extends TestCase
             ),
         ];
 
+        /** @var string $mockResponseBody */
         $mockResponseBody = json_encode(['message' => 'hello wiremock']);
         $mockResponse = new MockResponse($mockResponseBody, [
             'http_code' => Response::HTTP_OK,
         ]);
         $mockHttpClient = new MockHttpClient($mockResponse);
+        /** @var MockObject&JobEventManager $jobEventManagerMock */
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
+        /** @var MockObject&LoggerInterface $loggerMock */
         $loggerMock = $this->createMock(LoggerInterface::class);
 
         $jobEventHttpClient = new JobEventHttpClient(

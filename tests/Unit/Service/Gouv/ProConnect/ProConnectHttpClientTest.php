@@ -23,8 +23,8 @@ class ProConnectHttpClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->jwksFile = file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
-        $this->discoveryFile = file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/openid-configuration.json');
+        $this->jwksFile = (string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
+        $this->discoveryFile = (string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/openid-configuration.json');
     }
 
     /**
@@ -61,14 +61,14 @@ class ProConnectHttpClientTest extends TestCase
 
     public function testRequestToken(): void
     {
-        $discoveryResponse = new MockResponse(json_encode([
+        $discoveryResponse = new MockResponse((string) json_encode([
             'authorization_endpoint' => 'https://proconnect.gouv.fr/authorize',
             'token_endpoint' => 'https://proconnect.gouv.fr/token',
             'userinfo_endpoint' => 'https://proconnect.gouv.fr/userinfo',
             'jwks_uri' => 'https://proconnect.gouv.fr/jwks',
         ]));
 
-        $tokenResponse = new MockResponse(json_encode([
+        $tokenResponse = new MockResponse((string) json_encode([
             'access_token' => 'access123',
             'id_token' => 'idtoken123',
             'expires_in' => 3600,

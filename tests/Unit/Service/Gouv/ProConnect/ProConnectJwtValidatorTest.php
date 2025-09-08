@@ -11,9 +11,9 @@ class ProConnectJwtValidatorTest extends TestCase
 {
     public function testValidJwtReturnsTrue(): void
     {
-        $jwt = trim(file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/userinfo.txt'));
+        $jwt = trim((string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/userinfo.txt'));
         $jwksJson = file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
-        $jwks = new JWKSResponse($jwksJson);
+        $jwks = new JWKSResponse((string) $jwksJson);
 
         $validator = new ProConnectJwtValidator(new NullLogger());
         $result = $validator->validate($jwks, $jwt, 'fake_nonce');
@@ -25,7 +25,7 @@ class ProConnectJwtValidatorTest extends TestCase
     {
         $invalidJwt = 'invalid.jwt.token';
         $jwksJson = file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
-        $jwks = new JWKSResponse($jwksJson);
+        $jwks = new JWKSResponse((string) $jwksJson);
 
         $validator = new ProConnectJwtValidator(new NullLogger());
         $result = $validator->validate($jwks, $invalidJwt, 'fake_nonce');
@@ -37,7 +37,7 @@ class ProConnectJwtValidatorTest extends TestCase
     {
         $jwt = trim(file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/userinfo.txt'));
         $jwksJson = file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
-        $jwks = new JWKSResponse($jwksJson);
+        $jwks = new JWKSResponse((string) $jwksJson);
 
         $validator = new ProConnectJwtValidator(new NullLogger());
         $result = $validator->validate($jwks, $jwt, 'wrong_nonce');
