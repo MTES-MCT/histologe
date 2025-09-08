@@ -109,8 +109,8 @@ final class UserApiPermissionController extends AbstractController
         return $this->redirectToRoute('back_api_user_index');
     }
 
-    #[Route(path: '/add-user', name: 'back_user_api_permission_add_user', methods: ['GET', 'POST'])]
-    public function showAddUserForm(
+    #[Route(path: '/add', name: 'back_api_user_add', methods: ['GET', 'POST'])]
+    public function add(
         Request $request,
         EntityManagerInterface $entityManager,
         UserManager $userManager,
@@ -119,8 +119,6 @@ final class UserApiPermissionController extends AbstractController
         $user = new User();
         $user->setStatut(UserStatus::ACTIVE);
         $user->setRoles([User::ROLE_API_USER]);
-        $user->setPrenom('API');
-        $user->setNom('API');
         $user->setIsMailingActive(false);
         $user->setIsActivateAccountNotificationEnabled(false);
         $form = $this->createForm(UserApiType::class, $user);
@@ -136,7 +134,7 @@ final class UserApiPermissionController extends AbstractController
 
             $this->addFlash('success', 'Utilisateur "'.$user->getEmail().'" créé avec succès avec le mot de passe "'.$password.'".');
 
-            return $this->redirectToRoute('back_user_api_permission_index');
+            return $this->redirectToRoute('back_api_user_index');
         }
 
         return $this->render('back/user_api_permission/add-user.html.twig', [
