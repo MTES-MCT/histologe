@@ -138,11 +138,11 @@
                 </div>
                 {% for subKey, subChild in child.choices %}
                     {% if subChild.choices is defined %}
-                        <div class="fr-fieldset__element fr-ml-2v">
+                        <div class="fr-fieldset__element fr-ml-3v">
                             <strong>{{subKey}}</strong>
                         </div>
                         {% for subSubChild in subChild.choices %}
-                            <div class="fr-fieldset__element fr-ml-2v">
+                            <div class="fr-fieldset__element fr-ml-3v">
                                 <div class="fr-checkbox-group">
                                     <input name="{{form.vars.full_name}}" id="{{id}}-checkboxes-{{subSubChild.value}}" type="checkbox" value="{{subSubChild.value}}" 
                                         {% if subSubChild.value in form.vars.value %}checked="checked"{% endif %} >

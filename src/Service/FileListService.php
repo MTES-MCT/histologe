@@ -49,8 +49,7 @@ class FileListService
 
         // 1. Documents de la situation (ex "Documents du dossier")
         $situationFiles = $signalement->getFiles()->filter(function (File $file) {
-            return $file->isTypeDocument() && !$file->getIsSuspicious()
-                   && ($file->isSituationDocument() || null === $file->getDocumentType());
+            return !$file->getIsSuspicious() && ($file->isSituation() || null === $file->getDocumentType());
         });
         $choices['Documents de la situation'] = $situationFiles->toArray();
 
