@@ -7,7 +7,6 @@ use App\Form\SearchTerritoryFilesType;
 use App\Repository\FileRepository;
 use App\Service\ListFilters\SearchTerritoryFiles;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,7 +20,6 @@ class TerritoryFilesController extends AbstractController
     public function index(
         Request $request,
         FileRepository $fileRepository,
-        ParameterBagInterface $parameterBag,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -33,11 +31,11 @@ class TerritoryFilesController extends AbstractController
         }
 
         $maxListPagination = self::MAX_LIST_PAGINATION;
-        $territory = null;
+        $territories = null;
         if (!$this->isGranted('ROLE_ADMIN')) {
-            $territory = $user->getFirstTerritory();
+            $territories = $user->getPartnersTerritories();
         }
-        $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territory, $maxListPagination);
+        $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination);
 
         return $this->render('back/territory-files/index.html.twig', [
             'form' => $form,
