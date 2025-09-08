@@ -139,7 +139,7 @@
                 {% for subKey, subChild in child.choices %}
                     {% if subChild.choices is defined %}
                         <div class="fr-fieldset__element fr-ml-3v">
-                            <strong>{{subKey}}</strong>
+                            <strong>&gt; {{subKey}}</strong>
                         </div>
                         {% for subSubChild in subChild.choices %}
                             <div class="fr-fieldset__element fr-ml-3v">
