@@ -61,7 +61,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::GUID)]
+    #[ORM\Column(type: Types::GUID, unique: true)]
     private ?string $uuid = null;
 
     #[ORM\Column(length: 255, unique: true, nullable: true)]
@@ -243,14 +243,14 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(string $email): static
     {
         $this->email = $email;
 
         return $this;
     }
 
-    public function setProConnectUserId(?string $proConnectUserId): self
+    public function setProConnectUserId(?string $proConnectUserId): static
     {
         $this->proConnectUserId = $proConnectUserId;
 
@@ -275,7 +275,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $password): static
     {
         $this->password = $password;
 
@@ -299,7 +299,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->signalementsModified;
     }
 
-    public function addSignalementModified(Signalement $signalement): self
+    public function addSignalementModified(Signalement $signalement): static
     {
         if (!$this->signalementsModified->contains($signalement)) {
             $this->signalementsModified[] = $signalement;
@@ -309,7 +309,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function removeSignalementModified(Signalement $signalement): self
+    public function removeSignalementModified(Signalement $signalement): static
     {
         if ($this->signalementsModified->removeElement($signalement)) {
             // set the owning side to null (unless already changed)
@@ -339,7 +339,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         });
     }
 
-    public function addSignalementCreated(Signalement $signalement): self
+    public function addSignalementCreated(Signalement $signalement): static
     {
         if (!$this->signalementsCreated->contains($signalement)) {
             $this->signalementsCreated[] = $signalement;
@@ -349,7 +349,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function removeSignalementCreated(Signalement $signalement): self
+    public function removeSignalementCreated(Signalement $signalement): static
     {
         if ($this->signalementsCreated->removeElement($signalement)) {
             // set the owning side to null (unless already changed)
@@ -369,7 +369,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->suivis;
     }
 
-    public function addSuivi(Suivi $suivi): self
+    public function addSuivi(Suivi $suivi): static
     {
         if (!$this->suivis->contains($suivi)) {
             $this->suivis[] = $suivi;
@@ -379,7 +379,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function removeSuivi(Suivi $suivi): self
+    public function removeSuivi(Suivi $suivi): static
     {
         if ($this->suivis->removeElement($suivi)) {
             // set the owning side to null (unless already changed)
@@ -499,7 +499,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->nom;
     }
 
-    public function setNom(?string $nom): self
+    public function setNom(?string $nom): static
     {
         $this->nom = $nom;
 
@@ -511,7 +511,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->prenom;
     }
 
-    public function setPrenom(?string $prenom): self
+    public function setPrenom(?string $prenom): static
     {
         $this->prenom = $prenom;
 
@@ -532,7 +532,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->statut;
     }
 
-    public function setStatut(UserStatus $statut): self
+    public function setStatut(UserStatus $statut): static
     {
         $this->statut = $statut;
 
@@ -553,7 +553,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return '';
     }
 
-    public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): self
+    public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): static
     {
         $this->lastLoginAt = $lastLoginAt;
         $this->archivingScheduledAt = null;
@@ -566,7 +566,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->isMailingActive;
     }
 
-    public function setIsMailingActive(bool $isMailingActive): self
+    public function setIsMailingActive(bool $isMailingActive): static
     {
         $this->isMailingActive = $isMailingActive;
 
@@ -578,7 +578,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->isMailingSummary;
     }
 
-    public function setIsMailingSummary(?bool $isMailingSummary): self
+    public function setIsMailingSummary(?bool $isMailingSummary): static
     {
         $this->isMailingSummary = $isMailingSummary;
 
@@ -593,7 +593,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->notifications;
     }
 
-    public function addNotification(Notification $notification): self
+    public function addNotification(Notification $notification): static
     {
         if (!$this->notifications->contains($notification)) {
             $this->notifications[] = $notification;
@@ -603,7 +603,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function removeNotification(Notification $notification): self
+    public function removeNotification(Notification $notification): static
     {
         if ($this->notifications->removeElement($notification)) {
             // set the owning side to null (unless already changed)
@@ -641,7 +641,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     }
 
     /** @param array<mixed> $roles */
-    public function setRoles(array $roles): self
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
 
@@ -683,7 +683,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->hasPermissionAffectation;
     }
 
-    public function setHasPermissionAffectation(bool $hasPermissionAffectation): self
+    public function setHasPermissionAffectation(bool $hasPermissionAffectation): static
     {
         $this->hasPermissionAffectation = $hasPermissionAffectation;
 
@@ -695,7 +695,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->token;
     }
 
-    public function setToken(?string $token): self
+    public function setToken(?string $token): static
     {
         $this->token = $token;
 
@@ -707,7 +707,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->tokenExpiredAt;
     }
 
-    public function setTokenExpiredAt(?\DateTimeImmutable $tokenExpiredAt): self
+    public function setTokenExpiredAt(?\DateTimeImmutable $tokenExpiredAt): static
     {
         $this->tokenExpiredAt = $tokenExpiredAt;
 
@@ -719,7 +719,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->uuid;
     }
 
-    public function setUuid(string $uuid): self
+    public function setUuid(string $uuid): static
     {
         $this->uuid = $uuid;
 
@@ -734,7 +734,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->files;
     }
 
-    public function addFile(File $file): self
+    public function addFile(File $file): static
     {
         if (!$this->files->contains($file)) {
             $this->files->add($file);
@@ -744,7 +744,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function removeFile(File $file): self
+    public function removeFile(File $file): static
     {
         if ($this->files->removeElement($file)) {
             // set the owning side to null (unless already changed)
@@ -761,7 +761,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->isActivateAccountNotificationEnabled;
     }
 
-    public function setIsActivateAccountNotificationEnabled(bool $isActivateAccountNotificationEnabled): self
+    public function setIsActivateAccountNotificationEnabled(bool $isActivateAccountNotificationEnabled): static
     {
         $this->isActivateAccountNotificationEnabled = $isActivateAccountNotificationEnabled;
 
@@ -790,7 +790,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->archivingScheduledAt;
     }
 
-    public function setArchivingScheduledAt(?\DateTimeInterface $archivingScheduledAt): self
+    public function setArchivingScheduledAt(?\DateTimeInterface $archivingScheduledAt): static
     {
         $this->archivingScheduledAt = $archivingScheduledAt;
 
@@ -843,7 +843,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->cguVersionChecked;
     }
 
-    public function setCguVersionChecked(string $cguVersionChecked): self
+    public function setCguVersionChecked(string $cguVersionChecked): static
     {
         $this->cguVersionChecked = $cguVersionChecked;
 
@@ -855,7 +855,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->avatarFilename;
     }
 
-    public function setAvatarFilename(?string $avatarFilename): self
+    public function setAvatarFilename(?string $avatarFilename): static
     {
         $this->avatarFilename = $avatarFilename;
 
@@ -867,7 +867,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->tempEmail;
     }
 
-    public function setTempEmail(?string $tempEmail): self
+    public function setTempEmail(?string $tempEmail): static
     {
         $this->tempEmail = $tempEmail;
 
@@ -886,7 +886,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->apiUserTokens;
     }
 
-    public function addApiUserToken(ApiUserToken $apiUserToken): self
+    public function addApiUserToken(ApiUserToken $apiUserToken): static
     {
         if (!$this->apiUserTokens->contains($apiUserToken)) {
             $this->apiUserTokens[] = $apiUserToken;
@@ -896,7 +896,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function removeApiUserToken(ApiUserToken $apiUserToken): self
+    public function removeApiUserToken(ApiUserToken $apiUserToken): static
     {
         if ($this->apiUserTokens->removeElement($apiUserToken)) {
             // set the owning side to null (unless already changed)

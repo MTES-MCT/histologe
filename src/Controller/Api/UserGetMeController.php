@@ -48,10 +48,10 @@ class UserGetMeController extends AbstractController
                     items: new OA\Items(
                         properties: [
                             new OA\Property(
-                                property: 'id',
-                                description: 'Identifiant du partenaire',
-                                type: 'integer',
-                                example: 4567
+                                property: 'uuid',
+                                description: 'Identifiant UUID du partenaire',
+                                type: 'string',
+                                example: '342bf101-506d-4159-ba0c-c097f8cf12e7'
                             ),
                             new OA\Property(
                                 property: 'codeDepartement',

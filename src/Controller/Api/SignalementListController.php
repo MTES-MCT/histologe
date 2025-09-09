@@ -20,6 +20,7 @@ class SignalementListController extends AbstractController
 {
     /**
      * @throws \DateMalformedStringException
+     * @throws \Exception
      */
     #[Route('/signalements', name: 'api_signalements', methods: ['GET'])]
     #[OA\Get(
@@ -92,7 +93,6 @@ class SignalementListController extends AbstractController
         SignalementResponseFactory $signalementResponseFactory,
         #[MapQueryString] ?SignalementListQueryParams $signalementListQueryParams = null,
     ): JsonResponse {
-        // TODO permission API : ajout du parametre partenaire facultatif ? Si oui gérer le cas dans la requete findAllForApi
         $signalementListQueryParams ??= new SignalementListQueryParams();
         /** @var User $user */
         $user = $this->getUser();
@@ -108,6 +108,9 @@ class SignalementListController extends AbstractController
         return new JsonResponse($resources, Response::HTTP_OK);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/signalements/{uuid}', name: 'api_signalement_uuid', methods: ['GET'])]
     #[OA\Get(
         path: '/api/signalements/{uuid}',

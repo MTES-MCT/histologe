@@ -16,6 +16,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
@@ -41,6 +42,9 @@ class Partner implements EntityHistoryInterface
     #[ORM\Column(type: 'integer')]
     #[Groups(['widget-settings:read'])]
     private ?int $id = null;
+
+    #[ORM\Column(type: Types::GUID, unique: true)]
+    private ?string $uuid = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
@@ -131,6 +135,7 @@ class Partner implements EntityHistoryInterface
 
     public function __construct()
     {
+        $this->uuid = Uuid::v4();
         $this->isArchive = false;
         $this->affectations = new ArrayCollection();
         $this->interventions = new ArrayCollection();
@@ -542,6 +547,18 @@ class Partner implements EntityHistoryInterface
     public function setBailleur(?Bailleur $bailleur): static
     {
         $this->bailleur = $bailleur;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(?string $uuid): static
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }

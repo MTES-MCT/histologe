@@ -4,7 +4,9 @@ namespace App\Service\Security;
 
 use App\Entity\Partner;
 use App\Entity\User;
+use App\EventListener\SecurityApiExceptionListener;
 use App\Repository\PartnerRepository;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 readonly class PartnerAuthorizedResolver
 {
@@ -56,6 +58,43 @@ readonly class PartnerAuthorizedResolver
         }
 
         return array_values($listPartner);
+    }
+
+    public function resolvePartner(User $user, ?string $partenaireUuid = null): Partner
+    {
+        if ($partenaireUuid) {
+            $partner = $this->partnerRepository->findOneBy(['uuid' => $partenaireUuid, 'isArchive' => false]);
+
+            if (!$partner) {
+                throw new AccessDeniedException(SecurityApiExceptionListener::ACCESS_DENIED_PARTNER_NOT_FOUND);
+            }
+
+            return $partner;
+        }
+
+        $partner = $this->getUniquePartner($user);
+        if (!$partner) {
+            throw new AccessDeniedException(SecurityApiExceptionListener::ACCESS_DENIED_PARTNER);
+        }
+
+        return $partner;
+    }
+
+    /**
+     * @return array|Partner[]
+     */
+    public function resolvePartners(User $user): array|Partner
+    {
+        $partner = $this->getUniquePartner($user);
+        if ($partner) {
+            return $partner;
+        }
+
+        $partners = $this->resolveBy($user);
+        if (count($partners) > 1) {
+            return $partners;
+        }
+        throw new AccessDeniedException(SecurityApiExceptionListener::ACCESS_DENIED_PARTNER);
     }
 
     public function hasPermissionOnPartner(User $user, Partner $partner): bool

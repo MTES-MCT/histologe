@@ -59,6 +59,7 @@ class VisiteCreateController extends AbstractController
                         value: [
                             'date' => '2055-06-15',
                             'time' => '10:00',
+                            'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
                         ]
                     ),
                     new OA\Examples(
@@ -74,6 +75,7 @@ class VisiteCreateController extends AbstractController
                             'notifyUsager' => true,
                             'details' => 'Lorem ipsum dolor sit amet.',
                             'concludeProcedure' => ['LOGEMENT_DECENT'],
+                            'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
                         ]
                     ),
                 ],
@@ -177,10 +179,7 @@ class VisiteCreateController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
-        if (!$partner) {
-            throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
-        }
+        $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $visiteRequest->partenaireUuid);
         $this->denyAccessUnlessGranted(
             ApiSignalementPartnerVoter::API_ADD_INTERVENTION,
             ['signalement' => $signalement, 'partner' => $partner],

@@ -64,6 +64,13 @@ class ArreteRequest implements RequestInterface
     )]
     public ?string $mainLeveeNumero = null;
 
+    #[OA\Property(
+        description: 'Identifiant UUID du partenaire.',
+        example: '342bf101-506d-4159-ba0c-c097f8cf12e7',
+    )]
+    #[Assert\Uuid(message: 'Veuillez fournir un UUID valide.')]
+    public ?string $partenaireUuid = null;
+
     public static function validatePastDate(?string $dateValue, ExecutionContextInterface $context): void
     {
         if (null === $dateValue) {

@@ -40,12 +40,15 @@ class SignalementResponse
     )]
     public string $dateCreation;
 
+    /**
+     * @var Affectation[]
+     */
     #[OA\Property(
-        ref: new Model(type: Affectation::class),
-        description: 'Informations détaillées sur l\'affectation du partenaire',
-        type: 'object',
+        description: 'Liste des affectations.',
+        type: 'array',
+        items: new OA\Items(ref: new Model(type: Affectation::class))
     )]
-    public Affectation $affectation;
+    public array $affectations = [];
 
     #[OA\Property(
         ref: new Model(type: Adresse::class),

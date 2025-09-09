@@ -58,6 +58,7 @@ class ArreteCreateController extends AbstractController
                             'numero' => '123456789',
                             'numeroDossier' => '2023/DD13/00664',
                             'type' => 'Arrêté L.511-11 - Suroccupation',
+                            'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
                         ]
                     ),
                     new OA\Examples(
@@ -71,6 +72,7 @@ class ArreteCreateController extends AbstractController
                             'type' => 'Arrêté L.511-11 - Suroccupation',
                             'mainLeveeDate' => '2023-01-01',
                             'mainLeveeNumero' => '123456789',
+                            'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
                         ]
                     ),
                 ],
@@ -174,10 +176,7 @@ class ArreteCreateController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
-        if (!$partner) {
-            throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
-        }
+        $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $arreteRequest->partenaireUuid);
         $this->denyAccessUnlessGranted(
             ApiSignalementPartnerVoter::API_ADD_INTERVENTION,
             ['signalement' => $signalement, 'partner' => $partner],

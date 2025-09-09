@@ -28,6 +28,7 @@ use App\Service\DashboardTabPanel\TabQueryParameters;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
+use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
@@ -60,7 +61,9 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function __construct(
         ManagerRegistry $registry,
-        private readonly SearchFilter $searchFilter, private readonly Security $security,
+        private readonly SearchFilter $searchFilter,
+        private readonly Security $security,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
         parent::__construct($registry, Signalement::class);
     }
@@ -1590,13 +1593,8 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findForAPIQueryBuilder(User $user): QueryBuilder
     {
-        // TODO permission API : récupérer la liste des partenaires depuis le service de saidi (ou le filtre si directement spécifié ?)
-        $partners = [];
-        foreach ($user->getUserApiPermissions() as $permission) {
-            if ($permission->getPartner()) {
-                $partners[] = $permission->getPartner();
-            }
-        }
+        // TODO permission API : filtre partner
+        $partners = $this->partnerAuthorizedResolver->resolveBy($user);
         $qb = $this->createQueryBuilder('s');
 
         return $qb->select('s', 'territory')
