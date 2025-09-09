@@ -50,12 +50,18 @@
                 </div>
                 <div class="fr-col-12">
                     <h2 class="fr-mb-0 fr-h3">Affichage du document aux partenaires</h2>
-                    Par défaut, le document est disponible pour tous les partenaires. Choisissez types et/ou compétences si vous souhaitez restreindre l'affichage du document.
+                    <p>
+                        Par défaut, le document est disponible pour tous les partenaires. Activez l'interrupteur si vous souhaitez paramétrer l'affichage du document.
+                    </p>
+                    <div class="fr-toggle">
+                        <input type="checkbox" id="partner-visibility-toggle" class="fr-toggle__input">
+                        <label class="fr-toggle__label" for="partner-visibility-toggle">Paramétrer l'affichage pour les partenaires</label>
+                    </div>
                 </div>
-                <div class="fr-col-6">
+                <div class="fr-col-6 fr-hidden" id="partner-visibility-type" >
                     {{ form_row(addForm.partnerType) }}
                 </div>
-                <div class="fr-col-6">
+                <div class="fr-col-6 fr-hidden" id="partner-visibility-competence" >
                     {{ form_row(addForm.partnerCompetence) }}
                 </div>
             </div>
