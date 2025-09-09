@@ -12,6 +12,7 @@ use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -33,6 +35,7 @@ class SignalementFileUploadController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly FileFactory $fileFactory,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -136,7 +139,13 @@ class SignalementFileUploadController extends AbstractController
         }
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $data['files'] = $request->files->all();
-        $filesUploadRequest = $this->normalizer->denormalize($data['files'], FilesUploadRequest::class, 'json');
+        $filesUploadRequest = new FilesUploadRequest();
+        try {
+            $filesUploadRequest = $this->normalizer->denormalize($data['files'], FilesUploadRequest::class, 'json');
+        } catch (NotNormalizableValueException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
         $errors = $this->validator->validate(value: $filesUploadRequest, groups: ['multiple_documents']);
         if (count($errors) > 0) {
             throw new ValidationFailedException($filesUploadRequest, $errors);
