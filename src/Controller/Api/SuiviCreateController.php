@@ -13,7 +13,7 @@ use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\SuiviManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Sanitizer;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,7 +30,7 @@ class SuiviCreateController extends AbstractController
     public function __construct(
         readonly private SuiviManager $suiviManager,
         readonly private ValidatorInterface $validator,
-        readonly private UserApiPermissionService $userApiPermissionService,
+        readonly private PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -136,7 +136,7 @@ class SuiviCreateController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $this->userApiPermissionService->getUniquePartner($user);
+        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
         if (!$partner) {
             throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
         }

@@ -10,7 +10,7 @@ use App\Event\FileUploadedEvent;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\FileFactory;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -38,8 +38,8 @@ class SignalementFileUploadController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly FileFactory $fileFactory,
-        private readonly UserApiPermissionService $userApiPermissionService,
         private readonly LoggerInterface $logger,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -143,7 +143,7 @@ class SignalementFileUploadController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $this->userApiPermissionService->getUniquePartner($user);
+        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
         if (!$partner) {
             throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
         }

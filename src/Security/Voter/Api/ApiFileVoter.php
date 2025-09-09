@@ -7,7 +7,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\File;
 use App\Entity\User;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -19,7 +19,7 @@ class ApiFileVoter extends Voter
 
     public function __construct(
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
-        private readonly UserApiPermissionService $userApiPermissionService,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -72,7 +72,7 @@ class ApiFileVoter extends Voter
             if (AffectationStatus::ACCEPTED !== $affectation->getStatut()) {
                 return false;
             }
-            if ($this->userApiPermissionService->hasPermissionOnPartner($user, $affectation->getPartner())) {
+            if ($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $affectation->getPartner())) {
                 return true;
             }
 
@@ -80,7 +80,7 @@ class ApiFileVoter extends Voter
         }
         $hasAffectationForPartner = false;
         foreach ($file->getSignalement()->getAffectations() as $affectation) {
-            if ($this->userApiPermissionService->hasPermissionOnPartner($user, $affectation->getPartner())) {
+            if ($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $affectation->getPartner())) {
                 $hasAffectationForPartner = true;
                 break;
             }

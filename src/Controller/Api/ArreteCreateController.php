@@ -12,7 +12,7 @@ use App\Event\InterventionCreatedEvent;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\InterventionManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -33,7 +33,7 @@ class ArreteCreateController extends AbstractController
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterventionManager $interventionManager,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
-        private readonly UserApiPermissionService $userApiPermissionService,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -174,7 +174,7 @@ class ArreteCreateController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $this->userApiPermissionService->getUniquePartner($user);
+        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
         if (!$partner) {
             throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
         }

@@ -8,7 +8,6 @@ use App\Dto\Api\Model\Desordre;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Response\SignalementResponse;
-use App\Entity\Affectation;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\EtageType;
@@ -16,7 +15,7 @@ use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -35,7 +34,7 @@ readonly class SignalementResponseFactory
         private FileFactory $fileFactory,
         private VisiteFactory $visiteFactory,
         private Security $security,
-        private UserApiPermissionService $userApiPermissionService,
+        private PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -43,7 +42,7 @@ readonly class SignalementResponseFactory
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $partner = $this->userApiPermissionService->getUniquePartner($user);
+        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
         if (!$partner) {
             throw new \Exception('TODO permission API : Définir que faire pour les permission multi partenaire');
         }

@@ -8,7 +8,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -21,7 +21,7 @@ class ApiSignalementPartnerVoter extends Voter
 
     public function __construct(
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
-        private readonly UserApiPermissionService $userApiPermissionService,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -54,7 +54,7 @@ class ApiSignalementPartnerVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
 
-        if (!$this->userApiPermissionService->hasPermissionOnPartner($user, $subject['partner'])) {
+        if (!$this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $subject['partner'])) {
             return false;
         }
 

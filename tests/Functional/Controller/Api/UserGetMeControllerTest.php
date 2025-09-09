@@ -44,10 +44,10 @@ class UserGetMeControllerTest extends WebTestCase
     public function provideUserEmailApi(): \Generator
     {
         yield 'Partenaire id 2' => ['api-01@signal-logement.fr', [2], 1];
-        yield 'Partenaire id 84' => ['api-02@signal-logement.fr', [84], 1];
-        yield 'Partenaires EPCI de La Réunion' => ['api-reunion-epci@signal-logement.fr', [19], 1];
-        yield 'Partenaires COMMUNE_SCHS' => ['api-oilhi@signal-logement.fr', [6, 12, 15, 20], 31];
-        yield 'Partenaires 72 et 74 + partenaires EPCI et CAP_MSA de l\'Hérault' => ['api-34-01@signal-logement.fr', [71, 72, 73, 74], 4];
-        yield 'Partenaires du Puy-de-Dôme' => ['api-full-63@signal-logement.fr', [16, 26, 27, 28], 19];
+        yield 'Partenaire id 84' => ['api-02@signal-logement.fr', [86], 1];
+        yield 'Partenaires EPCI de La Réunion' => ['api-reunion-epci@signal-logement.fr', [19, 21], 2];
+        yield 'Partenaires COMMUNE_SCHS' => ['api-oilhi@signal-logement.fr', [6, 12, 15, 22], 31];
+        yield 'Partenaires 72 et 74 + partenaires EPCI et CAP_MSA de l\'Hérault' => ['api-34-01@signal-logement.fr', [73, 74, 75, 76], 4];
+        yield 'Partenaires du Puy-de-Dôme' => ['api-full-63@signal-logement.fr', [16, 28, 29, 30], 19];
     }
 }

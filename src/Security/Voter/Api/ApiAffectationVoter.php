@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -27,7 +27,7 @@ class ApiAffectationVoter extends Voter
 
     public function __construct(
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
-        private readonly UserApiPermissionService $userApiPermissionService,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -60,7 +60,7 @@ class ApiAffectationVoter extends Voter
             return false;
         }
 
-        return $this->userApiPermissionService->hasPermissionOnPartner($user, $affectation->getPartner());
+        return $this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $affectation->getPartner());
     }
 
     private function canUpdateStatus(Affectation $affectation, User $user): bool

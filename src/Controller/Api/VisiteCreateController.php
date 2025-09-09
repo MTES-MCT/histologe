@@ -14,7 +14,7 @@ use App\Factory\Api\VisiteFactory;
 use App\Factory\SignalementVisiteRequestFactory;
 use App\Manager\InterventionManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\TimezoneProvider;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -36,7 +36,7 @@ class VisiteCreateController extends AbstractController
         private readonly VisiteFactory $interventionFactory,
         private readonly SignalementVisiteRequestFactory $signalementVisiteRequestFactory,
         private readonly ValidatorInterface $validator,
-        private readonly UserApiPermissionService $userApiPermissionService,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -177,7 +177,7 @@ class VisiteCreateController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $this->userApiPermissionService->getUniquePartner($user);
+        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
         if (!$partner) {
             throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
         }

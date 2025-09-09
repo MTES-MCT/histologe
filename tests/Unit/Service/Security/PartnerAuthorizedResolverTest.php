@@ -4,20 +4,23 @@ namespace App\Tests\Unit\Service\Security;
 
 use App\Entity\Partner;
 use App\Entity\User;
-use App\Service\Security\UserApiPermissionService;
+use App\Repository\PartnerRepository;
+use App\Service\Security\PartnerAuthorizedResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class UserApiPermissionServiceTest extends KernelTestCase
+class PartnerAuthorizedResolverTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    private UserApiPermissionService $userApiPermissionService;
+    private PartnerRepository $partnerRepository;
+    private PartnerAuthorizedResolver $partnerAuthorizedResolver;
 
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
-        $this->userApiPermissionService = new UserApiPermissionService();
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->partnerAuthorizedResolver = new PartnerAuthorizedResolver($this->partnerRepository);
     }
 
     public function testGetUniquePartner(): void
@@ -31,7 +34,7 @@ class UserApiPermissionServiceTest extends KernelTestCase
 
         $this->assertCount(6, $users);
         foreach ($users as $user) {
-            $uniquePartner = $this->userApiPermissionService->getUniquePartner($user);
+            $uniquePartner = $this->partnerAuthorizedResolver->getUniquePartner($user);
             if ('api-01@signal-logement.fr' === $user->getEmail()) {
                 $this->assertEquals('Partenaire 13-01', $uniquePartner->getNom());
             } elseif ('api-02@signal-logement.fr' === $user->getEmail()) {
@@ -49,9 +52,9 @@ class UserApiPermissionServiceTest extends KernelTestCase
         $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-02']);
 
         $this->assertInstanceOf(Partner::class, $partnerOK);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK));
         $this->assertInstanceOf(Partner::class, $partnerKO);
-        $this->assertFalse($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerKO));
+        $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
     }
 
     public function testHasPermissionOnPartnerForPartnerTypeAndTerritoryPermission(): void
@@ -62,11 +65,11 @@ class UserApiPermissionServiceTest extends KernelTestCase
         $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 974-AUTRE']);
 
         $this->assertInstanceOf(Partner::class, $partnerOK1);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK1));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK1));
         $this->assertInstanceOf(Partner::class, $partnerOK2);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK2));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK2));
         $this->assertInstanceOf(Partner::class, $partnerKO);
-        $this->assertFalse($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerKO));
+        $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
     }
 
     public function testHasPermissionOnPartnerForPartnerTypePermission(): void
@@ -77,11 +80,11 @@ class UserApiPermissionServiceTest extends KernelTestCase
         $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Alès Agglomération']);
 
         $this->assertInstanceOf(Partner::class, $partnerOK1);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK1));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK1));
         $this->assertInstanceOf(Partner::class, $partnerOK2);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK2));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK2));
         $this->assertInstanceOf(Partner::class, $partnerKO);
-        $this->assertFalse($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerKO));
+        $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
     }
 
     public function testHasPermissionOnPartnerForTerritoryPermission(): void
@@ -92,11 +95,11 @@ class UserApiPermissionServiceTest extends KernelTestCase
         $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partner Habitat 44']);
 
         $this->assertInstanceOf(Partner::class, $partnerOK1);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK1));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK1));
         $this->assertInstanceOf(Partner::class, $partnerOK2);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK2));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK2));
         $this->assertInstanceOf(Partner::class, $partnerKO);
-        $this->assertFalse($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerKO));
+        $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
     }
 
     public function testHasPermissionOnMultiPermission(): void
@@ -107,10 +110,10 @@ class UserApiPermissionServiceTest extends KernelTestCase
         $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Commune de Campagne']);
 
         $this->assertInstanceOf(Partner::class, $partnerOK1);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK1));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK1));
         $this->assertInstanceOf(Partner::class, $partnerOK2);
-        $this->assertTrue($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerOK2));
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK2));
         $this->assertInstanceOf(Partner::class, $partnerKO);
-        $this->assertFalse($this->userApiPermissionService->hasPermissionOnPartner($user, $partnerKO));
+        $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
     }
 }

@@ -7,7 +7,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\User;
-use App\Service\Security\UserApiPermissionService;
+use App\Service\Security\PartnerAuthorizedResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -19,7 +19,7 @@ class ApiInterventionVoter extends Voter
 
     public function __construct(
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
-        private readonly UserApiPermissionService $userApiPermissionService,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -61,6 +61,6 @@ class ApiInterventionVoter extends Voter
             return false;
         }
 
-        return $this->userApiPermissionService->hasPermissionOnPartner($user, $intervention->getPartner());
+        return $this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $intervention->getPartner());
     }
 }
