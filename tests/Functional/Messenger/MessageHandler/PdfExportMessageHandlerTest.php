@@ -20,6 +20,7 @@ class PdfExportMessageHandlerTest extends WebTestCase
 
         $messageBus = $container->get(MessageBusInterface::class);
 
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);

@@ -3,11 +3,11 @@
 namespace App\Tests\Unit\Service\Gouv\Ban;
 
 use App\Service\Gouv\Ban\AddressService;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class AddressServiceTest extends TestCase
 {

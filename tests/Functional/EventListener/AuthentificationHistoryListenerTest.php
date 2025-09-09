@@ -60,6 +60,7 @@ class AuthentificationHistoryListenerTest extends WebTestCase
             '1'
         );
 
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
