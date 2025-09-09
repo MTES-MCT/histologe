@@ -227,7 +227,7 @@ export function handleFilters (context: any, ajaxurl: string): any {
 
   window.history.pushState({}, '', decodeURIComponent(url.toString()))
   buildUrl(context, ajaxurl)
-  requests.getSignalements(context.handleSignalements, { signal: context.abortRequest?.signal })
+  requests.getSignalementsDebounced(context.handleSignalements, { signal: context.abortRequest?.signal })
 }
 
 export function handleDateParameter (context: any, key: string, value: any): any {
