@@ -16,10 +16,12 @@ class SignalementDraftHelperTest extends KernelTestCase
      */
     public function testDeclarantData(string $draftUuid, bool $isTiersDeclarant, string $emailDeclarant): void
     {
+        /** @var SignalementDraftRepository $signalementDraftRepository */
         $signalementDraftRepository = static::getContainer()->get(SignalementDraftRepository::class);
         /** @var SignalementDraft $signalementDraft */
         $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => $draftUuid]);
 
+        /** @var SignalementDraftRequestSerializer $serializer */
         $serializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->denormalize(

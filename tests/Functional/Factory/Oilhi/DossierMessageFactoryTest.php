@@ -66,6 +66,7 @@ class DossierMessageFactoryTest extends KernelTestCase
                 ->setTerritory($signalement->getTerritory());
         }
 
+        /** @var UrlGeneratorInterface $urlGenerator */
         $urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
 
         $dossierMessageFactory = new DossierMessageFactory($urlGenerator, true, $this->urlSigner);

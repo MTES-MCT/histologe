@@ -32,6 +32,7 @@ class UploadHandlerServiceTest extends KernelTestCase
     {
         self::bootKernel();
         $this->projectDir = static::getContainer()->getParameter('kernel.project_dir');
+        /** @var Filesystem $filesystem */
         $filesystem = static::getContainer()->get(Filesystem::class);
 
         $filesystem->copy(

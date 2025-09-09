@@ -31,7 +31,9 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
     public function testBuildVisiteUpdated(string $reference, int $countMail): void
     {
         $eventDispatcher = new EventDispatcher();
+        /** @var VisiteNotifier $visiteNotifier */
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        /** @var SuiviManager $suiviManager */
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         /** @var SignalementRepository $signalementRepository */

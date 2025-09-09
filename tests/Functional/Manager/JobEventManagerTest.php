@@ -18,6 +18,7 @@ class JobEventManagerTest extends KernelTestCase
 
     public function testCreateJobEvent(): void
     {
+        /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
 
         $jobEventManager = new JobEventManager($managerRegistry, JobEvent::class);

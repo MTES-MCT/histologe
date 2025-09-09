@@ -11,6 +11,7 @@ use App\Service\Gouv\ProConnect\Request\CallbackRequest;
 use App\Service\Gouv\ProConnect\Request\LogoutRequest;
 use App\Service\Gouv\ProConnect\Response\JWKSResponse;
 use App\Service\Gouv\ProConnect\Response\OAuth2TokenResponse;
+use PHPUnit\Framework\MockObject\MockObject;
 use Random\RandomException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +25,6 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class ProConnectAuthenticationTest extends KernelTestCase
 {

@@ -49,6 +49,7 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
 
     public function testTerritoryWithNoAuthorizedInseeCodes(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $territory = $territoryRepository->findOneBy(['id' => 1]);
         $this->assertTrue($this->postalCodeHomeChecker->isAuthorizedInseeCode($territory, '01000'));
@@ -56,6 +57,7 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
 
     public function testTerritoryWithAuthorizedInseeCodesAndInseeCodeValid(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $territory = $territoryRepository->findOneBy(['id' => 70]);
         $territory->setAuthorizedCodesInsee(['69091']);
@@ -64,6 +66,7 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
 
     public function testTerritoryWithAuthorizedInseeCodesAndInseeCodeNotValid(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $territory = $territoryRepository->findOneBy(['id' => 70]);
         $territory->setAuthorizedCodesInsee(['69091']);

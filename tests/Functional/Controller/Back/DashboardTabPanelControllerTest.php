@@ -15,6 +15,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $router = self::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);

@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
+use App\Repository\AffectationRepository;
 use App\Service\ImageManipulationHandler;
 use App\Service\Interconnection\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +17,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use App\Repository\AffectationRepository;
 
 class IdossServiceTest extends KernelTestCase
 {
