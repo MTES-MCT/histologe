@@ -12,6 +12,7 @@ use App\Event\FileUploadedEvent;
 use App\Event\InterventionEditedEvent;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\VisiteFactory;
+use App\Security\Voter\Api\ApiInterventionVoter;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -187,7 +188,7 @@ class VisiteUploadDocumentsController extends AbstractController
                 Response::HTTP_NOT_FOUND
             );
         }
-        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention, SecurityApiExceptionListener::ACCESS_DENIED);
+        $this->denyAccessUnlessGranted(ApiInterventionVoter::API_INTERVENTION_UPDATE, $intervention, SecurityApiExceptionListener::ACCESS_DENIED);
 
         $errorMessage = null;
         if (!$this->canAddDocument($typeDocumentVisite, $intervention, $errorMessage)) {

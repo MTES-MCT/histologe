@@ -5,7 +5,9 @@ namespace App\Controller\Api;
 use App\Dto\Api\Request\FileRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
+use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\FileFactory;
+use App\Security\Voter\Api\ApiFileVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -95,7 +97,7 @@ class SignalementFileUpdateController extends AbstractController
                 Response::HTTP_NOT_FOUND
             );
         }
-        $this->denyAccessUnlessGranted('FILE_EDIT', $file);
+        $this->denyAccessUnlessGranted(ApiFileVoter::API_FILE_UPDATE, $file, SecurityApiExceptionListener::ACCESS_DENIED);
 
         $errors = $this->validator->validate($fileRequest);
         if (count($errors) > 0) {

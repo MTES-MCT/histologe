@@ -12,7 +12,7 @@ use App\Entity\User;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\AffectationManager;
 use App\Manager\UserSignalementSubscriptionManager;
-use App\Security\Voter\AffectationVoter;
+use App\Security\Voter\Api\ApiAffectationVoter;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -178,14 +178,14 @@ class AffectationUpdateController extends AbstractController
             );
         }
 
-        $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation, SecurityApiExceptionListener::ACCESS_DENIED);
+        $this->denyAccessUnlessGranted(ApiAffectationVoter::API_AFFECTATION_UPDATE, $affectation, SecurityApiExceptionListener::ACCESS_DENIED);
         $errors = $this->validator->validate($affectationRequest);
         if (count($errors) > 0) {
             throw new ValidationFailedException($affectationRequest, $errors);
         }
 
         $affectation->setNextStatut(AffectationStatus::tryFrom($affectationRequest->statut));
-        $this->denyAccessUnlessGranted(AffectationVoter::UPDATE_STATUT, $affectation, SecurityApiExceptionListener::TRANSITION_STATUT_DENIED);
+        $this->denyAccessUnlessGranted(ApiAffectationVoter::API_AFFECTATION_UPDATE_STATUS, $affectation, SecurityApiExceptionListener::TRANSITION_STATUT_DENIED);
         $this->applyUsagerNotification($affectationRequest, $affectation);
 
         $affectation = $this->update($affectationRequest, $affectation);

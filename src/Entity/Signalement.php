@@ -1976,6 +1976,17 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function getAffectationForPartner(Partner $partner): ?Affectation
+    {
+        foreach ($this->affectations as $affectation) {
+            if ($affectation->getPartner() === $partner) {
+                return $affectation;
+            }
+        }
+
+        return null;
+    }
+
     public function getMotifCloture(): ?MotifCloture
     {
         return $this->motifCloture;

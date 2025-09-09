@@ -92,6 +92,7 @@ class SignalementListController extends AbstractController
         SignalementResponseFactory $signalementResponseFactory,
         #[MapQueryString] ?SignalementListQueryParams $signalementListQueryParams = null,
     ): JsonResponse {
+        // TODO permission API : ajout du parametre partenaire facultatif ? Si oui gérer le cas dans la requete findAllForApi
         $signalementListQueryParams ??= new SignalementListQueryParams();
         /** @var User $user */
         $user = $this->getUser();
