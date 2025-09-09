@@ -14,6 +14,7 @@ class FileManagerTest extends KernelTestCase
 {
     public function testCreateFile(): void
     {
+        /** @var FileFactory $fileFactory */
         $fileFactory = static::getContainer()->get(FileFactory::class);
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
@@ -38,6 +39,7 @@ class FileManagerTest extends KernelTestCase
 
     public function testCreatePhotoVisite(): void
     {
+        /** @var FileFactory $fileFactory */
         $fileFactory = static::getContainer()->get(FileFactory::class);
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);

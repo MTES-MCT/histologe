@@ -10,6 +10,7 @@ class BailleurRepositoryTest extends KernelTestCase
 {
     public function testFindOneBailleur(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $territory = $territoryRepository->findOneBy(['zip' => '13']);
         /** @var BailleurRepository $bailleurRepository */
@@ -26,6 +27,7 @@ class BailleurRepositoryTest extends KernelTestCase
 
     public function testFindOneBailleurRadie(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $territory = $territoryRepository->findOneBy(['zip' => '13']);
         /** @var BailleurRepository $bailleurRepository */
