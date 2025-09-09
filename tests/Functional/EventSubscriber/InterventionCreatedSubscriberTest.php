@@ -39,7 +39,9 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
     public function testBuildVisiteDescription(): void
     {
         $eventDispatcher = new EventDispatcher();
+        /** @var VisiteNotifier $visiteNotifier */
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        /** @var SuiviManager $suiviManager */
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         /** @var InterventionRepository $interventionRepository */
@@ -74,7 +76,9 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
     public function testBuildVisiteDescriptionTimezone(): void
     {
         $eventDispatcher = new EventDispatcher();
+        /** @var VisiteNotifier $visiteNotifier */
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        /** @var SuiviManager $suiviManager */
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         /** @var InterventionRepository $interventionRepository */
@@ -137,7 +141,9 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
     private function testNbMailSent(\DateTimeImmutable $date, InterventionType $type, string $status = Intervention::STATUS_PLANNED): void
     {
         $eventDispatcher = new EventDispatcher();
+        /** @var VisiteNotifier $visiteNotifier */
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        /** @var SuiviManager $suiviManager */
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         /** @var InterventionRepository $interventionRepository */
