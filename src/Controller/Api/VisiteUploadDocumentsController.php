@@ -16,6 +16,7 @@ use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -40,11 +42,13 @@ class VisiteUploadDocumentsController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly VisiteFactory $interventionFactory,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     /**
      * @throws ExceptionInterface
+     * @throws \Throwable
      */
     #[OA\Post(
         path: '/api/visites/{uuid}/{typeDocumentVisite}',
@@ -197,7 +201,13 @@ class VisiteUploadDocumentsController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $data['files'] = $request->files->all();
-        $filesUploadRequest = $this->normalizer->denormalize($data['files'], FilesUploadRequest::class, 'json');
+        $filesUploadRequest = new FilesUploadRequest();
+        try {
+            $filesUploadRequest = $this->normalizer->denormalize($data['files'], FilesUploadRequest::class, 'json');
+        } catch (NotNormalizableValueException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
         $groups = self::TYPE_DOCUMENT_VISITE === $typeDocumentVisite ? ['single'] : ['multiple_images'];
         $errors = $this->validator->validate(value: $filesUploadRequest, groups: $groups);
         if (count($errors) > 0) {
