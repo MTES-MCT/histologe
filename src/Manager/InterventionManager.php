@@ -11,6 +11,7 @@ use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
 use App\Entity\File;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\FileFactory;
@@ -47,7 +48,7 @@ class InterventionManager extends AbstractManager
     /**
      * @throws \Exception
      */
-    public function createVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest): ?Intervention
+    public function createVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest, Partner $createdByPartner): ?Intervention
     {
         if (!$visiteRequest->getDate()) {
             return null;
@@ -77,13 +78,13 @@ class InterventionManager extends AbstractManager
         $this->save($intervention);
 
         if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
-            $this->confirmVisiteFromRequest($visiteRequest, $intervention);
+            $this->confirmVisiteFromRequest($visiteRequest, $createdByPartner, $intervention);
         }
 
         return $intervention;
     }
 
-    public function cancelVisiteFromRequest(VisiteRequest $visiteRequest): ?Intervention
+    public function cancelVisiteFromRequest(VisiteRequest $visiteRequest, Partner $createdByPartner): ?Intervention
     {
         if (!$visiteRequest->getIntervention() || !$visiteRequest->getDetails()) {
             return null;
@@ -96,7 +97,8 @@ class InterventionManager extends AbstractManager
 
         $intervention->setDetails($visiteRequest->getDetails());
         try {
-            $this->interventionPlanningStateMachine->apply($intervention, 'cancel');
+            $context['createdByPartner'] = $createdByPartner;
+            $this->interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
             $this->save($intervention);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
@@ -110,7 +112,7 @@ class InterventionManager extends AbstractManager
     /**
      * @throws \Exception
      */
-    public function rescheduleVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest): ?Intervention
+    public function rescheduleVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest, Partner $createdByPartner): ?Intervention
     {
         if (!$visiteRequest->getIntervention() || !$visiteRequest->getDate()) {
             return null;
@@ -141,7 +143,7 @@ class InterventionManager extends AbstractManager
         $this->save($intervention);
 
         if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
-            $this->confirmVisiteFromRequest($visiteRequest, $intervention);
+            $this->confirmVisiteFromRequest($visiteRequest, $createdByPartner, $intervention);
         }
 
         return $intervention;
@@ -149,6 +151,7 @@ class InterventionManager extends AbstractManager
 
     public function confirmVisiteFromRequest(
         VisiteRequest $visiteRequest,
+        Partner $createdByPartner,
         ?Intervention $intervention = null,
     ): ?Intervention {
         if (!$visiteRequest->getDetails()) {
@@ -183,12 +186,12 @@ class InterventionManager extends AbstractManager
             $document = $visiteRequest->getDocument();
             $intervention->addFile($this->createFile($intervention, $document));
         }
-
+        $context['createdByPartner'] = $createdByPartner;
         if ($visiteRequest->isVisiteDone()) {
-            $context = ['isUsagerNotified' => $visiteRequest->isUsagerNotified()];
+            $context['isUsagerNotified'] = $visiteRequest->isUsagerNotified();
             $this->interventionPlanningStateMachine->apply($intervention, 'confirm', $context);
         } else {
-            $this->interventionPlanningStateMachine->apply($intervention, 'abort');
+            $this->interventionPlanningStateMachine->apply($intervention, 'abort', $context);
         }
 
         $this->save($intervention);

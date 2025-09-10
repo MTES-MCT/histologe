@@ -134,7 +134,10 @@ class SignalementManagerTest extends WebTestCase
             ->setSignalement($signalementActive)
             ->setMotifCloture(MotifCloture::tryFrom('TRAVAUX_FAITS_OU_EN_COURS'))
             ->setDescription('Tous les problèmes ont été résolus en moins de 15 ans');
-        $signalementClosed = $this->signalementManager->closeSignalementForAllPartners($signalementAffectationClose);
+        $signalementClosed = $this->signalementManager->closeSignalementForAllPartners(
+            $signalementAffectationClose,
+            $signalementActive->getAffectations()->first()->getPartner()
+        );
 
         $this->assertEquals($signalementActive->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');
         $this->assertEquals($signalementClosed->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');

@@ -4,6 +4,7 @@ namespace App\Event;
 
 use App\Entity\Affectation;
 use App\Entity\File;
+use App\Entity\Partner;
 use App\Entity\User;
 
 class AffectationClosedEvent
@@ -16,6 +17,7 @@ class AffectationClosedEvent
     public function __construct(
         private readonly Affectation $affectation,
         private readonly User $user,
+        private readonly ?Partner $partner,
         private readonly ?string $message = null,
         private readonly iterable $files = [],
     ) {
@@ -42,5 +44,10 @@ class AffectationClosedEvent
     public function getFiles(): iterable
     {
         return $this->files;
+    }
+
+    public function getPartner(): Partner
+    {
+        return $this->partner;
     }
 }

@@ -82,6 +82,7 @@ class EsaboraManager
                 description: 'Signalement <b>'.$description.'</b>',
                 type: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? Suivi::TYPE_TECHNICAL : Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
+                partner: $affectation->getPartner(),
                 user: $this->adminUser,
             );
         }
@@ -104,28 +105,28 @@ class EsaboraManager
         switch ($esaboraStatus) {
             case EsaboraStatus::ESABORA_WAIT->value:
                 if (AffectationStatus::WAIT !== $currentStatus) {
-                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::WAIT);
+                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::WAIT, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                     $description = 'remis en attente par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
                 if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
-                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED);
+                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED, $affectation->getPartner());
                     $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
                     $this->userSignalementSubscriptionManager->flush();
                     $description = 'accepté par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
-                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED);
+                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                     $description = 'cloturé par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_REFUSED->value:
                 if (AffectationStatus::REFUSED !== $currentStatus) {
-                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::REFUSED);
+                    $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::REFUSED, $affectation->getPartner());
                     $description = 'refusé par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;
@@ -135,6 +136,7 @@ class EsaboraManager
                         affectation: $affectation,
                         user: $user,
                         status: AffectationStatus::REFUSED,
+                        partner: $affectation->getPartner(),
                         dispatchAffectationAnsweredEvent: false
                     );
                     $description = \sprintf(
@@ -162,7 +164,7 @@ class EsaboraManager
             $isVisiteUpdated = $this->updateFromDossierVisite($intervention, $dossierVisiteSISH, $affectation);
             if ($isVisiteUpdated) {
                 $this->eventDispatcher->dispatch(
-                    new InterventionUpdatedByEsaboraEvent($intervention, $this->adminUser),
+                    new InterventionUpdatedByEsaboraEvent($intervention, $this->adminUser, $affectation->getPartner()),
                     InterventionUpdatedByEsaboraEvent::NAME
                 );
             }
@@ -200,7 +202,7 @@ class EsaboraManager
                 }
 
                 $this->eventDispatcher->dispatch(
-                    new InterventionCreatedEvent($newIntervention, $this->adminUser),
+                    new InterventionCreatedEvent($newIntervention, $this->adminUser, $affectation->getPartner()),
                     InterventionCreatedEvent::NAME
                 );
             }
@@ -225,7 +227,7 @@ class EsaboraManager
             $isArreteUpdated = $this->updateFromDossierArrete($intervention, $dossierArreteSISH, $additionalInformation);
             if ($isArreteUpdated) {
                 $this->eventDispatcher->dispatch(
-                    new InterventionUpdatedByEsaboraEvent($intervention, $this->adminUser),
+                    new InterventionUpdatedByEsaboraEvent($intervention, $this->adminUser, $affectation->getPartner()),
                     InterventionUpdatedByEsaboraEvent::NAME
                 );
             }
@@ -249,7 +251,7 @@ class EsaboraManager
                 [ProcedureType::INSALUBRITE]
             );
             $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent($intervention, $this->adminUser),
+                new InterventionCreatedEvent($intervention, $this->adminUser, $affectation->getPartner()),
                 InterventionCreatedEvent::NAME
             );
         }
@@ -272,6 +274,7 @@ class EsaboraManager
             description: $description,
             type: Suivi::TYPE_PARTNER,
             category: SuiviCategory::MESSAGE_ESABORA_SCHS,
+            partner: $affectation->getPartner(),
             user: $this->adminUser,
             context: Suivi::CONTEXT_SCHS,
             flush: false,

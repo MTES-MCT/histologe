@@ -159,6 +159,7 @@ class SuiviCreateController extends AbstractController
             type: Suivi::TYPE_PARTNER,
             category: SuiviCategory::MESSAGE_PARTNER,
             isPublic: $suiviRequest->notifyUsager,
+            partner: $partner,
             user: $user,
             files: $fileToAttach,
         );

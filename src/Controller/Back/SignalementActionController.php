@@ -50,11 +50,12 @@ class SignalementActionController extends AbstractController
             $signalement->setStatut(SignalementStatus::ACTIVE);
             $subscriptionCreated = false;
             $suiviManager->createSuivi(
-                user : $user,
                 signalement: $signalement,
                 description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
                 type : Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                user : $user,
                 isPublic: true,
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 subscriptionCreated: $subscriptionCreated,
@@ -97,11 +98,12 @@ class SignalementActionController extends AbstractController
         $signalement->setStatut(SignalementStatus::REFUSED);
         $subscriptionCreated = false;
         $suiviManager->createSuivi(
-            user : $user,
             signalement: $signalement,
             description: $description,
             type : Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            user : $user,
             isPublic: true,
             context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
             files: $refusSignalement->getFiles(),
@@ -147,8 +149,9 @@ class SignalementActionController extends AbstractController
                 description: $suivi->getDescription(),
                 type: Suivi::TYPE_PARTNER,
                 category: SuiviCategory::MESSAGE_PARTNER,
-                isPublic: $suivi->getIsPublic(),
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
+                isPublic: $suivi->getIsPublic(),
                 files: $form->get('files')->getData(),
                 subscriptionCreated: $subscriptionCreated,
             );
@@ -233,8 +236,9 @@ class SignalementActionController extends AbstractController
                 description: 'Signalement rouvert pour '.$reopenFor,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
-                isPublic: '1' === $request->get('publicSuivi'),
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
+                isPublic: '1' === $request->get('publicSuivi'),
                 subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', 'Signalement rouvert avec succès !');

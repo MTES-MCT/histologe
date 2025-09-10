@@ -190,7 +190,7 @@ class SignalementFileUploadController extends AbstractController
         $this->entityManager->flush();
 
         $fileUploadedEvent = $this->eventDispatcher->dispatch(
-            new FileUploadedEvent($signalement, $user, $fileList),
+            new FileUploadedEvent($signalement, $user, $fileList, $partner),
             FileUploadedEvent::NAME
         );
 

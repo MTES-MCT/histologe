@@ -238,7 +238,7 @@ class SignalementManager extends AbstractManager
         return $affectation->toArray();
     }
 
-    public function closeSignalementForAllPartners(SignalementAffectationClose $signalementAffectationClose): Signalement
+    public function closeSignalementForAllPartners(SignalementAffectationClose $signalementAffectationClose, Partner $partner): Signalement
     {
         $signalement = $signalementAffectationClose->getSignalement();
         $signalement
@@ -249,7 +249,7 @@ class SignalementManager extends AbstractManager
 
         /** @var User $user */
         $user = $this->security->getUser();
-        $this->affectationManager->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user);
+        $this->affectationManager->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user, $partner);
         $this->managerRegistry->getManager()->flush();
 
         return $signalement;
@@ -924,7 +924,7 @@ class SignalementManager extends AbstractManager
         }
     }
 
-    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser): bool
+    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser, ?Partner $partner = null): bool
     {
         $signalement->setStatut(SignalementStatus::ACTIVE);
         $signalement->setValidatedAt(new \DateTimeImmutable());
@@ -935,8 +935,9 @@ class SignalementManager extends AbstractManager
             description: 'Signalement validé',
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
-            isPublic: true,
+            partner: $partner,
             user: $adminUser,
+            isPublic: true,
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             flush: false,
             subscriptionCreated: $subscriptionCreated

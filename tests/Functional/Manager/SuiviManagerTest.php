@@ -73,11 +73,12 @@ class SuiviManagerTest extends KernelTestCase
             'subject' => 'test',
         ];
         $suivi = $this->suiviManager->createSuivi(
-            user : $user,
             signalement : $signalement,
             description : SuiviManager::buildDescriptionClotureSignalement($params),
             type : Suivi::TYPE_PARTNER,
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            user : $user,
             isPublic : true,
         );
         $signalement->addSuivi($suivi);
@@ -108,6 +109,7 @@ class SuiviManagerTest extends KernelTestCase
             description : $desc,
             type : Suivi::TYPE_USAGER,
             category: SuiviCategory::MESSAGE_USAGER,
+            partner: null,
         );
         $this->assertEquals($descSanitized, $suivi->getDescription());
     }
@@ -122,6 +124,7 @@ class SuiviManagerTest extends KernelTestCase
             description : 'prise en charge du signalement',
             type : Suivi::TYPE_PARTNER,
             category: SuiviCategory::MESSAGE_PARTNER,
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user : $user,
         );
 

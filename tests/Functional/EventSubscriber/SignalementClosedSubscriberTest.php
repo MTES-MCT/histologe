@@ -5,7 +5,6 @@ namespace App\Tests\Functional\EventSubscriber;
 use App\Dto\SignalementAffectationClose;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\NotificationType;
-use App\Entity\Enum\UserStatus;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -47,7 +46,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         /** @var Signalement $signalementClosed */
         $signalementClosed = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
 
-        $user = $this->userRepository->findOneBy(['statut' => UserStatus::ACTIVE]);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-34-02@signal-logement.fr']);
 
         $securityMock = $this->createMock(Security::class);
         $securityMock->expects($this->once())->method('getUser')->willReturn($user);
@@ -65,7 +64,10 @@ class SignalementClosedSubscriberTest extends KernelTestCase
             ->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit.')
             ->setMotifCloture(MotifCloture::tryFrom('NON_DECENCE'))
             ->setSubject('tous les partenaires');
-        $signalementClosedEvent = new SignalementClosedEvent($signalementAffectationClose);
+        $signalementClosedEvent = new SignalementClosedEvent(
+            $signalementAffectationClose,
+            $user->getPartnerInTerritoryOrFirstOne($signalementClosed->getTerritory())
+        );
         $signalementClosed->setMotifCloture(MotifCloture::tryFrom('NON_DECENCE'));
 
         $dispatcher = new EventDispatcher();

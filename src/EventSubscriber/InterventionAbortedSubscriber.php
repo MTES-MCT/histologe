@@ -13,7 +13,7 @@ use App\Service\Signalement\VisiteNotifier;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Workflow\Event\Event;
+use Symfony\Component\Workflow\Event\TransitionEvent;
 
 class InterventionAbortedSubscriber implements EventSubscriberInterface
 {
@@ -35,12 +35,13 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onInterventionAborted(Event $event): void
+    public function onInterventionAborted(TransitionEvent $event): void
     {
         /** @var Intervention $intervention */
         $intervention = $event->getSubject();
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
+        $context = $event->getContext();
         if (InterventionType::VISITE === $intervention->getType()) {
             $description = 'La visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= ' n\'a pas pu avoir lieu pour le motif suivant :<br>';
@@ -50,8 +51,9 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_IS_ABORTED,
-                isPublic: true,
+                partner: $context['createdByPartner'],
                 user: $currentUser,
+                isPublic: true,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

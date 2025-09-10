@@ -102,11 +102,13 @@ class AffectationManagerTest extends WebTestCase
             ['email' => $affectationAccepted->getPartner()->getUsers()->first()->getEmail()]
         );
         $this->client->loginUser($user);
+        $partner = $user->getPartnerInTerritoryOrFirstOne($affectationAccepted->getSignalement()->getTerritory());
 
         $affectationClosed = $this->affectationManager->closeAffectation(
             affectation: $affectationAccepted,
             user: $user,
             motif: MotifCloture::tryFrom('NON_DECENCE'),
+            partner: $partner,
             message: null,
             flush: true
         );

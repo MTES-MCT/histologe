@@ -537,8 +537,9 @@ class SignalementController extends AbstractController
                 description: $description,
                 type: $suiviType,
                 category: $suiviCategory,
-                isPublic: true,
+                partner: null,
                 user: $signalementUser->getUser(),
+                isPublic: true,
                 files: $filesToAttach
             );
 
@@ -612,8 +613,9 @@ class SignalementController extends AbstractController
                             description: UserManager::OCCUPANT === $signalementUser->getType() ? 'L\'occupant a ajouté '.$descriptionDetails : 'Le déclarant a ajouté '.$descriptionDetails,
                             type: Suivi::TYPE_USAGER,
                             category: SuiviCategory::MESSAGE_USAGER,
-                            isPublic: true,
+                            partner: null,
                             user: $signalementUser->getUser(),
+                            isPublic: true,
                             files: $filesToAttach
                         );
                         $this->addFlash('success', 'Vos documents ont bien été enregistrés.');
@@ -691,9 +693,10 @@ class SignalementController extends AbstractController
                 signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_USAGER,
-                isPublic: true,
                 category: SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
+                partner: null,
                 user: $user,
+                isPublic: true,
             );
 
             $signalementManager->save($signalement);
@@ -747,9 +750,10 @@ class SignalementController extends AbstractController
                 signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_USAGER,
-                isPublic: true,
                 category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+                partner: null,
                 user: $user,
+                isPublic: true,
             );
 
             $signalementManager->save($signalement);

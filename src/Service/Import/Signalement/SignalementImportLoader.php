@@ -225,6 +225,7 @@ class SignalementImportLoader
                         $affectation = $this->affectationManager->closeAffectation(
                             affectation: $affectation,
                             user: $this->userSystem,
+                            partner: null,
                             motif: MotifCloture::tryFrom($dataMapped['motifCloture'])
                         );
                     } else {
@@ -305,11 +306,12 @@ class SignalementImportLoader
 
                 if (null === $suivi) {
                     $suivi = $this->suiviManager->createSuivi(
-                        user: $this->userSystem,
                         signalement: $signalement,
                         description: $description,
                         type: Suivi::TYPE_PARTNER,
                         category: SuiviCategory::MESSAGE_PARTNER,
+                        partner: null,
+                        user: $this->userSystem,
                         flush: false
                     );
 

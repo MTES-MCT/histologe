@@ -171,7 +171,12 @@ class AffectationController extends AbstractController
                 $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
                 $userSignalementSubscriptionManager->flush();
             }
-            $this->affectationManager->updateAffectation(affectation: $affectation, user: $user, status: AffectationStatus::ACCEPTED);
+            $this->affectationManager->updateAffectation(
+                affectation: $affectation,
+                user: $user,
+                status: AffectationStatus::ACCEPTED,
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+            );
             $this->addFlash('success', 'Affectation acceptée avec succès !');
 
             $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -180,7 +185,12 @@ class AffectationController extends AbstractController
         }
         // TODO : remove when FEATURE_NEW_DASHBOARD is removed
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
-            $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED);
+            $this->affectationManager->updateAffectation(
+                $affectation,
+                $user,
+                AffectationStatus::ACCEPTED,
+                $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+            );
             $this->addFlash('success', 'Affectation acceptée avec succès !');
         } else {
             $this->addFlash('error', "Une erreur est survenue lors de l'affectation");
@@ -214,6 +224,7 @@ class AffectationController extends AbstractController
             affectation: $affectation,
             user: $user,
             status: AffectationStatus::REFUSED,
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             motifRefus: $refusAffectation->getMotifRefus(),
             message: $refusAffectation->getDescription(),
             files: $refusAffectation->getFiles()

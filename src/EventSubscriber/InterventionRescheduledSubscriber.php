@@ -53,8 +53,9 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
-                isPublic: true,
+                partner: $event->getPartner(),
                 user: $event->getUser(),
+                isPublic: true,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

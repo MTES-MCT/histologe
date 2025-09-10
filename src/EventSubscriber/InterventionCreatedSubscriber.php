@@ -39,8 +39,9 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             description: $description,
             type: Suivi::TYPE_AUTO,
             category : SuiviCategory::INTERVENTION_IS_CREATED,
-            isPublic: true,
+            partner: $event->getPartner(),
             user: $event->getUser(),
+            isPublic: true,
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);

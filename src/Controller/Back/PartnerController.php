@@ -326,7 +326,10 @@ class PartnerController extends AbstractController
                     && Intervention::STATUS_PLANNED == $intervention->getStatus()
                 ) {
                     if ($this->shouldCancelFutureVisite($intervention)) {
-                        $interventionPlanningStateMachine->apply($intervention, 'cancel');
+                        /** @var User $user */
+                        $user = $this->getUser();
+                        $context = ['createdByPartner' => $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory())];
+                        $interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
                         $interventionManager->save($intervention);
 
                     // planned visites in the past are un-assigned

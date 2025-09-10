@@ -209,11 +209,14 @@ class VisiteCreateController extends AbstractController
             $visiteRequest,
             $signalement->getAffectationForPartner($partner)
         );
-        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $signalementVisiteRequest);
+        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $signalementVisiteRequest, $partner);
 
         $timezone = $signalement->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
         if ($this->isScheduledInFuture($intervention->getScheduledAt(), $timezone)) {
-            $this->eventDispatcher->dispatch(new InterventionCreatedEvent($intervention, $user), InterventionCreatedEvent::NAME);
+            $this->eventDispatcher->dispatch(
+                new InterventionCreatedEvent($intervention, $user, $partner),
+                InterventionCreatedEvent::NAME
+            );
         }
 
         return $this->json($this->interventionFactory->createInstance($intervention), Response::HTTP_CREATED);
