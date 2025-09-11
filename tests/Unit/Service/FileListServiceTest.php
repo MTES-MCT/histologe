@@ -51,7 +51,7 @@ class FileListServiceTest extends WebTestCase
         $this->assertArrayHasKey('Documents de la situation', $choices);
         $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
         $this->assertArrayHasKey('Documents types', $choices);
-        $this->assertCount(3, $choices['Documents de la situation']);
+        $this->assertCount(6, $choices['Documents de la situation']);
     }
 
     public function testGetFileChoicesForSignalementNDE(): void
@@ -70,7 +70,7 @@ class FileListServiceTest extends WebTestCase
         $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
         $this->assertArrayHasKey('Documents types', $choices);
         $this->assertArrayHasKey('Autre', $choices['Documents types']);
-        $this->assertCount(3, $choices['Documents de la situation']);
+        $this->assertCount(6, $choices['Documents de la situation']);
         $this->assertCount(6, $choices['Documents types']['Autre']);
     }
 }
