@@ -33,6 +33,7 @@ class SignalementListController extends AbstractController
         $session->save();
 
         // Dummy read to let Redis save session
+        sleep(1);
         $session->get('signalementSearchQuery');
 
         /** @var User $user */
