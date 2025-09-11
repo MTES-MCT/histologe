@@ -25,8 +25,6 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $client->loginUser($user);
 
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_territory_management_document_add_ajax');
-
         $crawler = $client->request('GET', $router->generate('back_territory_management_document_add'));
         $this->assertResponseIsSuccessful();
         $form = $crawler->filter('form')->form();
@@ -37,6 +35,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $formValues[$formName]['description'] = 'Description de test';
         $formValues[$formName]['documentType'] = DocumentType::AUTRE->value;
 
+        $route = $router->generate('back_territory_management_document_add_ajax');
         $client->request('POST', $route, $formValues);
 
         // Erreur d'absence de fichier en retour json
@@ -61,7 +60,6 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $this->assertNotNull($file, 'Aucun fichier disponible pour le test.');
 
         $router = self::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_territory_management_document_edit_ajax', ['file' => $file->getId()]);
 
         // On récupère le formulaire d'édition pour obtenir les champs attendus
         $crawler = $client->request('GET', $router->generate('back_territory_management_document_edit', ['file' => $file->getId()]));
@@ -74,6 +72,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $formName = array_key_first($formValues);
         $formValues[$formName]['title'] = $newTitle;
 
+        $route = $router->generate('back_territory_management_document_edit_ajax', ['file' => $file->getId()]);
         $client->request('POST', $route, $formValues);
 
         // Après redirection, on vérifie que la description a bien été modifiée en base

@@ -12,7 +12,7 @@ if (searchFilesForm) {
         if (otherTag !== e.target) {
           otherTag.setAttribute('aria-pressed', 'false');
         }
-      })
+      });
       const input = document.getElementById('form-field-type-value');
       if (input) {
         if (input.value === e.target.dataset.value) {
@@ -27,20 +27,62 @@ if (searchFilesForm) {
 
   document.querySelectorAll('.open-modal-document-view').forEach((button) => {
     button.addEventListener('click', (e) => {
-      document.getElementById('fr-modal-document-view-document-created-at').textContent = e.target.dataset.createdat;
-      document.getElementById('fr-modal-document-view-document-created-by').textContent = e.target.dataset.createdby;
-      document.getElementById('fr-modal-document-view-document-title').textContent = e.target.dataset.title;
-      document.getElementById('fr-modal-document-view-document-description').innerText = e.target.dataset.description;
+      document.getElementById('fr-modal-document-view-document-created-at').textContent =
+        e.target.dataset.createdat;
+      document.getElementById('fr-modal-document-view-document-created-by').textContent =
+        e.target.dataset.createdby;
+      document.getElementById('fr-modal-document-view-document-title').textContent =
+        e.target.dataset.title;
+      document.getElementById('fr-modal-document-view-document-description').innerText =
+        e.target.dataset.description;
+      document.getElementById('fr-modal-document-view-document-partner-type').innerHTML =
+        e.target.dataset.partnertype;
+      document.getElementById('fr-modal-document-view-document-partner-competence').innerHTML =
+        e.target.dataset.partnercompetence;
       document.getElementById('fr-modal-document-edit-btn-submit').href = e.target.dataset.url;
     });
   });
   document.querySelectorAll('.open-modal-document-delete').forEach((button) => {
     button.addEventListener('click', (e) => {
-      document.getElementById('fr-modal-document-delete-document-title').textContent = e.target.dataset.title;
-      document.getElementById('fr-modal-document-delete-document-title-reminder').textContent = e.target.dataset.title;
+      document.getElementById('fr-modal-document-delete-document-title').textContent =
+        e.target.dataset.title;
+      document.getElementById('fr-modal-document-delete-document-title-reminder').textContent =
+        e.target.dataset.title;
       document.getElementById('fr-modal-document-delete-btn-submit').href = e.target.dataset.url;
     });
   });
   updateLocalStorageWithFormParams('search-territory-files-type-form');
 }
-loadWindowWithLocalStorage('click', '[data-filter-list-territory-files]', 'search-territory-files-type-form');
+
+const partnerToggle = document.getElementById('partner-visibility-toggle');
+const partnerType = document.getElementById('partner-visibility-type');
+const partnerCompetence = document.getElementById('partner-visibility-competence');
+
+function clearFieldValues(container) {
+  container.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+    checkbox.checked = false;
+  });
+
+  container.querySelectorAll('select').forEach((select) => {
+    select.selectedIndex = -1;
+  });
+}
+
+if (partnerToggle) {
+  partnerToggle.addEventListener('change', () => {
+    if (partnerToggle.checked) {
+      partnerType.classList.remove('fr-hidden');
+      partnerCompetence.classList.remove('fr-hidden');
+    } else {
+      partnerType.classList.add('fr-hidden');
+      partnerCompetence.classList.add('fr-hidden');
+      clearFieldValues(partnerType);
+      clearFieldValues(partnerCompetence);
+    }
+  });
+}
+loadWindowWithLocalStorage(
+  'click',
+  '[data-filter-list-territory-files]',
+  'search-territory-files-type-form'
+);

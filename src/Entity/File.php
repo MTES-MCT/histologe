@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Repository\FileRepository;
 use App\Service\ImageManipulationHandler;
 use Doctrine\DBAL\Types\Types;
@@ -161,6 +163,17 @@ class File implements EntityHistoryInterface
 
     #[ORM\ManyToOne]
     private ?Partner $partner = null;
+    /**
+     * @var Qualification[]|null
+     */
+    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
+    private ?array $partner_competence = null;
+
+    /**
+     * @var PartnerType[]|null
+     */
+    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: PartnerType::class)]
+    private ?array $partner_type = null;
 
     public function __construct()
     {
@@ -490,6 +503,42 @@ class File implements EntityHistoryInterface
     public function setTerritory(?Territory $territory): static
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    /**
+     * @return Qualification[]|null
+     */
+    public function getPartnerCompetence(): ?array
+    {
+        return $this->partner_competence;
+    }
+
+    /**
+     * @param Qualification[]|null $partner_competence
+     */
+    public function setPartnerCompetence(?array $partner_competence): self
+    {
+        $this->partner_competence = $partner_competence;
+
+        return $this;
+    }
+
+    /**
+     * @return PartnerType[]|null
+     */
+    public function getPartnerType(): ?array
+    {
+        return $this->partner_type;
+    }
+
+    /**
+     * @param PartnerType[]|null $partner_type
+     */
+    public function setPartnerType(?array $partner_type): self
+    {
+        $this->partner_type = $partner_type;
 
         return $this;
     }
