@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Entity\Enum\DocumentType;
-use App\Entity\File;
 use App\Factory\FileFactory;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
@@ -34,13 +33,19 @@ class MigrateTerritoryGridFilesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        if (!$this->parameterBag->get('feature_new_document_space')) {
+            $io->error('Cette commande n\'est pas executable car la fonctionnalité de nouvel espace document n\'est pas activée');
+
+            return Command::SUCCESS;
+        }
+
         $userAdmin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('admin_email')]);
 
         $territoriesWithGridFiles = $this->territoryRepository->findAllWithGridFile();
         foreach ($territoriesWithGridFiles as $territory) {
             $gridFileName = $territory->getGrilleVisiteFilename();
 
-            $file = new File();
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $gridFileName,
                 title: 'Grille de visite - '.$territory->getName(),

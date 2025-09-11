@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
+// TODO remove most of the tests in this file when remove FEATURE_NEW_DOCUMENT_SPACE (just keep testGetBailleursList)
+
 class BackTerritoryControllerTest extends WebTestCase
 {
     /**

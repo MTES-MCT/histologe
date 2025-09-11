@@ -85,6 +85,7 @@ class SignalementController extends AbstractController
         SuiviSeenMarker $suiviSeenMarker,
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
+        UrlGeneratorInterface $urlGenerator,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         bool $featureNewDashboard,
         #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
@@ -217,15 +218,15 @@ class SignalementController extends AbstractController
         }, $listConcludeProcedures));
 
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
-        $displayLinkToVisitGrid = false;
+        $linkToVisitGrid = false;
         if ($featureNewDocumentSpace) {
             $existingVisitGrid = $fileRepository->findOneBy([
                 'territory' => $signalement->getTerritory(),
                 'documentType' => DocumentType::GRILLE_DE_VISITE,
             ]);
-            $displayLinkToVisitGrid = !empty($existingVisitGrid);
-        } else {
-            $displayLinkToVisitGrid = !$signalement->getTerritory()->getIsGrilleVisiteDisabled();
+            $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+        } elseif (!$signalement->getTerritory()->getIsGrilleVisiteDisabled()) {
+            $linkToVisitGrid = $this->generateUrl('back_territory_grille_visite', ['territory' => $signalement->getTerritory()->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
@@ -277,7 +278,7 @@ class SignalementController extends AbstractController
             'partnersCanVisite' => $partnerVisite,
             'visites' => $interventionRepository->getOrderedVisitesForSignalement($signalement),
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
-            'displayLinkToVisitGrid' => $displayLinkToVisitGrid,
+            'linkToVisitGrid' => $linkToVisitGrid,
             'allPhotosOrdered' => $allPhotosOrdered,
             'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),
             'canSeePartnerAffectation' => $canSeePartnerAffectation,
