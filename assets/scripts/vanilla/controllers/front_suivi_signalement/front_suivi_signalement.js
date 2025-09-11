@@ -335,16 +335,19 @@ if (modalUploadFiles) {
       uploadedFilesForm.querySelectorAll('input[name="form[file][]"]').forEach((input) => {
         input.remove();
       });
-      modalUploadFiles.querySelectorAll('.select-container select').forEach((select) => {
-        const inputFileId = document.createElement('input');
-        inputFileId.type = 'hidden';
-        inputFileId.name = 'form[file][]';
-        inputFileId.value = select.dataset.fileId;
-        uploadedFilesForm.appendChild(inputFileId);
-      });
-      uploadedFilesForm.submit();
+      const filesToAdd = modalUploadFiles.querySelectorAll('.select-container select');
+      if(filesToAdd.length > 0) {
+        filesToAdd.forEach((select) => {
+          const inputFileId = document.createElement('input');
+          inputFileId.type = 'hidden';
+          inputFileId.name = 'form[file][]';
+          inputFileId.value = select.dataset.fileId;
+          uploadedFilesForm.appendChild(inputFileId);
+        });
+        uploadedFilesForm.submit();
+      }
     }
-
+    
     modalUploadFiles.dataset.validated = true;
   });
 }
