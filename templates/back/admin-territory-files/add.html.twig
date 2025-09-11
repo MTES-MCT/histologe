@@ -31,8 +31,18 @@
         <div class="single-ajax-form-container">
             {{ form_start(addForm, {'attr': {'id': 'form-add-file', 'data-submit-type': 'formData', 'enctype': 'multipart/form-data'}}) }}
             <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12">
+                <div class="fr-col-6">
                     {{ form_row(addForm.file) }}
+                </div>
+                <div class="fr-col-6">
+                    <div id="form-add-file-no-preview" class="fr-hidden">
+                        Pas d'aperçu disponible.<br>
+                        <img src="{{ asset('img/picto-dsfr/document.svg') }}">
+                    </div>
+                    <div id="form-add-file-preview" class="fr-hidden">
+                        Aperçu du document :<br>
+                        <img src="">
+                    </div>
                 </div>
                 {% if is_granted('ROLE_ADMIN') %}
                 <div class="fr-col-12">
@@ -58,10 +68,10 @@
                         <label class="fr-toggle__label" for="partner-visibility-toggle">Paramétrer l'affichage pour les partenaires</label>
                     </div>
                 </div>
-                <div class="fr-col-6 fr-hidden" id="partner-visibility-type" >
+                <div class="fr-col-6 fr-hidden" id="partner-visibility-type">
                     {{ form_row(addForm.partnerType) }}
                 </div>
-                <div class="fr-col-6 fr-hidden" id="partner-visibility-competence" >
+                <div class="fr-col-6 fr-hidden" id="partner-visibility-competence">
                     {{ form_row(addForm.partnerCompetence) }}
                 </div>
             </div>
