@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Enum\Qualification;
 use App\Entity\File;
 use App\Entity\Signalement;
+use App\Entity\User;
 use App\Repository\FileRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -18,6 +19,7 @@ class FileListService
         private readonly SignalementQualificationRepository $signalementQualificationRepository,
         private readonly Security $security,
         private readonly QualificationStatusService $qualificationStatusService,
+        private readonly FileVisibilityService $fileVisibilityService,
         #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
         private readonly bool $featureNewDocumentSpace,
     ) {
@@ -70,6 +72,10 @@ class FileListService
             ->orderBy('f.title', 'ASC')
             ->getQuery()
             ->getResult();
+
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $standaloneFiles = $this->fileVisibilityService->filterFilesForUser($standaloneFiles, $user);
 
         if (!empty($standaloneFiles)) {
             // Grouper les fichiers par documentType

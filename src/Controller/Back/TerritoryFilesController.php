@@ -14,7 +14,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/espace-documentaire')]
 class TerritoryFilesController extends AbstractController
 {
-    public const MAX_LIST_PAGINATION = 20;
+    // public const MAX_LIST_PAGINATION = 20;
+    public const MAX_LIST_PAGINATION = 6;
 
     #[Route('/', name: 'back_territory_files_index', methods: ['GET'])]
     public function index(
@@ -35,13 +36,14 @@ class TerritoryFilesController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territories = $user->getPartnersTerritories();
         }
-        $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination);
+        $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination, $user);
 
         return $this->render('back/territory-files/index.html.twig', [
             'form' => $form,
             'searchTerritoryFiles' => $searchTerritoryFiles,
-            'files' => $paginatedFiles,
-            'pages' => (int) ceil($paginatedFiles->count() / $maxListPagination),
+            'files' => $paginatedFiles['items'],
+            'total' => $paginatedFiles['total'],
+            'pages' => (int) ceil($paginatedFiles['total'] / $maxListPagination),
         ]);
     }
 }

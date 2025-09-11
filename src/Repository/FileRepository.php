@@ -7,6 +7,7 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\FileVisibilityService;
 use App\Service\ListFilters\SearchTerritoryFiles;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -23,8 +24,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FileRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly FileVisibilityService $fileVisibilityService,
+    ) {
         parent::__construct($registry, File::class);
     }
 
@@ -146,9 +149,15 @@ class FileRepository extends ServiceEntityRepository
 
     /**
      * @param array<string, Territory> $territories
+     *
+     * @return Paginator|array<string, array<File>|int>
      */
-    public function findFilteredPaginated(SearchTerritoryFiles $searchTerritoryFiles, ?array $territories, int $maxListPagination): Paginator
-    {
+    public function findFilteredPaginated(
+        SearchTerritoryFiles $searchTerritoryFiles,
+        ?array $territories,
+        int $maxListPagination,
+        ?User $user = null,
+    ): Paginator|array {
         $qb = $this->createQueryBuilder('f')
             ->andWhere('f.isStandalone = true')
             ->andWhere('f.signalement IS NULL');
@@ -177,9 +186,27 @@ class FileRepository extends ServiceEntityRepository
             $qb->orderBy('f.title', 'ASC');
         }
 
-        $qb->setFirstResult(($searchTerritoryFiles->getPage() - 1) * $maxListPagination)
-            ->setMaxResults($maxListPagination);
+        if (null === $user) {
+            $qb->setFirstResult(($searchTerritoryFiles->getPage() - 1) * $maxListPagination)
+                ->setMaxResults($maxListPagination);
 
-        return new Paginator($qb->getQuery());
+            return new Paginator($qb->getQuery());
+        }
+
+        // Récupère tous les fichiers correspondant aux filtres classiques
+        $allFiles = $qb->getQuery()->getResult();
+
+        $filteredFiles = $this->fileVisibilityService->filterFilesForUser($allFiles, $user);
+        // Pagination PHP
+        $page = max(1, $searchTerritoryFiles->getPage());
+        $offset = ($page - 1) * $maxListPagination;
+        $paginatedFiles = array_slice($filteredFiles, $offset, $maxListPagination);
+
+        return [
+            'items' => $paginatedFiles,
+            'total' => count($filteredFiles),
+            'page' => $page,
+            'perPage' => $maxListPagination,
+        ];
     }
 }
