@@ -21,7 +21,14 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertCount(6, $response);
+
+        foreach ($response as $signalement) {
+            $this->assertIsArray($signalement['affectations']);
+            if ('2023-26' === $signalement['reference']) {
+                $this->assertCount(2, $signalement['affectations']);
+            }
+        }
+        $this->assertCount(9, $response);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
@@ -40,36 +47,32 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    public function testGetSignalementByUuid(): void
+    /**
+     * @dataProvider provideDataSignalementByUuid
+     */
+    public function testGetSignalementByUuid(string $email, string $uuid, int $nbAffectations, int $nbDesordres): void
     {
         $client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-02@signal-logement.fr',
+            'email' => $email,
         ]);
         $client->loginUser($user, 'api');
-        $client->request('GET', '/api/signalements/00000000-0000-0000-2024-000000000012');
+        $client->request('GET', '/api/signalements/'.$uuid);
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $response = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('desordres', $response);
-        $this->assertCount(7, $response['desordres']);
+        $this->assertArrayHasKey('affectations', $response);
+        $this->assertCount($nbDesordres, $response['desordres']);
+        $this->assertCount($nbAffectations, $response['affectations']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    public function testGetOldSignalementByUuid(): void
+    public function provideDataSignalementByUuid(): \Generator
     {
-        $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => 'api-01@signal-logement.fr',
-        ]);
-        $client->loginUser($user, 'api');
-        $client->request('GET', '/api/signalements/00000000-0000-0000-2022-000000000003');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $response = json_decode($client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('desordres', $response);
-        $this->assertCount(3, $response['desordres']);
-        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
+        yield 'api-02 user with signalement 2024-12' => ['api-02@signal-logement.fr', '00000000-0000-0000-2024-000000000012', 1, 7];
+        yield 'api-01 user with signalement 2023-26' => ['api-01@signal-logement.fr', '00000000-0000-0000-2023-000000000026', 2, 0];
+        yield 'api-01 user with old signalement 2022-03' => ['api-01@signal-logement.fr', '00000000-0000-0000-2022-000000000003', 1, 3];
     }
 
     /**

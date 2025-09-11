@@ -37,9 +37,11 @@ class SuiviCreateControllerTest extends WebTestCase
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $firstFile = $signalement?->getFiles()?->first() ?? null;
         $lastFile = $signalement?->getFiles()?->last() ?? null;
+        $partnerUuid = $signalement?->getAffectations()->first()->getPartner()->getUuid();
         $payload = [
             'description' => 'lorem ipsum dolor sit <em>amet</em>',
             'notifyUsager' => $notifyUsager,
+            'partenaireUuid' => $partnerUuid,
         ];
 
         if (null !== $firstFile && null !== $lastFile) {

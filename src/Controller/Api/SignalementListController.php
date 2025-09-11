@@ -157,6 +157,9 @@ class SignalementListController extends AbstractController
             return new JsonResponse($resource, Response::HTTP_OK);
         }
 
-        return new JsonResponse(['message' => 'Signalement introuvable', 'status' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
+        return new JsonResponse(
+            ['message' => 'Signalement introuvable', 'status' => Response::HTTP_NOT_FOUND],
+            Response::HTTP_NOT_FOUND
+        );
     }
 }

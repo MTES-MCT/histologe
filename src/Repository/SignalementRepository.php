@@ -1593,11 +1593,10 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function findForAPIQueryBuilder(User $user): QueryBuilder
     {
-        // TODO permission API : filtre partner
         $partners = $this->partnerAuthorizedResolver->resolveBy($user);
         $qb = $this->createQueryBuilder('s');
 
-        return $qb->select('s', 'territory')
+        return $qb->select('DISTINCT s', 'territory')
             ->leftJoin('s.territory', 'territory')
             ->leftJoin('s.affectations', 'affectations')
             ->where('affectations.partner IN (:partners)')

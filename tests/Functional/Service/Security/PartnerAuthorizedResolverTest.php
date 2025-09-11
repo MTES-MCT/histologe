@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Tests\Unit\Service\Security;
+namespace App\Tests\Functional\Service\Security;
 
 use App\Entity\Partner;
 use App\Entity\User;
+use App\EventListener\SecurityApiExceptionListener;
 use App\Repository\PartnerRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class PartnerAuthorizedResolverTest extends KernelTestCase
 {
@@ -32,12 +34,10 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
             ->getQuery()
             ->getResult();
 
-        $this->assertCount(6, $users);
+        $this->assertCount(7, $users);
         foreach ($users as $user) {
             $uniquePartner = $this->partnerAuthorizedResolver->getUniquePartner($user);
-            if ('api-01@signal-logement.fr' === $user->getEmail()) {
-                $this->assertEquals('Partenaire 13-01', $uniquePartner->getNom());
-            } elseif ('api-02@signal-logement.fr' === $user->getEmail()) {
+            if ('api-02@signal-logement.fr' === $user->getEmail()) {
                 $this->assertEquals('Alès Agglomération', $uniquePartner->getNom());
             } else {
                 $this->assertNull($uniquePartner);
@@ -49,10 +49,13 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
         $partnerOK = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-01']);
-        $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-02']);
+        $partner2OK = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-02']);
+        $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-03']);
 
         $this->assertInstanceOf(Partner::class, $partnerOK);
         $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK));
+        $this->assertInstanceOf(Partner::class, $partner2OK);
+        $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partner2OK));
         $this->assertInstanceOf(Partner::class, $partnerKO);
         $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
     }
@@ -115,5 +118,62 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
         $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK2));
         $this->assertInstanceOf(Partner::class, $partnerKO);
         $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
+    }
+
+    /**
+     * @dataProvider provideUsersWithApiRole
+     */
+    public function testResolveBy(string $email, int $countExpectedPartner): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+
+        $resultPartners = $this->partnerAuthorizedResolver->resolveBy($user);
+
+        $this->assertCount($countExpectedPartner, $resultPartners);
+    }
+
+    public function provideUsersWithApiRole(): \Generator
+    {
+        yield 'api-01@signal-logement.fr' => [
+            'email' => 'api-01@signal-logement.fr',
+            'countExpectedPartner' => 2,
+        ];
+
+        yield 'api-02@signal-logement.fr' => [
+            'email' => 'api-02@signal-logement.fr',
+            'countExpectedPartner' => 1,
+        ];
+
+        yield 'api-reunion-epci@signal-logement.fr' => [
+            'email' => 'api-reunion-epci@signal-logement.fr',
+            'countExpectedPartner' => 2,
+        ];
+
+        yield 'api-oilhi@signal-logement.fr' => [
+            'email' => 'api-oilhi@signal-logement.fr',
+            'countExpectedPartner' => 31,
+        ];
+
+        yield 'api-34-01@signal-logement.fr' => [
+            'email' => 'api-34-01@signal-logement.fr',
+            'countExpectedPartner' => 4,
+        ];
+
+        yield 'api-full-63@signal-logement.fr' => [
+            'email' => 'api-full-63@signal-logement.fr',
+            'countExpectedPartner' => 19,
+        ];
+    }
+
+    public function testResolvePartnersThrowsAccessDeniedCauseNoPartnerPermissions(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'api-03@signal-logement.fr']);
+
+        $this->expectException(AccessDeniedException::class);
+        $this->expectExceptionMessage(SecurityApiExceptionListener::ACCESS_DENIED_PARTNER);
+
+        $this->partnerAuthorizedResolver->resolvePartners($user);
     }
 }

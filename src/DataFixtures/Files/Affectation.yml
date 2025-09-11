@@ -177,6 +177,13 @@ affectations:
     territory: "Bouches-du-Rhône"
     created_at: '-15 days'
   -
+    signalement: 2023-26
+    partner: "partenaire-13-02@signal-logement.fr"
+    statut: "EN_COURS"
+    answered_by: "admin-03@signal-logement.fr"
+    affected_by: "admin-03@signal-logement.fr"
+    territory: "Bouches-du-Rhône"
+  -
     signalement: 2024-01
     partner: "partenaire-62-01@signal-logement.fr"
     statut: "NOUVEAU"

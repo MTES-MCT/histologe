@@ -34,7 +34,7 @@ class UserGetMeControllerTest extends WebTestCase
 
     public function provideUserEmailApi(): \Generator
     {
-        yield 'Partenaire id 2' => ['api-01@signal-logement.fr', 1];
+        yield 'Partenaire id 2' => ['api-01@signal-logement.fr', 2];
         yield 'Partenaire id 84' => ['api-02@signal-logement.fr', 1];
         yield 'Partenaires EPCI de La Réunion' => ['api-reunion-epci@signal-logement.fr', 2];
         yield 'Partenaires COMMUNE_SCHS' => ['api-oilhi@signal-logement.fr', 31];

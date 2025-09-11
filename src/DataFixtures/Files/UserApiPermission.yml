@@ -27,5 +27,8 @@ user_api_permissions:
     user: "api-01@signal-logement.fr"
     partner: "Partenaire 13-01"
   -
+    user: "api-01@signal-logement.fr"
+    partner: "Partenaire 13-02"
+  -
     user: "api-02@signal-logement.fr"
     partner: "Alès Agglomération"
