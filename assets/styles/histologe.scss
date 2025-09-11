@@ -1041,7 +1041,6 @@ ul + p {
     padding-right: 5px;
 }
 
-#form-add-file-preview img, #form-add-file-no-preview img {
-    max-width: 100%;
-    max-height: 100px;
+#form-add-file-preview embed, #form-add-file-no-preview img {
+    max-height: 150px;
 }

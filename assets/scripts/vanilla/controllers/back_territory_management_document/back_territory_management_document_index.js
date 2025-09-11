@@ -64,13 +64,13 @@ if (titleInput) {
 
 const fileElement = document.getElementById('territory_file_file');
 const previewElement = document.getElementById('form-add-file-preview');
-const previewImageElement = document.querySelector('#form-add-file-preview img');
+const previewImageElement = document.querySelector('#form-add-file-preview embed');
 const noPreviewElement = document.getElementById('form-add-file-no-preview');
 if (fileElement && previewElement) {
   fileElement.addEventListener('change', (e) => {
     const [file] = e.target.files;
     // preview if image file
-    if (file && file.type.startsWith('image/')) {
+    if (file && (file.type.startsWith('image/') || file.type === 'application/pdf')) {
       previewImageElement.src = URL.createObjectURL(file);
       previewElement.classList.remove('fr-hidden');
       noPreviewElement.classList.add('fr-hidden');
