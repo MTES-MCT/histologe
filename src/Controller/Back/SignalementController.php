@@ -224,7 +224,9 @@ class SignalementController extends AbstractController
                 'territory' => $signalement->getTerritory(),
                 'documentType' => DocumentType::GRILLE_DE_VISITE,
             ]);
-            $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+            if ($existingVisitGrid) {
+                $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+            }
         } elseif (!$signalement->getTerritory()->getIsGrilleVisiteDisabled()) {
             $linkToVisitGrid = $this->generateUrl('back_territory_grille_visite', ['territory' => $signalement->getTerritory()->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         }
