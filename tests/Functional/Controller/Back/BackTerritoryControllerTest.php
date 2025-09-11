@@ -18,6 +18,10 @@ class BackTerritoryControllerTest extends WebTestCase
      */
     public function testTerritoryList(array $params, int $nb): void
     {
+        $isNewDocumentSpace = self::getContainer()->getParameter('feature_new_document_space');
+        if ($isNewDocumentSpace) {
+            $this->markTestSkipped('Feature new document space enabled, skipping test.');
+        }
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -46,6 +50,10 @@ class BackTerritoryControllerTest extends WebTestCase
 
     public function testgrilleVisite(): void
     {
+        $isNewDocumentSpace = self::getContainer()->getParameter('feature_new_document_space');
+        if ($isNewDocumentSpace) {
+            $this->markTestSkipped('Feature new document space enabled, skipping test.');
+        }
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -64,6 +72,10 @@ class BackTerritoryControllerTest extends WebTestCase
 
     public function testgrilleVisiteDisabled(): void
     {
+        $isNewDocumentSpace = self::getContainer()->getParameter('feature_new_document_space');
+        if ($isNewDocumentSpace) {
+            $this->markTestSkipped('Feature new document space enabled, skipping test.');
+        }
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
