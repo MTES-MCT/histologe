@@ -594,10 +594,12 @@ class SignalementController extends AbstractController
                 if ($form->isValid()) {
                     $docs = $fileRepository->findTempForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
                     $filesToAttach = [];
-                    foreach ($form->getExtraData()['file'] as $fileId) {
-                        if (isset($docs[$fileId])) {
-                            $docs[$fileId]->setIsTemp(false);
-                            $filesToAttach[] = $docs[$fileId];
+                    if (isset($form->getExtraData()['file'])) {
+                        foreach ($form->getExtraData()['file'] as $fileId) {
+                            if (isset($docs[$fileId])) {
+                                $docs[$fileId]->setIsTemp(false);
+                                $filesToAttach[] = $docs[$fileId];
+                            }
                         }
                     }
                     if ($filesToAttach) {
