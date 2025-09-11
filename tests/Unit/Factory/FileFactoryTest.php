@@ -19,6 +19,7 @@ class FileFactoryTest extends TestCase
             'sample-123.jpg',
             'sample.jpg',
             $this->getSignalement(),
+            $this->getPartner(),
             $this->getUser([User::ROLE_USER_PARTNER])
         );
         $this->assertEquals('sample-123.jpg', $file->getFilename());

@@ -77,6 +77,7 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
                     filename: $document,
                     title: $document,
                     signalement: $intervention->getSignalement(),
+                    partner: $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory()),
                     user: $user,
                     intervention: $intervention,
                     documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE

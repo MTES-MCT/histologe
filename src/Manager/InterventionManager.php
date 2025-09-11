@@ -184,7 +184,7 @@ class InterventionManager extends AbstractManager
 
         if ($visiteRequest->getDocument()) {
             $document = $visiteRequest->getDocument();
-            $intervention->addFile($this->createFile($intervention, $document));
+            $intervention->addFile($this->createFile($intervention, $document, $createdByPartner));
         }
         $context['createdByPartner'] = $createdByPartner;
         if ($visiteRequest->isVisiteDone()) {
@@ -199,7 +199,7 @@ class InterventionManager extends AbstractManager
         return $intervention;
     }
 
-    public function editVisiteFromRequest(VisiteRequest $visiteRequest): ?Intervention
+    public function editVisiteFromRequest(VisiteRequest $visiteRequest, Partner $partner): ?Intervention
     {
         if (!$visiteRequest->getDetails()) {
             return null;
@@ -220,7 +220,7 @@ class InterventionManager extends AbstractManager
             if ($rapportDeVisite) {
                 $intervention->removeFile($rapportDeVisite);
             }
-            $intervention->addFile($this->createFile($intervention, $document));
+            $intervention->addFile($this->createFile($intervention, $document, $partner));
         }
         $this->save($intervention);
 
@@ -266,6 +266,7 @@ class InterventionManager extends AbstractManager
     private function createFile(
         Intervention $intervention,
         string $document,
+        Partner $partner,
         DocumentType $documentType = DocumentType::PROCEDURE_RAPPORT_DE_VISITE,
     ): File {
         /** @var User $user */
@@ -275,6 +276,7 @@ class InterventionManager extends AbstractManager
             filename: $document,
             title: $document,
             signalement: $intervention->getSignalement(),
+            partner: $partner,
             user: $user,
             documentType: $documentType
         );

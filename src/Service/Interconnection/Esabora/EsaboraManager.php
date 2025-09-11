@@ -328,6 +328,7 @@ class EsaboraManager
             signalement: $suivi->getSignalement(),
             scannedAt: new \DateTimeImmutable(),
             isVariantsGenerated: $variantsGenerated,
+            partner: $suivi->getPartner(),
         );
         $this->entityManager->persist($file);
         $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());

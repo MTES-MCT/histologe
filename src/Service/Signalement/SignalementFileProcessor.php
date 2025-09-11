@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\File\EmptyFileException;
@@ -129,6 +130,7 @@ class SignalementFileProcessor
     public function addFilesToSignalement(
         array $fileList,
         Signalement $signalement,
+        ?Partner $partner = null,
         ?User $user = null,
         ?Intervention $intervention = null,
         ?bool $isWaitingSuivi = false,
@@ -139,6 +141,7 @@ class SignalementFileProcessor
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $fileItem['file'],
                 title: $fileItem['title'],
+                partner: $partner,
                 user: $user,
                 intervention: $intervention,
                 documentType: $fileItem['documentType'],

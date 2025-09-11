@@ -5,6 +5,7 @@ namespace App\Factory;
 use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -16,6 +17,7 @@ class FileFactory
         ?string $filename = null,
         ?string $title = null,
         ?Signalement $signalement = null,
+        ?Partner $partner = null,
         ?User $user = null,
         ?Intervention $intervention = null,
         ?DocumentType $documentType = null,
@@ -45,6 +47,10 @@ class FileFactory
 
         if (null !== $signalement) {
             $file->setSignalement($signalement);
+        }
+
+        if (null !== $partner) {
+            $file->setPartner($partner);
         }
 
         if (null !== $user) {
@@ -95,9 +101,7 @@ class FileFactory
      */
     public function createFromFileArray(
         array $file,
-        ?Signalement $signalement = null,
-        ?User $user = null,
-        ?Intervention $intervention = null,
+        Signalement $signalement,
     ): ?File {
         $documentType = SignalementDocumentTypeMapper::map($file['slug']);
         $desordreSlug = DocumentType::PHOTO_SITUATION === $documentType ? $file['slug'] : null;
@@ -107,8 +111,6 @@ class FileFactory
             filename: $file['file'],
             title: $file['titre'],
             signalement: $signalement,
-            user: $user,
-            intervention: $intervention,
             documentType: $documentType,
             desordreSlug: $desordreSlug,
             description: $fileDescription,

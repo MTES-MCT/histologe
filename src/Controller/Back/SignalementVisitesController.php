@@ -364,11 +364,13 @@ class SignalementVisitesController extends AbstractController
             isUsagerNotified: $isUsagerNotified,
             document: $fileName,
         );
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
-        if ($interventionManager->editVisiteFromRequest($visiteRequest)) {
+        if ($interventionManager->editVisiteFromRequest($visiteRequest, $partner)) {
             $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
-            /** @var User $user */
-            $user = $this->getUser();
+
             $eventDispatcher->dispatch(new InterventionEditedEvent(
                 $intervention,
                 $user,

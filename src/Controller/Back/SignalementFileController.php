@@ -89,6 +89,7 @@ class SignalementFileController extends AbstractController
         $signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,
             signalement: $signalement,
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $user,
             isWaitingSuivi: true
         );

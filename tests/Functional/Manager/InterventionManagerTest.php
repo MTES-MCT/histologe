@@ -226,7 +226,8 @@ class InterventionManagerTest extends KernelTestCase
         );
 
         $intervention = $this->interventionManager->editVisiteFromRequest(
-            visiteRequest: $visiteRequest
+            visiteRequest: $visiteRequest,
+            partner: $intervention->getPartner()
         );
 
         $this->assertEquals(Intervention::STATUS_DONE, $intervention->getStatus());
