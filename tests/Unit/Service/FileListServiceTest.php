@@ -44,12 +44,14 @@ class FileListServiceTest extends WebTestCase
             $this->fileRepository,
             $this->signalementQualificationRepository,
             $this->security,
-            $this->qualificationStatusService
+            $this->qualificationStatusService,
+            true,
         ))->getFileChoicesForSignalement($signalement);
 
-        $this->assertArrayHasKey('Documents du dossier', $choices);
-        $this->assertArrayNotHasKey('Documents types', $choices);
-        $this->assertCount(3, $choices['Documents du dossier']);
+        $this->assertArrayHasKey('Documents de la situation', $choices);
+        $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
+        $this->assertArrayHasKey('Documents types', $choices);
+        $this->assertCount(3, $choices['Documents de la situation']);
     }
 
     public function testGetFileChoicesForSignalementNDE(): void
@@ -60,12 +62,15 @@ class FileListServiceTest extends WebTestCase
             $this->fileRepository,
             $this->signalementQualificationRepository,
             $this->security,
-            $this->qualificationStatusService
+            $this->qualificationStatusService,
+            true,
         ))->getFileChoicesForSignalement($signalement);
 
-        $this->assertArrayHasKey('Documents du dossier', $choices);
+        $this->assertArrayHasKey('Documents de la situation', $choices);
+        $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
         $this->assertArrayHasKey('Documents types', $choices);
-        $this->assertCount(3, $choices['Documents du dossier']);
-        $this->assertCount(6, $choices['Documents types']);
+        $this->assertArrayHasKey('Autre', $choices['Documents types']);
+        $this->assertCount(3, $choices['Documents de la situation']);
+        $this->assertCount(6, $choices['Documents types']['Autre']);
     }
 }

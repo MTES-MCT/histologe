@@ -843,6 +843,9 @@ ul + p {
         z-index: 11;
         background: white;
     }
+    .fr-ml-3v.topped {
+        margin-left: 0px !important;
+    }
 }
 #fr-modal-localisation-map, #fr-modal-pick-localisation-map {
     height: 50vh;

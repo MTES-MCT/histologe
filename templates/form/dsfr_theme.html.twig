@@ -132,11 +132,25 @@
         {{ nochoiceslabel }}
     {% else %}
         {% for key, child in form.vars.choices %}
-                {% if child.choices is defined %}
-                    <div class="fr-fieldset__element optgroup__element">
-                        <strong>{{key}}</strong>
-                    </div>
-                    {% for subChild in child.choices %}
+            {% if child.choices is defined %}
+                <div class="fr-fieldset__element optgroup__element">
+                    <strong>{{key}}</strong>
+                </div>
+                {% for subKey, subChild in child.choices %}
+                    {% if subChild.choices is defined %}
+                        <div class="fr-fieldset__element fr-ml-3v">
+                            <strong>&gt; {{subKey}}</strong>
+                        </div>
+                        {% for subSubChild in subChild.choices %}
+                            <div class="fr-fieldset__element fr-ml-3v">
+                                <div class="fr-checkbox-group">
+                                    <input name="{{form.vars.full_name}}" id="{{id}}-checkboxes-{{subSubChild.value}}" type="checkbox" value="{{subSubChild.value}}" 
+                                        {% if subSubChild.value in form.vars.value %}checked="checked"{% endif %} >
+                                    <label class="fr-label" for="{{id}}-checkboxes-{{subSubChild.value}}">{{subSubChild.label}}</label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
                         <div class="fr-fieldset__element">
                             <div class="fr-checkbox-group">
                                 <input name="{{form.vars.full_name}}" id="{{id}}-checkboxes-{{subChild.value}}" type="checkbox" value="{{subChild.value}}" 
@@ -144,16 +158,17 @@
                                 <label class="fr-label" for="{{id}}-checkboxes-{{subChild.value}}">{{subChild.label}}</label>
                             </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="fr-fieldset__element">
-                        <div class="fr-checkbox-group">
-                            <input name="{{form.vars.full_name}}" id="{{id}}-checkboxes-{{child.value}}" type="checkbox" value="{{child.value}}" 
-                                    {% if child.value in form.vars.value %}checked="checked"{% endif %} >
-                            <label class="fr-label" for="{{id}}-checkboxes-{{child.value}}">{{child.label}}</label>
-                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="fr-fieldset__element">
+                    <div class="fr-checkbox-group">
+                        <input name="{{form.vars.full_name}}" id="{{id}}-checkboxes-{{child.value}}" type="checkbox" value="{{child.value}}" 
+                                {% if child.value in form.vars.value %}checked="checked"{% endif %} >
+                        <label class="fr-label" for="{{id}}-checkboxes-{{child.value}}">{{child.label}}</label>
                     </div>
-                {% endif %}
+                </div>
+            {% endif %}
         {% endfor %}
     {% endif %}
     </div>

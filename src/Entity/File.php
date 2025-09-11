@@ -380,24 +380,34 @@ class File implements EntityHistoryInterface
         return !$this->isTypeImage();
     }
 
+    public function isSituation(): bool
+    {
+        return \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList());
+    }
+
+    public function isProcedure(): bool
+    {
+        return \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList());
+    }
+
     public function isSituationImage(): bool
     {
-        return $this->isTypeImage() && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList()) && null === $this->intervention;
+        return $this->isTypeImage() && $this->isSituation() && null === $this->intervention;
     }
 
     public function isProcedureImage(): bool
     {
-        return $this->isTypeImage() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
+        return $this->isTypeImage() && $this->isProcedure() && null === $this->intervention;
     }
 
     public function isSituationDocument(): bool
     {
-        return $this->isTypeDocument() && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList()) && null === $this->intervention;
+        return $this->isTypeDocument() && $this->isSituation() && null === $this->intervention;
     }
 
     public function isProcedureDocument(): bool
     {
-        return $this->isTypeDocument() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList()) && null === $this->intervention;
+        return $this->isTypeDocument() && $this->isProcedure() && null === $this->intervention;
     }
 
     public function isImageExtension(): bool
