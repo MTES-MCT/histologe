@@ -13,11 +13,11 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-add-visite-modal" class="fr-modal__title">Définir une date de visite</h1>
-                            {% if not signalement.territory.isGrilleVisiteDisabled %}
+                            {% if linkToVisitGrid %}
                                 <div class="fr-my-5v fr-text--right">
                                     <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
                                     title="Télécharger la grille de visite {% if signalement.territory.grilleVisiteFilename %}du territoire{% endif %}"
-                                    target="_blank" rel="noreferrer noopener" href="{{ path('back_territory_grille_visite', {territory:signalement.territory.id}) }}">
+                                    download href="{{ sign_url(linkToVisitGrid) }}">
                                         Grille de visite
                                     </a>
                                 </div>

@@ -8,6 +8,7 @@ use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
@@ -29,6 +30,7 @@ use App\Repository\CriticiteRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
@@ -79,11 +81,15 @@ class SignalementController extends AbstractController
         ZoneRepository $zoneRepository,
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
+        FileRepository $fileRepository,
         SuiviSeenMarker $suiviSeenMarker,
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
+        UrlGeneratorInterface $urlGenerator,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         bool $featureNewDashboard,
+        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
+        bool $featureNewDocumentSpace,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -212,6 +218,18 @@ class SignalementController extends AbstractController
         }, $listConcludeProcedures));
 
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
+        $linkToVisitGrid = false;
+        if ($featureNewDocumentSpace) {
+            $existingVisitGrid = $fileRepository->findOneBy([
+                'territory' => $signalement->getTerritory(),
+                'documentType' => DocumentType::GRILLE_DE_VISITE,
+            ]);
+            if ($existingVisitGrid) {
+                $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+            }
+        } elseif (!$signalement->getTerritory()->getIsGrilleVisiteDisabled()) {
+            $linkToVisitGrid = $this->generateUrl('back_territory_grille_visite', ['territory' => $signalement->getTerritory()->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        }
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $suiviSeenMarker->markSeenByUsager($signalement);
@@ -262,6 +280,7 @@ class SignalementController extends AbstractController
             'partnersCanVisite' => $partnerVisite,
             'visites' => $interventionRepository->getOrderedVisitesForSignalement($signalement),
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
+            'linkToVisitGrid' => $linkToVisitGrid,
             'allPhotosOrdered' => $allPhotosOrdered,
             'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),
             'canSeePartnerAffectation' => $canSeePartnerAffectation,

@@ -6,6 +6,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\Signalement\SignalementDocumentTypeMapper;
 
@@ -26,6 +27,7 @@ class FileFactory
         ?bool $isVariantsGenerated = false,
         ?bool $isSuspicious = false,
         ?bool $isStandalone = false,
+        ?Territory $territory = null,
     ): ?File {
         $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
         $file = (new File())
@@ -75,6 +77,10 @@ class FileFactory
 
         if (null !== $isStandalone) {
             $file->setIsStandalone($isStandalone);
+        }
+
+        if (null !== $territory) {
+            $file->setTerritory($territory);
         }
 
         return $file;

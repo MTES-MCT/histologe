@@ -32,7 +32,12 @@ class BackTerritoryController extends AbstractController
         Request $request,
         TerritoryRepository $territoryRepository,
         #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
+        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')] bool $featureNewDocumentSpace,
     ): Response {
+        if ($featureNewDocumentSpace) {
+            throw $this->createNotFoundException();
+        }
+
         $searchTerritory = new SearchTerritory();
         $form = $this->createForm(SearchTerritoryType::class, $searchTerritory);
         $form->handleRequest($request);
@@ -57,7 +62,12 @@ class BackTerritoryController extends AbstractController
         FileScanner $fileScanner,
         UploadHandlerService $uploadHandlerService,
         EntityManagerInterface $em,
+        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')] bool $featureNewDocumentSpace,
     ): Response {
+        if ($featureNewDocumentSpace) {
+            throw $this->createNotFoundException();
+        }
+
         $form = $this->createForm(TerritoryType::class, $territory);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -95,12 +105,20 @@ class BackTerritoryController extends AbstractController
     }
 
     #[Route('/{territory}/grille-visite', name: 'back_territory_grille_visite', methods: ['GET'])]
-    public function grilleVisite(Territory $territory): BinaryFileResponse
-    {
+    public function grilleVisite(
+        Territory $territory,
+        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')] bool $featureNewDocumentSpace,
+    ): BinaryFileResponse {
+        if ($featureNewDocumentSpace) {
+            throw $this->createNotFoundException();
+        }
+
         $this->denyAccessUnlessGranted(TerritoryVoter::GET_DOCUMENT, $territory);
+
         if ($territory->getIsGrilleVisiteDisabled()) {
             throw $this->createNotFoundException();
         }
+
         $filename = $territory->getGrilleVisiteFilename();
         if ($filename) {
             $tmpFilepath = $this->getParameter('uploads_tmp_dir').$filename;
@@ -111,6 +129,7 @@ class BackTerritoryController extends AbstractController
 
             return new BinaryFileResponse($file);
         }
+
         $filePath = $this->getParameter('file_dir').'Grille-visite.pdf';
         $file = new SymfonyFile($filePath);
 
