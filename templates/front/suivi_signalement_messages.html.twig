@@ -96,7 +96,12 @@
 			<div>Votre dossier a bien été enregistré le {{ signalement.createdAt|date('d/m/Y') }}.</div>
 			{% for suivi in signalement.suivis|reverse %}
 				{% set isUnreadMessage = false %}
-			    {% if (suivi.createdBy and suivi.createdBy.partners|length) or suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
+			    {% if suivi.category not in [
+						enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER, 
+						enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE, 
+						enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER
+					]
+				%}
 					{% if suivi.isSeenByUsager %}
 						{% set messageBoxClass = 'message-box--partner' %}
 					{% else %}
@@ -111,14 +116,15 @@
 						<strong>
 							{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
 								Suivi automatique
-							{% elseif suivi.createdBy is not null %}
-								{% if suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER
-											or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE
-											or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER %}
-									{{ suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT' }}
-								{% else %}
-									{{suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A'}}
-								{% endif %}
+							{% elseif suivi.partner %}
+								{{ suivi.partner.isArchive ? 'Partenaire supprimé' : suivi.partner.nom }}
+							{% elseif suivi.createdBy is not null and suivi.category in [
+									enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER,
+									enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE,
+									enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER
+								] 
+							%}
+								{{ suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT' }}
 							{% else %}
 								{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}
 							{% endif %}

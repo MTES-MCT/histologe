@@ -156,38 +156,37 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getCreatedByLabel(): ?string
+    public function getCreatedByLabel(string $separator = ' : '): ?string
     {
         if (self::TYPE_TECHNICAL === $this->type) {
             return 'Suivi automatique';
         }
+        if ($this->getPartner()) {
+            if ($this->getPartner()->getIsArchive()) {
+                return 'Partenaire supprimé'.$separator.$this->getCreatedBy()->getNomComplet(true);
+            }
+
+            return $this->getPartner()->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
+        }
         if ($this->getCreatedBy()) {
-            if (in_array('ROLE_USAGER', $this->getCreatedBy()->getRoles())) {
-                if ($this->getCreatedBy()->getEmail() === $this->getSignalement()->getMailOccupant()) {
-                    return 'OCCUPANT : '.ucfirst($this->getCreatedBy()->getNomComplet());
+            if (in_array($this->getCategory(), [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DOCUMENT_DELETED_BY_USAGER])) {
+                if ($this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant()) {
+                    return 'OCCUPANT'.$separator.$this->getCreatedBy()->getNomComplet(true);
                 }
 
-                return 'DECLARANT : '.ucfirst($this->getCreatedBy()->getNomComplet());
-            }
-            if ($this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())) {
-                $partner = $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory());
-                if ($partner->getIsArchive()) {
-                    return 'Partenaire supprimé';
-                }
-
-                return $partner->getNom().' : '.$this->getCreatedBy()->getPrenom().' '.$this->getCreatedBy()->getNom();
+                return 'DECLARANT'.$separator.$this->getCreatedBy()->getNomComplet(true);
             }
 
-            return 'Aucun';
+            return $this->getCreatedBy()->getNomComplet(true);
         }
         if ($this->getCreatedAt()->format('Y') >= 2024) {
             return 'Occupant ou déclarant';
         }
         if ($this->getSignalement()->getIsNotOccupant()) {
-            return 'DECLARANT : '.strtoupper($this->getSignalement()->getNomDeclarant()).' '.ucfirst($this->getSignalement()->getPrenomDeclarant());
+            return 'DECLARANT'.$separator.strtoupper($this->getSignalement()->getNomDeclarant()).' '.ucfirst($this->getSignalement()->getPrenomDeclarant());
         }
 
-        return 'OCCUPANT : '.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
+        return 'OCCUPANT'.$separator.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
     public function getDescription(bool $transformHtml = true): ?string

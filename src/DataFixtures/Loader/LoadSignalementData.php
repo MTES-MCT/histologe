@@ -16,7 +16,6 @@ use App\Entity\File;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
@@ -284,7 +283,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 filename: $document['file'],
                 title: $document['titre'],
                 signalement: $signalement,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                partner: $user?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
                 documentType: DocumentType::AUTRE
             );
@@ -303,7 +302,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     filename: 'blank-'.$row['reference'].'-'.$countMorePhoto.'.jpg',
                     title: 'Blank.pdf',
                     signalement: $signalement,
-                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                    partner: $user?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                     user: $user,
                     documentType: DocumentType::AUTRE
                 );

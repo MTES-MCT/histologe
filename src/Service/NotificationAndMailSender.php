@@ -451,7 +451,7 @@ class NotificationAndMailSender
         // - if entity is Suivi: we check that the partner of the user is different from the partner of the user who created the suivi
         $suiviPartner = null;
         if (!empty($this->suivi)) {
-            $suiviPartner = $this->suivi->getCreatedBy()?->getPartnerInTerritory($this->suivi->getSignalement()->getTerritory());
+            $suiviPartner = $this->suivi->getPartner();
         }
 
         return UserStatus::ACTIVE === $user->getStatut()
