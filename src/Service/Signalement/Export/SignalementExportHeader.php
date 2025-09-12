@@ -27,6 +27,7 @@ class SignalementExportHeader
             'Code postal',
             'Commune',
             'Code INSEE',
+            'EPCI',
             'Étage',
             'Escalier',
             'Appartement',

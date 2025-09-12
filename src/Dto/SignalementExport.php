@@ -22,6 +22,7 @@ class SignalementExport
         public ?string $cpOccupant = null,
         public ?string $villeOccupant = null,
         public ?string $inseeOccupant = null,
+        public ?string $epciNom = null,
         public ?string $etageOccupant = null,
         public ?string $escalierOccupant = null,
         public ?string $numAppartOccupant = null,

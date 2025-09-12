@@ -98,6 +98,7 @@ class SignalementExportFactory
             cpOccupant: $data['cpOccupant'],
             villeOccupant: $data['villeOccupant'],
             inseeOccupant: $data['inseeOccupant'],
+            epciNom: $data['epciNom'] ?? '-',
             etageOccupant: $data['etageOccupant'] ?? self::NON_RENSEIGNE,
             escalierOccupant: $data['escalierOccupant'] ?? self::NON_RENSEIGNE,
             numAppartOccupant: $data['numAppartOccupant'] ?? self::NON_RENSEIGNE,

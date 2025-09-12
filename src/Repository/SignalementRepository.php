@@ -611,6 +611,7 @@ class SignalementRepository extends ServiceEntityRepository
             s.mailOccupant,
             s.cpOccupant,
             s.inseeOccupant,
+            e.nom as epciNom,
             s.etageOccupant,
             s.escalierOccupant,
             s.numAppartOccupant,
@@ -658,7 +659,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('s.tags', 'tags')
             ->leftJoin(ViewLatestIntervention::class, 'vli', 'WITH', 'vli.signalementId = s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
-            ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT);
+            ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT)
+            ->leftJoin(Commune::class, 'c', Join::WITH, 'c.codePostal = s.cpOccupant AND c.codeInsee = s.inseeOccupant')
+            ->leftJoin('c.epci', 'e')
+        ;
 
         return $qb->getQuery()->toIterable();
     }
