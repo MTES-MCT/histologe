@@ -1040,3 +1040,7 @@ ul + p {
 .territory-management-tiles .fr-tile__detail span {
     padding-right: 5px;
 }
+
+#form-add-file-preview embed, #form-add-file-no-preview img {
+    max-height: 150px;
+}

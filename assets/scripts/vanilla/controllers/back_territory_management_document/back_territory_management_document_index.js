@@ -54,6 +54,45 @@ if (searchFilesForm) {
   updateLocalStorageWithFormParams('search-territory-files-type-form');
 }
 
+const titleInput = document.getElementById('territory_file_title');
+let isTitleEdited = false;
+if (titleInput) {
+  titleInput.addEventListener('input', () => {
+    isTitleEdited = true;
+  });
+}
+
+const fileElement = document.getElementById('territory_file_file');
+const previewElement = document.getElementById('form-add-file-preview');
+const previewImageElement = document.querySelector('#form-add-file-preview embed');
+const noPreviewElement = document.getElementById('form-add-file-no-preview');
+if (fileElement && previewElement) {
+  fileElement.addEventListener('change', (e) => {
+    const [file] = e.target.files;
+    // preview if image file
+    if (file && (file.type.startsWith('image/') || file.type === 'application/pdf')) {
+      previewImageElement.src = URL.createObjectURL(file);
+      previewElement.classList.remove('fr-hidden');
+      noPreviewElement.classList.add('fr-hidden');
+    } else {
+      previewImageElement.src = '';
+      previewElement.classList.add('fr-hidden');
+      noPreviewElement.classList.remove('fr-hidden');
+    }
+
+    if (!isTitleEdited && file) {
+      // set title to filename without extension
+      const filename = file.name;
+      const lastDotIndex = filename.lastIndexOf('.');
+      if (lastDotIndex !== -1) {
+        titleInput.value = filename.substring(0, lastDotIndex);
+      } else {
+        titleInput.value = filename;
+      }
+    }
+  });
+}
+
 const partnerToggle = document.getElementById('partner-visibility-toggle');
 const partnerType = document.getElementById('partner-visibility-type');
 const partnerCompetence = document.getElementById('partner-visibility-competence');
