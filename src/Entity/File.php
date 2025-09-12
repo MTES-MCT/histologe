@@ -163,6 +163,10 @@ class File implements EntityHistoryInterface
 
     #[ORM\ManyToOne]
     private ?Partner $partner = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?File $parentFile = null;
     /**
      * @var Qualification[]|null
      */
@@ -567,6 +571,18 @@ class File implements EntityHistoryInterface
     public function setPartner(?Partner $partner): static
     {
         $this->partner = $partner;
+
+        return $this;
+    }
+
+    public function getParentFile(): ?File
+    {
+        return $this->parentFile;
+    }
+
+    public function setParentFile(?File $parentFile): static
+    {
+        $this->parentFile = $parentFile;
 
         return $this;
     }
