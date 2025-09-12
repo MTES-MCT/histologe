@@ -42,7 +42,8 @@ parameters:
     frame-src:
       - "'self'"
     object-src:
-      - "'none'"
+      - "'self'"
+      - "blob:"
     base-uri:
       - "'self'"
     form-action:
