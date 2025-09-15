@@ -20,6 +20,8 @@ class SearchNotificationType extends AbstractType
             'choices' => [
                 'Date (la plus récente)' => 'n.createdAt-DESC',
                 'Date (la plus ancienne)' => 'n.createdAt-ASC',
+                'Non lues en premier' => 'n.isSeen-ASC',
+                'Non lues en dernier' => 'n.isSeen-DESC',
                 'Référence (ordre croissant)' => 'si.reference-ASC',
                 'Référence (ordre décroissant)' => 'si.reference-DESC',
                 'Nom de l\'auteur (A -> Z)' => 'cb.nom-ASC',
