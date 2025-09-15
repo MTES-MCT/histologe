@@ -151,7 +151,6 @@ class SignalementFileController extends AbstractController
                     description: $description,
                     type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
-                    partner: null,
                     user: $signalementUser->getUser(),
                 );
                 $message = $file->isTypeDocument() ? 'Le document a bien été supprimé.' : 'La photo a bien été supprimée.';

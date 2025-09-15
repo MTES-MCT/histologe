@@ -109,7 +109,6 @@ class SuiviManagerTest extends KernelTestCase
             description : $desc,
             type : Suivi::TYPE_USAGER,
             category: SuiviCategory::MESSAGE_USAGER,
-            partner: null,
         );
         $this->assertEquals($descSanitized, $suivi->getDescription());
     }

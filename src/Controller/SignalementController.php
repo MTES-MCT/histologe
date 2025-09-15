@@ -537,7 +537,6 @@ class SignalementController extends AbstractController
                 description: $description,
                 type: $suiviType,
                 category: $suiviCategory,
-                partner: null,
                 user: $signalementUser->getUser(),
                 isPublic: true,
                 files: $filesToAttach
@@ -613,7 +612,6 @@ class SignalementController extends AbstractController
                             description: UserManager::OCCUPANT === $signalementUser->getType() ? 'L\'occupant a ajouté '.$descriptionDetails : 'Le déclarant a ajouté '.$descriptionDetails,
                             type: Suivi::TYPE_USAGER,
                             category: SuiviCategory::MESSAGE_USAGER,
-                            partner: null,
                             user: $signalementUser->getUser(),
                             isPublic: true,
                             files: $filesToAttach
@@ -694,7 +692,6 @@ class SignalementController extends AbstractController
                 description: $description,
                 type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
-                partner: null,
                 user: $user,
                 isPublic: true,
             );
@@ -751,7 +748,6 @@ class SignalementController extends AbstractController
                 description: $description,
                 type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
-                partner: null,
                 user: $user,
                 isPublic: true,
             );

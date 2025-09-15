@@ -310,7 +310,6 @@ class SignalementImportLoader
                         description: $description,
                         type: Suivi::TYPE_PARTNER,
                         category: SuiviCategory::MESSAGE_PARTNER,
-                        partner: null,
                         user: $this->userSystem,
                         flush: false
                     );

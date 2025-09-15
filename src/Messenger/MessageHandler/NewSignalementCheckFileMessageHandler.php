@@ -226,7 +226,6 @@ class NewSignalementCheckFileMessageHandler
             description: $this->description,
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::ASK_DOCUMENT,
-            partner: null,
             user: $userAdmin,
             isPublic: true,
             context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,

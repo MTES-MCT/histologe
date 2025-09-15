@@ -223,7 +223,6 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                 description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
                 type: Suivi::TYPE_TECHNICAL,
                 category: SuiviCategory::ASK_FEEDBACK_SENT,
-                partner: null,
                 flush: false
             );
 

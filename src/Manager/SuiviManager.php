@@ -46,7 +46,7 @@ class SuiviManager extends Manager
         string $description,
         int $type,
         SuiviCategory $category,
-        ?Partner $partner,
+        ?Partner $partner = null,
         ?User $user = null,
         bool $isPublic = false,
         ?\DateTimeImmutable $createdAt = null,
