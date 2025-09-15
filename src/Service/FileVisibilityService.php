@@ -23,7 +23,7 @@ class FileVisibilityService
             $partnerCompetences = $f->getPartnerCompetence() ?? [];
 
             if (empty($partnerTypes) && empty($partnerCompetences)) {
-                return true; // pas de restriction
+                return true;
             }
 
             foreach ($user->getPartners() as $partner) {
@@ -39,17 +39,17 @@ class FileVisibilityService
     }
 
     /**
-     * @param array<mixed> $a
-     * @param array<mixed> $b
+     * @param array<mixed> $PartnerParameter
+     * @param array<mixed> $fileParameter
      */
-    private function enumsIntersect(array $a, array $b): bool
+    private function enumsIntersect(array $PartnerParameter, array $fileParameter): bool
     {
-        if (empty($a) || empty($b)) {
-            return true; // pas de restriction
+        if (empty($fileParameter)) {
+            return true;
         }
 
-        $valuesA = array_map(fn ($e) => $e->value, $a);
-        $valuesB = array_map(fn ($e) => $e->value, $b);
+        $valuesA = array_map(fn ($e) => $e->value, $PartnerParameter);
+        $valuesB = array_map(fn ($e) => $e->value, $fileParameter);
 
         return (bool) array_intersect($valuesA, $valuesB);
     }

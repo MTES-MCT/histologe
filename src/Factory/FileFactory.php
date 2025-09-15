@@ -3,6 +3,8 @@
 namespace App\Factory;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\Qualification;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -12,6 +14,10 @@ use App\Service\Signalement\SignalementDocumentTypeMapper;
 
 class FileFactory
 {
+    /**
+     * @param Qualification[] $partnerCompetence
+     * @param PartnerType[]   $partnerType
+     */
     public function createInstanceFrom(
         ?string $filename = null,
         ?string $title = null,
@@ -28,6 +34,8 @@ class FileFactory
         ?bool $isSuspicious = false,
         ?bool $isStandalone = false,
         ?Territory $territory = null,
+        ?array $partnerCompetence = null,
+        ?array $partnerType = null,
     ): ?File {
         $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
         $file = (new File())
@@ -81,6 +89,14 @@ class FileFactory
 
         if (null !== $territory) {
             $file->setTerritory($territory);
+        }
+
+        if (null !== $partnerCompetence) {
+            $file->setPartnerCompetence($partnerCompetence);
+        }
+
+        if (null !== $partnerType) {
+            $file->setPartnerType($partnerType);
         }
 
         return $file;

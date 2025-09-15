@@ -74,8 +74,29 @@ class FileListServiceTest extends WebTestCase
         $this->assertArrayHasKey('Documents de la situation', $choices);
         $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
         $this->assertArrayHasKey('Documents types', $choices);
-        $this->assertArrayHasKey('Autre', $choices['Documents types']);
+        $this->assertArrayHasKey('Modèle de courrier', $choices['Documents types']);
         $this->assertCount(6, $choices['Documents de la situation']);
-        $this->assertCount(6, $choices['Documents types']['Autre']);
+        $this->assertCount(6, $choices['Documents types']['Modèle de courrier']);
+    }
+
+    public function testGetFileChoicesForSignalementNonNDEUser(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@signal-logement.fr']);
+        $this->client->loginUser($user);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+
+        $choices = (new FileListService(
+            $this->fileRepository,
+            $this->signalementQualificationRepository,
+            $this->security,
+            $this->qualificationStatusService,
+            $this->fileVisibilityService,
+            true,
+        ))->getFileChoicesForSignalement($signalement);
+
+        $this->assertArrayHasKey('Documents de la situation', $choices);
+        $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
+        $this->assertArrayNotHasKey('Documents types', $choices);
+        $this->assertCount(6, $choices['Documents de la situation']);
     }
 }

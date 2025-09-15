@@ -14,8 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/espace-documentaire')]
 class TerritoryFilesController extends AbstractController
 {
-    // public const MAX_LIST_PAGINATION = 20;
-    public const MAX_LIST_PAGINATION = 6;
+    public const MAX_LIST_PAGINATION = 20;
 
     #[Route('/', name: 'back_territory_files_index', methods: ['GET'])]
     public function index(
