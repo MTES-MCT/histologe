@@ -132,6 +132,12 @@
                                 </select>
                             </div>
 
+                            <div class="fr-input-group">
+                                {% set travailleurSocialAccompagnementNomStructure = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementNomStructure : null %}
+                                <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementNomStructure">Nom de la structure d'accompagnement</label>
+                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementNomStructure" name="travailleurSocialAccompagnementNomStructure" value="{{ travailleurSocialAccompagnementNomStructure }}">
+                            </div>
+
                             <div class="fr-select-group">
                                 {% set beneficiaireRsa = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa : null %}
                                 <label class="fr-label" for="situationFoyerBeneficiaireRsa">Bénéficiaire RSA (facultatif)</label>

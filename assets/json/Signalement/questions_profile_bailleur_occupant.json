@@ -1322,6 +1322,18 @@
           "validate": {
             "message": "Veuillez indiquer si un travailleur ou une travailleuse sociale vous accompagne."
           }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_nom_structure",
+          "label": "Quel est le nom de la structure qui vous accompagne ? (facultatif)",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+          },
+          "validate": {
+            "required": false,
+            "message": "Veuillez indiquer le nom de la structure qui vous accompagne."
+          }
         }
       ],
       "footer": [

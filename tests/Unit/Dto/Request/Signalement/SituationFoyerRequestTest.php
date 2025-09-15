@@ -29,6 +29,7 @@ class SituationFoyerRequestTest extends KernelTestCase
             travailleurSocialPreavisDepart: 'oui',
             travailleurSocialAccompagnement: 'oui',
             travailleurSocialAccompagnementDeclarant: '1',
+            travailleurSocialAccompagnementNomStructure: 'Organisme Exemple',
             beneficiaireRsa: 'oui',
             beneficiaireFsl: 'non',
             revenuFiscal: '20000'
@@ -44,6 +45,7 @@ class SituationFoyerRequestTest extends KernelTestCase
         $this->assertSame('oui', $situationFoyerRequest->getTravailleurSocialPreavisDepart());
         $this->assertSame('oui', $situationFoyerRequest->getTravailleurSocialAccompagnement());
         $this->assertSame('1', $situationFoyerRequest->getTravailleurSocialAccompagnementDeclarant());
+        $this->assertSame('Organisme Exemple', $situationFoyerRequest->getTravailleurSocialAccompagnementNomStructure());
         $this->assertSame('oui', $situationFoyerRequest->getBeneficiaireRsa());
         $this->assertSame('non', $situationFoyerRequest->getBeneficiaireFsl());
         $this->assertSame('20000', $situationFoyerRequest->getRevenuFiscal());

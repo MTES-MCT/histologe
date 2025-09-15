@@ -46,6 +46,7 @@ class SignalementDraftRequestTest extends WebTestCase
         $this->assertSame('D', $signalementDraftRequest->getBailDpeClasseEnergetique());
         $this->assertSame('oui', $signalementDraftRequest->getTravailleurSocialAccompagnement());
         $this->assertSame('1', $signalementDraftRequest->getTravailleurSocialAccompagnementDeclarant());
+        $this->assertSame('Organisme Exemple', $signalementDraftRequest->getTravailleurSocialAccompagnementNomStructure());
         $this->assertSame('oui', $signalementDraftRequest->getInfoProcedureAssuranceContactee());
         $this->assertSame(
             'Réponse de l\'assurance',
@@ -289,6 +290,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTravailleurSocialPreavisDepart('oui')
             ->setTravailleurSocialAccompagnement('oui')
             ->setTravailleurSocialAccompagnementDeclarant('1')
+            ->setTravailleurSocialAccompagnementNomStructure('Organisme Exemple')
             ->setInfoProcedureBailleurPrevenu('oui')
             ->setInfoProcedureBailMoyen('sms')
             ->setInfoProcedureBailDate('11/2024')
