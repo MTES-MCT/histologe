@@ -169,7 +169,7 @@ trait FixturesHelper
             ->addFile($this->getPhotoFile());
 
         $partner = (new Partner())
-            ->setNom($faker->company())
+            ->setNom('ARS')
             ->setEsaboraUrl($faker->url())
             ->setEsaboraToken($faker->password(20))
             ->setType($partnerType);
@@ -179,33 +179,33 @@ trait FixturesHelper
 
     public function getSuiviPartner(
         string $description = 'Problèmes de condensation et de moisissures',
-        bool $isPublic = false,
+        ?Partner $partner = null,
     ): Suivi {
         return (new Suivi())
             ->setType(Suivi::TYPE_PARTNER)
             ->setDescription($description)
             ->setCreatedAt(new \DateTimeImmutable())
             ->setCreatedBy($this->getUser([User::ROLE_USER_PARTNER]))
-            ->setIsPublic($isPublic);
+            ->setPartner($partner);
     }
 
     /**
      * @return array<Suivi>
      */
-    public function getSuiviPartnerList(bool $isPublic = false): array
+    public function getSuiviPartnerList(Partner $partner): array
     {
         return [
             $this
-                ->getSuiviPartner('Problèmes de condensation et de moisissure', $isPublic)
+                ->getSuiviPartner('Problèmes de condensation et de moisissure', $partner)
                 ->setSignalement($this->getSignalement($this->getTerritory())),
             $this
-                ->getSuiviPartner('Problèmes d\'humidité dans le logement', $isPublic)
+                ->getSuiviPartner('Problèmes d\'humidité dans le logement', $partner)
                 ->setSignalement($this->getSignalement($this->getTerritory())),
             $this
-                ->getSuiviPartner('Absence de chauffage', $isPublic)
+                ->getSuiviPartner('Absence de chauffage', $partner)
                 ->setSignalement($this->getSignalement($this->getTerritory())),
             $this
-                ->getSuiviPartner('Ventilation défectueuse', $isPublic)
+                ->getSuiviPartner('Ventilation défectueuse', $partner)
                 ->setSignalement($this->getSignalement($this->getTerritory())),
         ];
     }

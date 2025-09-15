@@ -182,4 +182,30 @@ class FileRepository extends ServiceEntityRepository
 
         return new Paginator($qb->getQuery());
     }
+
+    /**
+     * @return array<int, array<string, int>>|int
+     */
+    public function findAllWithoutPartner(bool $count = false): array|int
+    {
+        $qb = $this->createQueryBuilder('f');
+        if ($count) {
+            $qb->select('COUNT(f.id)');
+        } else {
+            $qb->select('f.id, u.id AS user_id, t.id AS territory_id');
+        }
+        $qb
+            ->innerJoin('f.uploadedBy', 'u')
+            ->innerJoin('f.signalement', 'si')
+            ->innerJoin('si.territory', 't')
+            ->where('f.partner IS NULL')
+            ->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')->setParameter('roleUsager', '"ROLE_USAGER"');
+        if (!$count) {
+            $qb->setMaxResults(50000);
+
+            return $qb->getQuery()->getResult();
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }

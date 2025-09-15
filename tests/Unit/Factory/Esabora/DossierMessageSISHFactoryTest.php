@@ -30,7 +30,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         $suiviRepositoryMock
             ->expects($this->once())
             ->method('findAllSuiviBy')
-            ->willReturn($this->getSuiviPartnerList());
+            ->willReturn($this->getSuiviPartnerList($affectation->getPartner()));
 
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
@@ -77,7 +77,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         $this->assertEquals(75, $dossierMessage->getSitLogementSuperficie());
         $suivis = explode(\PHP_EOL.str_repeat('-', 50).\PHP_EOL, $dossierMessage->getSignalementCommentaire());
         foreach ($suivis as $suivi) {
-            $this->assertStringContainsString('Par ARS : John Doe, le', $suivi);
+            $this->assertStringContainsString('Par ARS : John DOE, le', $suivi);
         }
         $this->assertCount(4, $suivis);
         $this->assertEquals(
