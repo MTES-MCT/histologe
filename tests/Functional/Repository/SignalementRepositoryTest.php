@@ -86,20 +86,6 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertEmpty($signalements);
     }
 
-    public function testSignalementHasNDE(): void
-    {
-        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-8']);
-
-        $this->assertTrue($signalement->hasNDE());
-    }
-
-    public function testSignalementHasNotNDE(): void
-    {
-        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-6']);
-
-        $this->assertFalse($signalement->hasNDE());
-    }
-
     public function testSignalementHasRSD(): void
     {
         /** @var Signalement $signalement */

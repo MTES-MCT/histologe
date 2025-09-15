@@ -2170,17 +2170,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function hasNDE(): bool
-    {
-        foreach ($this->signalementQualifications as $qualification) {
-            if ($qualification->isNDE()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function getLastSuiviBy(): ?string
     {
         return $this->lastSuiviBy;

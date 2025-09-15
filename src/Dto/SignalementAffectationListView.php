@@ -142,20 +142,6 @@ class SignalementAffectationListView
         return $this->qualifications;
     }
 
-    #[Groups(['signalements:read'])]
-    public function hasNde(): bool
-    {
-        if (null !== $this->qualifications) {
-            foreach ($this->qualifications as $qualification) {
-                if (Qualification::NON_DECENCE_ENERGETIQUE->name === $qualification) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     /** @return array<string> */
     public function getQualificationsStatuses(): ?array
     {

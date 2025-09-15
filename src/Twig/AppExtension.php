@@ -172,6 +172,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
+            // supprimer la fonction avec le feature flipping FEATURE_NEW_DOCUMENT_SPACE
             new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
