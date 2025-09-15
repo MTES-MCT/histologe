@@ -19,6 +19,19 @@ class Affectation
         example: 'e96325bf-139e-4793-a7b4-a4c713a0fbd9',
     )]
     public ?string $uuid = null;
+
+    #[OA\Property(
+        description: 'Identifiant du partenaire.',
+        example: '85401893-8d92-11f0-8aa8-f6901f1203f4'
+    )]
+    public ?string $partenaireUuid;
+
+    #[OA\Property(
+        description: 'Nom du partenaire.',
+        example: 'Ville de Marseille'
+    )]
+    public ?string $partenaireNom;
+
     #[OA\Property(
         description: 'Le statut d\'affectation',
         example: 'FERME'

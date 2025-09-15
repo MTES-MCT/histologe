@@ -16,10 +16,10 @@ class Partner
 {
     #[OA\Property(
         description: 'L\'identifiant du partenaire.',
-        example: '4567'
+        example: '85401893-8d92-11f0-8aa8-f6901f1203f4'
     )]
     #[Groups(['user:me'])]
-    public int $id;
+    public string $uuid;
 
     #[OA\Property(
         description: 'Le code département du partenaire.',
@@ -78,7 +78,7 @@ class Partner
     public function __construct(
         PartnerEntity $partner,
     ) {
-        $this->id = $partner->getId();
+        $this->uuid = $partner->getUuid();
         $this->nom = $partner->getNom();
         $this->codeDepartement = $partner->getTerritory()->getZip();
         $this->type = $partner->getType();

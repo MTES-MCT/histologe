@@ -39,8 +39,8 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function provideParamsUserApiList(): \Generator
     {
-        yield 'Search without params' => [[], 6];
-        yield 'Search with queryUser api-0' => [['queryUser' => 'api-0'], 2];
+        yield 'Search without params' => [[], 7];
+        yield 'Search with queryUser api-0' => [['queryUser' => 'api-0'], 3];
         yield 'Search with statut INACTIVE' => [['statut' => 'INACTIVE'], 0];
     }
 

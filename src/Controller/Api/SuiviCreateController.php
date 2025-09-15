@@ -136,10 +136,7 @@ class SuiviCreateController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
-        if (!$partner) {
-            throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
-        }
+        $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $suiviRequest->partenaireUuid);
         $this->denyAccessUnlessGranted(
             ApiSignalementPartnerVoter::API_EDIT_SIGNALEMENT,
             ['signalement' => $signalement, 'partner' => $partner],

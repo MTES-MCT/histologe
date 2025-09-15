@@ -8,11 +8,13 @@ use App\Dto\Api\Model\Desordre;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Response\SignalementResponse;
+use App\Entity\Affectation;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProprioType;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\Security\PartnerAuthorizedResolver;
@@ -42,15 +44,14 @@ readonly class SignalementResponseFactory
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
-        if (!$partner) {
-            throw new \Exception('TODO permission API : Définir que faire pour les permission multi partenaire');
+        $partnerResult = $this->partnerAuthorizedResolver->resolvePartners($user);
+        $affectationResult = $partnerResult instanceof Partner
+            ? $signalement->getAffectationForPartner($partnerResult)
+            : $signalement->getAffectationsForPartners($partnerResult);
+
+        if ($affectationResult instanceof Affectation) {
+            $affectationResult = [$affectationResult];
         }
-        // TODO permission API :
-        // dans le cas possible ou plusieurs partenaire sur lequel j'ai les permission ont une affectation, comment faire ?
-        // retourner un tableau d'affectation et ajouter le partenaire sur l'objet affectation ?
-        // est ce qu'on généralise (même si une seule affectation, on retourne dans un tableau ?)
-        $affectation = $signalement->getAffectationForPartner($partner);
 
         $signalementResponse = new SignalementResponse();
         // references, dates et statut
@@ -66,13 +67,18 @@ readonly class SignalementResponseFactory
         $signalementResponse->typeDeclarant = $signalement->getProfileDeclarant();
         $signalementResponse->description = $signalement->getDetails();
 
-        $signalementResponse->affectation = new AffectationModel();
-        $signalementResponse->affectation->uuid = $affectation->getUuid();
-        $signalementResponse->affectation->statut = $affectation->getStatut();
-        $signalementResponse->affectation->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
-        $signalementResponse->affectation->dateAcceptation = $affectation->getAnsweredAt()?->format(\DATE_ATOM);
-        $signalementResponse->affectation->motifCloture = $affectation->getMotifCloture();
-        $signalementResponse->affectation->motifRefus = $affectation->getMotifRefus();
+        foreach ($affectationResult as $affectation) {
+            $affectationModel = new AffectationModel();
+            $affectationModel->uuid = $affectation->getUuid();
+            $affectationModel->partenaireUuid = $affectation->getPartner()->getUuid();
+            $affectationModel->partenaireNom = $affectation->getPartner()->getNom();
+            $affectationModel->statut = $affectation->getStatut();
+            $affectationModel->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
+            $affectationModel->dateAcceptation = $affectation->getAnsweredAt()?->format(\DATE_ATOM);
+            $affectationModel->motifCloture = $affectation->getMotifCloture();
+            $affectationModel->motifRefus = $affectation->getMotifRefus();
+            $signalementResponse->affectations[] = $affectationModel;
+        }
 
         // infos logement
         $signalementResponse->natureLogement = $signalement->getNatureLogement();

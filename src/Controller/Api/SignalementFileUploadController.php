@@ -60,11 +60,21 @@ class SignalementFileUploadController extends AbstractController
                 mediaType: 'multipart/form-data',
                 schema: new OA\Schema(
                     properties: [
-                        'files' => new OA\Property(
-                            property: 'files',
-                            description: 'Liste des fichiers téléversés',
+                        'files[]' => new OA\Property(
+                            property: 'files[]',
+                            description: 'Liste des fichiers téléversés. Utiliser la clé "files[]".',
                             type: 'array',
-                            items: new OA\Items(type: 'string', format: 'binary'),
+                            items: new OA\Items(
+                                description: 'Fichier téléversé.',
+                                type: 'string',
+                                format: 'binary'
+                            )
+                        ),
+                        'partenaireUuid' => new OA\Property(
+                            property: 'partenaireUuid',
+                            description: 'Identifiant UUID du partenaire relié au fichier.',
+                            type: 'string',
+                            example: '85401893-8d92-11f0-8aa8-f6901f1203f4'
                         ),
                     ],
                     type: 'object'
@@ -74,7 +84,13 @@ class SignalementFileUploadController extends AbstractController
                         example: "Exemple d'envoi d'un fichier",
                         summary: "Exemple d'envoi d'un fichier",
                         value: [
-                            'files' => ['file1.jpg', 'file2.pdf'],
+                            'files[]' => [
+                                'name' => 'file1.jpg',
+                                'contents' => '<CONTENU_EN_BINAIRE>',
+                                'filename' => 'file1.jpg',
+                                'type' => 'image/jpeg',
+                            ],
+                            'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
                         ]
                     ),
                 ]
@@ -143,16 +159,14 @@ class SignalementFileUploadController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $this->partnerAuthorizedResolver->getUniquePartner($user);
-        if (!$partner) {
-            throw new \Exception('TODO permission API : ajout du parametre partenaire facultatif. Si non fournit renvoyer une erreur demandant de l\'expliciter');
-        }
+        $partenaireUuid = $request->request->get('partenaireUuid');
+        $data['files'] = $request->files->all();
+        $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $partenaireUuid);
         $this->denyAccessUnlessGranted(
             ApiSignalementPartnerVoter::API_EDIT_SIGNALEMENT,
             ['signalement' => $signalement, 'partner' => $partner],
             SecurityApiExceptionListener::ACCESS_DENIED
         );
-        $data['files'] = $request->files->all();
         $filesUploadRequest = new FilesUploadRequest();
         try {
             $filesUploadRequest = $this->normalizer->denormalize($data['files'], FilesUploadRequest::class, 'json');

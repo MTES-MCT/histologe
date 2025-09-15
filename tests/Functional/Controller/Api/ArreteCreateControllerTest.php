@@ -36,25 +36,31 @@ class ArreteCreateControllerTest extends WebTestCase
      */
     public function testCreateArreteSuccess(string $type, array $payload): void
     {
+        $signalementUuid = '00000000-0000-0000-2022-000000000006';
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_arretes_post', [
-                'uuid' => '00000000-0000-0000-2022-000000000006',
+                'uuid' => $signalementUuid,
             ]),
             server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode($payload)
         );
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000006']);
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
         $lastDescription = $signalement->getSuivis()->last()->getDescription();
 
         foreach ($payload as $key => $value) {
-            if ('arrete_mainlevee' === $type && 'type' === $key) {
+            if (('arrete_mainlevee' === $type && 'type' === $key) || 'partenaireUuid' === $key) {
                 continue;
             }
             $this->assertStringContainsString($value, $lastDescription);
         }
-        $notifs = self::getContainer()->get(NotificationRepository::class)->findBy(['signalement' => $signalement, 'type' => NotificationType::NOUVEAU_SUIVI]);
+        $notifs = self::getContainer()->get(NotificationRepository::class)->findBy([
+            'signalement' => $signalement,
+            'type' => NotificationType::NOUVEAU_SUIVI,
+        ]);
         $this->assertCount(3, $notifs);
         $this->assertEmailCount(1);
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
@@ -68,10 +74,13 @@ class ArreteCreateControllerTest extends WebTestCase
      */
     public function testCreateArreteFailed(array $payload): void
     {
+        $signalementUuid = '00000000-0000-0000-2022-000000000006';
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_arretes_post', [
-                'uuid' => '00000000-0000-0000-2022-000000000006',
+                'uuid' => $signalementUuid,
             ]),
             server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode($payload)

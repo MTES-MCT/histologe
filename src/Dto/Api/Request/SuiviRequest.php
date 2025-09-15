@@ -40,6 +40,13 @@ class SuiviRequest implements RequestInterface, RequestFileInterface
     #[ValidFiles]
     public array $files = [];
 
+    #[OA\Property(
+        description: 'Identifiant UUID du partenaire.',
+        example: '342bf101-506d-4159-ba0c-c097f8cf12e7',
+    )]
+    #[Assert\Uuid(message: 'Veuillez fournir un UUID valide.')]
+    public ?string $partenaireUuid = null;
+
     public function getDescription(): ?string
     {
         return $this->description ?? null;

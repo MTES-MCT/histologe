@@ -20,3 +20,8 @@ framework:
             policy: 'fixed_window'
             limit: '%env(int:API_LIMITER_LIMIT)%'
             interval: '%env(API_LIMITER_INTERVAL)%'
+
+when@test:
+  framework:
+    rate_limiter:
+      api_limiter: { }

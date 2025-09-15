@@ -40,6 +40,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
         $firstFile = $signalement->getFiles()->first();
         $lastFile = $signalement->getFiles()->last();
+        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
         if ('visite_confirmed' === $type) {
             $payload['files'] = [$firstFile->getUuid(), $lastFile->getUuid()];
         }
@@ -77,6 +78,7 @@ class VisiteCreateControllerTest extends WebTestCase
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_visite_post', ['uuid' => $signalementUuid]),
@@ -99,6 +101,7 @@ class VisiteCreateControllerTest extends WebTestCase
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_visite_post', ['uuid' => $signalementUuid]),
@@ -120,6 +123,9 @@ class VisiteCreateControllerTest extends WebTestCase
      */
     public function testCreateVisiteWithPayloadErrors(array $payload, array $fieldsErrors, string $errorMessage): void
     {
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
+        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
+
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_visite_post', ['uuid' => self::UUID_SIGNALEMENT]),
@@ -152,7 +158,7 @@ class VisiteCreateControllerTest extends WebTestCase
                 ],
                 'details' => 'lorem ipsum dolor sit <em>amet</em>',
             ],
-            4,
+            5,
         ];
         yield 'test create visite confirmed with no usager notification' => [
             'visite_confirmed',
@@ -169,7 +175,7 @@ class VisiteCreateControllerTest extends WebTestCase
                 ],
                 'details' => 'lorem ipsum dolor sit <em>amet</em>',
             ],
-            3,
+            4,
         ];
 
         yield 'test create visite planned' => [

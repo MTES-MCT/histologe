@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\SignalementRepository;
 use App\Service\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
 use App\Tests\ApiHelper;
@@ -58,7 +59,9 @@ class SignalementFileUploadControllerTest extends WebTestCase
 
         self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
         $uuid = '00000000-0000-0000-2022-000000000006';
-        $this->postRequest($uuid, [$imageFile, $documentFile]);
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
+        $partnerUuid = $signalement->getAffectations()->first()->getPartner()->getUuid();
+        $this->postRequest($uuid, $partnerUuid, [$imageFile, $documentFile]);
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
@@ -68,14 +71,14 @@ class SignalementFileUploadControllerTest extends WebTestCase
      */
     public function testFileUploadWithBadRequest(string $uuid, int $codeHttpStatus): void
     {
-        $this->postRequest($uuid, []);
+        $this->postRequest($uuid, '', []);
         $this->assertEquals($codeHttpStatus, $this->client->getResponse()->getStatusCode());
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
     public function provideErrorInput(): \Generator
     {
-        yield 'test upload with bad request' => ['00000000-0000-0000-2022-000000000006', Response::HTTP_BAD_REQUEST];
+        yield 'test upload with bad request' => ['00000000-0000-0000-2022-000000000006', Response::HTTP_FORBIDDEN];
         yield 'test upload with not found' => ['00000000-0000-0000-2022-000000000000', Response::HTTP_NOT_FOUND];
         yield 'test upload with forbidden' => ['00000000-0000-0000-2022-000000000004', Response::HTTP_FORBIDDEN];
     }
@@ -83,12 +86,12 @@ class SignalementFileUploadControllerTest extends WebTestCase
     /**
      * @param array<UploadedFile> $files
      */
-    private function postRequest(string $uuid, array $files = []): void
+    private function postRequest(string $uuid, string $partnerUuid, array $files = []): void
     {
         $this->client->request(
             'POST',
             $this->router->generate('api_signalements_files_post', ['uuid' => $uuid]),
-            [],
+            ['partenaireUuid' => $partnerUuid],
             ['files' => $files],
             ['CONTENT_TYPE' => 'multipart/form-data']
         );
