@@ -36,10 +36,6 @@ class CartographieController extends AbstractController
         $session->set('signalementSearchQuery', $signalementSearchQuery);
         $session->save();
 
-        // Dummy read to let Redis save session
-        sleep(1);
-        $session->get('signalementSearchQuery');
-
         /** @var User $user */
         $user = $this->getUser();
         $filters = null !== $signalementSearchQuery
