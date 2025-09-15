@@ -610,9 +610,11 @@
                             <tr>
                                 <td style="padding:.5rem;width: 15%">
                                     {% if suivi.createdBy is defined and suivi.createdBy is not null %}
-                                        <b> {{ suivi.createdBy.nomComplet(true) }}</b>
-                                        {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
-                                        <br>
+                                        ️{% if not isForUsager %}
+                                            <b> {{ suivi.createdBy.nomComplet(true) }}</b>
+                                            {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
+                                            <br>
+                                        {% endif %}
                                         <small>
                                         {% if suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER
                                                         or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE
@@ -655,8 +657,10 @@
                     <h2>Photo : {{ photo.title }}</h2>
                     {% if photo.documentType.name == 'PHOTO_VISITE' %}
                        <h3>Photo de la visite du {{ photo.intervention is defined and photo.intervention.scheduledAt is defined ? photo.intervention.scheduledAt|date('d/m/Y') : 'N/R'}}</h3>  
-                    {% endif %}                    
-                    <small>Ajoutée par {{ photo.uploadedBy.nomComplet ?? 'N/R' }}</small><br>
+                    {% endif %}
+                    {% if not isForUsager %}                    
+                        <small>Ajoutée par {{ photo.uploadedBy.nomComplet ?? 'N/R' }}</small><br>
+                    {% endif %}
                     <small>le {{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}</small><br>                    
                     {% set encodedImage = photo.filename(constant('App\\Service\\ImageManipulationHandler::SUFFIX_RESIZE')) | image64 %}
                     {% if encodedImage is not null %}                    
