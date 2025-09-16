@@ -40,6 +40,7 @@ class LoadFileData extends Fixture implements OrderedFixtureInterface
                 isStandalone: true,
                 documentType: DocumentType::MODELE_DE_COURRIER,
                 partnerCompetence: [Qualification::NON_DECENCE_ENERGETIQUE],
+                description: 'Modèle de courrier pour '.$title,
             );
             $manager->persist($file);
         }
