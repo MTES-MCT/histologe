@@ -219,7 +219,6 @@ class SignalementEditControllerTest extends WebTestCase
      */
     private function getPayloadSituationFoyer(): array
     {
-        // TODO : ajouter le nom de la structure si travailleur social ?
         return [
             'isLogementSocial' => 'non',
             'isRelogement' => 'non',
