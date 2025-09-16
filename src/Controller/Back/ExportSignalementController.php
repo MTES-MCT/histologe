@@ -2,17 +2,21 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
 use App\Service\Signalement\Export\SignalementExportFiltersDisplay;
 use App\Service\Signalement\Export\SignalementExportSelectableColumns;
+use App\Service\Signalement\SearchFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/bo/export/signalement')]
 class ExportSignalementController extends AbstractController
@@ -22,11 +26,17 @@ class ExportSignalementController extends AbstractController
         Request $request,
         SignalementExportFiltersDisplay $signalementExportFiltersDisplay,
         SignalementManager $signalementManager,
+        SearchFilter $searchFilter,
+        DenormalizerInterface $denormalizer,
+        ValidatorInterface $validator,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
 
-        $filters = json_decode($request->cookies->get('filters'), true) ?? $request->getSession()->get('filters', ['isImported' => '1']);
+        $signalementSearchQuery = $this->createSignalementSearchQueryFromCookie($request, $denormalizer, $validator);
+        $filters = null !== $signalementSearchQuery
+            ? $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user)
+            : ['isImported' => 'oui'];
 
         $count_signalements = $signalementManager->findSignalementAffectationList($user, $filters, true);
         $textFilters = $signalementExportFiltersDisplay->filtersToText($filters);
@@ -43,6 +53,9 @@ class ExportSignalementController extends AbstractController
     public function exportFile(
         Request $request,
         MessageBusInterface $messageBus,
+        SearchFilter $searchFilter,
+        DenormalizerInterface $denormalizer,
+        ValidatorInterface $validator,
     ): RedirectResponse {
         $selectedColumns = $request->get('cols') ?? [];
         $format = $request->get('file-format');
@@ -57,7 +70,10 @@ class ExportSignalementController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $filters = json_decode($request->cookies->get('filters'), true) ?? $request->getSession()->get('filters', ['isImported' => '1']);
+        $signalementSearchQuery = $this->createSignalementSearchQueryFromCookie($request, $denormalizer, $validator);
+        $filters = null !== $signalementSearchQuery
+            ? $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user)
+            : ['isImported' => 'oui'];
 
         $message = (new ListExportMessage())
             ->setUserId($user->getId())
@@ -76,5 +92,55 @@ class ExportSignalementController extends AbstractController
         );
 
         return $this->redirectToRoute('back_signalement_list_export');
+    }
+
+    private function createSignalementSearchQueryFromCookie(
+        Request $request,
+        DenormalizerInterface $denormalizer,
+        ValidatorInterface $validator,
+    ): ?SignalementSearchQuery {
+        $cookieValue = $request->cookies->get('list-signalements-filters');
+
+        if (null === $cookieValue) {
+            return null;
+        }
+
+        try {
+            parse_str($cookieValue, $filteredData);
+
+            // Conversion des types pour éviter les erreurs de désérialisation
+            if (isset($filteredData['page'])) {
+                $filteredData['page'] = (int) $filteredData['page'];
+            }
+            if (isset($filteredData['criticiteScoreMin'])) {
+                $filteredData['criticiteScoreMin'] = (float) $filteredData['criticiteScoreMin'];
+            }
+            if (isset($filteredData['criticiteScoreMax'])) {
+                $filteredData['criticiteScoreMax'] = (float) $filteredData['criticiteScoreMax'];
+            }
+            if (isset($filteredData['sansSuiviPeriode'])) {
+                $filteredData['sansSuiviPeriode'] = (int) $filteredData['sansSuiviPeriode'];
+            }
+            if (isset($filteredData['usagerAbandonProcedure'])) {
+                $filteredData['usagerAbandonProcedure'] = filter_var($filteredData['usagerAbandonProcedure'], \FILTER_VALIDATE_BOOLEAN);
+            }
+
+            $signalementSearchQuery = $denormalizer->denormalize(
+                $filteredData,
+                SignalementSearchQuery::class,
+                null,
+                ['allow_extra_attributes' => false]
+            );
+
+            $violations = $validator->validate($signalementSearchQuery);
+
+            if (count($violations) > 0) {
+                return null;
+            }
+
+            return $signalementSearchQuery;
+        } catch (\Exception $exception) {
+            return null;
+        }
     }
 }

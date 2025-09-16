@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -25,14 +24,10 @@ class SignalementListController extends AbstractController
 
     #[Route('/list/signalements/', name: 'back_signalements_list_json')]
     public function list(
-        SessionInterface $session,
         SignalementManager $signalementManager,
         SearchFilter $searchFilter,
         #[MapQueryString] ?SignalementSearchQuery $signalementSearchQuery = null,
     ): JsonResponse {
-        $session->set('signalementSearchQuery', $signalementSearchQuery);
-        $session->save();
-
         /** @var User $user */
         $user = $this->getUser();
         $filters = null !== $signalementSearchQuery
@@ -52,8 +47,11 @@ class SignalementListController extends AbstractController
             ['groups' => ['signalements:read']]
         );
 
-        $cookie = Cookie::create('filters')
-            ->withValue(json_encode($filters))
+        $parsableQueryString = null !== $signalementSearchQuery
+            ? substr($signalementSearchQuery->getQueryStringForUrl(), 1)
+            : '';
+        $cookie = Cookie::create('list-signalements-filters')
+            ->withValue($parsableQueryString)
             ->withExpires(strtotime('+1 hour'));
 
         $response->headers->setCookie($cookie);

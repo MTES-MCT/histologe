@@ -11,7 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -26,16 +25,12 @@ class CartographieController extends AbstractController
 
     #[Route('/signalements/', name: 'back_signalement_carto_json')]
     public function list(
-        SessionInterface $session,
         SignalementRepository $signalementRepository,
         ZoneRepository $zoneRepository,
         SearchFilter $searchFilter,
         Request $request,
         #[MapQueryString] ?SignalementSearchQuery $signalementSearchQuery = null,
     ): JsonResponse {
-        $session->set('signalementSearchQuery', $signalementSearchQuery);
-        $session->save();
-
         /** @var User $user */
         $user = $this->getUser();
         $filters = null !== $signalementSearchQuery
