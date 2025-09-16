@@ -4,6 +4,7 @@ namespace Mock;
 
 include_once __DIR__.'/../../vendor/autoload.php';
 
+use Mock\Brevo\BrevoMock;
 use Mock\Esabora\EsaboraSCHSMock;
 use Mock\Esabora\EsaboraSISHMock;
 use Mock\Idoss\IdossMock;
@@ -24,6 +25,7 @@ class AppMock
             IdossMock::prepareMockForIdoss($wireMock);
             ProConnectMock::prepareAuthorizationMock($wireMock);
             RialMock::prepare($wireMock);
+            BrevoMock::prepare($wireMock);
         } catch (\Throwable $exception) {
             printf('Error message: %s', $exception->getMessage());
         }
