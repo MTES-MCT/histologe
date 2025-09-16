@@ -47,6 +47,7 @@ class SignalementListController extends AbstractController
             ['groups' => ['signalements:read']]
         );
 
+        // Remove '?' at the start of the string
         $parsableQueryString = null !== $signalementSearchQuery
             ? substr($signalementSearchQuery->getQueryStringForUrl(), 1)
             : '';

@@ -43,6 +43,7 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\FormHelper;
 use App\Service\Signalement\PhotoHelper;
+use App\Service\Signalement\SearchFilter;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SuiviSeenMarker;
 use Doctrine\DBAL\Exception;
@@ -300,6 +301,7 @@ class SignalementController extends AbstractController
         AffectationManager $affectationManager,
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
+        SearchFilter $searchFilter,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -350,7 +352,7 @@ class SignalementController extends AbstractController
         if (!empty($entity)) {
             $this->addFlash('success', sprintf('Signalement #%s fermé avec succès !', $reference));
         }
-        $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery');
+        $signalementSearchQuery = $searchFilter->createSignalementSearchQueryFromCookie($request);
         $url = $this->generateUrl('back_signalements_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $url .= $signalementSearchQuery?->getQueryStringForUrl();
 
