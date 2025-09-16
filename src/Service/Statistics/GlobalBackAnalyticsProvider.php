@@ -59,7 +59,8 @@ class GlobalBackAnalyticsProvider
         return $this->signalementRepository->countAll(
             territory: $territory,
             partners: $partners,
-            removeImported: true
+            removeImported: true,
+            removeArchived: true
         );
     }
 
