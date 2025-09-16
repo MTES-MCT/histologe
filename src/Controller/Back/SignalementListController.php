@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
+use App\Factory\SignalementSearchQueryFactory;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\SearchFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,7 +52,7 @@ class SignalementListController extends AbstractController
         $parsableQueryString = null !== $signalementSearchQuery
             ? substr($signalementSearchQuery->getQueryStringForUrl(), 1)
             : '';
-        $cookie = Cookie::create(SearchFilter::COOKIE_NAME)
+        $cookie = Cookie::create(SignalementSearchQueryFactory::COOKIE_NAME)
             ->withValue($parsableQueryString)
             ->withExpires(strtotime('+1 hour'));
 

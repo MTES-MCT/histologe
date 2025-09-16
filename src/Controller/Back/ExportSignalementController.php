@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
+use App\Factory\SignalementSearchQueryFactory;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
 use App\Service\Signalement\Export\SignalementExportFiltersDisplay;
@@ -24,11 +25,12 @@ class ExportSignalementController extends AbstractController
         SignalementExportFiltersDisplay $signalementExportFiltersDisplay,
         SignalementManager $signalementManager,
         SearchFilter $searchFilter,
+        SignalementSearchQueryFactory $signalementSearchQueryFactory,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
 
-        $signalementSearchQuery = $searchFilter->createSignalementSearchQueryFromCookie($request);
+        $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
         $filters = null !== $signalementSearchQuery
             ? $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user)
             : ['isImported' => 'oui'];
@@ -49,6 +51,7 @@ class ExportSignalementController extends AbstractController
         Request $request,
         MessageBusInterface $messageBus,
         SearchFilter $searchFilter,
+        SignalementSearchQueryFactory $signalementSearchQueryFactory,
     ): RedirectResponse {
         $selectedColumns = $request->get('cols') ?? [];
         $format = $request->get('file-format');
@@ -63,7 +66,7 @@ class ExportSignalementController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $signalementSearchQuery = $searchFilter->createSignalementSearchQueryFromCookie($request);
+        $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
         $filters = null !== $signalementSearchQuery
             ? $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user)
             : ['isImported' => 'oui'];
