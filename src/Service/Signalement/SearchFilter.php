@@ -34,6 +34,8 @@ use function Symfony\Component\String\u;
 
 class SearchFilter
 {
+    public const string COOKIE_NAME = 'list-signalements-filters';
+
     private SignalementSearchQuery $request;
 
     public function __construct(
@@ -676,7 +678,7 @@ class SearchFilter
 
     public function createSignalementSearchQueryFromCookie(Request $httpRequest): ?SignalementSearchQuery
     {
-        $cookieValue = $httpRequest->cookies->get('list-signalements-filters');
+        $cookieValue = $httpRequest->cookies->get(self::COOKIE_NAME);
 
         if (null === $cookieValue) {
             return null;

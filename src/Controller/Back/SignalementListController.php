@@ -51,7 +51,7 @@ class SignalementListController extends AbstractController
         $parsableQueryString = null !== $signalementSearchQuery
             ? substr($signalementSearchQuery->getQueryStringForUrl(), 1)
             : '';
-        $cookie = Cookie::create('list-signalements-filters')
+        $cookie = Cookie::create(SearchFilter::COOKIE_NAME)
             ->withValue($parsableQueryString)
             ->withExpires(strtotime('+1 hour'));
 
