@@ -141,7 +141,7 @@ class SignalementAffectationListView
     {
         return $this->qualifications;
     }
- 
+
     #[Groups(['signalements:read'])]
     public function hasNde(): bool
     {
@@ -155,7 +155,7 @@ class SignalementAffectationListView
 
         return false;
     }
-    
+
     /** @return array<string> */
     public function getQualificationsStatuses(): ?array
     {
