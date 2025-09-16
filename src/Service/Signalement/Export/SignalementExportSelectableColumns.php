@@ -10,6 +10,7 @@ class SignalementExportSelectableColumns
     private const array SELECTABLE_COLS = [
         'TEL_SEC' => ['name' => 'Téléphone sec.', 'description' => 'Numéro de téléphone secondaire de l\'occupant du logement', 'export' => 'telephoneOccupantBis'],
         'INSEE' => ['name' => 'Code INSEE', 'description' => 'Le code INSEE de la commune du signalement', 'export' => 'inseeOccupant'],
+        'EPCI_NOM' => ['name' => 'EPCI', 'description' => 'L\'EPCI auquel appartient la commune du logement', 'export' => 'epciNom'],
         'ETAGE' => ['name' => 'Étage', 'description' => 'L\'étage du logement', 'export' => 'etageOccupant'],
         'ESCALIER' => ['name' => 'Escalier', 'description' => 'Le numéro d\'escalier du logement', 'export' => 'escalierOccupant'],
         'APPARTEMENT' => ['name' => 'Appartement', 'description' => 'Le numéro d\'appartement du logement', 'export' => 'numAppartOccupant'],
