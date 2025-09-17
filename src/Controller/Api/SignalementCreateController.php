@@ -1,0 +1,189 @@
+<?php
+
+namespace App\Controller\Api;
+
+use App\Dto\Api\Request\SignalementRequest;
+use App\Dto\Api\Response\SignalementResponse;
+use App\Entity\Partner;
+use App\Entity\Signalement;
+use App\Entity\User;
+use App\Factory\Api\SignalementResponseFactory;
+use App\Repository\SignalementRepository;
+use App\Service\Security\PartnerAuthorizedResolver;
+use App\Service\Signalement\ReferenceGenerator;
+use App\Service\Signalement\SignalementApiFactory;
+use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+#[Route('/api')]
+class SignalementCreateController extends AbstractController
+{
+    public function __construct(
+        private readonly SignalementResponseFactory $signalementResponseFactory,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        private readonly ValidatorInterface $validator,
+        private readonly SignalementApiFactory $signalementApiFactory,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly ReferenceGenerator $referenceGenerator,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    #[OA\Post(
+        path: '/api/signalement',
+        description: 'Création d\'un signalement',
+        summary: 'Création d\'un signalement',
+        security: [['Bearer' => []]],
+        requestBody: new OA\RequestBody(
+            description: 'Payload d\'un signalement',
+            content: new OA\JsonContent(
+                examples: [
+                    new OA\Examples(
+                        example: 'Création d\'un signalement',
+                        summary: 'Création d\'un signalement',
+                        description: 'Exemple de payload de création d\'un signalement.',
+                        value: [
+                            'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
+                            'adresseOccupant' => '151 chemin de la route',
+                            'codePostalOccupant' => '34090',
+                            'communeOccupant' => 'Montpellier',
+                            'etageOccupant' => '2',
+                            'escalierOccupant' => 'B',
+                            'numAppartOccupant' => '24B',
+                            'adresseAutreOccupant' => 'Résidence les oliviers',
+                            'profilDeclarant' => 'TIERS_PARTICULIER',
+                            'lienDeclarantOccupant' => 'PROCHE',
+                            'isLogementSocial' => false,
+                            'isLogementVacant' => false,
+                            'nbOccupantsLogement' => 4,
+                            'nbEnfantsDansLogement' => 2,
+                            'isEnfantsMoinsSixAnsDansLogement' => true,
+                        ]
+                    ),
+                ],
+                ref: '#/components/schemas/SignalementRequest',
+            )
+        ),
+        tags: ['Signalements'],
+    )]
+    #[OA\Response(
+        response: Response::HTTP_CREATED,
+        description: 'Signalement crée avec succès',
+        content: new OA\JsonContent(ref: new Model(type: SignalementResponse::class))
+    )]
+    #[OA\Response(
+        response: Response::HTTP_BAD_REQUEST,
+        description: 'Mauvaise payload (données invalides).',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'message',
+                    type: 'string',
+                    example: 'Valeurs invalides pour les champs suivants :'
+                ),
+                new OA\Property(
+                    property: 'status',
+                    type: 'integer',
+                    example: 400
+                ),
+                new OA\Property(
+                    property: 'errors',
+                    type: 'array',
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(
+                                property: 'property',
+                                type: 'string',
+                                example: 'description'
+                            ),
+                            new OA\Property(
+                                property: 'adresse',
+                                type: 'string',
+                                example: 'Veuillez renseigner une adresse'
+                            ),
+                        ],
+                        type: 'object'
+                    )
+                ),
+            ],
+            type: 'object'
+        )
+    )]
+    #[Route('/signalement', name: 'api_signalements_create_post', methods: 'POST')]
+    public function __invoke(
+        #[MapRequestPayload(validationGroups: ['false'])]
+        SignalementRequest $signalementRequest,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $signalementRequest->partenaireUuid);
+        $errors = $this->validator->validate($signalementRequest);
+        if (count($errors) > 0) {
+            throw new ValidationFailedException($signalementRequest, $errors);
+        }
+        $signalement = $this->signalementApiFactory->createFromSignalementRequest($signalementRequest);
+        // domage de ne pas avoir toutes les erreurs dés le départ mais la vérif du territoire et des doublon demande des traitement intermédiaires
+        $errors = $this->checkPartnerAndTerritory($partner, $signalementRequest, $signalement, $errors);
+        $errors = $this->checkDuplicate($signalementRequest, $signalement, $errors);
+        if (count($errors) > 0) {
+            throw new ValidationFailedException($signalementRequest, $errors);
+        }
+
+        $this->entityManager->beginTransaction();
+        $signalement->setReference($this->referenceGenerator->generate($signalement->getTerritory()));
+        // TODO : persist and flush all objects
+        $this->entityManager->commit();
+
+        $resource = $this->signalementResponseFactory->createFromSignalement($signalement);
+
+        return new JsonResponse($resource, Response::HTTP_CREATED);
+    }
+
+    private function checkPartnerAndTerritory(Partner $partner, SignalementRequest $signalementRequest, Signalement $signalement, ConstraintViolationListInterface $errors): ConstraintViolationListInterface
+    {
+        if ($partner->getTerritory() !== $signalement->getTerritory()) {
+            $violation = new ConstraintViolation(
+                'Vous n\'avez pas le droit de créer un signalement sur le territoire "'.$signalement->getTerritory()->getName().'".',
+                null,
+                [],
+                $signalementRequest,
+                null,
+                $signalement->getAddressCompleteOccupant(false)
+            );
+            $errors->add($violation);
+        }
+
+        return $errors;
+    }
+
+    private function checkDuplicate(SignalementRequest $signalementRequest, Signalement $signalement, ConstraintViolationListInterface $errors): ConstraintViolationListInterface
+    {
+        $duplicates = $this->signalementRepository->findOnSameAddress($signalement);
+        if (count($duplicates) > 0) {
+            $violation = new ConstraintViolation(
+                'Un signalement existe déjà à cette adresse ('.$signalement->getAddressCompleteOccupant(false).').',
+                null,
+                [],
+                $signalementRequest,
+                null,
+                $signalement->getAddressCompleteOccupant(false)
+            );
+            $errors->add($violation);
+        }
+
+        return $errors;
+    }
+}
