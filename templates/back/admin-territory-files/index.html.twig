@@ -142,6 +142,7 @@
                             aria-controls="fr-modal-document-delete"
                             data-url="{{ path('back_territory_management_document_delete_ajax', { file: file.id }) }}?_token={{ csrf_token('document_delete') }}"
                             data-title="{{ file.title }}"
+                            data-territoire="{{ file.territory ? file.territory.name : 'Tous' }}"
                             >Supprimer le document {{ file.title }}</button>
                     </td>
                 </tr>
@@ -207,7 +208,7 @@
                         </div>
                         <div class="fr-modal__content">
                             <h1 id="fr-modal-title-document-delete" class="fr-modal__title">
-                                Supprimer le document : "<span id="fr-modal-document-delete-document-title"></span>"
+                                Supprimer le document : "<span id="fr-modal-document-delete-document-title"></span>" du territoire <span id="fr-modal-document-delete-document-territoire"></span>
                             </h1>
                             <p>Vous êtes sur le point de supprimer le document "<span id="fr-modal-document-delete-document-title-reminder"></span>" de l'espace documentaire.</p>
                             <p>Une fois le document supprimé :</p>

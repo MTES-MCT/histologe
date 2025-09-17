@@ -23,6 +23,18 @@
                         Choisissez le document sur votre appareil puis renseignez les détails et conditions d'affichage du document.
                     </p>
                 </div>
+                {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12 fr-notice fr-notice--warning">
+                    <div class="fr-container">
+                        <div class="fr-notice__body">
+                            <p>
+                                <span class="fr-notice__title">Vérifiez bien les informations avant d'ajouter un document pour tous les territoires.</span>
+                                <span class="fr-notice__desc">Le document sera dupliqué sur chaque territoire et ne pourra pas être modifié / supprimé d'un seul coup.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </header>
     </section>

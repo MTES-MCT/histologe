@@ -235,4 +235,16 @@ class FileRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleScalarResult();
     }
+
+    /**
+     * @return array<int, File>
+     */
+    public function findAllStandalone(): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.isStandalone = true')
+            ->andWhere('f.signalement IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
 }
