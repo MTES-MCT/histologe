@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\PartnerType;
@@ -15,9 +16,12 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Index(columns: ['is_standalone'], name: 'idx_is_standalone')]
 class File implements EntityHistoryInterface
 {
+    use TimestampableTrait;
+
     public const STANDALONE_FILES = [
         'Demande de copie de DPE (non décence énergétique)' => '1_Demande_de_transmission_d_une_copie_d_un_DPE.docx',
         'Information problème performance énergétique (non décence énergétique)' => '2_Information_au_bailleur_Mise_en_conformite.docx',
@@ -108,12 +112,6 @@ class File implements EntityHistoryInterface
 
     #[ORM\Column(length: 255)]
     private ?string $extension = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: true)]
@@ -272,30 +270,6 @@ class File implements EntityHistoryInterface
     public function setExtension(?string $extension): self
     {
         $this->extension = $extension;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }
