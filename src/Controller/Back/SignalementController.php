@@ -17,6 +17,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
+use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AcceptAffectationType;
 use App\Form\AddSuiviType;
 use App\Form\ClotureType;
@@ -300,6 +301,7 @@ class SignalementController extends AbstractController
         AffectationManager $affectationManager,
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
+        SignalementSearchQueryFactory $signalementSearchQueryFactory,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -350,7 +352,7 @@ class SignalementController extends AbstractController
         if (!empty($entity)) {
             $this->addFlash('success', sprintf('Signalement #%s fermé avec succès !', $reference));
         }
-        $signalementSearchQuery = $request->getSession()->get('signalementSearchQuery');
+        $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
         $url = $this->generateUrl('back_signalements_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $url .= $signalementSearchQuery?->getQueryStringForUrl();
 
