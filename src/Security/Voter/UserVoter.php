@@ -107,6 +107,7 @@ class UserVoter extends Voter
 
     public function canSeeNde(User $user): bool
     {
+        // check if remove when FEATURE_NEW_DASHBOARD active
         if ($user->isTerritoryAdmin()) {
             return true;
         }

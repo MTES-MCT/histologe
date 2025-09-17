@@ -99,7 +99,6 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertEquals($dataSignalement['lastSuiviBy'], $signalementAffectationListView->getLastSuiviBy());
         $this->assertEquals('Locataire', $signalementAffectationListView->getProfileDeclarant());
         $this->assertSame($expectedAffectations, $signalementAffectationListView->getAffectations());
-        $this->assertTrue($signalementAffectationListView->hasNde());
         $this->assertEquals(
             $dataSignalement['lastSuiviIsPublic'],
             $signalementAffectationListView->getLastSuiviIsPublic());

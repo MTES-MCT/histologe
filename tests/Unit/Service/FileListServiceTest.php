@@ -7,6 +7,7 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\FileListService;
+use App\Service\FileVisibilityService;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -21,6 +22,7 @@ class FileListServiceTest extends WebTestCase
     private QualificationStatusService $qualificationStatusService;
     private SignalementRepository $signalementRepository;
     private UserRepository $userRepository;
+    private FileVisibilityService $fileVisibilityService;
 
     protected function setUp(): void
     {
@@ -31,6 +33,7 @@ class FileListServiceTest extends WebTestCase
         $this->qualificationStatusService = self::getContainer()->get(QualificationStatusService::class);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
         $this->userRepository = self::getContainer()->get(UserRepository::class);
+        $this->fileVisibilityService = self::getContainer()->get(FileVisibilityService::class);
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -45,6 +48,7 @@ class FileListServiceTest extends WebTestCase
             $this->signalementQualificationRepository,
             $this->security,
             $this->qualificationStatusService,
+            $this->fileVisibilityService,
             true,
         ))->getFileChoicesForSignalement($signalement);
 
@@ -63,14 +67,36 @@ class FileListServiceTest extends WebTestCase
             $this->signalementQualificationRepository,
             $this->security,
             $this->qualificationStatusService,
+            $this->fileVisibilityService,
             true,
         ))->getFileChoicesForSignalement($signalement);
 
         $this->assertArrayHasKey('Documents de la situation', $choices);
         $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
         $this->assertArrayHasKey('Documents types', $choices);
-        $this->assertArrayHasKey('Autre', $choices['Documents types']);
+        $this->assertArrayHasKey('Modèle de courrier', $choices['Documents types']);
         $this->assertCount(6, $choices['Documents de la situation']);
-        $this->assertCount(6, $choices['Documents types']['Autre']);
+        $this->assertCount(6, $choices['Documents types']['Modèle de courrier']);
+    }
+
+    public function testGetFileChoicesForSignalementNonNDEUser(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@signal-logement.fr']);
+        $this->client->loginUser($user);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
+
+        $choices = (new FileListService(
+            $this->fileRepository,
+            $this->signalementQualificationRepository,
+            $this->security,
+            $this->qualificationStatusService,
+            $this->fileVisibilityService,
+            true,
+        ))->getFileChoicesForSignalement($signalement);
+
+        $this->assertArrayHasKey('Documents de la situation', $choices);
+        $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
+        $this->assertArrayNotHasKey('Documents types', $choices);
+        $this->assertCount(6, $choices['Documents de la situation']);
     }
 }

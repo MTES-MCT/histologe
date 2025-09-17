@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\Qualification;
 use App\Entity\File;
 use App\Factory\FileFactory;
 use App\Repository\UserRepository;
@@ -36,7 +37,10 @@ class LoadFileData extends Fixture implements OrderedFixtureInterface
                 filename: $filename,
                 title: $title,
                 user: $userAdmin,
-                isStandalone: true
+                isStandalone: true,
+                documentType: DocumentType::MODELE_DE_COURRIER,
+                partnerCompetence: [Qualification::NON_DECENCE_ENERGETIQUE],
+                description: 'Modèle de courrier pour '.$title,
             );
             $manager->persist($file);
         }

@@ -1,4 +1,5 @@
-{% if can_see_nde_edit_zone(signalementQualificationNDE) and is_granted('SIGN_SEE_NDE', signalement) %}
+{# supprimer la première partie de la condition avec le feature flipping FEATURE_NEW_DOCUMENT_SPACE #}
+{% if (feature_new_document_space or can_see_nde_edit_zone(signalementQualificationNDE)) and is_granted('SIGN_SEE_NDE', signalement) %}
     <hr class="fr-mt-3w">
 
     <div class="fr-grid-row">
@@ -16,7 +17,7 @@
         <div class="fr-col-12 fr-col-md-6">
             <strong>Consommation d'énergie :</strong> 
             <span class="fr-badge fr-badge--info fr-badge--sm">
-            {% if signalementQualificationNDE.details.DPE is same as null or signalementQualificationNDE.details.consommation_energie is same as null %}
+            {% if signalementQualificationNDE is same as null or signalementQualificationNDE.details.DPE is same as null or signalementQualificationNDE.details.consommation_energie is same as null %}
                 A renseigner
             {% else %}
                 {% if signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' and signalement.superficie is not null and signalement.superficie > 0 %}
@@ -34,9 +35,11 @@
                 {{signalement.typeCompositionLogement.bailDpeClasseEnergetique(false)}}
             {% endif %}
         </div>
-        <div class="fr-col-12 fr-col-md-6">                    
-            <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
-        </div>
+        {% if signalementQualificationNDE %}            
+            <div class="fr-col-12 fr-col-md-6">                    
+                <strong>Analyse :</strong> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
+            </div>
+        {% endif %}
         <div class="fr-col-12">
             <strong>Désordre(s) concerné(s) :</strong> 
             <ul class="fr-list">
@@ -54,11 +57,23 @@
         <div class="fr-col-12 fr-col-md-6">
             <strong>Entrée dans le logement :</strong> {{ signalement.dateEntree  ? ( signalement.dateEntree|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
         </div>
-        <div class="fr-col-12 fr-col-md-6">
-            <strong>DPE :</strong> {{ signalementQualificationNDE.details.DPE ? 'Oui' : (signalementQualificationNDE.details.DPE is same as null ? 'A vérifier' : 'Non') }} 
+        <div class="fr-col-12 fr-col-md-6">        
+            {% if signalementQualificationNDE %}      
+                <strong>DPE :</strong> {{ signalementQualificationNDE.details.DPE ? 'Oui' : (signalementQualificationNDE.details.DPE is same as null ? 'A vérifier' : 'Non') }} 
+            {% elseif signalement.typeCompositionLogement %}
+                <strong>DPE :</strong> {{ signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' ? 'Oui' : (signalement.typeCompositionLogement.bailDpeDpe is same as null ? 'A vérifier' : 'Non')  }} 
+            {% else %}  
+                <strong>DPE :</strong> A vérifier            
+            {% endif %}
         </div>
-        <div class="fr-col-12 fr-col-md-6">
-            <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe  ? ( signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
+        <div class="fr-col-12 fr-col-md-6">  
+            {% if signalementQualificationNDE %}      
+                <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe  ? ( signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
+            {% elseif signalement.typeCompositionLogement %}
+                <strong>Date dernier DPE :</strong> {{ signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee  ? ( signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
+            {% else %}  
+                <strong>Date dernier DPE :</strong> A vérifier            
+            {% endif %}            
         </div>
     </div>
 {% endif %}

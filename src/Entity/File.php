@@ -19,12 +19,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class File implements EntityHistoryInterface
 {
     public const STANDALONE_FILES = [
-        '1 - Demande de transmission d\'une copie d\'un DPE' => '1_Demande_de_transmission_d_une_copie_d_un_DPE.docx',
-        '2 - Information au bailleur - Mise en conformité' => '2_Information_au_bailleur_Mise_en_conformite.docx',
-        '3 - Mise en demeure' => '3_Mise_en_demeure.docx',
-        '4 - Invitation à contacter l\'ADIL' => '4_Invitation_a_contacter_l_ADIL.docx',
-        '5 - Engagement du bailleur à réaliser des travaux' => '5_Engagement_du_bailleur_a_realiser_des_travaux.docx',
-        '6 - Saisine de la Commission départementale de conciliation' => '6_Saisine_de_la_Commission_departementale_de_conciliation.docx',
+        'Demande de copie de DPE (non décence énergétique)' => '1_Demande_de_transmission_d_une_copie_d_un_DPE.docx',
+        'Information problème performance énergétique (non décence énergétique)' => '2_Information_au_bailleur_Mise_en_conformite.docx',
+        'Mise en demeure (non décence énergétique)' => '3_Mise_en_demeure.docx',
+        'Invitation du bailleur à contacter l\'ADIL (non décence énergétique)' => '4_Invitation_a_contacter_l_ADIL.docx',
+        'Engagement à réaliser des travaux (non décence énergétique)' => '5_Engagement_du_bailleur_a_realiser_des_travaux.docx',
+        'Saisine de la Commission de conciliation (non décence énergétique)' => '6_Saisine_de_la_Commission_departementale_de_conciliation.docx',
     ];
 
     /** @var string[] */

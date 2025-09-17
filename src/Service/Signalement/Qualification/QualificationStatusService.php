@@ -2,7 +2,6 @@
 
 namespace App\Service\Signalement\Qualification;
 
-use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\SignalementQualification;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -65,21 +64,9 @@ class QualificationStatusService implements RuntimeExtensionInterface
         return QualificationStatus::NDE_CHECK;
     }
 
-    public function canSeenNDEQualification(?SignalementQualification $signalementQualification): bool
-    {
-        if (empty($signalementQualification)) {
-            return false;
-        }
-
-        if (Qualification::NON_DECENCE_ENERGETIQUE !== $signalementQualification->getQualification()) {
-            return false;
-        }
-
-        return QualificationStatus::NDE_AVEREE == $signalementQualification->getStatus() || QualificationStatus::NDE_CHECK == $signalementQualification->getStatus();
-    }
-
     public function canSeenNDEEditZone(?SignalementQualification $signalementQualification): bool
     {
+        // supprimer la fonction avec le feature flipping FEATURE_NEW_DOCUMENT_SPACE
         if (empty($signalementQualification)) {
             return false;
         }
