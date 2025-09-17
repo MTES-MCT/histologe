@@ -171,7 +171,7 @@ class FileRepository extends ServiceEntityRepository
             $qb->andWhere('f.territory = :territory')
                 ->setParameter('territory', $searchTerritoryFiles->getTerritory());
         } elseif (!empty($territories)) {
-            $qb->andWhere('f.territory IN (:territories) OR f.territory IS NULL')
+            $qb->andWhere('f.territory IN (:territories)')
                 ->setParameter('territories', $territories);
         }
 
