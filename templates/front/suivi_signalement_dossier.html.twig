@@ -428,7 +428,7 @@
 							{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
 						</li>
 					{% endif %}
-					{% if signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
+					{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) and signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
 						<li>Nom de la structure d'accompagnement :
 							{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
 						</li>

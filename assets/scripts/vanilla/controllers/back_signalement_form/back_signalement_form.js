@@ -770,6 +770,9 @@ function initBoFormSignalementSituation() {
   initRefreshFromRadio('situation', 'signalement_draft_situation_assuranceContactee', [
     '#signalement_draft_situation_reponseAssurance',
   ]);
+  initRefreshFromRadio('situation', 'signalement_draft_situation_accompagnementTravailleurSocial', [
+    '#signalement_draft_situation_accompagnementTravailleurSocialNomStructure',
+  ]);
   window.dispatchEvent(new Event('refreshUploadButtonEvent'));
 
   reloadDeleteFileList();
