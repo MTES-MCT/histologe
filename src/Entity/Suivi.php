@@ -169,7 +169,13 @@ class Suivi implements EntityHistoryInterface
             return $this->getPartner()->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
         }
         if ($this->getCreatedBy()) {
-            if (in_array($this->getCategory(), [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DOCUMENT_DELETED_BY_USAGER])) {
+            if (in_array($this->getCategory(), [
+                SuiviCategory::MESSAGE_USAGER,
+                SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+                SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
+                SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+                SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
+            ])) {
                 if ($this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant()) {
                     return 'OCCUPANT'.$separator.$this->getCreatedBy()->getNomComplet(true);
                 }
@@ -177,7 +183,7 @@ class Suivi implements EntityHistoryInterface
                 return 'DECLARANT'.$separator.$this->getCreatedBy()->getNomComplet(true);
             }
 
-            return $this->getCreatedBy()->getNomComplet(true);
+            return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
         }
         if ($this->getCreatedAt()->format('Y') >= 2024) {
             return 'Occupant ou déclarant';

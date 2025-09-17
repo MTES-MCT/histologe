@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional\Controller\Api;
 
-use App\Entity\File;
 use App\Entity\User;
+use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -29,10 +29,8 @@ class SignalementFileUpdateControllerTest extends WebTestCase
 
     public function testUpdateSignalementFile(): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->find(1);
-        $file = $signalement->getFiles()->filter(function (File $file) {
-            return $file->isTypeImage();
-        })->current();
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2023-26']);
+        $file = self::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
 
         $payload = [
             'documentType' => 'PHOTO_SITUATION',
@@ -53,10 +51,8 @@ class SignalementFileUpdateControllerTest extends WebTestCase
 
     public function testUpdateSignalementFileWithFileTypeUpdated(): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->find(1);
-        $file = $signalement->getFiles()->filter(function (File $file) {
-            return $file->isTypeDocument();
-        })->current();
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2023-26']);
+        $file = self::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'pdf']);
 
         $payload = [
             'documentType' => 'PROCEDURE_ARRETE_PREFECTORAL',

@@ -33,6 +33,7 @@ use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\Security\PartnerAuthorizedResolver;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -55,6 +56,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private readonly UserRepository $userRepository,
         private readonly FileFactory $fileFactory,
         private readonly UserManager $userManager,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 
@@ -241,49 +243,58 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             [
                 'file' => 'test1.23.pdf',
                 'titre' => 'Fiche reperage.pdf',
-                'user' => 1,
+                'user' => 'api-01@signal-logement.fr',
                 'mimeType' => 'application/pdf',
             ],
             [
                 'file' => 'test1.pdf',
                 'titre' => 'Compte rendu de visite.pdf',
-                'user' => 22,
+                'user' => 'user-69-05@signal-logement.fr',
                 'mimeType' => 'application/pdf',
             ],
             [
                 'file' => 'blank-'.$row['reference'].'.pdf',
                 'titre' => 'Blank.pdf',
-                'user' => 1,
+                'user' => 'api-01@signal-logement.fr',
                 'mimeType' => 'application/pdf',
             ],
             [
                 'file' => 'Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png',
                 'titre' => '20220520_112424.png',
-                'user' => 1,
+                'user' => 'api-01@signal-logement.fr',
                 'mimeType' => 'image/png',
             ],
             [
                 'file' => 'Capture-d-ecran-du-2023-04-07-15-27-36-64302a1b57a20.png',
                 'titre' => 'IMG_20230220_141432735_HDR.png',
-                'user' => 23,
+                'user' => 'user-69-06@signal-logement.fr',
                 'mimeType' => 'image/png',
             ],
             [
                 'file' => 'blank-'.$row['reference'].'.jpg',
                 'titre' => 'Blank.jpg',
-                'user' => 1,
+                'user' => 'api-01@signal-logement.fr',
                 'mimeType' => 'image/jpeg',
             ],
         ];
 
         $dateMinusTwoMonth = (new \DateTimeImmutable())->modify('-2 months');
         foreach ($documentsAndPhotos as $document) {
-            $user = $this->userRepository->findOneBy(['id' => $document['user']]);
+            $user = $this->userRepository->findOneBy(['email' => $document['user']]);
+            $partner = null;
+            if ($user) {
+                if ($user->isApiUser()) {
+                    $partners = $this->partnerAuthorizedResolver->resolveBy($user);
+                    $partner = array_shift($partners);
+                } else {
+                    $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+                }
+            }
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $document['file'],
                 title: $document['titre'],
                 signalement: $signalement,
-                partner: $user?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                partner: $partner,
                 user: $user,
                 documentType: DocumentType::AUTRE
             );

@@ -36,7 +36,10 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
         $suivi = $notificationMail->getSuivi();
         $suiviCreator = null;
         if ($suivi && $suivi->getCreatedBy()) {
-            $suiviCreator = $suivi->getCreatedBy()->getNomComplet().' ('.$suivi->getPartner()?->getNom().')';
+            $suiviCreator = $suivi->getCreatedBy()->getNomComplet();
+            if ($suivi->getPartner()) {
+                $suiviCreator .= ' ('.$suivi->getPartner()->getNom().')';
+            }
         } elseif ($signalement->getPrenomDeclarant()) {
             $suiviCreator = $signalement->getPrenomDeclarant().' '.$signalement->getNomDeclarant();
         }

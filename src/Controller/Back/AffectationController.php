@@ -186,10 +186,10 @@ class AffectationController extends AbstractController
         // TODO : remove when FEATURE_NEW_DASHBOARD is removed
         if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
             $this->affectationManager->updateAffectation(
-                $affectation,
-                $user,
-                AffectationStatus::ACCEPTED,
-                $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+                affectation: $affectation,
+                user: $user,
+                status : AffectationStatus::ACCEPTED,
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             );
             $this->addFlash('success', 'Affectation acceptée avec succès !');
         } else {

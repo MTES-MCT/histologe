@@ -62,9 +62,7 @@ class ApiFileVoter extends Voter
         if ($file->getUploadedBy() !== $user) {
             return false;
         }
-        // TODO permission API : Une fois que le champ partner_id de File sera renseigné se baser dessus
-        // on vérifiera aussi le statut de l'affectation bien que ce n'était pas le cas jusqu'à présent
-        if (1 === 2) { // @phpstan-ignore-line
+        if ($file->getPartner()) {
             $affectation = $file->getSignalement()->getAffectationForPartner($file->getPartner());
             if (!$affectation) {
                 return false;
@@ -78,17 +76,7 @@ class ApiFileVoter extends Voter
 
             return false;
         }
-        $hasAffectationForPartner = false;
-        foreach ($file->getSignalement()->getAffectations() as $affectation) {
-            if ($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $affectation->getPartner())) {
-                $hasAffectationForPartner = true;
-                break;
-            }
-        }
-        if (!$hasAffectationForPartner) {
-            return false;
-        }
 
-        return true;
+        return false;
     }
 }

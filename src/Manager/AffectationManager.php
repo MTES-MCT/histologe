@@ -69,13 +69,13 @@ class AffectationManager extends Manager
         if ($dispatchAffectationAnsweredEvent) {
             $this->eventDispatcher->dispatch(
                 new AffectationAnsweredEvent(
-                    $affectation,
-                    $user,
-                    $partner,
-                    $status,
-                    $affectation->getMotifRefus(),
-                    $message,
-                    $files
+                    affectation: $affectation,
+                    user: $user,
+                    partner: $partner,
+                    status: $status,
+                    motifRefus: $affectation->getMotifRefus(),
+                    message: $message,
+                    files: $files
                 ),
                 AffectationAnsweredEvent::NAME
             );
