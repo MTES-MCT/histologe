@@ -119,8 +119,8 @@ class AffectationVoter extends Voter
 
     private function isSynchronizeWithEsabora(Affectation $affectation): bool
     {
-        if ($affectation->getPartner()->getType() === PartnerType::ARS
-            || $affectation->getPartner()->getType() === PartnerType::COMMUNE_SCHS) {
+        if (PartnerType::ARS === $affectation->getPartner()->getType()
+            || PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType()) {
             return $affectation->isSynchronized();
         }
 
