@@ -1,31 +1,31 @@
-{% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT
-    and affectation.isSynchronized
-    and (affectation.partner.type is same as enum('App\\Entity\\Enum\\PartnerType').ARS
-    or affectation.partner.type is same as enum('App\\Entity\\Enum\\PartnerType').COMMUNE_SCHS)
-%}
-    <div class="fr-notice fr-notice--warning fr-my-4v fr-text--left">
-        <div class="fr-container">
-            <div class="fr-notice__body">
-                <p>
-                    <span class="fr-notice__title">Pour traiter ce signalement, veuillez d’abord accepter ou refuser le dossier dans Esabora.</span>
-                </p>
+{% if affectation %}
+    {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT
+        and affectation.isSynchronized
+        and (affectation.partner.type is same as enum('App\\Entity\\Enum\\PartnerType').ARS
+        or affectation.partner.type is same as enum('App\\Entity\\Enum\\PartnerType').COMMUNE_SCHS) %}
+        <div class="fr-notice fr-notice--warning fr-my-4v fr-text--left">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p>
+                        <span class="fr-notice__title">Pour traiter ce signalement, veuillez d’abord accepter ou refuser le dossier dans Esabora.</span>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-{% endif %}
+    {% endif %}
 
-{% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED
-    and affectation.isSynchronized
-    and (affectation.partner.type is same as enum('App\\Entity\\Enum\\PartnerType').ARS
-    or affectation.partner.type is same as enum('App\\Entity\\Enum\\PartnerType').COMMUNE_SCHS)
-%}
-    <div class="fr-notice fr-notice--warning fr-my-4v fr-text--left">
-        <div class="fr-container">
-            <div class="fr-notice__body">
-                <p>
-                    <span class="fr-notice__title">La clôture de ce signalement est à réaliser sur Esabora.</span>
-                </p>
+    {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED
+        and affectation.isSynchronized
+        and (affectation.partner.type is same as enum('App\\Entity\\Enum\\PartnerType').ARS
+        or affectation.partner.type is same as enum('App\\Entity\\Enum\\PartnerType').COMMUNE_SCHS) %}
+        <div class="fr-notice fr-notice--warning fr-my-4v fr-text--left">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p>
+                        <span class="fr-notice__title">La clôture de ce signalement est à réaliser sur Esabora.</span>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endif %}
