@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -78,7 +79,14 @@ class AffectationVoter extends Voter
 
     private function canAnswer(Affectation $affectation, User $user): bool
     {
-        return $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory()) && SignalementStatus::ACTIVE === $affectation->getSignalement()->getStatut();
+        $canAnswer = $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory())
+            && SignalementStatus::ACTIVE === $affectation->getSignalement()->getStatut();
+
+        if (!$this->isSynchronizeWithEsabora($affectation)) {
+            return $canAnswer;
+        }
+
+        return false;
     }
 
     private function canClose(Affectation $affectation, User $user): bool
@@ -104,6 +112,16 @@ class AffectationVoter extends Voter
         }
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($affectation->getSignalement()->getTerritory())) {
             return true;
+        }
+
+        return false;
+    }
+
+    private function isSynchronizeWithEsabora(Affectation $affectation): bool
+    {
+        if ($affectation->getPartner()->getType() === PartnerType::ARS
+            || $affectation->getPartner()->getType() === PartnerType::COMMUNE_SCHS) {
+            return $affectation->isSynchronized();
         }
 
         return false;
