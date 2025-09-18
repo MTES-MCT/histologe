@@ -333,6 +333,12 @@ class SignalementController extends AbstractController
         if (!empty($inseeCode)) {
             $commune = $communeRepository->findOneBy(['codePostal' => $postalCode, 'codeInsee' => $inseeCode]);
             if (!$commune) {
+                \Sentry\captureMessage(sprintf(
+                    'Incohérence code postal et code INSEE : Code postal "%s", Code INSEE "%s"',
+                    $postalCode,
+                    $inseeCode
+                ));
+
                 return $this->json([
                     'success' => false,
                     'message' => 'Le paramètre code postal et le code insee ne sont pas cohérent',
