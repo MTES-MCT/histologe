@@ -50,11 +50,11 @@ class BackStatistiquesControllerTest extends WebTestCase
     public function provideRoutesStatistiquesDatas(): \Generator
     {
         yield 'Super Admin' => ['back_statistiques_filter', [], self::USER_SUPER_ADMIN, [
-            ['result' => 53, 'label' => 'count_signalement'],
+            ['result' => 50, 'label' => 'count_signalement'],
             ['result' => 55.1, 'label' => 'average_criticite'],
         ]];
         yield 'Responsable Territoire' => ['back_statistiques_filter', [], self::USER_ADMIN_TERRITOIRE, [
-            ['result' => 26, 'label' => 'count_signalement'],
+            ['result' => 25, 'label' => 'count_signalement'],
             ['result' => 88.4, 'label' => 'average_criticite'],
         ]];
         yield 'Partner' => ['back_statistiques_filter', [], self::USER_PARTNER, [
@@ -68,7 +68,7 @@ class BackStatistiquesControllerTest extends WebTestCase
             ['result' => 0, 'label' => 'count_signalement_archives'],
         ]];
         yield 'RT - filtered with commune Arles' => ['back_statistiques_filter', ['communes' => '["Arles"]'], self::USER_ADMIN_TERRITOIRE, [
-            ['result' => 26, 'label' => 'count_signalement'],
+            ['result' => 25, 'label' => 'count_signalement'],
             ['result' => 88.4, 'label' => 'average_criticite'],
             ['result' => 0, 'label' => 'count_signalement_filtered'],
             ['result' => 0, 'label' => 'average_criticite_filtered'],
