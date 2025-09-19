@@ -12,10 +12,13 @@
             <hr class="hr--blue-france">
             <div class="fr-container--fluid">
                 {% for item in items.data %}
-                    {% set statutClass = item.statut == 'en cours'
-                        ? 'fr-badge--success'
-                        : (item.statut == 'refusé' ? 'fr-badge--error' : 'fr-badge--grey')
-                    %}
+                    {% set classes = {
+                        'en cours': 'active',
+                        'fermé': 'closed',
+                        'refusé': 'refused'
+                    } %}
+
+                    {% set confettiClass = classes[item.statut]|default('') %}
                     {% set actionClass = item.actionDepuis == 'OUI'
                         ? 'fr-badge--success'
                         : 'fr-badge--grey'
@@ -28,7 +31,7 @@
                                 <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                                 <div>' ~ item.adresse ~ '</div>
                                 <div class="fr-mt-1v">
-                                    <span class="fr-badge ' ~ statutClass ~ ' fr-badge--no-icon">' ~ item.statut ~ '</span>
+                                    <span class="confetti ' ~ confettiClass ~ '"></span> ' ~ item.statut|capitalize ~ '
                                 </div>
                             </div>',
                             '<div><strong class="fr-text--lg">' ~ item.derniereAction ~ '</strong></div><div>' ~ item.derniereActionAt|date('d/m/Y à H:i') ~ '</div>',
