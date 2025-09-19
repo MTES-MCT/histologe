@@ -6,11 +6,9 @@ nelmio_api_doc:
              ## CHANGELOG 1.1.0 - 2025-09
                 Cette version introduit la **gestion des permissions API** et facilite l'intégration avec les partenaires en permettant l'utilisation d'un seul compte pour des interventions impliquant plusieurs partenaires. 
                 
-                Ces évolutions restent rétro-compatibles pour les interventions avec un seul partenaire.
-                Sinon, un UUID de partenaire devra être fournit.
-              
+                À l'exception du breaking change (voir plus bas), ces évolutions sont rétrocompatibles pour un utilisateur ayant une permission sur un seul partenaire.
                 #### AJOUTS
-                - Retourne l’email de l’utilisateur authentifié et la liste de ses **partenaires autorisés**.
+                - Retourne l’e-mail de l’utilisateur authentifié et la liste de ses **partenaires autorisés**.
                 
                   *Requête* 
                   
@@ -65,7 +63,7 @@ nelmio_api_doc:
                          "reference": "2022-6",
                          "dateCreation": "2025-09-03T14:01:24+00:00",
                          "affectations": [
-                           {
+                            {
                              "uuid": "1e89aad9-ff79-456c-b6ca-9358e5ee434b",
                              "partenaireUuid": "fc9b515f-d846-415b-91d2-1936563291e9",
                              "partenaireNom": "Partenaire 13-01",
