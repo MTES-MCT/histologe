@@ -72,6 +72,9 @@ class DuplicateStandaloneDocumentFilesCommand extends Command
 
                 $io->info('File '.$file->getFilename().' has been duplicated for territory zip '.$territory->getZip());
             }
+
+            // Remove orginial file
+            $this->uploadHandlerService->deleteFile($file);
         }
 
         $this->entityManager->flush();

@@ -30,7 +30,6 @@ class TerritoryFileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // On retire le champ file si on est en édition (l'entité a un id)
         $isEdit = false;
         if (isset($options['data']) && $options['data'] instanceof File && $options['data']->getId()) {
             $isEdit = true;

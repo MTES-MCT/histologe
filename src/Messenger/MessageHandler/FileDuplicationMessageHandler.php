@@ -60,13 +60,12 @@ class FileDuplicationMessageHandler
 
             // Reset UUID and detach from entity manager to avoid constraint violations
             $newFile->setUuid(Uuid::v4());
-            $this->entityManager->detach($newFile);
 
             $this->duplicateFileForTerritory($newFile, $variantsGenerated);
         }
 
         // Remove original file once all copies are made
-        $this->entityManager->remove($originalFile);
+        $this->uploadHandlerService->deleteFile($originalFile);
 
         $this->entityManager->flush();
 
@@ -89,9 +88,6 @@ class FileDuplicationMessageHandler
         if ($variantsGenerated) {
             $this->uploadHandlerService->copyPhotoVariantsToNewFilename($file->getFilename(), $newFilename);
         }
-
-        $file->setScannedAt(new \DateTimeImmutable());
-        $file->setIsStandalone(true);
 
         $this->entityManager->persist($file);
     }
