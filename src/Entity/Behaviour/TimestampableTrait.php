@@ -17,6 +17,13 @@ trait TimestampableTrait
         return $this->createdAt;
     }
 
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
     #[ORM\PrePersist()]
     public function setCreatedAtValue(): self
     {
