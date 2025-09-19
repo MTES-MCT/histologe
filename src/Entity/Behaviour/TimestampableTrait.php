@@ -27,7 +27,9 @@ trait TimestampableTrait
     #[ORM\PrePersist()]
     public function setCreatedAtValue(): self
     {
-        $this->createdAt = new \DateTimeImmutable();
+        if (empty($this->createdAt)) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
 
         return $this;
     }
