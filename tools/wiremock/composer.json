@@ -4,7 +4,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Mock\\": "src/Mock/"
+            "Mock\\": "src/Mock/",
+            "App\\": "../../src/"
         }
     }
 }

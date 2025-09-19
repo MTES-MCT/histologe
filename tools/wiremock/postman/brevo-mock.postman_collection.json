@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bd36a240-099d-4bb0-86e5-0dd4b3f5bf52",
+		"_postman_id": "aac93bc5-0270-4e0f-9963-e9ba21ed2f95",
 		"name": "brevo-mock",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "1569180"
@@ -10,61 +10,287 @@
 			"name": "webhook",
 			"item": [
 				{
-					"name": "blocked",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8082/brevo/trigger/blocked",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8082",
-							"path": [
-								"brevo",
-								"trigger",
-								"blocked"
-							]
+					"name": "success",
+					"item": [
+						{
+							"name": "delivered (user : nawell.mapaire)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/delivered",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"delivered"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "opened (user : coco)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/opened",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"opened"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "clicked (user : nelson.monfort)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/clicked",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"clicked"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "unique_opened (partner : partenaire-13-06)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/unique_opened",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"unique_opened"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "delivered",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8082/brevo/trigger/delivered",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8082",
-							"path": [
-								"brevo",
-								"trigger",
-								"delivered"
-							]
+					"name": "error",
+					"item": [
+						{
+							"name": "blocked (user: nelson.monfort)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/blocked",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"blocked"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "hard_bounce (partner: partenaire-13-06)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/hard_bounce",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"hard_bounce"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid_email (user : coco)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/invalid_email",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"invalid_email"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "spam (partner : partenaire-13-05)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/spam",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"spam"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "soft_bounce (user : baptiste@yopmail.com)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/soft_bounce",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"soft_bounce"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "error (user : user-69-05@signal-logement.fr)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/error",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"error"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "hard_bounce",
+					"name": "sent (partner: partenaire-13-01)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -75,7 +301,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8082/brevo/trigger/hard_bounce",
+							"raw": "http://localhost:8082/brevo/trigger/sent",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -84,61 +310,7 @@
 							"path": [
 								"brevo",
 								"trigger",
-								"hard_bounce"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "invalid_email",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8082/brevo/trigger/invalid_email",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8082",
-							"path": [
-								"brevo",
-								"trigger",
-								"invalid_email"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "soft_bounce",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8082/brevo/trigger/soft_bounce",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8082",
-							"path": [
-								"brevo",
-								"trigger",
-								"soft_bounce"
+								"sent"
 							]
 						}
 					},

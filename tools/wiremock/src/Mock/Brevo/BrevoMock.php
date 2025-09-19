@@ -2,6 +2,7 @@
 
 namespace Mock\Brevo;
 
+use App\Entity\Enum\BrevoEvent;
 use Mock\AppMock;
 use WireMock\Client\WireMock;
 use WireMock\PostServe\WebhookDefinition;
@@ -15,14 +16,7 @@ class BrevoMock
 
     public static function prepare(WireMock $wireMock): void
     {
-        $brevoEvents = [
-            'blocked',
-            'hard_bounce',
-            'soft_bounce',
-            'spam',
-            'invalid_email',
-            'delivered',
-        ];
+        $brevoEvents = BrevoEvent::values();
 
         foreach ($brevoEvents as $event) {
             $body = AppMock::getMockContent(self::RESOURCES_DIR."/$event.json");

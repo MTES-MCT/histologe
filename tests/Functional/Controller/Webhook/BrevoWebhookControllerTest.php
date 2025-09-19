@@ -175,7 +175,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         ];
 
         yield 'Delivery event' => [
-            'event' => 'delivery',
+            'event' => 'delivered',
             'email' => 'nawell.mapaire@yopmail.com',
             'expectDeliveryIssue' => false,
             'expectedPayload' => null,

@@ -46,14 +46,7 @@ class BrevoWebhookController extends AbstractController
             return new Response('Bad Request', Response::HTTP_BAD_REQUEST);
         }
 
-        $isDeliveryFailure = match ($event) {
-            BrevoEvent::BLOCKED->value,
-            BrevoEvent::HARD_BOUNCE->value,
-            BrevoEvent::SOFT_BOUNCE->value,
-            BrevoEvent::SPAM->value,
-            BrevoEvent::INVALID_EMAIL->value => true,
-            default => false,
-        };
+        $isDeliveryFailure = BrevoEvent::isErrorEvent($event);
 
         $emailDeliveryIssueRepository = $this->entityManager->getRepository(EmailDeliveryIssue::class);
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -73,7 +66,7 @@ class BrevoWebhookController extends AbstractController
 
             $severity = match ($event) {
                 BrevoEvent::BLOCKED->value => new Severity(Severity::FATAL),
-                BrevoEvent::HARD_BOUNCE, BrevoEvent::SOFT_BOUNCE, BrevoEvent::SPAM, BrevoEvent::INVALID_EMAIL => new Severity(Severity::ERROR),
+                BrevoEvent::HARD_BOUNCE, BrevoEvent::SOFT_BOUNCE, BrevoEvent::SPAM, BrevoEvent::INVALID_EMAIL, BrevoEvent::ERROR => new Severity(Severity::ERROR),
                 default => null,
             };
 
@@ -99,13 +92,13 @@ class BrevoWebhookController extends AbstractController
             }
 
             $this->entityManager->persist($emailDeliveryIssue);
-        } else {
+            $this->entityManager->flush();
+        } elseif (BrevoEvent::isSuccessEvent($event)) {
             if ($emailDeliveryIssue = $emailDeliveryIssueRepository->findOneBy(['email' => $email])) {
                 $this->entityManager->remove($emailDeliveryIssue);
+                $this->entityManager->flush();
             }
         }
-
-        $this->entityManager->flush();
 
         return new Response('OK', Response::HTTP_OK);
     }
