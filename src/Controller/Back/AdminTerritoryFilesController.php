@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\User;
 use App\Form\SearchTerritoryFilesType;
@@ -122,7 +123,12 @@ class AdminTerritoryFilesController extends AbstractController
                 // Dispatch message to duplicate file to all territories
                 if (empty($file->getTerritory())) {
                     $this->messageBus->dispatch(new FileDuplicationMessage($file->getId()));
-                    $successMessage = 'Le document a bien été ajouté. Il va être dupliqué pour tous les territoires, cela peut prendre quelques minutes.';
+                    $successMessage = 'Le document a bien été ajouté. ';
+                    if (DocumentType::GRILLE_DE_VISITE === $file->getDocumentType()) {
+                        $successMessage .= 'Il va être dupliqué pour tous les territoires qui ne possèdent pas de grille de visite. Cela peut prendre quelques minutes.';
+                    } else {
+                        $successMessage .= 'Il va être dupliqué pour tous les territoires, cela peut prendre quelques minutes.';
+                    }
                 }
 
                 $this->addFlash('success', $successMessage);
