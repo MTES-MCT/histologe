@@ -722,6 +722,14 @@ ul + p {
     background-color: var(--text-default-success);
 }
 
+.confetti.closed{
+    background-color: var(--blue-france-850-200);
+}
+
+.confetti.refused{
+    background-color: var(--text-default-grey);
+}
+
 .fr-tile.tile-last-suivi {
     height:auto;
     .fr-tile__pictogram{
