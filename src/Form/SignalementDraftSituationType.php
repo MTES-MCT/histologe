@@ -44,6 +44,7 @@ class SignalementDraftSituationType extends AbstractType
         $typeAllocation = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsTypeAllocation() : '';
         $montantAllocation = $signalement->getMontantAllocation();
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
+        $accompagnementTravailleurSocialNomStructure = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomStructure() : '';
         $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
         $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';
         $dateProprietaireAverti = $signalement->getProprioAvertiAt();
@@ -242,6 +243,12 @@ class SignalementDraftSituationType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocial,
+            ])
+            ->add('accompagnementTravailleurSocialNomStructure', TextType::class, [
+                'label' => 'Nom de la structure d\'accompagnement',
+                'required' => false,
+                'mapped' => false,
+                'data' => $accompagnementTravailleurSocialNomStructure,
             ])
             ->add('beneficiaireRSA', ChoiceType::class, [
                 'label' => 'Bénéficiaire RSA',

@@ -419,6 +419,13 @@ class SignalementResponse
     public bool|string|null $suiviParTravailleurSocial;
 
     #[OA\Property(
+        description: 'Nom de la structure d\'accompagnement.',
+        example: 'Structure Sociale ABC',
+        nullable: true
+    )]
+    public ?string $nomStructureAccompagnement;
+
+    #[OA\Property(
         description: "Indique si le propriétaire a été averti d'une situation concernant le logement.",
         type: 'boolean',
         example: true,

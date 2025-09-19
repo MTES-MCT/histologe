@@ -415,6 +415,8 @@ class SignalementDraftRequest
     #[Assert\Length(max: 50)]
     private ?string $travailleurSocialAccompagnementDeclarant = null;
 
+    private ?string $travailleurSocialAccompagnementNomStructure = null;
+
     #[Assert\Choice(
         choices: ['oui', 'non', 'nsp'],
         message: 'Le champ "infoProcedureBailleurPrevenu" est incorrect.',
@@ -1532,6 +1534,18 @@ class SignalementDraftRequest
     public function setTravailleurSocialAccompagnementDeclarant(?string $travailleurSocialAccompagnementDeclarant): self
     {
         $this->travailleurSocialAccompagnementDeclarant = $travailleurSocialAccompagnementDeclarant;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementNomStructure(): ?string
+    {
+        return $this->travailleurSocialAccompagnementNomStructure;
+    }
+
+    public function setTravailleurSocialAccompagnementNomStructure(?string $travailleurSocialAccompagnementNomStructure): self
+    {
+        $this->travailleurSocialAccompagnementNomStructure = $travailleurSocialAccompagnementNomStructure;
 
         return $this;
     }

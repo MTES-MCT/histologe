@@ -90,7 +90,8 @@
             Ne sait pas
         {% endif %}
     </div>
-    <div class="fr-col-12">
+    {% set structureAccompagnement = signalement.situationFoyer and signalement.situationFoyer.travailleurSocialAccompagnement is same as 'oui' %}
+    <div class="fr-col-12 {% if structureAccompagnement %}fr-col-md-6{% endif %}">
         <strong>Accompagnement par un ou une travailleuse sociale :</strong>
         {% if signalement.situationFoyer %}
             {% if signalement.situationFoyer.travailleurSocialAccompagnement is same as 'oui' %}
@@ -102,6 +103,12 @@
             {% endif %}
         {% endif %}
     </div>
+    {% if structureAccompagnement %}
+        <div class="fr-col-12 fr-col-md-6">
+            <strong>Nom de la structure d'accompagnement :</strong>
+            {{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
+        </div>
+    {% endif %}
     <div class="fr-col-12 fr-col-md-6">
         <strong>Bénéficiaire RSA :</strong>
         {% if signalement.informationComplementaire %}

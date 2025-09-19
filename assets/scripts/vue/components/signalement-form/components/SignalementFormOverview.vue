@@ -383,6 +383,14 @@ export default defineComponent({
         result += this.addLineIfNeeded('logement_social_numero_allocataire', 'Numéro allocataire : ')
         result += this.addLineIfNeeded('logement_social_montant_allocation', 'Montant allocation : ', ' €')
       }
+      result += this.addLineIfNeeded('travailleur_social_quitte_logement', 'Souhaite quitter le logement ? ')
+      if (this.formStore.data.travailleur_social_quitte_logement === 'oui') {
+        result += this.addLineIfNeeded('travailleur_social_preavis_depart', 'Préavis de départ ? ')
+      }
+      result += this.addLineIfNeeded('travailleur_social_accompagnement', 'Accompagnement par un ou une travailleuse sociale ? ')
+      if (this.formStore.data.travailleur_social_accompagnement === 'oui') {
+        result += this.addLineIfNeeded('travailleur_social_accompagnement_nom_structure', 'Nom de la structure : ')
+      }
       return result
     },
     getFormDataInfosDesordres (): string {

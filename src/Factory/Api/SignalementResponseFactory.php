@@ -113,6 +113,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->souhaiteQuitterLogement = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialQuitteLogement());
         $signalementResponse->souhaiteQuitterLogementApresTravaux = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureDepartApresTravaux());
         $signalementResponse->suiviParTravailleurSocial = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnement());
+        $signalementResponse->nomStructureAccompagnement = $signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementNomStructure();
         $signalementResponse->proprietaireAverti = $signalement->getIsProprioAverti();
         $signalementResponse->moyenInformationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailMoyen();
         $signalementResponse->dateInformationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailDate();

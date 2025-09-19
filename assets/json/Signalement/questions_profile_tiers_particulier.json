@@ -1817,6 +1817,18 @@
           "validate": {
             "message": "Veuillez indiquer si le foyer bénéficie d'un accompagnement par un ou une travailleuse sociale."
           }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_nom_structure",
+          "label": "Quel est le nom de la structure qui accompagne le foyer ? (facultatif)",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+          },
+          "validate": {
+            "required": false,
+            "message": "Veuillez indiquer le nom de la structure qui accompagne le foyer."
+          }
         }
       ],
       "footer": [
