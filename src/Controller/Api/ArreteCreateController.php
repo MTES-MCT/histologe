@@ -200,7 +200,7 @@ class ArreteCreateController extends AbstractController
             }
         }
         $interventionCreatedEvent = $this->eventDispatcher->dispatch(
-            new InterventionCreatedEvent($intervention, $user),
+            new InterventionCreatedEvent($intervention, $user, $partner),
             InterventionCreatedEvent::NAME
         );
         $suivi = $interventionCreatedEvent->getSuivi();

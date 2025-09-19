@@ -7,6 +7,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\SuiviFile;
@@ -45,8 +46,9 @@ class SuiviManager extends Manager
         string $description,
         int $type,
         SuiviCategory $category,
-        bool $isPublic = false,
+        ?Partner $partner = null,
         ?User $user = null,
+        bool $isPublic = false,
         ?\DateTimeImmutable $createdAt = null,
         ?string $context = null,
         bool $sendMail = true,
@@ -56,6 +58,7 @@ class SuiviManager extends Manager
     ): Suivi {
         $suivi = (new Suivi())
             ->setCreatedBy($user)
+            ->setPartner($partner)
             ->setSignalement($signalement)
             ->setDescription($this->htmlSanitizer->sanitize($description))
             ->setType($type)
@@ -135,6 +138,7 @@ class SuiviManager extends Manager
                 description: $description.$user->getNomComplet(),
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
                 subscriptionCreated: $subscriptionCreated
             );
@@ -146,8 +150,13 @@ class SuiviManager extends Manager
     /**
      * @param array<int, File> $files
      */
-    public function createInstanceForFilesSignalement(User $user, Signalement $signalement, array $files, bool &$subscriptionCreated = false): Suivi
-    {
+    public function createInstanceForFilesSignalement(
+        User $user,
+        Signalement $signalement,
+        array $files,
+        ?Partner $partner = null,
+        bool &$subscriptionCreated = false,
+    ): Suivi {
         $nbDocs = count($files);
         /** @var ?DocumentType $documentType */
         $documentType = null;
@@ -216,8 +225,9 @@ class SuiviManager extends Manager
             description: $description,
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::NEW_DOCUMENT,
-            isPublic: $isVisibleUsager,
+            partner: $partner,
             user: $user,
+            isPublic: $isVisibleUsager,
             files: $files,
             flush: false,
             subscriptionCreated: $subscriptionCreated

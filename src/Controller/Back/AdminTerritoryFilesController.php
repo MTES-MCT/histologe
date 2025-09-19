@@ -138,6 +138,11 @@ class AdminTerritoryFilesController extends AbstractController
                     $file->setScannedAt(new \DateTimeImmutable());
                     $file->setIsStandalone(true);
                     $file->setUploadedBy($user);
+                    if ($file->getTerritory()) {
+                        $file->setPartner($user->getPartnerInTerritoryOrFirstOne($file->getTerritory()));
+                    } else {
+                        $file->setPartner($user->getPartners()->first());
+                    }
                     $file->setDescription($file->getDescription());
                     $em->persist($file);
                     $em->flush();

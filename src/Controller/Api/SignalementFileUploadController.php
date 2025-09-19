@@ -183,14 +183,15 @@ class SignalementFileUploadController extends AbstractController
         $this->signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,
             signalement: $signalement,
-            user: $user
+            user: $user,
+            partner: $partner,
         );
 
         $this->entityManager->persist($signalement);
         $this->entityManager->flush();
 
         $fileUploadedEvent = $this->eventDispatcher->dispatch(
-            new FileUploadedEvent($signalement, $user, $fileList),
+            new FileUploadedEvent($signalement, $user, $fileList, $partner),
             FileUploadedEvent::NAME
         );
 

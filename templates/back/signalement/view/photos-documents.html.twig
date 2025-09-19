@@ -76,8 +76,7 @@
                             data-id={{ photo.id }} 
                             title="Voir la photo {{ photo.filename }}"
                         ></button>
-                        {% if is_granted('FILE_EDIT', photo) %}   
-                            {% set partner = photo.uploadedBy ? photo.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}                    
+                        {% if is_granted('FILE_EDIT', photo) %}                   
                             <button 
                                 class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                                 id="file_edit_{{ photo.id }}" 
@@ -94,7 +93,7 @@
                                 data-documentType="{{ photo.documentType.name }}" 
                                 data-desodreSlug="{{ photo.desordreSlug }}"
                                 data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
-                                data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
+                                data-partner-name="{{ photo.partner ? photo.partner.nom ~ ' - ' : '' }}"
                                 data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
                                 data-desordreSlug="{{ photo.desordreSlug }}"
                                 data-signalement-desordres="{{ criteres | json_encode }}"
@@ -129,7 +128,6 @@
             )
         )|reverse %}
     {% for doc in documents %}
-        {% set partner = doc.uploadedBy ? doc.uploadedBy.partnerInTerritoryOrFirstOne(signalement.territory) %}
         <div class="fr-grid-row fr-grid-row--middle fr-background-alt--grey fr-rounded fr-p-3v signalement-file-item">
             <div class="fr-col-10">
                 <div class="fr-grid-row">
@@ -140,7 +138,7 @@
                         <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
                     </div>
                     <div class="fr-col-12 fr-col-lg-5">
-                        {{ partner ? partner.nom ~ ' - ' : '' }}{{ doc.uploadedBy.nomComplet ?? 'N/R' }}
+                        {{ doc.partner ? doc.partner.nom ~ ' - ' : '' }}{{ doc.uploadedBy.nomComplet ?? 'N/R' }}
                     </div>
                     <div class="fr-col-12 fr-col-lg-4">
                         {% if not doc.isSuspicious %}
@@ -173,7 +171,7 @@
                             data-documentType="{{ doc.documentType.name }}"
                             data-desordreSlug="{{ doc.desordreSlug }}"
                             data-createdAt="{{ doc.createdAt is defined ? doc.createdAt|date('d/m/Y') : 'N/R' }}"
-                            data-partner-name="{{ partner ? partner.nom ~ ' - ' : '' }}"
+                            data-partner-name="{{ doc.partner ? doc.partner.nom ~ ' - ' : '' }}"
                             data-user-name="{{ doc.uploadedBy.nomComplet ?? 'N/R' }}"
                         ></button>
                     {% endif %}

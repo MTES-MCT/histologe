@@ -333,14 +333,15 @@ class SignalementController extends AbstractController
         $entity = $reference = null;
         if ('all' === $signalementAffectationClose->getType() && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $signalementAffectationClose->setSubject('tous les partenaires');
-            $entity = $signalement = $signalementManager->closeSignalementForAllPartners($signalementAffectationClose);
+            $entity = $signalement = $signalementManager->closeSignalementForAllPartners($signalementAffectationClose, $partner);
             $reference = $signalement->getReference();
-            $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose), SignalementClosedEvent::NAME);
+            $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose, $partner), SignalementClosedEvent::NAME);
         /* @var Affectation $affectation */
         } elseif ($affectation) {
             $entity = $affectationManager->closeAffectation(
                 affectation: $affectation,
                 user: $user,
+                partner: $partner,
                 motif: $signalementAffectationClose->getMotifCloture(),
                 message: $signalementAffectationClose->getDescription(),
                 files: $signalementAffectationClose->getFiles(),

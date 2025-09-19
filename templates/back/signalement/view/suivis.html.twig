@@ -25,10 +25,7 @@
         <div class="fr-col-3">   
             <strong>{{ suivi.createdAt|date('d/m/Y') }}</strong>
             <br>
-            {% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
-                Suivi automatique<br>
-
-            {% elseif suivi.createdBy is not null %}
+            {% if suivi.createdBy is not null %}
                 <div class="fr-hidden" id="tippy_suivi_{{ suivi.id }}">
                     <strong class="fr-ws-nowrap">{{ suivi.createdBy.nomComplet }}</strong>
                     <hr class="fr-pb-1v">
@@ -39,31 +36,10 @@
                     {% endif %}
                 </div>
                 <div class="part-infos-hover" data-template="tippy_suivi_{{ suivi.id }}" >
-                {{
-                    suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER
-                                or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE
-                                or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER
-                        ? (suivi.createdBy is same as signalement.getSignalementUsager.getOccupant
-                            ? 'OCCUPANT'~ '\n' ~ suivi.createdBy.nomComplet(true)
-                            : 'DECLARANT'~ '\n' ~ suivi.createdBy.nomComplet(true)
-                        )|nl2br
-                        : (suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory)
-                            ? (suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).isArchive
-                                ? 'Partenaire supprimé'
-                                : suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom ~ '\n' ~ suivi.createdBy.nomComplet(true)
-                            )
-                            : 'Aucun')|nl2br
-                }}
+            {% endif %}
+                {{ suivi.getCreatedByLabel('\n')|nl2br }}
+            {% if suivi.createdBy is not null %}
                 </div>
-            {% else %}
-                {# si le suivi est de 2024 ou posterieur on indique annonyme #}
-                {% if suivi.createdAt|date('Y') >= 2024 %}
-                    Occupant ou déclarant
-                {% else %}
-                    <strong>{{ signalement.isNotOccupant ? signalement.nomDeclarant|upper~' '~signalement.prenomDeclarant|capitalize : signalement.nomOccupant|upper~' '~signalement.prenomOccupant|capitalize }}</strong>
-                    <br>
-                    {{ signalement.isNotOccupant ? 'DECLARANT':'OCCUPANT'}}
-                {% endif %}
             {% endif %}
         </div>
 

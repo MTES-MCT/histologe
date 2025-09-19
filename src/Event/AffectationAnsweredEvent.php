@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\File;
+use App\Entity\Partner;
 use App\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -19,6 +20,7 @@ class AffectationAnsweredEvent extends Event
     public function __construct(
         private readonly Affectation $affectation,
         private readonly User $user,
+        private readonly Partner $partner,
         private readonly ?AffectationStatus $status,
         private readonly ?MotifRefus $motifRefus,
         private readonly ?string $message,
@@ -34,6 +36,11 @@ class AffectationAnsweredEvent extends Event
     public function getAffectation(): ?Affectation
     {
         return $this->affectation;
+    }
+
+    public function getPartner(): ?Partner
+    {
+        return $this->partner;
     }
 
     public function getStatus(): ?AffectationStatus

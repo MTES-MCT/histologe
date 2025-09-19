@@ -609,28 +609,49 @@
                         {% if (isForUsager and suivi.isPublic) or isForUsager is same as false  %}                            
                             <tr>
                                 <td style="padding:.5rem;width: 15%">
-                                    {% if suivi.createdBy is defined and suivi.createdBy is not null %}
-                                        ️{% if not isForUsager %}
-                                            <b> {{ suivi.createdBy.nomComplet(true) }}</b>
-                                            {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
+                                    {% set isSuiviUsager = false %}
+                                    {% if suivi.category in [
+                                            enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER,
+                                            enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE,
+                                            enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER,
+                                            enum('App\\Entity\\Enum\\SuiviCategory').DEMANDE_POURSUITE_PROCEDURE,
+                                            enum('App\\Entity\\Enum\\SuiviCategory').DEMANDE_ABANDON_PROCEDURE
+                                        ] 
+                                    %}
+                                        {% set isSuiviUsager = true %}
+                                    {% endif %}
+                                    {% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
+                                        Suivi automatique
+                                    {% elseif suivi.partner %}
+                                        <b>{{ suivi.partner.nom }}</b>
+                                        {% if not isForUsager %}
                                             <br>
+                                            <small>
+                                                {{ suivi.createdBy.nomComplet(true) }}
+                                                {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
+                                            </small>
                                         {% endif %}
-                                        <small>
-                                        {% if suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER
-                                                        or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').MESSAGE_USAGER_POST_CLOTURE
-                                                        or suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER %}
-							                {{
-                                                (suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT')
-                                                ~ '\n' ~ suivi.createdBy.nomComplet(true)
-                                            }}
+                                    {% elseif suivi.createdBy %}
+                                        {% if isSuiviUsager %}
+                                            <b>{{ (suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT') }}</b>
+                                            <br>
+                                            {{ suivi.createdBy.nomComplet(true) }}
                                         {% else %}
-								            [{{ suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory) ? suivi.createdBy.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'Aucun' }}]
+                                            {% if suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.territory) %}
+                                                <b>{{ suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.territory).nom }}</b>
+                                                {% if not isForUsager %}
+                                                    <br>
+                                                    <small>
+                                                        {{ suivi.createdBy.nomComplet(true) }}
+                                                        {% if suivi.createdBy.fonction %}({{ suivi.createdBy.fonction }}){% endif %}
+                                                    </small>
+                                                {% endif %}
+                                            {% endif %}
                                         {% endif %}
-                                        </small>
-                                        <br>
                                     {% else %}
                                         <b> Aucun</b>
                                     {% endif %}
+                                    <br>
                                     <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                                 </td>
                                 <td style="padding:.5rem;width:85%">{{ suivi.description|raw }}</td>

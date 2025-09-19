@@ -109,11 +109,13 @@ class SignalementVisitesController extends AbstractController
             isUsagerNotified: !empty($requestAddData['notifyUsager']),
             document: $fileName,
         );
-
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
         $errorMessage = $this->validateRequest($visiteRequest, $validator);
         if ($errorMessage) {
             $this->addFlash('error', \sprintf("Erreurs lors de l'enregistrement de la visite : %s", $errorMessage));
-        } elseif ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest)) {
+        } elseif ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest, $partner)) {
             $todayDate = new \DateTimeImmutable();
             if ($intervention->getScheduledAt()->format('Y-m-d') <= $todayDate->format('Y-m-d')) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
@@ -121,7 +123,14 @@ class SignalementVisitesController extends AbstractController
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
                 /** @var User $user */
                 $user = $this->getUser();
-                $eventDispatcher->dispatch(new InterventionCreatedEvent($intervention, $user), InterventionCreatedEvent::NAME);
+                $eventDispatcher->dispatch(
+                    new InterventionCreatedEvent(
+                        $intervention,
+                        $user,
+                        $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+                    ),
+                    InterventionCreatedEvent::NAME
+                );
             }
         } else {
             $this->addFlash('error', "Erreur lors de l'enregistrement de la visite.");
@@ -166,8 +175,9 @@ class SignalementVisitesController extends AbstractController
             idIntervention: $requestData['intervention'],
             details: $requestData['details'],
         );
-
-        if ($interventionManager->cancelVisiteFromRequest($visiteRequest)) {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($interventionManager->cancelVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getTerritory()))) {
             $this->addFlash('success', 'La visite a bien été annulée.');
         } else {
             $this->addFlash('error', "Erreur lors de l'annulation de la visite.");
@@ -230,18 +240,25 @@ class SignalementVisitesController extends AbstractController
             isUsagerNotified: !empty($requestRescheduleData['notifyUsager']),
             document: $fileName,
         );
-
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
         $errorMessage = $this->validateRequest($visiteRequest, $validator);
         if ($errorMessage) {
             $this->addFlash('error', \sprintf('Erreurs lors de la modification de la visite : %s', $errorMessage));
-        } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest)) {
+        } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest, $partner)) {
             if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
                 $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
             } else {
                 $this->addFlash('success', self::SUCCESS_MSG_ADD);
-                /** @var User $user */
-                $user = $this->getUser();
-                $eventDispatcher->dispatch(new InterventionRescheduledEvent($intervention, $user, $previousDate), InterventionRescheduledEvent::NAME);
+                $eventDispatcher->dispatch(
+                    new InterventionRescheduledEvent(
+                        $intervention,
+                        $user,
+                        $previousDate,
+                        $partner
+                    ), InterventionRescheduledEvent::NAME
+                );
             }
         } else {
             $this->addFlash('error', 'Erreur lors de la modification de la visite.');
@@ -292,8 +309,10 @@ class SignalementVisitesController extends AbstractController
             isProprietairePresent: $requestData['proprietairePresent'],
             document: $fileName,
         );
+        /** @var User $user */
+        $user = $this->getUser();
 
-        if ($interventionManager->confirmVisiteFromRequest($visiteRequest)) {
+        if ($interventionManager->confirmVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getTerritory()))) {
             $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
         } else {
             $this->addFlash('error', 'Erreur lors de la conclusion de la visite.');
@@ -345,12 +364,19 @@ class SignalementVisitesController extends AbstractController
             isUsagerNotified: $isUsagerNotified,
             document: $fileName,
         );
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
-        if ($interventionManager->editVisiteFromRequest($visiteRequest)) {
+        if ($interventionManager->editVisiteFromRequest($visiteRequest, $partner)) {
             $this->addFlash('success', self::SUCCESS_MSG_CONFIRM);
-            /** @var User $user */
-            $user = $this->getUser();
-            $eventDispatcher->dispatch(new InterventionEditedEvent($intervention, $user, $isUsagerNotified), InterventionEditedEvent::NAME);
+
+            $eventDispatcher->dispatch(new InterventionEditedEvent(
+                $intervention,
+                $user,
+                $isUsagerNotified,
+                $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+            ), InterventionEditedEvent::NAME);
         } else {
             $this->addFlash('error', 'Erreur lors de la conclusion de la visite.');
         }

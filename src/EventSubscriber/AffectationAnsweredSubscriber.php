@@ -5,6 +5,7 @@ namespace App\EventSubscriber;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Partner;
 use App\Entity\Suivi;
 use App\Event\AffectationAnsweredEvent;
 use App\Factory\Interconnection\Idoss\DossierMessageFactory;
@@ -56,6 +57,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 description: SuiviManager::buildDescriptionAnswerAffectation($params),
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::AFFECTATION_IS_REFUSED,
+                partner: $event->getPartner(),
                 user: $user,
                 files: $event->getFiles(),
             );
@@ -67,18 +69,19 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 description: 'Signalement rouvert pour '.mb_strtoupper($partner->getNom()),
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
-                isPublic: $affectation->getHasNotificationUsagerToCreate(),
+                partner: $event->getPartner(),
                 user: $user,
+                isPublic: $affectation->getHasNotificationUsagerToCreate(),
             );
         }
-        $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation());
+        $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation(), $event->getPartner());
 
         if ($this->dossierMessageFactory->supports($affectation)) {
             $this->bus->dispatch($this->dossierMessageFactory->createInstance($affectation));
         }
     }
 
-    private function createSuiviOnFirstAcceptedAffectation(Affectation $affectation): void
+    private function createSuiviOnFirstAcceptedAffectation(Affectation $affectation, Partner $partner): void
     {
         if ($this->firstAcceptedAffectationSpecification->isSatisfiedBy($affectation)) {
             $adminEmail = $this->parameterBag->get('user_system_email');
@@ -88,8 +91,9 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 description: $this->parameterBag->get('suivi_message')['first_accepted_affectation'],
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
-                isPublic: true,
+                partner: $partner,
                 user: $adminUser,
+                isPublic: true,
                 context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
             );
         }

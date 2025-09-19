@@ -13,6 +13,7 @@ use App\Manager\InterventionManager;
 use App\Manager\PartnerManager;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -29,6 +30,7 @@ class InterventionManagerTest extends KernelTestCase
     private PartnerManager $partnerManager;
     private WorkflowInterface $workflow;
     private SignalementRepository $signalementRepository;
+    private UserRepository $userRepository;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileFactory $fileFactory;
     private Security $security;
@@ -52,6 +54,7 @@ class InterventionManagerTest extends KernelTestCase
         $this->security = static::getContainer()->get('security.helper');
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->logger = static::getContainer()->get(LoggerInterface::class);
         $this->htmlSanitizer = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
@@ -93,7 +96,7 @@ class InterventionManagerTest extends KernelTestCase
             document: 'blank.pdf',
         );
 
-        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest);
+        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest, $affectation->getPartner());
 
         $this->assertInstanceOf(Intervention::class, $intervention);
         $this->assertTrue($intervention->getPartner()->hasCompetence(Qualification::VISITES));
@@ -130,7 +133,7 @@ class InterventionManagerTest extends KernelTestCase
             idPartner: $affectation?->getPartner()->getId(),
         );
 
-        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest);
+        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest, $affectation->getPartner());
         $this->assertInstanceOf(Intervention::class, $intervention);
         $this->assertEquals(Intervention::STATUS_PLANNED, $intervention->getStatus());
         $this->assertTrue($intervention->getScheduledAt() > new \DateTimeImmutable());
@@ -144,6 +147,8 @@ class InterventionManagerTest extends KernelTestCase
     public function testCreateFutureVisiteFromRequestOnExternalOperator(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
 
         $visiteRequest = new VisiteRequest(
             date: (new \DateTimeImmutable())->modify('+ 1 month')->format('Y-m-d'),
@@ -151,7 +156,7 @@ class InterventionManagerTest extends KernelTestCase
             externalOperator: 'Lala la',
         );
 
-        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest);
+        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest, $partner);
         $this->assertInstanceOf(Intervention::class, $intervention);
         $this->assertEquals(Intervention::STATUS_PLANNED, $intervention->getStatus());
         $this->assertTrue($intervention->getScheduledAt() > new \DateTimeImmutable());
@@ -176,7 +181,7 @@ class InterventionManagerTest extends KernelTestCase
             details: 'Suppression de la visite'
         );
 
-        $intervention = $this->interventionManager->cancelVisiteFromRequest($visiteRequest);
+        $intervention = $this->interventionManager->cancelVisiteFromRequest($visiteRequest, $intervention->getPartner());
         $this->assertInstanceOf(Intervention::class, $intervention);
         $this->assertEquals(Intervention::STATUS_CANCELED, $intervention->getStatus());
         $this->assertEquals('Suppression de la visite', $intervention->getDetails());
@@ -201,6 +206,7 @@ class InterventionManagerTest extends KernelTestCase
 
         $intervention = $this->interventionManager->rescheduleVisiteFromRequest(
             signalement: $signalement,
+            createdByPartner: $intervention->getPartner(),
             visiteRequest: $visiteRequest
         );
         $this->assertInstanceOf(Intervention::class, $intervention);
@@ -220,7 +226,8 @@ class InterventionManagerTest extends KernelTestCase
         );
 
         $intervention = $this->interventionManager->editVisiteFromRequest(
-            visiteRequest: $visiteRequest
+            visiteRequest: $visiteRequest,
+            partner: $intervention->getPartner()
         );
 
         $this->assertEquals(Intervention::STATUS_DONE, $intervention->getStatus());

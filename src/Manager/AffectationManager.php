@@ -46,6 +46,7 @@ class AffectationManager extends Manager
         Affectation $affectation,
         User $user,
         AffectationStatus $status,
+        Partner $partner,
         ?MotifRefus $motifRefus = null,
         ?string $message = null,
         ?array $files = [],
@@ -67,7 +68,15 @@ class AffectationManager extends Manager
         $this->save($affectation);
         if ($dispatchAffectationAnsweredEvent) {
             $this->eventDispatcher->dispatch(
-                new AffectationAnsweredEvent($affectation, $user, $status, $affectation->getMotifRefus(), $message, $files),
+                new AffectationAnsweredEvent(
+                    affectation: $affectation,
+                    user: $user,
+                    partner: $partner,
+                    status: $status,
+                    motifRefus: $affectation->getMotifRefus(),
+                    message: $message,
+                    files: $files
+                ),
                 AffectationAnsweredEvent::NAME
             );
         }
@@ -130,12 +139,13 @@ class AffectationManager extends Manager
         Signalement $signalement,
         MotifCloture $motif,
         User $user,
+        Partner $partner,
     ): void {
         foreach ($signalement->getAffectations() as $affectation) {
             if (in_array($affectation->getStatut(), [AffectationStatus::CLOSED, AffectationStatus::REFUSED])) {
                 continue;
             }
-            $this->closeAffectation(affectation: $affectation, user: $user, motif: $motif);
+            $this->closeAffectation(affectation: $affectation, user: $user, motif: $motif, partner: $partner);
         }
     }
 
@@ -146,6 +156,7 @@ class AffectationManager extends Manager
         Affectation $affectation,
         User $user,
         MotifCloture $motif,
+        ?Partner $partner,
         ?string $message = null,
         iterable $files = [],
         bool $flush = false): Affectation
@@ -161,7 +172,7 @@ class AffectationManager extends Manager
         if ($flush) {
             $this->save($affectation);
             $this->eventDispatcher->dispatch(
-                new AffectationClosedEvent(affectation: $affectation, user: $user, message: $message, files: $files),
+                new AffectationClosedEvent(affectation: $affectation, user: $user, partner: $partner, message: $message, files: $files),
                 AffectationClosedEvent::NAME
             );
         }

@@ -24,6 +24,7 @@ readonly class FileUploadedSubscriber implements EventSubscriberInterface
     {
         $files = $event->getFiles();
         $user = $event->getUser();
+        $partner = $event->getPartner();
 
         $files = array_map(function ($file) {
             return $file['file'];
@@ -35,6 +36,11 @@ readonly class FileUploadedSubscriber implements EventSubscriberInterface
         });
 
         $event->setFilesPushed($filesFilteredArray = $filesFiltered->toArray());
-        $this->suiviManager->createInstanceForFilesSignalement($user, $signalement, $filesFilteredArray);
+        $this->suiviManager->createInstanceForFilesSignalement(
+            user: $user,
+            signalement: $signalement,
+            files: $filesFilteredArray,
+            partner: $partner
+        );
     }
 }

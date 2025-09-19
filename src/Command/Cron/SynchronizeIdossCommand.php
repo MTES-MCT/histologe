@@ -150,6 +150,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                         description: $description,
                         type: Suivi::TYPE_TECHNICAL,
                         category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
+                        partner: $affectation->getPartner(),
                         user: $this->adminUser,
                         flush: false
                     );

@@ -89,6 +89,7 @@ class SignalementFileController extends AbstractController
         $signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,
             signalement: $signalement,
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $user,
             isWaitingSuivi: true
         );
@@ -124,7 +125,13 @@ class SignalementFileController extends AbstractController
         }
         $subscriptionCreated = false;
         if (SignalementStatus::CLOSED !== $signalement->getStatut()) {
-            $suivi = $suiviManager->createInstanceForFilesSignalement($user, $signalement, $files, $subscriptionCreated);
+            $suivi = $suiviManager->createInstanceForFilesSignalement(
+                user: $user,
+                signalement: $signalement,
+                files: $files,
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                subscriptionCreated: $subscriptionCreated
+            );
             $entityManager->persist($suivi);
         }
 
@@ -191,11 +198,12 @@ class SignalementFileController extends AbstractController
             $user = $this->getUser();
             $description = $user->getNomComplet().' a supprimé le document suivant : <ul><li>'.$filename.'</li></ul>';
             $suiviManager->createSuivi(
-                user: $user,
                 signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::DOCUMENT_DELETED_BY_PARTNER,
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                user: $user,
                 subscriptionCreated: $subscriptionCreated,
             );
         }

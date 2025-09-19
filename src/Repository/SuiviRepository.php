@@ -896,4 +896,39 @@ class SuiviRepository extends ServiceEntityRepository
             $this->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, $params)
         );
     }
+
+    /**
+     * @return array<int, array<string, int>>|int
+     */
+    public function findAllWithoutPartner(bool $count = false): array|int
+    {
+        $qb = $this->createQueryBuilder('s');
+        if ($count) {
+            $qb->select('COUNT(s.id)');
+        } else {
+            $qb->select('s.id, u.id as user_id, t.id as territory_id');
+        }
+        $qb
+            ->innerJoin('s.createdBy', 'u')
+            ->innerJoin('s.signalement', 'si')
+            ->innerJoin('si.territory', 't')
+            ->where('s.partner IS NULL')
+            ->andWhere('s.category NOT IN (:categories)')
+            ->setParameter('categories', [
+                SuiviCategory::MESSAGE_USAGER,
+                SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+                SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
+                SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+                SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
+            ])
+            ->andWhere('s.type != :type')
+            ->setParameter('type', Suivi::TYPE_TECHNICAL);
+        if (!$count) {
+            $qb->setMaxResults(25000);
+
+            return $qb->getQuery()->getResult();
+        }
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }

@@ -6,6 +6,7 @@ use App\Dto\Api\Model\Visite as InterventionModel;
 use App\Dto\Api\Request\FilesUploadRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\FileUploadedEvent;
@@ -219,6 +220,7 @@ class VisiteUploadDocumentsController extends AbstractController
             $filesUploadRequest,
             $signalement,
             $intervention,
+            $intervention->getPartner(),
             $user,
             $this->getDocumentType($typeDocumentVisite),
         );
@@ -228,12 +230,12 @@ class VisiteUploadDocumentsController extends AbstractController
 
         if ($this->isRapportVisite($typeDocumentVisite)) {
             $this->eventDispatcher->dispatch(
-                new InterventionEditedEvent($intervention, $user, true),
+                new InterventionEditedEvent($intervention, $user, true, $intervention->getPartner()),
                 InterventionEditedEvent::NAME
             );
         } else {
             $this->eventDispatcher->dispatch(
-                new FileUploadedEvent($signalement, $user, $fileList),
+                new FileUploadedEvent($signalement, $user, $fileList, $intervention->getPartner()),
                 FileUploadedEvent::NAME
             );
         }
@@ -250,6 +252,7 @@ class VisiteUploadDocumentsController extends AbstractController
         FilesUploadRequest $filesUploadRequest,
         Signalement $signalement,
         Intervention $intervention,
+        Partner $partner,
         User $user,
         DocumentType $documentType,
     ): array {
@@ -257,6 +260,7 @@ class VisiteUploadDocumentsController extends AbstractController
         $this->signalementFileProcessor->addFilesToSignalement(
             fileList: $processedFiles,
             signalement: $signalement,
+            partner: $partner,
             user: $user,
             intervention: $intervention,
         );

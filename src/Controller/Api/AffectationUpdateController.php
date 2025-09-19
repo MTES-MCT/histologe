@@ -205,6 +205,7 @@ class AffectationUpdateController extends AbstractController
             return $this->affectationManager->closeAffectation(
                 affectation: $affectation,
                 user: $user,
+                partner: $affectation->getPartner(),
                 motif: $motifCloture,
                 message: $affectationRequest->message,
                 flush: true
@@ -216,7 +217,7 @@ class AffectationUpdateController extends AbstractController
             $message = $affectationRequest->message;
         }
 
-        $this->affectationManager->updateAffectation($affectation, $user, $statut, $motifRefus, $message);
+        $this->affectationManager->updateAffectation($affectation, $user, $statut, $affectation->getPartner(), $motifRefus, $message);
         if (AffectationStatus::ACCEPTED === $statut) {
             $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
             $this->userSignalementSubscriptionManager->flush();

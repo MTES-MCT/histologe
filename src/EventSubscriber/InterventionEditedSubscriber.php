@@ -44,8 +44,9 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
-                isPublic: $event->isUsagerNotified(),
+                partner: $event->getPartner(),
                 user: $currentUser,
+                isPublic: $event->isUsagerNotified(),
                 context: Suivi::CONTEXT_INTERVENTION,
                 files: $intervention->getFiles(),
             );

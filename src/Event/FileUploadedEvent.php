@@ -2,6 +2,7 @@
 
 namespace App\Event;
 
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -22,6 +23,7 @@ class FileUploadedEvent extends Event
         private readonly Signalement $signalement,
         private readonly User $user,
         private readonly array $files,
+        private readonly Partner $partner,
     ) {
     }
 
@@ -59,5 +61,10 @@ class FileUploadedEvent extends Event
         $this->filesPushed = $filesPushed;
 
         return $this;
+    }
+
+    public function getPartner(): Partner
+    {
+        return $this->partner;
     }
 }
