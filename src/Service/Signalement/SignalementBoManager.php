@@ -154,17 +154,17 @@ class SignalementBoManager
         }
         if ('collective' === $cuisine) {
             $typeCompositionLogement->setTypeLogementCommoditesCuisineCollective('oui');
-            $cuisine = 'oui';
+            $cuisine = 'non';
         }
         $typeCompositionLogement->setTypeLogementCommoditesCuisine($cuisine);
         if ('collective' === $sdb) {
             $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective('oui');
-            $sdb = 'oui';
+            $sdb = 'non';
         }
         $typeCompositionLogement->setTypeLogementCommoditesSalleDeBain($sdb);
         if ('collective' === $toilettes) {
             $typeCompositionLogement->setTypeLogementCommoditesWcCollective('oui');
-            $toilettes = 'oui';
+            $toilettes = 'non';
         }
         $typeCompositionLogement->setTypeLogementCommoditesWc($toilettes);
 
