@@ -187,8 +187,10 @@ class AdminTerritoryFilesController extends AbstractController
 
                 /** @var User $user */
                 $user = $this->getUser();
+                $oldFilename = $file->getFilename();
                 if ($this->uploadFile($uploadedFile, $file, $user, $form, $fileScanner, $uploadHandlerService, $logger, $imageManipulationHandler)) {
                     $flush = true;
+                    $uploadHandlerService->deleteFileInBucketFromFilename($oldFilename);
                 }
             }
 

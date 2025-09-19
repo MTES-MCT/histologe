@@ -212,8 +212,13 @@ class UploadHandlerService
 
     public function deleteFileInBucket(File $file): void
     {
-        $this->deleteSingleFile($file->getFilename());
-        $variantNames = ImageManipulationHandler::getVariantNames($file->getFilename());
+        $this->deleteFileInBucketFromFilename($file->getFilename());
+    }
+
+    public function deleteFileInBucketFromFilename(string $filename): void
+    {
+        $this->deleteSingleFile($filename);
+        $variantNames = ImageManipulationHandler::getVariantNames($filename);
         $this->deleteSingleFile($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]);
         $this->deleteSingleFile($variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
     }
