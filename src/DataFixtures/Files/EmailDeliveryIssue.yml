@@ -1,0 +1,18 @@
+email_delivery_issue:
+  -
+    email: "nawell.mapaire@yopmail.com"
+    event: "blocked"
+    reason: "IP address blocked by recipient server"
+    payload:
+      event: "blocked"
+      email: "nawell.mapaire@yopmail.com"
+      reason: "IP address blocked by recipient server"
+  -
+    email: "partenaire-13-01@signal-logement.fr"
+    event: "hard_bounce"
+    reason: "Recipient address rejected: Access denied."
+    payload:
+      event: "hard_bounce"
+      email: "partenaire-13-01@signal-logement.fr"
+      reason: "Recipient address rejected: Access denied."
+

@@ -1,0 +1,17 @@
+{
+  "date": "2025-09-16 17:47:53",
+  "email": "nelson.monfort@yopmail.com",
+  "event": "clicked",
+  "id": 1234567890,
+  "message-id": "<202509161547.25699547923@smtp-relay.mailin.fr>",
+  "sender_email": "notifications@signal-logement.beta.gouv.fr",
+  "subject": "SIGNAL-LOGEMENT DORDOGNE - [2024-439 - Toto] Nouveau suivi",
+  "tag": ["Pro Nouveau Suivi Signalement"],
+  "tags": [
+    "Pro Nouveau Suivi Signalement"
+  ],
+  "ts": 1758037673,
+  "ts_epoch": 1758037673718,
+  "ts_event": 1758037673,
+  "uuid": "00000000-0000-0000-0000-000000000000"
+}

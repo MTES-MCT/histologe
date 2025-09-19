@@ -2,6 +2,11 @@
 
 namespace App\Controller\Webhook;
 
+use App\Entity\EmailDeliveryIssue;
+use App\Entity\Enum\BrevoEvent;
+use App\Entity\Partner;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Sentry\Severity;
 use Sentry\State\Scope;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,11 +21,14 @@ class BrevoWebhookController extends AbstractController
      * @var string[]
      */
     private array $allowedIps;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
+        EntityManagerInterface $entityManager,
         #[Autowire(env: 'BREVO_ALLOWED_IPS')] string $allowedIps,
     ) {
         $this->allowedIps = array_filter(array_map('trim', explode(',', $allowedIps)));
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/webhook/brevo', name: 'webhook_brevo', methods: ['POST'])]
@@ -33,23 +41,63 @@ class BrevoWebhookController extends AbstractController
 
         $payload = json_decode($request->getContent(), true);
         $event = $payload['event'] ?? null;
-        if (!$event) {
+        $email = isset($payload['email']) ? mb_strtolower(trim($payload['email'])) : null;
+        if (!$event || !$email) {
             return new Response('Bad Request', Response::HTTP_BAD_REQUEST);
         }
 
-        \Sentry\configureScope(function (Scope $scope) use ($payload): void {
-            $scope->setTag('email_recipient', $payload['email']);
-            $scope->setExtra('brevo_payload', $payload);
-        });
+        $isDeliveryFailure = BrevoEvent::isErrorEvent($event);
 
-        $severity = match ($event) {
-            'blocked' => new Severity(Severity::FATAL),
-            'hard_bounce' => new Severity(Severity::ERROR),
-            default => null,
-        };
+        $emailDeliveryIssueRepository = $this->entityManager->getRepository(EmailDeliveryIssue::class);
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $partnerRepository = $this->entityManager->getRepository(Partner::class);
 
-        if ($severity) {
-            \Sentry\captureMessage("[BREVO] Email: {$event}", $severity);
+        $user = $userRepository->findOneBy(['email' => $payload['email']]);
+        $partner = null;
+        if (!$user) {
+            $partner = $partnerRepository->findOneBy(['email' => $email]);
+        }
+
+        if (!$user && !$partner) {
+            \Sentry\configureScope(function (Scope $scope) use ($email, $payload): void {
+                $scope->setTag('email_recipient', $email);
+                $scope->setExtra('brevo_payload', $payload);
+            });
+
+            $severity = match ($event) {
+                BrevoEvent::BLOCKED->value => new Severity(Severity::FATAL),
+                BrevoEvent::HARD_BOUNCE, BrevoEvent::SOFT_BOUNCE, BrevoEvent::SPAM, BrevoEvent::INVALID_EMAIL, BrevoEvent::ERROR => new Severity(Severity::ERROR),
+                default => null,
+            };
+
+            if ($severity) {
+                \Sentry\captureMessage("[BREVO] Email: {$event}", $severity);
+            }
+
+            return new Response('OK', Response::HTTP_OK);
+        }
+
+        if ($isDeliveryFailure) {
+            $emailDeliveryIssue = $emailDeliveryIssueRepository->findOneBy(['email' => $email]) ?? new EmailDeliveryIssue();
+            $emailDeliveryIssue
+                ->setEmail($email)
+                ->setEvent(BrevoEvent::tryFrom($event))
+                ->setReason($payload['reason'] ?? null)
+                ->setPayload($payload);
+
+            if ($user) {
+                $user->setEmailDeliveryIssue($emailDeliveryIssue);
+            } else {
+                $partner->setEmailDeliveryIssue($emailDeliveryIssue);
+            }
+
+            $this->entityManager->persist($emailDeliveryIssue);
+            $this->entityManager->flush();
+        } elseif (BrevoEvent::isSuccessEvent($event)) {
+            if ($emailDeliveryIssue = $emailDeliveryIssueRepository->findOneBy(['email' => $email])) {
+                $this->entityManager->remove($emailDeliveryIssue);
+                $this->entityManager->flush();
+            }
         }
 
         return new Response('OK', Response::HTTP_OK);

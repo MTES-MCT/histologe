@@ -80,8 +80,9 @@ services:
       - 1080:1080
 
   signal_logement_wiremock:
-    image: wiremock/wiremock:2.35.0
+    image: wiremock/wiremock:3x-alpine
     container_name: signal_logement_wiremock
+    command: [ "--extensions", "org.wiremock.webhooks.Webhooks" ]
     ports:
       - 8082:8080
     volumes:
