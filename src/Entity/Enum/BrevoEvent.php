@@ -59,4 +59,24 @@ enum BrevoEvent: string
     {
         return in_array($event, self::getSuccessEvents(), true);
     }
+
+    /**
+     * @return string[]
+     */
+    public static function getLabelList(): array
+    {
+        return [
+            self::BLOCKED->name => 'Blocked',
+            self::HARD_BOUNCE->name => 'Hard Bounce',
+            self::SOFT_BOUNCE->name => 'Soft Bounce',
+            self::SPAM->name => 'Spam',
+            self::INVALID_EMAIL->name => 'Invalid Email',
+            self::ERROR->name => 'Error',
+            self::DELIVERED->name => 'Delivered',
+            self::OPENED->name => 'Opened',
+            self::CLICKED->name => 'Clicked',
+            self::FIRST_OPENED->name => 'First opening',
+            self::SENT->name => 'Sent',
+        ];
+    }
 }
