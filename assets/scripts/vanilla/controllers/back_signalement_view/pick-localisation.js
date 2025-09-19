@@ -36,6 +36,15 @@ if (modalLocalisation) {
       fetch(apiAdresse + address + '&postcode=' + postCode)
         .then((response) => response.json())
         .then((json) => {
+          // If no result, display error message
+          if (!json.features || json.features.length === 0) {
+            modalPickLocalisationMessage.innerText =
+              "Adresse introuvable, merci de préciser l'adresse grâce au formulaire.";
+            modalPickLocalisationMessage.classList.remove('fr-hidden');
+            const modalPickLocalisationMap = document.getElementById('fr-modal-pick-localisation-map');
+            modalPickLocalisationMap.classList.add('fr-hidden');
+            return;
+          }
           map.setView(
             [json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]],
             18
