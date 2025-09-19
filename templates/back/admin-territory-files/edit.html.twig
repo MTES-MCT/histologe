@@ -27,6 +27,18 @@
                             >Afficher dans un nouvel onglet</a>
                     </p>
                 </div>
+                {% if is_granted('ROLE_ADMIN') and file.territory %}
+                <div class="fr-col-12 fr-notice fr-notice--warning">
+                    <div class="fr-container">
+                        <div class="fr-notice__body">
+                            <p>
+                                <span class="fr-notice__title">La modification sera valable uniquement pour {{ file.territory.name }}.</span>
+                                <span class="fr-notice__desc">Pour modifier le document sur tous les territoires, il faut le faire un par un (ou voir si la team dev est disposée à vous aider :D).</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </header>
     </section>
@@ -35,11 +47,31 @@
         <div class="single-ajax-form-container">
             {{ form_start(editForm, {'attr': {'id': 'form-edit-file', 'data-submit-type': 'formData'}}) }}
             <div class="fr-grid-row fr-grid-row--gutters">
-                {% if is_granted('ROLE_ADMIN') and editForm.territory is defined %}
                 <div class="fr-col-12">
-                    {{ form_row(editForm.territory) }}
+                    <div class="fr-toggle">
+                        <input 
+                            type="checkbox"
+                            id="file-replacement-toggle"
+                            class="fr-toggle__input"
+                        >
+                        <label class="fr-toggle__label" for="file-replacement-toggle">Modifier le fichier</label>
+                    </div>
                 </div>
-                {% endif %}
+                <div id="file-replacement-container" class="fr-col-12 fr-grid-row fr-grid-row--gutters fr-hidden">
+                    <div class="fr-col-6">
+                        {{ form_row(editForm.file) }}
+                    </div>
+                    <div class="fr-col-6">
+                        <div id="form-add-file-no-preview" class="fr-hidden">
+                            Pas d'aperçu disponible.<br>
+                            <img src="{{ asset('img/picto-dsfr/document.svg') }}">
+                        </div>
+                        <div id="form-add-file-preview" class="fr-hidden">
+                            Aperçu du document :<br>
+                            <embed src="">
+                        </div>
+                    </div>
+                </div>
                 <div class="fr-col-6">
                     {{ form_row(editForm.title) }}
                 </div>
@@ -49,7 +81,6 @@
                 <div class="fr-col-12">
                     {{ form_row(editForm.description) }}
                 </div>
-                <input type="hidden" name="file" value="">
                 <div class="fr-col-12">
                     <h2 class="fr-mb-0 fr-h3">Affichage du document aux partenaires</h2>
                     <p>

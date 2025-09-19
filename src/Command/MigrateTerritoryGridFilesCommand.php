@@ -48,7 +48,8 @@ class MigrateTerritoryGridFilesCommand extends Command
 
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $gridFileName,
-                title: 'Grille de visite - '.$territory->getName(),
+                title: 'Grille de visite - '.$territory->getZip(),
+                description: 'Grille de repérage et d\'évaluation des désordres d\'un logement, pouvant relever de l\'habitat indigne.',
                 user: $userAdmin,
                 isStandalone: true,
                 documentType: DocumentType::GRILLE_DE_VISITE,
