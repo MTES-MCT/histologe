@@ -4,11 +4,14 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\DashboardTabPanel\Kpi\TabCountKpiCacheHelper;
+use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/bo/subscription-choice')]
@@ -18,6 +21,8 @@ class SubscriptionsChoiceController extends AbstractController
     public function choice(
         Request $request,
         UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        TabCountKpiCacheHelper $tabCountKpiCacheHelper,
+        #[MapQueryString] TabQueryParameters $tabQueryParameter,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $jsonData = $request->toArray();
@@ -41,6 +46,20 @@ class SubscriptionsChoiceController extends AbstractController
             foreach ($subs as $sub) {
                 $entityManager->remove($sub);
             }
+            if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
+                $tabQueryParameter->mesDossiersMessagesUsagers = '1';
+                $tabQueryParameter->mesDossiersAverifier = '1';
+            }
+            $isDeletedCacheOngletMessagesUsagers = $tabCountKpiCacheHelper->delete(
+                TabCountKpiCacheHelper::DOSSIERS_MESSAGES_USAGERS,
+                $user,
+                $tabQueryParameter
+            );
+            $isDeletedCacheOngletAverifier = $tabCountKpiCacheHelper->delete(
+                TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER,
+                $user,
+                $tabQueryParameter
+            );
         }
         $user->setHasDoneSubscriptionsChoice(true);
         $entityManager->flush();
