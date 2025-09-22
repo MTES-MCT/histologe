@@ -30,6 +30,10 @@ class SignalementApiFactory
     public function createFromSignalementRequest(SignalementRequest $request): Signalement
     {
         $signalement = new Signalement();
+        $typeCompositionLogement = new TypeCompositionLogement();
+        $situationFoyer = new SituationFoyer();
+        $informationProcedure = new InformationProcedure();
+        $informationComplementaire = new InformationComplementaire();
 
         $signalement->setAdresseOccupant($request->adresseOccupant);
         $signalement->setCpOccupant($request->codePostalOccupant);
@@ -37,7 +41,6 @@ class SignalementApiFactory
         $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
         $territory = $this->postalCodeHomeChecker->getActiveTerritory($signalement->getInseeOccupant());
         $signalement->setTerritory($territory);
-
         $signalement->setEtageOccupant($request->etageOccupant);
         $signalement->setEscalierOccupant($request->escalierOccupant);
         $signalement->setNumAppartOccupant(numAppartOccupant: $request->numAppartOccupant);
@@ -55,12 +58,10 @@ class SignalementApiFactory
             $signalement->setIsLogementVacant(false);
         }
 
-        $typeCompositionLogement = new TypeCompositionLogement();
         $typeCompositionLogement->setCompositionLogementNombrePersonnes((string) $request->nbOccupantsLogement);
         $signalement->setNbOccupantsLogement($request->nbOccupantsLogement);
         $typeCompositionLogement->setCompositionLogementNombreEnfants((string) $request->nbEnfantsDansLogement);
         $typeCompositionLogement->setCompositionLogementEnfants((string) $request->isEnfantsMoinsSixAnsDansLogement);
-
         $signalement->setNatureLogement($request->natureLogement);
         if ('autre' === $signalement->getNatureLogement()) {
             $typeCompositionLogement->setTypeLogementNatureAutrePrecision($request->natureLogementAutre);
@@ -111,12 +112,75 @@ class SignalementApiFactory
         $jsonContent['desordres_logement_chauffage'] = $request->typeChauffage;
         $signalement->setJsonContent($jsonContent);
 
-        // TODO :  TAB situation
-        //
+        $typeCompositionLogement->setBailDpeBail(self::convertBoolToString($request->isBail));
+        $typeCompositionLogement->setBailDpeDpe(self::convertBoolToString($request->isDpe));
+        if ($request->anneeDpe) {
+            if ($request->anneeDpe < 2023) {
+                $typeCompositionLogement->setDesordresLogementChauffageDetailsDpeAnnee('before2023');
+            } elseif ($request->anneeDpe > (int) date('Y')) {
+                $typeCompositionLogement->setDesordresLogementChauffageDetailsDpeAnnee('post2023');
+            }
+        }
+        $typeCompositionLogement->setBailDpeClasseEnergetique($request->classeEnergetique);
+        $typeCompositionLogement->setBailDpeEtatDesLieux(self::convertBoolToString($request->isEtatDesLieux));
+        if ($request->dateEntreeLogement) {
+            $dateEntree = new \DateTimeImmutable($request->dateEntreeLogement);
+            $typeCompositionLogement->setBailDpeDateEmmenagement($dateEntree->format('Y-m-d'));
+            $signalement->setDateEntree($dateEntree);
+        }
+        $informationComplementaire->setInformationsComplementairesLogementMontantLoyer((string) $request->montantLoyer);
+        $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes(self::convertBoolToString($request->isPaiementLoyersAJour));
 
-        $situationFoyer = new SituationFoyer();
-        $informationProcedure = new InformationProcedure();
-        $informationComplementaire = new InformationComplementaire();
+        if ($request->isAllocataire) {
+            if (in_array($request->caisseAllocation, ['CAF', 'MSA'])) {
+                $signalement->setIsAllocataire(mb_strtolower($request->caisseAllocation));
+            } else {
+                $signalement->setIsAllocataire('1');
+            }
+            if ($request->dateNaissanceAllocataire) {
+                $signalement->setDateNaissanceOccupant(new \DateTimeImmutable($request->dateNaissanceAllocataire));
+            }
+            $signalement->setNumAllocataire($request->numAllocataire);
+            $informationComplementaire->setInformationsComplementairesSituationOccupantsTypeAllocation(mb_strtolower($request->typeAllocation));
+            $signalement->setMontantAllocation($request->montantAllocation);
+        } elseif (false === $request->isAllocataire) {
+            $signalement->setIsAllocataire('0');
+        }
+
+        $situationFoyer->setTravailleurSocialAccompagnement(self::convertBoolToString($request->isAccompagnementTravailleurSocial));
+        $situationFoyer->setTravailleurSocialAccompagnementNomStructure($request->accompagnementTravailleurSocialNomStructure);
+        $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireRsa(self::convertBoolToString($request->isBeneficiaireRsa));
+        $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireFsl(self::convertBoolToString($request->isBeneficiaireFsl));
+
+        $signalement->setIsProprioAverti($request->isProprietaireAverti);
+        if ($request->isProprietaireAverti) {
+            if ($request->dateProprietaireAverti) {
+                $signalement->setProprioAvertiAt(new \DateTimeImmutable($request->dateProprietaireAverti));
+            }
+            $informationProcedure->setInfoProcedureBailMoyen($request->moyenInformationProprietaire);
+            $informationProcedure->setInfoProcedureBailReponse($request->reponseProprietaire);
+        }
+
+        $signalement->setIsRelogement($request->isDemandeRelogement);
+        $situationFoyer->setTravailleurSocialQuitteLogement(self::convertBoolToString($request->isSouhaiteQuitterLogement));
+        $situationFoyer->setTravailleurSocialPreavisDepart(self::convertBoolToString($request->isPreavisDepartDepose));
+        $signalement->setIsPreavisDepart($request->isPreavisDepartDepose);
+
+        if ($request->isLogementAssure) {
+            if ($request->isAssuranceContactee) {
+                $informationProcedure->setInfoProcedureAssuranceContactee('oui');
+                $informationProcedure->setInfoProcedureReponseAssurance($request->reponseAssurance);
+            } elseif (false === $request->isAssuranceContactee) {
+                $informationProcedure->setInfoProcedureAssuranceContactee('non');
+            }
+        } elseif (false === $request->isLogementAssure) {
+            $informationProcedure->setInfoProcedureAssuranceContactee('pas_assurance_logement');
+        }
+
+        // TODO : files ?
+        // TODO : tab coordonnées
+        // TODO : tab désordres
+        // TODO : tab validation ?
 
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $signalement->setSituationFoyer($situationFoyer);
