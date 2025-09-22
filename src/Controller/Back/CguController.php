@@ -9,7 +9,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/cgu')]
 class CguController extends AbstractController
@@ -42,7 +41,6 @@ class CguController extends AbstractController
     }
 
     #[Route('/archives', name: 'back_cgu_bo_archives', methods: 'GET')]
-    #[IsGranted('ROLE_USER_PARTNER')]
     public function archives(ParameterBagInterface $parameterBag): Response
     {
         $versions = [];
@@ -60,7 +58,6 @@ class CguController extends AbstractController
     }
 
     #[Route('/archives/{date}', name: 'back_cgu_bo_archive_version', methods: 'GET')]
-    #[IsGranted('ROLE_USER_PARTNER')]
     public function archiveVersion(string $date, ParameterBagInterface $parameterBag): Response
     {
         if (!isset(self::CGU_VERSIONS[$date])) {
