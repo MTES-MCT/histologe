@@ -2,6 +2,8 @@
 
 namespace App\Dto\Api\Request;
 
+use App\Entity\Enum\ChauffageType;
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use OpenApi\Attributes as OA;
@@ -17,7 +19,7 @@ class SignalementRequest implements RequestInterface
 {
     #[OA\Property(
         description: 'Identifiant UUID du partenaire pour lequel le signalement est créé.
-                    <br><strong>Obligatoire si vous avez les permissions sur plusieurs partenaires.</strong>',
+                    <br><strong>⚠️Obligatoire si vous avez les permissions sur plusieurs partenaires.</strong>',
         example: '342bf101-506d-4159-ba0c-c097f8cf12e7',
     )]
     #[Assert\Uuid(message: 'Veuillez fournir un UUID de partenaire valide.')]
@@ -88,13 +90,12 @@ class SignalementRequest implements RequestInterface
             ProfileDeclarant::BAILLEUR_OCCUPANT->value,
             ProfileDeclarant::LOCATAIRE->value,
         ],
-        message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}'
     )]
     public ?string $profilDeclarant = null;
 
     #[OA\Property(
         description: 'Lien entre le déclarant et l\'occupant.
-                      <br>A renseigner uniquement dans le cas du profilDeclarant '.ProfileDeclarant::TIERS_PARTICULIER->value.'.',
+                      <br>⚠️Pris en compte uniquement dans le cas du profilDeclarant '.ProfileDeclarant::TIERS_PARTICULIER->value.'.',
         example: OccupantLink::PROCHE->value,
     )]
     #[Assert\Choice(
@@ -103,7 +104,6 @@ class SignalementRequest implements RequestInterface
             OccupantLink::VOISIN->value,
             OccupantLink::AUTRE->value,
         ],
-        message: 'Cette valeur doit être l\'un des choix suivants : {{ choices }}'
     )]
     public ?string $lienDeclarantOccupant = null;
 
@@ -116,7 +116,7 @@ class SignalementRequest implements RequestInterface
 
     #[OA\Property(
         description: 'S\'agit-il d\'un logement vacant ?
-                    <br>Sera toujours mis à false pour les profils "LOCATAIRE" et "BAILLEUR_OCCUPANT".',
+                    <br>⚠️Pris en compte uniquement pour les profilDeclarant "LOCATAIRE" et "BAILLEUR_OCCUPANT".',
         example: false,
     )]
     public ?bool $isLogementVacant = null;
@@ -144,9 +144,136 @@ class SignalementRequest implements RequestInterface
     )]
     public ?bool $isEnfantsMoinsSixAnsDansLogement = null;
 
-    // TAB addresse du form BO ok
+    #[OA\Property(
+        description: 'Nature du logement.',
+        example: 'appartement',
+    )]
+    #[Assert\Choice(
+        choices: [
+            'appartement',
+            'maison',
+            'autre',
+        ],
+    )]
+    public ?string $natureLogement = null;
 
-    // TODO TAB logement
+    #[OA\Property(
+        description: 'Précision sur la nature du logement.
+                    <br>⚠️Pris en compte uniquement dans le cas où natureLogement = "autre".',
+        example: 'caravane',
+    )]
+    public ?string $natureLogementAutre = null;
+
+    #[OA\Property(
+        description: 'Spécificité de l\'étage de l\'appartement.
+                    <br>⚠️Pris en compte uniquement dans le cas où natureLogement = "appartement".',
+        example: EtageType::RDC->value,
+    )]
+    #[Assert\Choice(
+        choices: [
+            EtageType::RDC->value,
+            EtageType::DERNIER_ETAGE->value,
+            EtageType::SOUSSOL->value,
+            EtageType::AUTRE->value,
+        ],
+    )]
+    public ?string $etageAppartement = null;
+
+    #[OA\Property(
+        description: 'L\'appartement dispose-t-il de fenêtres ?
+                    <br>⚠️Pris en compte uniquement dans le cas où natureLogement = "appartement".',
+        example: true,
+    )]
+    public ?bool $isAppartementAvecFenetres = null;
+
+    #[OA\Property(
+        description: 'Nombre d\'étages dans le logement.',
+        example: 0,
+    )]
+    public ?int $nombreEtages = null;
+
+    #[OA\Property(
+        description: 'Année de construction du logement.',
+        example: 1970,
+    )]
+    public ?int $anneeConstruction = null;
+    #[OA\Property(
+        description: 'Nombre de pièces à vivre dans le logement (salon, chambre).',
+        example: 4,
+    )]
+    public ?int $nombrePieces = null;
+    #[OA\Property(
+        description: 'Superficie du logement en m².',
+        example: 85.5,
+    )]
+    public ?float $superficie = null;
+
+    #[OA\Property(
+        description: 'Le logement dispose-t-il d\'au moins une pièce à vivre de 9m² ou plus ?',
+        example: true,
+    )]
+    public ?bool $isPieceAVivre9m = null;
+
+    #[OA\Property(
+        description: 'Le logement dispose-t-il d\'une cuisine ou un coin cuisine ?',
+        example: true,
+    )]
+    public ?bool $isCuisine = null;
+
+    #[OA\Property(
+        description: 'Existe t-il un accès à une cuisine collective ?
+                     <br>⚠️Pris en compte uniquement dans le cas où isCuisine = false.',
+        example: false,
+    )]
+    public ?bool $isCuisineCollective = null;
+
+    #[OA\Property(
+        description: 'Le logement dispose-t-il d\'une salle de bain (salle d\'eau avec douche ou baignoire) ?',
+        example: true,
+    )]
+    public ?bool $isSdb = null;
+
+    #[OA\Property(
+        description: 'Existe t-il un accès à une salle de bain collective ?
+                     <br>⚠️Pris en compte uniquement dans le cas où isSdb = false.',
+        example: false,
+    )]
+    public ?bool $isSdbCollective = null;
+
+    #[OA\Property(
+        description: 'Le logement dispose-t-il de WC ?',
+        example: true,
+    )]
+    public ?bool $isWc = null;
+    #[OA\Property(
+        description: 'Existe t-il un accès à des WC collectifs ?
+                     <br>⚠️Pris en compte uniquement dans le cas où isWc = false.',
+        example: false,
+    )]
+    public ?bool $isWcCollectif = null;
+
+    #[OA\Property(
+        description: 'Les WC et la cuisine sont-ils dans la même pièce ?
+                     <br>⚠️Pris en compte uniquement dans le cas où isWc = true et isCuisine = true.',
+        example: false,
+    )]
+    public ?bool $isWcCuisineMemePiece = null;
+    // typeChauffage
+
+    #[OA\Property(
+        description: 'Type de chauffage du logement.',
+        example: ChauffageType::ELECTRIQUE->value,
+    )]
+    #[Assert\Choice(
+        choices: [
+            ChauffageType::ELECTRIQUE->value,
+            ChauffageType::GAZ->value,
+            ChauffageType::AUCUN->value,
+            ChauffageType::NSP->value,
+        ],
+    )]
+    public ?string $typeChauffage = null;
+
     // TODO TAB situation
     // TODO TAB cordonnées
     // TODO TAB désordres
