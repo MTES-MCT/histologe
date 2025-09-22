@@ -1,0 +1,70 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Historique des CGU{% endblock %}
+
+{% block content %}
+    <section class="fr-pt-5v fr-px-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'CGU',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Historique des versions',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12">
+                    <h1 class="fr-mb-0">Historique des versions des CGU</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-container--fluid fr-mt-3v">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12">
+                <div class="fr-alert fr-alert--info">
+                    <h3 class="fr-alert__title">Version actuelle : {{ current_version }}</h3>
+                    <p>Rendez-vous sur <a href="{{ path('back_profil') }}">votre profil</a> pour la consulter.</p>
+                </div>
+                
+                {% if versions is empty %}
+                    <div class="fr-alert fr-alert--warning">
+                        <p>Aucune version historique trouvée dans l'historique Git.</p>
+                    </div>
+                {% else %}
+                    <div class="fr-table fr-table--bordered">
+                        <div class="fr-table__wrapper">
+                            <div class="fr-table__container">
+                                <div class="fr-table__content">
+                                    <table aria-label="Historique des versions des CGU">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Date de modification</th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for version in versions %}
+                                                <tr>
+                                                    <td>{{ version.description }}</td>
+                                                    <td>
+                                                        <a href="{{ path('back_cgu_bo_archive_version', {'date': version.date}) }}"
+                                                        class="fr-btn fr-btn--sm fr-btn--secondary">
+                                                            Consulter cette version
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}CGU - Version archivée{% endblock %}
+
+{% block content %}
+    <section class="fr-pt-5v fr-px-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'CGU',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Historique des versions',
+            'level3Link': path('back_cgu_bo_archives'),
+            'level4Title': 'Version du ' ~ date,
+            'level4Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12">
+                    <div class="fr-alert fr-alert--info">
+                        <h3 class="fr-alert__title">Version archivée du {{ date }}</h3>
+                        <p>Vous consultez une ancienne version des CGU. La version actuelle est {{ current_version }}.</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-container--fluid fr-mt-3v">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12">
+                <div class="cgu-archive-content">
+                    {% include 'back/cgu/' ~ template_file %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
