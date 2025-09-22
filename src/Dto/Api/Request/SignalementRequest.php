@@ -162,6 +162,7 @@ class SignalementRequest implements RequestInterface
                     <br>⚠️Pris en compte uniquement dans le cas où natureLogement = "autre".',
         example: 'caravane',
     )]
+    #[Assert\Length(max: 100)]
     public ?string $natureLogementAutre = null;
 
     #[OA\Property(
@@ -190,22 +191,29 @@ class SignalementRequest implements RequestInterface
         description: 'Nombre d\'étages dans le logement.',
         example: 0,
     )]
+    #[Assert\GreaterThanOrEqual(value: 0)]
+    #[Assert\LessThan(value: 100)]
     public ?int $nombreEtages = null;
 
     #[OA\Property(
         description: 'Année de construction du logement.',
         example: 1970,
     )]
+    #[Assert\Regex(pattern: '/^\d{4}$/', message: 'Veuillez saisir une année de 4 chiffres.')]
     public ?int $anneeConstruction = null;
     #[OA\Property(
         description: 'Nombre de pièces à vivre dans le logement (salon, chambre).',
         example: 4,
     )]
+    #[Assert\GreaterThan(value: 0)]
+    #[Assert\LessThan(value: 100)]
     public ?int $nombrePieces = null;
     #[OA\Property(
         description: 'Superficie du logement en m².',
         example: 85.5,
     )]
+    #[Assert\GreaterThan(value: 0)]
+    #[Assert\LessThan(value: 10000)]
     public ?float $superficie = null;
 
     #[OA\Property(
@@ -274,7 +282,230 @@ class SignalementRequest implements RequestInterface
     )]
     public ?string $typeChauffage = null;
 
-    // TODO TAB situation
+    #[OA\Property(
+        description: 'Existe-il un contrat de location (bail) ?',
+        example: true,
+    )]
+    public ?bool $isBail = null;
+
+    #[OA\Property(
+        description: 'Existe-il un diagnostic de performance énergétique (DPE) ?',
+        example: true,
+    )]
+    public ?bool $isDpe = null;
+
+    #[OA\Property(
+        description: 'Année du diagnostic de performance énergétique (DPE).',
+        example: '2021',
+    )]
+    #[Assert\Regex(pattern: '/^\d{4}$/', message: 'Veuillez saisir une année de 4 chiffres.')]
+    public ?string $anneeDpe = null;
+
+    #[OA\Property(
+        description: 'Classe énergétique du logement.',
+        example: 'D',
+    )]
+    #[Assert\Choice(
+        choices: [
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+        ],
+    )]
+    public ?string $classeEnergetique = null;
+
+    #[OA\Property(
+        description: 'Existe-t-il un état des lieux ?',
+        example: true,
+    )]
+    public ?bool $isEtatDesLieux = null;
+
+    #[OA\Property(
+        description: 'Date d\'entrée dans le logement au format AAAA-MM-DD.',
+        example: '2023-01-31',
+    )]
+    #[Assert\Date(message: 'Veuillez saisir une date au format AAAA-MM-DD.')]
+    public ?string $dateEntreeLogement = null;
+
+    #[OA\Property(
+        description: 'Montant du loyer.',
+        example: 765.50,
+    )]
+    #[Assert\GreaterThanOrEqual(value: 0)]
+    #[Assert\LessThan(value: 10000)]
+    public ?float $montantLoyer = null;
+
+    #[OA\Property(
+        description: 'Le paiement des loyers est-il à jour ?',
+        example: true,
+    )]
+    public ?bool $isPaiementLoyersAJour = null;
+
+    #[OA\Property(
+        description: 'L\'occupant est-il allocataire CAF ou MSA ?',
+        example: true,
+    )]
+    public ?bool $isAllocataire = null;
+
+    #[OA\Property(
+        description: 'Nom de la caisse d\'allocation de l\'allocataire.
+                     <br>⚠️Pris en compte uniquement dans le cas où isAllocataire = true.',
+        example: 'CAF',
+    )]
+    #[Assert\Choice(
+        choices: [
+            'CAF',
+            'MSA',
+        ],
+    )]
+    public ?string $caisseAllocation = null;
+
+    #[OA\Property(
+        description: 'Date de naissance de l\'allocataire au format AAAA-MM-DD.
+                     <br>⚠️Pris en compte uniquement dans le cas où isAllocataire = true.',
+        example: '2001-03-15',
+    )]
+    #[Assert\Date(message: 'Veuillez saisir une date au format AAAA-MM-DD.')]
+    public ?string $dateNaissanceAllocataire = null;
+    #[OA\Property(
+        description: 'Numéro d\'allocataire CAF ou MSA.
+                     <br>⚠️Pris en compte uniquement dans le cas où isAllocataire = true.',
+        example: '1234567890123',
+    )]
+    #[Assert\Length(min: 1, max: 25)]
+    public ?string $numAllocataire = null;
+
+    #[OA\Property(
+        description: 'Type de l\'allocation perçue par l\'allocataire.
+                      <br>⚠️Pris en compte uniquement dans le cas où isAllocataire = true.',
+        example: 'APL',
+    )]
+    #[Assert\Choice(
+        choices: [
+            'ALS',
+            'AFL',
+            'APL',
+        ],
+    )]
+    public ?string $typeAllocation = null;
+
+    #[OA\Property(
+        description: 'Montant mensuel de l\'allocation perçue par l\'allocataire.
+                      <br>⚠️Pris en compte uniquement dans le cas où isAllocataire = true.',
+        example: 250.75,
+    )]
+    #[Assert\GreaterThanOrEqual(value: 0)]
+    #[Assert\LessThan(value: 10000)]
+    public ?float $montantAllocation = null;
+
+    #[OA\Property(
+        description: 'L\'occupant est-il accompagné par un travailleur social ?',
+        example: false,
+    )]
+    public ?bool $isAccompagnementTravailleurSocial = null;
+
+    #[OA\Property(
+        description: 'Nom de la structure du travailleur social accompagnant.
+                     <br>⚠️Pris en compte uniquement dans le cas où isAccompagnementTravailleurSocial = true.',
+        example: 'CCAS de Montpellier',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $accompagnementTravailleurSocialNomStructure = null;
+
+    // IsBeneficiaireRsa
+    #[OA\Property(
+        description: 'L\'occupant est-il bénéficiaire du RSA ?',
+        example: false,
+    )]
+    public ?bool $isBeneficiaireRsa = null;
+
+    #[OA\Property(
+        description: 'L\'occupant est-il bénéficiaire du FSL ?',
+        example: false,
+    )]
+    public ?bool $isBeneficiaireFsl = null;
+
+    #[OA\Property(
+        description: 'Le propriétaire a-t-il été informé de la situation ?',
+        example: true,
+    )]
+    public ?bool $isProprietaireAverti = null;
+
+    #[OA\Property(
+        description: 'Date à laquelle le propriétaire a été informé au format AAAA-MM-DD.
+                      <br>⚠️Pris en compte uniquement dans le cas où isProprietaireAverti = true.',
+        example: '2023-02-15',
+    )]
+    public ?string $dateProprietaireAverti = null;
+
+    #[OA\Property(
+        description: 'Moyen par lequel le propriétaire a été informé.
+                      <br>⚠️Pris en compte uniquement dans le cas où isProprietaireAverti = true.',
+        example: 'email',
+    )]
+    #[Assert\Choice(
+        choices: [
+            'courrier',
+            'email',
+            'telephone',
+            'sms',
+            'autre',
+            'nsp',
+        ],
+    )]
+    public ?string $moyenInformationProprietaire = null;
+
+    #[OA\Property(
+        description: 'Réponse du propriétaire.
+                      <br>⚠️Pris en compte uniquement dans le cas où isProprioAverti = true.',
+        example: 'Le propriétaire n\'a pas donné suite.',
+    )]
+    #[Assert\Length(max: 5000)]
+    public ?string $reponseProprietaire = null;
+
+    #[OA\Property(
+        description: 'Une demande de logement/relogement/mutation a-t-elle été faite ?',
+        example: false,
+    )]
+    public ?bool $isDemandeRelogement = null;
+
+    #[OA\Property(
+        description: 'L\'occupant souhaite-t-il quitter le logement ?',
+        example: false,
+    )]
+    public ?bool $isSouhaiteQuitterLogement = null;
+
+    #[OA\Property(
+        description: 'Un préavis de départ a-t-il été déposé ?',
+        example: false,
+    )]
+    public ?bool $isPreavisDepartDepose = null;
+
+    #[OA\Property(
+        description: 'Le logement est-il assuré ?',
+        example: false,
+    )]
+    public ?bool $isLogementAssure = null;
+
+    #[OA\Property(
+        description: 'L\'assurance a-t-elle été contactée ?
+                     <br>⚠️Pris en compte uniquement dans le cas où isLogementAssure = true.',
+        example: false,
+    )]
+    public ?bool $isAssuranceContactee = null;
+    #[OA\Property(
+        description: 'Réponse de l\'assurance.
+                     <br>⚠️Pris en compte uniquement dans le cas où isLogementAssure = true et isAssuranceContactee = true.',
+        example: 'L\'assurance refuse de couvrir les dégâts.',
+    )]
+    #[Assert\Length(max: 5000)]
+    public ?string $reponseAssurance = null;
+
+    // TODO files ?
     // TODO TAB cordonnées
     // TODO TAB désordres
     // TODO TAB validation ?
