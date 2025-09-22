@@ -58,20 +58,27 @@
                         link: path('back_user_inactive_accounts')
                     } %}
 
+                    {% set linkPartenairesParams = { isNotNotifiable: 1 } %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% set linkPartenairesParams = linkPartenairesParams|merge({ territoire: items.territory_id }) %}
+                    {% endif %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {
                         icon_path: 'img/picto-dsfr/notification.svg',
                         title: 'Partenaires non notifiables',
                         badge_class: 'fr-badge--info',
                         badge_label: singular_or_plural(items.data_kpi.partenaires_non_notifiables, ' Partenaire', 'Partenaires'),
-                        link: path('back_partner_index', { isNotNotifiable: 1, territoire: items.territory_id })
+                        link: path('back_partner_index', linkPartenairesParams)
                     } %}
-
+                    {% set linkSIParams = { isOnlyInterconnected: 1 } %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% set linkSIParams = linkSIParams|merge({ territoire: items.territory_id }) %}
+                    {% endif %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {
                         icon_path: 'img/picto-dsfr/system.svg',
                         title: 'Interfaçages SI externes',
                         badge_class: 'fr-badge--info',
                         badge_label: singular_or_plural(items.data_kpi.partenaires_interfaces, ' Partenaire', 'Partenaires'),
-                        link: path('back_partner_index', { isOnlyInterconnected: 1, territoire: items.territory_id })
+                        link: path('back_partner_index', linkSIParams)
                     } %}
                 </div>
                 {% if is_granted('ROLE_ADMIN') %}
