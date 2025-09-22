@@ -566,14 +566,24 @@ class SuiviRepository extends ServiceEntityRepository
                 SignalementStatus::DRAFT_ARCHIVED->value,
             ])
             ->orderBy('suivi.createdAt', 'DESC')
-            ->setMaxResults($limit)
-            ->select('
+            ->setMaxResults($limit);
+
+        $statutField = 'signalement.statut';
+
+        if ($user->isPartnerAdmin() || $user->isUserPartner()) {
+            $qb->innerJoin('signalement.affectations', 'affectation')
+               ->andWhere('affectation.partner IN (:partners)')
+               ->setParameter('partners', $user->getPartners());
+            $statutField = 'affectation.statut';
+        }
+
+        $qb->select('
                 signalement.reference AS reference,
                 signalement.nomOccupant AS nomOccupant,
                 signalement.prenomOccupant AS prenomOccupant,
-                CONCAT(signalement.adresseOccupant, \' \', signalement.cpOccupant, \' \', signalement.villeOccupant) AS adresseOccupant,
+                CONCAT(signalement.adresseOccupant, \' \' , signalement.cpOccupant, \' \' , signalement.villeOccupant) AS adresseOccupant,
                 signalement.uuid AS uuid,
-                signalement.statut AS statut,
+                '.$statutField.' AS statut,
                 suivi.createdAt AS suiviCreatedAt,
                 suivi.category AS suiviCategory,
                 suivi.isPublic AS suiviIsPublic,
