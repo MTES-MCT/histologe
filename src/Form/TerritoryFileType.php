@@ -30,34 +30,39 @@ class TerritoryFileType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // On retire le champ file si on est en édition (l'entité a un id)
         $isEdit = false;
         if (isset($options['data']) && $options['data'] instanceof File && $options['data']->getId()) {
             $isEdit = true;
         }
-        if (!$isEdit) {
-            $builder->add('file', FileType::class, [
-                'label' => 'Fichier <span class="fr-text-default--error">*</span>',
-                'label_html' => true,
-                'help' => 'Sélectionnez un fichier à télécharger.',
-                'multiple' => false,
-                'required' => false,
-                'mapped' => false,
-                'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => 'Veuillez sélectionner un fichier à télécharger.',
-                    ]),
-                    new Assert\Valid(),
-                    new Assert\File([
-                        'maxSize' => '10M',
-                        'mimeTypes' => File::DOCUMENT_MIME_TYPES,
-                        'maxSizeMessage' => 'Le fichier ne doit pas dépasser 10 Mo.',
-                        'mimeTypesMessage' => 'Seuls les fichiers {{ types }} sont autorisés.',
-                    ]),
-                ],
-            ]);
+
+        $fileConstraints = [
+            new Assert\NotBlank([
+                'message' => 'Veuillez sélectionner un fichier à télécharger.',
+            ]),
+            new Assert\Valid(),
+            new Assert\File([
+                'maxSize' => '10M',
+                'mimeTypes' => File::DOCUMENT_MIME_TYPES,
+                'maxSizeMessage' => 'Le fichier ne doit pas dépasser 10 Mo.',
+                'mimeTypesMessage' => 'Seuls les fichiers {{ types }} sont autorisés.',
+            ]),
+        ];
+        if ($isEdit) {
+            // En édition, le fichier n'est pas obligatoire
+            array_shift($fileConstraints);
         }
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+
+        $builder->add('file', FileType::class, [
+            'label' => 'Fichier <span class="fr-text-default--error">*</span>',
+            'label_html' => true,
+            'help' => 'Sélectionnez un fichier à télécharger.',
+            'multiple' => false,
+            'required' => false,
+            'mapped' => false,
+            'constraints' => $fileConstraints,
+        ]);
+
+        if ($this->security->isGranted('ROLE_ADMIN') && !$isEdit) {
             $builder->add('territory', TerritoryChoiceType::class);
         }
 
@@ -153,6 +158,11 @@ class TerritoryFileType extends AbstractType
             $file = $value;
 
             if (DocumentType::GRILLE_DE_VISITE !== $file->getDocumentType()) {
+                return;
+            }
+
+            if (empty($file->getTerritory())) {
+                // Si pas de territoire, on ne fait pas la vérification d'unicité
                 return;
             }
 

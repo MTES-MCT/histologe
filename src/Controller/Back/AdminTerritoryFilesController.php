@@ -2,10 +2,12 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\User;
 use App\Form\SearchTerritoryFilesType;
 use App\Form\TerritoryFileType;
+use App\Messenger\Message\FileDuplicationMessage;
 use App\Repository\FileRepository;
 use App\Security\Voter\FileVoter;
 use App\Service\FormHelper;
@@ -25,6 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -35,6 +38,7 @@ class AdminTerritoryFilesController extends AbstractController
     public function __construct(
         #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
         private readonly bool $featureNewDocumentSpace,
+        private readonly MessageBusInterface $messageBus,
     ) {
         if (!$this->featureNewDocumentSpace) {
             throw $this->createNotFoundException();
@@ -111,51 +115,27 @@ class AdminTerritoryFilesController extends AbstractController
             /** @var UploadedFile $uploadedFile */
             $uploadedFile = $form->get('file')->getData();
 
-            if (!$fileScanner->isClean($uploadedFile->getPathname())) {
-                $form->get('file')->addError(new FormError('Le fichier est infecté'));
-            } else {
-                try {
-                    $res = $uploadHandlerService->toTempFolder($uploadedFile);
+            if ($this->uploadFile($uploadedFile, $file, $user, $form, $fileScanner, $uploadHandlerService, $logger, $imageManipulationHandler)) {
+                $em->persist($file);
+                $em->flush();
+                $successMessage = 'Le document a bien été ajouté.';
 
-                    if (isset($res['error'])) {
-                        throw new \Exception($res['error']);
-                    }
-
-                    $file->setFilename($res['file']);
-                    // Move main file
-                    $uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
-                    $variantsGenerated = false;
-                    if (\in_array($uploadedFile->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
-                        $imageManipulationHandler->resize($file->getFilename())->thumbnail();
-                        // Move variants
-                        $uploadHandlerService->movePhotoVariants($file->getFilename());
-                        $variantsGenerated = true;
-                    }
-
-                    $extension = strtolower(pathinfo($res['file'], \PATHINFO_EXTENSION));
-                    $file->setExtension(strtolower($extension));
-                    $file->setIsVariantsGenerated($variantsGenerated);
-                    $file->setScannedAt(new \DateTimeImmutable());
-                    $file->setIsStandalone(true);
-                    $file->setUploadedBy($user);
-                    if ($file->getTerritory()) {
-                        $file->setPartner($user->getPartnerInTerritoryOrFirstOne($file->getTerritory()));
+                // Dispatch message to duplicate file to all territories
+                if (empty($file->getTerritory())) {
+                    $this->messageBus->dispatch(new FileDuplicationMessage($file->getId()));
+                    $successMessage = 'Le document a bien été ajouté. ';
+                    if (DocumentType::GRILLE_DE_VISITE === $file->getDocumentType()) {
+                        $successMessage .= 'Il va être dupliqué pour tous les territoires qui ne possèdent pas de grille de visite. Cela peut prendre quelques minutes.';
                     } else {
-                        $file->setPartner($user->getPartners()->first());
+                        $successMessage .= 'Il va être dupliqué pour tous les territoires, cela peut prendre quelques minutes.';
                     }
-                    $file->setDescription($file->getDescription());
-                    $em->persist($file);
-                    $em->flush();
-
-                    $this->addFlash('success', 'Le document a bien été ajouté.');
-
-                    $url = $this->generateUrl('back_territory_management_document');
-
-                    return $this->json(['redirect' => true, 'url' => $url]);
-                } catch (FileException $e) {
-                    $logger->error($e->getMessage());
-                    $form->get('file')->addError(new FormError('Échec du téléchargement du document.'));
                 }
+
+                $this->addFlash('success', $successMessage);
+
+                $url = $this->generateUrl('back_territory_management_document');
+
+                return $this->json(['redirect' => true, 'url' => $url]);
             }
         }
 
@@ -184,20 +164,45 @@ class AdminTerritoryFilesController extends AbstractController
         File $file,
         Request $request,
         EntityManagerInterface $em,
+        UploadHandlerService $uploadHandlerService,
+        FileScanner $fileScanner,
+        LoggerInterface $logger,
+        ImageManipulationHandler $imageManipulationHandler,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(FileVoter::EDIT_DOCUMENT, $file);
+
+        /** @var Form $form */
         $form = $this->createForm(TerritoryFileType::class, $file, [
             'action' => $this->generateUrl('back_territory_management_document_edit_ajax', ['file' => $file->getId()]),
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Le document a bien été modifié.');
+            $flush = true;
 
-            $url = $this->generateUrl('back_territory_management_document');
+            if (!empty($form->get('file')->getData())) {
+                $flush = false;
+                /** @var UploadedFile $uploadedFile */
+                $uploadedFile = $form->get('file')->getData();
 
-            return $this->json(['redirect' => true, 'url' => $url]);
+                /** @var User $user */
+                $user = $this->getUser();
+                $oldFilename = $file->getFilename();
+                if ($this->uploadFile($uploadedFile, $file, $user, $form, $fileScanner, $uploadHandlerService, $logger, $imageManipulationHandler)) {
+                    $flush = true;
+                    $uploadHandlerService->deleteFileInBucketFromFilename($oldFilename);
+                }
+            }
+
+            if ($flush) {
+                $file->setDescription($file->getDescription());
+                $em->flush();
+                $this->addFlash('success', 'Le document a bien été modifié.');
+
+                $url = $this->generateUrl('back_territory_management_document');
+
+                return $this->json(['redirect' => true, 'url' => $url]);
+            }
         }
 
         $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
@@ -220,5 +225,58 @@ class AdminTerritoryFilesController extends AbstractController
         }
 
         return $this->redirectToRoute('back_territory_management_document');
+    }
+
+    private function uploadFile(
+        UploadedFile $uploadedFile,
+        File $file,
+        User $user,
+        Form $form,
+        FileScanner $fileScanner,
+        UploadHandlerService $uploadHandlerService,
+        LoggerInterface $logger,
+        ImageManipulationHandler $imageManipulationHandler,
+    ): bool {
+        if (!$fileScanner->isClean($uploadedFile->getPathname())) {
+            $form->get('file')->addError(new FormError('Le fichier est infecté'));
+        } else {
+            try {
+                $res = $uploadHandlerService->toTempFolder($uploadedFile);
+
+                if (isset($res['error'])) {
+                    throw new \Exception($res['error']);
+                }
+
+                $file->setFilename($res['file']);
+                // Move main file
+                $uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
+                $variantsGenerated = false;
+                if (\in_array($uploadedFile->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
+                    $imageManipulationHandler->resize($file->getFilename())->thumbnail();
+                    // Move variants
+                    $uploadHandlerService->movePhotoVariants($file->getFilename());
+                    $variantsGenerated = true;
+                }
+
+                $extension = strtolower(pathinfo($res['file'], \PATHINFO_EXTENSION));
+                $file->setExtension(strtolower($extension));
+                $file->setIsVariantsGenerated($variantsGenerated);
+                $file->setScannedAt(new \DateTimeImmutable());
+                $file->setIsStandalone(true);
+                $file->setUploadedBy($user);
+                if ($file->getTerritory()) {
+                    $file->setPartner($user->getPartnerInTerritoryOrFirstOne($file->getTerritory()));
+                } else {
+                    $file->setPartner($user->getPartners()->first());
+                }
+
+                return true;
+            } catch (FileException $e) {
+                $logger->error($e->getMessage());
+                $form->get('file')->addError(new FormError('Échec du téléchargement du document.'));
+            }
+        }
+
+        return false;
     }
 }

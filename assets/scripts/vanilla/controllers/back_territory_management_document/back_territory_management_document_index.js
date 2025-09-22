@@ -46,6 +46,8 @@ if (searchFilesForm) {
     button.addEventListener('click', (e) => {
       document.getElementById('fr-modal-document-delete-document-title').textContent =
         e.target.dataset.title;
+      document.getElementById('fr-modal-document-delete-document-territoire').textContent =
+        e.target.dataset.territoire;
       document.getElementById('fr-modal-document-delete-document-title-reminder').textContent =
         e.target.dataset.title;
       document.getElementById('fr-modal-document-delete-btn-submit').href = e.target.dataset.url;
@@ -61,6 +63,8 @@ if (titleInput) {
     isTitleEdited = true;
   });
 }
+
+const fileReplacementToggle = document.getElementById('file-replacement-toggle');
 
 const fileElement = document.getElementById('territory_file_file');
 const previewElement = document.getElementById('form-add-file-preview');
@@ -80,7 +84,7 @@ if (fileElement && previewElement) {
       noPreviewElement.classList.remove('fr-hidden');
     }
 
-    if (!isTitleEdited && file) {
+    if (!isTitleEdited && !fileReplacementToggle && file) {
       // set title to filename without extension
       const filename = file.name;
       const lastDotIndex = filename.lastIndexOf('.');
@@ -88,6 +92,27 @@ if (fileElement && previewElement) {
         titleInput.value = filename.substring(0, lastDotIndex);
       } else {
         titleInput.value = filename;
+      }
+    }
+  });
+}
+
+
+const fileReplacementContainer = document.getElementById('file-replacement-container');
+if (fileReplacementToggle && fileReplacementContainer) {
+  fileReplacementToggle.addEventListener('change', () => {
+    if (fileReplacementToggle.checked) {
+      fileReplacementContainer.classList.remove('fr-hidden');
+    } else {
+      fileReplacementContainer.classList.add('fr-hidden');
+      // clear file input
+      const fileInput = fileReplacementContainer.querySelector('input[type="file"]');
+      if (fileInput) {
+        fileInput.value = '';
+        // hide preview
+        previewImageElement.src = '';
+        previewElement.classList.add('fr-hidden');
+        noPreviewElement.classList.add('fr-hidden');
       }
     }
   });

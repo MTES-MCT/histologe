@@ -164,6 +164,29 @@ class UploadHandlerService
         $this->moveFilePath($distantFolder.$variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
     }
 
+    public function copyToNewFilename(string $filename, string $newFilename): ?string
+    {
+        try {
+            if ($this->fileStorage->fileExists($filename) && !$this->fileStorage->fileExists($newFilename)) {
+                $this->fileStorage->copy($filename, $newFilename);
+
+                return $newFilename;
+            }
+        } catch (FilesystemException $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return null;
+    }
+
+    public function copyPhotoVariantsToNewFilename(string $filename, string $newFilename): void
+    {
+        $variantNames = ImageManipulationHandler::getVariantNames($filename);
+        $variantNewNames = ImageManipulationHandler::getVariantNames($newFilename);
+        $this->copyToNewFilename($variantNames[ImageManipulationHandler::SUFFIX_RESIZE], $variantNewNames[ImageManipulationHandler::SUFFIX_RESIZE]);
+        $this->copyToNewFilename($variantNames[ImageManipulationHandler::SUFFIX_THUMB], $variantNewNames[ImageManipulationHandler::SUFFIX_THUMB]);
+    }
+
     public function deleteIfExpiredFile(File $file): bool
     {
         if ((new \DateTime())->getTimestamp() - $file->getCreatedAt()->getTimestamp() > 3600) {
@@ -189,8 +212,13 @@ class UploadHandlerService
 
     public function deleteFileInBucket(File $file): void
     {
-        $this->deleteSingleFile($file->getFilename());
-        $variantNames = ImageManipulationHandler::getVariantNames($file->getFilename());
+        $this->deleteFileInBucketFromFilename($file->getFilename());
+    }
+
+    public function deleteFileInBucketFromFilename(string $filename): void
+    {
+        $this->deleteSingleFile($filename);
+        $variantNames = ImageManipulationHandler::getVariantNames($filename);
         $this->deleteSingleFile($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]);
         $this->deleteSingleFile($variantNames[ImageManipulationHandler::SUFFIX_THUMB]);
     }

@@ -171,7 +171,7 @@ class FileRepository extends ServiceEntityRepository
             $qb->andWhere('f.territory = :territory')
                 ->setParameter('territory', $searchTerritoryFiles->getTerritory());
         } elseif (!empty($territories)) {
-            $qb->andWhere('f.territory IN (:territories) OR f.territory IS NULL')
+            $qb->andWhere('f.territory IN (:territories)')
                 ->setParameter('territories', $territories);
         }
 
@@ -234,5 +234,17 @@ class FileRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return array<int, File>
+     */
+    public function findAllStandalone(): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.isStandalone = true')
+            ->andWhere('f.signalement IS NULL')
+            ->getQuery()
+            ->getResult();
     }
 }
