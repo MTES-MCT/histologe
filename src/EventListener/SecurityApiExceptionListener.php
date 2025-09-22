@@ -59,6 +59,7 @@ class SecurityApiExceptionListener
                 str_contains($exception->getMessage(), 'Access Denied')
                 || self::ACCESS_DENIED === $exception->getMessage()
                 || self::ACCESS_DENIED_PARTNER === $exception->getMessage()
+                || self::ACCESS_DENIED_SPECIFIC_PARTNER === $exception->getMessage()
                 || self::ACCESS_DENIED_PARTNER_NOT_FOUND === $exception->getMessage()
                 || self::TRANSITION_STATUT_DENIED === $exception->getMessage()
             );

@@ -43,7 +43,7 @@ class SignalementCreateController extends AbstractController
      * @throws \DateMalformedStringException
      */
     #[OA\Post(
-        path: '/api/signalement',
+        path: '/api/signalements',
         description: 'Création d\'un signalement',
         summary: 'Création d\'un signalement',
         security: [['Bearer' => []]],
@@ -71,6 +71,23 @@ class SignalementCreateController extends AbstractController
                             'nbOccupantsLogement' => 4,
                             'nbEnfantsDansLogement' => 2,
                             'isEnfantsMoinsSixAnsDansLogement' => true,
+                            'natureLogement' => 'appartement',
+                            'natureLogementAutre' => null,
+                            'etageAppartement' => 'RDC',
+                            'appartementAvecFenetres' => true,
+                            'nombreEtages' => 0,
+                            'anneeConstruction' => 1970,
+                            'nombrePieces' => 4,
+                            'superficie' => 85.5,
+                            'isPieceAVivre9m' => true,
+                            'isCuisine' => true,
+                            'isCuisineCollective' => null,
+                            'isSalleDeBain' => false,
+                            'isSalleDeBainCollective' => true,
+                            'isWc' => false,
+                            'isWcCollectif' => false,
+                            'isWcCuisineMemePiece' => false,
+                            'typeChauffage' => 'ELECTRIQUE',
                         ]
                     ),
                 ],
@@ -122,7 +139,7 @@ class SignalementCreateController extends AbstractController
             type: 'object'
         )
     )]
-    #[Route('/signalement', name: 'api_signalements_create_post', methods: 'POST')]
+    #[Route('/signalements', name: 'api_signalements_create_post', methods: 'POST')]
     public function __invoke(
         #[MapRequestPayload(validationGroups: ['false'])]
         SignalementRequest $signalementRequest,
