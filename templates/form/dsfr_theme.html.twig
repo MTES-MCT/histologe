@@ -235,7 +235,7 @@
 {% endblock %}
 
 {% block search_autocomplete_row %}
-    <div class="search-autocomplete-container fr-input-group {% if errors|length > 0 %}fr-input-group--error{% endif %}" id="{{ id }}">
+    <div class="search-autocomplete-container fr-input-group {% if errors|length > 0 %}fr-input-group--error{% endif %}" id="{{ id }}" data-form-target-name="{{ form.parent.vars.attr.id }}">
         {% if label is not same as(false) %}
             <label for="{{ id }}" class="fr-label">{{ label }} {{form_help(form)}}</label>
         {% endif %}
