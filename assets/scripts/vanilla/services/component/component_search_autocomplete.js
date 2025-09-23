@@ -12,7 +12,11 @@ function initSearchAutocompleteWidgets() {
         const choices = JSON.parse(input.getAttribute('data-autocomplete-choices') || '[]');
 
         function submitForm() {
-            const form = document.getElementById('search-dashboard-averifier-form');
+            const formName = container.getAttribute('data-form-target-name')
+            if (formName == undefined || formName == '') {
+              return;
+            }
+            const form = document.getElementById(formName);
             if (form) {
                 form.submit();
             }
