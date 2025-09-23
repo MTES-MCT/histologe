@@ -664,9 +664,11 @@ class SuiviRepository extends ServiceEntityRepository
                 ->from('App\\Entity\\Affectation', 'af')
                 ->where('af.signalement = signalement')
                 ->andWhere('af.partner IN (:partners)')
+                ->andWhere('af.statut = :affectationStatus')
                 ->getDQL();
             $qb->andWhere($qb->expr()->exists($existsAffectation))
-                ->setParameter('partners', $user->getPartners());
+                ->setParameter('partners', $user->getPartners())
+                ->setParameter('affectationStatus', AffectationStatus::ACCEPTED);
         }
 
         if ($params?->mesDossiersMessagesUsagers && '1' === $params->mesDossiersMessagesUsagers) {
