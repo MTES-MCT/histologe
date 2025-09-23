@@ -22,6 +22,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
+ * @extends ServiceEntityRepository<User>
+ *
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
  * @method User|null findOneBy(array $criteria, array $orderBy = null)
  * @method User[]    findAll()
@@ -114,7 +116,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $connection = $this->getEntityManager()->getConnection();
         $stmt = $connection->prepare($sql);
 
-        return $stmt->executeQuery()->fetchAllAssociative();
+        return $stmt->executeQuery()->fetchAllAssociative();// @phpstan-ignore-line
     }
 
     public function findArchivedUserByEmail(string $email): ?User
@@ -215,6 +217,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }, $pendingUsers);
     }
 
+    /**
+     * @return Paginator<User>
+     */
     public function findArchivedFilteredPaginated(SearchArchivedUser $searchArchivedUser, int $maxResult): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('u');
@@ -319,7 +324,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $qb->andWhere('up.partner IN (:partners)')->setParameter('partners', $user->getPartners());
         }
 
-        return $qb->getQuery()->getOneOrNullResult();
+        /** @var CountUser $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+
+        return $result;
     }
 
     /**
@@ -428,7 +436,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if ($count) {
             $qb->select('COUNT(u)');
 
-            return $qb->getQuery()->getSingleScalarResult();
+            return (int) $qb->getQuery()->getSingleScalarResult();
         }
         $qb->orderBy('u.nom', 'ASC');
 
@@ -458,8 +466,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @return Paginator<User>
+     */
     public function findFilteredPaginated(SearchUser $searchUser, int $maxResult): Paginator
     {
+        /** @var QueryBuilder $qb */
         $qb = $this->findFiltered($searchUser, false);
 
         $firstResult = ($searchUser->getPage() - 1) * $maxResult;
@@ -562,6 +574,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb;
     }
 
+    /**
+     * @return Paginator<User>
+     */
     public function findUsersApiPaginator(SearchUser $searchUser, int $maxResult = 20): Paginator
     {
         $queryBuilder = $this->findUsersApiQueryBuilder($searchUser);

@@ -114,10 +114,13 @@ class BailleurRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
         $indexed = [];
+        /** @var Bailleur $bailleur */
         foreach ($list as $bailleur) {
             if ($raisonSociale) {
+                /** @var string $name */
                 $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleur->getRaisonSociale()));
             } else {
+                /** @var string $name */
                 $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleur->getName()));
             }
             $indexed[$name] = $bailleur;
@@ -126,6 +129,9 @@ class BailleurRepository extends ServiceEntityRepository
         return $indexed;
     }
 
+    /**
+     * @return Paginator<Bailleur>
+     */
     public function findFilteredPaginated(SearchBailleur $searchBailleur, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('b');

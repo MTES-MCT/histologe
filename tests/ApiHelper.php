@@ -3,6 +3,7 @@
 namespace App\Tests;
 
 use Monolog\Handler\TestHandler;
+use Monolog\LogRecord;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,7 +30,7 @@ trait ApiHelper
         $this->assertInstanceOf(TestHandler::class, $testHandler);
 
         $records = $testHandler->getRecords();
-        $apiLogs = array_filter($records, function ($record) {
+        $apiLogs = array_filter($records, function (LogRecord $record) {
             return str_starts_with((string) $record['message'], 'API Request');
         });
 

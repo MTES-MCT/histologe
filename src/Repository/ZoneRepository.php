@@ -23,6 +23,9 @@ class ZoneRepository extends ServiceEntityRepository
         parent::__construct($registry, Zone::class);
     }
 
+    /**
+     * @return Paginator<Zone>
+     */
     public function findFilteredPaginated(SearchZone $searchZone, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('z');
