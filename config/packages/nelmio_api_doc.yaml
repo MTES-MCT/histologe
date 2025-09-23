@@ -2,8 +2,90 @@ nelmio_api_doc:
     documentation:
         info:
             title: '%platform_name%'
-            description:  |
-                API Documentation
+            description:  |              
+             ## CHANGELOG 1.1.0 - 2025-09
+                Cette version introduit la **gestion des permissions API** et facilite l'intégration avec les partenaires en permettant l'utilisation d'un seul compte pour des interventions impliquant plusieurs partenaires. 
+                
+                À l'exception du breaking change (voir plus bas), ces évolutions sont rétrocompatibles pour un utilisateur ayant une permission sur un seul partenaire.
+                #### AJOUTS
+                - Retourne l’e-mail de l’utilisateur authentifié et la liste de ses **partenaires autorisés**.
+                
+                  *Requête* 
+                  
+                  `GET /api/users/me` 
+                
+                  *Réponse*
+                    ```json
+                    {
+                      "email": "api-01@signal-logement.fr",
+                      "partenairesAutorises": [
+                        {
+                          "uuid": "fc9b515f-d846-415b-91d2-1936563291e9",
+                          "codeDepartement": "13",
+                          "nom": "Partenaire 13-01",
+                          "type": "AUTRE"
+                        },
+                        {
+                          "uuid": "abf06850-56ae-4de7-b660-d3594802b601",
+                          "codeDepartement": "13",
+                          "nom": "Partenaire 13-02",
+                          "type": "AUTRE"
+                        }
+                      ]
+                    }
+                    ```
+              
+                #### MODIFICATIONS
+                - Les routes suivantes acceptent désormais l’identifiant **UUID du partenaire** (obligatoire quand l’utilisateur possède plusieurs partenaires autorisés) :
+                    - `POST /api/signalements/arretes`
+                    - `POST /api/signalements/files`
+                    - `POST /api/signalements/suivis`
+                    - `POST /api/signalements/visite`
+                  
+                  *Exemple de payload*
+                  ```json
+                  {
+                    "partenaireUuid": "fc9b515f-d846-415b-91d2-1936563291e9",
+                    "...": "..."
+                  }
+      
+                #### BREAKING CHANGES
+                - La ressource `signalement` retourne désormais un tableau d’`affectations` (multi-partenaires) au lieu d’un objet `affectation`.
+              
+                   *Requête* 
+              
+                   `GET /api/signalements/00000000-0000-0000-2022-000000000006` 
+              
+                   *Réponse*
+                     ```json
+                      {
+                         "uuid": "00000000-0000-0000-2022-000000000006",
+                         "reference": "2022-6",
+                         "dateCreation": "2025-09-03T14:01:24+00:00",
+                         "affectations": [
+                            {
+                             "uuid": "1e89aad9-ff79-456c-b6ca-9358e5ee434b",
+                             "partenaireUuid": "fc9b515f-d846-415b-91d2-1936563291e9",
+                             "partenaireNom": "Partenaire 13-01",
+                             "statut": "EN_COURS",
+                              "...": "..."
+                            },
+                            {
+                              "uuid": "1e89aad9-ff79-456c-b6ca-9358e5ee434b",
+                              "partenaireUuid": "fc9b515f-d846-415b-91d2-1936563291e9",
+                              "partenaireNom": "Partenaire 13-01",
+                              "statut": "EN_COURS",
+                              "...": "..."
+                            }
+                         ]  
+                      }
+                     ```
+                ## CHANGELOG 1.0.0 - 2025-04
+                Première version officielle de l'API Signal Logement. 
+                Elle offre un ensemble de fonctionnalités permettant l'intégration avec notre plateforme pour la gestion des signalements.
+
+                ## API Documentation
+              
                 ### Requêtes
                 L'API adhère aux principes REST :
                 <ul>
@@ -66,7 +148,7 @@ nelmio_api_doc:
                 | 404  | Not Found             | La ressource est introuvable                                                         |
                 | 500  | Internal Server Error | Une erreur serveur s'est produite (l'équipe technique est notifiée automatiquement)  |
 
-            version: 1.0.0
+            version: 1.1.0
         components:
             securitySchemes:
                 Bearer:
