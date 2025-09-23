@@ -47,6 +47,6 @@ trait EnumTrait
         $label = mb_trim($label);
         $key = array_search($label, self::getLabelList(), true);
 
-        return false === $key ? null : $key;
+        return (false === $key || !is_string($key)) ? null : $key;
     }
 }

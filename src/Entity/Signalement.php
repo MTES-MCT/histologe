@@ -670,9 +670,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      */
     public function getNbPersonsDeprecated(): string
     {
-        $nbAdultes = str_replace('+', '', $this->nbAdultes ?? 0);
-        $nbEnfantsM6 = str_replace('+', '', $this->getNbEnfantsM6() ?? 0);
-        $nbEnfantsP6 = str_replace('+', '', $this->getNbEnfantsP6() ?? 0);
+        $nbAdultes = str_replace('+', '', (string) ($this->nbAdultes ?? ''));
+        $nbEnfantsM6 = str_replace('+', '', (string) ($this->getNbEnfantsM6() ?? ''));
+        $nbEnfantsP6 = str_replace('+', '', (string) ($this->getNbEnfantsP6() ?? ''));
 
         $nbPersons = (int) $nbAdultes + (int) $nbEnfantsM6 + (int) $nbEnfantsP6;
 
@@ -686,8 +686,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      */
     public function getNbEnfantsDeprecated(): string
     {
-        $nbEnfantsM6 = str_replace('+', '', $this->getNbEnfantsM6() ?? 0);
-        $nbEnfantsP6 = str_replace('+', '', $this->getNbEnfantsP6() ?? 0);
+        $nbEnfantsM6 = str_replace('+', '', (string) ($this->getNbEnfantsM6() ?? ''));
+        $nbEnfantsP6 = str_replace('+', '', (string) ($this->getNbEnfantsP6() ?? ''));
 
         $nbEnfants = (int) $nbEnfantsM6 + (int) $nbEnfantsP6;
 

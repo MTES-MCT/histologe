@@ -24,14 +24,23 @@ class Bailleur
     #[Groups(['settings:read'])]
     private ?string $name = null;
 
+    /**
+     * @var Collection<int, Signalement>
+     */
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Signalement::class)]
     #[Ignore]
     private Collection $signalements;
 
+    /**
+     * @var Collection<int, Partner>
+     */
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Partner::class)]
     #[Ignore]
     private Collection $partners;
 
+    /**
+     * @var Collection<int, BailleurTerritory>
+     */
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: BailleurTerritory::class, cascade: ['persist'])]
     #[Ignore]
     private Collection $bailleurTerritories;

@@ -266,10 +266,16 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
      * A visual identifier that represents this user.
      *
      * @see UserInterface
+     *
+     * @return non-empty-string
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        if (null === $this->email || '' === $this->email) {
+            throw new \LogicException('User email is not set');
+        }
+
+        return $this->email;
     }
 
     /**
@@ -490,7 +496,14 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function getPartnerInTerritoryOrFirstOne(Territory $territory): ?Partner
     {
-        return $this->getPartnerInTerritory($territory) ?? ($this->getPartners()->count() ? $this->getPartners()->first() : null);
+        $partnerInTerritory = $this->getPartnerInTerritory($territory);
+        if (null !== $partnerInTerritory) {
+            return $partnerInTerritory;
+        }
+
+        $first = $this->getPartners()->first();
+
+        return $first instanceof Partner ? $first : null;
     }
 
     public function hasPartnerInTerritory(Territory $territory): bool
@@ -508,7 +521,10 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     {
         $territory = null;
         if ($this->userPartners->count()) {
-            $territory = $this->userPartners->first()->getPartner()->getTerritory();
+            $first = $this->userPartners->first();
+            if ($first instanceof UserPartner) {
+                $territory = $first->getPartner()->getTerritory();
+            }
         }
 
         return $territory;
