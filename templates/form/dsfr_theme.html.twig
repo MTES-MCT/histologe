@@ -233,3 +233,21 @@
         {{ block('form_errors') }}
     </div>
 {% endblock %}
+
+{% block search_autocomplete_row %}
+    <div class="search-autocomplete-container fr-input-group {% if errors|length > 0 %}fr-input-group--error{% endif %}" id="{{ id }}">
+        {% if label is not same as(false) %}
+            <label for="{{ id }}" class="fr-label">{{ label }} {{form_help(form)}}</label>
+        {% endif %}
+        <div class="fr-input-wrap fr-input-wrap--addon">
+            {{ form_widget(form, {'attr': (attr|default({}))|merge({'list': id ~ '_datalist'})}) }}
+            <button type="button" class="fr-btn fr-icon-search-line">Rechercher</button>
+        </div>
+        <datalist id="{{ id }}_datalist">
+            {% for choice in autocomplete_choices %}
+                <option value="{{ choice }}">{{ choice }}</option>
+            {% endfor %}
+        </datalist>
+        {{ block('form_errors') }}
+    </div>
+{% endblock %}
