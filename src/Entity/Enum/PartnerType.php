@@ -55,15 +55,26 @@ enum PartnerType: string
 
     public static function fromLabel(string $label): self
     {
-        $key = array_search($label, self::getLabelList());
+        $key = self::getKeyFromLabel($label);
+        if (null === $key) {
+            throw new \ValueError("No case for label $label");
+        }
 
         return self::from($key);
     }
 
     public static function tryFromLabel(string $label): ?self
     {
-        $key = array_search($label, self::getLabelList());
+        $key = self::getKeyFromLabel($label);
 
-        return self::tryFrom($key);
+        return null === $key ? null : self::tryFrom($key);
+    }
+
+    private static function getKeyFromLabel(string $label): ?string
+    {
+        $label = mb_trim($label);
+        $key = array_search($label, self::getLabelList(), true);
+
+        return (false === $key || !is_string($key)) ? null : $key;
     }
 }
