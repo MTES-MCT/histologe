@@ -7,6 +7,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\PartnerType;
 use App\Repository\AffectationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -272,6 +273,19 @@ class Affectation implements EntityHistoryInterface
     {
         $this->motifRefus = null;
         $this->motifCloture = null;
+    }
+
+    public function isSynchronizeWithEsabora(): bool
+    {
+        if ((PartnerType::ARS === $this->getPartner()->getType()
+            || PartnerType::COMMUNE_SCHS === $this->getPartner()->getType()
+            || PartnerType::EPCI == $this->getPartner()->getType()
+        ) && $this->isSynchronized
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     /** @return array<HistoryEntryEvent> */

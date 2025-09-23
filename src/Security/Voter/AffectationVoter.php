@@ -4,7 +4,6 @@ namespace App\Security\Voter;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -82,7 +81,7 @@ class AffectationVoter extends Voter
         $canAnswer = $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory())
             && SignalementStatus::ACTIVE === $affectation->getSignalement()->getStatut();
 
-        if (!$this->isSynchronizeWithEsabora($affectation)) {
+        if (!$affectation->isSynchronizeWithEsabora()) {
             return $canAnswer;
         }
 
@@ -112,16 +111,6 @@ class AffectationVoter extends Voter
         }
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($affectation->getSignalement()->getTerritory())) {
             return true;
-        }
-
-        return false;
-    }
-
-    private function isSynchronizeWithEsabora(Affectation $affectation): bool
-    {
-        if (PartnerType::ARS === $affectation->getPartner()->getType()
-            || PartnerType::COMMUNE_SCHS === $affectation->getPartner()->getType()) {
-            return $affectation->isSynchronized();
         }
 
         return false;
