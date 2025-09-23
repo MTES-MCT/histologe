@@ -4,13 +4,13 @@ namespace App\Form;
 
 use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Form\Type\SearchAutocompleteType;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\PartnerRepository;
 use App\Service\ListFilters\SearchDashboardAverifier;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -27,10 +27,11 @@ class SearchDashboardAverifierType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('queryCommune', SearchType::class, [
+        $builder->add('queryCommune', SearchAutocompleteType::class, [
             'required' => false,
             'label' => 'Commune ou code postal',
             'attr' => ['placeholder' => 'Taper le nom ou le code postal de la commune'],
+            'autocomplete_choices' => $options['communesAndCp'] ?? [],
         ]);
 
         $builder->add('territoireId', HiddenType::class, [
@@ -92,6 +93,7 @@ class SearchDashboardAverifierType extends AbstractType
             'attr' => ['id' => 'search-dashboard-averifier-form', 'class' => 'bo-filter-form'],
             'territory' => null,
             'mesDossiersAverifier' => null,
+            'communesAndCp' => null,
         ]);
     }
 
