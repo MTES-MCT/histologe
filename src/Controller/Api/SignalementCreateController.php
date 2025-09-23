@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\ReferenceGenerator;
@@ -34,6 +35,7 @@ class SignalementCreateController extends AbstractController
         private readonly ValidatorInterface $validator,
         private readonly SignalementApiFactory $signalementApiFactory,
         private readonly SignalementRepository $signalementRepository,
+        private readonly UserManager $userManager,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -106,16 +108,40 @@ class SignalementCreateController extends AbstractController
                             'accompagnementTravailleurSocialNomStructure' => 'CCAS de Montpellier',
                             'isBeneficiaireRsa' => false,
                             'isBeneficiaireFsl' => false,
-                            'isProprietaireAverti' => true,
-                            'dateProprietaireAverti' => '2025-02-01',
-                            'moyenInformationProprietaire' => 'courrier',
-                            'reponseProprietaire' => 'Le propriétaire n\'a pas donné suite.',
+                            'isBailleurAverti' => true,
+                            'dateBailleurAverti' => '2025-02-01',
+                            'moyenInformationBailleur' => 'courrier',
+                            'reponseBailleur' => 'Le bailleur n\'a pas donné suite.',
                             'isDemandeRelogement' => false,
                             'isSouhaiteQuitterLogement' => false,
                             'isPreavisDepartDepose' => false,
                             'isLogementAssure' => true,
                             'isAssuranceContactee' => true,
                             'reponseAssurance' => 'L\'assurance refuse de couvrir les dégâts.',
+                            'civiliteOccupant' => 'Mme',
+                            'nomOccupant' => 'Dupont',
+                            'prenomOccupant' => 'Marie',
+                            'mailOccupant' => 'marie.dupont@example.com',
+                            'telOccupant' => '0639987654',
+                            'typeBailleur' => 'PARTICULIER',
+                            'denominationBailleur' => null,
+                            'nomBailleur' => 'Vignon',
+                            'prenomBailleur' => 'René',
+                            'mailBailleur' => 'rene.vignon@example.com',
+                            'telBailleur' => '0639980851',
+                            'adresseBailleur' => '12 avenue des bartas',
+                            'codePostalBailleur' => '34000',
+                            'communeBailleur' => 'Montpellier',
+                            'structureDeclarant' => null,
+                            'nomDeclarant' => 'El Allali',
+                            'prenomDeclarant' => 'Hakim',
+                            'mailDeclarant' => 'el-allali.hakim@example.com',
+                            'telDeclarant' => '0639980906',
+                            'denominationAgence' => 'IMMO 3600',
+                            'nomAgence' => 'Apollo-Sanchez',
+                            'prenomAgence' => 'Victoria',
+                            'mailAgence' => 'victoria.apollo@immo3600.com',
+                            'telAgence' => '0639988821',
                         ]
                     ),
                 ],
@@ -188,6 +214,8 @@ class SignalementCreateController extends AbstractController
         }
 
         $this->entityManager->beginTransaction();
+        $this->userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT, false);
+        $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT, false);
         $signalement->setReference($this->referenceGenerator->generate($signalement->getTerritory()));
         // TODO : persist and flush all objects
         $this->entityManager->commit();
@@ -216,7 +244,7 @@ class SignalementCreateController extends AbstractController
 
     private function checkDuplicate(SignalementRequest $signalementRequest, Signalement $signalement, ConstraintViolationListInterface $errors): ConstraintViolationListInterface
     {
-        $duplicates = $this->signalementRepository->findOnSameAddress($signalement);
+        $duplicates = $this->signalementRepository->findOnSameAddress(signalement: $signalement, compareNomOccupant: true);
         if (count($duplicates) > 0) {
             $violation = new ConstraintViolation(
                 'Un signalement existe déjà à cette adresse ('.$signalement->getAddressCompleteOccupant(false).').',
