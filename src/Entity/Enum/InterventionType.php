@@ -29,7 +29,11 @@ enum InterventionType: string
     public static function tryFromLabel(string $label): ?self
     {
         $label = str_contains($label, 'contrôle') ? self::INTERVENTION_TYPE_LABEL['VISITE_CONTROLE'] : $label;
-        $key = array_search($label, self::getLabelList());
+        $key = array_search($label, self::getLabelList(), true);
+
+        if (false === $key || !is_string($key)) {
+            return null;
+        }
 
         return self::tryFrom($key);
     }
