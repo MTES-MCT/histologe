@@ -6,9 +6,13 @@ use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProprioType;
+use App\Validator as AppAssert;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[OA\Schema(
     description: 'Payload de création d\'un signalement.',
@@ -430,21 +434,21 @@ class SignalementRequest implements RequestInterface
     public ?bool $isBeneficiaireFsl = null;
 
     #[OA\Property(
-        description: 'Le propriétaire a-t-il été informé de la situation ?',
+        description: 'Le bailleur a-t-il été informé de la situation ?',
         example: true,
     )]
-    public ?bool $isProprietaireAverti = null;
+    public ?bool $isBailleurAverti = null;
 
     #[OA\Property(
-        description: 'Date à laquelle le propriétaire a été informé au format AAAA-MM-DD.
-                      <br>⚠️Pris en compte uniquement dans le cas où isProprietaireAverti = true.',
+        description: 'Date à laquelle le bailleur a été informé au format AAAA-MM-DD.
+                      <br>⚠️Pris en compte uniquement dans le cas où isBailleurAverti = true.',
         example: '2023-02-15',
     )]
-    public ?string $dateProprietaireAverti = null;
+    public ?string $dateBailleurAverti = null;
 
     #[OA\Property(
-        description: 'Moyen par lequel le propriétaire a été informé.
-                      <br>⚠️Pris en compte uniquement dans le cas où isProprietaireAverti = true.',
+        description: 'Moyen par lequel le bailleur a été informé.
+                      <br>⚠️Pris en compte uniquement dans le cas où isBailleurAverti = true.',
         example: 'email',
     )]
     #[Assert\Choice(
@@ -457,15 +461,15 @@ class SignalementRequest implements RequestInterface
             'nsp',
         ],
     )]
-    public ?string $moyenInformationProprietaire = null;
+    public ?string $moyenInformationBailleur = null;
 
     #[OA\Property(
-        description: 'Réponse du propriétaire.
-                      <br>⚠️Pris en compte uniquement dans le cas où isProprioAverti = true.',
-        example: 'Le propriétaire n\'a pas donné suite.',
+        description: 'Réponse du bailleur.
+                      <br>⚠️Pris en compte uniquement dans le cas où isBailleurAverti = true.',
+        example: 'Le bailleur n\'a pas donné suite.',
     )]
     #[Assert\Length(max: 5000)]
-    public ?string $reponseProprietaire = null;
+    public ?string $reponseBailleur = null;
 
     #[OA\Property(
         description: 'Une demande de logement/relogement/mutation a-t-elle été faite ?',
@@ -505,8 +509,244 @@ class SignalementRequest implements RequestInterface
     #[Assert\Length(max: 5000)]
     public ?string $reponseAssurance = null;
 
-    // TODO files ?
-    // TODO TAB cordonnées
+    #[OA\Property(
+        description: 'Civilité de l\'occupant.',
+        example: 'Mme',
+    )]
+    #[Assert\Choice(
+        choices: [
+            'M',
+            'Mme',
+        ],
+    )]
+    public ?string $civiliteOccupant = null;
+
+    #[OA\Property(
+        description: 'Nom de l\'occupant.
+                     <br><strong>⚠️ Obligatoire en cas de profilDeclarant = "LOCATAIRE" ou "BAILLEUR_OCCUPANT".</strong>',
+        example: 'Dupont',
+    )]
+    #[Assert\Length(max: 50)]
+    public ?string $nomOccupant = null;
+
+    #[OA\Property(
+        description: 'Prénom de l\'occupant.
+                     <br><strong>⚠️ Obligatoire en cas de profilDeclarant = "LOCATAIRE" ou "BAILLEUR_OCCUPANT".</strong>',
+        example: 'Marie',
+    )]
+    #[Assert\Length(max: 50)]
+    public ?string $prenomOccupant = null;
+
+    #[OA\Property(
+        description: 'Email de l\'occupant.
+                     <br><strong>⚠️ Obligatoire en cas de profilDeclarant = "LOCATAIRE" ou "BAILLEUR_OCCUPANT".</strong>',
+        example: 'marie.dupont@example.com',
+    )]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.')]
+    #[Assert\Length(max: 255)]
+    public ?string $mailOccupant = null;
+
+    #[OA\Property(
+        description: 'Téléphone de l\'occupant.',
+        example: '0639987654',
+    )]
+    #[AppAssert\TelephoneFormat]
+    public ?string $telOccupant = null;
+
+    #[OA\Property(
+        description: 'Type de bailleur.',
+        example: ProprioType::PARTICULIER->value,
+    )]
+    #[Assert\Choice(
+        choices: [
+            ProprioType::PARTICULIER->value,
+            ProprioType::ORGANISME_SOCIETE->value,
+        ],
+    )]
+    public ?string $typeBailleur = null;
+    #[OA\Property(
+        description: 'Dénomination du bailleur (nom de la société ou de l\'organisme).
+                    <br>⚠️Pris en compte uniquement dans le cas où typeBailleur = "ORGANISME_SOCIETE".',
+        example: 'Habitat & Co',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $denominationBailleur = null;
+
+    #[OA\Property(
+        description: 'Nom de famille du bailleur ou de son représentant.',
+        example: 'Vignon',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $nomBailleur = null;
+
+    #[OA\Property(
+        description: 'Prénom du bailleur ou de son représentant.',
+        example: 'René',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $prenomBailleur = null;
+
+    #[OA\Property(
+        description: 'Email du bailleur ou de son représentant.',
+        example: 'rene.vignon@example.com',
+    )]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du bailleur n\'est pas valide.')]
+    #[Assert\Length(max: 255)]
+    public ?string $mailBailleur = null;
+
+    #[OA\Property(
+        description: 'Téléphone du bailleur ou de son représentant.',
+        example: '0639980851',
+    )]
+    #[AppAssert\TelephoneFormat]
+    public ?string $telBailleur = null;
+
+    #[OA\Property(
+        description: 'Adresse du bailleur ou de son représentant (numéro et voie).',
+        example: '12 avenue des bartas',
+    )]
+    #[Assert\Length(max: 100)]
+    public ?string $adresseBailleur = null;
+
+    #[OA\Property(
+        description: 'Code postal du bailleur ou de son représentant.',
+        example: '34000',
+    )]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
+    public ?string $codePostalBailleur = null;
+
+    #[OA\Property(
+        description: 'Commune du bailleur ou de son représentant.',
+        example: 'Montpellier',
+    )]
+    #[Assert\Length(max: 100)]
+    public ?string $communeBailleur = null;
+
+    #[OA\Property(
+        description: 'Nom de la structure/organisme du déclarant.
+                     <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".',
+        example: 'CAF 34',
+    )]
+    #[Assert\Length(max: 200)]
+    public ?string $structureDeclarant = null;
+
+    #[OA\Property(
+        description: 'Nom de famille du déclarant.
+                     <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".
+                     <br><strong>⚠️ Obligatoire dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".</strong>',
+        example: 'El Allali',
+    )]
+    #[Assert\Length(max: 50)]
+    public ?string $nomDeclarant = null;
+
+    #[OA\Property(
+        description: 'Prénom du déclarant.
+                     <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".
+                     <br><strong>⚠️ Obligatoire dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".</strong>',
+        example: 'Hakim',
+    )]
+    #[Assert\Length(max: 50)]
+    public ?string $prenomDeclarant = null;
+    #[OA\Property(
+        description: 'Email du déclarant.
+                     <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".
+                     <br><strong>⚠️ Obligatoire dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".</strong>',
+        example: 'el-allali.hakim@example.com',
+    )]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.')]
+    #[Assert\Length(max: 255)]
+    public ?string $mailDeclarant = null;
+
+    #[OA\Property(
+        description: 'Téléphone du déclarant.',
+        example: '0639980906',
+    )]
+    #[AppAssert\TelephoneFormat]
+    public ?string $telDeclarant = null;
+
+    #[OA\Property(
+        description: 'Dénomination de l\'agence immobilière.',
+        example: 'IMMO 3600',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $denominationAgence = null;
+
+    #[OA\Property(
+        description: 'Nom de famille du contact de l\'agence immobilière.',
+        example: 'Apollo-Sanchez',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $nomAgence = null;
+
+    #[OA\Property(
+        description: 'Prénom du contact à l\'agence immobilière.',
+        example: 'Victoria',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $prenomAgence = null;
+    #[OA\Property(
+        description: 'Email du contact à l\'agence immobilière.',
+        example: 'victoria.apollo@immo3600.com',
+    )]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du contact à l\'agence immobilière n\'est pas valide.')]
+    #[Assert\Length(max: 255)]
+    public ?string $mailAgence = null;
+
+    #[OA\Property(
+        description: 'Téléphone du contact à l\'agence immobilière.',
+        example: '0639988821',
+    )]
+    public ?string $telAgence = null;
+
+    #[OA\Property(
+        description: 'Adresse de l\'agence immobilière (numéro et voie).',
+        example: '185 Rue Léon Blum',
+    )]
+    #[Assert\Length(max: 100)]
+    public ?string $adresseAgence = null;
+
+    #[OA\Property(
+        description: 'Code postal de l\'agence immobilière.',
+        example: '34000',
+    )]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
+    public ?string $codePostalAgence = null;
+
+    #[OA\Property(
+        description: 'Commune de l\'agence immobilière.',
+        example: 'Montpellier',
+    )]
+    #[Assert\Length(max: 100)]
+    public ?string $communeAgence = null;
+
     // TODO TAB désordres
     // TODO TAB validation ?
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, mixed $payload): void
+    {
+        if ($this->profilDeclarant) {
+            if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value])) {
+                if (empty($this->nomOccupant)) {
+                    $context->buildViolation('Veuillez renseigner le nom de l\'occupant.')->atPath('nomOccupant')->addViolation();
+                }
+                if (empty($this->prenomOccupant)) {
+                    $context->buildViolation('Veuillez renseigner le prénom de l\'occupant.')->atPath('prenomOccupant')->addViolation();
+                }
+                if (empty($this->mailOccupant)) {
+                    $context->buildViolation('Veuillez renseigner l\'email de l\'occupant.')->atPath('mailOccupant')->addViolation();
+                }
+            } else {
+                if (empty($this->nomDeclarant)) {
+                    $context->buildViolation('Veuillez renseigner le nom du déclarant.')->atPath('nomDeclarant')->addViolation();
+                }
+                if (empty($this->prenomDeclarant)) {
+                    $context->buildViolation('Veuillez renseigner le prénom du déclarant.')->atPath('prenomDeclarant')->addViolation();
+                }
+                if (empty($this->mailDeclarant)) {
+                    $context->buildViolation('Veuillez renseigner l\'email du déclarant.')->atPath('mailDeclarant')->addViolation();
+                }
+            }
+        }
+    }
 }

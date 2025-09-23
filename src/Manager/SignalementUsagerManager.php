@@ -14,7 +14,7 @@ class SignalementUsagerManager extends AbstractManager
         parent::__construct($managerRegistry, $entityName);
     }
 
-    public function createOrUpdate(Signalement $signalement, ?User $userOccupant, ?User $userDeclarant): SignalementUsager
+    public function createOrUpdate(Signalement $signalement, ?User $userOccupant, ?User $userDeclarant, bool $flush = true): SignalementUsager
     {
         /** @var SignalementUsager|null $signalementUsager */
         $signalementUsager = $this->getRepository()->findOneBy([
@@ -30,7 +30,7 @@ class SignalementUsagerManager extends AbstractManager
         if (null !== $userDeclarant) {
             $signalementUsager->setDeclarant($userDeclarant);
         }
-        $this->save($signalementUsager);
+        $this->save($signalementUsager, $flush);
 
         return $signalementUsager;
     }

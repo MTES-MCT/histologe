@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Dto\Api\Request\SignalementRequest;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProprioType;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -152,13 +153,13 @@ class SignalementApiFactory
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireRsa(self::convertBoolToString($request->isBeneficiaireRsa));
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireFsl(self::convertBoolToString($request->isBeneficiaireFsl));
 
-        $signalement->setIsProprioAverti($request->isProprietaireAverti);
-        if ($request->isProprietaireAverti) {
-            if ($request->dateProprietaireAverti) {
-                $signalement->setProprioAvertiAt(new \DateTimeImmutable($request->dateProprietaireAverti));
+        $signalement->setIsProprioAverti($request->isBailleurAverti);
+        if ($request->isBailleurAverti) {
+            if ($request->dateBailleurAverti) {
+                $signalement->setProprioAvertiAt(new \DateTimeImmutable($request->dateBailleurAverti));
             }
-            $informationProcedure->setInfoProcedureBailMoyen($request->moyenInformationProprietaire);
-            $informationProcedure->setInfoProcedureBailReponse($request->reponseProprietaire);
+            $informationProcedure->setInfoProcedureBailMoyen($request->moyenInformationBailleur);
+            $informationProcedure->setInfoProcedureBailReponse($request->reponseBailleur);
         }
 
         $signalement->setIsRelogement($request->isDemandeRelogement);
@@ -176,9 +177,43 @@ class SignalementApiFactory
         } elseif (false === $request->isLogementAssure) {
             $informationProcedure->setInfoProcedureAssuranceContactee('pas_assurance_logement');
         }
+        if ($request->civiliteOccupant) {
+            $signalement->setCiviliteOccupant(mb_strtolower($request->civiliteOccupant));
+        }
+        $signalement->setNomOccupant($request->nomOccupant);
+        $signalement->setPrenomOccupant($request->prenomOccupant);
+        $signalement->setMailOccupant($request->mailOccupant);
+        $signalement->setTelOccupant($request->telOccupant);
+        if ($request->typeBailleur) {
+            $signalement->setTypeProprio(ProprioType::from($request->typeBailleur));
+        }
+        if ('ORGANISME_SOCIETE' === $request->typeBailleur) {
+            $signalement->setDenominationProprio($request->denominationBailleur);
+        }
+        $signalement->setNomProprio($request->nomBailleur);
+        $signalement->setPrenomProprio($request->prenomBailleur);
+        $signalement->setMailProprio($request->mailBailleur);
+        $signalement->setTelProprio($request->telBailleur);
+        $signalement->setAdresseProprio($request->adresseBailleur);
+        $signalement->setCodePostalProprio($request->codePostalBailleur);
+        $signalement->setVilleProprio($request->communeBailleur);
 
-        // TODO : files ?
-        // TODO : tab coordonnées
+        if ($signalement->isTiersDeclarant()) {
+            $signalement->setIsNotOccupant(true);
+            $signalement->setStructureDeclarant($request->structureDeclarant);
+            $signalement->setNomDeclarant($request->nomDeclarant);
+            $signalement->setPrenomDeclarant($request->prenomDeclarant);
+            $signalement->setMailDeclarant($request->mailDeclarant);
+            $signalement->setTelDeclarant($request->telDeclarant);
+        } else {
+            $signalement->setIsNotOccupant(false);
+        }
+        $signalement->setDenominationAgence($request->denominationAgence);
+        $signalement->setNomAgence($request->nomAgence);
+        $signalement->setPrenomAgence($request->prenomAgence);
+        $signalement->setMailAgence($request->mailAgence);
+        $signalement->setTelAgence($request->telAgence);
+
         // TODO : tab désordres
         // TODO : tab validation ?
 
@@ -189,6 +224,8 @@ class SignalementApiFactory
 
         // TODO : adapter l'affichage BO pour les création API
         $signalement->setCreatedBy($this->user);
+        // TODO : voir avec équipe (champ obligatoire)
+        $signalement->setIsCguAccepted(false);
 
         return $signalement;
     }
