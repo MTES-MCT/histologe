@@ -50,7 +50,7 @@ nelmio_api_doc:
                   }
       
                 #### BREAKING CHANGES
-                - La ressource `signalement` retourne désormais un tableau d’affectations (multi-partenaires) au lieu d’un objet affectation.
+                - La ressource `signalement` retourne désormais un tableau d’`affectations` (multi-partenaires) au lieu d’un objet `affectation`.
               
                    *Requête* 
               
