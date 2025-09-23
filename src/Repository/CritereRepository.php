@@ -9,6 +9,8 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Critere>
+ *
  * @method Critere|null find($id, $lockMode = null, $lockVersion = null)
  * @method Critere|null findOneBy(array $criteria, array $orderBy = null)
  * @method Critere[]    findAll()
@@ -27,7 +29,7 @@ class CritereRepository extends ServiceEntityRepository
      */
     public function getMaxScore(): int
     {
-        return $this->createQueryBuilder('c')
+        return (int) $this->createQueryBuilder('c')
             ->select('SUM(c.coef)')
             ->where('c.isArchive != 1')
             ->getQuery()
