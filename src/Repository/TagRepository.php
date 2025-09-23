@@ -12,6 +12,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Tag>
+ *
  * @method Tag|null find($id, $lockMode = null, $lockVersion = null)
  * @method Tag|null findOneBy(array $criteria, array $orderBy = null)
  * @method Tag[]    findAll()
@@ -44,6 +46,9 @@ class TagRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Paginator<Tag>
+     */
     public function findFilteredPaginated(SearchTag $searchTag, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('t');

@@ -63,7 +63,7 @@ class TerritoryRepository extends ServiceEntityRepository
         $qb->select('COUNT(t.id)')
             ->where('t.isActive = 1');
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -79,6 +79,9 @@ class TerritoryRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return Paginator<Territory>
+     */
     public function findFilteredPaginated(SearchTerritory $searchTerritory, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('t');
