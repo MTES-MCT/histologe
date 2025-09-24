@@ -437,6 +437,20 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
+    public function isAloneInPartner(?Partner $partner): bool
+    {
+        if ($partner && $this->hasPartner($partner)) {
+            return 1 === $partner->getUsers()->count();
+        }
+        foreach ($this->getPartners() as $partner) {
+            if ($partner->getUsers()->count() <= 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function removeUserPartner(UserPartner $userPartner): static
     {
         $this->userPartners->removeElement($userPartner);

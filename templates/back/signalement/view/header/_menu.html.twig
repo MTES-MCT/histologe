@@ -5,14 +5,25 @@
         </button>
         <div class="fr-collapse fr-translate__menu fr-menu" id="header-menu">
             <ul class="fr-menu__list">
+                {% set currentPartner =  app.user.partnerInTerritoryOrFirstOne(signalement.territory) %}
+                {% set isAloneInCurrentPartner = app.user.isAloneInPartner(currentPartner) %}
                 {% if canCancelRefusedAffectation %}
                     <li>
-                        <a href="#"
-                            data-fr-opened="false" 
-                            aria-controls="accept-affectation-modal"
-                            class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill">
-                            Annuler le refus de l'affectation
-                        </a>
+                        {% if isAloneInCurrentPartner %}
+                            <form id="signalement-affectation-response-form" action="{{ path('back_signalement_affectation_accept',{affectation:affectation.id}) }}" method="POST" class="inline-form">
+                                <button class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill">
+                                    Annuler le refus de l'affectation
+                                </button>
+                                <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
+                            </form>
+                        {% else %}
+                            <a href="#"
+                                data-fr-opened="false" 
+                                aria-controls="accept-affectation-modal"
+                                class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill">
+                                Annuler le refus de l'affectation
+                            </a>
+                        {% endif %}
                     </li>
                 {% elseif is_granted('SIGN_REOPEN', signalement) %}
                     <li>
@@ -30,7 +41,7 @@
                             class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
                             aria-controls="reopen-signalement-modal" 
                             data-fr-opened="false">
-                            Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
+                            Rouvrir pour {{ currentPartner ? currentPartner.nom : 'N/A' }}
                         </a>
                     </li>
                 {% elseif is_granted('SIGN_CLOSE', signalement) %}
@@ -76,12 +87,17 @@
                 {% endif %}
                 {% if isUserSubscribed %}
                     <li>
-                        <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
-                            class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
+                        <a
+                            {% if not isAloneInCurrentPartner %}
+                                href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
+                            {% endif %}
+                            class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line{% if isAloneInCurrentPartner %} disabled{% endif %}"
+                            {% if isAloneInCurrentPartner %}aria-disabled="true" tabindex="-1"{% endif %}
+                        >
                             Se retirer du dossier
                         </a>
                     </li>
-                {% else %}
+                {% elseif not canCancelRefusedAffectation %}
                     <li>
                         <a href="{{ path('back_signalement_subscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('subscribe') }}"
                             class="fr-nav__link fr-btn--icon-left fr-icon-eye-line">

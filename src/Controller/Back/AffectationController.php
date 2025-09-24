@@ -153,7 +153,7 @@ class AffectationController extends AbstractController
         $signalement = $affectation->getSignalement();
         /** @var User $user */
         $user = $this->getUser();
-        if ($featureNewDashboard) {
+        if ($featureNewDashboard && !$user->isAloneInPartner($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()))) {
             $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $form = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
@@ -182,15 +182,17 @@ class AffectationController extends AbstractController
             $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
 
             return $this->json(['redirect' => true, 'url' => $url]);
-        }
-        // TODO : remove when FEATURE_NEW_DASHBOARD is removed
-        if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
+        } elseif ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
             $this->affectationManager->updateAffectation(
                 affectation: $affectation,
                 user: $user,
                 status : AffectationStatus::ACCEPTED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             );
+            if ($featureNewDashboard) {
+                $userSignalementSubscriptionManager->createOrGet($user, $signalement, $user, $affectation);
+                $userSignalementSubscriptionManager->flush();
+            }
             $this->addFlash('success', 'Affectation acceptée avec succès !');
         } else {
             $this->addFlash('error', "Une erreur est survenue lors de l'affectation");
