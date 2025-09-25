@@ -475,9 +475,15 @@
         Les traceurs ont vocation à être conservés sur le poste informatique de l’Internaute pour une durée allant jusqu’à 13 mois.
     </p>
 
-    <h2>8 – Mise à jour des conditions d’utilisation</h2>
+    <h2>8 – Mise à jour des conditions d'utilisation</h2>
     <p>
-        Les termes des présentes conditions d’utilisation peuvent être amendés à tout moment, sans préavis, en fonction
-        des modifications apportées à la plateforme, de l’évolution de la législation ou pour tout autre motif jugé nécessaire.
+        Les termes des présentes conditions d'utilisation peuvent être amendés à tout moment, sans préavis, en fonction
+        des modifications apportées à la plateforme, de l'évolution de la législation ou pour tout autre motif jugé nécessaire.
     </p>
+
+    {% if is_granted('ROLE_USER_PARTNER') %}
+    <p>
+        <a href="{{ path('back_cgu_bo_archives') }}">Consulter l'historique des anciennes versions des CGU</a>
+    </p>
+    {% endif %}
 </div>
