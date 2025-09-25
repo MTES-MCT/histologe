@@ -1880,13 +1880,15 @@ class SignalementRepository extends ServiceEntityRepository
             %s, -- countFormulaireUsager
             %s, -- countFormulairePro
             %s, -- countSansAffectation
-            %s  -- countNouveauxDossiers
+            %s,  -- countNouveauxDossiers
+            %s  -- countNoAgentDossiers
         )',
             CountNouveauxDossiers::class,
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NULL THEN 1 ELSE 0 END), 0)',
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NOT NULL THEN 1 ELSE 0 END), 0)',
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_active AND a.id IS NULL THEN 1 ELSE 0 END), 0)',
-            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_wait THEN 1 ELSE 0 END), 0)' : 0
+            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_wait THEN 1 ELSE 0 END), 0)' : 0,
+            0 // TODO
         );
 
         $qb = $this
