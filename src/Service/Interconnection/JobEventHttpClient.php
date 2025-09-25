@@ -104,7 +104,7 @@ class JobEventHttpClient implements HttpClientInterface
             signalementId: $jobEventMetaData->getSignalementId(),
             partnerId: $jobEventMetaData->getPartnerId(),
             partnerType: $jobEventMetaData->getPartnerType(),
-            flush: 'esabora' === $jobEventMetaData->getService() ? false : true,
+            flush: 'esabora' === $jobEventMetaData->getService() && str_contains($jobEventMetaData->getAction(), 'sync') ? false : true,
         );
 
         return $response;
