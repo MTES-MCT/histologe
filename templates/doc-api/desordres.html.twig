@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Référence des désordres API{% endblock %}
+
+
+{% block body %}
+    <main class="fr-container--fluid fr-py-5w fr-px-10w" id="content">
+        <h1 class="fr-h2">Liste des désordres disponibles à la création de signalement via l'API</h1>
+        {# VERSION TABLEAU #}
+        {% for zone, categories in classifiedDesordres %}
+            <div class="fr-table fr-table--bordered">
+                <div class="fr-table__wrapper">
+                    <div class="fr-table__container">
+                        <div class="fr-table__content">
+                            <table>
+                                <caption>Désordres concernant le {{ zone }}</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Libellé du critère</th>
+                                        <th>Identifiant du critère</th>
+                                        <th>Précisions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for subCategory, subCategories in categories %}
+                                        <tr>
+                                            <th colspan="3" class="fr-cell--center">{{ subCategory }}</th>
+                                        </tr>
+                                        {% for subCategory, criteres in subCategories %}
+                                            <tr>
+                                                <td colspan="3"><strong>{{ subCategory }}</strong></td>
+                                            </tr>
+                                            {% for critere in criteres %}
+                                                <tr>
+                                                    <td class="fr-cell--multiline">
+                                                        {{ critere.labelCritere }}
+                                                        {% if critere.desordrePrecisions|length is same as 1 %}
+                                                            {% if critere.desordrePrecisions.first.label %}
+                                                                <br>
+                                                                <small>({{ critere.desordrePrecisions.first.label|raw }})</small>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if critere.desordrePrecisions|length > 1 %}
+                                                            {{ critere.slugCritere }}
+                                                        {% else %}
+                                                            {{ critere.desordrePrecisions.first.desordrePrecisionSlug }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if critere.desordrePrecisions|length > 1 %}
+                                                            <dl>
+                                                                {% for precision in critere.desordrePrecisions %}
+                                                                    <dt>
+                                                                        {{ precision.desordrePrecisionSlug }}
+                                                                    </dt>
+                                                                    <dd>
+                                                                        <small class="fr-text-mention--grey">{{ precision.label|raw }}</small>
+                                                                    </dd>
+                                                                {% endfor %}
+                                                            </dl>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </main>
+{% endblock %}
