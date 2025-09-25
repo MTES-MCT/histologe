@@ -102,7 +102,7 @@ class UserManager extends AbstractManager
         return $user;
     }
 
-    public function createUsagerFromSignalement(Signalement $signalement, string $type = self::OCCUPANT, bool $flush = true): ?User
+    public function createUsagerFromSignalement(Signalement $signalement, string $type = self::OCCUPANT): ?User
     {
         $user = null;
         $mail = (self::OCCUPANT === $type)
@@ -132,14 +132,14 @@ class UserManager extends AbstractManager
                 );
 
                 $user->setIsMailingActive(true);
-                $this->save($user, $flush);
+                $this->save($user);
             }
         }
 
         if (self::OCCUPANT === $type) {
-            $this->signalementUsagerManager->createOrUpdate($signalement, $user, null, $flush);
+            $this->signalementUsagerManager->createOrUpdate($signalement, $user, null);
         } else {
-            $this->signalementUsagerManager->createOrUpdate($signalement, null, $user, $flush);
+            $this->signalementUsagerManager->createOrUpdate($signalement, null, $user);
         }
 
         return $user;

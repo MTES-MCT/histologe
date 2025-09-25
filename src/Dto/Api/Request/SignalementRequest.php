@@ -8,6 +8,7 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Validator as AppAssert;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,7 +17,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[OA\Schema(
     description: 'Payload de création d\'un signalement.',
-    required: ['adresseOccupant', 'codePostalOccupant', 'communeOccupant', 'profilDeclarant', 'isLogementSocial'],
+    required: ['adresseOccupant', 'codePostalOccupant', 'communeOccupant', 'profilDeclarant', 'isLogementSocial', 'desordres'],
 )]
 #[Groups(groups: ['Default', 'false'])]
 class SignalementRequest implements RequestInterface
@@ -719,8 +720,22 @@ class SignalementRequest implements RequestInterface
     #[Assert\Length(max: 100)]
     public ?string $communeAgence = null;
 
-    // TODO TAB désordres
-    // TODO TAB validation ?
+    /** @var array<DesordreRequest> $desordres */
+    #[OA\Property(
+        description: 'Liste des désordres constatés.
+                     <br>Voir le <a href="/doc-api/desordres" target="_blank">tableau de référence des désordres</a>.',
+        type: 'array',
+        items: new OA\Items(ref: new Model(type: DesordreRequest::class))
+    )]
+    #[Assert\NotBlank(message: 'Au moins un désordre doit être renseigné.')]
+    #[Assert\Count(
+        min: 1,
+        minMessage: 'Au moins un désordre doit être renseigné.',
+        max: 100,
+        maxMessage: 'Vous ne pouvez pas renseigner plus de {{ limit }} désordres.'
+    )]
+    #[Assert\Valid]
+    public array $desordres = [];
 
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context, mixed $payload): void

@@ -8,9 +8,11 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
+use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementApiFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,6 +37,8 @@ class SignalementCreateController extends AbstractController
         private readonly ValidatorInterface $validator,
         private readonly SignalementApiFactory $signalementApiFactory,
         private readonly SignalementRepository $signalementRepository,
+        private readonly SignalementManager $signalementManager,
+        private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly UserManager $userManager,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly EntityManagerInterface $entityManager,
@@ -142,6 +146,27 @@ class SignalementCreateController extends AbstractController
                             'prenomAgence' => 'Victoria',
                             'mailAgence' => 'victoria.apollo@immo3600.com',
                             'telAgence' => '0639988821',
+                            'desordres' => [
+                                [
+                                    'identifiant' => 'desordres_logement_humidite_salle_de_bain',
+                                    'precisions' => [
+                                        'desordres_logement_humidite_salle_de_bain_details_machine_non',
+                                        'desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_oui',
+                                        'desordres_logement_humidite_salle_de_bain_details_fuite_non',
+                                    ],
+                                    'precisionLibres' => [],
+                                ],
+                                [
+                                    'identifiant' => 'desordres_batiment_nuisibles_autres',
+                                    'precisions' => [],
+                                    'precisionLibres' => [
+                                        [
+                                            'identifiant' => 'desordres_batiment_nuisibles_autres',
+                                            'description' => 'Invasion de fourmis.',
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ]
                     ),
                 ],
@@ -206,6 +231,8 @@ class SignalementCreateController extends AbstractController
             throw new ValidationFailedException($signalementRequest, $errors);
         }
         $signalement = $this->signalementApiFactory->createFromSignalementRequest($signalementRequest);
+        $this->signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         // domage de ne pas avoir toutes les erreurs dés le départ mais la vérif du territoire et des doublon demande des traitement intermédiaires
         $errors = $this->checkPartnerAndTerritory($partner, $signalementRequest, $signalement, $errors);
         $errors = $this->checkDuplicate($signalementRequest, $signalement, $errors);
@@ -214,11 +241,11 @@ class SignalementCreateController extends AbstractController
         }
 
         $this->entityManager->beginTransaction();
-        $this->userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT, false);
-        $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT, false);
         $signalement->setReference($this->referenceGenerator->generate($signalement->getTerritory()));
-        // TODO : persist and flush all objects
+        $this->signalementRepository->save($signalement, true);
         $this->entityManager->commit();
+        $this->userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+        $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
 
         $resource = $this->signalementResponseFactory->createFromSignalement($signalement);
 

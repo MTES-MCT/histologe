@@ -12,6 +12,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\DesordrePrecisionRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementApiFactory
@@ -22,6 +23,7 @@ class SignalementApiFactory
         private readonly Security $security,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
+        private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
     ) {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -35,6 +37,7 @@ class SignalementApiFactory
         $situationFoyer = new SituationFoyer();
         $informationProcedure = new InformationProcedure();
         $informationComplementaire = new InformationComplementaire();
+        $jsonContent = [];
 
         $signalement->setAdresseOccupant($request->adresseOccupant);
         $signalement->setCpOccupant($request->codePostalOccupant);
@@ -111,7 +114,6 @@ class SignalementApiFactory
             $typeCompositionLogement->setTypeLogementCommoditesWcCuisine(self::convertBoolToString($request->isWcCuisineMemePiece));
         }
         $jsonContent['desordres_logement_chauffage'] = $request->typeChauffage;
-        $signalement->setJsonContent($jsonContent);
 
         $typeCompositionLogement->setBailDpeBail(self::convertBoolToString($request->isBail));
         $typeCompositionLogement->setBailDpeDpe(self::convertBoolToString($request->isDpe));
@@ -214,13 +216,26 @@ class SignalementApiFactory
         $signalement->setMailAgence($request->mailAgence);
         $signalement->setTelAgence($request->telAgence);
 
-        // TODO : tab désordres
+        foreach ($request->desordres as $desordre) {
+            if (count($desordre->precisions)) {
+                foreach ($desordre->precisions as $precision) {
+                    $signalement->addDesordrePrecision($this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $precision]));
+                }
+            } else {
+                $signalement->addDesordrePrecision($this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $desordre->identifiant]));
+            }
+            foreach ($desordre->precisionLibres as $precisionLibre) {
+                $jsonContent[$precisionLibre->identifiant] = $precisionLibre->description;
+            }
+        }
+
         // TODO : tab validation ?
 
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $signalement->setSituationFoyer($situationFoyer);
         $signalement->setInformationProcedure($informationProcedure);
         $signalement->setInformationComplementaire($informationComplementaire);
+        $signalement->setJsonContent($jsonContent);
 
         // TODO : adapter l'affichage BO pour les création API
         $signalement->setCreatedBy($this->user);
