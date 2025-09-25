@@ -10,7 +10,7 @@
         </button>
       </li>
       <!-- TODO: Remove button when FEATURE_NEW_DASHBOARD is removed -->
-      <li v-if="sharedState.user.isResponsableTerritoire">
+      <li v-else-if="sharedState.user.isResponsableTerritoire">
         <button class="fr-tag"
                 ref="myAffectationButton"
                 :aria-pressed="ariaPressed.showMyAffectationOnly.toString()"
