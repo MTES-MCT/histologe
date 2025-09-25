@@ -634,3 +634,11 @@ partners:
     is_archive: 0
     territory: "Loire-Atlantique"
     type: "COMMUNE_SCHS"
+  -
+    nom: "Partenaire 13-10 EPCI"
+    email: "partenaire-13-10@signal-logement.fr"
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+    esabora_url: "http://signal_logement_wiremock:8080/ws/rest"
+    is_esabora_active: 1
+    type: "EPCI"

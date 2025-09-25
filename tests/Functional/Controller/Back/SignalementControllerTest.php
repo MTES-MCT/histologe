@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Tag;
@@ -150,8 +151,8 @@ class SignalementControllerTest extends WebTestCase
         ];
 
         yield '13 - Agent - Nouveau' => [
-            'user-13-06@signal-logement.fr',
-            '00000000-0000-0000-2023-000000000010',
+            'admin-partenaire-13-01@signal-logement.fr',
+            '00000000-0000-0000-2022-000000000001',
             '.fr-icon-checkbox-circle-fill.fr-btn--success',
             'Accepter',
         ];
@@ -160,6 +161,60 @@ class SignalementControllerTest extends WebTestCase
             '00000000-0000-0000-2023-000000000006',
             '#link-bouton-cloturer',
             'Clôturer',
+        ];
+    }
+
+    /**
+     * @dataProvider provideSignalementSyncRoutes
+     */
+    public function testSignalementSyncedWithWarningEsabora(
+        string $email,
+        string $uuid,
+        AffectationStatus $currentAffectationStatus,
+        string $elementText,
+    ): void {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $route = $generatorUrl->generate('back_signalement_view', ['uuid' => $uuid]);
+
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
+        $affectation = $signalement->getAffectationForPartner($user->getPartnerInTerritory($signalement->getTerritory()));
+
+        $client->loginUser($user);
+        $client->request('GET', $route);
+        $this->assertSelectorTextContains(
+            '.fr-notice.fr-notice--warning',
+            $elementText
+        );
+
+        $this->assertEquals($currentAffectationStatus, $affectation->getStatut());
+    }
+
+    public function provideSignalementSyncRoutes(): \Generator
+    {
+        yield 'Agent - ARS' => [
+            'user-13-06@signal-logement.fr',
+            '00000000-0000-0000-2024-000000000010',
+            AffectationStatus::ACCEPTED,
+            'La clôture de ce signalement est à réaliser sur SI-Santé Habitat (SI-SH).',
+        ];
+
+        yield 'Agent - SCHS' => [
+            'user-13-05@signal-logement.fr',
+            '00000000-0000-0000-2023-000000000012',
+            AffectationStatus::WAIT,
+            'Pour traiter ce signalement, veuillez d’abord accepter ou refuser le dossier dans Esabora.',
+        ];
+        yield 'Agent - EPCI' => [
+            'user-13-15@signal-logement.fr',
+            '00000000-0000-0000-2024-000000000010',
+            AffectationStatus::ACCEPTED,
+            'La clôture de ce signalement est à réaliser sur Esabora.',
         ];
     }
 

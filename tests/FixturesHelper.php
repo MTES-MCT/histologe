@@ -32,11 +32,12 @@ use Faker\Factory;
 
 trait FixturesHelper
 {
-    public function getAffectation(PartnerType $partnerType): Affectation
+    public function getAffectation(PartnerType $partnerType, bool $isSynchronized = false): Affectation
     {
         $faker = Factory::create();
 
         return (new Affectation())
+            ->setIsSynchronized($isSynchronized)
             ->setPartner(
                 (new Partner())
                     ->setEsaboraToken($faker->password(20))

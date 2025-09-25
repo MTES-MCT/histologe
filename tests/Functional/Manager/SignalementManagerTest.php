@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SignalementManagerTest extends WebTestCase
 {
-    public const TERRITORY_13 = 13;
+    public const int TERRITORY_13 = 13;
 
     private EntityManagerInterface $entityManager;
     private Security $security;
@@ -122,7 +122,7 @@ class SignalementManagerTest extends WebTestCase
         $this->assertArrayHasKey('not_affected', $partners);
 
         $this->assertCount(1, $partners['affected'], 'One partner should be affected');
-        $this->assertCount(7, $partners['not_affected'], 'Seven partners should not be affected');
+        $this->assertCount(8, $partners['not_affected'], 'Eight partners should not be affected');
     }
 
     public function testCloseSignalementForAllPartners(): void
