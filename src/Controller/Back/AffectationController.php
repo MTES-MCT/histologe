@@ -182,7 +182,8 @@ class AffectationController extends AbstractController
             $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
 
             return $this->json(['redirect' => true, 'url' => $url]);
-        } elseif ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
+        }
+        if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
             $this->affectationManager->updateAffectation(
                 affectation: $affectation,
                 user: $user,

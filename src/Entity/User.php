@@ -443,6 +443,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
             return 1 === $partner->getUsers()->count();
         }
         foreach ($this->getPartners() as $partner) {
+            // from the moment the agent is alone in one of its partners, it is considered alone for initialization
             if ($partner->getUsers()->count() <= 1) {
                 return true;
             }
