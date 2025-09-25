@@ -68,9 +68,18 @@
         </div>
         <div class="fr-col-12 fr-col-md-6">  
             {% if signalementQualificationNDE %}      
-                <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe  ? ( signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
+                <strong>Date dernier DPE :</strong> {{ signalementQualificationNDE.details.date_dernier_dpe ? ( signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
             {% elseif signalement.typeCompositionLogement %}
-                <strong>Date dernier DPE :</strong> {{ signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee  ? ( signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
+                <strong>Date dernier DPE :</strong>
+                {% if signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee %}
+                    {% if signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee is same as 'before2023' %}
+                        Avant 2023
+                    {% elseif signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee is same as 'post2023' %}
+                        A partir de 2023
+                    {% elseif signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee is same as 'nsp' %}
+                        Ne sait pas
+                    {% endif %}
+                {% endif %}
             {% else %}  
                 <strong>Date dernier DPE :</strong> A vérifier            
             {% endif %}            
