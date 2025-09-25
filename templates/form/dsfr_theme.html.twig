@@ -241,7 +241,7 @@
         {% endif %}
         <div class="fr-input-wrap fr-input-wrap--addon">
             {{ form_widget(form, {'attr': (attr|default({}))|merge({'list': id ~ '_datalist'})}) }}
-            <button type="button" class="fr-btn fr-icon-search-line">Rechercher</button>
+            <button type="submit" class="fr-btn fr-icon-search-line">Rechercher</button>
         </div>
         <datalist id="{{ id }}_datalist">
             {% for choice in autocomplete_choices %}
