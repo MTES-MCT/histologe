@@ -42,7 +42,6 @@ enum SignalementStatus: string
 
     public static function mapFilterStatus(string $label): string
     {
-        dump($label);
         return match ($label) {
             'brouillon' => SignalementStatus::DRAFT->value,
             'nouveau' => SignalementStatus::NEED_VALIDATION->value,
