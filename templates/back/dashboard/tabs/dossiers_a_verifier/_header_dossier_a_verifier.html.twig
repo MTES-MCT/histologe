@@ -2,11 +2,9 @@
     <div class="fr-col-md-8 fr-pr-10v">
         <h2 class="fr-mb-3v tab-panel-title-with-icon">Dossiers à vérifier</h2>
         {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-            <p class="fr-mt-1v fr-ml-1v fr-text--lg">Consultez les dossiers en cours, sans activité partenaire depuis au
-            moins 60 jours. Accédez aux dossiers, relancez les partenaires ou effectuez les actions nécessaires à
-            l'avancée du dossier.</p>
+            <p class="fr-mt-1v fr-ml-1v fr-text--lg">Consultez les dossiers en cours, sans activité partenaire depuis au moins 60 jours. Vérifiez les adresses e-mails des usagers si nécessaire, accédez aux dossiers, relancez les partenaires ou effectuez les actions nécessaires à l'avancée du dossier.</p>
         {% else %}
-            <p class="fr-mt-1v fr-ml-1v fr-text--lg">Consultez les dossiers en cours où vous n'avez effectué aucune action depuis au moins 60 jours. Accédez aux dossiers et effectuez les actions nécessaires à leur avancée ! </p>
+            <p class="fr-mt-1v fr-ml-1v fr-text--lg">Consultez les dossiers en cours où vous n'avez effectué aucune action depuis au moins 60 jours. Vérifiez les adresses e-mails des usagers si nécessaires, accédez aux dossiers et effectuez les actions nécessaires à leur avancée ! </p>
         {% endif %}
     </div>
     <div class="fr-col-md-4 fr-text--right">
