@@ -14,6 +14,7 @@ use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
+use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\EpciRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
@@ -41,6 +42,7 @@ class SearchFilter
         private SignalementQualificationRepository $signalementQualificationRepository,
         private EpciRepository $epciRepository,
         private BailleurRepository $bailleurRepository,
+        private EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         private bool $featureNewDashboard,
     ) {
@@ -481,6 +483,12 @@ class SearchFilter
 
         if (!empty($filters['isMessageWithoutResponse']) && $this->featureNewDashboard) {
             $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, null);
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $signalementIds);
+        }
+
+        if (!empty($filters['isEmailAVerifier']) && $this->featureNewDashboard) {
+            $signalementIds = $this->emailDeliveryIssueRepository->findIdsNonDeliverableSignalements($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }

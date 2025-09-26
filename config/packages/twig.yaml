@@ -20,7 +20,6 @@ twig:
         feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
         feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
         MAX_ITEMS_LIST: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST
-        MAX_ITEMS_LIST_LONG: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST_LONG
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images

@@ -50,6 +50,7 @@ doctrine:
                 SUBSTRING_INDEX: DoctrineExtensions\Query\Mysql\SubstringIndex
                 CAST: DoctrineExtensions\Query\Mysql\Cast
                 GROUP_CONCAT: DoctrineExtensions\Query\Mysql\GroupConcat
+                FIND_IN_SET: DoctrineExtensions\Query\Mysql\FindInSet
                 CONCAT_WS: DoctrineExtensions\Query\Mysql\ConcatWs
                 REGEXP: DoctrineExtensions\Query\Mysql\Regexp
 
