@@ -2372,7 +2372,7 @@ class SignalementRepository extends ServiceEntityRepository
             $sql .= ' ORDER BY MAX(s.created_at) ASC';
         }
 
-        $sql .= ' LIMIT '.TabDossier::MAX_ITEMS_LIST_LONG;
+        $sql .= ' LIMIT '.TabDossier::MAX_ITEMS_LIST;
 
         return $conn->executeQuery($sql, $paramsToBind, $types)->fetchAllAssociative();
     }

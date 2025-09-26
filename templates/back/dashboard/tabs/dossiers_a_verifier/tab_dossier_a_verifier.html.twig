@@ -9,4 +9,9 @@
             Chargement...
         </div>
     {% endif %}
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-adresse-email-a-verifier') %}
+        <div id="dossiers-adresse-email-a-verifier" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-adresse-email-a-verifier' }) }}">
+            Chargement...
+        </div>
+    {% endif %}
 </div>
