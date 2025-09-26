@@ -56,10 +56,12 @@ class DashboardController extends AbstractController
                 $territoireId
             );
 
+            $widgetSettings = $widgetSettingsFactory->createInstanceFrom($user, $territory);
             $searchDashboardAverifier = new SearchDashboardAverifier($user);
             $formSearchAverifier = $this->createForm(SearchDashboardAverifierType::class, $searchDashboardAverifier, [
                 'method' => 'GET',
                 'territory' => $territory,
+                'communesAndCp' => $widgetSettings->getCommunes(),
                 'mesDossiersAverifier' => $mesDossiersAverifier,
             ]);
             $formSearchAverifier->handleRequest($request);
@@ -70,7 +72,7 @@ class DashboardController extends AbstractController
 
             return $this->render('back/dashboard/index.html.twig', [
                 'territoireSelectedId' => $territoireId,
-                'settings' => $widgetSettingsFactory->createInstanceFrom($user, $territory),
+                'settings' => $widgetSettings,
                 'tab_count_kpi' => $tabDataManager->countDataKpi(
                     $territories,
                     $territory?->getId(),
