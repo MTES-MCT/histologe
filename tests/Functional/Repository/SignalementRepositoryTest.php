@@ -7,16 +7,18 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\Query\Signalement\MapGeoDataQuery;
+use App\Repository\Query\Signalement\QueryBuilderFactory;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -24,10 +26,10 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 class SignalementRepositoryTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    private const USER_ADMIN = 'admin-01@signal-logement.fr';
-    private const USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
-    private const USER_ADMIN_MULTI_13 = 'admin-partenaire-multi-ter-13-01@signal-logement.fr';
-    private const USER_AGENT_MULTI_34 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
+    private const string USER_ADMIN = 'admin-01@signal-logement.fr';
+    private const string USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
+    private const string USER_ADMIN_MULTI_13 = 'admin-partenaire-multi-ter-13-01@signal-logement.fr';
+    private const string USER_AGENT_MULTI_34 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
 
     protected function setUp(): void
     {
@@ -203,15 +205,17 @@ class SignalementRepositoryTest extends KernelTestCase
      * @dataProvider provideSearchWithGeoData
      *
      * @param array<mixed> $options
+     *
+     * @throws Exception
      */
-    public function testfindAllWithGeoData(string $email, array $options, int $nbResult): void
+    public function testFindAllWithGeoData(string $email, array $options, int $nbResult): void
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalements = $signalementRepository->findAllWithGeoData($user, $options, 0);
+        /** @var MapGeoDataQuery $mapGeoDataQuery */
+        $mapGeoDataQuery = static::getContainer()->get(MapGeoDataQuery::class);
+        $signalements = $mapGeoDataQuery->getData($user, $options, 0);
         $this->assertCount($nbResult, $signalements);
     }
 
@@ -411,11 +415,9 @@ class SignalementRepositoryTest extends KernelTestCase
         $user->method('getPartners')->willReturn(new ArrayCollection($userConfig['partners'] ?? []));
         $user->method('getPartnersTerritories')->willReturn($userConfig['territories'] ?? []);
 
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $qb = $signalementRepository->findSignalementAffectationQueryBuilder($user, $options);
-
-        $this->assertInstanceOf(QueryBuilder::class, $qb);
+        /** @var QueryBuilderFactory $queryBuilderFactory */
+        $queryBuilderFactory = static::getContainer()->get(QueryBuilderFactory::class);
+        $qb = $queryBuilderFactory->create($user, $options);
 
         $dql = $qb->getDQL();
         $params = $qb->getParameters();
