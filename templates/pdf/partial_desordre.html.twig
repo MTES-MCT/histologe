@@ -14,15 +14,17 @@
             <li>
                 {{ critere }}     
                 {% for precision in precisions %}
-                    {% if precision.label is not same as '' %}
+                    {% if precision.label is not same as '' or signalement.jsonContent[precision.desordreCritere.slugCritere] is defined %}
                         <ul class="fr-list fr-list--none">
                             <li>
-                                {{ precision.label|raw }}
+                                {% if precision.label is not same as '' %}
+                                    {{ precision.label|raw }}<br>
+                                {% endif %}    
                                 {% if signalement.jsonContent[precision.desordreCritere.slugCritere] is defined %}
-                                    <br>Commentaire usager : <i>{{ signalement.jsonContent[precision.desordreCritere.slugCritere] }}</i>
+                                    Commentaire usager : <i>{{ signalement.jsonContent[precision.desordreCritere.slugCritere] }}</i>
                                 {# Affichage des données spécifiques liées aux précisions sur la taille des pièces (à standardiser si nécessaire) #}
                                 {% elseif signalement.jsonContent[precision.desordrePrecisionSlug] is defined %}
-                                    <br>Taille (en cm) : <i>{{ signalement.jsonContent[precision.desordrePrecisionSlug] }}</i>
+                                    Taille (en cm) : <i>{{ signalement.jsonContent[precision.desordrePrecisionSlug] }}</i>
                                 {% endif %}
                             </li>
                         </ul>
