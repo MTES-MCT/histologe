@@ -57,6 +57,17 @@
                         badge_label: singular_or_plural(items.data_kpi.comptes_en_attente, ' compte', 'comptes'),
                         link: path('back_user_inactive_accounts')
                     } %}
+                    {% set linkAdresseEmail = { emailDeliveryIssue: 'Oui' } %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% set linkAdresseEmail = linkAdresseEmail|merge({ territory: items.territory_id }) %}
+                    {% endif %}
+                    {% include 'back/dashboard/components/_tuile.html.twig' with {
+                        icon_path: 'img/picto-dsfr/connection-lost.svg',
+                        title: 'Agents avec un problème d\'e-mail',
+                        badge_class: 'fr-badge--error',
+                        badge_label: singular_or_plural(items.data_kpi.comptes_pb_email, ' agent', 'agents'),
+                        link: path('back_user_index', linkAdresseEmail)
+                    } %}
 
                     {% set linkPartenairesParams = { isNotNotifiable: 1 } %}
                     {% if is_granted('ROLE_ADMIN') %}

@@ -30,6 +30,11 @@ class SearchUserType extends AbstractType
         'Oui' => 'Oui',
         'Non' => 'Non',
     ];
+    /** @var array<string, string> */
+    private const array EMAIL_DELIVERY_ISSUE = [
+        'Adresse e-mail fonctionnelle' => 'Non',
+        'Problème d\'adresse e-mail' => 'Oui',
+    ];
 
     private bool $isAdmin = false;
     /**
@@ -113,6 +118,12 @@ class SearchUserType extends AbstractType
             'required' => false,
             'placeholder' => 'Tous les droits d\'affectation',
             'label' => 'Droits d\'affectation',
+        ]);
+        $builder->add('emailDeliveryIssue', ChoiceType::class, [
+            'choices' => self::EMAIL_DELIVERY_ISSUE,
+            'required' => false,
+            'placeholder' => 'Tous',
+            'label' => 'Problème d\'adresse e-mail',
         ]);
 
         $builder->add('orderType', ChoiceType::class, [
