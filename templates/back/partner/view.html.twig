@@ -69,7 +69,12 @@
                     <div><b>Territoire :</b> {{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : ''}}</div>
                 </div>
                 <div class="fr-col-6">
-                    <div><b>E-mail de contact :</b> {{ partner.email }}</div>
+                    <div>
+                        <b>E-mail de contact :</b> {{ partner.email }}
+                        {% if partner.emailDeliveryIssue.event.value|default(false) %}
+                            <span class="fr-badge fr-badge--warning fr-badge--sm">Problème d'e-mail non remis</span>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="fr-col-6">
                     <div><b>Type :</b> {{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'N/A') }}</div>
@@ -218,7 +223,7 @@
             </div>
 
             {% set tableHead %}
-                <th scope="col">Dernière connexion</th>
+                {# <th scope="col">Dernière connexion</th> #}
                 <th scope="col">Nom</th>
                 <th scope="col">Prénom</th>
                 <th scope="col">Fonction</th>
@@ -229,6 +234,7 @@
                 {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
                 <th scope="col">Droits d'affectation</th>
                 {% endif %}
+                <th scope="col">Problème d'adresse e-mail</th>
                 <th scope="col" class="fr-text--right">Actions</th>
             {% endset %}
 
@@ -236,11 +242,16 @@
                 {% for user in partner.users|filter(user => user.id is not null) %}
                     {% if is_granted('ROLE_ADMIN') or 'ROLE_API_USER' not in user.roles %}
                         <tr class="user-row">
-                            <td>{{ user.getLastLoginAtStr('d/m/Y') }}</td>
+                            {# <td>{{ user.getLastLoginAtStr('d/m/Y') }}</td> #}
                             <td>{{ user.nom }}</td>
                             <td>{{ user.prenom }}</td>
                             <td>{{ user.fonction }}</td>
-                            <td>{{ user.email }}</td>
+                            <td>{{ user.email }}<br>
+                                Dernière connexion : {{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}
+                                {# {% if user.emailDeliveryIssue.event.value|default(false) %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm"> </span>
+                                {% endif %} #}
+                            </td>
                             <td>
                                 <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">
                                     {% if user.isMailingActive %}
@@ -267,6 +278,13 @@
                             {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
                             <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
                             {% endif %}
+                            <td>
+                                {% if user.emailDeliveryIssue.event.value|default(false) %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm">OUI</span>
+                                {% else %}
+                                    Non
+                                {% endif %}
+                            </td>
                             <td class="fr-text--right">
                                 {% if is_granted('USER_EDIT', user) %}
                                     <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"

@@ -26,6 +26,7 @@ class SearchUser
     private ?string $statut = null;
     private ?string $role = null;
     private ?string $permissionAffectation = null;
+    private ?string $emailDeliveryIssue = null;
     private ?string $orderType = null;
 
     public function __construct(User $user)
@@ -118,6 +119,16 @@ class SearchUser
         $this->permissionAffectation = $permissionAffectation;
     }
 
+    public function getEmailDeliveryIssue(): ?string
+    {
+        return $this->emailDeliveryIssue;
+    }
+
+    public function setEmailDeliveryIssue(?string $emailDeliveryIssue): void
+    {
+        $this->emailDeliveryIssue = $emailDeliveryIssue;
+    }
+
     public function getOrderType(): ?string
     {
         return $this->orderType;
@@ -172,6 +183,9 @@ class SearchUser
         }
         if ($this->permissionAffectation) {
             $filters['Droits d\'affectation'] = $this->permissionAffectation;
+        }
+        if ($this->emailDeliveryIssue) {
+            $filters['Problème d\'adresse e-mail'] = $this->emailDeliveryIssue;
         }
 
         return $filters;
