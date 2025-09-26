@@ -17,52 +17,52 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                             </form>
                         {% else %}
-                            <a href="#"
+                            <button
                                 data-fr-opened="false" 
                                 aria-controls="accept-affectation-modal"
                                 class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill">
                                 Annuler le refus de l'affectation
-                            </a>
+                            </button>
                         {% endif %}
                     </li>
                 {% elseif is_granted('SIGN_REOPEN', signalement) %}
                     <li>
-                        <a href="#" 
+                        <button
                             class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
                             aria-controls="reopen-all-signalement-modal" 
                             data-fr-opened="false"
                             >
                             Rouvrir pour tous
-                        </a>
+                        </button>
                     </li>
                 {% elseif canReopenAffectation %}
                     <li>
-                        <a href="#" 
+                        <button
                             class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
                             aria-controls="reopen-signalement-modal" 
                             data-fr-opened="false">
                             Rouvrir pour {{ currentPartner ? currentPartner.nom : 'N/A' }}
-                        </a>
+                        </button>
                     </li>
                 {% elseif is_granted('SIGN_CLOSE', signalement) %}
                     <li>
-                        <a href="#" 
+                        <button
                             id="test-bouton-cloturer" 
                             class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
                             aria-controls="cloture-modal" 
                             data-fr-opened="false">
                             Clôturer
-                        </a>
+                        </button>
                     </li>
                 {% elseif affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
                     <li>
-                        <a href="#" 
+                        <button
                             id="link-bouton-cloturer"
                             class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
                             aria-controls="cloture-modal" 
                             data-fr-opened="false">
                             Clôturer
-                        </a>
+                        </button>
                     </li>
                 {% endif %}
                 {% if is_granted('SIGN_VIEW', signalement) %}
@@ -76,13 +76,13 @@
                 {% endif %}
                 {% if is_granted('ROLE_ADMIN') %}
                     <li>
-                        <a href="#" 
+                        <button
                             class="fr-nav__link fr-btn--icon-left fr-icon-send-plane-fill" 
                             aria-controls="send-lien-suivi-modal" 
                             data-fr-opened="false" 
                             title="Envoyer le lien de suivi">
                             Envoyer le lien de suivi
-                        </a>
+                        </button>
                     </li>
                 {% endif %}
                 {% if isUserSubscribed %}

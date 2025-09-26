@@ -5,6 +5,7 @@ namespace App\EventSubscriber;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -22,9 +23,15 @@ class SubscriptionsChoiceSubscriber implements EventSubscriberInterface
         return [KernelEvents::REQUEST => 'onKernelRequest'];
     }
 
-    public function onKernelRequest(RequestEvent $event): void
-    {
+    public function onKernelRequest(
+        RequestEvent $event,
+        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
+        bool $featureNewDashboard,
+    ): void {
         if (!$event->isMainRequest()) {
+            return;
+        }
+        if (!$featureNewDashboard) {
             return;
         }
 
