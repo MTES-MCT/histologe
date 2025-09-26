@@ -1,0 +1,60 @@
+{% set columns = [
+    { class: 'fr-col-md-3', title: 'E-mail à vérifier' },
+    { class: 'fr-col-md-4', title: 'Référence' },
+    { class: 'fr-col-md-2', title: 'Déposé le' },
+    { class: 'fr-col-md-2', title: 'Dernière action' },
+] %}
+
+<section class="fr-mb-5v">
+    <header class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-9">
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-press-card-icon">Adresses e-mail à vérifier ({{ count }})</h3>
+        </div>
+        <div class="fr-select-group fr-col-12 fr-col-md-3">
+            <label class="fr-label" for="order-type-dossiers-adresse-email-a-verifier">
+                Trier par
+            </label>
+            <select id="order-type-dossiers-adresse-email-a-verifier" class="fr-select" data-sort-body="dossiers-adresse-email-a-verifier">
+                <option value="createdAt-DESC" selected="selected">Date la plus récente (du plus récent au plus ancien) = tri par défaut</option>
+                <option value="createdAt-ASC">Date la plus ancienne (de la plus ancienne à la plus récente)</option>
+                <option value="nomOccupant-ASC">Ordre alphabétique (A > Z)</option>
+                <option value="nomOccupant-DESC">Ordre alphabétique (Z > A)</option>
+            </select>
+        </div>
+    </header>
+    <hr class="hr--blue-france">
+    <section class="fr-container--fluid">
+        {% for item in items %}
+            {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+            {% include 'back/dashboard/components/_card.html.twig' with {
+                data: [
+                    '<div><span class="fr-badge fr-badge--no-icon fr-badge--warning">' ~ item.profilNonDeliverable  ~ '</span></div>',
+                    '<div class="fr-text-label--blue-france">
+                            <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                            <div>' ~ item.adresse ~ '</div>
+                        </div>',
+                    '<div>' ~ item.depotAt|date('d/m/Y') ~ '</div>',
+                    '<div>le ' ~ item.derniereActionAt|date('d/m/Y à H:i') ~ ' par ' ~ item.derniereActionPartenaireNom ~ '</div>',
+                ],
+                link: path('back_signalement_view', {'uuid' : item.uuid})
+            } %}
+        {% else %}
+            <p>Aucun dossier trouvé.</p>
+        {% endfor %}
+        {% if count > MAX_ITEMS_LIST %}
+            {% set paramsSansPartenaires = filters|merge({'partenaires': null}) %}
+            {% set url = path('back_signalements_index', paramsSansPartenaires) %}
+            {% if filters.partenaires is defined and filters.partenaires|length %}
+                {% set url = url ~ (('?' in url) ? '&' : '?') %}
+                {% for id in filters.partenaires %}
+                    {% set url = url ~ 'partenaires[]=' ~ id ~ (not loop.last ? '&' : '') %}
+                {% endfor %}
+            {% endif %}
+            <div class="fr-text--right">
+                <a href="{{ url }}" class="fr-text-label--blue-france">
+                Afficher la liste complète<span class="fr-fi-arrow-right-line"></span>
+                </a>
+            </div>
+        {% endif %}
+    </section>
+</section>
