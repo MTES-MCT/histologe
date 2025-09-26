@@ -1,4 +1,6 @@
-{% if canAnswerAffectation or canCancelRefusedAffectation %}
+{% set currentPartner =  app.user.partnerInTerritoryOrFirstOne(signalement.territory) %}
+{% set isAloneInCurrentPartner = app.user.isAloneInPartner(currentPartner) %}
+{% if (canAnswerAffectation or canCancelRefusedAffectation) and not isAloneInCurrentPartner %}
     <div data-ajax-form class="fr-display-inline">
         {% include '_partials/_modal_accept_affectation.html.twig' %}
     </div>
@@ -15,14 +17,23 @@
                 </p>
             </div>
         </div>
-    </div>                
-    <button 
-        class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" 
-        id="open-accept-affectation-modal" 
-        data-fr-opened="false" 
-        aria-controls="accept-affectation-modal">
-        Accepter l'affectation
-    </button>
+    </div>
+    {% if isAloneInCurrentPartner %}
+        <form id="signalement-affectation-response-form" action="{{ path('back_signalement_affectation_accept',{affectation:affectation.id}) }}" method="POST" class="inline-form">
+            <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success">
+                Accepter l'affectation
+            </button>
+            <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
+        </form>
+    {% else %}
+        <button 
+            class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" 
+            id="open-accept-affectation-modal" 
+            data-fr-opened="false" 
+            aria-controls="accept-affectation-modal">
+            Accepter l'affectation
+        </button>
+    {% endif %}
     <a href="#" 
         class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-close-circle-fill fr-btn--danger"
         data-fr-opened="false" 

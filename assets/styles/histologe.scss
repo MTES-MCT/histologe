@@ -1044,6 +1044,16 @@ ul + p {
     color: #000091;
     justify-content: flex-start;
 }
+.menu-actions-signalement button.fr-nav__link {
+    color: #000091;
+    justify-content: flex-start;
+}
+.menu-actions-signalement a.disabled {
+  pointer-events: none;
+  color: var(--text-disabled-grey);
+  opacity: 0.6;
+}
+
 
 .territory-management-tiles .fr-tile__detail span {
     padding-right: 5px;
