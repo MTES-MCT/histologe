@@ -21,7 +21,8 @@ enum SignalementStatus: string
         return match ($this) {
             self::DRAFT, self::NEED_VALIDATION => AffectationStatus::WAIT->value,
             self::ACTIVE => AffectationStatus::ACCEPTED->value,
-            self::CLOSED, self::REFUSED, self::ARCHIVED, self::DRAFT_ARCHIVED => AffectationStatus::CLOSED->value,
+            self::REFUSED => AffectationStatus::REFUSED->value,
+            self::CLOSED, self::ARCHIVED, self::DRAFT_ARCHIVED => AffectationStatus::CLOSED->value,
         };
     }
 
@@ -41,6 +42,7 @@ enum SignalementStatus: string
 
     public static function mapFilterStatus(string $label): string
     {
+        dump($label);
         return match ($label) {
             'brouillon' => SignalementStatus::DRAFT->value,
             'nouveau' => SignalementStatus::NEED_VALIDATION->value,
