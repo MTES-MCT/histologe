@@ -39,7 +39,8 @@ use App\Factory\SignalementFactory;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\SignalementList\ExportIterableQuery;
+use App\Repository\Query\SignalementList\ListPaginatorQuery;
 use App\Service\Gouv\Ban\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
@@ -76,6 +77,8 @@ class SignalementManager extends AbstractManager
         private readonly AffectationManager $affectationManager,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly ExportIterableQuery $exportIterableQuery,
+        private readonly ListPaginatorQuery $listPaginatorQuery,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         string $entityName = Signalement::class,
@@ -860,16 +863,15 @@ class SignalementManager extends AbstractManager
      * @param array<string, mixed> $options
      *
      * @return array<string, mixed>|int
+     *
+     * @throws Exception
      */
     public function findSignalementAffectationList(User $user, array $options, bool $count = false): array|int
     {
         $maxListPagination = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
         $signalementAffectationList = [];
 
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->getRepository();
-
-        $paginator = $signalementRepository->findSignalementAffectationListPaginator($user, $options);
+        $paginator = $this->listPaginatorQuery->paginate($user, $options);
         $total = $paginator->count();
         if ($count) {
             return $total;
@@ -905,9 +907,7 @@ class SignalementManager extends AbstractManager
         User $user,
         ?array $options = null,
     ): \Generator {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->getRepository();
-        foreach ($signalementRepository->findSignalementAffectationIterable($user, $options) as $row) {
+        foreach ($this->exportIterableQuery->stream($user, $options) as $row) {
             yield $this->signalementExportFactory->createInstanceFrom(
                 $user,
                 $row,

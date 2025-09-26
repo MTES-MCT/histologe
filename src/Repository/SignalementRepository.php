@@ -4,8 +4,6 @@ namespace App\Repository;
 
 use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Dto\CountSignalement;
-use App\Dto\SignalementAffectationListView;
-use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Commune;
@@ -22,7 +20,6 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
-use App\Entity\View\ViewLatestIntervention;
 use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\DashboardTabPanel\TabDossier;
@@ -32,7 +29,6 @@ use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use App\Service\Security\PartnerAuthorizedResolver;
-use App\Service\Signalement\SearchFilter;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
@@ -2264,9 +2260,9 @@ class SignalementRepository extends ServiceEntityRepository
          */ function (array $row): TabDossier {
             return new TabDossier(
                 uuid: $row['uuid'],
-                reference: $row['reference'],
                 nomDeclarant: $row['nom_occupant'],
                 prenomDeclarant: $row['prenom_occupant'],
+                reference: $row['reference'],
                 adresse: $row['fullAddress'],
                 nbRelanceDossier: (int) $row['nb_relances'],
                 premiereRelanceDossierAt: new \DateTimeImmutable($row['first_relance_at']),
@@ -2288,7 +2284,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return int[]
      */
-    private function getSignalementsIdAvecRelancesSansReponse(): array
+    public function getSignalementsIdAvecRelancesSansReponse(): array
     {
         $conn = $this->getEntityManager()->getConnection();
 

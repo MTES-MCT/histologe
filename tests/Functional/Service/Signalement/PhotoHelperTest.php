@@ -11,6 +11,8 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\Query\SignalementList\ExportIterableQuery;
+use App\Repository\Query\SignalementList\ListPaginatorQuery;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\PhotoHelper;
@@ -47,6 +49,9 @@ class PhotoHelperTest extends KernelTestCase
     private ZipcodeProvider $zipcodeProvider;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
 
+    private ExportIterableQuery $exportIterableQuery;
+    private ListPaginatorQuery $listPaginatorQuery;
+
     protected function setUp(): void
     {
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
@@ -69,6 +74,8 @@ class PhotoHelperTest extends KernelTestCase
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationManager = static::getContainer()->get(AffectationManager::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+        $this->exportIterableQuery = static::getContainer()->get(ExportIterableQuery::class);
+        $this->listPaginatorQuery = static::getContainer()->get(ListPaginatorQuery::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->signalementManager = new SignalementManager(
@@ -89,6 +96,8 @@ class PhotoHelperTest extends KernelTestCase
             $this->affectationManager,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
+            $this->exportIterableQuery,
+            $this->listPaginatorQuery,
             $this->htmlSanitizerInterface
         );
     }

@@ -12,12 +12,9 @@ use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\QueryBuilder;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
