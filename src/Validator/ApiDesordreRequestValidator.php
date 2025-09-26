@@ -29,12 +29,11 @@ class ApiDesordreRequestValidator extends ConstraintValidator
         if (!$constraint instanceof ApiDesordreRequest) {
             throw new UnexpectedValueException($constraint, ApiDesordreRequest::class);
         }
-
-        if (count($desordreRequest->precisions)) {
-            $desordreCritere = $this->desordreCritereRepository->findWithPrecisionsBySlug($desordreRequest->identifiant);
+        $desordrePrecision = $this->desordrePrecisionRepository->findWithCritereBySlug($desordreRequest->identifiant);
+        if ($desordrePrecision) {
+            $desordreCritere = $desordrePrecision->getDesordreCritere();
         } else {
-            $desordrePrecision = $this->desordrePrecisionRepository->findWithCritereBySlug($desordreRequest->identifiant);
-            $desordreCritere = $desordrePrecision?->getDesordreCritere();
+            $desordreCritere = $this->desordreCritereRepository->findWithPrecisionsBySlug($desordreRequest->identifiant);
         }
 
         if (!$desordreCritere) {
@@ -66,7 +65,6 @@ class ApiDesordreRequestValidator extends ConstraintValidator
         }
 
         // TODO : controle des doublons de précisions
-
         // TODO : controle des descriptions libres -> parametrer en base de données la config des désordre et précisions attendant une description libre ?
         // TODO : controle des précisions uniques -> parametrer en base de données la config des précisions devant être un choix unique ?
         // TODO : controle des précisions s'excluant mutuellement -> parametrer en base de données la config des précisions s'excluant mutuellement ?

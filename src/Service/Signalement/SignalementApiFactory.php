@@ -56,7 +56,9 @@ class SignalementApiFactory
         }
 
         $signalement->setIsLogementSocial($request->isLogementSocial);
-        if (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::LOCATAIRE, ProfileDeclarant::BAILLEUR_OCCUPANT])) {
+        if (in_array($signalement->getProfileDeclarant(),
+            [ProfileDeclarant::TIERS_PARTICULIER, ProfileDeclarant::TIERS_PRO, ProfileDeclarant::SERVICE_SECOURS, ProfileDeclarant::BAILLEUR]
+        )) {
             $signalement->setIsLogementVacant($request->isLogementVacant);
         } else {
             $signalement->setIsLogementVacant(false);
@@ -92,6 +94,8 @@ class SignalementApiFactory
                 }
             }
         }
+        $informationComplementaire->setInformationsComplementairesLogementNombreEtages((string) $request->nombreEtages);
+        $informationComplementaire->setInformationsComplementairesLogementAnneeConstruction((string) $request->anneeConstruction);
         if (1 === $request->nombrePieces) {
             $typeCompositionLogement->setCompositionLogementPieceUnique('piece_unique');
         } elseif ($request->nombrePieces > 1) {
@@ -102,13 +106,13 @@ class SignalementApiFactory
         $typeCompositionLogement->setCompositionLogementSuperficie((string) $request->superficie);
         $typeCompositionLogement->setTypeLogementCommoditesPieceAVivre9m(self::convertBoolToString($request->isPieceAVivre9m));
         $typeCompositionLogement->setTypeLogementCommoditesCuisine(self::convertBoolToString($request->isCuisine));
-        $typeCompositionLogement->setTypeLogementCommoditesSalleDeBain(self::convertBoolToString($request->isSdb));
+        $typeCompositionLogement->setTypeLogementCommoditesSalleDeBain(self::convertBoolToString($request->isSalleDeBain));
         $typeCompositionLogement->setTypeLogementCommoditesWc(self::convertBoolToString($request->isWc));
         if (false === $request->isCuisine && null !== $request->isCuisineCollective) {
             $typeCompositionLogement->setTypeLogementCommoditesCuisineCollective(self::convertBoolToString($request->isCuisineCollective));
         }
-        if (false === $request->isSdb && null !== $request->isSdbCollective) {
-            $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective(self::convertBoolToString($request->isSdbCollective));
+        if (false === $request->isSalleDeBain && null !== $request->isSalleDeBainCollective) {
+            $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective(self::convertBoolToString($request->isSalleDeBainCollective));
         }
         if ($request->isCuisine && $request->isWc) {
             $typeCompositionLogement->setTypeLogementCommoditesWcCuisine(self::convertBoolToString($request->isWcCuisineMemePiece));
@@ -135,8 +139,8 @@ class SignalementApiFactory
         $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes(self::convertBoolToString($request->isPaiementLoyersAJour));
 
         if ($request->isAllocataire) {
-            if (in_array($request->caisseAllocation, ['CAF', 'MSA'])) {
-                $signalement->setIsAllocataire(mb_strtolower($request->caisseAllocation));
+            if (in_array($request->caisseAllocations, ['CAF', 'MSA'])) {
+                $signalement->setIsAllocataire(mb_strtolower($request->caisseAllocations));
             } else {
                 $signalement->setIsAllocataire('1');
             }
@@ -229,17 +233,15 @@ class SignalementApiFactory
             }
         }
 
-        // TODO : tab validation ?
-
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $signalement->setSituationFoyer($situationFoyer);
         $signalement->setInformationProcedure($informationProcedure);
         $signalement->setInformationComplementaire($informationComplementaire);
         $signalement->setJsonContent($jsonContent);
 
-        // TODO : adapter l'affichage BO pour les création API
         $signalement->setCreatedBy($this->user);
-        // TODO : voir avec équipe (champ obligatoire)
+        // TODO : enregistrer le partnerId sur le signalement (aprés avoir ajouté le champ sur la table)
+        // TODO : champ obligatoire, false ?
         $signalement->setIsCguAccepted(false);
 
         return $signalement;

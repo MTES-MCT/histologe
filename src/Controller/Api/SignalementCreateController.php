@@ -7,18 +7,22 @@ use App\Dto\Api\Response\SignalementResponse;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Event\SignalementCreatedEvent;
 use App\Factory\Api\SignalementResponseFactory;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
+use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementApiFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -42,7 +46,14 @@ class SignalementCreateController extends AbstractController
         private readonly UserManager $userManager,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly EntityManagerInterface $entityManager,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly AutoAssigner $autoAssigner,
+        #[Autowire(env: 'FEATURE_API_CREATION_SIGNALEMENT')]
+        private readonly bool $featureApiCreationSignalement,
     ) {
+        if (!$this->featureApiCreationSignalement) {
+            throw $this->createNotFoundException('La création de signalement via l\'API est désactivée.');
+        }
     }
 
     /**
@@ -63,8 +74,8 @@ class SignalementCreateController extends AbstractController
                         description: 'Exemple de payload de création d\'un signalement.',
                         value: [
                             'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
-                            'adresseOccupant' => '151 chemin de la route',
-                            'codePostalOccupant' => '34090',
+                            'adresseOccupant' => '151 avenue du pont trinquat',
+                            'codePostalOccupant' => '34070',
                             'communeOccupant' => 'Montpellier',
                             'etageOccupant' => '2',
                             'escalierOccupant' => 'B',
@@ -80,7 +91,7 @@ class SignalementCreateController extends AbstractController
                             'natureLogement' => 'appartement',
                             'natureLogementAutre' => null,
                             'etageAppartement' => 'RDC',
-                            'appartementAvecFenetres' => true,
+                            'isAppartementAvecFenetres' => true,
                             'nombreEtages' => 0,
                             'anneeConstruction' => 1970,
                             'nombrePieces' => 4,
@@ -233,7 +244,8 @@ class SignalementCreateController extends AbstractController
         $signalement = $this->signalementApiFactory->createFromSignalementRequest($signalementRequest);
         $this->signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
-        // domage de ne pas avoir toutes les erreurs dés le départ mais la vérif du territoire et des doublon demande des traitement intermédiaires
+        // domage de ne pas avoir toutes les erreurs dés le départ mais la vérif du territoire et des doublons demande des traitement intermédiaires (appels BAN API),
+        // a voir si on intégre quand même avec les autres contraintes
         $errors = $this->checkPartnerAndTerritory($partner, $signalementRequest, $signalement, $errors);
         $errors = $this->checkDuplicate($signalementRequest, $signalement, $errors);
         if (count($errors) > 0) {
@@ -244,8 +256,14 @@ class SignalementCreateController extends AbstractController
         $signalement->setReference($this->referenceGenerator->generate($signalement->getTerritory()));
         $this->signalementRepository->save($signalement, true);
         $this->entityManager->commit();
-        $this->userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
-        $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+        $hasAssignablePartners = $this->autoAssigner->assign($signalement, true);
+        if (count($hasAssignablePartners)) {
+            $this->userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
+            $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $this->autoAssigner->assign($signalement);
+        } else {
+            $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME); // @phpstan-ignore-line
+        }
 
         $resource = $this->signalementResponseFactory->createFromSignalement($signalement);
 
@@ -274,12 +292,12 @@ class SignalementCreateController extends AbstractController
         $duplicates = $this->signalementRepository->findOnSameAddress(signalement: $signalement, compareNomOccupant: true);
         if (count($duplicates) > 0) {
             $violation = new ConstraintViolation(
-                'Un signalement existe déjà à cette adresse ('.$signalement->getAddressCompleteOccupant(false).').',
+                'Un signalement existe déjà à cette adresse pour le même occupant ('.$signalement->getAddressCompleteOccupant(false).' - '.$signalement->getNomOccupant().').',
                 null,
                 [],
                 $signalementRequest,
                 null,
-                $signalement->getAddressCompleteOccupant(false)
+                $signalement->getAddressCompleteOccupant(false).' - '.$signalement->getNomOccupant()
             );
             $errors->add($violation);
         }
