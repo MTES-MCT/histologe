@@ -33,6 +33,7 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
         $expectedData = ['foo' => 'bar'];
         $expectedKpi = [
             'comptes_en_attente' => 3,
+            'comptes_pb_email' => 0,
             'partenaires_non_notifiables' => 2,
             'partenaires_interfaces' => 1,
         ];

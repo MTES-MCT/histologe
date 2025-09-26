@@ -435,6 +435,29 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb->getQuery()->execute();
     }
 
+    /**
+     * @param array<int, Territory> $territories
+     */
+    public function countAgentsPbEmail(User $user, array $territories = [], bool $count = false): int
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p')
+            ->where('u.emailDeliveryIssue IS NOT NULL')
+            ->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')
+            ->setParameter('roleUsager', '"ROLE_USAGER"');
+
+        if (\count($territories)) {
+            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $territories);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        $qb->select('COUNT(u)');
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
     public function findFilteredPaginated(SearchUser $searchUser, int $maxResult): Paginator
     {
         $qb = $this->findFiltered($searchUser, false);
@@ -502,6 +525,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $qb->andWhere('u.hasPermissionAffectation = 0 AND JSON_CONTAINS(u.roles, :roleAdmin) = 0 AND JSON_CONTAINS(u.roles, :roleAdminTerritory) = 0')
                 ->setParameter('roleAdmin', '"ROLE_ADMIN"')
                 ->setParameter('roleAdminTerritory', '"ROLE_ADMIN_TERRITORY"');
+        }
+        if ('Oui' == $searchUser->getEmailDeliveryIssue()) {
+            $qb->andWhere('u.emailDeliveryIssue IS NOT NULL');
+        } elseif ('Non' == $searchUser->getEmailDeliveryIssue()) {
+            $qb->andWhere('u.emailDeliveryIssue IS NULL');
         }
         if ($execute) {
             return $qb->getQuery()->execute();
