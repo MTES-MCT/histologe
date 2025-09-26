@@ -41,7 +41,7 @@
         {% else %}
             <p>Aucun dossier trouvé.</p>
         {% endfor %}
-        {% if count > MAX_ITEMS_LIST_LONG %}
+        {% if count > MAX_ITEMS_LIST %}
             {% set paramsSansPartenaires = filters|merge({'partenaires': null}) %}
             {% set url = path('back_signalements_index', paramsSansPartenaires) %}
             {% if filters.partenaires is defined and filters.partenaires|length %}

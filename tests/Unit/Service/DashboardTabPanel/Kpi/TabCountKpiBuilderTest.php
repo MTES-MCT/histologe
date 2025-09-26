@@ -3,9 +3,11 @@
 namespace App\Tests\Unit\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
+use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\Kpi\CountAfermer;
+use App\Service\DashboardTabPanel\Kpi\CountDossiersAVerifier;
 use App\Service\DashboardTabPanel\Kpi\CountDossiersMessagesUsagers;
 use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
@@ -20,6 +22,7 @@ class TabCountKpiBuilderTest extends TestCase
 {
     protected MockObject|SignalementRepository $signalementRepository;
     protected MockObject|SuiviRepository $suiviRepository;
+    protected MockObject|EmailDeliveryIssueRepository $emailDeliveryIssueRepository;
     protected MockObject|Security $security;
     protected MockObject|TabCountKpiBuilder $tabCountKpiBuilder;
     protected MockObject|TabCountKpiCacheHelper $tabCountKpiCacheHelper;
@@ -28,12 +31,14 @@ class TabCountKpiBuilderTest extends TestCase
     {
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
         $this->suiviRepository = $this->createMock(SuiviRepository::class);
+        $this->emailDeliveryIssueRepository = $this->createMock(EmailDeliveryIssueRepository::class);
         $this->security = $this->createMock(Security::class);
         $this->tabCountKpiCacheHelper = $this->createMock(TabCountKpiCacheHelper::class);
 
         $this->tabCountKpiBuilder = new TabCountKpiBuilder(
             $this->signalementRepository,
             $this->suiviRepository,
+            $this->emailDeliveryIssueRepository,
             $this->security,
             $this->tabCountKpiCacheHelper,
         );
@@ -63,7 +68,7 @@ class TabCountKpiBuilderTest extends TestCase
         $countNouveaux = new CountNouveauxDossiers(1, 2, 3, 4);
         $countMessages = new CountDossiersMessagesUsagers(1, 2, 3);
         $countAfermer = new CountAfermer(1, 1, 1);
-        $countAverifier = 4;
+        $countAverifier = new CountDossiersAVerifier(3, 9);
 
         $this->signalementRepository
             ->expects($this->never())
@@ -87,7 +92,7 @@ class TabCountKpiBuilderTest extends TestCase
             ->expects($this->never())
             ->method('countSignalementsSansSuiviPartenaireDepuis60Jours')
             ->with($user, $params)
-            ->willReturn($countAverifier);
+            ->willReturn(3);
 
         $this->tabCountKpiCacheHelper
             ->method('getOrSet')
@@ -112,7 +117,7 @@ class TabCountKpiBuilderTest extends TestCase
         $this->assertSame(10, $tabCountKpi->countNouveauxDossiers);
         $this->assertSame(6, $tabCountKpi->countDossiersMessagesUsagers);
         $this->assertSame(3, $tabCountKpi->countDossiersAFermer);
-        $this->assertSame($countAverifier, $tabCountKpi->countDossiersAVerifier);
+        $this->assertSame(12, $tabCountKpi->countDossiersAVerifier);
     }
 
     public function testWithTabCountKpiForNonAdmin(): void
@@ -139,7 +144,7 @@ class TabCountKpiBuilderTest extends TestCase
         $countNouveaux = new CountNouveauxDossiers(1, 2, 1, 2);
         $countMessages = new CountDossiersMessagesUsagers(1, 2, 2);
         $countAfermer = new CountAfermer(1, 0, 0);
-        $countAverifier = 4;
+        $countAverifier = new CountDossiersAVerifier(2, 2);
 
         $this->signalementRepository
             ->expects($this->never())
@@ -163,7 +168,7 @@ class TabCountKpiBuilderTest extends TestCase
             ->expects($this->never())
             ->method('countSignalementsSansSuiviPartenaireDepuis60Jours')
             ->with($user, $params)
-            ->willReturn($countAverifier);
+            ->willReturn(2);
 
         $this->tabCountKpiCacheHelper
             ->method('getOrSet')
@@ -186,6 +191,6 @@ class TabCountKpiBuilderTest extends TestCase
         $this->assertSame(6, $tabCountKpi->countNouveauxDossiers);
         $this->assertSame(5, $tabCountKpi->countDossiersMessagesUsagers);
         $this->assertSame(1, $tabCountKpi->countDossiersAFermer);
-        $this->assertSame($countAverifier, $tabCountKpi->countDossiersAVerifier);
+        $this->assertSame(4, $tabCountKpi->countDossiersAVerifier);
     }
 }

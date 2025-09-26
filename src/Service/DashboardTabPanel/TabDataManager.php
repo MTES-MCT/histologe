@@ -7,6 +7,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
+use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -34,6 +35,7 @@ class TabDataManager
         private readonly PartnerRepository $partnerRepository,
         private readonly SignalementRepository $signalementRepository,
         private readonly TabCountKpiBuilder $tabCountKpiBuilder,
+        private readonly EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
     ) {
     }
 
@@ -405,6 +407,36 @@ class TabDataManager
         }
 
         $count = $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours(user: $user, params: $tabQueryParameters);
+
+        return new TabDossierResult($tabDossiers, $count);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getDossiersAVerifierAdresseEmailAverifier(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $signalements = $this->emailDeliveryIssueRepository->findActiveSignalementsWithInvalidEmails(user: $user, params: $tabQueryParameters);
+        $tabDossiers = [];
+        for ($i = 0; $i < \count($signalements); ++$i) {
+            $signalement = $signalements[$i];
+            $tabDossiers[] = new TabDossier(
+                profilNonDeliverable: $signalement['profilNonDeliverable'],
+                reference: '#'.$signalement['reference'],
+                nomDeclarant: $signalement['nomOccupant'],
+                prenomDeclarant: $signalement['prenomOccupant'],
+                adresse: $signalement['adresse'],
+                depotAt: $signalement['createdAt'],
+                derniereActionAt: $signalement['dernierSuiviAt'],
+                derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
+                uuid: $signalement['uuid'],
+            );
+        }
+
+        $count = $this->emailDeliveryIssueRepository->countNonDeliverableSignalements(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }

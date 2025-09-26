@@ -138,6 +138,9 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'isDossiersSansActivite') {
     return 'Dossiers sans activité partenaire'
   }
+  if (key === 'isEmailAVerifier') {
+    return 'Adresses e-mail usager à vérifier'
+  }
     
   return buildStaticBadge(value)
 }

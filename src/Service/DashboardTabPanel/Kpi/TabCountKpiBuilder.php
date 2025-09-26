@@ -3,6 +3,7 @@
 namespace App\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
+use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -26,6 +27,7 @@ class TabCountKpiBuilder
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly SuiviRepository $suiviRepository,
+        private readonly EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
         private readonly Security $security,
         private readonly TabCountKpiCacheHelper $tabCountKpiCacheHelper,
     ) {
@@ -107,14 +109,14 @@ class TabCountKpiBuilder
             TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER,
             $user,
             $params,
-            fn () => $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params)
+            fn () => $this->countAllDossiersAVerifier($user, $params)
         );
 
         $this->tabCountKpi = new TabCountKpi(
             countNouveauxDossiers: $countNouveauxDossiers->total(),
             countDossiersAFermer: $countDossiersAFermer->total(),
             countDossiersMessagesUsagers: $countDossiersMessagesUsagers->total(),
-            countDossiersAVerifier: $countDossiersAVerifier,
+            countDossiersAVerifier: $countDossiersAVerifier->total(),
         );
 
         return $this;
@@ -123,5 +125,13 @@ class TabCountKpiBuilder
     public function build(): TabCountKpi
     {
         return $this->tabCountKpi;
+    }
+
+    private function countAllDossiersAVerifier(User $user, ?TabQueryParameters $params): CountDossiersAVerifier
+    {
+        return new CountDossiersAVerifier(
+            $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params),
+            $this->emailDeliveryIssueRepository->countNonDeliverableSignalements($user, $params)
+        );
     }
 }

@@ -610,6 +610,7 @@ export default defineComponent({
         isNouveauMessage: null,
         isMessageWithoutResponse: null,
         isDossiersSansActivite: null,
+        isEmailAVerifier: null,
         showWithoutAffectationOnly: null,
         statusAffectation: null,
         criticiteScoreMin: null,
