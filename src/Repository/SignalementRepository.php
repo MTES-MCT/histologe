@@ -1692,6 +1692,7 @@ class SignalementRepository extends ServiceEntityRepository
         array $exclusiveStatus = [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE],
         array $excludedStatus = [],
         ?User $createdBy = null,
+        ?bool $compareNomOccupant = false,
     ): array {
         $qb = $this->createQueryBuilder('s')
             ->where('s.adresseOccupant = :address')
@@ -1718,6 +1719,11 @@ class SignalementRepository extends ServiceEntityRepository
         if (null !== $createdBy) {
             $qb->andWhere('s.createdBy = :user')
                 ->setParameter('user', $createdBy);
+        }
+
+        if ($compareNomOccupant && null !== $signalement->getNomOccupant()) {
+            $qb->andWhere('s.nomOccupant = :nomOccupant')
+                ->setParameter('nomOccupant', $signalement->getNomOccupant());
         }
 
         return $qb->getQuery()->getResult();

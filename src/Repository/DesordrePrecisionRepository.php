@@ -20,4 +20,17 @@ class DesordrePrecisionRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, DesordrePrecision::class);
     }
+
+    public function findWithCritereBySlug(string $slug): ?DesordrePrecision
+    {
+        return $this->createQueryBuilder('dp')
+            ->select('dp', 'dc', 'dps')
+            ->andWhere('dp.desordrePrecisionSlug = :slug')
+            ->setParameter('slug', $slug)
+            ->leftJoin('dp.desordreCritere', 'dc')
+            ->leftJoin('dc.desordrePrecisions', 'dps')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

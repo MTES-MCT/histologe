@@ -320,6 +320,9 @@ button.fr-btn--success,a[href].fr-btn--success {
 .fr-text-default--grey {
     color: var(--text-default-grey);
 }
+.fr-text-mention--grey {
+    color: var(--text-mention-grey);
+}
 .fr-text--text-default-warning {
     color: var(--text-default-warning);
 }
@@ -849,7 +852,7 @@ ul + p {
         top: 4.5rem;
         right: 15px;
         z-index: 11;
-        background: white;
+        background: #ffffffc9;
     }
     .fr-ml-3v.topped {
         margin-left: 0px !important;
@@ -1051,4 +1054,14 @@ ul + p {
 
 #form-add-file-preview embed, #form-add-file-no-preview img {
     max-height: 150px;
+}
+
+dl dt {
+    padding-top: 0.25rem;
+}
+dl dd {
+    border-bottom: 1px solid var(--background-disabled-grey);
+}
+dl dd:last-child {
+    border-bottom: none;
 }
