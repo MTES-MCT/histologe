@@ -23,7 +23,7 @@ class SignalementListControllerTest extends WebTestCase
      *
      * @param array<string> $filter
      */
-    public function testFilterSignalements(array $filter, int $results): void
+    public function testFilterSignalements(array $filter, int $results, string $email = 'admin-01@signal-logement.fr'): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -31,7 +31,7 @@ class SignalementListControllerTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
         $route = $generatorUrl->generate('back_signalements_list_json');
 
@@ -93,6 +93,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Messages usagers après fermeture' => [['isMessagePostCloture' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Nouveaux messages usagers' => [['isNouveauMessage' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Messages usagers sans réponse' => [['isMessageWithoutResponse' => 'oui', 'isImported' => 'oui'], 0];
+        yield 'Search by Status Refuse for agent 38' => [['status' => 'refuse', 'isImported' => 'oui'], 1, 'user-38-01@signal-logement.fr'];
     }
 
     /**

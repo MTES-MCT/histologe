@@ -155,6 +155,15 @@ affectations:
     signalement: 2023-22
     partner: "partenaire-38-01@signal-logement.fr"
     statut: "REFUSE"
+    answered_by: "admin-territoire-38-01@signal-logement.fr"
+    affected_by: "admin-territoire-38-01@signal-logement.fr"
+    motif_cloture: ""
+    motif_refus: "DOUBLON"
+    territory: "Isère"
+  -
+    signalement: 2023-22
+    partner: "partenaire-38-02@signal-logement.fr"
+    statut: "REFUSE"
     answered_by: "user-38-01@signal-logement.fr"
     affected_by: "user-38-01@signal-logement.fr"
     motif_cloture: ""

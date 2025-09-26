@@ -18,7 +18,8 @@ enum AffectationStatus: string
         return match ($this) {
             self::WAIT => SignalementStatus::NEED_VALIDATION,
             self::ACCEPTED => SignalementStatus::ACTIVE,
-            self::CLOSED, self::REFUSED => SignalementStatus::CLOSED,
+            self::CLOSED => SignalementStatus::CLOSED,
+            self::REFUSED => SignalementStatus::REFUSED,
         };
     }
 
