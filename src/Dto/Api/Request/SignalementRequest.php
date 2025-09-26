@@ -32,7 +32,7 @@ class SignalementRequest implements RequestInterface
 
     #[OA\Property(
         description: 'Adresse du logement (numéro et voie).',
-        example: '151 chemin de la route',
+        example: '151 avenue du pont trinquat',
     )]
     #[Assert\NotBlank(message: 'Veuillez renseigner l\'adresse du logement.')]
     #[Assert\Length(max: 100)]
@@ -40,7 +40,7 @@ class SignalementRequest implements RequestInterface
 
     #[OA\Property(
         description: 'Code postal du logement.',
-        example: '34090',
+        example: '34070',
     )]
     #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
     public ?string $codePostalOccupant = null;
@@ -121,7 +121,7 @@ class SignalementRequest implements RequestInterface
 
     #[OA\Property(
         description: 'S\'agit-il d\'un logement vacant ?
-                    <br>⚠️Pris en compte uniquement pour les profilDeclarant "LOCATAIRE" et "BAILLEUR_OCCUPANT".',
+                    <br>⚠️Pris en compte uniquement pour les profilDeclarant "TIERS_PARTICULIER", "TIERS_PRO", "SERVICE_SECOURS" et "BAILLEUR".',
         example: false,
     )]
     public ?bool $isLogementVacant = null;
@@ -244,14 +244,14 @@ class SignalementRequest implements RequestInterface
         description: 'Le logement dispose-t-il d\'une salle de bain (salle d\'eau avec douche ou baignoire) ?',
         example: true,
     )]
-    public ?bool $isSdb = null;
+    public ?bool $isSalleDeBain = null;
 
     #[OA\Property(
         description: 'Existe t-il un accès à une salle de bain collective ?
-                     <br>⚠️Pris en compte uniquement dans le cas où isSdb = false.',
+                     <br>⚠️Pris en compte uniquement dans le cas où isSalleDeBain = false.',
         example: false,
     )]
-    public ?bool $isSdbCollective = null;
+    public ?bool $isSalleDeBainCollective = null;
 
     #[OA\Property(
         description: 'Le logement dispose-t-il de WC ?',
@@ -367,7 +367,7 @@ class SignalementRequest implements RequestInterface
             'MSA',
         ],
     )]
-    public ?string $caisseAllocation = null;
+    public ?string $caisseAllocations = null;
 
     #[OA\Property(
         description: 'Date de naissance de l\'allocataire au format AAAA-MM-DD.
