@@ -110,7 +110,7 @@ class SignalementControllerTest extends WebTestCase
         yield 'SA - Fermé' => [
             'admin-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000001',
-            'a.fr-nav__link.fr-fi-lock-fill',
+            'button.fr-nav__link.fr-fi-lock-fill',
             'Rouvrir pour tous',
         ];
 
@@ -132,7 +132,7 @@ class SignalementControllerTest extends WebTestCase
         yield '01 - RT - Fermé' => [
             'admin-territoire-01-01@signal-logement.fr',
             '00000000-0000-0000-2022-000000000002',
-            'a.fr-nav__link.fr-fi-lock-fill',
+            'button.fr-nav__link.fr-fi-lock-fill',
             'Rouvrir pour tous',
         ];
 
@@ -145,7 +145,7 @@ class SignalementControllerTest extends WebTestCase
         yield '38 - RT - Affectation clôturée' => [
             'admin-territoire-38-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000023',
-            'a.fr-nav__link.fr-fi-lock-fill',
+            'button.fr-nav__link.fr-fi-lock-fill',
             'Rouvrir pour DDT 38',
         ];
 

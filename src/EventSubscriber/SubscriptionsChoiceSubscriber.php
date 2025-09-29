@@ -15,6 +15,8 @@ class SubscriptionsChoiceSubscriber implements EventSubscriberInterface
     public function __construct(
         private Security $security,
         private EntityManagerInterface $em,
+        #[Autowire('%feature_new_dashboard%')]
+        private bool $featureNewDashboard,
     ) {
     }
 
@@ -25,13 +27,11 @@ class SubscriptionsChoiceSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(
         RequestEvent $event,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        bool $featureNewDashboard,
     ): void {
         if (!$event->isMainRequest()) {
             return;
         }
-        if (!$featureNewDashboard) {
+        if (!$this->featureNewDashboard) {
             return;
         }
 

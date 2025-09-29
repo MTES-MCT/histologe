@@ -301,10 +301,46 @@ class SignalementActionControllerTest extends WebTestCase
         yield 'Signalement with geoloc' => ['00000000-0000-0000-2025-000000000003', false];
     }
 
-    public function testSubscribeAndUnsubscribe(): void
+    public function testSubscribeAndUnsubscribeAlone(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-12']);
         $user = $this->userRepository->findOneBy(['email' => 'user-13-05@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_subscribe', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'subscribe'),
+            ]
+        );
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        $this->assertNotNull($sub);
+
+        $route = $this->router->generate('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'unsubscribe'),
+            ]
+        );
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('error'));
+        $this->assertEquals('Vous ne pouvez pas quitter un dossier étant seul agent de votre partenaire.', $flashBag->get('error')[0]);
+
+        $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        $this->assertNotNull($sub);
+    }
+
+    public function testSubscribeAndUnsubscribe(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-10']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@signal-logement.fr']);
         $this->client->loginUser($user);
 
         $route = $this->router->generate('back_signalement_subscribe', ['uuid' => $signalement->getUuid()]);
