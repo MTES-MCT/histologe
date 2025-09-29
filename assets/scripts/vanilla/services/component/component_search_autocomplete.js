@@ -4,19 +4,20 @@ function initSearchAutocompleteWidgets() {
     const containers = document.querySelectorAll('.search-autocomplete-container');
 
     containers.forEach(container => {
+        const formName = container.getAttribute('data-form-target-name');
+        const form = document.getElementById(formName);
         const input = container.querySelector('input');
         const datalist = container.querySelector('datalist');
+        const errorMessage = container.querySelector('.fr-message--error-value-list');
 
         if (!input || !datalist) return;
 
         const choices = JSON.parse(input.getAttribute('data-autocomplete-choices') || '[]');
 
         function submitForm() {
-            const formName = container.getAttribute('data-form-target-name')
             if (formName == undefined || formName == '') {
               return;
             }
-            const form = document.getElementById(formName);
             if (form) {
                 form.submit();
             }
@@ -43,5 +44,17 @@ function initSearchAutocompleteWidgets() {
                 submitForm();
             }
         });
+
+        // Vérifier la valeur lorsque le formulaire est posté
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                if (!isValidChoice(input.value)) {
+                    event.preventDefault();
+                    errorMessage.classList.remove('fr-hidden');
+                } else {
+                    errorMessage.classList.add('fr-hidden');
+                }
+            });
+        }
     });
 }

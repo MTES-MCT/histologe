@@ -249,5 +249,8 @@
             {% endfor %}
         </datalist>
         {{ block('form_errors') }}
+        <div class="fr-messages-group" aria-live="polite">
+            <p class="fr-message fr-message--error fr-message--error-value-list fr-hidden" id="text-input-error-message-error">Cette valeur ne fait pas partie des propositions.</p>
+        </div>
     </div>
 {% endblock %}
