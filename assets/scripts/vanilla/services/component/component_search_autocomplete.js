@@ -12,7 +12,8 @@ function initSearchAutocompleteWidgets() {
 
         if (!input || !datalist) return;
 
-        const choices = JSON.parse(input.getAttribute('data-autocomplete-choices') || '[]');
+        let choices = JSON.parse(input.getAttribute('data-autocomplete-choices') || '[]');
+        choices = choices.map((str) => str.toLowerCase());
 
         function submitForm() {
             if (formName == undefined || formName == '') {
@@ -24,7 +25,7 @@ function initSearchAutocompleteWidgets() {
         }
 
         function isValidChoice(value) {
-            return choices.includes(value);
+            return value === '' || choices.includes(value.toLowerCase());
         }
 
         // Détecter la sélection d'un élément dans la datalist
