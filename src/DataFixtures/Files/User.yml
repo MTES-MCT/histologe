@@ -233,6 +233,12 @@ users:
     statut: "INACTIVE"
     is_mailing_active: 0
   -
+    email: user-13-15@signal-logement.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Partenaire 13-10 EPCI"
+    statut: "ACTIVE"
+    is_mailing_active: 0
+  -
     email: user-2A-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 2A-01"

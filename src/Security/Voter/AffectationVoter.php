@@ -78,7 +78,14 @@ class AffectationVoter extends Voter
 
     private function canAnswer(Affectation $affectation, User $user): bool
     {
-        return $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory()) && SignalementStatus::ACTIVE === $affectation->getSignalement()->getStatut();
+        $canAnswer = $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory())
+            && SignalementStatus::ACTIVE === $affectation->getSignalement()->getStatut();
+
+        if (!$affectation->isSynchronizeWithEsabora()) {
+            return $canAnswer;
+        }
+
+        return false;
     }
 
     private function canClose(Affectation $affectation, User $user): bool

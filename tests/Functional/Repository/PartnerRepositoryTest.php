@@ -16,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerRepositoryTest extends KernelTestCase
 {
-    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
+    public const string USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
     private EntityManagerInterface $entityManager;
     private PartnerRepository $partnerRepository;
 
@@ -49,7 +49,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(7, $partners);
+        $this->assertCount(8, $partners);
     }
 
     public function testFindPossiblePartnersForCOR69(): void
@@ -195,7 +195,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
         $searchPartner->setTerritoire($territory);
         $partnerPaginator = $this->partnerRepository->getPartners(50, $searchPartner);
-        $this->assertEquals(2, $partnerPaginator->count());
+        $this->assertEquals(3, $partnerPaginator->count());
     }
 
     public function testGetPartnerPaginatorWithSearchPartnerNotInterconnected(): void
@@ -242,7 +242,7 @@ class PartnerRepositoryTest extends KernelTestCase
     {
         $countAll = $this->partnerRepository->countPartnerInterfaces([]);
         $this->assertIsInt($countAll);
-        $this->assertEquals(2, $countAll);
+        $this->assertEquals(3, $countAll);
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy([]);
         if ($territory) {

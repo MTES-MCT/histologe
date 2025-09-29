@@ -50,8 +50,8 @@ class SignalementSearchQueryTest extends KernelTestCase
             direction: 'DESC',
             createdFrom: 'formulaire-pro',
             relanceUsagerSansReponse: 'oui',
-            isNouveauMessage: 'oui',
             isMessagePostCloture: 'oui',
+            isNouveauMessage: 'oui',
             isMessageWithoutResponse: 'oui',
             isDossiersSansActivite: 'oui',
         );
