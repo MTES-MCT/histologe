@@ -19,20 +19,7 @@
                 <li>
                     {{ critere }}
                     {% for precision in precisions %}
-                        {% if precision.label is not same as '' %}
-                            <ul class="fr-list fr-list--none">
-                                <li>
-                                    {{ precision.label|raw }}                
-                                    {# Affichage des données spécifiques liées au critère #}
-                                    {% if signalement.jsonContent[precision.desordreCritere.slugCritere] is defined %}
-                                        <br>Commentaire usager : <i>{{ signalement.jsonContent[precision.desordreCritere.slugCritere] }}</i>
-                                    {# Affichage des données spécifiques liées aux précisions sur la taille des pièces (à standardiser si nécessaire) #}
-                                    {% elseif signalement.jsonContent[precision.desordrePrecisionSlug] is defined %}
-                                        <br>Taille (en cm) : <i>{{ signalement.jsonContent[precision.desordrePrecisionSlug] }}</i>
-                                    {% endif %}
-                                </li>
-                            </ul>
-                        {% endif %}
+                        {% include '_partials/signalement/desordre-precision-label.html.twig' %}
                         {# ajout des photos liées spécifiquement à ce critère ou à cette précision #}
                         {% if photos[precision.desordreCritere.slugCritere] is defined %}
                             <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
