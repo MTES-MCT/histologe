@@ -15,7 +15,7 @@ class ExportIterableQuery
 {
     public function __construct(
         private readonly QueryBuilderFactory $queryBuilderFactory,
-        private readonly EntityManagerInterface $em
+        private readonly EntityManagerInterface $em,
     ) {
     }
 

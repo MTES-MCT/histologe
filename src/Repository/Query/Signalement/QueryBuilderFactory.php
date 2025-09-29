@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use App\Service\Signalement\SearchFilter;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
@@ -23,6 +24,8 @@ readonly class QueryBuilderFactory
 
     /**
      * @param array<string, mixed> $options
+     *
+     * @throws Exception
      */
     public function create(User $user, array $options = []): QueryBuilder
     {
@@ -99,7 +102,11 @@ readonly class QueryBuilderFactory
             $qb->andWhere('s.bailleur = :bailleur')
                 ->setParameter('bailleur', $options['bailleurSocial']);
         }
-        $qb->setParameter('statusList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);
+        $qb->setParameter('statusList', [
+            SignalementStatus::ARCHIVED,
+            SignalementStatus::DRAFT,
+            SignalementStatus::DRAFT_ARCHIVED,
+        ]);
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
 
         if (!empty($options['relanceUsagerSansReponse'])) {

@@ -4,7 +4,6 @@ namespace App\Repository\Query\Signalement;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
-use Doctrine\DBAL\Exception;
 
 class MapGeoDataQuery
 {
@@ -18,8 +17,6 @@ class MapGeoDataQuery
      * @param array<string,mixed> $options
      *
      * @return array<int, array<string,mixed>>
-     *
-     * @throws Exception
      */
     public function getData(User $user, array $options, int $offset): array
     {
@@ -29,7 +26,11 @@ class MapGeoDataQuery
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
+            ->setParameter('signalement_status_list', [
+                SignalementStatus::ARCHIVED,
+                SignalementStatus::DRAFT,
+                SignalementStatus::DRAFT_ARCHIVED,
+            ])
             ->setFirstResult($offset)
             ->setMaxResults(self::MARKERS_PAGE_SIZE);
 

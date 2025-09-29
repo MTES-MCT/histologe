@@ -4,7 +4,6 @@ namespace App\Repository\Query\Signalement;
 
 use App\Dto\SignalementAffectationListView;
 use App\Entity\User;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 readonly class ListPaginatorQuery
@@ -15,8 +14,6 @@ readonly class ListPaginatorQuery
 
     /**
      * @param array<string,mixed> $options
-     *
-     * @throws Exception
      */
     public function paginate(User $user, array $options): Paginator
     {
