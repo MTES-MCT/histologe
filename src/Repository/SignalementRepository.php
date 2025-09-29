@@ -657,7 +657,10 @@ class SignalementRepository extends ServiceEntityRepository
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
-            ->leftJoin('s.desordreCategories', 'desordreCategories')
+            ->leftJoin('s.desordrePrecisions', 'desordrePrecisions')
+            ->leftJoin('desordrePrecisions.desordreCritere', 'desordreCritere')
+            ->leftJoin('desordreCritere.desordreCategorie', 'desordreCategories')
+            // ->leftJoin('s.desordreCategories', 'desordreCategories')
             ->leftJoin('s.desordreCriteres', 'desordreCriteres')
             ->leftJoin('s.tags', 'tags')
             ->leftJoin(ViewLatestIntervention::class, 'vli', 'WITH', 'vli.signalementId = s.id')

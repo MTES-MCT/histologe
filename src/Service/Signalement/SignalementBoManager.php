@@ -247,7 +247,6 @@ class SignalementBoManager
     {
         $signalement->setDetails($form->get('details')->getData());
 
-        $signalement->removeAllDesordreCategory();
         $signalement->removeAllDesordreCritere();
         $signalement->removeAllDesordrePrecision();
         $jsonContent = $signalement->getJsonContent();
@@ -269,7 +268,6 @@ class SignalementBoManager
                 /** @var DesordreCritere $desordreCritere */
                 foreach ($fieldData as $desordreCritere) {
                     $signalement->addDesordreCritere($desordreCritere);
-                    $signalement->addDesordreCategory($desordreCritere->getDesordreCategorie());
                     if ($desordreCritere->getDesordrePrecisions()->count() < 2) {
                         $signalement->addDesordrePrecision($desordreCritere->getDesordrePrecisions()->first());
                     }

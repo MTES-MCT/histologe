@@ -472,11 +472,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'information_complementaire', nullable: true)]
     private ?InformationComplementaire $informationComplementaire = null;
 
-    /** @var Collection<int, DesordreCategorie> $desordreCategories */
-    #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, inversedBy: 'signalement', cascade: ['persist'])]
-    #[ORM\JoinTable(name: 'desordre_categorie_signalement')]
-    private Collection $desordreCategories;
-
     /** @var Collection<int, DesordreCritere> $desordreCriteres */
     #[ORM\ManyToMany(targetEntity: DesordreCritere::class, inversedBy: 'signalement', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'desordre_critere_signalement')]
@@ -538,7 +533,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->signalementQualifications = new ArrayCollection();
         $this->interventions = new ArrayCollection();
         $this->files = new ArrayCollection();
-        $this->desordreCategories = new ArrayCollection();
         $this->desordreCriteres = new ArrayCollection();
         $this->desordrePrecisions = new ArrayCollection();
         $this->userSignalementSubscriptions = new ArrayCollection();
@@ -2521,37 +2515,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection<int, DesordreCategorie>
-     */
-    public function getDesordreCategories(): Collection
-    {
-        return $this->desordreCategories;
-    }
-
-    public function addDesordreCategory(DesordreCategorie $desordreCategory): self
-    {
-        if (!$this->desordreCategories->contains($desordreCategory)) {
-            $this->desordreCategories->add($desordreCategory);
-        }
-
-        return $this;
-    }
-
-    public function removeDesordreCategory(DesordreCategorie $desordreCategory): self
-    {
-        $this->desordreCategories->removeElement($desordreCategory);
-
-        return $this;
-    }
-
-    public function removeAllDesordreCategory(): self
-    {
-        $this->desordreCategories->clear();
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, DesordreCritere>
      */
     public function getDesordreCriteres(): Collection
@@ -2635,11 +2598,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nomOccupant ?? $this->nomDeclarant;
     }
 
-    public function hasDesordreCategorie(DesordreCategorie $desordreCategorie): bool
-    {
-        return \in_array($desordreCategorie, $this->desordreCategories->toArray());
-    }
-
     public function hasDesordreCritere(DesordreCritere $desordreCritere): bool
     {
         return \in_array($desordreCritere, $this->desordreCriteres->toArray());
@@ -2702,12 +2660,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         )->toArray();
     }
 
-    /** @return array<string> */
-    public function getDesordreCategorieSlugs(): array
+    /** @return array<string, DesordreCritere[]> */
+    public function getDesordresIndexedByCategorieSlugs(): array
     {
-        return $this->getDesordreCriteres()->map(
-            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCategorie()
-        )->toArray();
+        $list = [];
+        foreach ($this->getDesordrePrecisions() as $desordrePrecision) {
+            $list[$desordrePrecision->getDesordreCritere()->getSlugCategorie()][] = $desordrePrecision->getDesordreCritere();
+        }
+
+        return $list;
     }
 
     public function getBailleur(): ?Bailleur

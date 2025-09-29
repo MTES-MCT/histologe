@@ -184,7 +184,6 @@ class SignalementBuilderTest extends KernelTestCase
         $informationComplementaire = array_filter($signalement->getInformationComplementaire()->toArray());
         $this->assertEquals($this->getLocataireInformationComplementaire(), $informationComplementaire);
 
-        $this->assertCount(3, $signalement->getDesordreCategories());
         $this->assertCount(5, $signalement->getDesordreCriteres());
         $this->assertCount(5, $signalement->getDesordrePrecisions());
 
@@ -251,7 +250,6 @@ class SignalementBuilderTest extends KernelTestCase
             ->withDesordres()
             ->build();
 
-        $this->assertCount(12, $signalement->getDesordreCategories());
         $this->assertCount(56, $signalement->getDesordreCriteres());
         $this->assertCount(64, $signalement->getDesordrePrecisions());
 

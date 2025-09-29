@@ -260,11 +260,6 @@ class SignalementBuilder
                         }
                     }
                 }
-
-                if (null !== $critereToLink) {
-                    // lier la catégorie BO idoine
-                    $this->signalement->addDesordreCategory($critereToLink->getDesordreCategorie());
-                }
             }
         }
     }

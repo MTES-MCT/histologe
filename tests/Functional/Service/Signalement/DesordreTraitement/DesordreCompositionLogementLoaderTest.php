@@ -55,11 +55,6 @@ class DesordreCompositionLogementLoaderTest extends KernelTestCase
         $this->assertCount($nbDesordrePrecision + 1, $signalement->getDesordrePrecisions());
         $this->assertTrue($signalement->hasDesordrePrecision($precisionToLink));
         $this->assertTrue($signalement->hasDesordreCritere($precisionToLink->getDesordreCritere()));
-        $this->assertTrue(
-            $signalement->hasDesordreCategorie(
-                $precisionToLink->getDesordreCritere()->getDesordreCategorie()
-            )
-        );
 
         $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
 
@@ -69,8 +64,5 @@ class DesordreCompositionLogementLoaderTest extends KernelTestCase
         $this->assertCount($nbDesordrePrecision, $signalement->getDesordrePrecisions());
         $this->assertFalse($signalement->hasDesordrePrecision($precisionToLink));
         $this->assertFalse($signalement->hasDesordreCritere($precisionToLink->getDesordreCritere()));
-        $this->assertFalse($signalement->hasDesordreCategorie(
-            $precisionToLink->getDesordreCritere()->getDesordreCategorie()
-        ));
     }
 }

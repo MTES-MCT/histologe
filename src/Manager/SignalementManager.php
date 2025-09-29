@@ -628,10 +628,6 @@ class SignalementManager extends AbstractManager
                     $critereToLink = $precisionToLink->getDesordreCritere();
                     if (null !== $critereToLink) {
                         $signalement->addDesordreCritere($critereToLink);
-                        $categorieToLink = $critereToLink->getDesordreCategorie();
-                        if (null !== $categorieToLink) {
-                            $signalement->addDesordreCategory($categorieToLink);
-                        }
                     }
                 }
             } elseif ($removeSuroccupationDesordre) {
@@ -645,8 +641,6 @@ class SignalementManager extends AbstractManager
                 $signalement->removeDesordrePrecision($precisionToLink);
                 $critereToLink = $precisionToLink->getDesordreCritere();
                 $signalement->removeDesordreCritere($critereToLink);
-                $categorieToLink = $critereToLink->getDesordreCategorie();
-                $signalement->removeDesordreCategory($categorieToLink);
             }
         }
 

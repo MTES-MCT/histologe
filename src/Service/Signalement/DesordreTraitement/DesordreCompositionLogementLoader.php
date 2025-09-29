@@ -2,7 +2,6 @@
 
 namespace App\Service\Signalement\DesordreTraitement;
 
-use App\Entity\DesordreCategorie;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Repository\DesordreCritereRepository;
@@ -171,9 +170,6 @@ class DesordreCompositionLogementLoader
             && !$this->signalement->hasDesordrePrecision($precisionToLink)) {
             $this->signalement->addDesordrePrecision($precisionToLink);
         }
-        if (!$this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())) {
-            $this->signalement->addDesordreCategory($critereToLink->getDesordreCategorie());
-        }
     }
 
     private function removeDesordreCriterePrecisionBySlugs(string $slugCritere, string $slugPrecision): void
@@ -188,22 +184,5 @@ class DesordreCompositionLogementLoader
             && $this->signalement->hasDesordrePrecision($precisionToLink)) {
             $this->signalement->removeDesordrePrecision($precisionToLink);
         }
-
-        if (null !== $critereToLink && $this->signalement->hasDesordreCategorie($critereToLink->getDesordreCategorie())
-            && !$this->hasDesordreCritereInCategorie($this->signalement, $critereToLink->getDesordreCategorie())) {
-            $this->signalement->removeDesordreCategory($critereToLink->getDesordreCategorie());
-        }
-    }
-
-    private function hasDesordreCritereInCategorie(Signalement $signalement, DesordreCategorie $desordreCategorie): bool
-    {
-        $hasDesordreCritere = false;
-        foreach ($signalement->getDesordreCriteres() as $critere) {
-            if ($critere->getDesordreCategorie() === $desordreCategorie) {
-                $hasDesordreCritere = true;
-            }
-        }
-
-        return $hasDesordreCritere;
     }
 }
