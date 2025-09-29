@@ -1087,3 +1087,49 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
+  -     
+    territory: "Gers"
+    uuid: "00000000-0000-0000-2025-000000000010"
+    reference: "2025-10"
+    details: "Les murs sont complétements fissurés et le vent s'engouffre."
+    is_allocataire: "0"
+    nature_logement: "maison"
+    superficie: 340
+    is_logement_social: 0
+    logement_vacant: 1
+    adresse_occupant: "1 D507"
+    cp_occupant: "32100"
+    ville_occupant: "Larressingle"
+    statut: "ACTIVE"
+    geoloc: "{\"lat\": 43.9438516, \"lng\": 0.3110056}"
+    insee_occupant: "32194"
+    nb_pieces_logement: 1
+    nb_occupants_logement: 0
+    score: 35
+    score_logement: 20
+    score_batiment: 15
+    loyer: null
+    date_entree: "2019-12-01"
+    nom_proprio: "ImmoGers"
+    type_proprio: "ORGANISME_SOCIETE"
+    profile_declarant: "TIERS_PRO"
+    created_by: "user-44-02@signal-logement.fr"
+    desordre_categorie:
+      - "Sécurite risques particuliers"
+      - "Structure du bâti"
+    desordre_critere:
+      - "desordres_batiment_securite_elements_toit"
+      - "desordres_batiment_securite_toit"
+      - "desordres_batiment_securite_murs_fissures"
+      - "desordres_batiment_securite_balcons"
+      - "desordres_batiment_incendie_odeur_gaz"
+    desordre_precision:
+      - "desordres_batiment_securite_elements_toit"
+      - "desordres_batiment_securite_toit"
+      - "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
+      - "desordres_batiment_securite_balcons"
+      - "desordres_batiment_incendie_odeur_gaz"
+    type_composition_logement: "[]"
+    situation_foyer: "[]"
+    information_procedure: "[]"
+    information_complementaire: "[]"

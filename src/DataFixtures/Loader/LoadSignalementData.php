@@ -331,12 +331,12 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     private function loadNewSignalements(ObjectManager $manager, array $row): void
     {
         $faker = Factory::create('fr_FR');
-        $phoneNumber = $row['phone_number'];
+        $phoneNumber = $row['phone_number'] ?? null;
 
         /** @var Signalement $signalement */
         $signalement = (new Signalement())
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
-            ->setCiviliteOccupant($row['civilite_occupant'])
+            ->setCiviliteOccupant($row['civilite_occupant'] ?? 'mme')
             ->setNomOccupant($row['nom_occupant'] ?? $faker->lastName())
             ->setPrenomOccupant($row['prenom_occupant'] ?? $faker->firstName())
             ->setTelOccupant($row['tel_occupant'] ?? $phoneNumber)
@@ -352,7 +352,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setSuperficie($row['superficie'])
             ->setLoyer($row['loyer'] ?? $faker->randomNumber(3))
             ->setDetails($row['details'] ?? '')
-            ->setIsProprioAverti($row['is_proprio_averti'])
+            ->setIsProprioAverti($row['is_proprio_averti'] ?? 0)
             ->setNomProprio($row['nom_proprio'] ?? $faker->company())
             ->setMailProprio($faker->companyEmail)
             ->setTelProprio($phoneNumber)
@@ -381,7 +381,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     : (new \DateTimeImmutable())->modify('-15 days')
             )
             ->setIsUsagerAbandonProcedure($row['usager_abandon_procedure'] ?? null)
-            ->setNbPiecesLogement($row['nb_pieces_logement']);
+            ->setNbPiecesLogement($row['nb_pieces_logement'] ?? 1)
+            ->setIsLogementVacant($row['logement_vacant'] ?? false);
 
         if (isset($row['created_from_uuid'])) {
             $signalement->setCreatedFrom(
@@ -505,7 +506,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 $manager->persist($file);
             }
         }
-
         $manager->persist($signalement);
         $this->userManager->createUsagerFromSignalement($signalement);
         $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);

@@ -500,6 +500,9 @@ class SearchFilter
             case 'preavis_de_depart':
                 $qb->andWhere('s.isPreavisDepart = :is_preavis_depart')->setParameter('is_preavis_depart', true);
                 break;
+            case 'logement_vacant':
+                $qb->andWhere('s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', true);
+                break;
         }
 
         return $qb;
