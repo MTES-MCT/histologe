@@ -291,6 +291,15 @@ export default defineComponent({
         this.territoryModalLabel = requestResponse.label
         this.territoryModalDescription = requestResponse.message
         this.isTerritoryModalOpen = true
+
+        Sentry.captureMessage(this.territoryModalDescription, {
+          level: "error",
+          extra: {
+            adresse: formStore.data.adresse_logement_adresse,
+            code_postal: formStore.data.adresse_logement_adresse_detail_code_postal,
+            insee: formStore.data.adresse_logement_adresse_detail_insee,
+          },
+        });
       }
     },
     changeScreenBySlug (requestResponse: any) {
