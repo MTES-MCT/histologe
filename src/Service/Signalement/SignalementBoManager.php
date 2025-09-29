@@ -85,6 +85,7 @@ class SignalementBoManager
             $signalement->setNomDeclarant(null);
             $signalement->setPrenomDeclarant(null);
             $signalement->setStructureDeclarant(null);
+            $signalement->setTelDeclarant(null);
         }
 
         $signalement->setStatut(SignalementStatus::DRAFT);

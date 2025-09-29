@@ -381,12 +381,7 @@ class SignalementBuilder
                 ->setNomOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
                 ->setPrenomOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
                 ->setTelOccupant($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
-                ->setTelOccupantBis($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
-                ->setNomDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantNom())
-                ->setPrenomDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantPrenom())
-                ->setTelDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantTel())
-                ->setTelDeclarantSecondaire($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire())
-                ->setMailDeclarant($this->signalementDraftRequest->getVosCoordonneesOccupantEmail());
+                ->setTelOccupantBis($this->signalementDraftRequest->getVosCoordonneesOccupantTelSecondaire());
         } else {
             $this->signalement
                 ->setIsNotOccupant(true)
