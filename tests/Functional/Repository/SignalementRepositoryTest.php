@@ -217,7 +217,7 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function provideSearchWithGeoData(): \Generator
     {
-        yield 'Search all for super admin' => [self::USER_ADMIN, [], 47];
+        yield 'Search all for super admin' => [self::USER_ADMIN, [], 48];
         yield 'Search in Marseille for super admin' => [self::USER_ADMIN, ['cities' => ['Marseille']], 25];
         yield 'Search all for admin partner multi territories' => [self::USER_ADMIN_MULTI_13, [], 6];
         yield 'Search in Ain for admin partner multi territories' => [self::USER_ADMIN_MULTI_13, ['territories' => 1], 1];

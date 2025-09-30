@@ -61,7 +61,7 @@ class SignalementSearchQuery
         private readonly ?string $allocataire = null,
         #[Assert\Choice(['oui', 'non', 'non_renseigne'])]
         private readonly ?string $enfantsM6 = null,
-        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart'])]
+        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart', 'logement_vacant'])]
         private readonly ?string $situation = null,
         #[Assert\Choice([
             'non_decence_energetique',

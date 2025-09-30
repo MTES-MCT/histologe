@@ -21,7 +21,7 @@ class GlobalBackAnalyticsProviderTest extends KernelTestCase
 
         $this->assertEquals(6, \count($data));
         $this->assertArrayHasKey('count_signalement', $data);
-        $this->assertEquals(50, $data['count_signalement']);
+        $this->assertEquals(51, $data['count_signalement']);
         $this->assertArrayHasKey('average_criticite', $data);
         $this->assertArrayHasKey('average_days_validation', $data);
         $this->assertArrayHasKey('average_days_closure', $data);

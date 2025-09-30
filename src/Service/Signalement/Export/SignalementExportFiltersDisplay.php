@@ -55,6 +55,7 @@ class SignalementExportFiltersDisplay
         'attente_relogement' => 'Attente de relogement',
         'bail_en_cours' => 'Bail en cours',
         'preavis_de_depart' => 'Préavis de départ',
+        'logement_vacant' => 'Logement vacant',
     ];
 
     /** @var array<string> CLOSED_AFFECTATION_LIST */
