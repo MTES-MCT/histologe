@@ -233,3 +233,24 @@
         {{ block('form_errors') }}
     </div>
 {% endblock %}
+
+{% block search_autocomplete_row %}
+    <div class="search-autocomplete-container fr-input-group {% if errors|length > 0 %}fr-input-group--error{% endif %}" id="{{ id }}" data-form-target-name="{{ form.parent.vars.attr.id }}">
+        {% if label is not same as(false) %}
+            <label for="{{ id }}" class="fr-label">{{ label }} {{form_help(form)}}</label>
+        {% endif %}
+        <div class="fr-input-wrap fr-input-wrap--addon">
+            {{ form_widget(form, {'attr': (attr|default({}))|merge({'list': id ~ '_datalist'})}) }}
+            <button type="submit" class="fr-btn fr-icon-search-line">Rechercher</button>
+        </div>
+        <datalist id="{{ id }}_datalist">
+            {% for choice in autocomplete_choices %}
+                <option value="{{ choice }}">{{ choice }}</option>
+            {% endfor %}
+        </datalist>
+        {{ block('form_errors') }}
+        <div class="fr-messages-group" aria-live="polite">
+            <p class="fr-message fr-message--error fr-message--error-value-list fr-hidden" id="text-input-error-message-error">Cette valeur ne fait pas partie des propositions.</p>
+        </div>
+    </div>
+{% endblock %}
