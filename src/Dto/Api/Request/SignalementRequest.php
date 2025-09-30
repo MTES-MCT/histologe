@@ -42,6 +42,7 @@ class SignalementRequest implements RequestInterface
         description: 'Code postal du logement.',
         example: '34070',
     )]
+    #[Assert\NotBlank(message: 'Veuillez renseigner le code postal du logement.')]
     #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
     public ?string $codePostalOccupant = null;
 
@@ -204,7 +205,7 @@ class SignalementRequest implements RequestInterface
         description: 'Année de construction du logement.',
         example: 1970,
     )]
-    #[Assert\Regex(pattern: '/^\d{4}$/', message: 'Veuillez saisir une année de 4 chiffres.')]
+    #[Assert\Regex(pattern: '/^\d{4}$/', message: 'Veuillez saisir une année sur 4 chiffres.')]
     public ?int $anneeConstruction = null;
     #[OA\Property(
         description: 'Nombre de pièces à vivre dans le logement (salon, chambre).',
@@ -271,7 +272,6 @@ class SignalementRequest implements RequestInterface
         example: false,
     )]
     public ?bool $isWcCuisineMemePiece = null;
-    // typeChauffage
 
     #[OA\Property(
         description: 'Type de chauffage du logement.',
@@ -303,7 +303,7 @@ class SignalementRequest implements RequestInterface
         description: 'Année du diagnostic de performance énergétique (DPE).',
         example: '2021',
     )]
-    #[Assert\Regex(pattern: '/^\d{4}$/', message: 'Veuillez saisir une année de 4 chiffres.')]
+    #[Assert\Regex(pattern: '/^\d{4}$/', message: 'Veuillez saisir une année sur 4 chiffres.')]
     public ?string $anneeDpe = null;
 
     #[OA\Property(
@@ -421,7 +421,6 @@ class SignalementRequest implements RequestInterface
     #[Assert\Length(max: 255)]
     public ?string $accompagnementTravailleurSocialNomStructure = null;
 
-    // IsBeneficiaireRsa
     #[OA\Property(
         description: 'L\'occupant est-il bénéficiaire du RSA ?',
         example: false,
@@ -445,6 +444,7 @@ class SignalementRequest implements RequestInterface
                       <br>⚠️Pris en compte uniquement dans le cas où isBailleurAverti = true.',
         example: '2023-02-15',
     )]
+    #[Assert\Date(message: 'Veuillez saisir une date au format AAAA-MM-DD.')]
     public ?string $dateBailleurAverti = null;
 
     #[OA\Property(
@@ -539,7 +539,7 @@ class SignalementRequest implements RequestInterface
     public ?string $prenomOccupant = null;
 
     #[OA\Property(
-        description: 'Email de l\'occupant.
+        description: 'E-mail de l\'occupant.
                      <br><strong>⚠️ Obligatoire en cas de profilDeclarant = "LOCATAIRE" ou "BAILLEUR_OCCUPANT".</strong>',
         example: 'marie.dupont@example.com',
     )]
@@ -588,7 +588,7 @@ class SignalementRequest implements RequestInterface
     public ?string $prenomBailleur = null;
 
     #[OA\Property(
-        description: 'Email du bailleur ou de son représentant.',
+        description: 'E-mail du bailleur ou de son représentant.',
         example: 'rene.vignon@example.com',
     )]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du bailleur n\'est pas valide.')]
@@ -649,7 +649,7 @@ class SignalementRequest implements RequestInterface
     #[Assert\Length(max: 50)]
     public ?string $prenomDeclarant = null;
     #[OA\Property(
-        description: 'Email du déclarant.
+        description: 'E-mail du déclarant.
                      <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".
                      <br><strong>⚠️ Obligatoire dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".</strong>',
         example: 'el-allali.hakim@example.com',
@@ -686,7 +686,7 @@ class SignalementRequest implements RequestInterface
     #[Assert\Length(max: 255)]
     public ?string $prenomAgence = null;
     #[OA\Property(
-        description: 'Email du contact à l\'agence immobilière.',
+        description: 'E-mail du contact à l\'agence immobilière.',
         example: 'victoria.apollo@immo3600.com',
     )]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du contact à l\'agence immobilière n\'est pas valide.')]
@@ -697,6 +697,7 @@ class SignalementRequest implements RequestInterface
         description: 'Téléphone du contact à l\'agence immobilière.',
         example: '0639988821',
     )]
+    #[AppAssert\TelephoneFormat]
     public ?string $telAgence = null;
 
     #[OA\Property(
@@ -749,7 +750,19 @@ class SignalementRequest implements RequestInterface
                     $context->buildViolation('Veuillez renseigner le prénom de l\'occupant.')->atPath('prenomOccupant')->addViolation();
                 }
                 if (empty($this->mailOccupant)) {
-                    $context->buildViolation('Veuillez renseigner l\'email de l\'occupant.')->atPath('mailOccupant')->addViolation();
+                    $context->buildViolation('Veuillez renseigner l\'e-mail de l\'occupant.')->atPath('mailOccupant')->addViolation();
+                }
+                if ($this->structureDeclarant) {
+                    $context->buildViolation('Le champ structureDeclarant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE ou BAILLEUR_OCCUPANT.')->atPath('structureDeclarant')->addViolation();
+                }
+                if ($this->nomDeclarant) {
+                    $context->buildViolation('Le champ nomDeclarant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE ou BAILLEUR_OCCUPANT.')->atPath('nomDeclarant')->addViolation();
+                }
+                if ($this->prenomDeclarant) {
+                    $context->buildViolation('Le champ prenomDeclarant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE ou BAILLEUR_OCCUPANT.')->atPath('prenomDeclarant')->addViolation();
+                }
+                if ($this->mailDeclarant) {
+                    $context->buildViolation('Le champ mailDeclarant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE ou BAILLEUR_OCCUPANT.')->atPath('mailDeclarant')->addViolation();
                 }
             } else {
                 if (empty($this->nomDeclarant)) {
@@ -759,8 +772,84 @@ class SignalementRequest implements RequestInterface
                     $context->buildViolation('Veuillez renseigner le prénom du déclarant.')->atPath('prenomDeclarant')->addViolation();
                 }
                 if (empty($this->mailDeclarant)) {
-                    $context->buildViolation('Veuillez renseigner l\'email du déclarant.')->atPath('mailDeclarant')->addViolation();
+                    $context->buildViolation('Veuillez renseigner l\'e-mail du déclarant.')->atPath('mailDeclarant')->addViolation();
                 }
+            }
+            if ($this->profilDeclarant !== ProfileDeclarant::TIERS_PARTICULIER->value && $this->lienDeclarantOccupant) {
+                $context->buildViolation('Le champ lienDeclarantOccupant ne doit être renseigné que si le profilDeclarant = TIERS_PARTICULIER.')->atPath('lienDeclarantOccupant')->addViolation();
+            }
+            if (in_array($this->profilDeclarant, [ProfileDeclarant::TIERS_PARTICULIER->value, ProfileDeclarant::TIERS_PRO->value, ProfileDeclarant::SERVICE_SECOURS->value, ProfileDeclarant::BAILLEUR->value]) && $this->isLogementVacant) {
+                $context->buildViolation('Le champ isLogementVacant ne peux être true que si le profilDeclarant = TIERS_PARTICULIER, TIERS_PRO, SERVICE_SECOURS ou BAILLEUR.')->atPath('isLogementVacant')->addViolation();
+            }
+        }
+        if ($this->natureLogementAutre && 'autre' !== $this->natureLogement) {
+            $context->buildViolation('Le champ natureLogementAutre ne peux être true que si natureLogement = "autre".')->atPath('natureLogementAutre')->addViolation();
+        }
+        if ($this->etageAppartement && 'appartement' !== $this->natureLogement) {
+            $context->buildViolation('Le champ etageAppartement ne peux être true que si natureLogement = "appartement".')->atPath('etageAppartement')->addViolation();
+        }
+        if ($this->isAppartementAvecFenetres && 'appartement' !== $this->natureLogement) {
+            $context->buildViolation('Le champ isAppartementAvecFenetres ne peux être true que si natureLogement = "appartement".')->atPath('isAppartementAvecFenetres')->addViolation();
+        }
+        if ($this->isCuisineCollective && false !== $this->isCuisine) {
+            $context->buildViolation('Le champ isCuisineCollective ne peux être true que si isCuisine = false.')->atPath('isCuisineCollective')->addViolation();
+        }
+        if ($this->isSalleDeBainCollective && false !== $this->isSalleDeBain) {
+            $context->buildViolation('Le champ isSalleDeBainCollective ne peux être true que si isSalleDeBain = false.')->atPath('isSalleDeBainCollective')->addViolation();
+        }
+        if ($this->isWcCollectif && false !== $this->isWc) {
+            $context->buildViolation('Le champ isWcCollectif ne peux être true que si isWc = false.')->atPath('isWcCollectif')->addViolation();
+        }
+        if ($this->isWcCuisineMemePiece && (true !== $this->isWc || true !== $this->isCuisine)) {
+            $context->buildViolation('Le champ isWcCuisineMemePiece ne peux être true que si isWc = true et isCuisine = true.')->atPath('isWcCuisineMemePiece')->addViolation();
+        }
+        if (true !== $this->isAllocataire) {
+            if ($this->caisseAllocations) {
+                $context->buildViolation('Le champ caisseAllocations ne doit être renseigné que si isAllocataire = true.')->atPath('caisseAllocations')->addViolation();
+            }
+            if ($this->dateNaissanceAllocataire) {
+                $context->buildViolation('Le champ dateNaissanceAllocataire ne doit être renseigné que si isAllocataire = true.')->atPath('dateNaissanceAllocataire')->addViolation();
+            }
+            if ($this->numAllocataire) {
+                $context->buildViolation('Le champ numAllocataire ne doit être renseigné que si isAllocataire = true.')->atPath('numAllocataire')->addViolation();
+            }
+            if ($this->typeAllocation) {
+                $context->buildViolation('Le champ typeAllocation ne doit être renseigné que si isAllocataire = true.')->atPath('typeAllocation')->addViolation();
+            }
+            if ($this->montantAllocation) {
+                $context->buildViolation('Le champ montantAllocation ne doit être renseigné que si isAllocataire = true.')->atPath('montantAllocation')->addViolation();
+            }
+        }
+        if (true !== $this->isAccompagnementTravailleurSocial && $this->accompagnementTravailleurSocialNomStructure) {
+            $context->buildViolation('Le champ accompagnementTravailleurSocialNomStructure ne doit être renseigné que si isAccompagnementTravailleurSocial = true.')->atPath('accompagnementTravailleurSocialNomStructure')->addViolation();
+        }
+        if (true !== $this->isBailleurAverti) {
+            if ($this->dateBailleurAverti) {
+                $context->buildViolation('Le champ dateBailleurAverti ne doit être renseigné que si isBailleurAverti = true.')->atPath('dateBailleurAverti')->addViolation();
+            }
+            if ($this->moyenInformationBailleur) {
+                $context->buildViolation('Le champ moyenInformationBailleur ne doit être renseigné que si isBailleurAverti = true.')->atPath('moyenInformationBailleur')->addViolation();
+            }
+            if ($this->reponseBailleur) {
+                $context->buildViolation('Le champ reponseBailleur ne doit être renseigné que si isBailleurAverti = true.')->atPath('reponseBailleur')->addViolation();
+            }
+        }
+        if (true !== $this->isLogementAssure) {
+            if ($this->isAssuranceContactee) {
+                $context->buildViolation('Le champ isAssuranceContactee ne peut être true que si isLogementAssure = true.')->atPath('isAssuranceContactee')->addViolation();
+            }
+            if ($this->reponseAssurance) {
+                $context->buildViolation('Le champ reponseAssurance ne doit être renseigné que si isLogementAssure = true.')->atPath('reponseAssurance')->addViolation();
+            }
+        }
+        if ($this->typeBailleur !== ProprioType::ORGANISME_SOCIETE->value && $this->denominationBailleur) {
+            $context->buildViolation('Le champ denominationBailleur ne doit être renseigné que si typeBailleur = "ORGANISME_SOCIETE".')->atPath('denominationBailleur')->addViolation();
+        }
+        if ($this->dateEntreeLogement) {
+            $dateEntree = \DateTime::createFromFormat('Y-m-d', $this->dateEntreeLogement);
+            $now = new \DateTime();
+            if ($dateEntree && $dateEntree > $now) {
+                $context->buildViolation('La date d\'entrée dans le logement ne peut pas être dans le futur.')->atPath('dateEntreeLogement')->addViolation();
             }
         }
     }
