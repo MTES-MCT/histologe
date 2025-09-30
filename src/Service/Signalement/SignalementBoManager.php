@@ -247,7 +247,6 @@ class SignalementBoManager
     {
         $signalement->setDetails($form->get('details')->getData());
 
-        $signalement->removeAllDesordreCritere();
         $signalement->removeAllDesordrePrecision();
         $jsonContent = $signalement->getJsonContent();
         if (array_key_exists('desordres_batiment_nuisibles_autres', $jsonContent)) {
@@ -267,7 +266,6 @@ class SignalementBoManager
             if (str_starts_with($fieldName, 'desordres_LOGEMENT') || str_starts_with($fieldName, 'desordres_BATIMENT')) {
                 /** @var DesordreCritere $desordreCritere */
                 foreach ($fieldData as $desordreCritere) {
-                    $signalement->addDesordreCritere($desordreCritere);
                     if ($desordreCritere->getDesordrePrecisions()->count() < 2) {
                         $signalement->addDesordrePrecision($desordreCritere->getDesordrePrecisions()->first());
                     }

@@ -25,7 +25,6 @@ use App\Manager\UserManager;
 use App\Repository\BailleurRepository;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
-use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SituationRepository;
@@ -47,7 +46,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private readonly SituationRepository $situationRepository,
         private readonly CritereRepository $critereRepository,
         private readonly CriticiteRepository $criticiteRepository,
-        private readonly DesordreCritereRepository $desordreCritereRepository,
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly SignalementDraftRepository $signalementDraftRepository,
         private readonly TagRepository $tagRepository,
@@ -451,14 +449,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (isset($row['type_proprio'])) {
             $signalement
                 ->setTypeProprio(ProprioType::tryFrom($row['type_proprio']));
-        }
-
-        if (isset($row['desordre_critere'])) {
-            foreach ($row['desordre_critere'] as $desordreCritere) {
-                $signalement->addDesordreCritere(
-                    $this->desordreCritereRepository->findOneBy(['slugCritere' => $desordreCritere])
-                );
-            }
         }
 
         if (isset($row['desordre_precision'])) {

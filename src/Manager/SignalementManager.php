@@ -625,10 +625,6 @@ class SignalementManager extends AbstractManager
                 );
                 if (null !== $precisionToLink) {
                     $signalement->addDesordrePrecision($precisionToLink);
-                    $critereToLink = $precisionToLink->getDesordreCritere();
-                    if (null !== $critereToLink) {
-                        $signalement->addDesordreCritere($critereToLink);
-                    }
                 }
             } elseif ($removeSuroccupationDesordre) {
                 $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
@@ -639,8 +635,6 @@ class SignalementManager extends AbstractManager
                     ['desordrePrecisionSlug' => 'desordres_type_composition_logement_suroccupation_non_allocataire']
                 );
                 $signalement->removeDesordrePrecision($precisionToLink);
-                $critereToLink = $precisionToLink->getDesordreCritere();
-                $signalement->removeDesordreCritere($critereToLink);
             }
         }
 
