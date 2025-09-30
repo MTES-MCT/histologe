@@ -49,11 +49,8 @@ class SignalementApiFactory
         $signalement->setEscalierOccupant($request->escalierOccupant);
         $signalement->setNumAppartOccupant(numAppartOccupant: $request->numAppartOccupant);
         $signalement->setAdresseAutreOccupant($request->adresseAutreOccupant);
-
         $signalement->setProfileDeclarant(ProfileDeclarant::from($request->profilDeclarant));
-        if (ProfileDeclarant::TIERS_PARTICULIER === $signalement->getProfileDeclarant() && $request->lienDeclarantOccupant) {
-            $signalement->setLienDeclarantOccupant($request->lienDeclarantOccupant);
-        }
+        $signalement->setLienDeclarantOccupant($request->lienDeclarantOccupant);
 
         $signalement->setIsLogementSocial($request->isLogementSocial);
         if (in_array($signalement->getProfileDeclarant(),
@@ -69,31 +66,28 @@ class SignalementApiFactory
         $typeCompositionLogement->setCompositionLogementNombreEnfants((string) $request->nbEnfantsDansLogement);
         $typeCompositionLogement->setCompositionLogementEnfants((string) $request->isEnfantsMoinsSixAnsDansLogement);
         $signalement->setNatureLogement($request->natureLogement);
-        if ('autre' === $signalement->getNatureLogement()) {
-            $typeCompositionLogement->setTypeLogementNatureAutrePrecision($request->natureLogementAutre);
-        }
-        if ('appartement' === $signalement->getNatureLogement()) {
-            $apptAvecFenetre = self::convertBoolToString($request->isAppartementAvecFenetres);
-            $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($apptAvecFenetre);
+        $typeCompositionLogement->setTypeLogementNatureAutrePrecision($request->natureLogementAutre);
+        $apptAvecFenetre = self::convertBoolToString($request->isAppartementAvecFenetres);
+        $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($apptAvecFenetre);
 
-            if ($request->etageAppartement) {
-                $typeCompositionLogement->setTypeLogementDernierEtage('non');
-                $typeCompositionLogement->setTypeLogementRdc('non');
-                $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
-                $typeCompositionLogement->setTypeLogementSousSolSansFenetre('non');
+        if ($request->etageAppartement) {
+            $typeCompositionLogement->setTypeLogementDernierEtage('non');
+            $typeCompositionLogement->setTypeLogementRdc('non');
+            $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
+            $typeCompositionLogement->setTypeLogementSousSolSansFenetre('non');
 
-                if (EtageType::RDC->value === $request->etageAppartement) {
-                    $typeCompositionLogement->setTypeLogementRdc('oui');
-                } elseif (EtageType::DERNIER_ETAGE->value === $request->etageAppartement) {
-                    $typeCompositionLogement->setTypeLogementDernierEtage('oui');
-                    if ('non' === $apptAvecFenetre) {
-                        $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
-                    }
-                } elseif (EtageType::SOUSSOL->value === $request->etageAppartement && 'non' === $apptAvecFenetre) {
-                    $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
+            if (EtageType::RDC->value === $request->etageAppartement) {
+                $typeCompositionLogement->setTypeLogementRdc('oui');
+            } elseif (EtageType::DERNIER_ETAGE->value === $request->etageAppartement) {
+                $typeCompositionLogement->setTypeLogementDernierEtage('oui');
+                if ('non' === $apptAvecFenetre) {
+                    $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
                 }
+            } elseif (EtageType::SOUSSOL->value === $request->etageAppartement && 'non' === $apptAvecFenetre) {
+                $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
             }
         }
+
         $informationComplementaire->setInformationsComplementairesLogementNombreEtages((string) $request->nombreEtages);
         $informationComplementaire->setInformationsComplementairesLogementAnneeConstruction((string) $request->anneeConstruction);
         if (1 === $request->nombrePieces) {
@@ -108,16 +102,12 @@ class SignalementApiFactory
         $typeCompositionLogement->setTypeLogementCommoditesCuisine(self::convertBoolToString($request->isCuisine));
         $typeCompositionLogement->setTypeLogementCommoditesSalleDeBain(self::convertBoolToString($request->isSalleDeBain));
         $typeCompositionLogement->setTypeLogementCommoditesWc(self::convertBoolToString($request->isWc));
-        if (false === $request->isCuisine && null !== $request->isCuisineCollective) {
-            $typeCompositionLogement->setTypeLogementCommoditesCuisineCollective(self::convertBoolToString($request->isCuisineCollective));
+        $typeCompositionLogement->setTypeLogementCommoditesCuisineCollective(self::convertBoolToString($request->isCuisineCollective));
+        $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective(self::convertBoolToString($request->isSalleDeBainCollective));
+        $typeCompositionLogement->setTypeLogementCommoditesWcCuisine(self::convertBoolToString($request->isWcCuisineMemePiece));
+        if ($request->typeChauffage) {
+            $jsonContent['desordres_logement_chauffage'] = $request->typeChauffage;
         }
-        if (false === $request->isSalleDeBain && null !== $request->isSalleDeBainCollective) {
-            $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective(self::convertBoolToString($request->isSalleDeBainCollective));
-        }
-        if ($request->isCuisine && $request->isWc) {
-            $typeCompositionLogement->setTypeLogementCommoditesWcCuisine(self::convertBoolToString($request->isWcCuisineMemePiece));
-        }
-        $jsonContent['desordres_logement_chauffage'] = $request->typeChauffage;
 
         $typeCompositionLogement->setBailDpeBail(self::convertBoolToString($request->isBail));
         $typeCompositionLogement->setBailDpeDpe(self::convertBoolToString($request->isDpe));
@@ -160,13 +150,11 @@ class SignalementApiFactory
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireFsl(self::convertBoolToString($request->isBeneficiaireFsl));
 
         $signalement->setIsProprioAverti($request->isBailleurAverti);
-        if ($request->isBailleurAverti) {
-            if ($request->dateBailleurAverti) {
-                $signalement->setProprioAvertiAt(new \DateTimeImmutable($request->dateBailleurAverti));
-            }
-            $informationProcedure->setInfoProcedureBailMoyen($request->moyenInformationBailleur);
-            $informationProcedure->setInfoProcedureBailReponse($request->reponseBailleur);
+        if ($request->dateBailleurAverti) {
+            $signalement->setProprioAvertiAt(new \DateTimeImmutable($request->dateBailleurAverti));
         }
+        $informationProcedure->setInfoProcedureBailMoyen($request->moyenInformationBailleur);
+        $informationProcedure->setInfoProcedureBailReponse($request->reponseBailleur);
 
         $signalement->setIsRelogement($request->isDemandeRelogement);
         $situationFoyer->setTravailleurSocialQuitteLogement(self::convertBoolToString($request->isSouhaiteQuitterLogement));
@@ -192,8 +180,6 @@ class SignalementApiFactory
         $signalement->setTelOccupant($request->telOccupant);
         if ($request->typeBailleur) {
             $signalement->setTypeProprio(ProprioType::from($request->typeBailleur));
-        }
-        if ('ORGANISME_SOCIETE' === $request->typeBailleur) {
             $signalement->setDenominationProprio($request->denominationBailleur);
         }
         $signalement->setNomProprio($request->nomBailleur);

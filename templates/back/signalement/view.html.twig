@@ -6,30 +6,23 @@
 {% block notice %}
     {% if signalement.createdBy and signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
         {% if signalement.createdBy and 'ROLE_API_USER' in signalement.createdBy.roles %}
-            <div class="fr-notice fr-notice--info">
-                <div class="fr-container">
-                    <div class="fr-notice__body">
-                        <p>
-                            <span class="fr-notice__title">Signalement API</span>
-                            <span class="fr-notice__desc">Ce signalement a été créé via API par {{ signalement.createdBy.email }} pour le partenaire #TODO#.</span>
-                        </p>
-                        <button title="Masquer le message" class="fr-btn--close fr-btn">Masquer le message</button>
-                    </div>
-                </div>
-            </div>
+            {% set noticeTitle = 'Signalement API' %}
+            {% set noticeDesc = 'Ce signalement a été créé via API par ' ~ signalement.createdBy.email ~ ' pour le partenaire #TODO#.' %}
         {% else %}
+            {% set noticeTitle = 'Signalement BO' %}
+            {% set noticeDesc = 'Ce signalement a été créé depuis le formulaire pro par ' ~ signalement.createdBy.prenom ~ ' ' ~ signalement.createdBy.nom ~ ', du partenaire ' ~ signalement.createdBy.getPartnerInTerritory(signalement.territory).nom ~ '.' %}
+        {% endif %}
             <div class="fr-notice fr-notice--info">
                 <div class="fr-container">
                     <div class="fr-notice__body">
                         <p>
-                            <span class="fr-notice__title">Signalement BO</span>
-                            <span class="fr-notice__desc">Ce signalement a été créé depuis le formulaire pro par {{ signalement.createdBy.prenom }} {{ signalement.createdBy.nom }}, du partenaire {{ signalement.createdBy.getPartnerInTerritory(signalement.territory).nom }}.</span>
+                            <span class="fr-notice__title">{{ noticeTitle }}</span>
+                            <span class="fr-notice__desc">{{ noticeDesc }}</span>
                         </p>
                         <button title="Masquer le message" class="fr-btn--close fr-btn">Masquer le message</button>
                     </div>
                 </div>
             </div>
-        {% endif %}
     {% endif %}
 {% endblock %}
 

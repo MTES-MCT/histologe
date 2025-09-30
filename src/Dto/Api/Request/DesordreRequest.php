@@ -255,7 +255,7 @@ class DesordreRequest implements RequestInterface
 
     /** @var array<DesordrePrecisionLibreRequest> $precisionLibres */
     #[OA\Property(
-        description: 'Liste de précision libre concernant le désordre.',
+        description: 'Liste de précisions libres concernant les désordres.',
         type: 'array',
         items: new OA\Items(ref: new Model(type: DesordrePrecisionLibreRequest::class))
     )]

@@ -94,7 +94,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals($typeCompositionLogement->getTypeLogementCommoditesWc(), 'non');
         $this->assertEquals($typeCompositionLogement->getTypeLogementCommoditesCuisineCollective(), null);
         $this->assertEquals($typeCompositionLogement->getTypeLogementCommoditesSalleDeBainCollective(), 'oui');
-        $this->assertEquals($typeCompositionLogement->getTypeLogementCommoditesWcCuisine(), null);
+        $this->assertEquals($typeCompositionLogement->getTypeLogementCommoditesWcCuisine(), 'non');
         $jsonContent['desordres_logement_chauffage'] = $payload['typeChauffage'];
         $this->assertEquals($typeCompositionLogement->getBailDpeBail(), 'oui');
         $this->assertEquals($typeCompositionLogement->getBailDpeDpe(), 'oui');
@@ -307,7 +307,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(4, $response['errors']);
+        $this->assertCount(5, $response['errors']);
         $errors = json_encode($response['errors']);
         $this->assertStringContainsString('Veuillez renseigner l\'adresse du logement.', $errors);
         $this->assertStringContainsString('Cette valeur doit \u00eatre l\'un des choix propos\u00e9s.', $errors);
