@@ -39,19 +39,22 @@ validationButton.forEach((button) => {
   });
 });
 
-const linkSelectAllAgents = document.getElementById('select-all-agents');
-if (linkSelectAllAgents) {
-  linkSelectAllAgents.addEventListener('click', (e) => {
+document.querySelectorAll('[data-select-all-agents]').forEach((link) => {
+  link.addEventListener('click', (e) => {
     e.preventDefault();
 
+    const form = link.closest('form');
+    if (!form) return;
+
     /** @type {NodeListOf<HTMLInputElement>} */
-    const checkboxes = document.querySelectorAll('#accept-affectation-form input[type="checkbox"]');
+    const checkboxes = form.querySelectorAll('input[type="checkbox"]');
     const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
 
     checkboxes.forEach((cb) => {
       cb.checked = !allChecked;
     });
 
-    linkSelectAllAgents.textContent = allChecked ? 'Tout sélectionner' : 'Tout désélectionner';
+    link.textContent = allChecked ? 'Tout sélectionner' : 'Tout désélectionner';
   });
-}
+});
+

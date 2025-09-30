@@ -6,6 +6,7 @@ use App\Dto\AcceptAffectation;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
+use App\Dto\TransferSubscription;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
@@ -23,6 +24,7 @@ use App\Form\AddSuiviType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
+use App\Form\TransferSubscriptionType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
@@ -141,6 +143,11 @@ class SignalementController extends AbstractController
                                             && SignalementStatus::NEED_VALIDATION === $signalement->getStatut();
         $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
 
+        $isUserSubscribed = false;
+        if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
+            $isUserSubscribed = true;
+        }
+
         $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
         $refusSignalementRoute = $this->generateUrl('back_signalement_deny', ['uuid' => $signalement->getUuid()]);
         $refusSignalementForm = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
@@ -165,6 +172,13 @@ class SignalementController extends AbstractController
             $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation)->setAgents([$user]);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $acceptAffectationForm = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
+        }
+
+        $transferSubscriptionForm = null;
+        if ($featureNewDashboard && $isUserSubscribed) {
+            $transferSubscription = (new TransferSubscription())->setAffectation($affectation)->setAgents([$user]);
+            $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+            $transferSubscriptionForm = $this->createForm(TransferSubscriptionType::class, $transferSubscription, ['action' => $transferSubscriptionFormRoute]);
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
@@ -239,10 +253,6 @@ class SignalementController extends AbstractController
             exclusiveStatus: [],
             excludedStatus: SignalementStatus::excludedStatuses(),
         );
-        $isUserSubscribed = false;
-        if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
-            $isUserSubscribed = true;
-        }
         $canSeePartnerAffectation = $this->isGranted(AffectationVoter::SEE, $signalement);
         $subscriptionsInMyPartner = [];
         if ($featureNewDashboard && ($canSeePartnerAffectation || (!$isClosedForMe && $isAffectationAccepted))) {
@@ -266,12 +276,14 @@ class SignalementController extends AbstractController
             'isAffectationRefused' => $isAffectationRefused,
             'isDanger' => $infoDesordres['isDanger'],
             'signalement' => $signalement,
+            'partner' => $partner,
             'partners' => $partners,
             'clotureForm' => $clotureForm,
             'addSuiviForm' => $addSuiviForm,
             'refusAffectationForm' => $refusAffectationForm,
             'refusSignalementForm' => $refusSignalementForm,
             'acceptAffectationForm' => $acceptAffectationForm,
+            'transferSubscriptionForm' => $transferSubscriptionForm,
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,

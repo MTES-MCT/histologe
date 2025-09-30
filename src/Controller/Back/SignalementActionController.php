@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Dto\RefusSignalement;
+use App\Dto\TransferSubscription;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -12,6 +13,7 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Form\AddSuiviType;
 use App\Form\RefusSignalementType;
+use App\Form\TransferSubscriptionType;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
@@ -340,11 +342,12 @@ class SignalementActionController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    #[Route('/{uuid:signalement}/unsubscribe', name: 'back_signalement_unsubscribe', methods: 'GET')]
+    #[Route('/{uuid:signalement}/unsubscribe', name: 'back_signalement_unsubscribe', methods: ['GET', 'POST'])]
     public function unsubscribe(
         Signalement $signalement,
         UserSignalementSubscriptionManager $signalementSubscriptionManager,
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
+        AffectationRepository $affectationRepository,
         Request $request,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         bool $featureNewDashboard,
@@ -353,6 +356,39 @@ class SignalementActionController extends AbstractController
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
         $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents en charge du dossier et vous ne recevrez plus les mises à jour du dossier.';
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
+        if (\count($subscriptionsInMyPartner) < 2 && null !== $request->get('transfer_subscription')) {
+            $affectation = $affectationRepository->findOneBy(['partner' => $partner, 'signalement' => $signalement]);
+            $transferSubscription = (new TransferSubscription())->setAffectation($affectation);
+            $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+            $form = $this->createForm(TransferSubscriptionType::class, $transferSubscription, ['action' => $transferSubscriptionFormRoute]);
+            $form->handleRequest($request);
+
+            if (!$form->isSubmitted()) {
+                return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+            }
+            if (!$form->isValid()) {
+                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+                return $this->json($response, $response['code']);
+            }
+
+            $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
+            foreach ($transferSubscription->getAgents() as $agent) {
+                $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
+                $signalementSubscriptionManager->flush();
+            }
+            $this->addFlash('success', $successMsg);
+
+            $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+            return $this->json(['redirect' => true, 'url' => $url]);
+        }
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
             $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
@@ -367,14 +403,18 @@ class SignalementActionController extends AbstractController
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
 
-        $subscription = $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
-        if ($subscription) {
-            $signalementSubscriptionManager->remove($subscription);
-        }
+        $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
 
-        $msg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents en charge du dossier et vous ne recevrez plus les mises à jour du dossier.';
-        $this->addFlash('success', $msg);
+        $this->addFlash('success', $successMsg);
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    private function unsubscribeUser(User $user, Signalement $signalement, UserSignalementSubscriptionManager $manager, UserSignalementSubscriptionRepository $repo): void
+    {
+        $subscription = $repo->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        if ($subscription) {
+            $manager->remove($subscription);
+        }
     }
 }
