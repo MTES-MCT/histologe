@@ -26,7 +26,7 @@ class EmailDeliveryIssue
     #[ORM\Column(enumType: BrevoEvent::class)]
     private ?BrevoEvent $event = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $reason;
 
     /** @var array<string, mixed> $payload */
