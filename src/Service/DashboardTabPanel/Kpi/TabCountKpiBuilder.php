@@ -3,7 +3,6 @@
 namespace App\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
-use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -27,7 +26,6 @@ class TabCountKpiBuilder
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
         private readonly SuiviRepository $suiviRepository,
-        private readonly EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
         private readonly Security $security,
         private readonly TabCountKpiCacheHelper $tabCountKpiCacheHelper,
     ) {
@@ -131,7 +129,7 @@ class TabCountKpiBuilder
     {
         return new CountDossiersAVerifier(
             $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params),
-            $this->emailDeliveryIssueRepository->countNonDeliverableSignalements($user, $params)
+            $this->signalementRepository->countNonDeliverableSignalements($user, $params)
         );
     }
 }

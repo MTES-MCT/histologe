@@ -7,7 +7,6 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
-use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -35,7 +34,6 @@ class TabDataManager
         private readonly PartnerRepository $partnerRepository,
         private readonly SignalementRepository $signalementRepository,
         private readonly TabCountKpiBuilder $tabCountKpiBuilder,
-        private readonly EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
     ) {
     }
 
@@ -419,7 +417,7 @@ class TabDataManager
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $signalements = $this->emailDeliveryIssueRepository->findActiveSignalementsWithInvalidEmails(user: $user, params: $tabQueryParameters);
+        $signalements = $this->signalementRepository->findActiveSignalementsWithInvalidEmails(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($signalements); ++$i) {
             $signalement = $signalements[$i];
@@ -436,7 +434,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->emailDeliveryIssueRepository->countNonDeliverableSignalements(user: $user, params: $tabQueryParameters);
+        $count = $this->signalementRepository->countNonDeliverableSignalements(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }

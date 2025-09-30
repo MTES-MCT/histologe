@@ -8,7 +8,6 @@ use App\Dto\CountPartner;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
-use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -34,7 +33,6 @@ class TabDataManagerTest extends TestCase
     protected MockObject|UserRepository $userRepository;
     protected MockObject|PartnerRepository $partnerRepository;
     protected MockObject|SignalementRepository $signalementRepository;
-    protected MockObject|EmailDeliveryIssueRepository $emailDeliveryIssueRepository;
     protected MockObject|TabCountKpiBuilder $tabCountKpiBuilder;
 
     protected function setUp(): void
@@ -46,7 +44,6 @@ class TabDataManagerTest extends TestCase
         $this->userRepository = $this->createMock(UserRepository::class);
         $this->partnerRepository = $this->createMock(PartnerRepository::class);
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
-        $this->emailDeliveryIssueRepository = $this->createMock(EmailDeliveryIssueRepository::class);
         $this->tabCountKpiBuilder = $this->createMock(TabCountKpiBuilder::class);
     }
 
@@ -82,7 +79,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
 
         $result = $tabDataManager->getDernierActionDossiers();
@@ -115,7 +111,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
 
         $result = $tabDataManager->countUsersPendingToArchive();
@@ -137,7 +132,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
 
         $result = $tabDataManager->countPartenairesNonNotifiables();
@@ -157,7 +151,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
 
         $result = $tabDataManager->countPartenairesInterfaces();
@@ -180,7 +173,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
 
         $result = $tabDataManager->getInterconnexions();
@@ -217,7 +209,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
         $result = $tabDataManager->getDossiersDemandesFermetureByUsager();
 
@@ -255,7 +246,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
         $result = $tabDataManager->getMessagesUsagersNouveauxMessages();
         $this->assertCount(1, $result->dossiers);
@@ -290,7 +280,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
         $result = $tabDataManager->getDossiersRelanceSansReponse($params);
 
@@ -328,7 +317,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
         $result = $tabDataManager->getMessagesUsagersMessageApresFermeture();
         $this->assertCount(1, $result->dossiers);
@@ -362,7 +350,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
         $result = $tabDataManager->getDossiersFermePartenaireTous($params);
 
@@ -400,7 +387,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
 
         $result = $tabDataManager->getMessagesUsagersMessagesSansReponse();
@@ -445,7 +431,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
 
         $result = $tabDataManager->getDossiersAVerifierSansActivitePartenaires();
@@ -471,7 +456,6 @@ class TabDataManagerTest extends TestCase
             $this->partnerRepository,
             $this->signalementRepository,
             $this->tabCountKpiBuilder,
-            $this->emailDeliveryIssueRepository
         );
 
         $result = $tabDataManager->countDataKpi(

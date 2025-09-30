@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
-use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\Kpi\CountAfermer;
@@ -22,7 +21,6 @@ class TabCountKpiBuilderTest extends TestCase
 {
     protected MockObject|SignalementRepository $signalementRepository;
     protected MockObject|SuiviRepository $suiviRepository;
-    protected MockObject|EmailDeliveryIssueRepository $emailDeliveryIssueRepository;
     protected MockObject|Security $security;
     protected MockObject|TabCountKpiBuilder $tabCountKpiBuilder;
     protected MockObject|TabCountKpiCacheHelper $tabCountKpiCacheHelper;
@@ -31,14 +29,12 @@ class TabCountKpiBuilderTest extends TestCase
     {
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
         $this->suiviRepository = $this->createMock(SuiviRepository::class);
-        $this->emailDeliveryIssueRepository = $this->createMock(EmailDeliveryIssueRepository::class);
         $this->security = $this->createMock(Security::class);
         $this->tabCountKpiCacheHelper = $this->createMock(TabCountKpiCacheHelper::class);
 
         $this->tabCountKpiBuilder = new TabCountKpiBuilder(
             $this->signalementRepository,
             $this->suiviRepository,
-            $this->emailDeliveryIssueRepository,
             $this->security,
             $this->tabCountKpiCacheHelper,
         );
