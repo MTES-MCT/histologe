@@ -2,13 +2,13 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AcceptAffectation;
+use App\Dto\AgentsSelection;
 use App\Dto\RefusAffectation;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Form\AcceptAffectationType;
+use App\Form\AgentsSelectionType;
 use App\Form\RefusAffectationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
@@ -154,9 +154,13 @@ class AffectationController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         if ($featureNewDashboard && !$user->isAloneInPartner($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()))) {
-            $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation);
-            $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-            $form = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
+            $agentsSelection = (new AgentsSelection())->setAffectation($affectation);
+            $agentsSelectionFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+            $form = $this->createForm(
+                AgentsSelectionType::class,
+                $agentsSelection,
+                ['action' => $agentsSelectionFormRoute]
+            );
             $form->handleRequest($request);
 
             if (!$form->isSubmitted()) {
@@ -167,7 +171,7 @@ class AffectationController extends AbstractController
 
                 return $this->json($response, $response['code']);
             }
-            foreach ($acceptAffectation->getAgents() as $agent) {
+            foreach ($agentsSelection->getAgents() as $agent) {
                 $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
                 $userSignalementSubscriptionManager->flush();
             }

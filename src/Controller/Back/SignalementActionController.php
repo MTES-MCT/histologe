@@ -2,8 +2,8 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\AgentsSelection;
 use App\Dto\RefusSignalement;
-use App\Dto\TransferSubscription;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -12,8 +12,8 @@ use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Form\AddSuiviType;
+use App\Form\AgentsSelectionType;
 use App\Form\RefusSignalementType;
-use App\Form\TransferSubscriptionType;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
@@ -364,9 +364,17 @@ class SignalementActionController extends AbstractController
         $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
         if (\count($subscriptionsInMyPartner) < 2 && null !== $request->get('transfer_subscription')) {
             $affectation = $affectationRepository->findOneBy(['partner' => $partner, 'signalement' => $signalement]);
-            $transferSubscription = (new TransferSubscription())->setAffectation($affectation);
-            $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
-            $form = $this->createForm(TransferSubscriptionType::class, $transferSubscription, ['action' => $transferSubscriptionFormRoute]);
+            $agentsSelection = (new AgentsSelection())->setAffectation($affectation);
+            $agentsSelectionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+            $form = $this->createForm(
+                AgentsSelectionType::class,
+                $agentsSelection,
+                [
+                    'action' => $agentsSelectionFormRoute,
+                    'exclude_user' => $this->getUser(),
+                    'label' => 'Sélectionnez le(s) agent(s) à qui transmettre le dossier',
+                ]
+            );
             $form->handleRequest($request);
 
             if (!$form->isSubmitted()) {
@@ -379,7 +387,7 @@ class SignalementActionController extends AbstractController
             }
 
             $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
-            foreach ($transferSubscription->getAgents() as $agent) {
+            foreach ($agentsSelection->getAgents() as $agent) {
                 $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
                 $signalementSubscriptionManager->flush();
             }
