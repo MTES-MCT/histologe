@@ -219,6 +219,23 @@ class TabDataManager
         return new TabDossierResult($dossiers, $count);
     }
 
+    public function getDossiersNoAgentWithCount(
+        ?TabQueryParameters $tabQueryParameters = null,
+        ?AffectationStatus $affectationStatus = null,
+    ): TabDossierResult {
+        $dossiers = $this->signalementRepository->findDossiersNoAgentFrom(
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersNoAgentFrom(
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
+    }
+
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException

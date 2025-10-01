@@ -41,8 +41,8 @@ class DossiersNoAgentTabBodyLoader extends AbstractTabBodyLoader
             $this->tabQueryParameters->partenairesId = [$partner->getId()];
         }
 
-        $result = $this->tabDataManager->getNouveauxDossiersWithCount(
-            affectationStatus: AffectationStatus::WAIT,
+        $result = $this->tabDataManager->getDossiersNoAgentWithCount(
+            affectationStatus: AffectationStatus::ACCEPTED,
             tabQueryParameters: $this->tabQueryParameters
         );
 
