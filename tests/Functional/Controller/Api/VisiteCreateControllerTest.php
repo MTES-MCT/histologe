@@ -134,10 +134,10 @@ class VisiteCreateControllerTest extends WebTestCase
             content: json_encode($payload)
         );
 
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
         $errors = json_decode($this->client->getResponse()->getContent(), true)['errors'];
         $this->assertStringContainsString($errorMessage, $errors[0]['message']);
         $errors = array_map(function ($error) { return $error['property']; }, $errors);
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
         $this->assertEquals($fieldsErrors, $errors);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
