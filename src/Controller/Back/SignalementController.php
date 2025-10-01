@@ -144,7 +144,7 @@ class SignalementController extends AbstractController
         $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
 
         $isUserSubscribed = false;
-        if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
+        if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]) && $affectation) {
             $isUserSubscribed = true;
         }
 
