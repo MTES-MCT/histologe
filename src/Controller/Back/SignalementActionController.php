@@ -361,6 +361,11 @@ class SignalementActionController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
+        if ($user->isAloneInPartner($user->getPartnerInTerritory($signalement->getTerritory()))) {
+            $this->addFlash('error', 'Vous ne pouvez pas quitter un dossier étant seul agent de votre partenaire.');
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
 
         $subscription = $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
         if ($subscription) {
