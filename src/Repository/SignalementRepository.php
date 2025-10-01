@@ -1977,7 +1977,8 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb = $this
             ->createQueryBuilder('s')
-            ->select($select);
+            ->select($select)
+            ->leftJoin('s.affectations', 'a');
 
         if (null === $user) {
             $qb->setParameter('statut_active', SignalementStatus::ACTIVE);
@@ -1994,7 +1995,6 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->setParameter('partners', $user->getPartners())
                 ->setParameter('affectation_wait', AffectationStatus::WAIT)
                 ->setParameter('affectation_accepted', AffectationStatus::ACCEPTED)
-                ->leftJoin('s.affectations', 'a')
                 ->leftJoin('s.userSignalementSubscriptions', 'uss', 'WITH', 'uss.user IN ('.$subquery.')');
         }
 
