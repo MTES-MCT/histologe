@@ -226,7 +226,6 @@ class SignalementApiFactory
         $signalement->setJsonContent($jsonContent);
 
         $signalement->setCreatedBy($this->user);
-        // TODO : enregistrer le partnerId sur le signalement (aprés avoir ajouté le champ sur la table)
         // TODO : champ obligatoire, false ?
         $signalement->setIsCguAccepted(false);
 

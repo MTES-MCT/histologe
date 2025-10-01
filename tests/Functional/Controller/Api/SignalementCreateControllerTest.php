@@ -48,6 +48,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $signalementUuuid = json_decode($this->client->getResponse()->getContent(), true)['uuid'];
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
         $this->assertNotNull($signalement);
+        $this->assertEquals($signalement->getPartner()->getId(), $partner->getId());
 
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
         $informationComplementaire = $signalement->getInformationComplementaire();
@@ -176,6 +177,8 @@ class SignalementCreateControllerTest extends WebTestCase
     public function testCreateSignalementWithSuccessOnMinmimalPayloadWithoutAutoAffectation(): void
     {
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-02@signal-logement.fr']);
+        $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
+        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
         $payload = $this->getMinimalPayload();
 
@@ -190,6 +193,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $signalementUuuid = json_decode($this->client->getResponse()->getContent(), true)['uuid'];
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
         $this->assertNotNull($signalement);
+        $this->assertEquals($signalement->getPartner()->getId(), $partner->getId());
 
         $this->assertEquals($signalement->getAdresseOccupant(), $payload['adresseOccupant']);
         $this->assertEquals($signalement->getCpOccupant(), $payload['codePostalOccupant']);

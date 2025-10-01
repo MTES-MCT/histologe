@@ -252,6 +252,7 @@ class SignalementCreateController extends AbstractController
             throw new ValidationFailedException($signalementRequest, $errors);
         }
 
+        $signalement->setPartner($partner);
         $this->entityManager->beginTransaction();
         $signalement->setReference($this->referenceGenerator->generate($signalement->getTerritory()));
         $this->signalementRepository->save($signalement, true);
