@@ -389,6 +389,7 @@ class SignalementActionController extends AbstractController
 
             return $this->json(['redirect' => true, 'url' => $url]);
         }
+        
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
             $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
