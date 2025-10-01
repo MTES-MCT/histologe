@@ -362,7 +362,7 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
         $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
-        if (\count($subscriptionsInMyPartner) < 2 && null !== $request->get('transfer_subscription')) {
+        if (\count($subscriptionsInMyPartner) < 2 && null !== $request->get('agents_selection')) {
             $affectation = $affectationRepository->findOneBy(['partner' => $partner, 'signalement' => $signalement]);
             $agentsSelection = (new AgentsSelection())->setAffectation($affectation);
             $agentsSelectionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
@@ -387,6 +387,7 @@ class SignalementActionController extends AbstractController
             }
 
             $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
+            dump($agentsSelection->getAgents());
             foreach ($agentsSelection->getAgents() as $agent) {
                 $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
                 $signalementSubscriptionManager->flush();
