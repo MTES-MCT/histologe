@@ -2,11 +2,10 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AcceptAffectation;
+use App\Dto\AgentsSelection;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
-use App\Dto\TransferSubscription;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
@@ -19,12 +18,11 @@ use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
-use App\Form\AcceptAffectationType;
 use App\Form\AddSuiviType;
+use App\Form\AgentsSelectionType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
-use App\Form\TransferSubscriptionType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
@@ -169,16 +167,28 @@ class SignalementController extends AbstractController
 
         $acceptAffectationForm = null;
         if ($featureNewDashboard && ($canAnswerAffectation || $canCancelRefusedAffectation)) {
-            $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation)->setAgents([$user]);
+            $acceptAffectation = (new AgentsSelection())->setAffectation($affectation)->setAgents([$user]);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-            $acceptAffectationForm = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
+            $acceptAffectationForm = $this->createForm(
+                AgentsSelectionType::class,
+                $acceptAffectation,
+                ['action' => $acceptAffectationFormRoute]
+            );
         }
 
         $transferSubscriptionForm = null;
         if ($featureNewDashboard && $isUserSubscribed) {
-            $transferSubscription = (new TransferSubscription())->setAffectation($affectation)->setAgents([$user]);
+            $transferSubscription = (new AgentsSelection())->setAffectation($affectation)->setAgents([$user]);
             $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
-            $transferSubscriptionForm = $this->createForm(TransferSubscriptionType::class, $transferSubscription, ['action' => $transferSubscriptionFormRoute]);
+            $transferSubscriptionForm = $this->createForm(
+                AgentsSelectionType::class,
+                $transferSubscription,
+                [
+                    'action' => $transferSubscriptionFormRoute,
+                    'exclude_user' => $this->getUser(),
+                    'label' => 'Sélectionnez le(s) agent(s) à qui transmettre le dossier',
+                ]
+            );
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);

@@ -104,10 +104,10 @@ class AffectationControllerTest extends WebTestCase
             }
             $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
 
-            $tokenId = 'accept_affectation';
+            $tokenId = 'agents_selection';
 
             $this->client->request('POST', $routeAffectationResponse, [
-                'accept_affectation' => [
+                'agents_selection' => [
                     'agents' => $agentIds,
                     '_token' => $this->generateCsrfToken($this->client, $tokenId),
                 ],
@@ -162,10 +162,10 @@ class AffectationControllerTest extends WebTestCase
             }
             $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
 
-            $tokenId = 'accept_affectation';
+            $tokenId = 'agents_selection';
 
             $this->client->request('POST', $routeAffectationResponse, [
-                'accept_affectation' => [
+                'agents_selection' => [
                     'agents' => $agentIds,
                     '_token' => $this->generateCsrfToken($this->client, $tokenId),
                 ],

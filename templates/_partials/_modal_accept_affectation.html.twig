@@ -20,7 +20,7 @@
                         </div>
                         {{ form_errors(acceptAffectationForm) }}
                         <div class="fr-select-group">
-                            {{ form_label(acceptAffectationForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'accept_affectation[agents]'}}) }}
+                            {{ form_label(acceptAffectationForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]'}}) }}
                             <div class="fr-grid-row">
                                 {% for agent in acceptAffectationForm.agents %}
                                     <div class="fr-checkbox-group fr-col-6">
