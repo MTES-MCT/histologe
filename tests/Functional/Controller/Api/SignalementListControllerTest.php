@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Api;
 
+use App\Entity\Signalement;
 use App\Entity\User;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -119,5 +120,35 @@ class SignalementListControllerTest extends WebTestCase
             ],
             6,
         ];
+    }
+
+    public function testGetUnAffectedSignalementByUuid(): void
+    {
+        $client = static::createClient();
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
+
+        $uuid = '00000000-0000-0000-2024-000000000006';
+        $client->loginUser($user, 'api');
+        $client->request('GET', '/api/signalements/'.$uuid);
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
+    }
+
+    public function testGetUnAffectedSignalementCreatedByMeByUuid(): void
+    {
+        $client = static::createClient();
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
+
+        $uuid = '00000000-0000-0000-2024-000000000006';
+        $signalement = self::getContainer()->get('doctrine')->getRepository(Signalement::class)->findOneBy(['uuid' => $uuid]);
+        $signalement->setCreatedBy($user);
+        self::getContainer()->get('doctrine')->getManager()->flush();
+
+        $client->loginUser($user, 'api');
+        $client->request('GET', '/api/signalements/'.$uuid);
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 }

@@ -17,7 +17,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class ApiSignalementPartnerVoter extends Voter
 {
     public const string API_ADD_INTERVENTION = 'API_ADD_INTERVENTION';
-    public const string API_EDIT_SIGNALEMENT = 'API_EDIT_SIGNALEMENT';
+    public const string API_ADD_SUIVI = 'API_ADD_SUIVI';
+    public const string API_ADD_FILE = 'API_ADD_FILE';
 
     public function __construct(
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
@@ -27,7 +28,7 @@ class ApiSignalementPartnerVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        if (!in_array($attribute, [self::API_ADD_INTERVENTION, self::API_EDIT_SIGNALEMENT])) {
+        if (!in_array($attribute, [self::API_ADD_INTERVENTION, self::API_ADD_SUIVI, self::API_ADD_FILE])) {
             return false;
         }
         if (!is_array($subject)) {
@@ -60,7 +61,8 @@ class ApiSignalementPartnerVoter extends Voter
 
         return match ($attribute) {
             self::API_ADD_INTERVENTION => $this->canAddIntervention($subject['signalement'], $subject['partner']),
-            self::API_EDIT_SIGNALEMENT => $this->canEditSignalement($subject['signalement'], $subject['partner']),
+            self::API_ADD_SUIVI => $this->canAddSuivi($subject['signalement'], $subject['partner']),
+            self::API_ADD_FILE => $this->canAddFile($subject['signalement'], $subject['partner'], $user),
             default => false,
         };
     }
@@ -75,6 +77,24 @@ class ApiSignalementPartnerVoter extends Voter
         }
 
         return true;
+    }
+
+    private function canAddSuivi(Signalement $signalement, Partner $partner): bool
+    {
+        return $this->canEditSignalement($signalement, $partner);
+    }
+
+    private function canAddFile(Signalement $signalement, Partner $partner, User $user): bool
+    {
+        if (
+            $signalement->getPartner() === $partner
+            && $signalement->getCreatedBy() === $user
+            && in_array($signalement->getStatut(), [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE])
+        ) {
+            return true;
+        }
+
+        return $this->canEditSignalement($signalement, $partner);
     }
 
     private function canEditSignalement(Signalement $signalement, Partner $partner): bool

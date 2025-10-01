@@ -1547,7 +1547,7 @@ class SignalementRepository extends ServiceEntityRepository
         ?string $uuid = null,
         ?string $reference = null,
     ): ?Signalement {
-        $qb = $this->findForAPIQueryBuilder($user);
+        $qb = $this->findForAPIQueryBuilder($user, true);
         if ($uuid) {
             $qb->andWhere('s.uuid = :uuid')->setParameter('uuid', $uuid);
         }
@@ -1595,15 +1595,21 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findForAPIQueryBuilder(User $user): QueryBuilder
+    public function findForAPIQueryBuilder(User $user, ?bool $includeCreatedByUser = false): QueryBuilder
     {
         $partners = $this->partnerAuthorizedResolver->resolveBy($user);
         $qb = $this->createQueryBuilder('s');
 
-        return $qb->select('DISTINCT s', 'territory')
+        $qb->select('DISTINCT s', 'territory')
             ->leftJoin('s.territory', 'territory')
-            ->leftJoin('s.affectations', 'affectations')
-            ->where('affectations.partner IN (:partners)')
+            ->leftJoin('s.affectations', 'affectations');
+        if ($includeCreatedByUser) {
+            return $qb->where('affectations.partner IN (:partners) OR s.createdBy = :user')
+                ->setParameter('partners', $partners)
+                ->setParameter('user', $user);
+        }
+
+        return $qb->where('affectations.partner IN (:partners)')
             ->setParameter('partners', $partners);
     }
 

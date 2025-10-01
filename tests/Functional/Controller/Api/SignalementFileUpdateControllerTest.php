@@ -14,16 +14,17 @@ class SignalementFileUpdateControllerTest extends WebTestCase
 {
     use ApiHelper;
     private KernelBrowser $client;
+    private User $user;
     private RouterInterface $router;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $this->user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
-        $this->client->loginUser($user, 'api');
+        $this->client->loginUser($this->user, 'api');
         $this->router = self::getContainer()->get('router');
     }
 
@@ -85,6 +86,50 @@ class SignalementFileUpdateControllerTest extends WebTestCase
         );
 
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function testUpdateFileOnUnaffectedSignalement(): void
+    {
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2022-1']);
+        $file = self::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
+
+        $payload = [
+            'documentType' => 'PHOTO_SITUATION',
+            'description' => 'lorem ipsum dolor sit amet',
+        ];
+        $this->client->request(
+            method: 'PATCH',
+            uri: $this->router->generate('api_signalements_files_patch', ['uuid' => $file->getUuid()]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode($payload)
+        );
+
+        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function testUpdateFileOnUnaffectedSignalementCreatedByMe(): void
+    {
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2022-1']);
+        $file = self::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
+        $signalement->setCreatedBy($this->user);
+        self::getContainer()->get('doctrine')->getManager()->flush();
+
+        $payload = [
+            'documentType' => 'PHOTO_SITUATION',
+            'description' => 'lorem ipsum dolor sit amet',
+        ];
+        $this->client->request(
+            method: 'PATCH',
+            uri: $this->router->generate('api_signalements_files_patch', ['uuid' => $file->getUuid()]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode($payload)
+        );
+
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals($payload['documentType'], $response['documentType']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 }
