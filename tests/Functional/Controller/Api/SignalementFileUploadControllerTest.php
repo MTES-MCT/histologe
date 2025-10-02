@@ -119,7 +119,7 @@ class SignalementFileUploadControllerTest extends WebTestCase
         $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
         $signalement->setCreatedBy($this->user);
-        $signalement->setPartner($partner);
+        $signalement->setCreatedByPartner($partner);
         self::getContainer()->get('doctrine')->getManager()->flush();
         $this->postRequest($uuid, $partner->getUuid(), [$imageFile]);
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);

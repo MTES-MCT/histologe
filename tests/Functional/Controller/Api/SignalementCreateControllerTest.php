@@ -48,7 +48,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $signalementUuuid = json_decode($this->client->getResponse()->getContent(), true)['uuid'];
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
         $this->assertNotNull($signalement);
-        $this->assertEquals($signalement->getPartner()->getId(), $partner->getId());
+        $this->assertEquals($signalement->getCreatedByPartner()->getId(), $partner->getId());
 
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
         $informationComplementaire = $signalement->getInformationComplementaire();
@@ -193,7 +193,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $signalementUuuid = json_decode($this->client->getResponse()->getContent(), true)['uuid'];
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
         $this->assertNotNull($signalement);
-        $this->assertEquals($signalement->getPartner()->getId(), $partner->getId());
+        $this->assertEquals($signalement->getCreatedByPartner()->getId(), $partner->getId());
 
         $this->assertEquals($signalement->getAdresseOccupant(), $payload['adresseOccupant']);
         $this->assertEquals($signalement->getCpOccupant(), $payload['codePostalOccupant']);

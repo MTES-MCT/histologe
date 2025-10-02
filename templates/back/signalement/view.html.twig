@@ -7,7 +7,7 @@
     {% if signalement.createdBy and signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
         {% if signalement.createdBy and 'ROLE_API_USER' in signalement.createdBy.roles %}
             {% set noticeTitle = 'Signalement API' %}
-            {% set noticeDesc = 'Ce signalement a été créé via API par ' ~ signalement.createdBy.email ~ ' pour le partenaire ' ~ signalement.partner.nom ~ '.' %}
+            {% set noticeDesc = 'Ce signalement a été créé via API par ' ~ signalement.createdBy.email ~ ' pour le partenaire ' ~ signalement.createdByPartner.nom ~ '.' %}
         {% else %}
             {% set noticeTitle = 'Signalement BO' %}
             {% set noticeDesc = 'Ce signalement a été créé depuis le formulaire pro par ' ~ signalement.createdBy.prenom ~ ' ' ~ signalement.createdBy.nom ~ ', du partenaire ' ~ signalement.createdBy.getPartnerInTerritory(signalement.territory).nom ~ '.' %}

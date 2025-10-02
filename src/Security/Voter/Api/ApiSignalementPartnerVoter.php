@@ -87,7 +87,7 @@ class ApiSignalementPartnerVoter extends Voter
     private function canAddFile(Signalement $signalement, Partner $partner, User $user): bool
     {
         if (
-            $signalement->getPartner() === $partner
+            $signalement->getCreatedByPartner() === $partner
             && $signalement->getCreatedBy() === $user
             && in_array($signalement->getStatut(), [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE])
         ) {
