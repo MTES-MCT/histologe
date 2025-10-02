@@ -50,7 +50,8 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
         $partnerOK = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-01']);
         $partner2OK = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-02']);
-        $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-03']);
+        $partner3OK = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-03']);
+        $partnerKO = $this->entityManager->getRepository(Partner::class)->findOneBy(['nom' => 'Partenaire 13-04']);
 
         $this->assertInstanceOf(Partner::class, $partnerOK);
         $this->assertTrue($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerOK));
@@ -136,7 +137,7 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
     {
         yield 'api-01@signal-logement.fr' => [
             'email' => 'api-01@signal-logement.fr',
-            'countExpectedPartner' => 2,
+            'countExpectedPartner' => 3,
         ];
 
         yield 'api-02@signal-logement.fr' => [

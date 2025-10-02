@@ -25,7 +25,7 @@ class SignalementListControllerTest extends WebTestCase
         foreach ($response as $signalement) {
             $this->assertIsArray($signalement['affectations']);
             if ('2023-26' === $signalement['reference']) {
-                $this->assertCount(2, $signalement['affectations']);
+                $this->assertCount(3, $signalement['affectations']);
             }
         }
         $this->assertCount(9, $response);
@@ -71,7 +71,7 @@ class SignalementListControllerTest extends WebTestCase
     public function provideDataSignalementByUuid(): \Generator
     {
         yield 'api-02 user with signalement 2024-12' => ['api-02@signal-logement.fr', '00000000-0000-0000-2024-000000000012', 1, 7];
-        yield 'api-01 user with signalement 2023-26' => ['api-01@signal-logement.fr', '00000000-0000-0000-2023-000000000026', 2, 0];
+        yield 'api-01 user with signalement 2023-26' => ['api-01@signal-logement.fr', '00000000-0000-0000-2023-000000000026', 3, 0];
         yield 'api-01 user with old signalement 2022-03' => ['api-01@signal-logement.fr', '00000000-0000-0000-2022-000000000003', 1, 3];
     }
 

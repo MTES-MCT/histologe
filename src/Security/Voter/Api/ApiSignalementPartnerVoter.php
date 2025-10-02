@@ -82,7 +82,7 @@ class ApiSignalementPartnerVoter extends Voter
     private function canEditSignalement(Signalement $signalement, Partner $partner, ?Vote $vote = null): bool
     {
         if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
-            $vote->addReason('Le signalement n\'est pas active.');
+            $vote->addReason('Le signalement n\'est pas actif.');
 
             return false;
         }
