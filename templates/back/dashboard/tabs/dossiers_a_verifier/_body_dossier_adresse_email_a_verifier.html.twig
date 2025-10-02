@@ -1,21 +1,24 @@
 {% set columns = [
-    { class: 'fr-col-md-3', title: 'Dernière activité partenaire il y a' },
+    { class: 'fr-col-md-3', title: 'E-mail à vérifier' },
     { class: 'fr-col-md-4', title: 'Référence' },
+    { class: 'fr-col-md-2', title: 'Déposé le' },
     { class: 'fr-col-md-2', title: 'Dernière action' },
-    { class: 'fr-col-md-2', title: 'Action faite par' },
 ] %}
+
 <section class="fr-mb-5v">
     <header class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-md-9">
-            <h3 class="fr-text-label--blue-france tab-panel-title-with-connection-lost-icon">Dossier sans activité partenaire ({{ count }})</h3>
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-press-card-icon">Adresses e-mail à vérifier ({{ count }})</h3>
         </div>
         <div class="fr-select-group fr-col-12 fr-col-md-3">
-            <label class="fr-label" for="order-type-dossiers-sans-activite-partenaire">
+            <label class="fr-label" for="order-type-dossiers-adresse-email-a-verifier">
                 Trier par
             </label>
-            <select id="order-type-dossiers-sans-activite-partenaire" class="fr-select" data-sort-body="dossiers-sans-activite-partenaire">
-                <option value="createdAt-ASC" selected="selected">Activité la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
-                <option value="createdAt-DESC">Activité la plus récente (du plus récent au plus ancien)</option>
+            <select id="order-type-dossiers-adresse-email-a-verifier" class="fr-select" data-sort-body="dossiers-adresse-email-a-verifier">
+                <option value="createdAt-DESC" selected="selected">Date la plus récente (du plus récent au plus ancien) = tri par défaut</option>
+                <option value="createdAt-ASC">Date la plus ancienne (de la plus ancienne à la plus récente)</option>
+                <option value="nomOccupant-ASC">Ordre alphabétique (A > Z)</option>
+                <option value="nomOccupant-DESC">Ordre alphabétique (Z > A)</option>
             </select>
         </div>
     </header>
@@ -25,16 +28,13 @@
             {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
-                    '<div><span class="fr-badge fr-badge--no-icon ' ~ (item.derniereActionPartenaireDaysAgo | badge_class) ~ '">' ~ item.derniereActionPartenaireDaysAgo  ~ ' JOURS</span></div>',
+                    '<div><span class="fr-badge fr-badge--no-icon fr-badge--warning">' ~ item.profilNonDeliverable  ~ '</span></div>',
                     '<div class="fr-text-label--blue-france">
                             <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
                             <div>' ~ item.adresse ~ '</div>
                         </div>',
-                    '<div><strong>' ~ item.derniereActionTypeSuivi ~ '</strong><br> le ' ~ item.derniereActionAt|date('d/m/Y à H:i') ~ '</div>',
-                    '<div>
-                        <strong>' ~ item.derniereActionPartenairePrenomAgent ~ ' ' ~ item.derniereActionPartenaireNomAgent ~ '</strong><br>
-                        <span>' ~ item.derniereActionPartenaireNom ~ '</span>
-                    </div>'
+                    '<div>' ~ item.depotAt|date('d/m/Y') ~ '</div>',
+                    '<div>le ' ~ item.derniereActionAt|date('d/m/Y à H:i') ~ ' par ' ~ item.derniereActionPartenaireNom ~ '</div>',
                 ],
                 link: path('back_signalement_view', {'uuid' : item.uuid})
             } %}

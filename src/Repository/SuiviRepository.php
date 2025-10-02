@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -10,6 +11,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use App\Service\DashboardTabPanel\Kpi\CountDossiersMessagesUsagers;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -661,7 +663,7 @@ class SuiviRepository extends ServiceEntityRepository
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
             $existsAffectation = $this->_em->createQueryBuilder()
                 ->select('1')
-                ->from('App\\Entity\\Affectation', 'af')
+                ->from(Affectation::class, 'af')
                 ->where('af.signalement = signalement')
                 ->andWhere('af.partner IN (:partners)')
                 ->andWhere('af.statut = :affectationStatus')
@@ -674,7 +676,7 @@ class SuiviRepository extends ServiceEntityRepository
         if ($params?->mesDossiersMessagesUsagers && '1' === $params->mesDossiersMessagesUsagers) {
             $existsSubscription = $this->_em->createQueryBuilder()
                 ->select('1')
-                ->from('App\\Entity\\UserSignalementSubscription', 'uss')
+                ->from(UserSignalementSubscription::class, 'uss')
                 ->where('uss.signalement = signalement')
                 ->andWhere('uss.user = :currentUser')
                 ->getDQL();

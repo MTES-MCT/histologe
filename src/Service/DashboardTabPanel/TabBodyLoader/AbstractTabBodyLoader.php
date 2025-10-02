@@ -45,6 +45,12 @@ abstract class AbstractTabBodyLoader implements TabBodyLoaderInterface
                 $this->tabQueryParameters->orderBy = $filters['direction'] = 'DESC';
             }
         }
+        if ($this->tabQueryParameters->partners && \count($this->tabQueryParameters->partners) > 0) {
+            $filters['partenaires'] = $this->tabQueryParameters->partners;
+        }
+        if (null !== $this->tabQueryParameters->queryCommune && '' !== $this->tabQueryParameters->queryCommune) {
+            $filters['communes[]'] = $this->tabQueryParameters->queryCommune;
+        }
         $tabBody->setFilters($filters);
         $this->ensureAccess($tabBody);
     }

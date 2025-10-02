@@ -408,4 +408,34 @@ class TabDataManager
 
         return new TabDossierResult($tabDossiers, $count);
     }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getDossiersAVerifierAdresseEmailAverifier(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $signalements = $this->signalementRepository->findActiveSignalementsWithInvalidEmails(user: $user, params: $tabQueryParameters);
+        $tabDossiers = [];
+        for ($i = 0; $i < \count($signalements); ++$i) {
+            $signalement = $signalements[$i];
+            $tabDossiers[] = new TabDossier(
+                profilNonDeliverable: $signalement['profilNonDeliverable'],
+                reference: '#'.$signalement['reference'],
+                nomDeclarant: $signalement['nomOccupant'],
+                prenomDeclarant: $signalement['prenomOccupant'],
+                adresse: $signalement['adresse'],
+                depotAt: $signalement['createdAt'],
+                derniereActionAt: $signalement['dernierSuiviAt'],
+                derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
+                uuid: $signalement['uuid'],
+            );
+        }
+
+        $count = $this->signalementRepository->countNonDeliverableSignalements(user: $user, params: $tabQueryParameters);
+
+        return new TabDossierResult($tabDossiers, $count);
+    }
 }

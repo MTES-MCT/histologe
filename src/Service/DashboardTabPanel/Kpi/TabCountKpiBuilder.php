@@ -107,14 +107,14 @@ class TabCountKpiBuilder
             TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER,
             $user,
             $params,
-            fn () => $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params)
+            fn () => $this->countAllDossiersAVerifier($user, $params)
         );
 
         $this->tabCountKpi = new TabCountKpi(
             countNouveauxDossiers: $countNouveauxDossiers->total(),
             countDossiersAFermer: $countDossiersAFermer->total(),
             countDossiersMessagesUsagers: $countDossiersMessagesUsagers->total(),
-            countDossiersAVerifier: $countDossiersAVerifier,
+            countDossiersAVerifier: $countDossiersAVerifier->total(),
         );
 
         return $this;
@@ -123,5 +123,13 @@ class TabCountKpiBuilder
     public function build(): TabCountKpi
     {
         return $this->tabCountKpi;
+    }
+
+    private function countAllDossiersAVerifier(User $user, ?TabQueryParameters $params): CountDossiersAVerifier
+    {
+        return new CountDossiersAVerifier(
+            $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params),
+            $this->signalementRepository->countNonDeliverableSignalements($user, $params)
+        );
     }
 }
