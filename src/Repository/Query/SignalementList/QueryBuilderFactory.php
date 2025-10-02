@@ -122,6 +122,12 @@ readonly class QueryBuilderFactory
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
+        if (!empty($options['isEmailAVerifier'])) {
+            $signalementIds = $signalementRepository->findIdsNonDeliverableSignalements($user, null);
+            $qb->andWhere('s.id IN (:signalement_ids)')
+                ->setParameter('signalement_ids', $signalementIds);
+        }
+
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
                 case 'reference':

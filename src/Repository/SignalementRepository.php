@@ -20,7 +20,6 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
-use App\Entity\View\ViewLatestIntervention;
 use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\DashboardTabPanel\TabDossier;
