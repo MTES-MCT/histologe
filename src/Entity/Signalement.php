@@ -2584,7 +2584,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getDesordreLabel(string $desordreSlug): string
     {
         foreach ($this->getDesordrePrecisions() as $desordrePrecision) {
+            if ($desordrePrecision->getDesordrePrecisionSlug() === $desordreSlug && $desordrePrecision->getLabel()) {
+                return $desordrePrecision->getLabel();
+            }
             if ($desordrePrecision->getDesordreCritere()->getSlugCritere() === $desordreSlug) {
+                return $desordrePrecision->getDesordreCritere()->getLabelCritere();
+            }
+            if ($desordrePrecision->getDesordreCritere()->getSlugCategorie() === $desordreSlug) {
                 return $desordrePrecision->getDesordreCritere()->getLabelCritere();
             }
         }
