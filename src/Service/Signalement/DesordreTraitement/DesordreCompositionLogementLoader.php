@@ -24,73 +24,73 @@ class DesordreCompositionLogementLoader
             return;
         }
         if ('oui' === $typeCompositionLogement->getTypeLogementSousCombleSansFenetre()) {
-            $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_sous_combles');
+            $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_sous_combles');
         } else {
-            $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_sous_combles');
+            $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_sous_combles');
         }
 
         if ('oui' === $typeCompositionLogement->getTypeLogementSousSolSansFenetre()) {
-            $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_sous_sol');
+            $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_sous_sol');
         } else {
-            $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_sous_sol');
+            $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_sous_sol');
         }
 
         if ('piece_unique' === $typeCompositionLogement->getCompositionLogementPieceUnique()) {
             if (null !== $typeCompositionLogement->getCompositionLogementSuperficie()
                 && $typeCompositionLogement->getCompositionLogementSuperficie() < 9
             ) {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_piece_unique_superficie');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_piece_unique_superficie');
             } else {
-                $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_piece_unique_superficie');
+                $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_piece_unique_superficie');
             }
         } else {
             if ('non' === $typeCompositionLogement->getTypeLogementCommoditesPieceAVivre9m()) {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9');
             } else {
-                $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9');
+                $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_plusieurs_pieces_aucune_piece_9');
             }
         }
 
         if ('non' === $typeCompositionLogement->getTypeLogementCommoditesCuisine()) {
             if ('non' === $typeCompositionLogement->getTypeLogementCommoditesCuisineCollective()) {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_cuisine_collective_non');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_cuisine_collective_non');
             } else {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_cuisine_collective_oui');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_cuisine_collective_oui');
             }
         } else {
-            $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_cuisine_collective_non');
-            $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_cuisine_collective_oui');
+            $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_cuisine_collective_non');
+            $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_cuisine_collective_oui');
         }
 
         if ('non' === $typeCompositionLogement->getTypeLogementCommoditesSalleDeBain()) {
             if ('non' === $typeCompositionLogement->getTypeLogementCommoditesSalleDeBainCollective()) {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_douche_collective_non');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_douche_collective_non');
             } else {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_douche_collective_oui');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_douche_collective_oui');
             }
         } else {
-            $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_douche_collective_non');
-            $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_douche_collective_oui');
+            $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_douche_collective_non');
+            $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_douche_collective_oui');
         }
 
         if ('non' === $typeCompositionLogement->getTypeLogementCommoditesWc()) {
             if ('non' === $typeCompositionLogement->getTypeLogementCommoditesWcCollective()) {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_wc_collectif_non');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_wc_collectif_non');
             } else {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_wc_collectif_oui');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_wc_collectif_oui');
             }
         } else {
-            $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_wc_collectif_non');
-            $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_wc_collectif_oui');
+            $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_wc_collectif_non');
+            $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_wc_collectif_oui');
             if ('oui' === $typeCompositionLogement->getTypeLogementCommoditesWcCuisine()) {
-                $this->addDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_wc_cuisine_ensemble');
+                $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_wc_cuisine_ensemble');
             } else {
-                $this->removeDesordreCriterePrecisionBySlugs('desordres_type_composition_logement_wc_cuisine_ensemble');
+                $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_wc_cuisine_ensemble');
             }
         }
     }
 
-    private function addDesordreCriterePrecisionBySlugs(string $slugPrecision): void
+    private function addDesordrePrecisionBySlug(string $slugPrecision): void
     {
         $precisionToLink = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $slugPrecision]);
         if (null !== $precisionToLink
@@ -99,7 +99,7 @@ class DesordreCompositionLogementLoader
         }
     }
 
-    private function removeDesordreCriterePrecisionBySlugs(string $slugPrecision): void
+    private function removeDesordrePrecisionBySlug(string $slugPrecision): void
     {
         $precisionToLink = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $slugPrecision]);
         if (null !== $precisionToLink
