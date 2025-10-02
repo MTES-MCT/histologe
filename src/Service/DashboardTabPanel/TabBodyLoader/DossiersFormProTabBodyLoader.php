@@ -31,7 +31,8 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
 
         $result = $this->tabDataManager->getNouveauxDossiersWithCount(
             signalementStatus: SignalementStatus::NEED_VALIDATION,
-            tabQueryParameters: $this->tabQueryParameters
+            tabQueryParameters: $this->tabQueryParameters,
+            territoires: $tabBody->getTerritoires(),
         );
 
         $tabBody->setData($result->dossiers);

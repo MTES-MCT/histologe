@@ -30,7 +30,8 @@ class DossiersFormUsagerTabBodyLoader extends AbstractTabBodyLoader
         $this->tabQueryParameters->createdFrom = TabDossier::CREATED_FROM_FORMULAIRE_USAGER;
         $result = $this->tabDataManager->getNouveauxDossiersWithCount(
             signalementStatus: SignalementStatus::NEED_VALIDATION,
-            tabQueryParameters: $this->tabQueryParameters
+            tabQueryParameters: $this->tabQueryParameters,
+            territoires: $tabBody->getTerritoires(),
         );
 
         $tabBody->setData($result->dossiers);

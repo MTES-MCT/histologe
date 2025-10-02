@@ -1974,7 +1974,7 @@ class SignalementRepository extends ServiceEntityRepository
             %s, -- countFormulaireUsager
             %s, -- countFormulairePro
             %s, -- countSansAffectation
-            %s,  -- countNouveauxDossiers
+            %s, -- countNouveauxDossiers
             %s  -- countNoAgentDossiers
         )',
             CountNouveauxDossiers::class,
