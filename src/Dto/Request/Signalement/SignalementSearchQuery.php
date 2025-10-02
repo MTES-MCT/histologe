@@ -123,11 +123,8 @@ class SignalementSearchQuery
         private readonly ?string $isNouveauMessage = null,
         private readonly ?string $isMessageWithoutResponse = null,
         private readonly ?string $isDossiersSansActivite = null,
-<<<<<<< HEAD
         private readonly ?string $isEmailAVerifier = null,
-=======
         private readonly ?string $isDossiersSansAgent = null,
->>>>>>> 8963635da (fix link to view complete list #4641)
     ) {
     }
 
@@ -326,15 +323,14 @@ class SignalementSearchQuery
         return $this->isDossiersSansActivite;
     }
 
-<<<<<<< HEAD
     public function getIsEmailAVerifier(): ?string
     {
         return $this->isEmailAVerifier;
-=======
+    }
+
     public function getIsDossiersSansAgent(): ?string
     {
         return $this->isDossiersSansAgent;
->>>>>>> 8963635da (fix link to view complete list #4641)
     }
 
     public function getPage(): ?int
