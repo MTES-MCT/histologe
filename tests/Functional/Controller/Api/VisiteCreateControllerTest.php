@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -141,6 +142,40 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
+    /**
+     * @dataProvider provideDataFailure403
+     */
+    public function testCreateVisiteWithErrors(string $signalementUuid, string $partnerName, string $errorMessage): void
+    {
+        $partner = self::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
+        $payload = [
+            'date' => '2052-03-11',
+            'time' => '10:00',
+            'partenaireUuid' => $partner->getUuid(),
+        ];
+
+        $this->client->request(
+            method: 'POST',
+            uri: $this->router->generate('api_signalements_visite_post', ['uuid' => $signalementUuid]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode($payload)
+        );
+
+        $this->assertEquals(403, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
+        $content = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertStringContainsString('Access Denied', $content['message']);
+        $this->assertStringContainsString($errorMessage, $content['message']);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function provideDataFailure403(): \Generator
+    {
+        yield 'test create visite with new affectation' => ['00000000-0000-0000-2022-000000000001', 'Partenaire 13-01', 'L\'affectation doit être au statut EN_COURS'];
+        yield 'test create visite with closed signalement' => ['00000000-0000-0000-2022-000000000003', 'Partenaire 13-01', 'Le signalement n\'est pas actif.'];
+        yield 'test create visite with partner non affecté' => ['00000000-0000-0000-2022-000000000001', 'Partenaire 13-02', ' Le partenaire n\'est pas affecté au signalement.'];
+        yield 'test create visite with partner with no competence visite' => ['00000000-0000-0000-2023-000000000026', 'Partenaire 13-03', 'Le partenaire n\'a pas la compétence visite.'];
+    }
+
     public function provideDataForNotification(): \Generator
     {
         yield 'test create visite confirmed with usager notification' => [
@@ -158,7 +193,7 @@ class VisiteCreateControllerTest extends WebTestCase
                 ],
                 'details' => 'lorem ipsum dolor sit <em>amet</em>',
             ],
-            5,
+            6,
         ];
         yield 'test create visite confirmed with no usager notification' => [
             'visite_confirmed',
@@ -175,7 +210,7 @@ class VisiteCreateControllerTest extends WebTestCase
                 ],
                 'details' => 'lorem ipsum dolor sit <em>amet</em>',
             ],
-            4,
+            5,
         ];
 
         yield 'test create visite planned' => [

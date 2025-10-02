@@ -38,6 +38,10 @@ class SecurityApiExceptionListener
                 default => 'Une erreur inconnue est survenue.',
             };
 
+            if (str_contains($exception->getMessage(), 'Access Denied')) {
+                $message = $exception->getMessage();
+            }
+
             $response = [
                 'message' => $message,
                 'status' => Response::HTTP_FORBIDDEN,
@@ -50,7 +54,8 @@ class SecurityApiExceptionListener
     {
         return $exception instanceof AccessDeniedHttpException
             && (
-                self::ACCESS_DENIED === $exception->getMessage()
+                str_contains($exception->getMessage(), 'Access Denied')
+                || self::ACCESS_DENIED === $exception->getMessage()
                 || self::ACCESS_DENIED_PARTNER === $exception->getMessage()
                 || self::ACCESS_DENIED_PARTNER_NOT_FOUND === $exception->getMessage()
                 || self::TRANSITION_STATUT_DENIED === $exception->getMessage()

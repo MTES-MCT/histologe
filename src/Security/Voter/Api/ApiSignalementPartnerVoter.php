@@ -59,34 +59,42 @@ class ApiSignalementPartnerVoter extends Voter
         }
 
         return match ($attribute) {
-            self::API_ADD_INTERVENTION => $this->canAddIntervention($subject['signalement'], $subject['partner']),
-            self::API_EDIT_SIGNALEMENT => $this->canEditSignalement($subject['signalement'], $subject['partner']),
+            self::API_ADD_INTERVENTION => $this->canAddIntervention($subject['signalement'], $subject['partner'], $vote),
+            self::API_EDIT_SIGNALEMENT => $this->canEditSignalement($subject['signalement'], $subject['partner'], $vote),
             default => false,
         };
     }
 
-    private function canAddIntervention(Signalement $signalement, Partner $partner): bool
+    private function canAddIntervention(Signalement $signalement, Partner $partner, ?Vote $vote = null): bool
     {
-        if (!$this->canEditSignalement($signalement, $partner)) {
+        if (!$this->canEditSignalement($signalement, $partner, $vote)) {
             return false;
         }
         if (!\in_array(Qualification::VISITES, $partner->getCompetence())) {
+            $vote->addReason('Le partenaire n\'a pas la compétence visite.');
+
             return false;
         }
 
         return true;
     }
 
-    private function canEditSignalement(Signalement $signalement, Partner $partner): bool
+    private function canEditSignalement(Signalement $signalement, Partner $partner, ?Vote $vote = null): bool
     {
         if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
+            $vote->addReason('Le signalement n\'est pas actif.');
+
             return false;
         }
         $affectation = $signalement->getAffectationForPartner($partner);
         if (!$affectation) {
+            $vote->addReason('Le partenaire n\'est pas affecté au signalement.');
+
             return false;
         }
         if (AffectationStatus::ACCEPTED !== $affectation->getStatut()) {
+            $vote->addReason('L\'affectation doit être au statut EN_COURS.');
+
             return false;
         }
 

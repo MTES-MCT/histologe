@@ -9,7 +9,6 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
-use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\InterventionManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Security\PartnerAuthorizedResolver;
@@ -42,7 +41,7 @@ class ArreteCreateController extends AbstractController
      */
     #[OA\Post(
         path: '/api/signalements/{uuid}/arretes',
-        description: 'Création d\'un arrêté préfectoral',
+        description: 'Création d\'un arrêté préfectoral<br>⚠️ <a href="#tag/Affectations/operation/patch_api_affectations_update">Condition : l\'affectation du partenaire doit être au statut `EN_COURS`</a>',
         summary: 'Création d\'un arrêté préfectoral',
         security: [['Bearer' => []]],
         requestBody: new OA\RequestBody(
@@ -179,8 +178,7 @@ class ArreteCreateController extends AbstractController
         $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $arreteRequest->partenaireUuid);
         $this->denyAccessUnlessGranted(
             ApiSignalementPartnerVoter::API_ADD_INTERVENTION,
-            ['signalement' => $signalement, 'partner' => $partner],
-            SecurityApiExceptionListener::ACCESS_DENIED
+            ['signalement' => $signalement, 'partner' => $partner]
         );
         $affectation = $signalement->getAffectationForPartner($partner);
 

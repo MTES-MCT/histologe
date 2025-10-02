@@ -9,7 +9,6 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\InterventionCreatedEvent;
-use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\VisiteFactory;
 use App\Factory\SignalementVisiteRequestFactory;
 use App\Manager\InterventionManager;
@@ -45,7 +44,7 @@ class VisiteCreateController extends AbstractController
      */
     #[OA\Post(
         path: '/api/signalements/{uuid}/visites',
-        description: 'Création d\'une visite',
+        description: 'Création d\'une visite<br>⚠️ <a href="#tag/Affectations/operation/patch_api_affectations_update">Condition : l\'affectation du partenaire doit être au statut `EN_COURS`</a>.',
         summary: 'Création d\'une visite',
         security: [['Bearer' => []]],
         requestBody: new OA\RequestBody(
@@ -183,7 +182,6 @@ class VisiteCreateController extends AbstractController
         $this->denyAccessUnlessGranted(
             ApiSignalementPartnerVoter::API_ADD_INTERVENTION,
             ['signalement' => $signalement, 'partner' => $partner],
-            SecurityApiExceptionListener::ACCESS_DENIED
         );
 
         $errors = $this->validator->validate($visiteRequest);

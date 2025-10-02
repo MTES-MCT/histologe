@@ -9,7 +9,6 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\SuiviManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Sanitizer;
@@ -37,7 +36,7 @@ class SuiviCreateController extends AbstractController
     #[Route('/signalements/{uuid:signalement}/suivis', name: 'api_signalements_suivis_post', methods: ['POST'])]
     #[OA\Post(
         path: '/api/signalements/{uuid}/suivis',
-        description: 'Création d\'un suivi',
+        description: 'Création d\'un suivi<br>⚠️ <a href="#tag/Affectations/operation/patch_api_affectations_update">Condition : l\'affectation du partenaire doit être au statut `EN_COURS`</a>',
         summary: 'Création d\'un suivi',
         security: [['Bearer' => []]],
         tags: ['Suivis']
@@ -140,7 +139,6 @@ class SuiviCreateController extends AbstractController
         $this->denyAccessUnlessGranted(
             ApiSignalementPartnerVoter::API_EDIT_SIGNALEMENT,
             ['signalement' => $signalement, 'partner' => $partner],
-            SecurityApiExceptionListener::ACCESS_DENIED
         );
 
         $errors = $this->validator->validate($suiviRequest);
@@ -158,9 +156,9 @@ class SuiviCreateController extends AbstractController
             description: Sanitizer::sanitize($suiviRequest->getDescription()),
             type: Suivi::TYPE_PARTNER,
             category: SuiviCategory::MESSAGE_PARTNER,
-            isPublic: $suiviRequest->notifyUsager,
             partner: $partner,
             user: $user,
+            isPublic: $suiviRequest->notifyUsager,
             files: $fileToAttach,
         );
 
