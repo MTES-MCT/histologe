@@ -417,6 +417,13 @@ class SignalementCreateController extends AbstractController
 
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        if (!$signalement->isTiersDeclarant()) {
+            $signalement->setMailDeclarant(null);
+            $signalement->setNomDeclarant(null);
+            $signalement->setPrenomDeclarant(null);
+            $signalement->setStructureDeclarant(null);
+            $signalement->setTelDeclarant(null);
+        }
         $signalementManager->flush();
 
         $errorMsgs = [];

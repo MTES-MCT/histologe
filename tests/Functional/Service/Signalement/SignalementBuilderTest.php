@@ -116,14 +116,9 @@ class SignalementBuilderTest extends KernelTestCase
             '+2693621161',
             $signalement->getTelOccupantBis()
         );
-        $this->assertEquals(
-            '+'.self::FR_PHONE_COUNTRY_CODE.'0644784515',
-            $signalement->getTelDeclarant()
-        );
-        $this->assertEquals(
-            '+2693621161',
-            $signalement->getTelDeclarantSecondaire()
-        );
+        $this->assertNull($signalement->getTelDeclarant());
+        $this->assertNull($signalement->getMailDeclarant());
+        $this->assertNull($signalement->getTelDeclarantSecondaire());
         $this->assertEquals(
             '+'.self::FR_PHONE_COUNTRY_CODE.'0644784516',
             $signalement->getTelProprio()

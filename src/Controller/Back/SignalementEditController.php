@@ -78,6 +78,9 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if ($signalement->isV2() && !$signalement->getIsNotOccupant()) {
+            throw $this->createAccessDeniedException();
+        }
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_tiers_'.$signalement->getId(),
