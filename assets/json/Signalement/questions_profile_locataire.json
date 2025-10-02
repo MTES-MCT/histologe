@@ -1138,7 +1138,7 @@
             "message": "Veuillez renseigner le nombre d'enfants vivant dans votre logement.",
             "pattern": "^[0-9]*$",
             "patternMessage": "Veuillez renseigner un nombre d'enfants valide.",
-            "expression": "formStore.data.composition_logement_nombre_enfants <= formStore.data.composition_logement_nombre_personnes",
+            "expression": "parseInt(formStore.data.composition_logement_nombre_enfants) <= parseInt(formStore.data.composition_logement_nombre_personnes)",
             "expressionMessage": "Le nombre d'enfants doit être inférieur ou égal au nombre total de personnes du foyer."
           }
         },
