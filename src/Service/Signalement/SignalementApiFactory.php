@@ -47,7 +47,7 @@ class SignalementApiFactory
         $signalement->setTerritory($territory);
         $signalement->setEtageOccupant($request->etageOccupant);
         $signalement->setEscalierOccupant($request->escalierOccupant);
-        $signalement->setNumAppartOccupant(numAppartOccupant: $request->numAppartOccupant);
+        $signalement->setNumAppartOccupant($request->numAppartOccupant);
         $signalement->setAdresseAutreOccupant($request->adresseAutreOccupant);
         $signalement->setProfileDeclarant(ProfileDeclarant::from($request->profilDeclarant));
         $signalement->setLienDeclarantOccupant($request->lienDeclarantOccupant);
