@@ -520,7 +520,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private Collection $userSignalementSubscriptions;
 
     #[ORM\ManyToOne]
-    private ?Partner $partner = null;
+    private ?Partner $createdByPartner = null;
 
     public function __construct()
     {
@@ -2897,14 +2897,14 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getPartner(): ?Partner
+    public function getCreatedByPartner(): ?Partner
     {
-        return $this->partner;
+        return $this->createdByPartner;
     }
 
-    public function setPartner(?Partner $partner): static
+    public function setCreatedByPartner(?Partner $createdByPartner): static
     {
-        $this->partner = $partner;
+        $this->createdByPartner = $createdByPartner;
 
         return $this;
     }
