@@ -3,7 +3,6 @@
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
@@ -51,7 +50,7 @@ class DossiersNoAgentTabBodyLoader extends AbstractTabBodyLoader
 
         $filters = [
             ...$tabBody->getFilters(),
-            'status' => SignalementStatus::NEED_VALIDATION->label(),
+            'isDossiersSansAgent' => 'oui',
         ];
         $tabBody->setFilters($filters);
 

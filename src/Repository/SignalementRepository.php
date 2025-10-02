@@ -572,6 +572,13 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
+        if (!empty($options['isDossiersSansAgent'])) {
+            $params = new TabQueryParameters();
+            $signalementUuids = $this->getSignalementsUuidSansAgent($params);
+            $qb->andWhere('s.uuid IN (:signalement_uuids)')
+                ->setParameter('signalement_uuids', $signalementUuids);
+        }
+
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
                 case 'reference':
@@ -1882,6 +1889,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function findDossiersNoAgentFrom(
         ?AffectationStatus $affectationStatus = null,
         ?TabQueryParameters $tabQueryParameters = null,
+        bool $isLimitApplied = true,
     ): array {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -1923,7 +1931,9 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->orderBy('s.createdAt', 'DESC');
         }
 
-        $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+        if ($isLimitApplied) {
+            $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+        }
 
         return $qb->getQuery()->getResult();
     }
@@ -2476,6 +2486,24 @@ class SignalementRepository extends ServiceEntityRepository
         $sql .= ' LIMIT '.TabDossier::MAX_ITEMS_LIST;
 
         return $conn->executeQuery($sql, $paramsToBind, $types)->fetchAllAssociative();
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSignalementsUuidSansAgent(TabQueryParameters $params): array
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        if (null === $params->territoireId) {
+            $params->partenairesId = $user->getPartners()
+                ->map(fn ($partner) => $partner->getId())
+                ->toArray();
+        }
+
+        $signalements = $this->findDossiersNoAgentFrom(AffectationStatus::ACCEPTED, $params, false);
+
+        return array_map(fn (TabDossier $dossier) => $dossier->uuid, $signalements);
     }
 
     public function trimFields(): void
