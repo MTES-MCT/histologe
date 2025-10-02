@@ -90,7 +90,6 @@
             <th scope="col">Partenaire</th>
             <th scope="col">Type de partenaire</th>
             <th scope="col">Statut du compte</th>
-            {# <th scope="col">Dernière connexion</th> #}
             <th scope="col">Rôle</th>
             <th scope="col">Droits d'affectation</th>
             <th scope="col">Problème d'adresse e-mail</th>
@@ -144,8 +143,6 @@
                             {{ user.statut.label }}
                         {% endif %}
                     </td>
-                    {# <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>
-                     #}
                     <td>{{ user.roleLabel() }}</td>
                     <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
                     <td>

@@ -223,7 +223,6 @@
             </div>
 
             {% set tableHead %}
-                {# <th scope="col">Dernière connexion</th> #}
                 <th scope="col">Nom</th>
                 <th scope="col">Prénom</th>
                 <th scope="col">Fonction</th>
@@ -242,15 +241,11 @@
                 {% for user in partner.users|filter(user => user.id is not null) %}
                     {% if is_granted('ROLE_ADMIN') or 'ROLE_API_USER' not in user.roles %}
                         <tr class="user-row">
-                            {# <td>{{ user.getLastLoginAtStr('d/m/Y') }}</td> #}
                             <td>{{ user.nom }}</td>
                             <td>{{ user.prenom }}</td>
                             <td>{{ user.fonction }}</td>
                             <td>{{ user.email }}<br>
                                 Dernière connexion : {{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}
-                                {# {% if user.emailDeliveryIssue.event.value|default(false) %}
-                                    <span class="fr-badge fr-badge--warning fr-badge--sm"> </span>
-                                {% endif %} #}
                             </td>
                             <td>
                                 <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">
