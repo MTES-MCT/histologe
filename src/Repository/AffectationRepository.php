@@ -64,7 +64,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->select('COUNT(a.signalement) as count')
             ->leftJoin('a.signalement', 's', 'WITH', 's = a.signalement')
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [SignalementStatus::DRAFT, SignalementStatus::ARCHIVED, SignalementStatus::DRAFT_ARCHIVED])
+            ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses())
             ->addSelect('a.statut')
             ->andWhere('a.partner IN (:partners)')
             ->setParameter('partners', $user->getPartners());
@@ -127,11 +127,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.signalement', 's')
             ->where('p.esaboraUrl IS NOT NULL AND p.esaboraToken IS NOT NULL AND p.isEsaboraActive = 1')
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [
-                SignalementStatus::ARCHIVED,
-                SignalementStatus::DRAFT,
-                SignalementStatus::DRAFT_ARCHIVED,
-            ]);
+            ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses());
 
         if (is_array($partnerType)) {
             $qb->andWhere('p.type IN (:partner_types)')->setParameter('partner_types', $partnerType);
@@ -225,7 +221,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin('a.signalement', 's')
             ->where('s.statut NOT IN (:statut_list)')
             ->andWhere('a.partner IN (:partners)')
-            ->setParameter('statut_list', [SignalementStatus::ARCHIVED->value, SignalementStatus::DRAFT->value, SignalementStatus::DRAFT_ARCHIVED->value])
+            ->setParameter('statut_list', SignalementStatus::excludedStatuses())
             ->setParameter('partners', $user->getPartners());
 
         if (\count($territories)) {
@@ -297,7 +293,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->where('p.isIdossActive = 1')
             ->andWhere('p.idossUrl IS NOT NULL')
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
+            ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses())
             ->andWhere('s.uuid LIKE :uuid_signalement')
             ->setParameter('uuid_signalement', $uuidSignalement);
 

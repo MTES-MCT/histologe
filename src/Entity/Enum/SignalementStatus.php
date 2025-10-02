@@ -15,11 +15,12 @@ enum SignalementStatus: string
     case ARCHIVED = 'ARCHIVED';
     case REFUSED = 'REFUSED';
     case DRAFT_ARCHIVED = 'DRAFT_ARCHIVED';
+    case EN_MEDIATION = 'EN_MEDIATION';
 
     public function mapAffectationStatus(): string
     {
         return match ($this) {
-            self::DRAFT, self::NEED_VALIDATION => AffectationStatus::WAIT->value,
+            self::EN_MEDIATION, self::DRAFT, self::NEED_VALIDATION => AffectationStatus::WAIT->value,
             self::ACTIVE => AffectationStatus::ACCEPTED->value,
             self::REFUSED => AffectationStatus::REFUSED->value,
             self::CLOSED, self::ARCHIVED, self::DRAFT_ARCHIVED => AffectationStatus::CLOSED->value,
@@ -37,6 +38,7 @@ enum SignalementStatus: string
             self::REFUSED->name => 'refusé',
             self::ARCHIVED->name => 'archivé',
             self::DRAFT_ARCHIVED->name => 'brouillon archivé',
+            self::EN_MEDIATION->name => 'en médiation',
         ];
     }
 
@@ -48,7 +50,19 @@ enum SignalementStatus: string
             'en_cours' => SignalementStatus::ACTIVE->value,
             'ferme' => SignalementStatus::CLOSED->value,
             'refuse' => SignalementStatus::REFUSED->value,
+            'en_mediation' => SignalementStatus::EN_MEDIATION->value,
             default => throw new \UnexpectedValueException('Unexpected signalement status : '.$label),
         };
+    }
+
+    /** @return array<SignalementStatus> */
+    public static function excludedStatuses(): array
+    {
+        return [
+            self::ARCHIVED,
+            self::DRAFT,
+            self::DRAFT_ARCHIVED,
+            self::EN_MEDIATION,
+        ];
     }
 }

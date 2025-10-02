@@ -156,11 +156,12 @@ class SearchFilter
                     ->select('DISTINCT IDENTITY(a.signalement)')
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut = :statut_affectation_closed')
-                    ->andWhere('s.statut != :status_archived AND s.statut != :statut_closed AND s.statut != :status_draft AND s.statut != :status_draft_archived')
+                    ->andWhere('s.statut != :status_archived AND s.statut != :statut_closed AND s.statut != :status_draft AND s.statut != :status_draft_archived AND s.statut != :status_en_mediation')
                     ->setParameter('status_archived', SignalementStatus::ARCHIVED->value)
                     ->setParameter('statut_closed', SignalementStatus::CLOSED->value)
                     ->setParameter('status_draft', SignalementStatus::DRAFT->value)
                     ->setParameter('status_draft_archived', SignalementStatus::DRAFT_ARCHIVED->value)
+                    ->setParameter('status_en_mediation', SignalementStatus::EN_MEDIATION->value)
                     ->setParameter('statut_affectation_closed', AffectationStatus::CLOSED->value);
 
                 if (!empty($filters['territories'])) {
@@ -207,6 +208,7 @@ class SearchFilter
                     'status_refused' => SignalementStatus::REFUSED->value,
                     'status_draft' => SignalementStatus::DRAFT->value,
                     'status_draft_archived' => SignalementStatus::DRAFT_ARCHIVED->value,
+                    'status_en_mediation' => SignalementStatus::EN_MEDIATION->value,
                     'nb_suivi_technical' => 3,
                 ];
 

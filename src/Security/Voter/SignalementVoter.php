@@ -148,13 +148,11 @@ class SignalementVoter extends Voter
 
     private function canView(Signalement $signalement, User $user): bool
     {
-        if ($this->security->isGranted('ROLE_ADMIN') && SignalementStatus::DRAFT !== $signalement->getStatut() && SignalementStatus::DRAFT_ARCHIVED !== $signalement->getStatut()) {
+        if ($this->security->isGranted('ROLE_ADMIN') && !in_array($signalement->getStatut(), [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])) {
             return true;
         }
 
-        if (SignalementStatus::ARCHIVED === $signalement->getStatut()
-        || SignalementStatus::DRAFT === $signalement->getStatut()
-        || SignalementStatus::DRAFT_ARCHIVED === $signalement->getStatut()) {
+        if (in_array($signalement->getStatut(), SignalementStatus::excludedStatuses())) {
             return false;
         }
 

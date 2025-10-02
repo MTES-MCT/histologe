@@ -49,7 +49,7 @@ class TagRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('t');
         $qb->select('t', 's')
             ->leftJoin('t.signalements', 's', 'WITH', 's.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
+            ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses())
             ->andWhere('t.isArchive != 1');
 
         if (!empty($searchTag->getOrderType())) {
