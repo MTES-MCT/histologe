@@ -4,7 +4,6 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\User;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
@@ -28,22 +27,11 @@ class DossiersNewAffectationTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        /** @var User $user */
-        $user = $this->security->getUser();
-
-        if (null === $this->tabQueryParameters->territoireId) {
-            $this->tabQueryParameters->partenairesId = $user->getPartners()
-                ->map(fn ($partner) => $partner->getId())
-                ->toArray();
-        } else {
-            $territoire = $tabBody->getTerritoires()[$this->tabQueryParameters->territoireId];
-            $partner = $user->getPartnerInTerritory($territoire);
-            $this->tabQueryParameters->partenairesId = [$partner->getId()];
-        }
 
         $result = $this->tabDataManager->getNouveauxDossiersWithCount(
             affectationStatus: AffectationStatus::WAIT,
-            tabQueryParameters: $this->tabQueryParameters
+            tabQueryParameters: $this->tabQueryParameters,
+            territoires: $tabBody->getTerritoires(),
         );
 
         $tabBody->setData($result->dossiers);
