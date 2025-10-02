@@ -4,7 +4,7 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
-use App\Repository\Query\Signalement\MapGeoDataQuery;
+use App\Repository\Query\SignalementList\MapGeoDataQuery;
 use App\Repository\ZoneRepository;
 use App\Service\Signalement\SearchFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

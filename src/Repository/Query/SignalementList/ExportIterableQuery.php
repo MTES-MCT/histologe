@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Query\Signalement;
+namespace App\Repository\Query\SignalementList;
 
 use App\Dto\SignalementAffectationListView;
 use App\Dto\SignalementExport;

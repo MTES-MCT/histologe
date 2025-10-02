@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Repository\Query\Signalement;
+namespace App\Repository\Query\SignalementList;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
+use Doctrine\DBAL\Exception;
 
 class MapGeoDataQuery
 {
@@ -17,6 +18,7 @@ class MapGeoDataQuery
      * @param array<string,mixed> $options
      *
      * @return array<int, array<string,mixed>>
+     * @throws Exception
      */
     public function getData(User $user, array $options, int $offset): array
     {
