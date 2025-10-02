@@ -2418,8 +2418,8 @@ class SignalementRepository extends ServiceEntityRepository
                 )
             )
             ->leftJoin('s.affectations', 'aff')
-            ->where('s.statut = :statut')
-            ->setParameter('statut', SignalementStatus::ACTIVE);
+            ->where('s.statut IN (:statutList)')
+            ->setParameter('statutList', [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE]);
 
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
             $existsAffectation = $this->_em->createQueryBuilder()
