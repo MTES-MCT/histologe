@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\SignalementStatus;
@@ -12,6 +13,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Tests\SessionHelper;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -24,6 +26,7 @@ class AffectationControllerTest extends WebTestCase
 
     public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
     public const USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
+    public const USER_PARTNER_TERRITORY_34_30 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
     public const SIGNALEMENT_REFERENCE = '2022-1';
     public const SIGNALEMENT_ACTIVE_UUID = '00000000-0000-0000-2022-000000000001';
     public const SIGNALEMENT_NEED_VALIDATION_UUID = '00000000-0000-0000-2023-000000000016';
@@ -35,6 +38,7 @@ class AffectationControllerTest extends WebTestCase
     private SuiviRepository $suiviRepository;
     private AffectationRepository $affectationRepository;
     private PartnerRepository $partnerRepository;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
 
     protected function setUp(): void
     {
@@ -45,6 +49,7 @@ class AffectationControllerTest extends WebTestCase
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
     }
 
     public function testRejectAffectationSignalement(): void
@@ -86,7 +91,7 @@ class AffectationControllerTest extends WebTestCase
 
     public function testFirstAcceptationAffectationSignalement(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
+        $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
         $this->client->loginUser($user);
 
         $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
@@ -117,7 +122,12 @@ class AffectationControllerTest extends WebTestCase
             $this->assertEquals(AffectationStatus::ACCEPTED, $affectation->getStatut());
             $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
             $this->assertEmailCount(1);
-        // TODO : vérifier les subscriptions
+
+            $subscriptions = $this->userSignalementSubscriptionRepository->findBy([
+                'user' => $user,
+                'signalement' => $signalement,
+            ]);
+            $this->assertCount(1, $subscriptions);
         } else {
             $tokenId = 'signalement_affectation_response_'.$signalement->getId();
             $this->client->request(
@@ -145,7 +155,7 @@ class AffectationControllerTest extends WebTestCase
 
     public function testSecondAffectationAffectationSignalement(): void
     {
-        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
+        $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
         $this->client->loginUser($user);
         $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
 
@@ -175,7 +185,12 @@ class AffectationControllerTest extends WebTestCase
             $this->assertEquals(AffectationStatus::ACCEPTED, $affectation->getStatut());
             $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
             $this->assertEmailCount(0);
-        // TODO : vérifier les subscriptions
+
+            $subscriptions = $this->userSignalementSubscriptionRepository->findBy([
+                'user' => $user,
+                'signalement' => $signalement,
+            ]);
+            $this->assertCount(1, $subscriptions);
         } else {
             $tokenId = 'signalement_affectation_response_'.$signalement->getId();
             $this->client->request(
@@ -198,6 +213,101 @@ class AffectationControllerTest extends WebTestCase
             $this->assertEmailCount(0);
             $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         }
+    }
+
+    public function testAcceptationWhenUserIsAloneInPartnerCreatesOwnSubscription(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
+        if (!$isNewDashboard) {
+            $this->markTestSkipped('Cas spécifique au nouveau dashboard');
+        }
+
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-19']);
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $territory = $signalement->getTerritory();
+
+        $affectation = (new Affectation())->setPartner($partner)
+            ->setSignalement($signalement)
+            ->setStatut(AffectationStatus::WAIT)
+            ->setTerritory($signalement->getTerritory());
+
+        $signalement->addAffectation($affectation);
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->persist($signalement);
+        $em->persist($affectation);
+        $em->flush();
+        $em->refresh($affectation);
+        $affectation = $this->affectationRepository->find($affectation->getId());
+
+        $route = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+
+        $tokenId = 'signalement_affectation_response_'.$signalement->getId();
+        $this->client->request('POST', $route, [
+            'signalement-affectation-response' => ['accept' => 1],
+            '_token' => $this->generateCsrfToken($this->client, $tokenId),
+        ]);
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+
+        $subscriptions = $this->userSignalementSubscriptionRepository->findBy([
+            'user' => $user,
+            'signalement' => $signalement,
+        ]);
+        $this->assertCount(1, $subscriptions);
+    }
+
+    public function testAffectationAcceptFormInvalid(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
+        $this->client->loginUser($user);
+
+        $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
+        if (!$isNewDashboard) {
+            $this->markTestSkipped('Cas spécifique au nouveau dashboard');
+        }
+
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
+        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement]);
+
+        $route = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+
+        $this->client->request('POST', $route, [
+            'agents_selection' => [
+                'agents' => [99999],
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('errors', $response);
+    }
+
+    public function testAffectationAcceptWithInvalidCsrf(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
+        $this->client->loginUser($user);
+
+        $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
+        if ($isNewDashboard) {
+            $this->markTestSkipped('Cas spécifique à l’ancien dashboard');
+        }
+
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
+        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement]);
+
+        $route = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+
+        $this->client->request('POST', $route, [
+            'signalement-affectation-response' => ['accept' => 1],
+            '_token' => 'invalid-token',
+        ]);
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--error', 'Une erreur est survenue');
     }
 
     public function testCheckingNoDuplicatedMailSentWhenPartnerAffectationIsMultiple(): void
