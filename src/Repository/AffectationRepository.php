@@ -282,7 +282,7 @@ class AffectationRepository extends ServiceEntityRepository
         $stmt->bindValue('signalement_status', SignalementStatus::ACTIVE->value);
         $stmt->bindValue('affectation_status', AffectationStatus::ACCEPTED->value);
 
-        return $stmt->executeQuery()->fetchAllAssociative();// @phpstan-ignore-line
+        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
     }
 
     /**

@@ -48,7 +48,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @extends ServiceEntityRepository<Signalement>
- * 
+ *
  * @method Signalement|null find($id, $lockMode = null, $lockVersion = null)
  * @method Signalement|null findOneBy(array $criteria, array $orderBy = null)
  * @method Signalement[]    findAll()
@@ -133,7 +133,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param array<int, Territory>                $territories
-     * @param ?ArrayCollection<int, Partner> $partners
+     * @param ?ArrayCollection<int, Partner>       $partners
      * @param array<int, QualificationStatus>|null $qualificationStatuses
      *
      * @return array<int, array<string, mixed>>
@@ -524,7 +524,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param ?ArrayCollection<int, Partner> $partners
-     * 
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -552,7 +552,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param ?ArrayCollection<int, Partner> $partners
-     * 
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -565,7 +565,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param ?ArrayCollection<int, Partner> $partners
-     * 
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -578,7 +578,7 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param ?ArrayCollection<int, Partner> $partners
-     * 
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */

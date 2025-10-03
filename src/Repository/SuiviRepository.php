@@ -345,7 +345,7 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, Territory> $territories
+     * @param array<int, Territory>          $territories
      * @param ?ArrayCollection<int, Partner> $partners
      *
      * @throws Exception
@@ -383,7 +383,7 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, Territory> $territories
+     * @param array<int, Territory>          $territories
      * @param ?ArrayCollection<int, Partner> $partners
      */
     public function getSignalementsLastAskFeedbackSuivisQuery(
@@ -610,7 +610,7 @@ class SuiviRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
         $stmt = $connection->prepare($sql);
 
-        return $stmt->executeQuery()->fetchAllAssociative();// @phpstan-ignore-line
+        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
     }
 
     /**
