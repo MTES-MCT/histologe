@@ -2307,9 +2307,13 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($params->queryCommune) {
-            $query = '%'.$params->queryCommune.'%';
-            $sql .= ' AND (si.cp_occupant LIKE :query OR si.ville_occupant LIKE :query)';
-            $paramsToBind['query'] = $query;
+            $listCity = [$params->queryCommune];
+            if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune])) {
+                $listCity = array_merge($listCity, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune]);
+            }
+            $sql .= ' AND (si.cp_occupant IN (:cities) OR si.ville_occupant IN (:cities))';
+            $paramsToBind['cities'] = $listCity;
+            $types['cities'] = ArrayParameterType::STRING;
         }
 
         if (!empty($excludedIds)) {
