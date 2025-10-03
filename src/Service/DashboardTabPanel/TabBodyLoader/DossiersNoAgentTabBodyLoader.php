@@ -2,18 +2,17 @@
 
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
-use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\AffectationStatus;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
-use App\Service\DashboardTabPanel\TabDossier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
+class DossiersNoAgentTabBodyLoader extends AbstractTabBodyLoader
 {
-    protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO;
+    protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NO_AGENT;
 
     public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
     {
@@ -27,10 +26,9 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $this->tabQueryParameters->createdFrom = TabDossier::CREATED_FROM_FORMULAIRE_PRO;
 
-        $result = $this->tabDataManager->getNouveauxDossiersWithCount(
-            signalementStatus: SignalementStatus::NEED_VALIDATION,
+        $result = $this->tabDataManager->getDossiersNoAgentWithCount(
+            affectationStatus: AffectationStatus::ACCEPTED,
             tabQueryParameters: $this->tabQueryParameters,
             territoires: $tabBody->getTerritoires(),
         );
@@ -40,11 +38,10 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
 
         $filters = [
             ...$tabBody->getFilters(),
-            'status' => SignalementStatus::NEED_VALIDATION->label(),
-            'createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_PRO,
+            'isDossiersSansAgent' => 'oui',
         ];
-
         $tabBody->setFilters($filters);
-        $tabBody->setTemplate('back/dashboard/tabs/dossiers_nouveaux/_body_dossier_pro.html.twig');
+
+        $tabBody->setTemplate('back/dashboard/tabs/dossiers_nouveaux/_body_dossier_no_agent.html.twig');
     }
 }

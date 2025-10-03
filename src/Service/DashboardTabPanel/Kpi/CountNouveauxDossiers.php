@@ -9,6 +9,7 @@ readonly class CountNouveauxDossiers
         public int $countFormulairePro = 0,
         public int $countSansAffectation = 0,
         public int $countNouveauxDossiers = 0,
+        public int $countNoAgentDossiers = 0,
     ) {
     }
 
@@ -17,6 +18,7 @@ readonly class CountNouveauxDossiers
         return $this->countFormulaireUsager
             + $this->countFormulairePro
             + $this->countSansAffectation
-            + $this->countNouveauxDossiers;
+            + $this->countNouveauxDossiers
+            + $this->countNoAgentDossiers;
     }
 }

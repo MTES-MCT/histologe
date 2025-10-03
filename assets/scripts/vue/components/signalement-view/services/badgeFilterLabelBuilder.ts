@@ -141,6 +141,9 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'isEmailAVerifier') {
     return 'Adresses e-mail usager à vérifier'
   }
+  if (key === 'isDossiersSansAgent') {
+    return 'Dossiers sans agent'
+  }
     
   return buildStaticBadge(value)
 }

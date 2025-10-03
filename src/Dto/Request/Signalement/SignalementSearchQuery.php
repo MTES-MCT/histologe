@@ -124,6 +124,7 @@ class SignalementSearchQuery
         private readonly ?string $isMessageWithoutResponse = null,
         private readonly ?string $isDossiersSansActivite = null,
         private readonly ?string $isEmailAVerifier = null,
+        private readonly ?string $isDossiersSansAgent = null,
     ) {
     }
 
@@ -327,6 +328,11 @@ class SignalementSearchQuery
         return $this->isEmailAVerifier;
     }
 
+    public function getIsDossiersSansAgent(): ?string
+    {
+        return $this->isDossiersSansAgent;
+    }
+
     public function getPage(): ?int
     {
         return $this->page;
@@ -442,6 +448,7 @@ class SignalementSearchQuery
         $filters['isMessageWithoutResponse'] = 'oui' === $this->getIsMessageWithoutResponse();
         $filters['isDossiersSansActivite'] = 'oui' === $this->getIsDossiersSansActivite();
         $filters['isEmailAVerifier'] = 'oui' === $this->getIsEmailAVerifier();
+        $filters['isDossiersSansAgent'] = 'oui' === $this->getIsDossiersSansAgent();
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         $filters['sortBy'] = $this->getSortBy();

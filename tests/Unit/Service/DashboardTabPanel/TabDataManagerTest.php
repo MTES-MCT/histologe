@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service\DashboardTabPanel;
 
 use App\Dto\CountPartner;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
@@ -185,6 +186,37 @@ class TabDataManagerTest extends TestCase
         $this->assertInstanceOf(\DateTimeImmutable::class, $result['LastSyncAt']);
         $this->assertEquals('2024-06-11 11:00:00', $result['firstErrorLastDayAt']->format('Y-m-d H:i:s'));
         $this->assertEquals('2024-06-10 10:00:00', $result['LastSyncAt']->format('Y-m-d H:i:s'));
+    }
+
+    public function testGetDossiersNoAgentWithCountReturnsExpectedResult(): void
+    {
+        $expectedDossiers = [];
+        $expectedCount = 0;
+        $params = new TabQueryParameters(null, null);
+
+        $this->signalementRepository
+            ->method('findDossiersNoAgentFrom')
+            ->with(AffectationStatus::ACCEPTED, $params)
+            ->willReturn($expectedDossiers);
+        $this->signalementRepository
+            ->method('countDossiersNoAgentFrom')
+            ->with(AffectationStatus::ACCEPTED, $params)
+            ->willReturn($expectedCount);
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+        $result = $tabDataManager->getDossiersNoAgentWithCount($params, AffectationStatus::ACCEPTED);
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
     }
 
     public function testGetDossiersDemandesFermetureByUsagerReturnsExpectedResult(): void

@@ -7,7 +7,7 @@
 <section class="fr-mb-5v">
     <header class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-md-9">
-            <h3 class="fr-text-label--blue-france tab-panel-title-with-press-card-icon">{{ title }} ({{ count }})</h3>
+            <h3 class="fr-text-label--blue-france {{ h3_icon_class }}">{{ title }} ({{ count }})</h3>
         </div>
         {% include 'back/dashboard/components/_select_sort_dossiers_nouveaux.html.twig' with {
             data_sort_body: data_sort_body
