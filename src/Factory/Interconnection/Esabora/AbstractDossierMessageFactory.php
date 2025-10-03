@@ -43,7 +43,7 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
 
     protected function buildDesordresCreatedFrom(Signalement $signalement): string
     {
-        if (!$signalement->getDesordreCriteres()->isEmpty()) {
+        if (!$signalement->getDesordrePrecisions()->isEmpty()) {
             $criticitesArranged = [];
             foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
                 $zone = $desordrePrecision->getDesordreCritere()->getZoneCategorie();

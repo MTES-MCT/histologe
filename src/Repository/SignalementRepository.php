@@ -369,7 +369,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :batimentString THEN 1 ELSE 0 END) AS desordrecritere_batiment_count')
             ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :logementString THEN 1 ELSE 0 END) AS desordrecritere_logement_count')
             ->leftJoin('s.criteres', 'c')
-            ->leftJoin('s.desordreCriteres', 'dc')
+            ->leftJoin('s.desordrePrecisions', 'dp')
+            ->leftJoin('dp.desordreCritere', 'dc')
             ->setParameter('batiment', 1)
             ->setParameter('logement', 2)
             ->setParameter('batimentString', 'BATIMENT')
@@ -397,7 +398,8 @@ class SignalementRepository extends ServiceEntityRepository
     ): array {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, desordreCriteres.labelCritere')
-            ->leftJoin('s.desordreCriteres', 'desordreCriteres')
+            ->leftJoin('s.desordrePrecisions', 'dp')
+            ->leftJoin('dp.desordreCritere', 'desordreCriteres')
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED])
             ->andWhere('s.createdFrom IS NOT NULL OR s.createdBy IS NOT NULL');
@@ -665,8 +667,9 @@ class SignalementRepository extends ServiceEntityRepository
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
-            ->leftJoin('s.desordreCategories', 'desordreCategories')
-            ->leftJoin('s.desordreCriteres', 'desordreCriteres')
+            ->leftJoin('s.desordrePrecisions', 'desordrePrecisions')
+            ->leftJoin('desordrePrecisions.desordreCritere', 'desordreCriteres')
+            ->leftJoin('desordreCriteres.desordreCategorie', 'desordreCategories')
             ->leftJoin('s.tags', 'tags')
             ->leftJoin(ViewLatestIntervention::class, 'vli', 'WITH', 'vli.signalementId = s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)

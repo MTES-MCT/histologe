@@ -49,8 +49,7 @@ class FileFactoryTest extends TestCase
         $this->assertEquals($documentType, $file->getDocumentType());
         $this->assertEquals($filename, $file->getFilename());
         if (DocumentType::PHOTO_SITUATION === $file->getDocumentType()
-        && (\in_array($dataItem['slug'], $signalement->getDesordreCritereSlugs())
-        || \in_array($dataItem['slug'], $signalement->getDesordrePrecisionSlugs()))) {
+        && \in_array($dataItem['slug'], $signalement->getDesordrePrecisionSlugs())) {
             $this->assertNotEmpty($file->getDesordreSlug());
         }
     }

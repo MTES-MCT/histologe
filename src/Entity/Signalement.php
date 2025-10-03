@@ -472,16 +472,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'information_complementaire', nullable: true)]
     private ?InformationComplementaire $informationComplementaire = null;
 
-    /** @var Collection<int, DesordreCategorie> $desordreCategories */
-    #[ORM\ManyToMany(targetEntity: DesordreCategorie::class, inversedBy: 'signalement', cascade: ['persist'])]
-    #[ORM\JoinTable(name: 'desordre_categorie_signalement')]
-    private Collection $desordreCategories;
-
-    /** @var Collection<int, DesordreCritere> $desordreCriteres */
-    #[ORM\ManyToMany(targetEntity: DesordreCritere::class, inversedBy: 'signalement', cascade: ['persist'])]
-    #[ORM\JoinTable(name: 'desordre_critere_signalement')]
-    private Collection $desordreCriteres;
-
     /** @var Collection<int, DesordrePrecision> $desordrePrecisions */
     #[ORM\ManyToMany(targetEntity: DesordrePrecision::class, inversedBy: 'signalement', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'desordre_precision_signalement')]
@@ -538,8 +528,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->signalementQualifications = new ArrayCollection();
         $this->interventions = new ArrayCollection();
         $this->files = new ArrayCollection();
-        $this->desordreCategories = new ArrayCollection();
-        $this->desordreCriteres = new ArrayCollection();
         $this->desordrePrecisions = new ArrayCollection();
         $this->userSignalementSubscriptions = new ArrayCollection();
     }
@@ -2521,65 +2509,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection<int, DesordreCategorie>
-     */
-    public function getDesordreCategories(): Collection
-    {
-        return $this->desordreCategories;
-    }
-
-    public function addDesordreCategory(DesordreCategorie $desordreCategory): self
-    {
-        if (!$this->desordreCategories->contains($desordreCategory)) {
-            $this->desordreCategories->add($desordreCategory);
-        }
-
-        return $this;
-    }
-
-    public function removeDesordreCategory(DesordreCategorie $desordreCategory): self
-    {
-        $this->desordreCategories->removeElement($desordreCategory);
-
-        return $this;
-    }
-
-    public function removeAllDesordreCategory(): self
-    {
-        $this->desordreCategories->clear();
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, DesordreCritere>
      */
     public function getDesordreCriteres(): Collection
     {
-        return $this->desordreCriteres;
-    }
-
-    public function addDesordreCritere(DesordreCritere $desordreCritere): self
-    {
-        if (!$this->desordreCriteres->contains($desordreCritere)) {
-            $this->desordreCriteres->add($desordreCritere);
+        $desordreCriteres = new ArrayCollection();
+        foreach ($this->desordrePrecisions as $desordrePrecision) {
+            if (!$desordreCriteres->contains($desordrePrecision->getDesordreCritere())) {
+                $desordreCriteres->add($desordrePrecision->getDesordreCritere());
+            }
         }
 
-        return $this;
-    }
-
-    public function removeDesordreCritere(DesordreCritere $desordreCritere): self
-    {
-        $this->desordreCriteres->removeElement($desordreCritere);
-
-        return $this;
-    }
-
-    public function removeAllDesordreCritere(): self
-    {
-        $this->desordreCriteres->clear();
-
-        return $this;
+        return $desordreCriteres;
     }
 
     /**
@@ -2635,16 +2576,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nomOccupant ?? $this->nomDeclarant;
     }
 
-    public function hasDesordreCategorie(DesordreCategorie $desordreCategorie): bool
-    {
-        return \in_array($desordreCategorie, $this->desordreCategories->toArray());
-    }
-
-    public function hasDesordreCritere(DesordreCritere $desordreCritere): bool
-    {
-        return \in_array($desordreCritere, $this->desordreCriteres->toArray());
-    }
-
     public function hasDesordrePrecision(DesordrePrecision $desordrePrecision): bool
     {
         return \in_array($desordrePrecision, $this->desordrePrecisions->toArray());
@@ -2652,46 +2583,19 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getDesordreLabel(string $desordreSlug): string
     {
-        /** @var DesordrePrecision $desordrePrecision */
-        $desordrePrecision = $this->getDesordrePrecisions()->filter(function ($desordrePrecision) use ($desordreSlug) {
-            return $desordrePrecision->getDesordrePrecisionSlug() == $desordreSlug;
-        })->first();
-
-        if ($desordrePrecision) {
-            if ('' !== $desordrePrecision->getLabel()) {
+        foreach ($this->getDesordrePrecisions() as $desordrePrecision) {
+            if ($desordrePrecision->getDesordrePrecisionSlug() === $desordreSlug && $desordrePrecision->getLabel()) {
                 return $desordrePrecision->getLabel();
             }
-
-            return $desordrePrecision->getDesordreCritere()->getLabelCritere();
+            if ($desordrePrecision->getDesordreCritere()->getSlugCritere() === $desordreSlug) {
+                return $desordrePrecision->getDesordreCritere()->getLabelCritere();
+            }
+            if ($desordrePrecision->getDesordreCritere()->getSlugCategorie() === $desordreSlug) {
+                return $desordrePrecision->getDesordreCritere()->getLabelCritere();
+            }
         }
 
-        /** @var DesordreCritere $desordreCritere */
-        $desordreCritere = $this->getDesordreCriteres()->filter(function ($desordreCritere) use ($desordreSlug) {
-            return $desordreCritere->getSlugCritere() == $desordreSlug;
-        })->first();
-
-        if ($desordreCritere) {
-            return $desordreCritere->getLabelCritere();
-        }
-
-        /** @var DesordreCritere $desordreCritere */
-        $desordreCritere = $this->getDesordreCriteres()->filter(function ($desordreCategorie) use ($desordreSlug) {
-            return $desordreCategorie->getSlugCategorie() == $desordreSlug;
-        })->first();
-
-        if ($desordreCritere) {
-            return $desordreCritere->getDesordreCategorie()->getLabel();
-        }
-
-        return $desordreSlug;
-    }
-
-    /** @return array<string> */
-    public function getDesordreCritereSlugs(): array
-    {
-        return $this->getDesordreCriteres()->map(
-            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCritere()
-        )->toArray();
+        return '';
     }
 
     /** @return array<string> */
@@ -2702,12 +2606,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         )->toArray();
     }
 
-    /** @return array<string> */
-    public function getDesordreCategorieSlugs(): array
+    /** @return array<string, DesordreCritere[]> */
+    public function getDesordresIndexedByCategorieSlugs(): array
     {
-        return $this->getDesordreCriteres()->map(
-            fn (DesordreCritere $desordreCritere) => $desordreCritere->getSlugCategorie()
-        )->toArray();
+        $list = [];
+        foreach ($this->getDesordrePrecisions() as $desordrePrecision) {
+            $list[$desordrePrecision->getDesordreCritere()->getSlugCategorie()][] = $desordrePrecision->getDesordreCritere();
+        }
+
+        return $list;
     }
 
     public function getBailleur(): ?Bailleur

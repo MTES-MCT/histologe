@@ -26,14 +26,9 @@ class DesordreCategorie
     #[ORM\OneToMany(mappedBy: 'desordreCategorie', targetEntity: DesordreCritere::class, orphanRemoval: true)]
     private Collection $desordreCriteres;
 
-    /** @var Collection<int, Signalement> $signalement */
-    #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'desordreCategories')]
-    private Collection $signalement;
-
     public function __construct()
     {
         $this->desordreCriteres = new ArrayCollection();
-        $this->signalement = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,13 +76,5 @@ class DesordreCategorie
         }
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Signalement>
-     */
-    public function getSignalement(): Collection
-    {
-        return $this->signalement;
     }
 }
