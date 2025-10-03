@@ -221,7 +221,20 @@
                 "label": "Suivant",
                 "slug": "coordonnees_bailleur_next",
                 "action": "goto.save:info_procedure_bail",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "!formStore.shouldMediationBailleurSuggested()"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant (médiation bailleur)",
+                "slug": "coordonnees_bailleur_next",
+                "action": "goto.save:mediation_bailleur",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.shouldMediationBailleurSuggested()"
+                }
               },
               {
                 "type": "SignalementFormButton",
@@ -235,6 +248,74 @@
                 "label": "Précédent",
                 "slug": "coordonnees_bailleur_previous",
                 "action": "goto:vos_coordonnees_occupant",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "mediation_bailleur",
+    "screenCategory": "Médiation bailleur",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Souhaitez-vous mettre un coup de pression sur votre baileur avec la médiation bailleur ?",
+          "slug": "choix_mediation_bailleur",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si vous souhaitez rentrer dans la médiation bailleur."
+          },
+          "accessibility": {
+            "focus": true
+          }
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Bla bla bla bla. Na na ni, Na na na. Patati, patata",
+          "slug": "info_mediation_bailleur"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "info_procedure_bail_footer",
+          "customCss": "button-group-footer",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "info_procedure_bail_next_zone_concernee",
+                "action": "goto.save:info_procedure_bail",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "info_procedure_bail_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "info_procedure_bail_previous",
+                "action": "goto:coordonnees_bailleur",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
