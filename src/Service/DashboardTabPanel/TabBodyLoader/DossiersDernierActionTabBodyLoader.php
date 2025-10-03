@@ -28,6 +28,7 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
         if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
             $data['data_kpi'] = [
                 'comptes_en_attente' => $this->tabDataManager->countUsersPendingToArchive($this->tabQueryParameters),
+                'comptes_pb_email' => $this->tabDataManager->countUsersPbEmail($this->tabQueryParameters),
                 'partenaires_non_notifiables' => $this->tabDataManager->countPartenairesNonNotifiables($this->tabQueryParameters),
                 'partenaires_interfaces' => $this->tabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
             ];

@@ -111,6 +111,18 @@ class TabDataManager
         return \count($users);
     }
 
+    public function countUsersPbEmail(?TabQueryParameters $tabQueryParameters = null): int
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $territories = [];
+        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
+            $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
+        }
+
+        return $this->userRepository->countAgentsPbEmail($user, $territories);
+    }
+
     public function countPartenairesNonNotifiables(?TabQueryParameters $tabQueryParameters = null): int
     {
         $territories = [];

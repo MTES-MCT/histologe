@@ -54,6 +54,9 @@
                 {{ form_row(form.permissionAffectation) }}
             </div>
             <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.emailDeliveryIssue) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
                 <a href="{{ path('back_user_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>
@@ -87,9 +90,9 @@
             <th scope="col">Partenaire</th>
             <th scope="col">Type de partenaire</th>
             <th scope="col">Statut du compte</th>
-            <th scope="col">Dernière connexion</th>
             <th scope="col">Rôle</th>
             <th scope="col">Droits d'affectation</th>
+            <th scope="col">Problème d'adresse e-mail</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
@@ -112,7 +115,9 @@
                         {{ user.prenom }} {{ user.nom }}
                         {% if user.fonction %}({{ user.fonction }}){% endif %}
                     </td>
-                    <td>{{ user.email }}</td>
+                    <td>{{ user.email }}<br>
+                        Dernière connexion : {{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}
+                    </td>
                     <td>
                         {% for partner in user.partners %}
                             {{ partner.nom }}
@@ -138,9 +143,15 @@
                             {{ user.statut.label }}
                         {% endif %}
                     </td>
-                    <td>{{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}</td>
                     <td>{{ user.roleLabel() }}</td>
                     <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
+                    <td>
+                        {% if user.emailDeliveryIssue.event.value|default(false) %}
+                            <span class="fr-badge fr-badge--warning fr-badge--sm">OUI</span>
+                        {% else %}
+                            Non
+                        {% endif %}
+                    </td>
                     <td class="fr-text--right">
                         {% if user.getPartners|length %}
                             <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
