@@ -24,36 +24,36 @@ class SignalementControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    // /**
-    //  * @dataProvider provideRoutes
-    //  */
-    // public function testSignalementSuccessfullyDisplay(string $route, Signalement $signalement): void
-    // {
-    //     $client = static::createClient();
-    //     /** @var UserRepository $userRepository */
-    //     $userRepository = static::getContainer()->get(UserRepository::class);
+    /**
+     * @dataProvider provideRoutes
+     */
+    public function testSignalementSuccessfullyDisplay(string $route, Signalement $signalement): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
 
-    //     $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
-    //     $client->loginUser($user);
-    //     $client->request('GET', $route);
-    //     switch ($signalement->getStatut()) {
-    //         case SignalementStatus::ARCHIVED:
-    //             $this->assertResponseRedirects('/bo/signalements/');
-    //             break;
-    //         case SignalementStatus::DRAFT:
-    //         case SignalementStatus::DRAFT_ARCHIVED:
-    //             $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-    //             break;
-    //         default:
-    //             $this->assertResponseIsSuccessful((string) $signalement->getId());
-    //             $this->assertSelectorTextContains(
-    //                 'h1.fr-h2',
-    //                 '#'.$signalement->getReference(),
-    //                 $signalement->getReference()
-    //             );
-    //     }
-    // }
+        $client->loginUser($user);
+        $client->request('GET', $route);
+        switch ($signalement->getStatut()) {
+            case SignalementStatus::ARCHIVED:
+                $this->assertResponseRedirects('/bo/signalements/');
+                break;
+            case SignalementStatus::DRAFT:
+            case SignalementStatus::DRAFT_ARCHIVED:
+                $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+                break;
+            default:
+                $this->assertResponseIsSuccessful((string) $signalement->getId());
+                $this->assertSelectorTextContains(
+                    'h1.fr-h2',
+                    '#'.$signalement->getReference(),
+                    $signalement->getReference()
+                );
+        }
+    }
 
     public function provideRoutes(): \Generator
     {

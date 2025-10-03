@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Dto\AgentsSelection;
+use App\Dto\AgentSelection;
 use App\Entity\Affectation;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
@@ -11,14 +11,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AgentsSelectionType extends AbstractType
+class AgentSelectionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var AgentsSelection $AgentsSelection */
-        $AgentsSelection = $builder->getData();
+        /** @var AgentSelection $AgentSelection */
+        $AgentSelection = $builder->getData();
         /** @var Affectation $affectation */
-        $affectation = $AgentsSelection->getAffectation();
+        $affectation = $AgentSelection->getAffectation();
         $choicesAgents = $affectation->getPartner()->getUsers();
 
         if ($options['exclude_user'] instanceof User) {
@@ -58,7 +58,7 @@ class AgentsSelectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => AgentsSelection::class,
+            'data_class' => AgentSelection::class,
             'exclude_user' => null,
             'label' => 'Sélectionnez le(s) agent(s) en charge du dossier',
         ]);

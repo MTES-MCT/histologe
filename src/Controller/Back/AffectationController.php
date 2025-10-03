@@ -2,13 +2,13 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AgentsSelection;
+use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Form\AgentsSelectionType;
+use App\Form\AgentSelectionType;
 use App\Form\RefusAffectationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
@@ -154,10 +154,10 @@ class AffectationController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         if ($featureNewDashboard && !$user->isAloneInPartner($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()))) {
-            $agentsSelection = (new AgentsSelection())->setAffectation($affectation);
+            $agentsSelection = (new AgentSelection())->setAffectation($affectation);
             $agentsSelectionFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $form = $this->createForm(
-                AgentsSelectionType::class,
+                AgentSelectionType::class,
                 $agentsSelection,
                 ['action' => $agentsSelectionFormRoute]
             );

@@ -2,11 +2,11 @@
 
 namespace App\Tests\Unit\Form;
 
-use App\Dto\AgentsSelection;
+use App\Dto\AgentSelection;
 use App\Entity\Affectation;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
-use App\Form\AgentsSelectionType;
+use App\Form\AgentSelectionType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -26,8 +26,8 @@ class AgentsSelectionTypeTest extends KernelTestCase
         $affectationRepo = $em->getRepository(Affectation::class);
 
         $affectation = $affectationRepo->findOneBy(['statut' => 'NOUVEAU']);
-        $dto = (new AgentsSelection())->setAffectation($affectation);
-        $form = $this->formFactory->create(AgentsSelectionType::class, $dto, [
+        $dto = (new AgentSelection())->setAffectation($affectation);
+        $form = $this->formFactory->create(AgentSelectionType::class, $dto, [
             'csrf_protection' => false,
         ]);
         $view = $form->createView();
@@ -70,8 +70,8 @@ class AgentsSelectionTypeTest extends KernelTestCase
         $users = $affectation->getPartner()->getUsers();
         $excluded = $users->first(); // prend le premier pour le test
 
-        $dto = (new AgentsSelection())->setAffectation($affectation);
-        $form = $this->formFactory->create(AgentsSelectionType::class, $dto, [
+        $dto = (new AgentSelection())->setAffectation($affectation);
+        $form = $this->formFactory->create(AgentSelectionType::class, $dto, [
             'csrf_protection' => false,
             'exclude_user' => $excluded,
         ]);
@@ -88,18 +88,18 @@ class AgentsSelectionTypeTest extends KernelTestCase
         $users = $affectation->getPartner()->getUsers();
         $excluded = $users->first(); // prend le premier pour le test
 
-        $dto = (new AgentsSelection())->setAffectation($affectation);
-        $form = $this->formFactory->create(AgentsSelectionType::class, $dto);
+        $dto = (new AgentSelection())->setAffectation($affectation);
+        $form = $this->formFactory->create(AgentSelectionType::class, $dto);
 
         $config = $form->getConfig();
-        $this->assertSame(AgentsSelection::class, $config->getOption('data_class'));
+        $this->assertSame(AgentSelection::class, $config->getOption('data_class'));
         $this->assertNull($config->getOption('exclude_user'));
         $this->assertSame('Sélectionnez le(s) agent(s) en charge du dossier', $config->getOption('label'));
     }
 
     public function testBlockPrefix(): void
     {
-        $formType = new AgentsSelectionType();
+        $formType = new AgentSelectionType();
         $this->assertSame('agents_selection', $formType->getBlockPrefix());
     }
 }

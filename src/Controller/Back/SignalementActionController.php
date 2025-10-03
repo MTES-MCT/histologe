@@ -2,7 +2,7 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AgentsSelection;
+use App\Dto\AgentSelection;
 use App\Dto\RefusSignalement;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -12,7 +12,7 @@ use App\Entity\Suivi;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Form\AddSuiviType;
-use App\Form\AgentsSelectionType;
+use App\Form\AgentSelectionType;
 use App\Form\RefusSignalementType;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -362,12 +362,17 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
         $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
-        if (\count($subscriptionsInMyPartner) < 2 && null !== $request->get('agents_selection')) {
+        if (\count($subscriptionsInMyPartner) < 2 && !$user->isAloneInPartner($partner)) {
+            if (null === $request->get('agents_selection')) {
+                $this->addFlash('error', 'Vous êtes le seul agent de votre partenaire sur ce dossier. Si vous souhaitez quitter le dossier, vous devez d\'abord transférer le dossier à un autre agent de votre partenaire.');
+
+                return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            }
             $affectation = $affectationRepository->findOneBy(['partner' => $partner, 'signalement' => $signalement]);
-            $agentsSelection = (new AgentsSelection())->setAffectation($affectation);
+            $agentsSelection = (new AgentSelection())->setAffectation($affectation);
             $agentsSelectionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
             $form = $this->createForm(
-                AgentsSelectionType::class,
+                AgentSelectionType::class,
                 $agentsSelection,
                 [
                     'action' => $agentsSelectionFormRoute,
