@@ -169,12 +169,18 @@ class SignalementRepository extends ServiceEntityRepository
         bool $removeImported = false,
         ?Qualification $qualification = null,
         ?array $qualificationStatuses = null,
+        ?bool $keepArchivedSignalements = false,
     ): array {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) as count')
-            ->addSelect('s.statut')
-            ->andWhere('s.statut NOT IN (:statutList)')
-            ->setParameter('statutList', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::EN_MEDIATION]);
+            ->addSelect('s.statut');
+        if ($keepArchivedSignalements) {
+            $qb->andWhere('s.statut NOT IN (:statutList)')
+               ->setParameter('statutList', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::EN_MEDIATION]);
+        } else {
+            $qb->andWhere('s.statut NOT IN (:statutList)')
+               ->setParameter('statutList', SignalementStatus::excludedStatuses());
+        }
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');

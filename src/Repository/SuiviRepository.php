@@ -293,13 +293,7 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'day_period' => $period,
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
-            'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
-            'status_closed' => SignalementStatus::CLOSED->value,
-            'status_archived' => SignalementStatus::ARCHIVED->value,
-            'status_refused' => SignalementStatus::REFUSED->value,
-            'status_draft' => SignalementStatus::DRAFT->value,
-            'status_draft_archived' => SignalementStatus::DRAFT_ARCHIVED->value,
-            'status_en_mediation' => SignalementStatus::EN_MEDIATION->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
         ];
 
         $sql = 'SELECT s.id
@@ -312,7 +306,7 @@ class SuiviRepository extends ServiceEntityRepository
                 ) su ON s.id = su.signalement_id
                 LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.max_date_suivi_technique
                 WHERE su_last.id IS NULL AND su.max_date_suivi_technique < DATE_SUB(NOW(), INTERVAL :day_period DAY)
-                AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused, :status_draft, :status_draft_archived, :status_en_mediation)
+                AND s.statut = :status_active
                 AND s.is_imported != 1
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
                 LIMIT '.$this->limitDailyRelancesByRequest;
@@ -335,12 +329,7 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
-            'status_closed' => SignalementStatus::CLOSED->value,
-            'status_archived' => SignalementStatus::ARCHIVED->value,
-            'status_refused' => SignalementStatus::REFUSED->value,
-            'status_draft' => SignalementStatus::DRAFT->value,
-            'status_draft_archived' => SignalementStatus::DRAFT_ARCHIVED->value,
-            'status_en_mediation' => SignalementStatus::EN_MEDIATION->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
             'nb_suivi_technical' => 2,
         ];
 
@@ -364,12 +353,7 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
-            'status_archived' => SignalementStatus::ARCHIVED->value,
-            'status_closed' => SignalementStatus::CLOSED->value,
-            'status_refused' => SignalementStatus::REFUSED->value,
-            'status_draft' => SignalementStatus::DRAFT->value,
-            'status_draft_archived' => SignalementStatus::DRAFT_ARCHIVED->value,
-            'status_en_mediation' => SignalementStatus::EN_MEDIATION->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
             'nb_suivi_technical' => 3,
         ];
 
@@ -446,7 +430,7 @@ class SuiviRepository extends ServiceEntityRepository
                 AND su2.created_at > t1.min_date
                 AND su2.category <> :category_ask_feedback
                 WHERE su2.signalement_id IS NULL
-                AND s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused, :status_draft, :status_draft_archived, :status_en_mediation)
+                AND s.statut = :status_active
                 AND s.is_imported != 1 '
                 .$whereLastSuiviDelay
                 .$whereExcludeUsagerAbandonProcedure

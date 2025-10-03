@@ -34,7 +34,7 @@ class GlobalBackAnalyticsProvider
 
         $data['count_signalement_archives'] = 0;
         $data['count_signalement_refuses'] = 0;
-        $countByStatus = $this->signalementRepository->countByStatus($territories, $partners, null, true);
+        $countByStatus = $this->signalementRepository->countByStatus($territories, $partners, null, true, keepArchivedSignalements: true);
         foreach ($countByStatus as $countByStatusItem) {
             switch ($countByStatusItem['statut']) {
                 case SignalementStatus::ARCHIVED:
