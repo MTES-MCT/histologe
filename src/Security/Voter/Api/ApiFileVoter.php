@@ -50,10 +50,8 @@ class ApiFileVoter extends Voter
         if (null === $file->getSignalement()) {
             return false;
         }
+        $signalement = $file->getSignalement();
         if ($file->getIntervention() && DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType()) {
-            return false;
-        }
-        if (SignalementStatus::ACTIVE !== $file->getSignalement()->getStatut()) {
             return false;
         }
         if (!$file->getUploadedBy()) {
@@ -62,8 +60,18 @@ class ApiFileVoter extends Voter
         if ($file->getUploadedBy() !== $user) {
             return false;
         }
+        // condition ci-dessous pour permettre l'édition de File suite à la création d'un signalement API
+        if (
+            $signalement->getCreatedBy() === $user
+            && $this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $file->getPartner())
+            && in_array($signalement->getStatut(), [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE])) {
+            return true;
+        }
+        if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
+            return false;
+        }
         if ($file->getPartner()) {
-            $affectation = $file->getSignalement()->getAffectationForPartner($file->getPartner());
+            $affectation = $signalement->getAffectationForPartner($file->getPartner());
             if (!$affectation) {
                 return false;
             }

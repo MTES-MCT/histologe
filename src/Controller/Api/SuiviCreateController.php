@@ -137,7 +137,7 @@ class SuiviCreateController extends AbstractController
         $user = $this->getUser();
         $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $suiviRequest->partenaireUuid);
         $this->denyAccessUnlessGranted(
-            ApiSignalementPartnerVoter::API_EDIT_SIGNALEMENT,
+            ApiSignalementPartnerVoter::API_ADD_SUIVI,
             ['signalement' => $signalement, 'partner' => $partner],
         );
 

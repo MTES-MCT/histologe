@@ -163,7 +163,7 @@ class SignalementFileUploadController extends AbstractController
         $data['files'] = $request->files->all();
         $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $partenaireUuid);
         $this->denyAccessUnlessGranted(
-            ApiSignalementPartnerVoter::API_EDIT_SIGNALEMENT,
+            ApiSignalementPartnerVoter::API_ADD_FILE,
             ['signalement' => $signalement, 'partner' => $partner],
             SecurityApiExceptionListener::ACCESS_DENIED
         );
