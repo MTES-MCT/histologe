@@ -15,6 +15,7 @@ use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -46,16 +47,18 @@ class SuiviRepository extends ServiceEntityRepository
     public function getAverageSuivi(array $territories): float
     {
         $connection = $this->getEntityManager()->getConnection();
+        $parameters = [];
+        $types = [];
         $whereTerritory = '';
-        $parameters['statut_archived'] = SignalementStatus::ARCHIVED->value;
-        $parameters['statut_draft'] = SignalementStatus::DRAFT->value;
-        $parameters['statut_draft_archived'] = SignalementStatus::DRAFT_ARCHIVED->value;
-        $parameters['statut_en_mediation'] = SignalementStatus::EN_MEDIATION->value;
+
+        $parameters['statut_list'] = SignalementStatus::excludedStatusesValue();
+        $types['statut_list'] = ArrayParameterType::STRING;
 
         if (\count($territories)) {
-            $territoriesIds = implode(',', array_keys($territories));
+            $territoriesIds = array_keys($territories);
             $whereTerritory = 'AND s.territory_id IN (:territories)';
             $parameters['territories'] = $territoriesIds;
+            $types['territories'] = ArrayParameterType::STRING;
         }
 
         $sql = 'SELECT AVG(nb_suivi) as average_nb_suivi
@@ -63,13 +66,12 @@ class SuiviRepository extends ServiceEntityRepository
                     SELECT count(*) as nb_suivi
                     FROM suivi su
                     INNER JOIN signalement s on s.id = su.signalement_id
-                    WHERE s.statut NOT IN (:statut_archived, :statut_draft, :statut_draft_archived, :statut_en_mediation)
+                    WHERE s.statut NOT IN (:statut_list)
                     '.$whereTerritory.'
                     GROUP BY su.signalement_id
                 ) as countQuery';
-        $statement = $connection->prepare($sql);
 
-        return (float) $statement->executeQuery($parameters)->fetchOne();
+        return (float) $connection->executeQuery($sql, $parameters, $types)->fetchOne();
     }
 
     /**
@@ -88,19 +90,20 @@ class SuiviRepository extends ServiceEntityRepository
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
             'type_suivi_auto' => Suivi::TYPE_AUTO,
-            'status_archived' => SignalementStatus::ARCHIVED->value,
-            'status_closed' => SignalementStatus::CLOSED->value,
-            'status_refused' => SignalementStatus::REFUSED->value,
-            'status_draft' => SignalementStatus::DRAFT->value,
-            'status_draft_archived' => SignalementStatus::DRAFT_ARCHIVED->value,
-            'status_en_mediation' => SignalementStatus::EN_MEDIATION->value,
+            'statut_list' => array_merge(
+                SignalementStatus::excludedStatusesValue(),
+                [SignalementStatus::CLOSED->value, SignalementStatus::REFUSED->value]),
         ];
+        $types = [];
+        $types['statut_list'] = ArrayParameterType::STRING;
 
         if (\count($territories)) {
-            $parameters['territories'] = implode(',', array_keys($territories));
+            $parameters['territories'] = array_keys($territories);
+            $types['territories'] = ArrayParameterType::STRING;
         }
         if (!empty($partnersIds)) {
-            $parameters['partners'] = implode(',', $partnersIds);
+            $parameters['partners'] = $partnersIds;
+            $types['partners'] = ArrayParameterType::INTEGER;
             $parameters['status_wait'] = AffectationStatus::WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
         }
@@ -110,9 +113,7 @@ class SuiviRepository extends ServiceEntityRepository
                         $this->getSignalementsQuery($territories, $partnersIds)
                 .') as countSignalementSuivi';
 
-        $statement = $connection->prepare($sql);
-
-        return (int) $statement->executeQuery($parameters)->fetchOne();
+        return (int) $connection->executeQuery($sql, $parameters, $types)->fetchOne();
     }
 
     /**
@@ -133,29 +134,29 @@ class SuiviRepository extends ServiceEntityRepository
             'type_suivi_usager' => Suivi::TYPE_USAGER,
             'type_suivi_partner' => Suivi::TYPE_PARTNER,
             'type_suivi_auto' => Suivi::TYPE_AUTO,
-            'status_archived' => SignalementStatus::ARCHIVED->value,
-            'status_closed' => SignalementStatus::CLOSED->value,
-            'status_refused' => SignalementStatus::REFUSED->value,
-            'status_draft' => SignalementStatus::DRAFT->value,
-            'status_draft_archived' => SignalementStatus::DRAFT_ARCHIVED->value,
-            'status_en_mediation' => SignalementStatus::EN_MEDIATION->value,
+            'statut_list' => array_merge(
+                SignalementStatus::excludedStatusesValue(),
+                [SignalementStatus::CLOSED->value, SignalementStatus::REFUSED->value]),
         ];
+        $types = [];
+        $types['statut_list'] = ArrayParameterType::STRING;
 
         $territories = [];
         if (null !== $territory) {
-            $parameters['territories'] = $territory->getId();
+            $parameters['territories'] = [$territory->getId()];
             $territories[] = $territory;
+            $types['territories'] = ArrayParameterType::STRING;
         }
 
         if (!empty($partnersIds)) {
-            $parameters['partners'] = implode(',', $partnersIds);
+            $parameters['partners'] = $partnersIds;
+            $types['partners'] = ArrayParameterType::INTEGER;
             $parameters['status_wait'] = AffectationStatus::WAIT->value;
             $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
         }
         $sql = $this->getSignalementsQuery($territories, $partnersIds);
-        $statement = $connection->prepare($sql);
 
-        return $statement->executeQuery($parameters)->fetchFirstColumn();
+        return $connection->executeQuery($sql, $parameters, $types)->fetchFirstColumn();
     }
 
     /**
@@ -229,7 +230,7 @@ class SuiviRepository extends ServiceEntityRepository
                 INNER JOIN signalement s on s.id = su.signalement_id
                 '.$innerPartnerJoin.'
                 WHERE type in (:type_suivi_usager,:type_suivi_partner, :type_suivi_auto)
-                AND s.statut NOT IN (:status_closed, :status_archived, :status_refused, :status_draft, :status_draft_archived, :status_en_mediation)
+                AND s.statut NOT IN (:statut_list)
                 '.$whereTerritory.'
                 '.$wherePartner.'
                 GROUP BY su.signalement_id
@@ -250,13 +251,7 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'day_period' => $period,
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
-            'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
-            'status_closed' => SignalementStatus::CLOSED->value,
-            'status_archived' => SignalementStatus::ARCHIVED->value,
-            'status_refused' => SignalementStatus::REFUSED->value,
-            'status_draft' => SignalementStatus::DRAFT->value,
-            'status_draft_archived' => SignalementStatus::DRAFT_ARCHIVED->value,
-            'status_en_mediation' => SignalementStatus::EN_MEDIATION->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
         ];
 
         $sql = 'SELECT s.id, s.created_at, MAX(su.max_date_suivi_technique_or_public) AS last_posted_at
@@ -267,7 +262,7 @@ class SuiviRepository extends ServiceEntityRepository
             WHERE (category = :category_ask_feedback OR is_public = 1)
             GROUP BY signalement_id
         ) su ON s.id = su.signalement_id
-        WHERE s.statut NOT IN (:status_need_validation, :status_closed, :status_archived, :status_refused, :status_draft, :status_draft_archived, :status_en_mediation)
+        WHERE s.statut = :status_active
         AND s.is_imported != 1
         AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
         GROUP BY s.id

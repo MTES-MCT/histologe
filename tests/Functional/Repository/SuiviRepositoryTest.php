@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Repository;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -159,5 +160,50 @@ class SuiviRepositoryTest extends KernelTestCase
         $result = $this->suiviRepository->countAllMessagesUsagers($user, $params);
         $this->assertIsObject($result);
         $this->assertTrue(method_exists($result, 'total'));
+    }
+
+    public function testGetAverageSuivi(): void
+    {
+        $result = $this->suiviRepository->getAverageSuivi([]);
+        $this->assertIsFloat($result);
+        $this->assertEquals(1.3333, round($result, 4));
+    }
+
+    public function testGetAverageSuiviIn13(): void
+    {
+        $territory = (new Territory())->setZip('13');
+        $result = $this->suiviRepository->getAverageSuivi([13 => $territory]);
+        $this->assertIsFloat($result);
+        $this->assertEquals(1.4783, round($result, 4));
+    }
+
+    public function testFindSignalementNoSuiviSince(): void
+    {
+        $result = $this->suiviRepository->findSignalementNoSuiviSince();
+        $this->assertIsArray($result);
+        $this->assertCount(12, $result);
+    }
+
+    public function testFindSignalementNoSuiviSinceIn13(): void
+    {
+        $territory = (new Territory())->setZip('13');
+        $result = $this->suiviRepository->findSignalementNoSuiviSince(territory: $territory);
+        $this->assertIsArray($result);
+        $this->assertCount(0, $result);
+    }
+
+    public function testCountSignalementNoSuiviSince(): void
+    {
+        $result = $this->suiviRepository->countSignalementNoSuiviSince([]);
+        $this->assertIsInt($result);
+        $this->assertEquals(12, $result);
+    }
+
+    public function testCountSignalementNoSuiviSinceIn13(): void
+    {
+        $territory = (new Territory())->setZip('13');
+        $result = $this->suiviRepository->countSignalementNoSuiviSince([13 => $territory]);
+        $this->assertIsInt($result);
+        $this->assertEquals(6, $result);
     }
 }

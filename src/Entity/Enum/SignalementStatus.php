@@ -65,4 +65,15 @@ enum SignalementStatus: string
             self::EN_MEDIATION,
         ];
     }
+
+    /** @return array<string> */
+    public static function excludedStatusesValue(): array
+    {
+        return [
+            self::ARCHIVED->value,
+            self::DRAFT->value,
+            self::DRAFT_ARCHIVED->value,
+            self::EN_MEDIATION->value,
+        ];
+    }
 }
