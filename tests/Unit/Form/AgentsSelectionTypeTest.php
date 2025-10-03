@@ -2,15 +2,15 @@
 
 namespace App\Tests\Unit\Form;
 
-use App\Dto\AcceptAffectation;
+use App\Dto\AgentSelection;
 use App\Entity\Affectation;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
-use App\Form\AcceptAffectationType;
+use App\Form\AgentSelectionType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class AcceptAffectationTypeTest extends KernelTestCase
+class AgentsSelectionTypeTest extends KernelTestCase
 {
     private FormFactoryInterface $formFactory;
 
@@ -26,8 +26,8 @@ class AcceptAffectationTypeTest extends KernelTestCase
         $affectationRepo = $em->getRepository(Affectation::class);
 
         $affectation = $affectationRepo->findOneBy(['statut' => 'NOUVEAU']);
-        $dto = (new AcceptAffectation())->setAffectation($affectation);
-        $form = $this->formFactory->create(AcceptAffectationType::class, $dto, [
+        $dto = (new AgentSelection())->setAffectation($affectation);
+        $form = $this->formFactory->create(AgentSelectionType::class, $dto, [
             'csrf_protection' => false,
         ]);
         $view = $form->createView();
@@ -60,5 +60,46 @@ class AcceptAffectationTypeTest extends KernelTestCase
                 );
             }
         }
+    }
+
+    public function testExcludeUserOptionRemovesUserFromChoices(): void
+    {
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $affectation = $em->getRepository(Affectation::class)->findOneBy([]);
+
+        $users = $affectation->getPartner()->getUsers();
+        $excluded = $users->first(); // prend le premier pour le test
+
+        $dto = (new AgentSelection())->setAffectation($affectation);
+        $form = $this->formFactory->create(AgentSelectionType::class, $dto, [
+            'csrf_protection' => false,
+            'exclude_user' => $excluded,
+        ]);
+        $choices = array_map(fn ($c) => $c->data, $form->createView()->children['agents']->vars['choices']);
+
+        $this->assertNotContains($excluded, $choices, 'L’utilisateur exclu ne doit pas apparaître dans les choix.');
+    }
+
+    public function testDefaultOptions(): void
+    {
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $affectation = $em->getRepository(Affectation::class)->findOneBy([]);
+
+        $users = $affectation->getPartner()->getUsers();
+        $excluded = $users->first(); // prend le premier pour le test
+
+        $dto = (new AgentSelection())->setAffectation($affectation);
+        $form = $this->formFactory->create(AgentSelectionType::class, $dto);
+
+        $config = $form->getConfig();
+        $this->assertSame(AgentSelection::class, $config->getOption('data_class'));
+        $this->assertNull($config->getOption('exclude_user'));
+        $this->assertSame('Sélectionnez le(s) agent(s) en charge du dossier', $config->getOption('label'));
+    }
+
+    public function testBlockPrefix(): void
+    {
+        $formType = new AgentSelectionType();
+        $this->assertSame('agents_selection', $formType->getBlockPrefix());
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Suivi;
@@ -316,6 +318,11 @@ class SignalementActionControllerTest extends WebTestCase
             ]
         );
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $this->assertEquals('Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents en charge du dossier.
+        Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.', $flashBag->get('success')[0]);
+
         $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
         $this->assertNotNull($sub);
 
@@ -383,5 +390,78 @@ class SignalementActionControllerTest extends WebTestCase
             ]
         );
         $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testSubscribeAndUnsubscribeAndTransfer(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-34-02@signal-logement.fr']);
+        $territory = $signalement->getTerritory();
+        $partner = $user->getPartnerInTerritory($territory);
+
+        $affectation = (new Affectation())->setPartner($partner)
+            ->setSignalement($signalement)
+            ->setStatut(AffectationStatus::WAIT)
+            ->setTerritory($territory);
+
+        $signalement->addAffectation($affectation);
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->persist($signalement);
+        $em->persist($affectation);
+        $em->flush();
+        $em->refresh($affectation);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_subscribe', ['uuid' => $signalement->getUuid()]);
+        $this->client->request(
+            'GET',
+            $route,
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'subscribe'),
+            ]
+        );
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        $this->assertNotNull($sub);
+        $partnerUsers = $partner->getUsers();
+        $otherAgent = $partnerUsers->filter(fn ($u) => $u !== $user)->first();
+
+        $route = $this->router->generate('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+
+        $this->client->request('POST', $route, [
+            'agents_selection' => [
+                'agents' => [$otherAgent->getId()],
+                '_token' => $this->generateCsrfToken($this->client, 'agents_selection'),
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertNull($this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]));
+        $this->assertNotNull($this->userSignalementSubscriptionRepository->findOneBy(['user' => $otherAgent, 'signalement' => $signalement]));
+    }
+
+    public function testUnsubscribeWithInvalidCsrfToken(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-10']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-02@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+
+        $this->client->request('GET', $route, [
+            '_token' => 'invalid_token',
+        ]);
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('error'));
+        $this->assertEquals('Le jeton CSRF est invalide. Veuillez réessayer.', $flashBag->get('error')[0]);
+
+        $sub = $this->userSignalementSubscriptionRepository->findOneBy([
+            'user' => $user,
+            'signalement' => $signalement,
+        ]);
+        $this->assertNotNull($sub);
     }
 }

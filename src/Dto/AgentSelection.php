@@ -6,7 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class AcceptAffectation
+class AgentSelection
 {
     #[Assert\NotNull(message: 'Affectation manquante.')]
     private ?Affectation $affectation = null;
