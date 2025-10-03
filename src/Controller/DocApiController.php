@@ -25,6 +25,8 @@ class DocApiController extends AbstractController
         ]);
     }
 
+    // route uniquement utile pour récupérer la liste des slug des désordres et précisions autorisées dans l'API
+    // Ces liste sont dupliqué dans les contraintes choices de l'objet DesordreRequest
     #[Route('/bo/identifiants-desordres', name: 'bo_identifiants_desordres', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function identifiantsDesordres(DesordreCritereRepository $desordreCritereRepository): Response
