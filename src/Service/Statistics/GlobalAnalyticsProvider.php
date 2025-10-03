@@ -56,12 +56,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementData(): int
     {
-        return $this->signalementRepository->countAll(
-            territory: null,
-            partners: null,
-            removeImported: true,
-            removeArchived: true
-        );
+        return $this->signalementRepository->countAll(territory: null, partners: null);
     }
 
     public function getCountTerritoryData(): int

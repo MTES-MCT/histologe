@@ -156,11 +156,8 @@ class SearchFilter
                     ->select('DISTINCT IDENTITY(a.signalement)')
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut = :statut_affectation_closed')
-                    ->andWhere('s.statut != :status_archived AND s.statut != :statut_closed AND s.statut != :status_draft AND s.statut != :status_draft_archived')
-                    ->setParameter('status_archived', SignalementStatus::ARCHIVED->value)
-                    ->setParameter('statut_closed', SignalementStatus::CLOSED->value)
-                    ->setParameter('status_draft', SignalementStatus::DRAFT->value)
-                    ->setParameter('status_draft_archived', SignalementStatus::DRAFT_ARCHIVED->value)
+                    ->andWhere('s.statut NOT IN (:excluded_statuses)')
+                    ->setParameter('excluded_statuses', array_merge([SignalementStatus::CLOSED], SignalementStatus::excludedStatuses()))
                     ->setParameter('statut_affectation_closed', AffectationStatus::CLOSED->value);
 
                 if (!empty($filters['territories'])) {
@@ -202,11 +199,7 @@ class SearchFilter
                     'day_period' => 0,
                     'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
                     'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
-                    'status_archived' => SignalementStatus::ARCHIVED->value,
-                    'status_closed' => SignalementStatus::CLOSED->value,
-                    'status_refused' => SignalementStatus::REFUSED->value,
-                    'status_draft' => SignalementStatus::DRAFT->value,
-                    'status_draft_archived' => SignalementStatus::DRAFT_ARCHIVED->value,
+                    'status_active' => SignalementStatus::ACTIVE->value,
                     'nb_suivi_technical' => 3,
                 ];
 

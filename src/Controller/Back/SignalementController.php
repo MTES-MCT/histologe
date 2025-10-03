@@ -237,7 +237,7 @@ class SignalementController extends AbstractController
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(
             signalement: $signalement,
             exclusiveStatus: [],
-            excludedStatus: [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::ARCHIVED]
+            excludedStatus: SignalementStatus::excludedStatuses(),
         );
         $isUserSubscribed = false;
         if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
