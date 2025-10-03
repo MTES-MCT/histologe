@@ -21,6 +21,8 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\Query\SignalementList\ExportIterableQuery;
+use App\Repository\Query\SignalementList\ListPaginatorQuery;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -61,6 +63,8 @@ class SignalementManagerTest extends WebTestCase
     private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationManager $affectationManager;
     private ZipcodeProvider $zipcodeProvider;
+    private ExportIterableQuery $exportIterableQuery;
+    private ListPaginatorQuery $listPaginatorQuery;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
 
     protected function setUp(): void
@@ -87,6 +91,8 @@ class SignalementManagerTest extends WebTestCase
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationManager = static::getContainer()->get(AffectationManager::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+        $this->exportIterableQuery = static::getContainer()->get(ExportIterableQuery::class);
+        $this->listPaginatorQuery = static::getContainer()->get(ListPaginatorQuery::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->signalementManager = new SignalementManager(
@@ -107,6 +113,8 @@ class SignalementManagerTest extends WebTestCase
             $this->affectationManager,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
+            $this->exportIterableQuery,
+            $this->listPaginatorQuery,
             $this->htmlSanitizerInterface,
         );
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);

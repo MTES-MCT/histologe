@@ -4,7 +4,7 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\SignalementList\MapGeoDataQuery;
 use App\Repository\ZoneRepository;
 use App\Service\Signalement\SearchFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,7 +25,7 @@ class CartographieController extends AbstractController
 
     #[Route('/signalements/', name: 'back_signalement_carto_json')]
     public function list(
-        SignalementRepository $signalementRepository,
+        MapGeoDataQuery $mapGeoDataQuery,
         ZoneRepository $zoneRepository,
         SearchFilter $searchFilter,
         Request $request,
@@ -38,7 +38,7 @@ class CartographieController extends AbstractController
             : [
                 'isImported' => 'oui',
             ];
-        $signalements = $signalementRepository->findAllWithGeoData(
+        $signalements = $mapGeoDataQuery->getData(
             $user,
             $filters,
             (int) $request->get('offset')
