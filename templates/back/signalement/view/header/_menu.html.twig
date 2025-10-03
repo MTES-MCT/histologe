@@ -93,7 +93,7 @@
                                 aria-disabled="true" tabindex="-1">
                                 Se retirer du dossier
                             </a>
-                        {% else if subscriptionsInMyPartner|length > 1 %}
+                        {% elseif subscriptionsInMyPartner|length > 1 %}
                             <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
                                 class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
                                 Se retirer du dossier

@@ -387,7 +387,6 @@ class SignalementActionController extends AbstractController
             }
 
             $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
-            dump($agentsSelection->getAgents());
             foreach ($agentsSelection->getAgents() as $agent) {
                 $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
                 $signalementSubscriptionManager->flush();
