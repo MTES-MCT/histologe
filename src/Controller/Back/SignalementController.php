@@ -2,7 +2,7 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AgentsSelection;
+use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
@@ -19,7 +19,7 @@ use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddSuiviType;
-use App\Form\AgentsSelectionType;
+use App\Form\AgentSelectionType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
@@ -167,10 +167,10 @@ class SignalementController extends AbstractController
 
         $acceptAffectationForm = null;
         if ($featureNewDashboard && ($canAnswerAffectation || $canCancelRefusedAffectation)) {
-            $acceptAffectation = (new AgentsSelection())->setAffectation($affectation)->setAgents([$user]);
+            $acceptAffectation = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $acceptAffectationForm = $this->createForm(
-                AgentsSelectionType::class,
+                AgentSelectionType::class,
                 $acceptAffectation,
                 ['action' => $acceptAffectationFormRoute]
             );
@@ -178,10 +178,10 @@ class SignalementController extends AbstractController
 
         $transferSubscriptionForm = null;
         if ($featureNewDashboard && $isUserSubscribed) {
-            $transferSubscription = (new AgentsSelection())->setAffectation($affectation)->setAgents([$user]);
+            $transferSubscription = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
             $transferSubscriptionForm = $this->createForm(
-                AgentsSelectionType::class,
+                AgentSelectionType::class,
                 $transferSubscription,
                 [
                     'action' => $transferSubscriptionFormRoute,

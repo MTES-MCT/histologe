@@ -318,6 +318,11 @@ class SignalementActionControllerTest extends WebTestCase
             ]
         );
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $this->assertEquals('Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents en charge du dossier.
+        Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.', $flashBag->get('success')[0]);
+
         $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
         $this->assertNotNull($sub);
 
