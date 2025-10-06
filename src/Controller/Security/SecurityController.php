@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
+use App\Security\User\SignalementBailleur;
 use App\Service\Files\ImageVariantProvider;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -134,6 +135,21 @@ class SecurityController extends AbstractController
             'signalement' => $signalement,
             'error' => $error,
             'title' => $title,
+        ]);
+    }
+
+    #[Route('/login-bailleur', name: 'app_login_bailleur')]
+    public function loginBailleur(
+        AuthenticationUtils $authenticationUtils,
+    ): Response {
+        $user = $this->getUser();
+        if ($user && $user instanceof SignalementBailleur) {
+            return $this->redirectToRoute('front_dossier_bailleur');
+        }
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        return $this->render('security/login_bailleur.html.twig', [
+            'error' => $error,
         ]);
     }
 

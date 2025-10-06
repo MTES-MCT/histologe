@@ -512,6 +512,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToOne]
     private ?Partner $createdByPartner = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $loginBailleur = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -533,6 +536,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->files = new ArrayCollection();
         $this->desordrePrecisions = new ArrayCollection();
         $this->userSignalementSubscriptions = new ArrayCollection();
+        $this->loginBailleur = mb_substr(md5(uniqid().date('YmdHis')), 0, 10);
     }
 
     #[Assert\Callback]
@@ -2828,6 +2832,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setCreatedByPartner(?Partner $createdByPartner): static
     {
         $this->createdByPartner = $createdByPartner;
+
+        return $this;
+    }
+
+    public function getLoginBailleur(): ?string
+    {
+        return $this->loginBailleur;
+    }
+
+    public function setLoginBailleur(?string $loginBailleur): static
+    {
+        $this->loginBailleur = $loginBailleur;
 
         return $this;
     }

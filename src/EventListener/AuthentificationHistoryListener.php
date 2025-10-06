@@ -6,6 +6,7 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\User;
 use App\Manager\HistoryEntryManager;
 use App\Repository\SignalementRepository;
+use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
@@ -42,7 +43,7 @@ class AuthentificationHistoryListener
         $this->createAuthentificationHistory(HistoryEntryEvent::LOGIN_2FA, $user);
     }
 
-    private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, SignalementUser|User $user): void
+    private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, SignalementBailleur|SignalementUser|User $user): void
     {
         if (!$this->historyTrackingEnable) {
             return;
@@ -50,10 +51,12 @@ class AuthentificationHistoryListener
         try {
             if ($user instanceof SignalementUser) {
                 $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi());
+            } elseif ($user instanceof SignalementBailleur) {
+                $signalement = $this->signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
             }
             $historyEntry = $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
-                entityHistory: $user instanceof SignalementUser ? $signalement : $user,
+                entityHistory: $user instanceof SignalementUser || $user instanceof SignalementBailleur ? $signalement : $user,
             );
 
             $source = $this->historyEntryManager->getSource();
@@ -62,8 +65,12 @@ class AuthentificationHistoryListener
 
             return;
         } catch (\Throwable $exception) {
-            if ($user instanceof SignalementUser) {
-                $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi());
+            if ($user instanceof SignalementUser || $user instanceof SignalementBailleur) {
+                if ($user instanceof SignalementUser) {
+                    $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi());
+                } else {
+                    $signalement = $this->signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+                }
                 $this->logger->error(\sprintf(
                     'Failed to create login history entry (%s) on signalement : %d',
                     $exception->getMessage(),
