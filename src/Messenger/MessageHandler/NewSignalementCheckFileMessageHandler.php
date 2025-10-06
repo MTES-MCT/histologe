@@ -127,12 +127,12 @@ class NewSignalementCheckFileMessageHandler
     public function getMissingDesordresPhotosString(Signalement $signalement): string
     {
         $desordres = '';
-        $signalementDesordreCategorieSlugs = $signalement->getDesordreCategorieSlugs();
+        $signalementDesordresIndexedByCategorieSlugs = $signalement->getDesordresIndexedByCategorieSlugs();
         foreach (self::DESORDRES_CATEGORIES_WITH_PHOTOS as $desordreCategorieSlug) {
-            if (!in_array($desordreCategorieSlug, $signalementDesordreCategorieSlugs)) {
+            if (!isset($signalementDesordresIndexedByCategorieSlugs[$desordreCategorieSlug])) {
                 continue;
             }
-            $categorieLabel = $this->getCategorieLabelFromCategorieSlug($desordreCategorieSlug);
+            $categorieLabel = $signalementDesordresIndexedByCategorieSlugs[$desordreCategorieSlug][0]->getLabelCategorie();
             if ($categorieLabel && !$this->hasPhotoForCritere($signalement, $desordreCategorieSlug)) {
                 if (!empty($desordres)) {
                     $desordres .= ' / ';
@@ -167,19 +167,6 @@ class NewSignalementCheckFileMessageHandler
         }
 
         return false;
-    }
-
-    private function getCategorieLabelFromCategorieSlug(string $desordreCategorieSlug): ?string
-    {
-        $desordresCritere = $this->desordreCritereRepository->findBy(
-            ['slugCategorie' => $desordreCategorieSlug]
-        );
-        $desordreCritere = $desordresCritere[0];
-        if ($desordreCritere) {
-            return $desordreCritere->getLabelCategorie();
-        }
-
-        return null;
     }
 
     private function getCategorieLabelFromCritereSlug(string $desordreCritereSlug): ?string

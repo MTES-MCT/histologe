@@ -233,7 +233,6 @@ class SignalementBuilder
                 $critereToLink = null;
                 foreach ($critereSlugDraft as $slugCritere => $value) {
                     $critereToLink = $desordreCriteresBySlug[$slugCritere];
-                    $this->signalement->addDesordreCritere($critereToLink);
                     // on cherche les précisions qu'on peut lier
                     $precisions = $critereToLink->getDesordrePrecisions();
                     if (1 === \count($precisions)) {
@@ -260,11 +259,6 @@ class SignalementBuilder
                         }
                     }
                 }
-
-                if (null !== $critereToLink) {
-                    // lier la catégorie BO idoine
-                    $this->signalement->addDesordreCategory($critereToLink->getDesordreCategorie());
-                }
             }
         }
     }
@@ -281,12 +275,6 @@ class SignalementBuilder
         $situationFoyer = $this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload);
         $suroccupationSpecification = new SuroccupationSpecification();
         if ($suroccupationSpecification->isSatisfiedBy($situationFoyer, $typeCompositionLogement)) {
-            $critereToLink = $this->desordreCritereRepository->findOneBy(
-                ['slugCritere' => 'desordres_type_composition_logement_suroccupation']
-            );
-            if (null !== $critereToLink) {
-                $this->signalement->addDesordreCritere($critereToLink);
-            }
             $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => $suroccupationSpecification->getSlug()]
             );
