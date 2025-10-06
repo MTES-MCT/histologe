@@ -280,7 +280,7 @@ class Affectation implements EntityHistoryInterface
         if ((PartnerType::ARS === $this->getPartner()->getType()
             || PartnerType::COMMUNE_SCHS === $this->getPartner()->getType()
             || PartnerType::EPCI == $this->getPartner()->getType()
-        ) && $this->isSynchronized
+        ) && $this->isSynchronized && !$this->getPartner()->canSyncWithOilhi($this->getSignalement())
         ) {
             return true;
         }
