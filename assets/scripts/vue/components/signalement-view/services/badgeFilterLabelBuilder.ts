@@ -42,7 +42,6 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     if (epciData !== null) {
       const listEpci = JSON.parse(epciData)
       if (value.length > 0) {
-        console.log(value)
         const listEpciAsString = value
           .map((item: string) => {
             const matches = PATTERN_BADGE_EPCI.exec(item)
@@ -52,7 +51,6 @@ export function buildBadge (key: string, value: any): string | undefined | null 
           })
           .join(', ')
 
-          console.log(listEpciAsString)
         return listEpciAsString.length > 0 ? `EPCI : ${listEpciAsString}` : null
       }
     }
