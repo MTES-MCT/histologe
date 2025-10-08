@@ -307,6 +307,56 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('Arnaque & cie', $signalement->getDenominationAgence());
     }
 
+    public function testEditCoordoonneesBailleur(): void
+    {
+        $crawler = $this->getCrawler();
+
+        $form = $crawler->filter('#bo-form-signalement-coordonnees')->form();
+        $form->setValues([
+            'signalement_draft_coordonnees[denominationProprio]' => 'Habitat 44',
+            'signalement_draft_coordonnees[nomProprio]' => '',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertTrue($response['redirect']);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+        $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
+        $this->assertEquals('Habitat 44', $signalement->getDenominationProprio());
+        $this->assertEquals('Habitat 44', $signalement->getNomProprio());
+        $this->assertNull($signalement->getBailleur());
+    }
+
+    public function testEditCoordoonneesBailleurSocial(): void
+    {
+        $crawler = $this->getCrawler();
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+        $signalement->setIsLogementSocial(true);
+        $this->signalementRepository->save($signalement, true);
+
+        $form = $crawler->filter('#bo-form-signalement-coordonnees')->form();
+        $form->setValues([
+            'signalement_draft_coordonnees[denominationProprio]' => 'Habitat 44',
+            'signalement_draft_coordonnees[nomProprio]' => 'Pignon',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertTrue($response['redirect']);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
+        $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
+        $this->assertEquals('Habitat 44', $signalement->getDenominationProprio());
+        $this->assertEquals('Pignon', $signalement->getNomProprio());
+        $this->assertEquals('Habitat 44', $signalement->getBailleur()->getName());
+    }
+
     public function testValidationSignalementWithAutoAffectationWithRT(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);

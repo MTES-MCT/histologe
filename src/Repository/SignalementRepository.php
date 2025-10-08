@@ -2394,4 +2394,17 @@ class SignalementRepository extends ServiceEntityRepository
 
         $connection->prepare($sql)->executeStatement();
     }
+
+    /**
+     * @return array<int, Signalement>
+     */
+    public function findLogementSocialWithoutBailleurLink(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.isLogementSocial = 1')
+            ->andWhere('s.bailleur IS NULL')
+            ->andWhere('s.nomProprio IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
 }
