@@ -50,8 +50,8 @@ parameters:
     feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
     feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
     feature_api_creation_signalement: '%env(bool:FEATURE_API_CREATION_SIGNALEMENT)%'
-    feature_mediation_bailleur: '%env(bool:FEATURE_MEDIATION_BAILLEUR)%'
-    feature_mediation_bailleur_depts: '%env(resolve:FEATURE_MEDIATION_BAILLEUR_DEPTS)%'
+    feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
+    feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'
     tab_data_kpi_cache_expired_after: '%env(int:TAB_DATA_KPI_CACHE_EXPIRED_AFTER)%'
 
 services:

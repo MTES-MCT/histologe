@@ -106,8 +106,8 @@ export default defineComponent({
       this.sharedProps.ajaxurlSendMailGetLienSuivi = initElements.dataset.ajaxurlSendMailGetLienSuivi
       this.sharedProps.ajaxurlArchiveDraft = initElements.dataset.ajaxurlArchiveDraft
       this.sharedProps.initProfile = initElements.dataset.initProfile
-      this.sharedProps.featureMediationBailleur = JSON.parse(initElements.dataset.featureMediationBailleur)
-      this.sharedProps.featureMediationBailleurDepts = JSON.parse(initElements.dataset.featureMediationBailleurDepts)
+      this.sharedProps.featureInjonctionBailleur = JSON.parse(initElements.dataset.featureInjonctionBailleur)
+      this.sharedProps.featureInjonctionBailleurDepts = JSON.parse(initElements.dataset.featureInjonctionBailleurDepts)
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)

@@ -223,17 +223,17 @@
                 "action": "goto.save:info_procedure_bail",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "!formStore.shouldMediationBailleurSuggested()"
+                  "show": "!formStore.shouldInjonctionBailleurSuggested()"
                 }
               },
               {
                 "type": "SignalementFormButton",
-                "label": "Suivant (médiation bailleur)",
+                "label": "Suivant (injonction bailleur)",
                 "slug": "coordonnees_bailleur_next",
-                "action": "goto.save:mediation_bailleur",
+                "action": "goto.save:injonction_bailleur",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "formStore.shouldMediationBailleurSuggested()"
+                  "show": "formStore.shouldInjonctionBailleurSuggested()"
                 }
               },
               {
@@ -259,14 +259,14 @@
   {
     "type": "SignalementFormScreen",
     "label": "",
-    "slug": "mediation_bailleur",
-    "screenCategory": "Médiation bailleur",
+    "slug": "injonction_bailleur",
+    "screenCategory": "Injonction bailleur",
     "components": {
       "body": [
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Souhaitez-vous mettre un coup de pression sur votre baileur avec la médiation bailleur ?",
-          "slug": "choix_mediation_bailleur",
+          "label": "Souhaitez-vous mettre un coup de pression sur votre bailleur avec l'injonction bailleur ?",
+          "slug": "injonction_bailleur_choice",
           "values": [
             {
               "label": "Oui",
@@ -278,7 +278,7 @@
             }
           ],
           "validate": {
-            "message": "Veuillez indiquer si vous souhaitez rentrer dans la médiation bailleur."
+            "message": "Veuillez indiquer si vous souhaitez rentrer dans l'injonction bailleur."
           },
           "accessibility": {
             "focus": true
@@ -287,7 +287,7 @@
         {
           "type": "SignalementFormInfo",
           "label": "Bla bla bla bla. Na na ni, Na na na. Patati, patata",
-          "slug": "info_mediation_bailleur"
+          "slug": "injonction_bailleur_info"
         }
       ],
       "footer": [
@@ -300,21 +300,21 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Suivant",
-                "slug": "info_procedure_bail_next_zone_concernee",
+                "slug": "injonction_bailleur_next",
                 "action": "goto.save:info_procedure_bail",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
                 "label": "Finir plus tard",
-                "slug": "info_procedure_bail_finish_later",
+                "slug": "injonction_bailleur_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
                 "action": "finish.save:/"
               },
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
-                "slug": "info_procedure_bail_previous",
+                "slug": "injonction_bailleur_previous",
                 "action": "goto:coordonnees_bailleur",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }

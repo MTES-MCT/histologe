@@ -92,8 +92,8 @@ const formStore: FormStore = reactive({
     ajaxurlSendMailGetLienSuivi: '',
     ajaxurlArchiveDraft: '',
     initProfile: '',
-    featureMediationBailleur: '',
-    featureMediationBailleurDepts: ''
+    featureInjonctionBailleur: '',
+    featureInjonctionBailleurDepts: ''
   },
   screenData: [],
   currentScreen: null,
@@ -241,11 +241,11 @@ const formStore: FormStore = reactive({
     
     return dateToday.getMonth() - dateBailleurPrevenu.getMonth() + (12 * (dateToday.getFullYear() - dateBailleurPrevenu.getFullYear()))
   },
-  shouldMediationBailleurSuggested(): boolean {
-      if(!this.props.featureMediationBailleur) {
+  shouldInjonctionBailleurSuggested(): boolean {
+      if(!this.props.featureInjonctionBailleur) {
         return false
       }
-      if(!this.props.featureMediationBailleurDepts.includes(formStore.data.territoryCode)) {
+      if(!this.props.featureInjonctionBailleurDepts.includes(formStore.data.territoryCode)) {
         return false
       }
       if(formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui') {
