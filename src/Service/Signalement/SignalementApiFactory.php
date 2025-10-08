@@ -12,6 +12,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -24,6 +25,7 @@ class SignalementApiFactory
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
+        private readonly BailleurRepository $bailleurRepository,
     ) {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -181,8 +183,11 @@ class SignalementApiFactory
         if ($request->typeBailleur) {
             $signalement->setTypeProprio(ProprioType::from($request->typeBailleur));
             $signalement->setDenominationProprio($request->denominationBailleur);
+            $signalement->setNomProprio($request->denominationBailleur);
         }
-        $signalement->setNomProprio($request->nomBailleur);
+        if ($request->nomBailleur) {
+            $signalement->setNomProprio($request->nomBailleur);
+        }
         $signalement->setPrenomProprio($request->prenomBailleur);
         $signalement->setMailProprio($request->mailBailleur);
         $signalement->setTelProprio($request->telBailleur);
@@ -224,10 +229,16 @@ class SignalementApiFactory
         $signalement->setInformationProcedure($informationProcedure);
         $signalement->setInformationComplementaire($informationComplementaire);
         $signalement->setJsonContent($jsonContent);
-
+        if ($signalement->getIsLogementSocial() && $signalement->getNomProprio()) {
+            $bailleur = $this->bailleurRepository->findOneBailleurBy(
+                name: $signalement->getNomProprio(),
+                territory: $signalement->getTerritory(),
+                bailleurSanitized: true
+            );
+            $signalement->setBailleur($bailleur);
+        }
         $signalement->setCreatedBy($this->user);
-        // TODO : champ obligatoire, false ?
-        $signalement->setIsCguAccepted(false);
+        $signalement->setIsCguAccepted(true);
 
         return $signalement;
     }
