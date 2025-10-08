@@ -165,7 +165,7 @@ class SignalementControllerTest extends WebTestCase
         yield '13 - Agent - En cours - abonné alone' => [
             'user-13-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000026',
-            'ul.fr-menu__list li a.fr-nav__link.fr-btn--icon-left.fr-icon-eye-off-line.disabled',
+            'ul.fr-menu__list li button.fr-nav__link.fr-btn--icon-left.fr-icon-eye-off-line.disabled',
             'Se retirer du dossier',
         ];
         yield '30 - Agent - En cours - abonné' => [
