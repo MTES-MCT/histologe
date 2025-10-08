@@ -15,10 +15,10 @@ class AgentSelectionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var AgentSelection $AgentSelection */
-        $AgentSelection = $builder->getData();
+        /** @var AgentSelection $agentSelection */
+        $agentSelection = $builder->getData();
         /** @var Affectation $affectation */
-        $affectation = $AgentSelection->getAffectation();
+        $affectation = $agentSelection->getAffectation();
         $choicesAgents = $affectation->getPartner()->getUsers();
 
         if ($options['exclude_user'] instanceof User) {

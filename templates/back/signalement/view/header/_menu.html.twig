@@ -88,24 +88,24 @@
                 {% if isUserSubscribed %}
                     <li>
                         {% if isAloneInCurrentPartner %}
-                            <a href="#" 
+                            <button href="#" 
                                 class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line disabled"
                                 aria-disabled="true" tabindex="-1">
                                 Se retirer du dossier
-                            </a>
+                            </button>
                         {% elseif subscriptionsInMyPartner|length > 1 %}
                             <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
                                 class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
                                 Se retirer du dossier
                             </a>
                         {% else %}
-                            <a href="#"
+                            <button href="#"
                                 class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
                                 aria-controls="transfer-subscription-modal" 
                                 data-fr-opened="false"
                                 >
                                 Se retirer du dossier
-                            </a>
+                            </button>
                         {% endif %}
                     </li>
                 {% elseif not canCancelRefusedAffectation %}
