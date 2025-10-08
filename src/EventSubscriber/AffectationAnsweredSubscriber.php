@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Partner;
 use App\Entity\Suivi;
 use App\Event\AffectationAnsweredEvent;
 use App\Factory\Interconnection\Idoss\DossierMessageFactory;
@@ -74,14 +73,14 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 isPublic: $affectation->getHasNotificationUsagerToCreate(),
             );
         }
-        $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation(), $event->getPartner());
+        $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation());
 
         if ($this->dossierMessageFactory->supports($affectation)) {
             $this->bus->dispatch($this->dossierMessageFactory->createInstance($affectation));
         }
     }
 
-    private function createSuiviOnFirstAcceptedAffectation(Affectation $affectation, Partner $partner): void
+    private function createSuiviOnFirstAcceptedAffectation(Affectation $affectation): void
     {
         if ($this->firstAcceptedAffectationSpecification->isSatisfiedBy($affectation)) {
             $adminEmail = $this->parameterBag->get('user_system_email');
@@ -91,7 +90,6 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 description: $this->parameterBag->get('suivi_message')['first_accepted_affectation'],
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
-                partner: $partner,
                 user: $adminUser,
                 isPublic: true,
                 context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
