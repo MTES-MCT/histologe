@@ -77,9 +77,9 @@
 					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 						<p>Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>
 					</div>
-				{% elseif signalement.statut.name == 'EN_MEDIATION' %}
+				{% elseif signalement.statut.name == 'INJONCTION_BAILLEUR' %}
 					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-						<p>Votre dossier est en médiation, vous ne pouvez pas envoyer de messages.</p>
+						<p>Votre dossier est en injonction bailleur, vous ne pouvez pas envoyer de messages.</p>
 					</div>
 				{% else %}
 					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">

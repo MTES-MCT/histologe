@@ -35,7 +35,7 @@ class SignalementControllerTest extends WebTestCase
         yield 'Archivé' => [SignalementStatus::ARCHIVED->value];
         yield 'Brouillon' => [SignalementStatus::DRAFT->value];
         yield 'Brouillon de signalement' => [SignalementStatus::DRAFT_ARCHIVED->value];
-        yield 'En médiation' => [SignalementStatus::EN_MEDIATION->value];
+        yield 'En médiation' => [SignalementStatus::INJONCTION_BAILLEUR->value];
     }
 
     /**
@@ -99,7 +99,7 @@ class SignalementControllerTest extends WebTestCase
                 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
                 $crawler->filter('.fr-tile__detail')->text()
             );
-        } elseif (SignalementStatus::ACTIVE->value === $status || SignalementStatus::EN_MEDIATION->value === $status) {
+        } elseif (SignalementStatus::ACTIVE->value === $status || SignalementStatus::INJONCTION_BAILLEUR->value === $status) {
             $this->assertEquals('Votre dossier', $crawler->filter('h1')->text());
         } elseif (SignalementStatus::CLOSED->value === $status) {
             $this->assertEquals(
@@ -244,8 +244,8 @@ class SignalementControllerTest extends WebTestCase
             $this->assertEquals('Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.', $crawler->filter('.fr-alert p')->text());
         } elseif (SignalementStatus::CLOSED->value === $status) {
             $this->assertEquals('Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.', $crawler->filter('.fr-alert p')->text());
-        } elseif (SignalementStatus::EN_MEDIATION->value === $status) {
-            $this->assertEquals('Votre dossier est en médiation, vous ne pouvez pas envoyer de messages.', $crawler->filter('.fr-alert p')->text());
+        } elseif (SignalementStatus::INJONCTION_BAILLEUR->value === $status) {
+            $this->assertEquals('Votre dossier est en injonction bailleur, vous ne pouvez pas envoyer de messages.', $crawler->filter('.fr-alert p')->text());
         } else {
             $this->assertResponseRedirects('/authentification/'.$signalement->getCodeSuivi());
         }

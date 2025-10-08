@@ -15,12 +15,12 @@ enum SignalementStatus: string
     case ARCHIVED = 'ARCHIVED';
     case REFUSED = 'REFUSED';
     case DRAFT_ARCHIVED = 'DRAFT_ARCHIVED';
-    case EN_MEDIATION = 'EN_MEDIATION';
+    case INJONCTION_BAILLEUR = 'INJONCTION_BAILLEUR';
 
     public function mapAffectationStatus(): string
     {
         return match ($this) {
-            self::EN_MEDIATION, self::DRAFT, self::NEED_VALIDATION => AffectationStatus::WAIT->value,
+            self::INJONCTION_BAILLEUR, self::DRAFT, self::NEED_VALIDATION => AffectationStatus::WAIT->value,
             self::ACTIVE => AffectationStatus::ACCEPTED->value,
             self::REFUSED => AffectationStatus::REFUSED->value,
             self::CLOSED, self::ARCHIVED, self::DRAFT_ARCHIVED => AffectationStatus::CLOSED->value,
@@ -38,7 +38,7 @@ enum SignalementStatus: string
             self::REFUSED->name => 'refusé',
             self::ARCHIVED->name => 'archivé',
             self::DRAFT_ARCHIVED->name => 'brouillon archivé',
-            self::EN_MEDIATION->name => 'en médiation',
+            self::INJONCTION_BAILLEUR->name => 'injonction bailleur',
         ];
     }
 
@@ -50,7 +50,7 @@ enum SignalementStatus: string
             'en_cours' => SignalementStatus::ACTIVE->value,
             'ferme' => SignalementStatus::CLOSED->value,
             'refuse' => SignalementStatus::REFUSED->value,
-            'en_mediation' => SignalementStatus::EN_MEDIATION->value,
+            'injonction_bailleur' => SignalementStatus::INJONCTION_BAILLEUR->value,
             default => throw new \UnexpectedValueException('Unexpected signalement status : '.$label),
         };
     }
@@ -62,7 +62,7 @@ enum SignalementStatus: string
             self::ARCHIVED,
             self::DRAFT,
             self::DRAFT_ARCHIVED,
-            self::EN_MEDIATION,
+            self::INJONCTION_BAILLEUR,
         ];
     }
 
@@ -73,7 +73,7 @@ enum SignalementStatus: string
             self::ARCHIVED->value,
             self::DRAFT->value,
             self::DRAFT_ARCHIVED->value,
-            self::EN_MEDIATION->value,
+            self::INJONCTION_BAILLEUR->value,
         ];
     }
 }

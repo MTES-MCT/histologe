@@ -1158,7 +1158,7 @@ signalements:
     adresse_occupant: "18 Bd du 8 Mai 1945"
     cp_occupant: "30110"
     ville_occupant: "La Grand-Combe"
-    statut: "EN_MEDIATION"
+    statut: "INJONCTION_BAILLEUR"
     geoloc: "[]"
     insee_occupant: ""
     nb_pieces_logement: 3
