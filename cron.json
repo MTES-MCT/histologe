@@ -32,6 +32,9 @@
     },
     {
       "command": "0 6 2 * * php bin/console app:remind-pending-drafts-bailleur-prevenu"
+    },
+    {
+      "command": "/30 * * * * php bin/console app:monitor-messenger-queues"
     }
   ]
 }
