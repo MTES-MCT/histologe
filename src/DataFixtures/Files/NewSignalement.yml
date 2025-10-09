@@ -941,3 +941,45 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
+  -     
+    territory: "Gard"
+    uuid: "00000000-0000-0000-2025-000000000011"
+    reference: "2025-11"
+    details: "Le toit n'est plus étanche."
+    is_proprio_averti: 1
+    is_allocataire: "0"
+    nature_logement: "maison"
+    superficie: 80
+    loyer: 750
+    date_entree: "2025-12-01"
+    nom_proprio: "Morel"
+    prenom_proprio: "Sylvain"
+    email_proprio: "s.morel@yopmail.com"
+    type_proprio: "PARTICULIER"
+    is_logement_social: 0
+    civilite_occupant: "mr"
+    nom_occupant: "Talau"
+    prenom_occupant: "Clément"
+    tel_occupant: "+330644556677"
+    phone_number: "+330644556677"
+    mail_occupant: "c.talau@yopmail.com"
+    adresse_occupant: "18 Bd du 8 Mai 1945"
+    cp_occupant: "30110"
+    ville_occupant: "La Grand-Combe"
+    statut: "INJONCTION_BAILLEUR"
+    geoloc: "[]"
+    insee_occupant: ""
+    nb_pieces_logement: 3
+    nb_occupants_logement: 5
+    score: 37
+    score_logement: 22
+    score_batiment: 13
+    created_from_uuid: '00000000-0000-0000-2025-000000000011'
+    profile_declarant: "LOCATAIRE"
+    type_composition_logement: "[]"
+    situation_foyer: "[]"
+    information_procedure: "[]"
+    information_complementaire: "[]"
+    desordre_precision:
+      - "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
+      - "desordres_logement_electricite_installation_dangereuse"
