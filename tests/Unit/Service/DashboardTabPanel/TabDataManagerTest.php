@@ -50,6 +50,7 @@ class TabDataManagerTest extends TestCase
 
     public function testGetDernierActionDossiersReturnsExpectedTabDossier(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
 
@@ -99,6 +100,7 @@ class TabDataManagerTest extends TestCase
 
     public function testCountUsersPendingToArchiveReturnsCount(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
         $this->userRepository->method('findUsersPendingToArchive')->willReturn([1, 2, 3]);
@@ -190,6 +192,10 @@ class TabDataManagerTest extends TestCase
 
     public function testGetDossiersNoAgentWithCountReturnsExpectedResult(): void
     {
+        /** @var MockObject&User $user */
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+
         $expectedDossiers = [];
         $expectedCount = 0;
         $params = new TabQueryParameters(null, null);
@@ -322,6 +328,7 @@ class TabDataManagerTest extends TestCase
 
     public function testGetMessagesUsagersMessageApresFermetureReturnsExpectedResult(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
         $this->suiviRepository->method('findSuivisPostCloture')->with($user)->willReturn([
@@ -392,6 +399,7 @@ class TabDataManagerTest extends TestCase
 
     public function testGetMessagesUsagersMessagesSansReponseReturnsExpectedResult(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
         $this->suiviRepository->method('findSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn([
@@ -434,6 +442,7 @@ class TabDataManagerTest extends TestCase
 
     public function testGetDossiersAVerifierSansActivitePartenaires(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
         $this->signalementRepository->method('findSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn([
