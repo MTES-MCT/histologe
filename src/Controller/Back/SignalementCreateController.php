@@ -347,9 +347,6 @@ class SignalementCreateController extends AbstractController
                 );
                 $signalement->setBailleur($bailleur);
             }
-            if (!$signalement->getNomProprio() && $signalement->getDenominationProprio()) {
-                $signalement->setNomProprio($signalement->getDenominationProprio());
-            }
 
             $this->signalementManager->save($signalement);
             $entityManager->commit();
@@ -433,6 +430,9 @@ class SignalementCreateController extends AbstractController
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
         if (!$signalement->getIsLogementSocial() && $signalement->getBailleur()) {
             $signalement->setBailleur(null);
+        }
+        if (!$signalement->getNomProprio() && $signalement->getDenominationProprio()) {
+            $signalement->setNomProprio($signalement->getDenominationProprio());
         }
         $signalementManager->flush();
 
