@@ -74,7 +74,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
         }
         $listRouteBOParameters = [];
         if (!$user->isPartnerAdmin() && !$user->isTerritoryAdmin() && !$user->isSuperAdmin()) {
-            $listRouteBOParameters = ['mesDossiersMessagesUsagers' => '1', 'mesDossiersAverifier' => '1'];
+            $listRouteBOParameters = ['mesDossiersMessagesUsagers' => '1', 'mesDossiersAverifier' => '1', 'mesDossiersActiviteRecente' => '1'];
         }
 
         return new RedirectResponse($this->urlGenerator->generate('back_dashboard', $listRouteBOParameters));

@@ -104,7 +104,7 @@ class TabCountKpiBuilderTest extends TestCase
 
         $tabCountKpi = $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
-            ->setMesDossiers($mesDossiers, $mesDossiers)
+            ->setMesDossiers($mesDossiers, $mesDossiers, $mesDossiers)
             ->setSearchAverifier(null, [])
             ->withTabCountKpi()
             ->build();
@@ -179,7 +179,7 @@ class TabCountKpiBuilderTest extends TestCase
             });
         $tabCountKpi = $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
-            ->setMesDossiers($mesDossiers, $mesDossiers)
+            ->setMesDossiers($mesDossiers, $mesDossiers, $mesDossiers)
             ->setSearchAverifier(null, [])
             ->withTabCountKpi()
             ->build();

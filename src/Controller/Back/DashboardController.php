@@ -35,6 +35,7 @@ class DashboardController extends AbstractController
         #[MapQueryParameter('territoireId')] ?string $territoireIdRaw = null,
         #[MapQueryParameter('mesDossiersMessagesUsagers')] ?string $mesDossiersMessagesUsagers = null,
         #[MapQueryParameter('mesDossiersAverifier')] ?string $mesDossiersAverifier = null,
+        #[MapQueryParameter('mesDossiersActiviteRecente')] ?string $mesDossiersActiviteRecente = null,
     ): Response {
         $territoireId = (is_numeric($territoireIdRaw) ? (int) $territoireIdRaw : null);
 
@@ -42,11 +43,12 @@ class DashboardController extends AbstractController
             /** @var User $user */
             $user = $this->getUser();
 
-            if ($user->isUserPartner() && (null === $mesDossiersMessagesUsagers || null === $mesDossiersAverifier)) {
+            if ($user->isUserPartner() && (null === $mesDossiersMessagesUsagers || null === $mesDossiersAverifier || null === $mesDossiersActiviteRecente)) {
                 return $this->redirectToRoute('back_dashboard', [
                     'territoireId' => $territoireId,
                     'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers ?? '1',
                     'mesDossiersAverifier' => $mesDossiersAverifier ?? '1',
+                    'mesDossiersActiviteRecente' => $mesDossiersActiviteRecente ?? '1',
                 ]);
             }
 
@@ -78,12 +80,14 @@ class DashboardController extends AbstractController
                     $territory?->getId(),
                     $mesDossiersMessagesUsagers,
                     $mesDossiersAverifier,
+                    $mesDossiersActiviteRecente,
                     $searchDashboardAverifier->getQueryCommune(),
                     $searchDashboardAverifier->getPartners()->map(fn ($p) => $p->getId())->toArray()
                 ),
                 'territory' => $territory,
                 'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers,
                 'mesDossiersAverifier' => $mesDossiersAverifier,
+                'mesDossiersActiviteRecente' => $mesDossiersActiviteRecente,
                 'formSearchAverifier' => $formSearchAverifier,
             ]);
         }

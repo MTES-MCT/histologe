@@ -144,6 +144,9 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'isDossiersSansAgent') {
     return 'Dossiers sans agent'
   }
+  if (key === 'isActiviteRecente') {
+    return 'Dossiers avec activité récente'
+  }
     
   return buildStaticBadge(value)
 }

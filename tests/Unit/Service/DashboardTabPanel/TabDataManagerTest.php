@@ -506,6 +506,7 @@ class TabDataManagerTest extends WebTestCase
             territoryId: 1,
             mesDossiersMessagesUsagers: 'oui',
             mesDossiersAverifier: null,
+            mesDossiersActiviteRecente: null,
             queryCommune: null,
             partners: null
         );

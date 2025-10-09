@@ -1046,6 +1046,10 @@ ul + p {
     .tab-panel-title-with-connection-lost-icon::before {
         @include tab-panel-title-icon('../../public/img/picto-dsfr/connection-lost.svg');
     }
+
+    .tab-panel-title-with-conclusion-icon::before {
+        @include tab-panel-title-icon('../../public/img/picto-dsfr/conclusion.svg');
+    }
 }
 
 .menu-actions-signalement a.fr-nav__link {

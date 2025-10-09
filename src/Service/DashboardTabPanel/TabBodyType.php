@@ -27,4 +27,7 @@ class TabBodyType
     // Tab A vérifier
     public const string TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE = 'dossiers-sans-activite-partenaire';
     public const string TAB_DATA_TYPE_ADRESSE_EMAIL_A_VERIFIER = 'dossiers-adresse-email-a-verifier';
+
+    // Tab Activite récente
+    public const string TAB_DATA_TYPE_DOSSIERS_ACTIVITE_RECENTE = 'dossiers-activite-recente';
 }

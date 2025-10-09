@@ -43,4 +43,18 @@ export default function initFilterHandler() {
       window.location.href = url.toString();
     }
   });
+
+  const mySignalementsActiviteRecenteButton = document.getElementById('mySignalementsActiviteRecenteButton');
+  mySignalementsActiviteRecenteButton?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const url = new URL(window.location.href);
+    const current = url.searchParams.get('mesDossiersActiviteRecente');
+    const newValue = current === '1' ? '0' : '1';
+    url.searchParams.set('mesDossiersActiviteRecente', newValue);
+    if (window.location.href === url.toString()) {
+      window.location.reload();
+    } else {
+      window.location.href = url.toString();
+    }
+  });
 }

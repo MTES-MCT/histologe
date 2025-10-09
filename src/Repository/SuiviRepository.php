@@ -11,6 +11,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Entity\UserSignalementSubscription;
 use App\Service\DashboardTabPanel\Kpi\CountDossiersMessagesUsagers;
 use App\Service\DashboardTabPanel\TabDossier;
@@ -926,5 +927,108 @@ class SuiviRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function buildBaseQbForOtherUserSuivi(User $user, ?Territory $territory, ?TabQueryParameters $params): QueryBuilder
+    {
+        $subQb = $this->createQueryBuilder('sq')
+            ->select('MAX(sq.id)')
+            ->where('sq.signalement = suivi.signalement');
+
+        $qb = $this->createQueryBuilder('suivi')
+            ->innerJoin('suivi.signalement', 'signalement')
+            ->andWhere('signalement.statut NOT IN (:excludedStatus)')
+            ->andWhere('suivi.createdBy != :user')
+            ->andWhere('suivi.id = ('.$subQb->getDQL().')')
+            ->setParameter('user', $user)
+            ->setParameter('excludedStatus', [
+                SignalementStatus::ARCHIVED->value,
+                SignalementStatus::DRAFT->value,
+                SignalementStatus::DRAFT_ARCHIVED->value,
+            ]);
+
+        if ($user->isPartnerAdmin() || $user->isUserPartner()) {
+            $qb->innerJoin('signalement.affectations', 'affectation')
+            ->andWhere('affectation.partner IN (:partners)')
+            ->setParameter('partners', $user->getPartners());
+        }
+
+        // Filtrer sur activité récente (< 3 mois)
+        $threeMonthsAgo = new \DateTime('-3 months');
+        $qb->andWhere('suivi.createdAt >= :threeMonthsAgo')
+        ->setParameter('threeMonthsAgo', $threeMonthsAgo);
+
+        // Filtrer abonnements
+        if ($params && $params->mesDossiersActiviteRecente && '1' === $params->mesDossiersActiviteRecente) {
+            $existsSubscription = $this->_em->createQueryBuilder()
+                ->select('1')
+                ->from(UserSignalementSubscription::class, 'uss')
+                ->where('uss.signalement = signalement')
+                ->andWhere('uss.user = :currentUser')
+                ->getDQL();
+            $qb->andWhere($qb->expr()->exists($existsSubscription))
+                ->setParameter('currentUser', $user);
+        }
+
+        // Joins user/partner
+        $qb->leftJoin('suivi.createdBy', 'u')
+        ->leftJoin(UserPartner::class, 'up', 'WITH', 'up.user = u')
+        ->leftJoin('up.partner', 'p', 'WITH', 'p.territory = signalement.territory');
+
+        if (null !== $territory) {
+            $qb->andWhere('signalement.territory = :territory')
+            ->setParameter('territory', $territory);
+        }
+
+        return $qb;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function findLastSignalementsWithOtherUserSuivi(User $user, ?Territory $territory, TabQueryParameters $params, int $limit = 10): array
+    {
+        $qb = $this->buildBaseQbForOtherUserSuivi($user, $territory, $params);
+
+        $qb->select('
+            signalement.reference AS reference,
+            signalement.nomOccupant AS nomOccupant,
+            signalement.prenomOccupant AS prenomOccupant,
+            CONCAT(signalement.adresseOccupant, \' \' , signalement.cpOccupant, \' \' , signalement.villeOccupant) AS adresseOccupant,
+            signalement.uuid AS uuid,
+            signalement.statut AS statut,
+            suivi.id AS suiviId,
+            suivi.createdAt AS suiviCreatedAt,
+            suivi.category AS suiviCategory,
+            suivi.isPublic AS suiviIsPublic,
+            MAX(p.nom) AS derniereActionPartenaireNom,
+            MAX(u.nom) AS derniereActionPartenaireNomAgent,
+            MAX(u.prenom) AS derniereActionPartenairePrenomAgent
+        ')->groupBy('signalement.id, suivi.id');
+
+        $qb->orderBy('suivi.createdAt', 'DESC')
+        ->setMaxResults($limit);
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @return array<int>
+     */
+    public function findIdsLastSignalementsWithOtherUserSuivi(User $user, ?Territory $territory, ?TabQueryParameters $params): array
+    {
+        $qb = $this->buildBaseQbForOtherUserSuivi($user, $territory, $params);
+        $qb->select('signalement.id')
+        ->groupBy('signalement.id');
+
+        return $qb->getQuery()->getSingleColumnResult();
+    }
+
+    public function countLastSignalementsWithOtherUserSuivi(User $user, ?Territory $territory, TabQueryParameters $params): int
+    {
+        $qb = $this->buildBaseQbForOtherUserSuivi($user, $territory, $params);
+        $qb->select('COUNT(DISTINCT signalement.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }

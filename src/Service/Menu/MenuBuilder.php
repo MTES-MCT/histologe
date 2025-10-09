@@ -96,7 +96,7 @@ readonly class MenuBuilder
 
         $listRouteBOParameters = [];
         if (!$this->currentRoute->isGranted(User::ROLE_ADMIN_PARTNER)) {
-            $listRouteBOParameters = ['mesDossiersMessagesUsagers' => '1', 'mesDossiersAverifier' => '1'];
+            $listRouteBOParameters = ['mesDossiersMessagesUsagers' => '1', 'mesDossiersAverifier' => '1', 'mesDossiersActiviteRecente' => '1'];
         }
 
         $menu = (new MenuItem(label: 'root', route: ''))

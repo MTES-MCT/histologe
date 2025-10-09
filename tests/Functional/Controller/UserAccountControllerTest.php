@@ -45,7 +45,7 @@ class UserAccountControllerTest extends WebTestCase
             'password' => 'signallogement',
         ]);
 
-        $this->assertResponseRedirects('/bo/?mesDossiersMessagesUsagers=1&mesDossiersAverifier=1');
+        $this->assertResponseRedirects('/bo/?mesDossiersMessagesUsagers=1&mesDossiersAverifier=1&mesDossiersActiviteRecente=1');
     }
 
     public function testUserApiLogin(): void
