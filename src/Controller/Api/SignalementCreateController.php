@@ -49,9 +49,9 @@ class SignalementCreateController extends AbstractController
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly AutoAssigner $autoAssigner,
         #[Autowire(env: 'FEATURE_API_CREATION_SIGNALEMENT')]
-        private readonly bool $featureApiCreationSignalement,
+        private readonly string $featureApiCreationSignalement,
     ) {
-        if (!$this->featureApiCreationSignalement) {
+        if (!empty($this->featureApiCreationSignalement)) {
             throw $this->createNotFoundException('La création de signalement via l\'API est désactivée.');
         }
     }
