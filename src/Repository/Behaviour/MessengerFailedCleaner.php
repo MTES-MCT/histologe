@@ -17,6 +17,11 @@ class MessengerFailedCleaner implements EntityCleanerRepositoryInterface
      */
     public function cleanOlderThan(string $period = '-30 days'): int
     {
+        $schemaManager = $this->connection->createSchemaManager();
+        if (!$schemaManager->tablesExist(['messenger_messages'])) {
+            return 0; // 0 message supprimé (pas de table messenger_messages en environnement de test)
+        }
+
         $sql = 'DELETE FROM messenger_messages
                 WHERE queue_name LIKE :queue
                   AND (delivered_at = :delivered_at OR created_at < :created_at)';
