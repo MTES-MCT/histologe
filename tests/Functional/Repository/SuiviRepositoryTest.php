@@ -215,7 +215,7 @@ class SuiviRepositoryTest extends KernelTestCase
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );
-        $result = $this->suiviRepository->countLastSignalementsWithOtherUserSuivi($user, null, $tabQueryParameter);
+        $result = $this->suiviRepository->countLastSignalementsWithOtherUserSuivi($user, $tabQueryParameter);
         $this->assertIsInt($result);
         $this->assertGreaterThanOrEqual(0, $result);
     }
@@ -228,7 +228,7 @@ class SuiviRepositoryTest extends KernelTestCase
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );
-        $result = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, null, $tabQueryParameter);
+        $result = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, $tabQueryParameter);
         $this->assertIsArray($result);
     }
 }

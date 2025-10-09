@@ -479,7 +479,7 @@ class SearchFilter
         }
 
         if (!empty($filters['isActiviteRecente']) && $this->featureNewDashboard) {
-            $signalementIds = $this->suiviRepository->findIdsLastSignalementsWithOtherUserSuivi($user, null, null);
+            $signalementIds = $this->suiviRepository->findIdsLastSignalementsWithOtherUserSuivi($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }

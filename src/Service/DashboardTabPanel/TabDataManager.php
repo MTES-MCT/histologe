@@ -525,12 +525,8 @@ class TabDataManager
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $territory = null;
-        if ($tabQueryParameters && $tabQueryParameters->territoireId) {
-            $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
-        }
 
-        $signalements = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, $territory, $tabQueryParameters, 10);
+        $signalements = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, $tabQueryParameters, 10);
         $tabDossiers = [];
         if (empty($signalements)) {
             return new TabDossierResult($tabDossiers, 0);
@@ -555,7 +551,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countLastSignalementsWithOtherUserSuivi($user, $territory, $tabQueryParameters);
+        $count = $this->suiviRepository->countLastSignalementsWithOtherUserSuivi($user, $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }

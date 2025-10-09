@@ -929,7 +929,7 @@ class SuiviRepository extends ServiceEntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    private function buildBaseQbForOtherUserSuivi(User $user, ?Territory $territory, ?TabQueryParameters $params): QueryBuilder
+    private function buildBaseQbForOtherUserSuivi(User $user, ?TabQueryParameters $params): QueryBuilder
     {
         $subQb = $this->createQueryBuilder('sq')
             ->select('MAX(sq.id)')
@@ -958,7 +958,6 @@ class SuiviRepository extends ServiceEntityRepository
         $qb->andWhere('suivi.createdAt >= :threeMonthsAgo')
         ->setParameter('threeMonthsAgo', $threeMonthsAgo);
 
-        // Filtrer abonnements
         if ($params && $params->mesDossiersActiviteRecente && '1' === $params->mesDossiersActiviteRecente) {
             $existsSubscription = $this->_em->createQueryBuilder()
                 ->select('1')
@@ -970,14 +969,18 @@ class SuiviRepository extends ServiceEntityRepository
                 ->setParameter('currentUser', $user);
         }
 
-        // Joins user/partner
         $qb->leftJoin('suivi.createdBy', 'u')
         ->leftJoin(UserPartner::class, 'up', 'WITH', 'up.user = u')
         ->leftJoin('up.partner', 'p', 'WITH', 'p.territory = signalement.territory');
 
-        if (null !== $territory) {
-            $qb->andWhere('signalement.territory = :territory')
-            ->setParameter('territory', $territory);
+        if ($params?->territoireId) {
+            $qb
+                ->andWhere('signalement.territory = :territoireId')
+                ->setParameter('territoireId', $params->territoireId);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb
+                ->andWhere('signalement.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
         }
 
         return $qb;
@@ -986,9 +989,9 @@ class SuiviRepository extends ServiceEntityRepository
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function findLastSignalementsWithOtherUserSuivi(User $user, ?Territory $territory, TabQueryParameters $params, int $limit = 10): array
+    public function findLastSignalementsWithOtherUserSuivi(User $user, TabQueryParameters $params, int $limit = 10): array
     {
-        $qb = $this->buildBaseQbForOtherUserSuivi($user, $territory, $params);
+        $qb = $this->buildBaseQbForOtherUserSuivi($user, $params);
 
         $qb->select('
             signalement.reference AS reference,
@@ -1014,18 +1017,18 @@ class SuiviRepository extends ServiceEntityRepository
     /**
      * @return array<int>
      */
-    public function findIdsLastSignalementsWithOtherUserSuivi(User $user, ?Territory $territory, ?TabQueryParameters $params): array
+    public function findIdsLastSignalementsWithOtherUserSuivi(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQbForOtherUserSuivi($user, $territory, $params);
+        $qb = $this->buildBaseQbForOtherUserSuivi($user, $params);
         $qb->select('signalement.id')
         ->groupBy('signalement.id');
 
         return $qb->getQuery()->getSingleColumnResult();
     }
 
-    public function countLastSignalementsWithOtherUserSuivi(User $user, ?Territory $territory, TabQueryParameters $params): int
+    public function countLastSignalementsWithOtherUserSuivi(User $user, TabQueryParameters $params): int
     {
-        $qb = $this->buildBaseQbForOtherUserSuivi($user, $territory, $params);
+        $qb = $this->buildBaseQbForOtherUserSuivi($user, $params);
         $qb->select('COUNT(DISTINCT signalement.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
