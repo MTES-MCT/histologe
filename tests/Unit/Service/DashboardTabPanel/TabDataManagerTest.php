@@ -22,10 +22,10 @@ use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class TabDataManagerTest extends TestCase
+class TabDataManagerTest extends WebTestCase
 {
     protected MockObject|Security $security;
     protected MockObject|JobEventRepository $jobEventRepository;
@@ -192,8 +192,10 @@ class TabDataManagerTest extends TestCase
 
     public function testGetDossiersNoAgentWithCountReturnsExpectedResult(): void
     {
-        /** @var MockObject&User $user */
-        $user = $this->createMock(User::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        /** @var User $user */
+        $user = $userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $this->security->method('getUser')->willReturn($user);
 
         $expectedDossiers = [];
