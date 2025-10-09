@@ -27,9 +27,13 @@ class TabCountKpiBuilderTest extends TestCase
 
     protected function setUp(): void
     {
+        /* @var MockObject&SignalementRepository */
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
+        /* @var MockObject&SuiviRepository */
         $this->suiviRepository = $this->createMock(SuiviRepository::class);
+        /* @var MockObject&Security */
         $this->security = $this->createMock(Security::class);
+        /* @var MockObject&TabCountKpiCacheHelper */
         $this->tabCountKpiCacheHelper = $this->createMock(TabCountKpiCacheHelper::class);
 
         $this->tabCountKpiBuilder = new TabCountKpiBuilder(
@@ -50,7 +54,8 @@ class TabCountKpiBuilderTest extends TestCase
             territoireId: $territoryId,
             partners: [],
             mesDossiersAverifier: $mesDossiers,
-            mesDossiersMessagesUsagers: $mesDossiers
+            mesDossiersMessagesUsagers: $mesDossiers,
+            mesDossiersActiviteRecente: $mesDossiers,
         );
 
         $this->security
@@ -126,7 +131,8 @@ class TabCountKpiBuilderTest extends TestCase
             territoireId: $territoryId,
             partners: [],
             mesDossiersAverifier: $mesDossiers,
-            mesDossiersMessagesUsagers: $mesDossiers
+            mesDossiersMessagesUsagers: $mesDossiers,
+            mesDossiersActiviteRecente: $mesDossiers,
         );
 
         $this->security

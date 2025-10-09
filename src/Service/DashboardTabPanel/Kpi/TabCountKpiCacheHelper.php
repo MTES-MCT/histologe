@@ -64,7 +64,6 @@ class TabCountKpiCacheHelper
                         'mesDossiersAverifier' => '1' === $params->mesDossiersAverifier ? $user->getId() : 'null',
                     ];
                     break;
-                    // TODO ?
                 default:
                     $otherParams = null;
             }

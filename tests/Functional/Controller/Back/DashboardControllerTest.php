@@ -39,6 +39,7 @@ class DashboardControllerTest extends WebTestCase
         $this->assertResponseRedirects();
         $this->assertStringContainsString('mesDossiersMessagesUsagers=1', $client->getResponse()->headers->get('Location'));
         $this->assertStringContainsString('mesDossiersAverifier=1', $client->getResponse()->headers->get('Location'));
+        $this->assertStringContainsString('mesDossiersActiviteRecente=1', $client->getResponse()->headers->get('Location'));
     }
 
     public function testIndexDisplaysSearchDashboardAverifierForm(): void
@@ -89,6 +90,7 @@ class DashboardControllerTest extends WebTestCase
         $this->assertSelectorExists('#tabpanel-dossiers-a-fermer');
         $this->assertSelectorExists('#tabpanel-dossiers-messages-usagers');
         $this->assertSelectorExists('#tabpanel-dossiers-a-verifier');
+        $this->assertSelectorExists('#tabpanel-dossiers-activite-recente');
     }
 
     public function testIndexDisplaysTabPartner(): void
@@ -106,6 +108,7 @@ class DashboardControllerTest extends WebTestCase
         $redirectUrl = $client->getResponse()->headers->get('Location');
         $this->assertStringContainsString('mesDossiersMessagesUsagers=1', $redirectUrl);
         $this->assertStringContainsString('mesDossiersAverifier=1', $redirectUrl);
+        $this->assertStringContainsString('mesDossiersActiviteRecente=1', $redirectUrl);
 
         $crawler = $client->followRedirect();
         $this->assertSelectorExists('#tabpanel-dernieres-actions');
@@ -113,5 +116,6 @@ class DashboardControllerTest extends WebTestCase
         $this->assertSelectorNotExists('#tabpanel-dossiers-a-fermer');
         $this->assertSelectorExists('#tabpanel-dossiers-messages-usagers');
         $this->assertSelectorExists('#tabpanel-dossiers-a-verifier');
+        $this->assertSelectorExists('#tabpanel-dossiers-activite-recente');
     }
 }

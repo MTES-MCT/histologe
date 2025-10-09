@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Security\Voter;
 use App\Security\Voter\TabPanelVoter;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -14,6 +15,7 @@ class TabPanelVoterTest extends TestCase
 
     public function testVoteDeniesAccessWhenUserLacksPermissionAffectation(): void
     {
+        /** @var MockObject&TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
 
         $user = $this->getUser(['ROLE_USER']);
@@ -30,6 +32,7 @@ class TabPanelVoterTest extends TestCase
 
     public function testVoteDeniesAccessWhenUserIsNotAuthenticated(): void
     {
+        /** @var MockObject&TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
 
         $token->method('getUser')->willReturn(null);
@@ -44,6 +47,7 @@ class TabPanelVoterTest extends TestCase
 
     public function testVoteDeniesAccessForUnknownTabType(): void
     {
+        /** @var MockObject&TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
 
         $user = $this->getUser(['ROLE_ADMIN']);

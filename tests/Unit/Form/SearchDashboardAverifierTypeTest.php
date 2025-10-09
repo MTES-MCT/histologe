@@ -39,6 +39,7 @@ class SearchDashboardAverifierTypeTest extends KernelTestCase
         $this->assertTrue($form->has('territoireId'));
         $this->assertTrue($form->has('mesDossiersAverifier'));
         $this->assertTrue($form->has('mesDossiersMessagesUsagers'));
+        $this->assertTrue($form->has('mesDossiersActiviteRecente'));
 
         // pas de partenaires pour un user simple
         $this->assertFalse($form->has('partners'));

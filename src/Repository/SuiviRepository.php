@@ -997,7 +997,6 @@ class SuiviRepository extends ServiceEntityRepository
             CONCAT(signalement.adresseOccupant, \' \' , signalement.cpOccupant, \' \' , signalement.villeOccupant) AS adresseOccupant,
             signalement.uuid AS uuid,
             signalement.statut AS statut,
-            suivi.id AS suiviId,
             suivi.createdAt AS suiviCreatedAt,
             suivi.category AS suiviCategory,
             suivi.isPublic AS suiviIsPublic,

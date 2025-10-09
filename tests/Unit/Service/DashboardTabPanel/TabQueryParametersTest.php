@@ -25,6 +25,7 @@ class TabQueryParametersTest extends KernelTestCase
             partners: [12, 14],
             mesDossiersMessagesUsagers: 'oui',
             mesDossiersAverifier: 'oui',
+            mesDossiersActiviteRecente: 'oui',
             queryCommune: '72000',
             sortBy: 'createdAt',
             orderBy: 'ASC'
@@ -44,6 +45,7 @@ class TabQueryParametersTest extends KernelTestCase
             partners: [12, 14],
             mesDossiersMessagesUsagers: 'oui',
             mesDossiersAverifier: 'oui',
+            mesDossiersActiviteRecente: 'oui',
             queryCommune: '72000',
             sortBy: 'invalidSortBy',
             orderBy: 'ASC'
@@ -64,6 +66,7 @@ class TabQueryParametersTest extends KernelTestCase
             partners: [12, 14],
             mesDossiersMessagesUsagers: 'oui',
             mesDossiersAverifier: 'oui',
+            mesDossiersActiviteRecente: 'oui',
             queryCommune: '72000',
             sortBy: 'createdAt',
             orderBy: 'INVALID'
@@ -84,6 +87,7 @@ class TabQueryParametersTest extends KernelTestCase
             partners: null,
             mesDossiersMessagesUsagers: null,
             mesDossiersAverifier: null,
+            mesDossiersActiviteRecente: null,
             queryCommune: null,
             sortBy: null,
             orderBy: null
