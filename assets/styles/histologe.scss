@@ -677,6 +677,11 @@ p + ul {
 ul + p {
     margin-top: 1.5rem;
 }
+.bloc-suivi-content-row {
+    p + ul {
+        margin-top: 0.5rem;
+    }
+}
 
 .faq-redirection {
     position: fixed;
