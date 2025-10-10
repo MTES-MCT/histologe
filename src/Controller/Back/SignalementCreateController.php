@@ -15,6 +15,7 @@ use App\Form\SignalementDraftSituationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
+use App\Repository\BailleurRepository;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -329,6 +330,7 @@ class SignalementCreateController extends AbstractController
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
+        BailleurRepository $bailleurRepository,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
 
@@ -337,6 +339,15 @@ class SignalementCreateController extends AbstractController
         $form = $this->createForm(SignalementDraftCoordonneesType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($signalement->getIsLogementSocial() && $signalement->getDenominationProprio()) {
+                $bailleur = $bailleurRepository->findOneBailleurBy(
+                    name: $signalement->getDenominationProprio(),
+                    territory: $signalement->getTerritory(),
+                    bailleurSanitized: true
+                );
+                $signalement->setBailleur($bailleur);
+            }
+
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
@@ -417,6 +428,12 @@ class SignalementCreateController extends AbstractController
 
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        if (!$signalement->getIsLogementSocial() && $signalement->getBailleur()) {
+            $signalement->setBailleur(null);
+        }
+        if (!$signalement->getNomProprio() && $signalement->getDenominationProprio()) {
+            $signalement->setNomProprio($signalement->getDenominationProprio());
+        }
         $signalementManager->flush();
 
         $errorMsgs = [];
