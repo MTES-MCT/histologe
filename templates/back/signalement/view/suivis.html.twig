@@ -5,7 +5,7 @@
         <h3 class="fr-h5">Suivis</h3>
     </div>
     {% if 
-        is_granted('COMMENT_CREATE', signalement)
+        is_granted('CREATE_SUIVI', signalement)
         and not isClosedForMe
         %}
         <div data-ajax-form>
@@ -43,7 +43,7 @@
             {% endif %}
         </div>
 
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('DELETE_SUIVI', suivi) or is_granted('EDIT_SUIVI', suivi) %}
             <div class="fr-col-6 bloc-suivi-content-row fr-pl-3v">
         {% else %}
             <div class="fr-col-7 bloc-suivi-content-row fr-pl-3v">
@@ -61,13 +61,23 @@
                 <span class="fr-badge fr-badge--{{ suivi.isSeenByUsager ? 'success fr-background--notif-info' : 'error fr-background--notif-error' }} fr-mt-1v">{{ suivi.isSeenByUsager ? 'Lu' : 'Non lu' }}</span>
             {% endif %}
         </div>
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('DELETE_SUIVI', suivi) or is_granted('EDIT_SUIVI', suivi) %}
             <div class="fr-col-1 fr-text--right">
-                {% if suivi.deletedAt is null %}
-                <button title="Supprimer le suivi"
-                    data-delete="{{ path('back_signalement_delete_suivi',{uuid:signalement.uuid,suivi:suivi.id}) }}"
-                    data-token="{{ csrf_token('signalement_delete_suivi_'~signalement.id) }}"
-                    class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line suivi-row-delete"></button>
+                {% if is_granted('EDIT_SUIVI', suivi) %}
+                    <button title="Modifier le suivi" 
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line btn-edit-suivi"
+                        data-fr-opened="false"
+                        aria-controls="fr-modal-edit-suivi"
+                        data-url="{{ path('back_signalement_edit_suivi',{suivi:suivi.id}) }}"
+                        >
+                    </button>
+                {% endif %}
+                {% if is_granted('DELETE_SUIVI', suivi) %}
+                    <button title="Supprimer le suivi"
+                        data-delete="{{ path('back_signalement_delete_suivi',{uuid:signalement.uuid,suivi:suivi.id}) }}"
+                        data-token="{{ csrf_token('signalement_delete_suivi_'~signalement.id) }}"
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line suivi-row-delete">
+                    </button>
                 {% endif %}
             </div>            
         {% endif %}

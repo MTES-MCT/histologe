@@ -1023,4 +1023,18 @@ class SuiviRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getSingleColumnResult();
     }
+
+    /**
+     * @return array<int, Suivi>
+     */
+    public function findWithWaitingNotificationAndExpiredDelay(): array
+    {
+        $limit = new \DateTimeImmutable('-'.Suivi::DELAY_SUIVI_EDITABLE_IN_MINUTES.' minutes');
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.createdAt < :limit')
+            ->setParameter('limit', $limit)
+            ->andWhere('s.waitingNotification = 1');
+
+        return $qb->getQuery()->getResult();
+    }
 }

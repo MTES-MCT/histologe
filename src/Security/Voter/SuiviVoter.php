@@ -2,10 +2,7 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Affectation;
-use App\Entity\Enum\AffectationStatus;
-use App\Entity\Enum\SignalementStatus;
-use App\Entity\Signalement;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -14,43 +11,53 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SuiviVoter extends Voter
 {
-    public const string CREATE = 'COMMENT_CREATE';
+    public const string DELETE_SUIVI = 'DELETE_SUIVI';
+    public const string EDIT_SUIVI = 'EDIT_SUIVI';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE])
-            && ($subject instanceof Suivi || $subject instanceof Signalement);
+        return \in_array($attribute, [self::DELETE_SUIVI, self::EDIT_SUIVI]) && ($subject instanceof Suivi);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
         $user = $token->getUser();
-        if (!$user instanceof User || !$user->isSuperAdmin() && !$user->hasPartnerInTerritory($subject->getTerritory())) {
-            $vote?->addReason('L\'utilisateur n\'a pas les droits suffisants dans le territoire demandé.');
+        if (!$user instanceof User) {
+            $vote?->addReason('L\'utilisateur n\'est pas authentifié.');
 
             return false;
         }
 
         return match ($attribute) {
-            self::CREATE => $this->canCreate($subject, $user),
+            self::DELETE_SUIVI => $this->canDelete($subject, $user),
+            self::EDIT_SUIVI => $this->canEdit($subject, $user),
             default => false,
         };
     }
 
-    private function canCreate(Signalement $signalement, User $user): bool
+    private function canDelete(Suivi $suivi, User $user): bool
     {
-        if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
+        if (null !== $suivi->getDeletedAt()) {
             return false;
         }
-        if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
+        if ($user->isSuperAdmin()) {
             return true;
         }
 
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        return $this->canEdit($suivi, $user);
+    }
 
-        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
-            return $affectation->getPartner()->getId() === $partner->getId() && AffectationStatus::ACCEPTED == $affectation->getStatut();
-        })->count() > 0;
+    private function canEdit(Suivi $suivi, User $user): bool
+    {
+        if (null !== $suivi->getDeletedAt()) {
+            return false;
+        }
+        $limit = new \DateTimeImmutable('-'.Suivi::DELAY_SUIVI_EDITABLE_IN_MINUTES.' minutes');
+        if (SuiviCategory::MESSAGE_PARTNER === $suivi->getCategory() && $suivi->isWaitingNotification() && $suivi->getCreatedAt() > $limit && $user === $suivi->getCreatedBy()) {
+            return true;
+        }
+
+        return false;
     }
 }

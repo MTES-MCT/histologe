@@ -21,3 +21,19 @@ autoSubmitElements.forEach((autoSubmitElements) => {
     this.form.submit();
   });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    initTinyMCE('textarea.editor');
+});
+
+export function initTinyMCE(selector) {
+  tinymce.init({
+    selector: selector,
+    browser_spellcheck: true,
+    license_key: 'gpl',
+    plugins: 'lists',
+    toolbar: 'undo redo | styleselect | bold italic | numlist bullist | mybutton',
+    menubar: false,
+    height: 320,
+  });
+}

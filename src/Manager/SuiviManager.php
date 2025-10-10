@@ -69,6 +69,9 @@ class SuiviManager extends Manager
         if (!empty($createdAt)) {
             $suivi->setCreatedAt($createdAt);
         }
+        if (SuiviCategory::MESSAGE_PARTNER === $suivi->getCategory()) {
+            $suivi->setWaitingNotification(true);
+        }
         foreach ($files as $file) {
             $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());
             $this->persist($suiviFile);

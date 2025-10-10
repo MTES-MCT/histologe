@@ -9,6 +9,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\SuiviFile;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Form\AddSuiviType;
@@ -33,7 +34,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementActionController extends AbstractController
@@ -128,7 +128,7 @@ class SignalementActionController extends AbstractController
         SuiviManager $suiviManager,
         LoggerInterface $logger,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('COMMENT_CREATE', $signalement);
+        $this->denyAccessUnlessGranted('CREATE_SUIVI', $signalement);
         $suivi = (new Suivi())->setSignalement($signalement);
         $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(AddSuiviType::class, $suivi, ['action' => $addSuiviRoute]);
@@ -174,34 +174,75 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
-    #[IsGranted('ROLE_ADMIN')]
     public function deleteSuivi(
         Request $request,
         Signalement $signalement,
         SuiviRepository $suiviRepository,
         ManagerRegistry $doctrine,
     ): RedirectResponse {
-        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), $request->get('_token'))
-            && $idSuivi = $request->get('suivi')
-        ) {
-            $suivi = $suiviRepository->findOneBy(['id' => $idSuivi]);
-            if ($suivi) {
+        $suivi = $suiviRepository->findOneBy(['id' => $request->get('suivi')]);
+        $this->denyAccessUnlessGranted('DELETE_SUIVI', $suivi);
+        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), $request->get('_token'))) {
+            $limit = new \DateTimeImmutable('-'.Suivi::DELAY_SUIVI_EDITABLE_IN_MINUTES.' minutes');
+            if ($suivi->getCreatedAt() > $limit) {
+                $doctrine->getManager()->remove($suivi);
+            } else {
                 /** @var User $user */
                 $user = $this->getUser();
                 $suivi->setDeletedAt(new \DateTimeImmutable());
                 $suivi->setDeletedBy($user);
-                $doctrine->getManager()->persist($suivi);
-                $doctrine->getManager()->flush();
-
-                $this->addFlash('success', 'Le suivi a été supprimé.');
-            } else {
-                $this->addFlash('success', 'Ce suivi n\'existe pas.');
             }
+            $doctrine->getManager()->flush();
+            $this->addFlash('success', 'Le suivi a été supprimé.');
+        } else {
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
         }
 
         return $this->redirect(
             $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis'
         );
+    }
+
+    #[Route('/suivi/{suivi}/edit', name: 'back_signalement_edit_suivi', methods: ['GET', 'POST'])]
+    public function editSuivi(
+        Request $request,
+        Suivi $suivi,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('EDIT_SUIVI', $suivi);
+        $suivi->setSuiviTransformerService(null);
+        $form = $this->createForm(AddSuiviType::class, $suivi, ['action' => $this->generateUrl('back_signalement_edit_suivi', ['suivi' => $suivi->getId()])]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+                return $this->json($response, $response['code']);
+            }
+            foreach ($suivi->getSuiviFiles() as $suiviFile) {
+                $entityManager->remove($suiviFile);
+            }
+            $entityManager->flush();
+            foreach ($form->get('files')->getData() as $file) {
+                $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());
+                $entityManager->persist($suiviFile);
+            }
+            $entityManager->flush();
+
+            $response = ['code' => Response::HTTP_OK];
+            $this->addFlash('success', 'Le suivi a été modifié avec succès !');
+
+            return $this->json($response, $response['code']);
+        }
+
+        $html = $this->renderView('back/signalement/view/add-edit-suivi-form.html.twig', [
+            'form' => $form,
+            'formId' => 'fr-modal-edit-suivi-form',
+            'signalement' => $suivi->getSignalement(),
+        ]);
+
+        return $this->json(['content' => $html]);
     }
 
     #[Route('/{uuid:signalement}/reopen', name: 'back_signalement_reopen')]

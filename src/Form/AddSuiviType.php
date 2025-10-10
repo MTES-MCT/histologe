@@ -63,6 +63,7 @@ class AddSuiviType extends AbstractType
             'nochoiceslabel' => 'Aucun fichier disponible',
             'mapped' => false,
             'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
+            'data' => $suivi->getSuiviFiles()->map(fn ($suiviFile) => $suiviFile->getFile())->toArray(),
         ]);
     }
 

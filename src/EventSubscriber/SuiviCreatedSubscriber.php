@@ -38,7 +38,9 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         if (in_array($suivi->getSignalement()->getStatut(), SignalementStatus::excludedStatuses())) {
             return;
         }
-
+        if ($suivi->isWaitingNotification()) {
+            return;
+        }
         $this->sendToAdminAndPartners($suivi);
         $this->sendToUsagers($suivi);
     }
