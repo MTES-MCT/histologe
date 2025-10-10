@@ -509,6 +509,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: UserSignalementSubscription::class, orphanRemoval: true)]
     private Collection $userSignalementSubscriptions;
 
+    #[ORM\ManyToOne]
+    private ?Partner $createdByPartner = null;
+
     public function __construct()
     {
         $this->situations = new ArrayCollection();
@@ -2797,6 +2800,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
                 $userSignalementSubscription->setSignalement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedByPartner(): ?Partner
+    {
+        return $this->createdByPartner;
+    }
+
+    public function setCreatedByPartner(?Partner $createdByPartner): static
+    {
+        $this->createdByPartner = $createdByPartner;
 
         return $this;
     }

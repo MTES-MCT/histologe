@@ -68,6 +68,9 @@ readonly class PartnerAuthorizedResolver
             if (!$partner) {
                 throw new AccessDeniedException(SecurityApiExceptionListener::ACCESS_DENIED_PARTNER_NOT_FOUND);
             }
+            if (!$this->hasPermissionOnPartner($user, $partner)) {
+                throw new AccessDeniedException(SecurityApiExceptionListener::ACCESS_DENIED_SPECIFIC_PARTNER);
+            }
 
             return $partner;
         }

@@ -52,6 +52,9 @@ readonly class SignalementResponseFactory
         if ($affectationResult instanceof Affectation) {
             $affectationResult = [$affectationResult];
         }
+        if (!$affectationResult) {
+            $affectationResult = [];
+        }
 
         $signalementResponse = new SignalementResponse();
         // references, dates et statut

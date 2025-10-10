@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\User;
+use App\Entity\UserApiPermission;
 use App\Repository\SignalementRepository;
 use App\Service\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
@@ -17,18 +18,19 @@ class SignalementFileUploadControllerTest extends WebTestCase
 {
     use ApiHelper;
     private KernelBrowser $client;
+    private User $user;
     private RouterInterface $router;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $this->user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
         $this->router = self::getContainer()->get('router');
 
-        $this->client->loginUser($user, 'api');
+        $this->client->loginUser($this->user, 'api');
     }
 
     public function testFileUploadSuccess(): void
@@ -62,6 +64,64 @@ class SignalementFileUploadControllerTest extends WebTestCase
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
         $partnerUuid = $signalement->getAffectations()->first()->getPartner()->getUuid();
         $this->postRequest($uuid, $partnerUuid, [$imageFile, $documentFile]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function testFileUploadOnUnaffectedSignalement(): void
+    {
+        $imageFile = new UploadedFile(
+            __DIR__.'/../../../files/sample.jpg',
+            'sample.jpg',
+            'image/jpeg',
+            null,
+            true
+        );
+
+        $imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
+        self::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
+
+        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceMock
+            ->method('uploadFromFile')
+            ->willReturn('sample.jpg');
+
+        self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
+        $uuid = '00000000-0000-0000-2024-000000000006';
+        $permissionParams = ['user' => $this->user, 'partnerType' => null, 'territory' => null];
+        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $this->postRequest($uuid, $partner->getUuid(), [$imageFile]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function testFileUploadOnUnaffectedSignalementCreatedByMe(): void
+    {
+        $imageFile = new UploadedFile(
+            __DIR__.'/../../../files/sample.jpg',
+            'sample.jpg',
+            'image/jpeg',
+            null,
+            true
+        );
+
+        $imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
+        self::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
+
+        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+        $uploadHandlerServiceMock
+            ->method('uploadFromFile')
+            ->willReturn('sample.jpg');
+
+        self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
+        $uuid = '00000000-0000-0000-2024-000000000006';
+        $permissionParams = ['user' => $this->user, 'partnerType' => null, 'territory' => null];
+        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
+        $signalement->setCreatedBy($this->user);
+        $signalement->setCreatedByPartner($partner);
+        self::getContainer()->get('doctrine')->getManager()->flush();
+        $this->postRequest($uuid, $partner->getUuid(), [$imageFile]);
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }

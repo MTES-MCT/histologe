@@ -35,4 +35,28 @@ class DesordreCritereRepository extends ServiceEntityRepository
 
         return $qb->indexBy('d', 'd.slugCritere')->getQuery()->getResult();
     }
+
+    /**
+     * @return DesordreCritere[]
+     */
+    public function findAllWithPrecisions(): array
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->select('d', 'c', 'p')
+            ->leftJoin('d.desordreCategorie', 'c')
+            ->leftJoin('d.desordrePrecisions', 'p');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findWithPrecisionsBySlug(string $slug): ?DesordreCritere
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->select('d', 'p')
+            ->leftJoin('d.desordrePrecisions', 'p')
+            ->where('d.slugCritere = :slug')
+            ->setParameter('slug', $slug);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }
