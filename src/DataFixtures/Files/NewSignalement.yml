@@ -983,3 +983,44 @@ signalements:
     desordre_precision:
       - "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
       - "desordres_logement_electricite_installation_dangereuse"
+  -     
+    territory: "Hérault"
+    uuid: "00000000-0000-0000-2025-000000000012"
+    reference: "2025-12"
+    details: "Il y a du scotch sur mes fenêtres."
+    is_proprio_averti: 1
+    is_allocataire: "0"
+    nature_logement: "maison"
+    superficie: 80
+    loyer: 750
+    date_entree: "2023-12-01"
+    nom_proprio: "Ramon Tafrez"
+    email_proprio: "viens@ramontafrez.com"
+    type_proprio: "ORGANISME_SOCIETE"
+    is_logement_social: 0
+    civilite_occupant: "mr"
+    nom_occupant: "Mulder"
+    prenom_occupant: "Fox"
+    tel_occupant: "+330644116677"
+    phone_number: "+330644116677"
+    mail_occupant: "fox.mulder@fbi.com"
+    adresse_occupant: "4 Rue Notre Dame"
+    cp_occupant: "34170"
+    ville_occupant: "Castelnau-le-Lez"
+    statut: "INJONCTION_BAILLEUR"
+    geoloc: "[]"
+    insee_occupant: ""
+    nb_pieces_logement: 3
+    nb_occupants_logement: 5
+    score: 37
+    score_logement: 22
+    score_batiment: 13
+    created_from_uuid: '00000000-0000-0000-2025-000000000012'
+    profile_declarant: "LOCATAIRE"
+    type_composition_logement: "[]"
+    situation_foyer: "[]"
+    information_procedure: "[]"
+    information_complementaire: "[]"
+    desordre_precision:
+      - "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
+      - "desordres_logement_electricite_installation_dangereuse"

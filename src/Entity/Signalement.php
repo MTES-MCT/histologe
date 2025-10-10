@@ -887,6 +887,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function getDisplayedNomProprio(): ?string
+    {
+        if (ProprioType::PARTICULIER === $this->typeProprio) {
+            return $this->nomProprio.' '.$this->prenomProprio;
+        }
+
+        return $this->denominationProprio;
+    }
+
     public function getAdresseProprio(): ?string
     {
         return $this->adresseProprio;

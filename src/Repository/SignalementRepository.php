@@ -30,6 +30,7 @@ use App\Service\DashboardTabPanel\TabQueryParameters;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
+use App\Service\ListFilters\SearchSignalementInjonction;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\SearchFilter;
 use App\Service\Signalement\ZipcodeProvider;
@@ -2660,5 +2661,32 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.nomProprio IS NOT NULL')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findInjonctionFilteredPaginated(
+        SearchSignalementInjonction $searchSignalementInjonction,
+        int $maxResult,
+    ): Paginator {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->where('s.statut = :statut')
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
+
+        if (!empty($searchSignalementInjonction->getTerritoire())) {
+            $queryBuilder->andWhere('s.territory = :territory')->setParameter('territory', $searchSignalementInjonction->getTerritoire());
+        }
+
+        if (!empty($searchSignalementInjonction->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchSignalementInjonction->getOrderType());
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('s.id', 'DESC');
+        }
+
+        $firstResult = ($searchSignalementInjonction->getPage() - 1) * $maxResult;
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        $paginator = new Paginator($queryBuilder->getQuery());
+
+        return $paginator;
     }
 }
