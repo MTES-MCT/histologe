@@ -6,6 +6,7 @@ use App\Dto\CountPartner;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
@@ -196,6 +197,8 @@ class TabDataManager
     }
 
     /**
+     * @param Territory[] $territoires
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -203,7 +206,13 @@ class TabDataManager
         ?SignalementStatus $signalementStatus = null,
         ?AffectationStatus $affectationStatus = null,
         ?TabQueryParameters $tabQueryParameters = null,
+        array $territoires = [],
     ): TabDossierResult {
+        $tabQueryParameters = $this->initTabQueryParametersPartenairesId(
+            $tabQueryParameters,
+            $territoires,
+        );
+
         $dossiers = $this->signalementRepository->findNewDossiersFrom(
             signalementStatus: $signalementStatus,
             affectationStatus: $affectationStatus,
@@ -212,6 +221,35 @@ class TabDataManager
 
         $count = $this->signalementRepository->countNewDossiersFrom(
             signalementStatus: $signalementStatus,
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
+    }
+
+    /**
+     * @param Territory[] $territoires
+     *
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getDossiersNoAgentWithCount(
+        ?TabQueryParameters $tabQueryParameters = null,
+        ?AffectationStatus $affectationStatus = null,
+        array $territoires = [],
+    ): TabDossierResult {
+        $tabQueryParameters = $this->initTabQueryParametersPartenairesId(
+            $tabQueryParameters,
+            $territoires,
+        );
+
+        $dossiers = $this->signalementRepository->findDossiersNoAgentFrom(
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersNoAgentFrom(
             affectationStatus: $affectationStatus,
             tabQueryParameters: $tabQueryParameters
         );
@@ -449,5 +487,32 @@ class TabDataManager
         $count = $this->signalementRepository->countNonDeliverableSignalements(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
+    }
+
+    /**
+     * @param Territory[] $territoires
+     */
+    private function initTabQueryParametersPartenairesId(
+        ?TabQueryParameters $tabQueryParameters = null,
+        array $territoires = [],
+    ): ?TabQueryParameters {
+        if (null === $tabQueryParameters) {
+            return null;
+        }
+
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        if (null === $tabQueryParameters->territoireId) {
+            $tabQueryParameters->partenairesId = $user->getPartners()
+                ->map(fn ($partner) => $partner->getId())
+                ->toArray();
+        } else {
+            $territoire = $territoires[$tabQueryParameters->territoireId];
+            $partner = $user->getPartnerInTerritory($territoire);
+            $tabQueryParameters->partenairesId = [$partner->getId()];
+        }
+
+        return $tabQueryParameters;
     }
 }

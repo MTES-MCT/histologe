@@ -569,6 +569,13 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
+        if (!empty($options['isDossiersSansAgent'])) {
+            $params = new TabQueryParameters();
+            $signalementUuids = $this->getSignalementsUuidSansAgent($params);
+            $qb->andWhere('s.uuid IN (:signalement_uuids)')
+                ->setParameter('signalement_uuids', $signalementUuids);
+        }
+
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
                 case 'reference':
@@ -1727,6 +1734,7 @@ class SignalementRepository extends ServiceEntityRepository
         User $user,
         ?SignalementStatus $signalementStatus = null,
         ?AffectationStatus $affectationStatus = null,
+        ?bool $onlyWithoutSubscription = false,
         ?TabQueryParameters $tabQueryParameters = null,
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('s');
@@ -1767,6 +1775,14 @@ class SignalementRepository extends ServiceEntityRepository
         if ($affectationStatus) {
             $qb->andWhere('a.statut = :affectationStatus');
             $qb->setParameter('affectationStatus', $affectationStatus);
+        }
+
+        if ($onlyWithoutSubscription) {
+            $subquery = 'SELECT u FROM '.User::class.' u JOIN u.userPartners up JOIN up.partner p WHERE p IN (:partners)';
+            $qb
+                ->leftJoin('s.userSignalementSubscriptions', 'uss', 'WITH', 'uss.user IN ('.$subquery.')')
+                ->andWhere('uss.id IS NULL')
+                ->setParameter('partners', $user->getPartners());
         }
 
         return $qb;
@@ -1860,6 +1876,84 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return TabDossier[]
+     */
+    public function findDossiersNoAgentFrom(
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+        bool $isLimitApplied = true,
+    ): array {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            affectationStatus: $affectationStatus,
+            onlyWithoutSubscription: true,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select(
+            \sprintf(
+                'NEW %s(
+                    s.uuid,
+                    s.profileDeclarant,
+                    s.nomOccupant,
+                    s.prenomOccupant,
+                    s.reference,
+                    CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),
+                    s.createdAt,'.
+                    '\'\' , \'\' ,
+                    CASE
+                        WHEN s.isLogementSocial = true THEN \'PUBLIC\'
+                        ELSE \'PRIVÉ\'
+                    END,
+                    s.validatedAt
+                )',
+                TabDossier::class
+            )
+        );
+
+        if (null !== $tabQueryParameters
+            && in_array($tabQueryParameters->sortBy, ['createdAt', 'nomOccupant'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $qb->orderBy('s.'.$tabQueryParameters->sortBy, $tabQueryParameters->orderBy);
+        } else {
+            $qb->orderBy('s.createdAt', 'DESC');
+        }
+
+        if ($isLimitApplied) {
+            $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countDossiersNoAgentFrom(
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): int {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            affectationStatus: $affectationStatus,
+            onlyWithoutSubscription: true,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select('COUNT(s.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
      * @param array<int, mixed> $territories
      *
      * @throws NonUniqueResultException
@@ -1872,13 +1966,15 @@ class SignalementRepository extends ServiceEntityRepository
             %s, -- countFormulaireUsager
             %s, -- countFormulairePro
             %s, -- countSansAffectation
-            %s  -- countNouveauxDossiers
+            %s, -- countNouveauxDossiers
+            %s  -- countNoAgentDossiers
         )',
             CountNouveauxDossiers::class,
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NULL THEN 1 ELSE 0 END), 0)',
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NOT NULL THEN 1 ELSE 0 END), 0)',
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_active AND a.id IS NULL THEN 1 ELSE 0 END), 0)',
-            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_wait THEN 1 ELSE 0 END), 0)' : 0
+            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_wait THEN 1 ELSE 0 END), 0)' : 0,
+            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_accepted AND uss.id IS NULL THEN 1 ELSE 0 END), 0)' : 0,
         );
 
         $qb = $this
@@ -1897,8 +1993,11 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
-            $qb->setParameter('partners', $user->getPartners());
-            $qb->setParameter('affectation_wait', AffectationStatus::WAIT);
+            $subquery = 'SELECT u FROM '.User::class.' u JOIN u.userPartners up JOIN up.partner p WHERE p IN (:partners)';
+            $qb->setParameter('partners', $user->getPartners())
+                ->setParameter('affectation_wait', AffectationStatus::WAIT)
+                ->setParameter('affectation_accepted', AffectationStatus::ACCEPTED)
+                ->leftJoin('s.userSignalementSubscriptions', 'uss', 'WITH', 'uss.user IN ('.$subquery.')');
         }
 
         return $qb->getQuery()->getSingleResult();
@@ -2379,6 +2478,24 @@ class SignalementRepository extends ServiceEntityRepository
         $sql .= ' LIMIT '.TabDossier::MAX_ITEMS_LIST;
 
         return $conn->executeQuery($sql, $paramsToBind, $types)->fetchAllAssociative();
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSignalementsUuidSansAgent(TabQueryParameters $params): array
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        if (null === $params->territoireId) {
+            $params->partenairesId = $user->getPartners()
+                ->map(fn ($partner) => $partner->getId())
+                ->toArray();
+        }
+
+        $signalements = $this->findDossiersNoAgentFrom(AffectationStatus::ACCEPTED, $params, false);
+
+        return array_map(fn (TabDossier $dossier) => $dossier->uuid, $signalements);
     }
 
     public function trimFields(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service\DashboardTabPanel;
 
 use App\Dto\CountPartner;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
@@ -21,10 +22,10 @@ use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class TabDataManagerTest extends TestCase
+class TabDataManagerTest extends WebTestCase
 {
     protected MockObject|Security $security;
     protected MockObject|JobEventRepository $jobEventRepository;
@@ -49,6 +50,7 @@ class TabDataManagerTest extends TestCase
 
     public function testGetDernierActionDossiersReturnsExpectedTabDossier(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
 
@@ -98,6 +100,7 @@ class TabDataManagerTest extends TestCase
 
     public function testCountUsersPendingToArchiveReturnsCount(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
         $this->userRepository->method('findUsersPendingToArchive')->willReturn([1, 2, 3]);
@@ -185,6 +188,43 @@ class TabDataManagerTest extends TestCase
         $this->assertInstanceOf(\DateTimeImmutable::class, $result['LastSyncAt']);
         $this->assertEquals('2024-06-11 11:00:00', $result['firstErrorLastDayAt']->format('Y-m-d H:i:s'));
         $this->assertEquals('2024-06-10 10:00:00', $result['LastSyncAt']->format('Y-m-d H:i:s'));
+    }
+
+    public function testGetDossiersNoAgentWithCountReturnsExpectedResult(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        /** @var User $user */
+        $user = $userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
+        $this->security->method('getUser')->willReturn($user);
+
+        $expectedDossiers = [];
+        $expectedCount = 0;
+        $params = new TabQueryParameters(null, null);
+
+        $this->signalementRepository
+            ->method('findDossiersNoAgentFrom')
+            ->with(AffectationStatus::ACCEPTED, $params)
+            ->willReturn($expectedDossiers);
+        $this->signalementRepository
+            ->method('countDossiersNoAgentFrom')
+            ->with(AffectationStatus::ACCEPTED, $params)
+            ->willReturn($expectedCount);
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder
+        );
+        $result = $tabDataManager->getDossiersNoAgentWithCount($params, AffectationStatus::ACCEPTED);
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
     }
 
     public function testGetDossiersDemandesFermetureByUsagerReturnsExpectedResult(): void
@@ -290,6 +330,7 @@ class TabDataManagerTest extends TestCase
 
     public function testGetMessagesUsagersMessageApresFermetureReturnsExpectedResult(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
         $this->suiviRepository->method('findSuivisPostCloture')->with($user)->willReturn([
@@ -360,6 +401,7 @@ class TabDataManagerTest extends TestCase
 
     public function testGetMessagesUsagersMessagesSansReponseReturnsExpectedResult(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
         $this->suiviRepository->method('findSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn([
@@ -402,6 +444,7 @@ class TabDataManagerTest extends TestCase
 
     public function testGetDossiersAVerifierSansActivitePartenaires(): void
     {
+        /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
         $this->signalementRepository->method('findSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn([

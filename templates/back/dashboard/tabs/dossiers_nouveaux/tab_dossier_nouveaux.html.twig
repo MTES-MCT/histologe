@@ -26,4 +26,9 @@
             Chargement...
         </div>
     {% endif %}
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-no-agent') %}
+        <div id="dossiers-no-agent" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-no-agent' }) }}">
+            Chargement...
+        </div>
+    {% endif %}
 </div>
