@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Entity\User;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -13,6 +14,12 @@ class SuiviVoter extends Voter
 {
     public const string DELETE_SUIVI = 'DELETE_SUIVI';
     public const string EDIT_SUIVI = 'EDIT_SUIVI';
+
+    public function __construct(
+        #[Autowire(env: 'FEATURE_EDITION_SUIVI')]
+        private readonly bool $featureEditionSuivi,
+    ) {
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -50,6 +57,9 @@ class SuiviVoter extends Voter
 
     private function canEdit(Suivi $suivi, User $user): bool
     {
+        if (!$this->featureEditionSuivi) {
+            return false;
+        }
         if (null !== $suivi->getDeletedAt()) {
             return false;
         }
