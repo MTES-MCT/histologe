@@ -229,4 +229,10 @@ class SecurityController extends AbstractController
     {
         return $this->redirectToRoute('home');
     }
+
+    #[Route('/logout-bailleur', name: 'app_logout_signalement_bailleur')]
+    public function logoutSignalementBailleur(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
 }

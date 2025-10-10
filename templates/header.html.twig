@@ -35,6 +35,10 @@
                                         <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_user') }}">
                                             Quitter
                                         </a>
+                                    {% elseif 'ROLE_BAILLEUR_SIGNALEMENT' in app.user.roles %}
+                                        <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_bailleur') }}">
+                                            Quitter
+                                        </a>
                                     {% else %}
                                         <a class="fr-btn" target="_self" href="{{ path('back_dashboard') }}">
                                             Tableau de bord
@@ -61,6 +65,10 @@
                         {% if app.user %}
                             {% if 'ROLE_SUIVI_SIGNALEMENT' in app.user.roles %}
                                 <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_user') }}">
+                                    Quitter
+                                </a>
+                            {% elseif 'ROLE_BAILLEUR_SIGNALEMENT' in app.user.roles %}
+                                <a class="fr-btn fr-fi-logout-box-r-line" href="{{ path('app_logout_signalement_bailleur') }}">
                                     Quitter
                                 </a>
                             {% else %}

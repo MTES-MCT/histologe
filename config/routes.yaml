@@ -12,3 +12,7 @@ app_logout_signalement_user:
 app_logout_signalement_user_success:
     path: /logout-suivi-success
     controller: App\Controller\Security\SecurityController::logoutSignalementUserSuccess
+
+app_logout_signalement_bailleur:
+    path: /logout-bailleur
+    controller: App\Controller\Security\SecurityController::logoutSignalementBailleur

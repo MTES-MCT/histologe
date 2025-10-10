@@ -2663,6 +2663,21 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findOneForLoginBailleur(string $reference, string $loginBailleur): ?Signalement
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.suivis', 'su')
+            ->where('s.reference = :reference')
+            ->setParameter('reference', $reference)
+            ->andWhere('s.loginBailleur = :loginBailleur')
+            ->setParameter('loginBailleur', $loginBailleur)
+            ->andWhere('s.statut = :statutInjonction OR su.category IN (:injonctionCategories)')
+            ->setParameter('statutInjonction', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('injonctionCategories', SuiviCategory::injonctionBailleurCategories())
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findInjonctionFilteredPaginated(
         SearchSignalementInjonction $searchSignalementInjonction,
         int $maxResult,

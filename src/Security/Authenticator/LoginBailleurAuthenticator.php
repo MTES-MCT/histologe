@@ -35,14 +35,7 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
     {
         $reference = $request->get('bailleur_reference');
         $code = $request->get('bailleur_code');
-
-        // on recherche un signalement avec la reférence et le code bailleur qui
-        // - est ou a été en médiation bailleur (réfléchir a ce qu'on fait ensuite suivant les cas)
-        $signalement = $this->signalementRepository->findOneBy([
-            'reference' => $reference,
-            'loginBailleur' => $code,
-            // 'status' => SignalementStatus::EN_MEDIATION,
-        ]);
+        $signalement = $this->signalementRepository->findOneForLoginBailleur($reference, $code);
 
         if (!$signalement) {
             throw new CustomUserMessageAuthenticationException('La référence et/ou le code ne sont pas valides.');
@@ -53,8 +46,7 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        // TODO
-        return new RedirectResponse($this->urlGenerator->generate('app_login_bailleur'));
+        return new RedirectResponse($this->urlGenerator->generate('front_dossier_bailleur'));
     }
 
     protected function getLoginUrl(Request $request): string

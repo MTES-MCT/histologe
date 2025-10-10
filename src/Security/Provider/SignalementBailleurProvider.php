@@ -21,10 +21,7 @@ class SignalementBailleurProvider implements UserProviderInterface
      */
     public function loadUserByIdentifier(string $signalementUuid): UserInterface
     {
-        $signalement = $this->signalementRepository->findOneBy([
-            'uuid' => $signalementUuid,
-            // 'status' => SignalementStatus::EN_MEDIATION,
-        ]);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
 
         if (!$signalement) {
             throw new UserNotFoundException('Signalement introuvable.');

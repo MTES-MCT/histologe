@@ -50,13 +50,14 @@ security:
                 target: app_logout_signalement_user_success
                 invalidate_session: false
         login_bailleur:
-            pattern: ^/(login-bailleur|dossier-bailleur)
+            pattern: ^/(login-bailleur|dossier-bailleur|logout-bailleur)
             provider: app_signalement_bailleur_provider
             custom_authenticator: App\Security\Authenticator\LoginBailleurAuthenticator
             login_throttling:
                 max_attempts: 5
                 interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
             logout:
+                path: app_logout_signalement_bailleur
 
         main:
             lazy: true
