@@ -321,6 +321,7 @@ class SignalementController extends AbstractController
         CommuneRepository $communeRepository,
     ): JsonResponse {
         $postalCode = $request->get('cp');
+        $inseeCode = $request->get('insee');
         if (empty($postalCode)) {
             return $this->json([
                 'success' => false,
@@ -329,7 +330,8 @@ class SignalementController extends AbstractController
             ]);
         }
 
-        $inseeCode = $request->get('insee');
+        $inseeCode = $postalCodeHomeChecker->normalizeInseeCode($postalCode, $inseeCode);
+
         if (!empty($inseeCode)) {
             $commune = $communeRepository->findOneBy(['codePostal' => $postalCode, 'codeInsee' => $inseeCode]);
             if (!$commune) {
