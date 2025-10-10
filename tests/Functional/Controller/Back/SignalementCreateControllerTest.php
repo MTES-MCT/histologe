@@ -326,7 +326,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
         $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
         $this->assertEquals('Habitat 44', $signalement->getDenominationProprio());
-        $this->assertEquals('Habitat 44', $signalement->getNomProprio());
+        $this->assertNull($signalement->getNomProprio());
         $this->assertNull($signalement->getBailleur());
     }
 
