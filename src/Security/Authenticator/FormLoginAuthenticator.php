@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
@@ -33,18 +34,21 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function supports(Request $request): bool
     {
-        if ($request->isMethod('POST')
-            && $request->get('email')
-            && $request->get('password')) {
-            return true;
-        }
-
-        return false;
+        return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getPathInfo();
     }
 
     public function authenticate(Request $request): Passport
     {
         $email = $request->request->get('email', '');
+        $password = $request->request->get('password', '');
+
+        if (empty($email)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir votre adresse email.');
+        }
+
+        if (empty($password)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir votre mot de passe.');
+        }
 
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 
@@ -52,7 +56,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
             new UserBadge($email, function (string $email) {
                 return $this->userRepository->findAgentByEmail(email: $email, userStatus: UserStatus::ACTIVE, acceptRoleApi: false);
             }),
-            new PasswordCredentials($request->request->get('password', '')),
+            new PasswordCredentials($password),
             [
                 new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
                 new RememberMeBadge(),

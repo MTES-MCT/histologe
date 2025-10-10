@@ -39,14 +39,9 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function supports(Request $request): bool
     {
-        if ($request->isMethod('POST')
-            && $request->get('login-first-letter-prenom')
-            && $request->get('login-first-letter-nom')
-            && $request->get('login-code-postal')) {
-            return true;
-        }
-
-        return false;
+        return $request->isMethod('POST')
+            && $request->attributes->has('code')
+            && str_contains($request->getPathInfo(), '/authentification/');
     }
 
     public function authenticate(Request $request): Passport
@@ -59,9 +54,21 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         $visitorType = $request->request->get('visitor-type');
-        $firstLetterPrenom = $request->request->get('login-first-letter-prenom');
-        $firstLetterNom = $request->request->get('login-first-letter-nom');
-        $codePostal = $request->request->get('login-code-postal');
+        $firstLetterPrenom = $request->request->get('login-first-letter-prenom', '');
+        $firstLetterNom = $request->request->get('login-first-letter-nom', '');
+        $codePostal = $request->request->get('login-code-postal', '');
+
+        if (empty($firstLetterPrenom)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir la première lettre du prénom.');
+        }
+
+        if (empty($firstLetterNom)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir la première lettre du nom.');
+        }
+
+        if (empty($codePostal)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir le code postal.');
+        }
 
         if (ProfileDeclarant::LOCATAIRE !== $signalement->getProfileDeclarant()
             && ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant()
