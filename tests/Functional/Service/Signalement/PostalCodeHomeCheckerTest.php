@@ -69,4 +69,11 @@ class PostalCodeHomeCheckerTest extends KernelTestCase
         $territory->setAuthorizedCodesInsee(['69091']);
         $this->assertFalse($this->postalCodeHomeChecker->isAuthorizedInseeCode($territory, '69092'));
     }
+
+    public function normalizeInseeCode(): void
+    {
+        $this->assertEquals('13201', $this->postalCodeHomeChecker->normalizeInseeCode('13001', '13055'));
+        $this->assertEquals('69381', $this->postalCodeHomeChecker->normalizeInseeCode('69001', '69381'));
+        $this->assertEquals('13202', $this->postalCodeHomeChecker->normalizeInseeCode('13002', '13202'));
+    }
 }
