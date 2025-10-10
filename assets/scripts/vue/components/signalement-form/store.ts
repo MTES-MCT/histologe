@@ -248,6 +248,9 @@ const formStore: FormStore = reactive({
       if(!this.props.featureInjonctionBailleurDepts.includes(formStore.data.territoryCode)) {
         return false
       }
+      if(formStore.data.profil !== 'locataire') {
+        return false
+      }
       if(formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui') {
         return false
       }
