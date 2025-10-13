@@ -12,6 +12,7 @@ use App\Service\Interconnection\Esabora\Handler\InterventionArreteServiceHandler
 use App\Service\Interconnection\Esabora\Handler\InterventionVisiteServiceHandler;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -27,15 +28,20 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
+        /** @var MockObject&EsaboraManager $esaboraManagerMock */
         $esaboraManagerMock = $this->createMock(EsaboraManager::class);
+        /** @var MockObject&SerializerInterface $serializerMock */
         $serializerMock = $this->createMock(SerializerInterface::class);
+        /** @var MockObject&AffectationRepository $affectationRepositoryMock */
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
+        /** @var MockObject&JobEventRepository $jobEventRepositoryMock */
         $jobEventRepositoryMock = $this->createMock(JobEventRepository::class);
         $jobEventRepositoryMock
             ->expects($this->once())
             ->method('getReportEsaboraAction')
             ->willReturn(['success_count' => 4, 'failed_count' => 2]);
 
+        /** @var MockObject&JobEventManager $jobEventManagerMock */
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
         $jobEventManagerMock->expects($this->once())->method('getRepository')->willReturn($jobEventRepositoryMock);
 
