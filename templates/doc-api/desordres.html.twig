@@ -58,6 +58,11 @@
                                                                     <dd>
                                                                         <small class="fr-text-mention--grey">{{ precision.label|raw }}</small>
                                                                     </dd>
+                                                                    {% if precision.configIsUnique %}
+                                                                        <dd>
+                                                                            <small class="fr-text-default--error">Choix unique</small>
+                                                                        </dd>
+                                                                    {% endif %}
                                                                 {% endfor %}
                                                             </dl>
                                                         {% endif %}

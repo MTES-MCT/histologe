@@ -38,7 +38,7 @@ class ApiDesordreRequestValidator extends ConstraintValidator
 
         if (!$desordreCritere) {
             $this->context
-                ->buildViolation('Le désordre " '.$desordreRequest->identifiant.' " est invalide.')
+                ->buildViolation('Le désordre "'.$desordreRequest->identifiant.'" est invalide.')
                 ->atPath('identifiant')
                 ->addViolation();
 
@@ -49,24 +49,38 @@ class ApiDesordreRequestValidator extends ConstraintValidator
             // controle de la précision obligatoire
             if (0 === count($desordreRequest->precisions)) {
                 $this->context
-                    ->buildViolation('Au moins une précision doit être fournie pour le désordre " '.$desordreRequest->identifiant.' "')
+                    ->buildViolation('Au moins une précision doit être fournie pour le désordre "'.$desordreRequest->identifiant.'"')
                     ->atPath('identifiant')
                     ->addViolation();
             }
-            // contrôle de la cohérence entre le critere et les précisions
-            foreach ($desordreRequest->precisions as $precision) {
-                if (!in_array($precision, $existingPrecisionSlugs)) {
+            $existingPrecisions = [];
+            foreach ($desordreRequest->precisions as $index => $precisionSlug) {
+                // contrôle de la cohérence entre le critere et les précisions
+                if (!in_array($precisionSlug, $existingPrecisionSlugs)) {
                     $this->context
-                        ->buildViolation('La précision " '.$precision.' " ne correspond pas au désordre " '.$desordreRequest->identifiant.' "')
+                        ->buildViolation('La précision "'.$precisionSlug.'" ne correspond pas au désordre "'.$desordreRequest->identifiant.'"')
                         ->atPath('precisions')
+                        ->addViolation();
+                }
+                // controle des doublons de précisions
+                if (in_array($precisionSlug, $existingPrecisions)) {
+                    $this->context
+                        ->buildViolation('La précision "'.$precisionSlug.'" est fournie en doublon pour le désordre "'.$desordreRequest->identifiant.'"')
+                        ->atPath('precisions['.$index.']')
+                        ->addViolation();
+                }
+                $existingPrecisions[] = $precisionSlug;
+                // controle des précisions uniques
+                $precision = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $precisionSlug]);
+                if ($precision->getconfigIsUnique() && count($desordreRequest->precisions) > 1) {
+                    $this->context
+                        ->buildViolation('La précision "'.$precisionSlug.'" ne doit pas être cumulée avec d\'autres précisions pour le désordre "'.$desordreRequest->identifiant.'"')
+                        ->atPath('precisions['.$index.']')
                         ->addViolation();
                 }
             }
         }
-
-        // TODO : controle des doublons de précisions
         // TODO : controle des descriptions libres -> parametrer en base de données la config des désordre et précisions attendant une description libre ?
-        // TODO : controle des précisions uniques -> parametrer en base de données la config des précisions devant être un choix unique ?
         // TODO : controle des précisions s'excluant mutuellement -> parametrer en base de données la config des précisions s'excluant mutuellement ?
     }
 }
