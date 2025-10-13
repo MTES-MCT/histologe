@@ -206,7 +206,7 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->assertIsInt($result);
         $this->assertEquals(6, $result);
     }
-    
+
     public function testCountLastSignalementsWithOtherUserSuivi(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
