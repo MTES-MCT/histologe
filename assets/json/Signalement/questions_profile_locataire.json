@@ -221,7 +221,20 @@
                 "label": "Suivant",
                 "slug": "coordonnees_bailleur_next",
                 "action": "goto.save:info_procedure_bail",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "!formStore.shouldInjonctionBailleurSuggested()"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant (injonction bailleur)",
+                "slug": "coordonnees_bailleur_next",
+                "action": "goto.save:injonction_bailleur",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.shouldInjonctionBailleurSuggested()"
+                }
               },
               {
                 "type": "SignalementFormButton",
@@ -235,6 +248,74 @@
                 "label": "Précédent",
                 "slug": "coordonnees_bailleur_previous",
                 "action": "goto:vos_coordonnees_occupant",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "injonction_bailleur",
+    "screenCategory": "Injonction bailleur",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Souhaitez-vous mettre un coup de pression sur votre bailleur avec l'injonction bailleur ?",
+          "slug": "injonction_bailleur_choice",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si vous souhaitez rentrer dans l'injonction bailleur."
+          },
+          "accessibility": {
+            "focus": true
+          }
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Bla bla bla bla. Na na ni, Na na na. Patati, patata",
+          "slug": "injonction_bailleur_info"
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "info_procedure_bail_footer",
+          "customCss": "button-group-footer",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "injonction_bailleur_next",
+                "action": "goto.save:info_procedure_bail",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "injonction_bailleur_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "injonction_bailleur_previous",
+                "action": "goto:coordonnees_bailleur",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]

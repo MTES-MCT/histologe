@@ -30,6 +30,8 @@
         data-ajaxurl-send-mail-get-lien-suivi="{{ path('send_mail_get_lien_suivi', {uuid: 'uuid'}) }}"
         data-ajaxurl-archive-draft="{{ path('archive_draft') }}"
         data-init-profile="{{ profile }}"
+        data-feature-injonction-bailleur="{{ feature_injonction_bailleur ? 'true' : 'false' }}"
+        data-feature-injonction-bailleur-depts='{{ feature_injonction_bailleur_depts|raw }}'
         >
     </div>
   </main>

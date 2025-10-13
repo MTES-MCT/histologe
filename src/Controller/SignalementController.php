@@ -347,11 +347,13 @@ class SignalementController extends AbstractController
                     'label' => 'Erreur', ]);
             }
             if ($postalCodeHomeChecker->isActiveByInseeCode($inseeCode)) {
-                return $this->json(['success' => true]);
+                return $this->json(['success' => true, 'territoryCode' => $commune->getTerritory()->getZip()]);
             }
         } else {
             if ($postalCodeHomeChecker->isActiveByPostalCode($postalCode)) {
-                return $this->json(['success' => true]);
+                $commune = $communeRepository->findOneBy(['codePostal' => $postalCode]);
+
+                return $this->json(['success' => true, 'territoryCode' => $commune->getTerritory()->getZip()]);
             }
         }
 

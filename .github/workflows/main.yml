@@ -27,6 +27,8 @@ env:
   FEATURE_NEW_DASHBOARD: 1
   FEATURE_NEW_DOCUMENT_SPACE: 1
   FEATURE_API_CREATION_SIGNALEMENT: ''
+  FEATURE_INJONCTION_BAILLEUR: 1
+  FEATURE_INJONCTION_BAILLEUR_DEPTS: '["30","34"]'
 jobs:
   code-quality:
     name: Signal-logement (PHP ${{ matrix.php-versions }})

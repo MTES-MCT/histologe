@@ -106,6 +106,8 @@ export default defineComponent({
       this.sharedProps.ajaxurlSendMailGetLienSuivi = initElements.dataset.ajaxurlSendMailGetLienSuivi
       this.sharedProps.ajaxurlArchiveDraft = initElements.dataset.ajaxurlArchiveDraft
       this.sharedProps.initProfile = initElements.dataset.initProfile
+      this.sharedProps.featureInjonctionBailleur = JSON.parse(initElements.dataset.featureInjonctionBailleur)
+      this.sharedProps.featureInjonctionBailleurDepts = JSON.parse(initElements.dataset.featureInjonctionBailleurDepts)
       if (initElements.dataset.ajaxurlGetSignalementDraft !== undefined) {
         this.sharedProps.ajaxurlGetSignalementDraft = initElements.dataset.ajaxurlGetSignalementDraft
         requests.initWithExistingData(this.handleInitData)
@@ -286,6 +288,7 @@ export default defineComponent({
     handleTerritoryChecked (requestResponse: any) {
       formStore.lastButtonClicked = ''
       if (requestResponse.success) {
+        formStore.data.territoryCode = requestResponse.territoryCode
         this.changeScreenBySlug(undefined)
       } else {
         this.territoryModalLabel = requestResponse.label

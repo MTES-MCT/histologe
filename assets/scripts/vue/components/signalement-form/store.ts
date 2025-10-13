@@ -91,7 +91,9 @@ const formStore: FormStore = reactive({
     ajaxurlSendMailContinueFromDraft: '',
     ajaxurlSendMailGetLienSuivi: '',
     ajaxurlArchiveDraft: '',
-    initProfile: ''
+    initProfile: '',
+    featureInjonctionBailleur: '',
+    featureInjonctionBailleurDepts: ''
   },
   screenData: [],
   currentScreen: null,
@@ -238,7 +240,27 @@ const formStore: FormStore = reactive({
     const dateBailleurPrevenu = new Date(dateBailleurPrevenuSplit[1], dateBailleurPrevenuSplit[0])
     
     return dateToday.getMonth() - dateBailleurPrevenu.getMonth() + (12 * (dateToday.getFullYear() - dateBailleurPrevenu.getFullYear()))
-  }
+  },
+  shouldInjonctionBailleurSuggested(): boolean {
+      if(!this.props.featureInjonctionBailleur) {
+        return false
+      }
+      if(!this.props.featureInjonctionBailleurDepts.includes(formStore.data.territoryCode)) {
+        return false
+      }
+      if(formStore.data.profil !== 'locataire') {
+        return false
+      }
+      if(formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui') {
+        return false
+      }
+      //logiquement on devrait aussi vérifier que l'email ou l'adresse du bailleur est renseignée
+      //mais lors de l'appel de cette méthode (écran de saisie des coordonnées du bailleur) on ne sait pas encore ce qui sera renseigné
+      //est-ce que ca remet en question le fait de faire cette vérification ici ?
+      //on pourrait éventuellement proposer cette écran aprés info_procedure_bail pour contourner le problème
+
+      return true
+    },
 })
 
 export default formStore
