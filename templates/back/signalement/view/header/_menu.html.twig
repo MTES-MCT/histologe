@@ -88,9 +88,9 @@
                 {% if isUserSubscribed %}
                     <li>
                         {% if isAloneInCurrentPartner %}
-                            <button href="#" 
+                            <button 
                                 class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line disabled"
-                                aria-disabled="true" tabindex="-1">
+                                aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire.">
                                 Se retirer du dossier
                             </button>
                         {% elseif subscriptionsInMyPartner|length > 1 %}
@@ -99,7 +99,7 @@
                                 Se retirer du dossier
                             </a>
                         {% else %}
-                            <button href="#"
+                            <button
                                 class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
                                 aria-controls="transfer-subscription-modal" 
                                 data-fr-opened="false"
