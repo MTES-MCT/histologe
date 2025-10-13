@@ -521,7 +521,7 @@ class TabDataManagerTest extends WebTestCase
         $this->security->method('getUser')->willReturn($user);
         $params = new TabQueryParameters(null, null);
         $this->suiviRepository->method('findLastSignalementsWithOtherUserSuivi')
-            ->with($user, null, $params)
+            ->with($user, $params, 11)
             ->willReturn([
                 [
                     'reference' => '2024-003',
@@ -538,9 +538,6 @@ class TabDataManagerTest extends WebTestCase
                     'derniereActionPartenairePrenomAgent' => 'Sophie',
                 ],
             ]);
-        $this->suiviRepository->method('countLastSignalementsWithOtherUserSuivi')
-            ->with($user, null, $params)
-            ->willReturn(1);
 
         $tabDataManager = new TabDataManager(
             $this->security,
