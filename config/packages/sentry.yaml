@@ -9,6 +9,7 @@ when@prod:
           environment: '%env(resolve:SENTRY_ENVIRONMENT)%' # prod|staging
           # Specify a fixed sample rate:
           traces_sample_rate: '%env(float:SENTRY_TRACES_SAMPLE_RATE)%' # Between 0 and 1
+          enable_logs: true
         tracing:
           enabled: true
           dbal: # DB queries
@@ -27,10 +28,19 @@ when@prod:
           level: !php/const Monolog\Logger::ERROR
           hub_id: Sentry\State\HubInterface
           fill_extra_context: true
+        sentry_logs:
+          type: service
+          id: Sentry\SentryBundle\Monolog\LogsHandler
+          channels: [ "!event", "!doctrine", "!console" ]   # optionnel
+
 
     services:
       Monolog\Processor\PsrLogMessageProcessor:
         tags: { name: monolog.processor, handler: sentry }
+
+      Sentry\SentryBundle\Monolog\LogsHandler:
+        arguments:
+          - !php/const Monolog\Logger::INFO
 
 
 #        If you are using Monolog, you also need these additional configuration and services to log the errors correctly:
