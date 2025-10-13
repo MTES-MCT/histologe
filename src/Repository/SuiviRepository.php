@@ -939,12 +939,12 @@ class SuiviRepository extends ServiceEntityRepository
             ->innerJoin('suivi.signalement', 'signalement')
             ->andWhere('signalement.statut NOT IN (:excludedStatus)')
             ->andWhere('suivi.createdBy != :user')
+            ->andWhere('suivi.category NOT IN (:excludedCategories)')
             ->andWhere('suivi.id = ('.$subQb->getDQL().')')
             ->setParameter('user', $user)
-            ->setParameter('excludedStatus', [
-                SignalementStatus::ARCHIVED->value,
-                SignalementStatus::DRAFT->value,
-                SignalementStatus::DRAFT_ARCHIVED->value,
+            ->setParameter('excludedStatus', SignalementStatus::excludedStatuses())
+            ->setParameter('excludedCategories', [
+                SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
             ]);
 
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
@@ -1004,8 +1004,8 @@ class SuiviRepository extends ServiceEntityRepository
             suivi.category AS suiviCategory,
             suivi.isPublic AS suiviIsPublic,
             MAX(p.nom) AS derniereActionPartenaireNom,
-            MAX(u.nom) AS derniereActionPartenaireNomAgent,
-            MAX(u.prenom) AS derniereActionPartenairePrenomAgent
+            u.nom AS derniereActionPartenaireNomAgent,
+            u.prenom AS derniereActionPartenairePrenomAgent
         ')->groupBy('signalement.id, suivi.id');
 
         $qb->orderBy('suivi.createdAt', 'DESC')
@@ -1024,13 +1024,5 @@ class SuiviRepository extends ServiceEntityRepository
         ->groupBy('signalement.id');
 
         return $qb->getQuery()->getSingleColumnResult();
-    }
-
-    public function countLastSignalementsWithOtherUserSuivi(User $user, TabQueryParameters $params): int
-    {
-        $qb = $this->buildBaseQbForOtherUserSuivi($user, $params);
-        $qb->select('COUNT(DISTINCT signalement.id)');
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }

@@ -526,13 +526,14 @@ class TabDataManager
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $signalements = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, $tabQueryParameters, 10);
+        $signalements = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, $tabQueryParameters, 11);
         $tabDossiers = [];
         if (empty($signalements)) {
             return new TabDossierResult($tabDossiers, 0);
         }
-        for ($i = 0; $i < \count($signalements); ++$i) {
-            $signalement = $signalements[$i];
+        $displayedSignalements = \array_slice($signalements, 0, 10);
+
+        foreach ($displayedSignalements as $signalement) {
             $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
                 ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
                 : $signalement['suiviCategory']->label();
@@ -551,7 +552,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countLastSignalementsWithOtherUserSuivi($user, $tabQueryParameters);
+        $count = \count($signalements);
 
         return new TabDossierResult($tabDossiers, $count);
     }
