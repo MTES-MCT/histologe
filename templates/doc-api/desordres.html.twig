@@ -47,6 +47,10 @@
                                                         {% else %}
                                                             {{ critere.desordrePrecisions.first.desordrePrecisionSlug }}
                                                         {% endif %}
+                                                        {% if critere.configPrecisionLibreLabel %}
+                                                            <br>
+                                                            <small class="fr-text--text-default-warning">Précision libre : {{ critere.configPrecisionLibreLabel }}</small>
+                                                        {% endif %}
                                                     </td>
                                                     <td>
                                                         {% if critere.desordrePrecisions|length > 1 %}

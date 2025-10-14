@@ -66,12 +66,9 @@ final class Version20251013111836 extends AbstractMigration
     ];
 
     private const array SLUGS_IS_PRECISION_LIBRE = [
-        'desordres_batiment_nuisibles_autres' => 'Précisez le type de nuisible',
-        'desordres_logement_nuisibles_autres' => 'Précisez le type de nuisible', // ca va pas !!!!
-        'desordres_logement_lumiere_plafond_trop_bas_cuisine' => 'Précisez la hauteur du plafond (en cm)',
-        'desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre' => 'Précisez la hauteur du plafond (en cm)',
-        'desordres_logement_lumiere_plafond_trop_bas_salle_de_bain' => 'Précisez la hauteur du plafond (en cm)',
-        'desordres_logement_lumiere_plafond_trop_bas_toutes_pieces' => 'Précisez la hauteur du plafond (en cm)',
+        'desordres_batiment_nuisibles_autres' => ['type' => 'critere', 'label' => 'Précisez le type de nuisible'],
+        'desordres_logement_nuisibles_autres' => ['type' => 'critere', 'label' => 'Précisez le type de nuisible'],
+        'desordres_logement_lumiere_plafond_trop_bas' => ['type' => 'precisions', 'label' => 'Pour chaque précision vous pouvez préciser la hauteur du plafond (en cm)'],
     ];
 
     public function getDescription(): string
@@ -85,15 +82,15 @@ final class Version20251013111836 extends AbstractMigration
         foreach (self::SLUGS_IS_UNIQUE as $slug) {
             $this->addSql('UPDATE desordre_precision SET config_is_unique = 1 WHERE desordre_precision_slug = ?', [$slug]);
         }
-        /*$this->addSql('ALTER TABLE desordre_precision ADD config_precision_libre VARCHAR(255) DEFAULT NULL');
-        foreach (self::SLUGS_IS_PRECISION_LIBRE as $slug => $label) {
-            $this->addSql('UPDATE desordre_precision SET config_precision_libre = ? WHERE desordre_precision_slug = ?', [$label, $slug]);
-        }*/
+        $this->addSql('ALTER TABLE desordre_critere ADD config_precision_libre_type VARCHAR(255) DEFAULT NULL, ADD config_precision_libre_label VARCHAR(255) DEFAULT NULL');
+        foreach (self::SLUGS_IS_PRECISION_LIBRE as $slug => $config) {
+            $this->addSql('UPDATE desordre_critere SET config_precision_libre_type = ?, config_precision_libre_label = ? WHERE slug_critere = ?', [$config['type'], $config['label'], $slug]);
+        }
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE desordre_precision DROP config_is_unique');
-        $this->addSql('ALTER TABLE desordre_precision DROP config_precision_libre');
+        $this->addSql('ALTER TABLE desordre_critere DROP config_precision_libre_type, DROP config_precision_libre_label');
     }
 }

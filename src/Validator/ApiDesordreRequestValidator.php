@@ -79,8 +79,41 @@ class ApiDesordreRequestValidator extends ConstraintValidator
                         ->addViolation();
                 }
             }
+            // TODO : controle des précisions s'excluant mutuellement -> parametrer en base de données la config des précisions s'excluant mutuellement ?
         }
-        // TODO : controle des descriptions libres -> parametrer en base de données la config des désordre et précisions attendant une description libre ?
-        // TODO : controle des précisions s'excluant mutuellement -> parametrer en base de données la config des précisions s'excluant mutuellement ?
+        // controle des precisions libres
+        foreach ($desordreRequest->precisionLibres as $index => $precisionLibre) {
+            $precisionLibreType = $desordreCritere->getConfigPrecisionLibreType();
+            if ('critere' === $precisionLibreType) {
+                if ($precisionLibre->identifiant !== $desordreRequest->identifiant) {
+                    $this->context
+                        ->buildViolation('Le désordre "'.$desordreRequest->identifiant.'" ne correspond pas avec la précision libre "'.$precisionLibre->identifiant.'".')
+                        ->atPath('precisionLibres['.$index.']')
+                        ->addViolation();
+                }
+            } elseif ('precisions' === $precisionLibreType) {
+                if (!in_array($precisionLibre->identifiant, $existingPrecisionSlugs)) {
+                    $this->context
+                        ->buildViolation('Le désordre "'.$desordreRequest->identifiant.'" ne correspond pas avec la précision libre "'.$precisionLibre->identifiant.'".')
+                        ->atPath('precisionLibres['.$index.']')
+                        ->addViolation();
+                }
+                $precisionSlugs = [];
+                foreach ($desordreRequest->precisions as $precisionSlug) {
+                    $precisionSlugs[] = $precisionSlug;
+                }
+                if (!in_array($precisionLibre->identifiant, $precisionSlugs)) {
+                    $this->context
+                        ->buildViolation('La précision libre "'.$precisionLibre->identifiant.'" ne correspond pas avec les précisions fournies pour le désordre "'.$desordreRequest->identifiant.'".')
+                        ->atPath('precisionLibres['.$index.']')
+                        ->addViolation();
+                }
+            } else {
+                $this->context
+                    ->buildViolation('Le désordre "'.$desordreRequest->identifiant.'" n\'accepte pas de description libre.')
+                    ->atPath('precisionLibres['.$index.']')
+                    ->addViolation();
+            }
+        }
     }
 }

@@ -18,6 +18,14 @@ class DesordrePrecisionLibreRequest implements RequestInterface
         example: 'desordres_batiment_nuisibles_autres',
     )]
     #[Assert\NotBlank]
+    #[Assert\Choice(choices: [
+        'desordres_batiment_nuisibles_autres',
+        'desordres_logement_nuisibles_autres',
+        'desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre',
+        'desordres_logement_lumiere_plafond_trop_bas_cuisine',
+        'desordres_logement_lumiere_plafond_trop_bas_salle_de_bain',
+        'desordres_logement_lumiere_plafond_trop_bas_toutes_pieces',
+    ])]
     public string $identifiant;
 
     #[OA\Property(
