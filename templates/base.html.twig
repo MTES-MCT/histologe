@@ -67,7 +67,7 @@
                 _paq.push(['setSecureCookie', true]);
             {% endif %}
             /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-            {% if app.user is not null and 'ROLE_ADMIN' not in app.user.roles and 'ROLE_USAGER' not in app.user.roles and 'ROLE_SUIVI_SIGNALEMENT' not in app.user.roles %}
+            {% if app.user is not null and ('ROLE_ADMIN_TERRITORY' in app.user.roles or 'ROLE_ADMIN_PARTNER' in app.user.roles or 'ROLE_USER_PARTNER' in app.user.roles) %}
                 _paq.push(['setCustomDimension', customDimensionId = 1, customDimensionValue = '{{ app.user.roles|first}}' ]);
                 _paq.push(['setCustomDimension', customDimensionId = 2, customDimensionValue = '{{ app.user.firstTerritory.name }}' ]);
                 _paq.push(['setCustomDimension', customDimensionId = 3, customDimensionValue = '{{ app.user.partners.first.nom }}' ]);

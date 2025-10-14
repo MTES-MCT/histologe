@@ -19,6 +19,60 @@ class SecurityControllerTest extends WebTestCase
     use SessionHelper;
     use UserHelper;
 
+    public function testLoginBailleurWithValidLoginPOST(): void
+    {
+        $client = static::createClient();
+        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-11']);
+        $payload = [
+            'bailleur_reference' => $signalement->getReference(),
+            'bailleur_code' => $signalement->getLoginBailleur(),
+            '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+        ];
+        $client->request('POST', '/login-bailleur', $payload);
+        $this->assertResponseRedirects('/dossier-bailleur/');
+    }
+
+    public function testLoginBailleurWithValidLoginGET(): void
+    {
+        $client = static::createClient();
+        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-11']);
+        $client->request('GET', '/login-bailleur', [
+            'bailleur_reference' => $signalement->getReference(),
+            'bailleur_code' => $signalement->getLoginBailleur()
+        ]);
+        $this->assertResponseRedirects('/dossier-bailleur/');
+    }
+
+    public function testLoginBailleurWithInvalidLoginPOST(): void
+    {
+        $client = static::createClient();
+        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-11']);
+        $payload = [
+            'bailleur_reference' => $signalement->getReference(),
+            'bailleur_code' => 'invalid_code',
+            '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+        ];
+        $client->request('POST', '/login-bailleur', $payload);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/login-bailleur');
+        $client->followRedirect();
+        $this->assertSelectorExists('.fr-alert.fr-alert--error');
+    }
+
+    public function testLoginBailleurWithInvalidReferenceGET(): void
+    {
+        $client = static::createClient();
+        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-10']);
+        $client->request('GET', '/login-bailleur', [
+            'bailleur_reference' => $signalement->getReference(),
+            'bailleur_code' => $signalement->getLoginBailleur()
+        ]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/login-bailleur');
+        $client->followRedirect();
+        $this->assertSelectorExists('.fr-alert.fr-alert--error');
+    }
+
     public function testFOLoginOnOccupantWithoutEmail(): void
     {
         $client = static::createClient();

@@ -17,6 +17,7 @@ use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\TimezoneProvider;
@@ -536,7 +537,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->files = new ArrayCollection();
         $this->desordrePrecisions = new ArrayCollection();
         $this->userSignalementSubscriptions = new ArrayCollection();
-        $this->loginBailleur = mb_substr(md5(uniqid().date('YmdHis')), 0, 10);
+        $this->loginBailleur = UserManager::getComplexRandomPassword();
     }
 
     #[Assert\Callback]

@@ -24,7 +24,7 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
 
     public function supports(Request $request): bool
     {
-        if ($request->isMethod('POST') && $request->get('bailleur_reference') && $request->get('bailleur_code')) {
+        if ($request->get('bailleur_reference') && $request->get('bailleur_code')) {
             return true;
         }
 

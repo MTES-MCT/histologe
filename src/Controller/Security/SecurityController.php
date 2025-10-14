@@ -12,6 +12,7 @@ use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -141,7 +142,12 @@ class SecurityController extends AbstractController
     #[Route('/login-bailleur', name: 'app_login_bailleur')]
     public function loginBailleur(
         AuthenticationUtils $authenticationUtils,
+        #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR')]
+        bool $featureInjonctionBailleur,
     ): Response {
+        if (!$featureInjonctionBailleur) {
+            throw $this->createNotFoundException();
+        }
         $user = $this->getUser();
         if ($user && $user instanceof SignalementBailleur) {
             return $this->redirectToRoute('front_dossier_bailleur');

@@ -78,9 +78,9 @@ class UserManager extends AbstractManager
         return $user;
     }
 
-    public function getComplexRandomPassword(): string
+    public static function getComplexRandomPassword(): string
     {
-        $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_!:()';
+        $keyspace = '23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ!:()';
         $password = '';
         $max = mb_strlen($keyspace, '8bit') - 1;
         for ($i = 0; $i < 15; ++$i) {
