@@ -1061,7 +1061,10 @@ ul + p {
   color: var(--text-disabled-grey);
   opacity: 0.6;
 }
-
+.menu-actions-signalement button.disabled {
+  color: var(--text-disabled-grey);
+  opacity: 0.6;
+}
 
 .territory-management-tiles .fr-tile__detail span {
     padding-right: 5px;

@@ -2,7 +2,7 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AcceptAffectation;
+use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
@@ -18,8 +18,8 @@ use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
-use App\Form\AcceptAffectationType;
 use App\Form\AddSuiviType;
+use App\Form\AgentSelectionType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
@@ -141,6 +141,11 @@ class SignalementController extends AbstractController
                                             && SignalementStatus::NEED_VALIDATION === $signalement->getStatut();
         $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
 
+        $isUserSubscribed = false;
+        if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]) && $affectation) {
+            $isUserSubscribed = true;
+        }
+
         $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
         $refusSignalementRoute = $this->generateUrl('back_signalement_deny', ['uuid' => $signalement->getUuid()]);
         $refusSignalementForm = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
@@ -162,9 +167,28 @@ class SignalementController extends AbstractController
 
         $acceptAffectationForm = null;
         if ($featureNewDashboard && ($canAnswerAffectation || $canCancelRefusedAffectation)) {
-            $acceptAffectation = (new AcceptAffectation())->setAffectation($affectation)->setAgents([$user]);
+            $acceptAffectation = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-            $acceptAffectationForm = $this->createForm(AcceptAffectationType::class, $acceptAffectation, ['action' => $acceptAffectationFormRoute]);
+            $acceptAffectationForm = $this->createForm(
+                AgentSelectionType::class,
+                $acceptAffectation,
+                ['action' => $acceptAffectationFormRoute]
+            );
+        }
+
+        $transferSubscriptionForm = null;
+        if ($featureNewDashboard && $isUserSubscribed) {
+            $transferSubscription = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
+            $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+            $transferSubscriptionForm = $this->createForm(
+                AgentSelectionType::class,
+                $transferSubscription,
+                [
+                    'action' => $transferSubscriptionFormRoute,
+                    'exclude_user' => $this->getUser(),
+                    'label' => 'Sélectionnez le(s) agent(s) à qui transmettre le dossier',
+                ]
+            );
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
@@ -239,10 +263,6 @@ class SignalementController extends AbstractController
             exclusiveStatus: [],
             excludedStatus: SignalementStatus::excludedStatuses(),
         );
-        $isUserSubscribed = false;
-        if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
-            $isUserSubscribed = true;
-        }
         $canSeePartnerAffectation = $this->isGranted(AffectationVoter::SEE, $signalement);
         $subscriptionsInMyPartner = [];
         if ($featureNewDashboard && ($canSeePartnerAffectation || (!$isClosedForMe && $isAffectationAccepted))) {
@@ -266,12 +286,14 @@ class SignalementController extends AbstractController
             'isAffectationRefused' => $isAffectationRefused,
             'isDanger' => $infoDesordres['isDanger'],
             'signalement' => $signalement,
+            'partner' => $partner,
             'partners' => $partners,
             'clotureForm' => $clotureForm,
             'addSuiviForm' => $addSuiviForm,
             'refusAffectationForm' => $refusAffectationForm,
             'refusSignalementForm' => $refusSignalementForm,
             'acceptAffectationForm' => $acceptAffectationForm,
+            'transferSubscriptionForm' => $transferSubscriptionForm,
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,

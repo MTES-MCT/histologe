@@ -87,17 +87,26 @@
                 {% endif %}
                 {% if isUserSubscribed %}
                     <li>
-                        <a
-                            {% if isAloneInCurrentPartner %}
-                                href="#" 
-                                aria-disabled="true" tabindex="-1" 
-                            {% else %}
-                                href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
-                            {% endif %}
-                            class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line{% if isAloneInCurrentPartner %} disabled{% endif %}"
-                        >
-                            Se retirer du dossier
-                        </a>
+                        {% if isAloneInCurrentPartner %}
+                            <button 
+                                class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line disabled"
+                                aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire.">
+                                Se retirer du dossier
+                            </button>
+                        {% elseif subscriptionsInMyPartner|length > 1 %}
+                            <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
+                                class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
+                                Se retirer du dossier
+                            </a>
+                        {% else %}
+                            <button
+                                class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
+                                aria-controls="transfer-subscription-modal" 
+                                data-fr-opened="false"
+                                >
+                                Se retirer du dossier
+                            </button>
+                        {% endif %}
                     </li>
                 {% elseif not canCancelRefusedAffectation %}
                     <li>

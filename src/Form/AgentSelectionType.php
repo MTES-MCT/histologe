@@ -2,7 +2,8 @@
 
 namespace App\Form;
 
-use App\Dto\AcceptAffectation;
+use App\Dto\AgentSelection;
+use App\Entity\Affectation;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -10,13 +11,19 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AcceptAffectationType extends AbstractType
+class AgentSelectionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var AcceptAffectation $acceptAffectation */
-        $acceptAffectation = $builder->getData();
-        $choicesAgents = $acceptAffectation->getAffectation()->getPartner()->getUsers();
+        /** @var AgentSelection $agentSelection */
+        $agentSelection = $builder->getData();
+        /** @var Affectation $affectation */
+        $affectation = $agentSelection->getAffectation();
+        $choicesAgents = $affectation->getPartner()->getUsers();
+
+        if ($options['exclude_user'] instanceof User) {
+            $choicesAgents = $choicesAgents->filter(fn (User $u) => $u->getId() !== $options['exclude_user']->getId());
+        }
 
         $builder->add('agents', EntityType::class, [
             'class' => User::class,
@@ -25,7 +32,7 @@ class AcceptAffectationType extends AbstractType
             'multiple' => true,
             'expanded' => true,
             'label_html' => true,
-            'label' => 'Sélectionnez le(s) agent(s) en charge du dossier',
+            'label' => $options['label'],
         ]);
     }
 
@@ -43,10 +50,17 @@ class AcceptAffectationType extends AbstractType
         return $html;
     }
 
+    public function getBlockPrefix(): string
+    {
+        return 'agents_selection';
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => AcceptAffectation::class,
+            'data_class' => AgentSelection::class,
+            'exclude_user' => null,
+            'label' => 'Sélectionnez le(s) agent(s) en charge du dossier',
         ]);
     }
 }

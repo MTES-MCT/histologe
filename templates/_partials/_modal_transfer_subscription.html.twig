@@ -1,0 +1,54 @@
+<dialog aria-labelledby="modal-transfer-subscription-title" id="transfer-subscription-modal" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-10">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="transfer-subscription-modal">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content fr-text--left">
+                        <h1 class="fr-modal__title" id="modal-transfer-subscription-title">
+                            Veuillez attribuer le dossier #{{ signalement.reference }} à un autre agent
+                        </h1>
+                        <div class="fr-alert fr-alert--info  fr-alert--sm">
+                            <p>Si votre partenaire {{partner.nom}} a terminé son travail sur le dossier, veuillez clôturer le dossier</p>
+                        </div>
+                        <br>
+                        <p>Vous êtes le dernier agent de votre partenaire {{partner.nom}} en charge de ce dossier. 
+Avant de quitter le dossier, veuillez sélectionner un ou plusieurs agents de votre partenaire à qui l'attribuer. Pour attribuer le dossier à tous les agents, cliquez sur "Tout sélectionner".</p>
+                        {{ form_start(transferSubscriptionForm, {'attr': {'id': 'transfer-subscription-form', 'data-submit-type':'formData'}}) }}
+                        <div class="fr-mb-2v">
+                            <button id="select-all-agents-transfer-subscription" data-select-all-agents  class="fr-link">Tout sélectionner</button>
+                        </div>
+                        {{ form_errors(transferSubscriptionForm) }}
+                        <div class="fr-select-group">
+                            {{ form_label(transferSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'transfer_subscription[agents]'}}) }}
+                            <div class="fr-grid-row">
+                                {% for agent in transferSubscriptionForm.agents %}
+                                    <div class="fr-checkbox-group fr-col-6">
+                                        {{ form_row(agent) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {{ form_end(transferSubscriptionForm) }}
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-icon-check-line" form="transfer-subscription-form" type="submit">
+                                    Valider
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="transfer-subscription-modal">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
