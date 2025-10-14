@@ -38,7 +38,7 @@ class SecurityControllerTest extends WebTestCase
         $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-11']);
         $client->request('GET', '/login-bailleur', [
             'bailleur_reference' => $signalement->getReference(),
-            'bailleur_code' => $signalement->getLoginBailleur()
+            'bailleur_code' => $signalement->getLoginBailleur(),
         ]);
         $this->assertResponseRedirects('/dossier-bailleur/');
     }
@@ -65,7 +65,7 @@ class SecurityControllerTest extends WebTestCase
         $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-10']);
         $client->request('GET', '/login-bailleur', [
             'bailleur_reference' => $signalement->getReference(),
-            'bailleur_code' => $signalement->getLoginBailleur()
+            'bailleur_code' => $signalement->getLoginBailleur(),
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
         $this->assertResponseRedirects('/login-bailleur');
