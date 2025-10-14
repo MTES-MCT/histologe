@@ -361,6 +361,7 @@ class SignalementVisitesController extends AbstractController
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestData['intervention'],
             details: $requestData['details'],
+            concludeProcedure: $requestData['concludeProcedure'] ?? [],
             isUsagerNotified: $isUsagerNotified,
             document: $fileName,
         );
