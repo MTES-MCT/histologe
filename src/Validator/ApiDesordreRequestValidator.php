@@ -79,7 +79,9 @@ class ApiDesordreRequestValidator extends ConstraintValidator
                         ->addViolation();
                 }
             }
-            // TODO : controle des précisions s'excluant mutuellement -> parametrer en base de données la config des précisions s'excluant mutuellement ?
+            // on pourrais controller aussi les précisions incompatibles entre elles :
+            // ex : Diagnostic plomb / amiante disponible : oui et Diagnostic plomb / amiante disponible : non)
+            // cela concerne uniquement 3 désordres, j'ai laissé de coté pour l'instant
         }
         // controle des precisions libres
         foreach ($desordreRequest->precisionLibres as $index => $precisionLibre) {
