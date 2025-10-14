@@ -25,7 +25,7 @@
         {% else %}
             {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
                 <button class="fr-btn fr-btn--secondary fr-fi-edit-line" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
-                    Editer le rapport
+                    Editer la conclusion
                 </button>
             {% endif %}
             <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
