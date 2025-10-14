@@ -1,0 +1,51 @@
+{% set columns = [
+    { class: 'fr-col-md-3', title: 'Action faite le' },
+    { class: 'fr-col-md-3', title: 'Référence' },
+    { class: 'fr-col-md-2', title: 'Type d\'action' },
+    { class: 'fr-col-md-3', title: 'Action faite par' },
+] %}
+<section class="fr-mb-5v">
+    <header class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-9">
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-conclusion-icon">Activité récente</h3>
+        </div>
+    </header>
+    <hr class="hr--blue-france">
+    <section class="fr-container--fluid">
+        {% set classes = {
+            'en cours': 'active',
+            'fermé': 'closed',
+            'refusé': 'refused'
+        } %}
+        {% for item in items %}
+            {% set confettiClass = classes[item.statut]|default('') %}
+            {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+
+            {% include 'back/dashboard/components/_card.html.twig' with {
+                data: [
+                    '<div>' ~ item.derniereActionAt|date('d/m/Y à H:i') ~ '</div>',
+                    '<div class="fr-text-label--blue-france">
+                                <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                                <div>' ~ item.adresse ~ '</div>
+                                <div class="fr-mt-1v">
+                                    <span class="confetti ' ~ confettiClass ~ '"></span> ' ~ item.statut|capitalize ~ '
+                                </div>
+                            </div>',
+                    '<div><strong class="fr-text--lg">' ~ item.derniereAction ~ '</strong></div>',
+                    '<div>
+                        <strong>' ~ item.derniereActionPartenairePrenomAgent ~ ' ' ~ item.derniereActionPartenaireNomAgent ~ '</strong><br>
+                        <span>' ~ item.derniereActionPartenaireNom ~ '</span>
+                    </div>',
+                ],
+                link: path('back_signalement_view', {'uuid' : item.uuid})
+            } %}
+        {% else %}
+            <p>Aucun dossier trouvé.</p>
+        {% endfor %}
+        {% if count > 10 %}
+            <div class="fr-text--right">
+                <a href="{{ path('back_signalements_index', filters) }}" class="fr-text-label--blue-france">Afficher la liste complète<span class="fr-fi-arrow-right-line"></span></a>
+            </div>
+        {% endif %}
+    </section>
+</section>

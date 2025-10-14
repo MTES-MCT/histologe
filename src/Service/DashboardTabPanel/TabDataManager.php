@@ -50,12 +50,13 @@ class TabDataManager
         ?int $territoryId,
         ?string $mesDossiersMessagesUsagers,
         ?string $mesDossiersAverifier,
+        ?string $mesDossiersActiviteRecente,
         ?string $queryCommune,
         ?array $partners,
     ): TabCountKpi {
         return $this->tabCountKpiBuilder
             ->setTerritories($territories, $territoryId)
-            ->setMesDossiers($mesDossiersMessagesUsagers, $mesDossiersAverifier)
+            ->setMesDossiers($mesDossiersMessagesUsagers, $mesDossiersAverifier, $mesDossiersActiviteRecente)
             ->setSearchAverifier($queryCommune, $partners)
             ->withTabCountKpi()
             ->build();
@@ -514,5 +515,45 @@ class TabDataManager
         }
 
         return $tabQueryParameters;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getDossiersActiviteRecente(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $signalements = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, $tabQueryParameters, 11);
+        $tabDossiers = [];
+        if (empty($signalements)) {
+            return new TabDossierResult($tabDossiers, 0);
+        }
+        $displayedSignalements = \array_slice($signalements, 0, 10);
+
+        foreach ($displayedSignalements as $signalement) {
+            $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
+                ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
+                : $signalement['suiviCategory']->label();
+            $tabDossiers[] = new TabDossier(
+                statut: $signalement['statut']->label(),
+                reference: '#'.$signalement['reference'],
+                nomDeclarant: $signalement['nomOccupant'],
+                prenomDeclarant: $signalement['prenomOccupant'],
+                derniereActionAt: $signalement['suiviCreatedAt'],
+                adresse: $signalement['adresseOccupant'],
+                derniereAction: $derniereAction,
+                derniereActionPartenairePrenomAgent: $signalement['derniereActionPartenairePrenomAgent'] ?? 'N/A',
+                derniereActionPartenaireNomAgent: $signalement['derniereActionPartenaireNomAgent'] ?? 'N/A',
+                derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
+                uuid: $signalement['uuid'],
+            );
+        }
+
+        $count = \count($signalements);
+
+        return new TabDossierResult($tabDossiers, $count);
     }
 }

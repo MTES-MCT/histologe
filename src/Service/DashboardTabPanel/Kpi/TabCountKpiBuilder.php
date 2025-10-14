@@ -19,6 +19,7 @@ class TabCountKpiBuilder
     private ?int $territoryId = null;
     private ?string $mesDossiersMessagesUsagers = null;
     private ?string $mesDossiersAverifier = null;
+    private ?string $mesDossiersActiviteRecente = null;
     private ?string $queryCommune = null;
     /** @var array<int, int> */
     private array $partners = [];
@@ -42,10 +43,11 @@ class TabCountKpiBuilder
         return $this;
     }
 
-    public function setMesDossiers(?string $mesDossiersMessagesUsagers, ?string $mesDossiersAverifier): self
+    public function setMesDossiers(?string $mesDossiersMessagesUsagers, ?string $mesDossiersAverifier, ?string $mesDossiersActiviteRecente): self
     {
         $this->mesDossiersMessagesUsagers = $mesDossiersMessagesUsagers;
         $this->mesDossiersAverifier = $mesDossiersAverifier;
+        $this->mesDossiersActiviteRecente = $mesDossiersActiviteRecente;
 
         return $this;
     }
@@ -71,6 +73,7 @@ class TabCountKpiBuilder
             territoireId: $this->territoryId,
             mesDossiersMessagesUsagers: $this->mesDossiersMessagesUsagers,
             mesDossiersAverifier: $this->mesDossiersAverifier,
+            mesDossiersActiviteRecente: $this->mesDossiersActiviteRecente,
             queryCommune: $this->queryCommune,
             partners: $this->partners
         );

@@ -21,6 +21,7 @@ class TabQueryParameters
         public ?string $orderBy = null,
         public ?string $mesDossiersMessagesUsagers = null,
         public ?string $mesDossiersAverifier = null,
+        public ?string $mesDossiersActiviteRecente = null,
         public ?string $queryCommune = null,
     ) {
     }

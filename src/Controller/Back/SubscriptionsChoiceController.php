@@ -49,6 +49,7 @@ class SubscriptionsChoiceController extends AbstractController
             if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
                 $tabQueryParameter->mesDossiersMessagesUsagers = '1';
                 $tabQueryParameter->mesDossiersAverifier = '1';
+                $tabQueryParameter->mesDossiersActiviteRecente = '1';
             }
             $isDeletedCacheOngletMessagesUsagers = $tabCountKpiCacheHelper->delete(
                 TabCountKpiCacheHelper::DOSSIERS_MESSAGES_USAGERS,

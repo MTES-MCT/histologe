@@ -1,0 +1,21 @@
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-md-8 fr-pr-10v">
+        <h2 class="fr-mb-3v tab-panel-title-with-icon">Activité récente</h2>
+        <p class="fr-mt-1v fr-ml-1v fr-text--lg">Retrouvez les dossiers sur lesquels une action a été récemment effectuée.</p>
+    </div>
+    <div class="fr-col-md-4 fr-text--right">
+        {% set isPressed = mesDossiersActiviteRecente is not null
+            ? (mesDossiersActiviteRecente == '1')
+            : (is_granted('ROLE_ADMIN_PARTNER') ? false : true)
+        %}
+
+        <button
+            type="button"
+            class="fr-tag"
+            id="mySignalementsActiviteRecenteButton"
+            aria-pressed="{{ isPressed ? 'true' : 'false' }}"
+        >
+            Afficher uniquement mes dossiers
+        </button>
+    </div>
+</div>

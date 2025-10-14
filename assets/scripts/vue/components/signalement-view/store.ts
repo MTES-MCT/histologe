@@ -43,6 +43,7 @@ export const store = {
         isDossiersSansActivite: null as 'oui' | null,
         isEmailAVerifier: null as 'oui' | null,
         isDossiersSansAgent: null as 'oui' | null,
+        isActiviteRecente: null as 'oui' | null,
         showWithoutAffectationOnly: null as 'oui' | null,
         statusAffectation: null,
         criticiteScoreMin: null,

@@ -1,0 +1,13 @@
+<div id="tabpanel-dossiers-activite-recente-panel"
+     class="fr-tabs__panel"
+     role="tabpanel"
+     aria-labelledby="tabpanel-dossiers-activite-recente"
+     tabindex="0">
+    {% include 'back/dashboard/tabs/dossiers_activite_recente/_header_dossier_activite_recente.html.twig' %}
+
+    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-activite-recente') %}
+    <div id="dossiers-activite-recente" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-activite-recente'}) }}">
+        Chargement...
+    </div>
+    {% endif %}
+</div>

@@ -506,10 +506,63 @@ class TabDataManagerTest extends WebTestCase
             territoryId: 1,
             mesDossiersMessagesUsagers: 'oui',
             mesDossiersAverifier: null,
+            mesDossiersActiviteRecente: null,
             queryCommune: null,
             partners: null
         );
 
         $this->assertInstanceOf(TabCountKpi::class, $result);
+    }
+
+    public function testGetDossiersActiviteRecente(): void
+    {
+        $user = $this->createMock(User::class);
+
+        $this->security->method('getUser')->willReturn($user);
+        $params = new TabQueryParameters(null, null);
+        $this->suiviRepository->method('findLastSignalementsWithOtherUserSuivi')
+            ->with($user, $params, 11)
+            ->willReturn([
+                [
+                    'reference' => '2024-003',
+                    'nomOccupant' => 'Lemoine',
+                    'prenomOccupant' => 'Claire',
+                    'adresseOccupant' => '30 boulevard Nation 62100 Alès',
+                    'uuid' => 'uuid-999',
+                    'statut' => SignalementStatus::ACTIVE,
+                    'suiviCreatedAt' => new \DateTimeImmutable('2024-06-20 12:00:00'),
+                    'suiviCategory' => SuiviCategory::MESSAGE_PARTNER,
+                    'suiviIsPublic' => true,
+                    'derniereActionPartenaireNom' => 'SUPER PARTENAIRE',
+                    'derniereActionPartenaireNomAgent' => 'Robert',
+                    'derniereActionPartenairePrenomAgent' => 'Sophie',
+                ],
+            ]);
+
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder,
+        );
+
+        $result = $tabDataManager->getDossiersActiviteRecente($params);
+        $this->assertCount(1, $result->dossiers);
+        $this->assertSame(1, $result->count);
+        $this->assertSame(SignalementStatus::ACTIVE->label(), $result->dossiers[0]->statut);
+        $this->assertSame('#2024-003', $result->dossiers[0]->reference);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomDeclarant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
+        $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereActionAt);
+        $this->assertSame('30 boulevard Nation 62100 Alès', $result->dossiers[0]->adresse);
+        $this->assertSame('Suivi visible par l\'usager', $result->dossiers[0]->derniereAction);
+        $this->assertSame('Sophie', $result->dossiers[0]->derniereActionPartenairePrenomAgent);
+        $this->assertSame('Robert', $result->dossiers[0]->derniereActionPartenaireNomAgent);
+        $this->assertSame('SUPER PARTENAIRE', $result->dossiers[0]->derniereActionPartenaireNom);
+        $this->assertSame('uuid-999', $result->dossiers[0]->uuid);
     }
 }

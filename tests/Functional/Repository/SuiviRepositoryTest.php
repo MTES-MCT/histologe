@@ -206,4 +206,16 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->assertIsInt($result);
         $this->assertEquals(6, $result);
     }
+
+    public function testFindLastSignalementsWithOtherUserSuivi(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersActiviteRecente: '1',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, $tabQueryParameter);
+        $this->assertIsArray($result);
+    }
 }

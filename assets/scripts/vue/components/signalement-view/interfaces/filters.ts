@@ -35,6 +35,7 @@ export const SEARCH_FILTERS = [
   { type: 'text', name: 'isDossiersSansActivite', showOptions: false, defaultValue: null },
   { type: 'text', name: 'isEmailAVerifier', showOptions: false, defaultValue: null },  
   { type: 'text', name: 'isDossiersSansAgent', showOptions: false, defaultValue: null },
+  { type: 'text', name: 'isActiviteRecente', showOptions: false, defaultValue: null },
   { type: 'text', name: 'showWithoutAffectationOnly', showOptions: true, defaultValue: null },
   { type: 'text', name: 'isImported', showOptions: false, defaultValue: null },
   { type: 'text', name: 'isZonesDisplayed', showOptions: false, defaultValue: null },

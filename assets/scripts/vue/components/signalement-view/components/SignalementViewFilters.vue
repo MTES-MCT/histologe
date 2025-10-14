@@ -612,6 +612,7 @@ export default defineComponent({
         isDossiersSansActivite: null,
         isEmailAVerifier: null,
         isDossiersSansAgent: null,
+        isActiviteRecente: null,
         showWithoutAffectationOnly: null,
         statusAffectation: null,
         criticiteScoreMin: null,

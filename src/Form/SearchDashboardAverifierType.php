@@ -54,6 +54,11 @@ class SearchDashboardAverifierType extends AbstractType
             'required' => false,
         ]);
 
+        $builder->add('mesDossiersActiviteRecente', HiddenType::class, [
+            'mapped' => false,
+            'required' => false,
+        ]);
+
         if ($this->security->isGranted('ROLE_SUPER_ADMIN') || $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             $this->addPartnersField($builder, $options['territory']);
         }
