@@ -40,6 +40,7 @@ class SuiviVisiteEditedToUsagerMailer extends AbstractNotificationMailer
             'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
             'signalement_cpOccupant' => $signalement->getCpOccupant(),
             'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'intervention_changes' => $intervention->getChangesForMail(),
             'partner_name' => $partnerName,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',
