@@ -199,7 +199,7 @@ class InterventionManager extends AbstractManager
         return $intervention;
     }
 
-    public function editVisiteFromRequest(VisiteRequest $visiteRequest, Partner $partner): ?Intervention
+    public function editVisiteFromRequest(VisiteRequest $visiteRequest, ?Partner $partner = null): ?Intervention
     {
         if (!$visiteRequest->getDetails()) {
             return null;
@@ -213,7 +213,14 @@ class InterventionManager extends AbstractManager
             return null;
         }
 
-        $intervention->setDetails($visiteRequest->getDetails());
+        $procedures = [];
+        foreach ($visiteRequest->getConcludeProcedure() as $concludeProcedure) {
+            $procedures[] = ProcedureType::tryFrom($concludeProcedure);
+        }
+        $intervention
+            ->setDetails($visiteRequest->getDetails())
+            ->setConcludeProcedure($procedures);
+
         if ($visiteRequest->getDocument()) {
             $document = $visiteRequest->getDocument();
             $rapportDeVisite = $intervention->getRapportDeVisite();
@@ -266,8 +273,7 @@ class InterventionManager extends AbstractManager
     private function createFile(
         Intervention $intervention,
         string $document,
-        Partner $partner,
-        DocumentType $documentType = DocumentType::PROCEDURE_RAPPORT_DE_VISITE,
+        ?Partner $partner = null,
     ): File {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -278,7 +284,7 @@ class InterventionManager extends AbstractManager
             signalement: $intervention->getSignalement(),
             partner: $partner,
             user: $user,
-            documentType: $documentType
+            documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
         );
     }
 }
