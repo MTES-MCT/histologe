@@ -11,15 +11,14 @@
 </ul>
 
 {% if remainingCount > 0 %}
-    <p>
-        <button
-            class="fr-link"
-            data-fr-opened="false"
-            aria-controls="modal-agents-subscriptions"
-        >
-            + {{ remainingCount }} agent{{ remainingCount > 1 ? 's' }}
-        </button>
-    </p>
+
+    <button
+        class="fr-link"
+        data-fr-opened="false"
+        aria-controls="modal-agents-subscriptions"
+    >
+        + {{ remainingCount }} agent{{ remainingCount > 1 ? 's' }}
+    </button>
 
     <dialog id="modal-agents-subscriptions" class="fr-modal" role="dialog" aria-labelledby="modal-title-agents">
         <div class="fr-container fr-container--fluid fr-container-md">
