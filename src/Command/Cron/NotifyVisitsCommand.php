@@ -2,6 +2,7 @@
 
 namespace App\Command\Cron;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
@@ -62,12 +63,15 @@ class NotifyVisitsCommand extends AbstractCronCommand
         foreach ($listFutureVisits as $intervention) {
             $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
             $signalement = $intervention->getSignalement();
+            if (!$signalement || SignalementStatus::ACTIVE !== $signalement->getStatut()) {
+                continue;
+            }
             $description = '<strong>Rappel de visite :</strong> la visite du logement situé ';
             $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
             $description .= ' aura lieu le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= '<br>La visite sera effectuée par '.$partnerName.'.';
             $suivi = $this->suiviManager->createSuivi(
-                signalement: $intervention->getSignalement(),
+                signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_TECHNICAL,
                 category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
@@ -105,6 +109,11 @@ class NotifyVisitsCommand extends AbstractCronCommand
 
         $listPastVisits = $this->interventionRepository->getPastVisits();
         foreach ($listPastVisits as $intervention) {
+            $signalement = $intervention->getSignalement();
+
+            if (!$signalement || SignalementStatus::ACTIVE !== $signalement->getStatut()) {
+                continue;
+            }
             if ($this->parameterBag->get('feature_new_dashboard')) {
                 $this->visiteNotifier->notifyInterventionSubscribers(
                     notificationMailerType: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
@@ -117,8 +126,8 @@ class NotifyVisitsCommand extends AbstractCronCommand
                         new NotificationMail(
                             type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
                             to: $user->getEmail(),
-                            territory: $intervention->getSignalement()->getTerritory(),
-                            signalement: $intervention->getSignalement(),
+                            territory: $signalement->getTerritory(),
+                            signalement: $signalement,
                             intervention: $intervention,
                         )
                     );

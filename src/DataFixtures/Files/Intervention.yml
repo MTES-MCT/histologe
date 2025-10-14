@@ -105,3 +105,9 @@ interventions:
       arrete_date: "2025-01-12"
       arrete_type: "Arrêté L.511-12 - Suroccupation"
       arrete_numero: "123456789"
+  -
+    signalement: "2022-3"
+    partner: "partenaire-13-01@signal-logement.fr"
+    user: "admin-partenaire-13-01@signal-logement.fr"
+    scheduled_at: '+2 days'
+    status: 'PLANNED'

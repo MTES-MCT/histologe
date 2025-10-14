@@ -41,7 +41,7 @@ class CronMailer extends AbstractNotificationMailer
     {
         $this->mailerSubject = \sprintf(
             self::MAILER_SUBJECT,
-            isset($notificationMail->getParams()['error_messages']) && $notificationMail->getParams()['error_messages'] > 0 ?
+            isset($notificationMail->getParams()['error_messages']) && \count($notificationMail->getParams()['error_messages']) > 0 ?
                 's\'est arrêtée en erreur' :
                 's\'est bien exécutée'
         );
