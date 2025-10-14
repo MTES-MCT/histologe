@@ -57,6 +57,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 ->withProcedure()
                 ->withInformationComplementaire()
                 ->withDesordres()
+                ->withStatus()
                 ->build();
 
             if (null !== $signalement) {
