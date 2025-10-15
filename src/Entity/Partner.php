@@ -20,6 +20,7 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
+#[ORM\Index(columns: ['territory_id'], name: 'idx_partner_territory_id')]
 #[ORM\HasLifecycleCallbacks()]
 #[UniqueEntity(
     fields: ['email', 'territory', 'isArchive'],
