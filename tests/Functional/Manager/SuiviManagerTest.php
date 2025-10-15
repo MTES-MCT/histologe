@@ -51,7 +51,7 @@ class SuiviManagerTest extends KernelTestCase
             $this->htmlSanitizerInterface,
             $this->userSignalementSubscriptionManager,
             true,
-            false,
+            true,
             Suivi::class,
         );
     }

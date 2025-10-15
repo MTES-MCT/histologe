@@ -311,7 +311,6 @@ class SignalementImportLoader
                         type: Suivi::TYPE_PARTNER,
                         category: SuiviCategory::MESSAGE_PARTNER,
                         user: $this->userSystem,
-                        flush: false
                     );
 
                     if (null !== $createdAt) {

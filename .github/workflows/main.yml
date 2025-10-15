@@ -29,7 +29,7 @@ env:
   FEATURE_API_CREATION_SIGNALEMENT: ''
   FEATURE_INJONCTION_BAILLEUR: 1
   FEATURE_INJONCTION_BAILLEUR_DEPTS: '["30","34"]'
-  FEATURE_EDITION_SUIVI: 0
+  FEATURE_EDITION_SUIVI: 1
 jobs:
   code-quality:
     name: Signal-logement (PHP ${{ matrix.php-versions }})

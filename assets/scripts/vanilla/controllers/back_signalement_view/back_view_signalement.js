@@ -467,25 +467,15 @@ document.querySelectorAll('.btn-edit-suivi').forEach((swbtn) => {
     document.querySelector('#fr-modal-edit-suivi button[type="submit"]').disabled = true;
     document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = 'Chargement en cours...';
     fetch(url).then((response) => {
-      try {
-        if (response.ok) {
-          response.json().then((response) => {
-            if (response.redirect) {
-              window.location.href = response.url;
-              window.location.reload();
-            } else {
-              document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = response.content;
-              tinymce.remove('#add_suivi_description');
-              initTinyMCE('#add_suivi_description');
-              window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
-              document.querySelector('#fr-modal-edit-suivi button[type="submit"]').disabled = false;
-            }
-          });
-        } else {
-          const content = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur s\'est produite. Veuillez actualiser la page.</p></div>';
-          document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = content;
-        }
-      } catch (e) {
+      if (response.ok) {
+        response.json().then((response) => {
+          document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = response.content;
+          tinymce.remove('#add_suivi_description');
+          initTinyMCE('#add_suivi_description');
+          window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
+          document.querySelector('#fr-modal-edit-suivi button[type="submit"]').disabled = false;
+        });
+      } else {
         const content = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur s\'est produite. Veuillez actualiser la page.</p></div>';
         document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = content;
       }
