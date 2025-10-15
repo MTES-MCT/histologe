@@ -570,74 +570,36 @@ class SignalementResponse
     public ?string $dateEffetBail;
     /** @var list<mixed> $desordres */
     #[OA\Property(
-        description: "Liste des désordres associés au logement signalant les problèmes affectant la qualité, la sécurité ou les conditions d'habitabilité.<br>
-        Les désordres sur le logement concernent tous les problèmes à l'intérieur du logement ou batiment. <br>
-        **Liste des catégories de désordre Bâtiment :**
-        <ul>
-            <li>`Usage / entretien`</li>
-            <li>`Equipements collectifs` </li>
-            <li>`Etanchéité / isolation`</li>
-            <li>`Bâtiment risques particuliers`</li>
-            <li>`Structure du bâti`</li>
-            <li>`Environnement / éclairage`</li>
-        </ul>
-        **Liste des catégories de désordre Logement :**
-        <ul>
-            <li>`Structure / équipements`</li>
-            <li>`Suroccupation`</li>
-            <li>`Eau potable / assainissement`</li>
-            <li>`Aération / humidité`</li>
-            <li>`Sécurite risques particuliers`</li>
-            <li>`Propreté / entretien`</li>
-            <li>`Eclairage`</li>
-        </ul>
+        description: "Liste des désordres associés au signalement.<br>
         *Exemple* :<br>
-
 ```json
 [
     {
-        \"categorie\": \"Équipements\",
-        \"zone\": \"LOGEMENT\",
-        \"details\": [
-            \"Les prises électriques ne fonctionnent pas.\",
-            \"Il n'y a pas d'éclairage dans le logement.\"
+        \"identifiant\": \"desordres_batiment_nuisibles_autres\",
+        \"libelle\": \"Il y a un autre type de nuisibles\",
+        \"precisions\": [],
+        \"precisionsLibres\": [
+            {
+                \"identifiant\": \"desordres_batiment_nuisibles_autres\",
+                \"description\": \"Invasion de fourmis.\"
+            }
         ]
     },
     {
-        \"categorie\": \"Etanchéité / isolation\",
-        \"zone\": \"BATIMENT\",
-        \"details\": [
-            \"Les murs ne sont pas ou peu isolés\",
-            \"Il manque des portes ou des fenêtres...\",
-            \"Le dernier étage n'est pas isolé,...\",
-            \"De l'eau s'infiltre par le sol ou les murs\"
-        ]
+        \"identifiant\": \"desordres_logement_humidite_salle_de_bain\",
+        \"libelle\": \"Le logement est humide et a des traces de moisissures\",
+        \"precisions\": {
+            \"desordres_logement_humidite_salle_de_bain_details_machine_non\": \"Dans : La salle de bain, salle d'eau et / ou les toilettes - Machine à laver, sèche-linge ou lave vaisselle : non\",
+            \"desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_oui\": \"Dans : La salle de bain, salle d'eau et / ou les toilettes - Moisissure revient après nettoyage : oui\",
+            \"desordres_logement_humidite_salle_de_bain_details_fuite_non\": \"Dans : La salle de bain, salle d'eau et / ou les toilettes - Fuite ou dégat des eaux : non\"
+        },
+        \"precisionsLibres\": []
     }
 ]
 ```
         ",
         type: 'array',
         items: new OA\Items(ref: new Model(type: Desordre::class)),
-        example: [
-            [
-                'categorie' => 'Équipements',
-                'zone' => 'LOGEMENT',
-                'details' => [
-                    'Les prises électriques ne fonctionnent pas.',
-                    "Il n'y a pas d'éclairage dans le logement.",
-                ],
-            ],
-            [
-                'categorie' => 'Etanchéité / isolation',
-                'zone' => 'BATIMENT',
-                'details' => [
-                    'Les murs ne sont pas ou peu isolés',
-                    'Il manque des portes ou des fenêtres, ou elles sont mal isolées.',
-                    "Le dernier étage n'est pas isolé, le toit n'est pas étanche\n - Le logement est sous les combles",
-                    "De l'eau s'infiltre par le sol ou les murs",
-                ],
-            ],
-        ]
     )]
     /** @var array<mixed> */
     public array $desordres = [];
