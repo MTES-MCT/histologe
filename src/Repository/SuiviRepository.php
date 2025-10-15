@@ -39,6 +39,8 @@ class SuiviRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         #[Autowire(env: 'LIMIT_DAILY_RELANCES_BY_REQUEST')]
         private int $limitDailyRelancesByRequest,
+        #[Autowire(env: 'DELAY_SUIVI_EDITABLE_IN_MINUTES')]
+        private readonly int $delaySuiviEditableInMinutes,
         private ClockInterface $clock,
     ) {
         parent::__construct($registry, Suivi::class);
@@ -1031,7 +1033,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function findWithWaitingNotificationAndExpiredDelay(): array
     {
-        $limit = $this->clock->now()->modify('-'.Suivi::DELAY_SUIVI_EDITABLE_IN_MINUTES.' minutes');
+        $limit = $this->clock->now()->modify('-'.$this->delaySuiviEditableInMinutes.' minutes');
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.createdAt < :limit')
             ->setParameter('limit', $limit)

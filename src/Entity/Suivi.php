@@ -48,7 +48,6 @@ class Suivi implements EntityHistoryInterface
 
     public const string ARRET_PROCEDURE = 'arret-procedure';
     public const string POURSUIVRE_PROCEDURE = 'poursuivre-procedure';
-    public const int DELAY_SUIVI_EDITABLE_IN_MINUTES = 20;
 
     private ?SuiviTransformerService $suiviTransformerService = null;
 

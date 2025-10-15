@@ -18,6 +18,8 @@ class SuiviVoter extends Voter
     public function __construct(
         #[Autowire(env: 'FEATURE_EDITION_SUIVI')]
         private readonly bool $featureEditionSuivi,
+        #[Autowire(env: 'DELAY_SUIVI_EDITABLE_IN_MINUTES')]
+        private readonly int $delaySuiviEditableInMinutes,
     ) {
     }
 
@@ -63,7 +65,7 @@ class SuiviVoter extends Voter
         if (null !== $suivi->getDeletedAt()) {
             return false;
         }
-        $limit = new \DateTimeImmutable('-'.Suivi::DELAY_SUIVI_EDITABLE_IN_MINUTES.' minutes');
+        $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
         if (SuiviCategory::MESSAGE_PARTNER === $suivi->getCategory() && $suivi->isWaitingNotification() && $suivi->getCreatedAt() > $limit && $user === $suivi->getCreatedBy()) {
             return true;
         }

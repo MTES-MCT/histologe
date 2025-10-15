@@ -41,6 +41,8 @@ class SignalementActionController extends AbstractController
     public function __construct(
         #[Autowire(env: 'FEATURE_EDITION_SUIVI')]
         private readonly bool $featureEditionSuivi,
+        #[Autowire(env: 'DELAY_SUIVI_EDITABLE_IN_MINUTES')]
+        private readonly int $delaySuiviEditableInMinutes,
     ) {
     }
 
@@ -189,7 +191,7 @@ class SignalementActionController extends AbstractController
         $suivi = $suiviRepository->findOneBy(['id' => $request->get('suivi')]);
         $this->denyAccessUnlessGranted('DELETE_SUIVI', $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), $request->get('_token'))) {
-            $limit = new \DateTimeImmutable('-'.Suivi::DELAY_SUIVI_EDITABLE_IN_MINUTES.' minutes');
+            $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
             if ($suivi->getCreatedAt() > $limit && $this->featureEditionSuivi) {
                 $doctrine->getManager()->remove($suivi);
             } else {
