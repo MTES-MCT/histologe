@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Event\SignalementCreatedEvent;
 use App\Manager\UserManager;
 use App\Service\NotificationAndMailSender;
@@ -29,6 +30,10 @@ class SignalementCreatedSubscriber implements EventSubscriberInterface
         $this->userManager->createUsagerFromSignalement($signalement);
         $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
 
-        $this->notificationAndMailSender->sendNewSignalement($signalement);
+        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            $this->notificationAndMailSender->sendNewSignalementInjonction($signalement);
+        } else {
+            $this->notificationAndMailSender->sendNewSignalement($signalement);
+        }
     }
 }

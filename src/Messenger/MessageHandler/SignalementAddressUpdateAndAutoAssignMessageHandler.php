@@ -2,6 +2,7 @@
 
 namespace App\Messenger\MessageHandler;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Messenger\Message\SignalementAddressUpdateAndAutoAssignMessage;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\AutoAssigner;
@@ -28,7 +29,9 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
             $signalement = $this->signalementRepository->find($signalementAddressUpdateAndAutoAssignMessage->getSignalementId());
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
             $this->entityManager->flush();
-            $this->autoAssigner->assign($signalement);
+            if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+                $this->autoAssigner->assign($signalement);
+            }
         } catch (\Throwable $exception) {
             $this->logger->error(
                 sprintf(

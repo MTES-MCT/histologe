@@ -52,6 +52,24 @@ class NotificationAndMailSender
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SIGNALEMENT, signalement: $signalement);
     }
 
+    public function sendNewSignalementInjonction(Signalement $signalement): void
+    {
+        $mailerType = NotificationMailerType::TYPE_CONFIRM_INJONCTION_TO_BAILLEUR;
+        $this->signalement = $signalement;
+        $mailProprio = $signalement->getMailProprio();
+
+        if ($mailProprio) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: $mailerType,
+                    to: $mailProprio,
+                    territory: $this->signalement->getTerritory(),
+                    signalement: $this->signalement,
+                )
+            );
+        }
+    }
+
     public function sendNewAffectation(Affectation $affectation): void
     {
         $mailerType = NotificationMailerType::TYPE_AFFECTATION_NEW;

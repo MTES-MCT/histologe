@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
@@ -87,9 +88,12 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
     {
         $toRecipients = $signalement->getMailUsagers();
         foreach ($toRecipients as $toRecipient) {
+            $type = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut())
+                ? NotificationMailerType::TYPE_CONFIRM_INJONCTION_TO_USAGER
+                : NotificationMailerType::TYPE_CONFIRM_RECEPTION_TO_USAGER;
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
-                    type: NotificationMailerType::TYPE_CONFIRM_RECEPTION_TO_USAGER,
+                    type: $type,
                     to: $toRecipient,
                     territory: $signalement->getTerritory(),
                     signalement: $signalement,
