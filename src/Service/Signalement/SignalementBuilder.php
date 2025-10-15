@@ -364,7 +364,7 @@ class SignalementBuilder
         // - que l'usager ait contacté son bailleur
         // - que le territoire soit ouvert
         if (
-            'oui' === $this->payload['injonction_bailleur_choice']
+            !empty($this->payload['injonction_bailleur_choice']) && 'oui' === $this->payload['injonction_bailleur_choice']
             && ProfileDeclarant::LOCATAIRE === $this->signalement->getProfileDeclarant()
             && !$this->signalement->getIsLogementSocial()
             && $this->signalement->getIsProprioAverti()
