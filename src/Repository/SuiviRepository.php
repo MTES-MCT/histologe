@@ -24,6 +24,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Clock\ClockInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -38,6 +39,7 @@ class SuiviRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         #[Autowire(env: 'LIMIT_DAILY_RELANCES_BY_REQUEST')]
         private int $limitDailyRelancesByRequest,
+        private ClockInterface $clock,
     ) {
         parent::__construct($registry, Suivi::class);
     }
@@ -1029,7 +1031,7 @@ class SuiviRepository extends ServiceEntityRepository
      */
     public function findWithWaitingNotificationAndExpiredDelay(): array
     {
-        $limit = new \DateTimeImmutable('-'.Suivi::DELAY_SUIVI_EDITABLE_IN_MINUTES.' minutes');
+        $limit = $this->clock->now()->modify('-'.Suivi::DELAY_SUIVI_EDITABLE_IN_MINUTES.' minutes');
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.createdAt < :limit')
             ->setParameter('limit', $limit)
