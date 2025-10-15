@@ -1,6 +1,46 @@
-<h3 class="fr-h5">{{title}}</h3>
+<h3 class="fr-h5">{{ title }}</h3>
+
+{% set total = subscriptionsInMyPartner|length %}
+{% set firstThree = subscriptionsInMyPartner|slice(0, 3) %}
+{% set remainingCount = total - 3 %}
+
 <ul>
-    {% for subscription in subscriptionsInMyPartner %}
+    {% for subscription in firstThree %}
         <li>{{ subscription.user.nomComplet(true) }} ({{ subscription.user.email }})</li>
     {% endfor %}
 </ul>
+
+{% if remainingCount > 0 %}
+
+    <button
+        class="fr-link"
+        data-fr-opened="false"
+        aria-controls="modal-agents-subscriptions"
+    >
+        + {{ remainingCount }} agent{{ remainingCount > 1 ? 's' }}
+    </button>
+
+    <dialog id="modal-agents-subscriptions" class="fr-modal" role="dialog" aria-labelledby="modal-title-agents">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-btn--close fr-btn" aria-controls="modal-agents-subscriptions">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="modal-title-agents" class="fr-modal__title">
+                                Tous les agents
+                            </h1>
+                            <ul>
+                                {% for subscription in subscriptionsInMyPartner %}
+                                    <li>{{ subscription.user.nomComplet(true) }} ({{ subscription.user.email }})</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+{% endif %}
