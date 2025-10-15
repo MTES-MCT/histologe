@@ -3,6 +3,7 @@
 namespace App\Service\Menu;
 
 use App\Entity\User;
+use App\Security\Voter\UserVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -47,6 +48,9 @@ readonly class MenuBuilder
             $adminToolsSubItem->addChild(new MenuItem(label: 'Mon partenaire'.$partnerName, route: 'back_partner_view', routeParameters: ['id' => $partner->getId()], roleGranted: User::ROLE_ADMIN_PARTNER, roleNotGranted: User::ROLE_ADMIN_TERRITORY));
         }
         $adminToolsSubItem->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        if ($this->currentRoute->isGranted(UserVoter::SEE_INJONCTION_BAILLEUR, $user)) {
+            $adminToolsSubItem->addChild(new MenuItem(label: 'Signalements en cours d\'injonction', route: 'back_injonction_signalement_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        }
         if ($this->featureNewDocumentSpace) {
             $adminToolsSubItem->addChild(new MenuItem(label: $user->isSuperAdmin() ? 'Gérer les territoires' : 'Gérer mon territoire', route: 'back_territory_management_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
             $adminToolsSubItem->addChild(new MenuItem(route: 'back_territory_management_zone_index'))

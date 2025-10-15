@@ -1,0 +1,102 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Signalements en cours d'injonction{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils admin',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Signalements en cours d\'injonction',
+            'level3Link': '',
+        } %}
+
+        <div class="fr-notice fr-notice--warning fr-mb-3v">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p>
+                        <span class="fr-notice__desc">
+                            Ces signalements ne sont pas encore traîtés par les partenaires. Ils sont en attente d'une réponse de la part du bailleur.<br>
+                            Tous ces signalements sont sur le parc privé et créés par des locataires.<br>
+                            Les locataires ont accepté d'essayer de régler leur problème à l'amiable avant votre intervention.
+                        </span>
+                    </p>
+                    <button title="Masquer le message" class="fr-btn--close fr-btn">Masquer le message</button>
+                </div>
+            </div>
+        </div>
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Signalements en cours d'injonction</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    {{ form_start(form) }}
+
+    {% if is_granted('ROLE_ADMIN') %}
+    <section class="fr-col-12">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.territoire) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                <a href="{{ path('back_injonction_signalement_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+    </section>
+    {% endif %}
+
+    <section class="fr-col-12 fr-py-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement trouvé', 'signalements trouvés') }}</h2>
+    </section>
+    
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form) }}
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <th scope="col">Territoire</th>
+            {% endif %}
+            <th scope="col">Réference</th>
+            <th scope="col">Date</th>
+            <th scope="col">Adresse du logement</th>
+            <th scope="col">Nom de l'occupant</th>
+            <th scope="col">Nom du bailleur</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for signalement in signalements %}
+                <tr>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>{{ signalement.territory ? signalement.territory.zip ~ ' - ' ~ signalement.territory.name : 'aucun' }}</td>
+                    {% endif %}
+                    <td>{{ signalement.reference }}</td>
+                    <td>{{ signalement.createdAt.format('d/m/Y') }}</td>
+                    <td>{{ signalement.getAddressCompleteOccupant() }}</td>
+                    <td>{{ signalement.prenomOccupant ~ ' ' ~ signalement.nomOccupant }}</td>
+                    <td>{{ signalement.getDisplayedNomProprio() }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">Aucun signalement trouvé</td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des signalements', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="signalement-pagination">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchSignalement.page, 'back_injonction_signalement_index', searchSignalement.urlParams) }}
+        </div>
+    </section>
+{% endblock %}

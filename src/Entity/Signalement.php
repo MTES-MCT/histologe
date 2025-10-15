@@ -887,6 +887,22 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function getDisplayedNomProprio(): ?string
+    {
+        $result = '-';
+        if (!empty($this->denominationProprio)) {
+            $result = $this->denominationProprio;
+        }
+        if (!empty($this->nomProprio)) {
+            $result = $this->nomProprio;
+            if (!empty($this->prenomProprio)) {
+                $result .= ' '.$this->prenomProprio;
+            }
+        }
+
+        return $result;
+    }
+
     public function getAdresseProprio(): ?string
     {
         return $this->adresseProprio;
