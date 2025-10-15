@@ -196,9 +196,7 @@ class SearchFilter
             if (\in_array('NO_SUIVI_AFTER_3_RELANCES', $filters['relances_usager'])) {
                 $connection = $this->entityManager->getConnection();
                 $parameters = [
-                    'day_period' => 0,
                     'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
-                    'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
                     'status_active' => SignalementStatus::ACTIVE->value,
                     'nb_suivi_technical' => 3,
                 ];

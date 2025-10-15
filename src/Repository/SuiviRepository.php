@@ -325,7 +325,6 @@ class SuiviRepository extends ServiceEntityRepository
 
         $parameters = [
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
-            'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
             'status_active' => SignalementStatus::ACTIVE->value,
             'nb_suivi_technical' => 2,
         ];
@@ -349,7 +348,6 @@ class SuiviRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
         $parameters = [
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
-            'status_need_validation' => SignalementStatus::NEED_VALIDATION->value,
             'status_active' => SignalementStatus::ACTIVE->value,
             'nb_suivi_technical' => 3,
         ];
