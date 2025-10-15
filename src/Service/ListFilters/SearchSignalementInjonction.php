@@ -61,17 +61,4 @@ class SearchSignalementInjonction
 
         return $params;
     }
-
-    /**
-     * @return array<mixed>
-     */
-    public function getFiltersToText(): array
-    {
-        $filters = [];
-        if ($this->territoire && $this->user->isSuperAdmin()) {
-            $filters['Territoire'] = $this->territoire->getZip().' - '.$this->territoire->getName();
-        }
-
-        return $filters;
-    }
 }

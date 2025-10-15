@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -15,20 +14,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SearchSignalementInjonctionType extends AbstractType
 {
     private bool $isAdmin = false;
-    /**
-     * @var array<string, string>
-     */
-    private array $roleChoices = [];
 
     public function __construct(
         private readonly Security $security,
     ) {
-        $this->roleChoices = User::ROLES;
-        unset($this->roleChoices['Usager']);
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $this->isAdmin = true;
-        } else {
-            unset($this->roleChoices['Super Admin']);
         }
     }
 
