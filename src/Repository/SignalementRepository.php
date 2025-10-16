@@ -4,8 +4,6 @@ namespace App\Repository;
 
 use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Dto\CountSignalement;
-use App\Dto\SignalementAffectationListView;
-use App\Dto\SignalementExport;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Commune;
@@ -22,7 +20,6 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
-use App\Entity\View\ViewLatestIntervention;
 use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\DashboardTabPanel\TabDossier;
@@ -32,7 +29,6 @@ use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use App\Service\Security\PartnerAuthorizedResolver;
-use App\Service\Signalement\SearchFilter;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
@@ -64,7 +60,6 @@ class SignalementRepository extends ServiceEntityRepository
 
     public function __construct(
         ManagerRegistry $registry,
-        private readonly SearchFilter $searchFilter,
         private readonly Security $security,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
@@ -78,28 +73,6 @@ class SignalementRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
-    }
-
-    /**
-     * @param array<string, mixed> $options
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    public function findAllWithGeoData(User $user, array $options, int $offset): array
-    {
-        $firstResult = $offset;
-
-        $qb = $this->findSignalementAffectationQueryBuilder($user, $options);
-
-        $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant')
-            ->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
-            ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
-            ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses());
-
-        $qb->setFirstResult($firstResult)->setMaxResults(self::MARKERS_PAGE_SIZE);
-
-        return $qb->getQuery()->getArrayResult();
     }
 
     /**
@@ -450,238 +423,6 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->orderBy('s.motifCloture');
 
         return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param array<string, mixed> $options
-     */
-    public function findSignalementAffectationListPaginator(
-        User $user,
-        array $options,
-    ): Paginator {
-        $maxResult = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
-        $page = \array_key_exists('page', $options) ? (int) $options['page'] : 1;
-        $firstResult = (($page < 1 ? 1 : $page) - 1) * $maxResult;
-        $qb = $this->findSignalementAffectationQueryBuilder($user, $options);
-        $qb
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxResult)
-            ->getQuery();
-
-        return new Paginator($qb, true);
-    }
-
-    /**
-     * @param array<string, mixed> $options
-     */
-    public function findSignalementAffectationQueryBuilder(
-        User $user,
-        array $options,
-    ): QueryBuilder {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('
-            DISTINCT s.id,
-            s.uuid,
-            s.reference,
-            s.createdAt,
-            s.statut,
-            s.score,
-            s.isNotOccupant,
-            s.nomOccupant,
-            s.prenomOccupant,
-            s.adresseOccupant,
-            s.cpOccupant,
-            s.villeOccupant,
-            s.lastSuiviAt,
-            s.lastSuiviBy,
-            s.lastSuiviIsPublic,
-            s.profileDeclarant,
-            territory.id as territoryId,
-            GROUP_CONCAT(DISTINCT CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
-            GROUP_CONCAT(DISTINCT p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
-            GROUP_CONCAT(DISTINCT a.statut SEPARATOR :group_concat_separator) as affectationStatus,
-            GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications,
-            GROUP_CONCAT(DISTINCT sq.status SEPARATOR :group_concat_separator) as qualificationsStatuses,
-            GROUP_CONCAT(DISTINCT i.concludeProcedure ORDER BY i.scheduledAt DESC SEPARATOR :group_concat_separator) as conclusionsProcedure')
-            ->leftJoin('s.affectations', 'a')
-            ->leftJoin('a.partner', 'p')
-            ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
-            ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\' OR i.type LIKE \'ARRETE_PREFECTORAL\'')
-            ->leftJoin('s.territory', 'territory')
-            ->where('s.statut NOT IN (:statusList)')
-            ->groupBy('s.id')
-            ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
-            ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
-
-        if ($user->isTerritoryAdmin()) {
-            if (empty($options['territories'])) {
-                $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
-            }
-        } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
-            if (empty($options['territories'])) {
-                $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
-            }
-            $statuses = [];
-            if (!empty($options['statuses'])) {
-                $statuses = array_map(function ($status) {
-                    return SignalementStatus::tryFrom($status)?->mapAffectationStatus();
-                }, $options['statuses']);
-            }
-
-            $subQueryBuilder = $this->_em->createQueryBuilder()
-                ->select('DISTINCT IDENTITY(a2.signalement)')
-                ->from(Affectation::class, 'a2')
-                ->where('a2.partner IN (:partners)');
-
-            if (!empty($options['statuses'])) {
-                $subQueryBuilder->andWhere('a2.statut IN (:statut_affectation)');
-            }
-            $qb->andWhere('s.id IN ('.$subQueryBuilder->getDQL().')');
-
-            $qb->setParameter('partners', $user->getPartners());
-            if (!empty($options['statuses'])) {
-                $qb->setParameter('statut_affectation', $statuses);
-            }
-        }
-
-        if (!empty($options['bailleurSocial'])) {
-            $qb->andWhere('s.bailleur = :bailleur')
-                ->setParameter('bailleur', $options['bailleurSocial']);
-        }
-        $qb->setParameter('statusList', SignalementStatus::excludedStatuses());
-        $qb = $this->searchFilter->applyFilters($qb, $options, $user);
-
-        if (!empty($options['relanceUsagerSansReponse'])) {
-            $signalementIds = $this->getSignalementsIdAvecRelancesSansReponse();
-            $qb->andWhere('s.id IN (:signalement_ids)')
-                ->setParameter('signalement_ids', $signalementIds);
-        }
-
-        if (!empty($options['isDossiersSansActivite'])) {
-            $params = new TabQueryParameters();
-            $signalementIds = $this->getSignalementsIdSansSuiviPartenaireDepuis60Jours($user, $params);
-            $qb->andWhere('s.id IN (:signalement_ids)')
-                ->setParameter('signalement_ids', $signalementIds);
-        }
-
-        if (!empty($options['isEmailAVerifier'])) {
-            $signalementIds = $this->findIdsNonDeliverableSignalements($user, null);
-            $qb->andWhere('s.id IN (:signalement_ids)')
-                ->setParameter('signalement_ids', $signalementIds);
-        }
-
-        if (!empty($options['isDossiersSansAgent'])) {
-            $params = new TabQueryParameters();
-            $signalementUuids = $this->getSignalementsUuidSansAgent($params);
-            $qb->andWhere('s.uuid IN (:signalement_uuids)')
-                ->setParameter('signalement_uuids', $signalementUuids);
-        }
-
-        if (isset($options['sortBy'])) {
-            switch ($options['sortBy']) {
-                case 'reference':
-                    $qb
-                        ->orderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', 1) AS UNSIGNED)', $options['orderBy'])
-                        ->addOrderBy('CAST(SUBSTRING_INDEX(s.reference, \'-\', -1) AS UNSIGNED)', $options['orderBy']);
-                    break;
-                case 'nomOccupant':
-                    $qb->orderBy('s.nomOccupant', $options['orderBy']);
-                    break;
-                case 'createdAt':
-                    $qb->orderBy('s.createdAt', $options['orderBy']);
-                    break;
-                case 'lastSuiviAt':
-                    $qb->orderBy('s.lastSuiviAt', $options['orderBy']);
-                    break;
-                case 'villeOccupant':
-                    $qb->orderBy('s.villeOccupant', $options['orderBy']);
-                    break;
-                default:
-                    $qb->orderBy('s.createdAt', 'DESC');
-            }
-        } else {
-            $qb->orderBy('s.createdAt', 'DESC');
-        }
-
-        return $qb;
-    }
-
-    /**
-     * @param array<string, mixed> $options
-     *
-     * @throws Exception
-     */
-    public function findSignalementAffectationIterable(User $user, array $options): \Generator
-    {
-        // temporary increase the group_concat_max_len to a higher value, for texts in GROUP_CONCAT
-        $connection = $this->getEntityManager()->getConnection();
-        $sql = 'SET SESSION group_concat_max_len=32505856';
-        $connection->prepare($sql)->executeQuery();
-
-        $qb = $this->findSignalementAffectationQueryBuilder($user, $options);
-
-        $qb->addSelect(
-            's.details,
-            s.telOccupant,
-            s.telOccupantBis,
-            s.mailOccupant,
-            s.cpOccupant,
-            s.inseeOccupant,
-            e.nom as epciNom,
-            s.etageOccupant,
-            s.escalierOccupant,
-            s.numAppartOccupant,
-            s.adresseAutreOccupant,
-            s.isProprioAverti,
-            s.nbOccupantsLogement,
-            s.nbEnfantsM6,
-            s.nbEnfantsP6,
-            s.isAllocataire,
-            s.numAllocataire,
-            s.natureLogement,
-            s.superficie,
-            s.nomProprio,
-            s.isLogementSocial,
-            s.isPreavisDepart,
-            s.isRelogement,
-            s.nomDeclarant,
-            s.mailDeclarant,
-            s.structureDeclarant,
-            s.lienDeclarantOccupant,
-            s.modifiedAt,
-            s.closedAt,
-            s.motifCloture,
-            s.comCloture,
-            s.geoloc,
-            s.typeCompositionLogement,
-            s.informationProcedure,
-            s.debutDesordres,
-            GROUP_CONCAT(DISTINCT situations.label SEPARATOR :group_concat_separator_1) as oldSituations,
-            GROUP_CONCAT(DISTINCT criteres.label SEPARATOR :group_concat_separator_1) as oldCriteres,
-            GROUP_CONCAT(DISTINCT desordreCategories.label SEPARATOR :group_concat_separator_1) as listDesordreCategories,
-            GROUP_CONCAT(DISTINCT desordreCriteres.labelCritere SEPARATOR :group_concat_separator_1) as listDesordreCriteres,
-            GROUP_CONCAT(DISTINCT tags.label SEPARATOR :group_concat_separator_1) as etiquettes,
-            MAX(vli.occupantPresent) AS interventionOccupantPresent,
-            MAX(vli.concludeProcedure) AS interventionConcludeProcedure,
-            MAX(vli.details) AS interventionDetails,
-            MAX(vli.status) AS interventionStatus,
-            MAX(vli.scheduledAt) AS interventionScheduledAt,
-            MAX(vli.nbVisites) AS interventionNbVisites
-            '
-        )->leftJoin('s.situations', 'situations')
-            ->leftJoin('s.criteres', 'criteres')
-            ->leftJoin('s.desordrePrecisions', 'desordrePrecisions')
-            ->leftJoin('desordrePrecisions.desordreCritere', 'desordreCriteres')
-            ->leftJoin('desordreCriteres.desordreCategorie', 'desordreCategories')
-            ->leftJoin('s.tags', 'tags')
-            ->leftJoin(ViewLatestIntervention::class, 'vli', 'WITH', 'vli.signalementId = s.id')
-            ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
-            ->setParameter('group_concat_separator_1', SignalementExport::SEPARATOR_GROUP_CONCAT)
-            ->leftJoin(Commune::class, 'c', Join::WITH, 'c.codePostal = s.cpOccupant AND c.codeInsee = s.inseeOccupant')
-            ->leftJoin('c.epci', 'e')
-        ;
-
-        return $qb->getQuery()->toIterable();
     }
 
     /**
@@ -2264,9 +2005,9 @@ class SignalementRepository extends ServiceEntityRepository
          */ function (array $row): TabDossier {
             return new TabDossier(
                 uuid: $row['uuid'],
-                reference: $row['reference'],
                 nomDeclarant: $row['nom_occupant'],
                 prenomDeclarant: $row['prenom_occupant'],
+                reference: $row['reference'],
                 adresse: $row['fullAddress'],
                 nbRelanceDossier: (int) $row['nb_relances'],
                 premiereRelanceDossierAt: new \DateTimeImmutable($row['first_relance_at']),
@@ -2288,7 +2029,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return int[]
      */
-    private function getSignalementsIdAvecRelancesSansReponse(): array
+    public function getSignalementsIdAvecRelancesSansReponse(): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
