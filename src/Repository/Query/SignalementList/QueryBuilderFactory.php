@@ -102,11 +102,7 @@ readonly class QueryBuilderFactory
             $qb->andWhere('s.bailleur = :bailleur')
                 ->setParameter('bailleur', $options['bailleurSocial']);
         }
-        $qb->setParameter('statusList', [
-            SignalementStatus::ARCHIVED,
-            SignalementStatus::DRAFT,
-            SignalementStatus::DRAFT_ARCHIVED,
-        ]);
+        $qb->setParameter('statusList', SignalementStatus::excludedStatuses());
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
 
         if (!empty($options['relanceUsagerSansReponse'])) {
@@ -126,6 +122,13 @@ readonly class QueryBuilderFactory
             $signalementIds = $signalementRepository->findIdsNonDeliverableSignalements($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
+        }
+
+        if (!empty($options['isDossiersSansAgent'])) {
+            $params = new TabQueryParameters();
+            $signalementUuids = $this->getSignalementsUuidSansAgent($params);
+            $qb->andWhere('s.uuid IN (:signalement_uuids)')
+                ->setParameter('signalement_uuids', $signalementUuids);
         }
 
         if (isset($options['sortBy'])) {

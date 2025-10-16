@@ -14,6 +14,7 @@ class MapGeoDataQueryTest extends KernelTestCase
 
     /**
      * @dataProvider provideSearchWithGeoData
+     *
      * @param array<string, mixed> $options
      */
     public function testGetData(string $email, array $options, int $nbResult): void
