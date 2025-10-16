@@ -21,6 +21,8 @@ security:
                 property: email
         app_signalement_user_provider:
             id: App\Security\Provider\SignalementUserProvider
+        app_signalement_bailleur_provider:
+            id: App\Security\Provider\SignalementBailleurProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -47,6 +49,16 @@ security:
                 path: app_logout_signalement_user
                 target: app_logout_signalement_user_success
                 invalidate_session: false
+        login_bailleur:
+            pattern: ^/(login-bailleur|dossier-bailleur|logout-bailleur)
+            provider: app_signalement_bailleur_provider
+            custom_authenticator: App\Security\Authenticator\LoginBailleurAuthenticator
+            login_throttling:
+                max_attempts: 5
+                interval: '%env(FORMS_SUBMIT_LIMITER_INTERVAL)%'
+            logout:
+                path: app_logout_signalement_bailleur
+
         main:
             lazy: true
             stateless: false
@@ -95,7 +107,8 @@ security:
         - { path: ^/suivre-ma-procedure/, roles: ROLE_SUIVI_SIGNALEMENT }
         - { path: ^/show-export-pdf-usager/, roles: ROLE_SUIVI_SIGNALEMENT }
         - { path: ^/signalement/[^/]+/file/, roles: ROLE_SUIVI_SIGNALEMENT }
-
+        # FO bailleur authentication
+        - { path: ^/dossier-bailleur/, roles: ROLE_BAILLEUR_SIGNALEMENT }
 
 when@prod:
     security:

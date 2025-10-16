@@ -33,6 +33,10 @@ enum SuiviCategory: string
     case MESSAGE_ESABORA_SCHS = 'MESSAGE_ESABORA_SCHS';
     case MESSAGE_PARTNER = 'MESSAGE_PARTNER';
 
+    // cas liées à l'injonction bailleur (virtuel pour le moment)
+    case INJONCTION_BAILLEUR_EXPIREE = 'INJONCTION_BAILLEUR_EXPIREE';
+    case INJONCTION_BAILLEUR_REPONSE_OK = 'INJONCTION_BAILLEUR_REPONSE_OK';
+
     public function label(): string
     {
         return self::getLabelList()[$this->name];
@@ -70,6 +74,17 @@ enum SuiviCategory: string
             'DEMANDE_POURSUITE_PROCEDURE' => 'Demande de poursuite de procédure par l\'usager',
             'MESSAGE_ESABORA_SCHS' => 'Message Esabora SCHS',
             'MESSAGE_PARTNER' => 'Suivi du partenaire',
+            'INJONCTION_BAILLEUR_EXPIREE' => 'Injonction bailleur expirée',
+            'INJONCTION_BAILLEUR_REPONSE_OK' => 'Réponse favorable à l\'injonction bailleur',
+        ];
+    }
+
+    /** @return array<SuiviCategory> */
+    public static function injonctionBailleurCategories(): array
+    {
+        return [
+            self::INJONCTION_BAILLEUR_EXPIREE,
+            self::INJONCTION_BAILLEUR_REPONSE_OK,
         ];
     }
 }

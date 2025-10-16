@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User;
+use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
 use App\Service\Gouv\ProConnect\ProConnectAuthentication;
 use App\Service\Gouv\ProConnect\ProConnectContext;
@@ -47,6 +48,14 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
                     'home',
                 )
             );
+            $event->setResponse($response);
+
+            return;
+        }
+        if ($user instanceof SignalementBailleur) {
+            $this->logger->info('App bailleur logout');
+            $this->clearSession($session);
+            $response = new RedirectResponse($this->urlGenerator->generate('app_login_bailleur'));
             $event->setResponse($response);
 
             return;

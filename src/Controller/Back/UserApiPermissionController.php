@@ -113,7 +113,6 @@ final class UserApiPermissionController extends AbstractController
     public function add(
         Request $request,
         EntityManagerInterface $entityManager,
-        UserManager $userManager,
         UserPasswordHasherInterface $hasher,
     ): Response {
         $user = new User();
@@ -125,7 +124,7 @@ final class UserApiPermissionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $userManager->getComplexRandomPassword();
+            $password = UserManager::getComplexRandomPassword();
             $passwordHashed = $hasher->hashPassword($user, $password);
             $user->setPassword($passwordHashed);
 

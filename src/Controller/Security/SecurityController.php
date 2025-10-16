@@ -6,11 +6,13 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
+use App\Security\User\SignalementBailleur;
 use App\Service\Files\ImageVariantProvider;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -137,6 +139,26 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    #[Route('/login-bailleur', name: 'app_login_bailleur')]
+    public function loginBailleur(
+        AuthenticationUtils $authenticationUtils,
+        #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR')]
+        bool $featureInjonctionBailleur,
+    ): Response {
+        if (!$featureInjonctionBailleur) {
+            throw $this->createNotFoundException();
+        }
+        $user = $this->getUser();
+        if ($user && $user instanceof SignalementBailleur) {
+            return $this->redirectToRoute('front_dossier_bailleur');
+        }
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        return $this->render('security/login_bailleur.html.twig', [
+            'error' => $error,
+        ]);
+    }
+
     /**
      * Use only for exporting pdf signalement and using in old description suivi
      * Use @see FileController::showFile() instead.
@@ -212,5 +234,11 @@ class SecurityController extends AbstractController
     public function logoutSignalementUserSuccess(): Response
     {
         return $this->redirectToRoute('home');
+    }
+
+    #[Route('/logout-bailleur', name: 'app_logout_signalement_bailleur')]
+    public function logoutSignalementBailleur(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }
