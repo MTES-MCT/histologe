@@ -2,6 +2,10 @@
     <span class="confetti"></span>
     Demande de fermeture enregistrée
 {% else %}
-    <span class="confetti {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}active{% endif %}"></span>
+    <span class="confetti {% if signalement.statut in [
+        enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE, 
+        enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR
+    ] %}active{% endif %}">
+    </span>
     {{ signalement.statut.label }}
 {% endif %}

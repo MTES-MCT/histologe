@@ -69,9 +69,11 @@ class SignalementFoVoter extends Voter
 
     private function canUsagerEdit(Signalement $signalement): bool
     {
-        if (SignalementStatus::ACTIVE === $signalement->getStatut()
-            || SignalementStatus::NEED_VALIDATION === $signalement->getStatut()
-        ) {
+        if (in_array($signalement->getStatut(), [
+            SignalementStatus::ACTIVE,
+            SignalementStatus::NEED_VALIDATION,
+            SignalementStatus::INJONCTION_BAILLEUR,
+        ])) {
             return true;
         }
 

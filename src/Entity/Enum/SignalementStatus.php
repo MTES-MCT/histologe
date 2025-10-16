@@ -56,14 +56,18 @@ enum SignalementStatus: string
     }
 
     /** @return array<SignalementStatus> */
-    public static function excludedStatuses(): array
+    public static function excludedStatuses(bool $includeInjonctionBailleur = true): array
     {
-        return [
+        $list = [
             self::ARCHIVED,
             self::DRAFT,
             self::DRAFT_ARCHIVED,
-            self::INJONCTION_BAILLEUR,
         ];
+        if ($includeInjonctionBailleur) {
+            $list[] = self::INJONCTION_BAILLEUR;
+        }
+
+        return $list;
     }
 
     /** @return array<string> */
