@@ -221,20 +221,7 @@
                 "label": "Suivant",
                 "slug": "coordonnees_bailleur_next",
                 "action": "goto.save:info_procedure_bail",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "conditional": {
-                  "show": "!formStore.shouldInjonctionBailleurSuggested()"
-                }
-              },
-              {
-                "type": "SignalementFormButton",
-                "label": "Suivant (injonction bailleur)",
-                "slug": "coordonnees_bailleur_next",
-                "action": "goto.save:injonction_bailleur",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
-                "conditional": {
-                  "show": "formStore.shouldInjonctionBailleurSuggested()"
-                }
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
                 "type": "SignalementFormButton",
@@ -248,74 +235,6 @@
                 "label": "Précédent",
                 "slug": "coordonnees_bailleur_previous",
                 "action": "goto:vos_coordonnees_occupant",
-                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  },
-  {
-    "type": "SignalementFormScreen",
-    "label": "",
-    "slug": "injonction_bailleur",
-    "screenCategory": "Injonction bailleur",
-    "components": {
-      "body": [
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Souhaitez-vous mettre un coup de pression sur votre bailleur avec l'injonction bailleur ?",
-          "slug": "injonction_bailleur_choice",
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            }
-          ],
-          "validate": {
-            "message": "Veuillez indiquer si vous souhaitez rentrer dans l'injonction bailleur."
-          },
-          "accessibility": {
-            "focus": true
-          }
-        },
-        {
-          "type": "SignalementFormInfo",
-          "label": "Bla bla bla bla. Na na ni, Na na na. Patati, patata",
-          "slug": "injonction_bailleur_info"
-        }
-      ],
-      "footer": [
-        {
-          "type": "SignalementFormSubscreen",
-          "slug": "info_procedure_bail_footer",
-          "customCss": "button-group-footer",
-          "components": {
-            "body": [
-              {
-                "type": "SignalementFormButton",
-                "label": "Suivant",
-                "slug": "injonction_bailleur_next",
-                "action": "goto.save:info_procedure_bail",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
-              },
-              {
-                "type": "SignalementFormButton",
-                "label": "Finir plus tard",
-                "slug": "injonction_bailleur_finish_later",
-                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
-              },
-              {
-                "type": "SignalementFormButton",
-                "label": "Précédent",
-                "slug": "injonction_bailleur_previous",
-                "action": "goto:coordonnees_bailleur",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
@@ -355,7 +274,7 @@
         {
           "type": "SignalementFormInfo",
           "label": "Avant de déposer un signalement, il est recommandé de prévenir votre bailleur. Vous pourrez le faire grâce au modèle de courrier que nous vous enverrons par e-mail dès la fin de votre signalement.",
-          "slug": "info_procedure_bailleur_prevenu_info",
+          "slug": "info_procedure_bailleur_prevenu_info_non",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu === 'non' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'non'"
           }
@@ -363,7 +282,7 @@
         {
           "type": "SignalementFormInfo",
           "label": "Avant de déposer un signalement, il est obligatoire pour les locataires du parc social de prévenir le bailleur. Vous pourrez le faire grâce au modèle de courrier que vous pourrez télécharger à la page suivante ou en le sollicitant par les canaux de communication habituels.",
-          "slug": "info_procedure_bailleur_prevenu_info",
+          "slug": "info_procedure_bailleur_prevenu_info_oui",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu === 'non' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
           }
@@ -458,7 +377,7 @@
                 "action": "goto.save:zone_concernee",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "(formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() >= 2) || formStore.data.signalement_concerne_logement_social_autre_tiers === 'non'"
+                  "show": "!formStore.shouldInjonctionBailleurSuggested() && ((formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() >= 2) || formStore.data.signalement_concerne_logement_social_autre_tiers === 'non')"
                 }
               },
               {
@@ -468,7 +387,17 @@
                 "action": "goto.save:prevenir_bailleur_info",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "(formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui') && ((formStore.data.info_procedure_bailleur_prevenu === 'non') || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() < 2))"
+                  "show": "!formStore.shouldInjonctionBailleurSuggested() && ((formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui') && ((formStore.data.info_procedure_bailleur_prevenu === 'non') || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() < 2)))"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant (injonction bailleur)",
+                "slug": "info_procedure_bail_next_injonction_bailleur",
+                "action": "goto.save:injonction_bailleur",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.shouldInjonctionBailleurSuggested()"
                 }
               },
               {
@@ -526,6 +455,131 @@
                 "label": "Fermer",
                 "slug": "prevenir_bailleur_info_close",
                 "customCss": "fr-btn--icon-left fr-icon-close-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "",
+    "slug": "injonction_bailleur",
+    "screenCategory": "Injonction bailleur",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormInfo",
+          "label": "Signal Logement peut vous aider à accélérer la résolution de votre dossier en contactant directement votre bailleur pour l'encourager à engager des travaux dans votre logement. Si celui-ci ne répond pas, nous transmettrons automatiquement votre dossier aux services compétents.",
+          "slug": "injonction_bailleur_info"
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Souhaitez-vous que Signal Logement contacte votre bailleur afin d'accélérer la résolution ?",
+          "slug": "injonction_bailleur_choice",
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si vous souhaitez rentrer dans l'injonction bailleur."
+          },
+          "accessibility": {
+            "focus": true
+          }
+        },
+        {
+          "type": "SignalementFormWarning",
+          "label": "Afin de vous aider dans cette démarche, merci de nous donner les informations les plus précises possibles sur votre bailleur. Veuillez au moins saisir son adresse postale ou son adresse électronique.",
+          "slug": "injonction_bailleur_oui_warning",
+          "conditional": {
+            "show": "formStore.data.injonction_bailleur_choice === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormEmailfield",
+          "label": "Adresse e-mail (facultatif)",
+          "slug": "coordonnees_bailleur_email",
+          "description": "Format attendu : nom@domaine.fr",
+          "validate": {
+            "message": "Veuillez renseigner une adresse e-mail valide.",
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide.",
+            "required": false
+          },
+          "accessibility": {
+            "name": "mail",
+            "autocomplete": "email"
+          },
+          "conditional": {
+            "show": "formStore.data.injonction_bailleur_choice === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormPhonefield",
+          "label": "Téléphone (facultatif)",
+          "slug": "coordonnees_bailleur_tel",
+          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
+          "validate": {
+            "required": false
+          },
+          "accessibility": {
+            "name": "telephone",
+            "autocomplete": "tel-national"
+          },
+          "conditional": {
+            "show": "formStore.data.injonction_bailleur_choice === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormAddress",
+          "label": "Adresse postale (facultatif)",
+          "slug": "coordonnees_bailleur_adresse",
+          "description": "Format attendu : Tapez l'adresse puis sélectionnez-la dans la liste. Si elle n'apparait pas, cliquez sur Saisir une adresse manuellement.",
+          "validate": {
+            "required": false
+          },
+          "conditional": {
+            "show": "formStore.data.injonction_bailleur_choice === 'oui'"
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "injonction_bailleur_footer",
+          "customCss": "button-group-footer",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "injonction_bailleur_next",
+                "action": "goto.save:zone_concernee",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.data.injonction_bailleur_choice === 'non' || (formStore.data.injonction_bailleur_choice === 'oui' && (formStore.data.coordonnees_bailleur_email !== '' || (formStore.data.coordonnees_bailleur_adresse !== '' && formStore.data.coordonnees_bailleur_adresse !== undefined)))"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Finir plus tard",
+                "slug": "injonction_bailleur_finish_later",
+                "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
+                "action": "finish.save:/"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "injonction_bailleur_previous",
+                "action": "goto:info_procedure_bail",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
           }
@@ -634,9 +688,22 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
-                "slug": "zone_concernee_zone_previous",
+                "slug": "zone_concernee_zone_previous_info_procedure",
                 "action": "goto:info_procedure_bail",
-                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+                "conditional": {
+                  "show": "!formStore.shouldInjonctionBailleurSuggested()"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent (injonction bailleur)",
+                "slug": "zone_concernee_zone_previous_injonction",
+                "action": "goto:injonction_bailleur",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+                "conditional": {
+                  "show": "formStore.shouldInjonctionBailleurSuggested()"
+                }
               }
             ]
           }
