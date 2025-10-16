@@ -356,13 +356,12 @@ class SignalementVisitesController extends AbstractController
         }
 
         $fileName = $this->getUploadedFile($request, 'visite-edit', $uploadHandler, $filenameGenerator);
-        $isUsagerNotified = !empty($requestData['notifyUsager']);
 
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestData['intervention'],
             details: $requestData['details'],
             concludeProcedure: $requestData['concludeProcedure'] ?? [],
-            isUsagerNotified: $isUsagerNotified,
+            isUsagerNotified: true,
             document: $fileName,
         );
         /** @var User $user */
@@ -375,7 +374,7 @@ class SignalementVisitesController extends AbstractController
             $eventDispatcher->dispatch(new InterventionEditedEvent(
                 $intervention,
                 $user,
-                $isUsagerNotified,
+                true,
                 $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             ), InterventionEditedEvent::NAME);
         } else {
