@@ -72,14 +72,14 @@ class QueryBuilderFactoryTest extends KernelTestCase
                 ['isUserPartner' => true, 'isPartnerAdmin' => false, 'isTerritoryAdmin' => false, 'partners' => [], 'territories' => []],
                 ['statuses' => [SignalementStatus::ACTIVE->value], 'sortBy' => 'reference', 'orderBy' => 'ASC'],
                 ['LEFT JOIN s.affectations', 'LEFT JOIN a.partner', 's.id IN'],
-                ['statusList' => [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]],
+                ['statusList' => SignalementStatus::excludedStatuses()],
             ],
             'Partner admin with bailleur' => [
                 ['isUserPartner' => false, 'isPartnerAdmin' => true, 'isTerritoryAdmin' => false, 'partners' => [], 'territories' => []],
                 ['bailleurSocial' => 'LOGEMENT1', 'statuses' => [SignalementStatus::ACTIVE->value]],
                 ['AND s.bailleur = :bailleur', 'LEFT JOIN s.affectations', 'DISTINCT IDENTITY(a2.signalement)'],
                 [
-                    'statusList' => [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED],
+                    'statusList' => SignalementStatus::excludedStatuses(),
                     'bailleur' => 'LOGEMENT1',
                     'partners' => new ArrayCollection([]),
                     'statut_affectation' => [SignalementStatus::ACTIVE->mapAffectationStatus()],
@@ -90,7 +90,7 @@ class QueryBuilderFactoryTest extends KernelTestCase
                 [],
                 ['s.territory IN (:territories)'],
                 [
-                    'statusList' => [SignalementStatus::ARCHIVED, SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED],
+                    'statusList' => SignalementStatus::excludedStatuses(),
                     'territories' => [1, 2],
                 ],
             ],

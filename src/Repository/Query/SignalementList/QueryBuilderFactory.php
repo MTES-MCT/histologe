@@ -126,7 +126,7 @@ readonly class QueryBuilderFactory
 
         if (!empty($options['isDossiersSansAgent'])) {
             $params = new TabQueryParameters();
-            $signalementUuids = $this->getSignalementsUuidSansAgent($params);
+            $signalementUuids = $signalementRepository->getSignalementsUuidSansAgent($params);
             $qb->andWhere('s.uuid IN (:signalement_uuids)')
                 ->setParameter('signalement_uuids', $signalementUuids);
         }

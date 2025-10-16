@@ -30,7 +30,7 @@ class MapGeoDataQuery
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
             ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses())
-            ->setFirstResult($firstResult)
+            ->setFirstResult($offset)
             ->setMaxResults(self::MARKERS_PAGE_SIZE);
 
         return $qb->getQuery()->getArrayResult();

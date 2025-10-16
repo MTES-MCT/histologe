@@ -83,8 +83,9 @@ class ExportIterableQuery
             '
         )->leftJoin('s.situations', 'situations')
             ->leftJoin('s.criteres', 'criteres')
-            ->leftJoin('s.desordreCategories', 'desordreCategories')
-            ->leftJoin('s.desordreCriteres', 'desordreCriteres')
+            ->leftJoin('s.desordrePrecisions', 'desordrePrecisions')
+            ->leftJoin('desordrePrecisions.desordreCritere', 'desordreCriteres')
+            ->leftJoin('desordreCriteres.desordreCategorie', 'desordreCategories')
             ->leftJoin('s.tags', 'tags')
             ->leftJoin(ViewLatestIntervention::class, 'vli', 'WITH', 'vli.signalementId = s.id')
             ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
