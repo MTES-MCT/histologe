@@ -33,6 +33,8 @@ class SuiviManager extends Manager
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
         private readonly bool $featureNewDashboard,
+        #[Autowire(env: 'FEATURE_EDITION_SUIVI')]
+        private readonly bool $featureEditionSuivi,
         string $entityName = Suivi::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -68,6 +70,9 @@ class SuiviManager extends Manager
             ->setCategory($category);
         if (!empty($createdAt)) {
             $suivi->setCreatedAt($createdAt);
+        }
+        if (SuiviCategory::MESSAGE_PARTNER === $suivi->getCategory() && $this->featureEditionSuivi) {
+            $suivi->setWaitingNotification(true);
         }
         foreach ($files as $file) {
             $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());

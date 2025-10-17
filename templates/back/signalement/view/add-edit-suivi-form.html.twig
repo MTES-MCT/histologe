@@ -1,0 +1,24 @@
+{{ form_start(form, {'attr': {'id': formId, 'data-submit-type':'formData'}}) }}
+<div class="fr-container">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12">
+            <div class="fr-input-group">
+                <span class="no-field-errors"></span>
+            </div>
+            {{ form_errors(form) }}
+            {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
+                <p class="fr-badge fr-badge--error">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
+            {% endif %}
+        </div>
+        <div class="fr-col-12">
+            {{ form_row(form.isPublic) }}
+        </div>
+        <div class="fr-col-12 fr-col-md-7" id="suivi-description">
+            {{ form_row(form.description) }}
+        </div>
+        <div class="fr-col-12 fr-col-md-5" id="suivi-files">
+            {{ form_row(form.files) }}
+        </div>
+    </div>
+</div>
+{{ form_end(form) }}

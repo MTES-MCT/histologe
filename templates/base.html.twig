@@ -140,19 +140,6 @@
     <script src="{{ asset('build/popper/umd/popper.min.js') }}"></script>
     <script src="{{ asset('build/tippy/tippy.umd.min.js') }}"></script>
     <script src="{{ asset('build/tinymce/tinymce.min.js') }}"></script>
-
-    <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
-        tinymce.init({
-            selector: 'textarea.editor',
-            browser_spellcheck: true,
-            license_key: 'gpl',
-            plugins: 'lists',
-            toolbar: 'undo redo | styleselect | bold italic | numlist bullist | mybutton',
-            menubar: false,
-            height: 320,
-        });
-    </script>
-
     <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
         {% if isClosedForMe or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
         document?.querySelector('#signalement-{{ signalement.id }}-content').querySelectorAll('button:not(.reopen,.reaffect,.img-box,.fr-accordion__btn,.keep-when-signalement-closed),.fr-btn:not(.reopen,.reaffect,.img-box,.fr-fi-file-pdf-fill,.keep-when-signalement-closed)').forEach(input => {

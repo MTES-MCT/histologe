@@ -117,7 +117,7 @@ class NotificationAndMailSender
             $recipients = new ArrayCollection(array_merge($partnerRecipients->toArray(), $adminRecipients->toArray()));
         }
 
-        $this->sendMail($recipients, $mailerType);
+        $this->sendMail($recipients, $mailerType, $suivi);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
     }
 
@@ -315,10 +315,10 @@ class NotificationAndMailSender
     /**
      * @param ArrayCollection<int, mixed> $recipients
      */
-    private function sendMail(ArrayCollection $recipients, ?NotificationMailerType $mailType): void
+    private function sendMail(ArrayCollection $recipients, ?NotificationMailerType $mailType, ?Suivi $suivi = null): void
     {
         if (!$recipients->isEmpty() && $mailType) {
-            $recipientsEmails = $this->getRecipientsFilteredEmail($recipients);
+            $recipientsEmails = $this->getRecipientsFilteredEmail($recipients, $suivi);
 
             if (!empty($recipientsEmails)) {
                 $this->notificationMailerRegistry->send(
@@ -416,13 +416,15 @@ class NotificationAndMailSender
      *
      * @return array<int, string>
      */
-    private function getRecipientsFilteredEmail(ArrayCollection $recipients): array
+    private function getRecipientsFilteredEmail(ArrayCollection $recipients, ?Suivi $suivi = null): array
     {
         $copyRecipients = clone $recipients;
         /** @var ?User $user */
         $user = $this->security->getUser();
         if ($user) {
             $copyRecipients->removeElement($user);
+        } elseif ($suivi && $suivi->getCreatedBy()) {
+            $copyRecipients->removeElement($suivi->getCreatedBy());
         }
 
         $recipientsEmails = [];

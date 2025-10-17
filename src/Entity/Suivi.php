@@ -114,15 +114,19 @@ class Suivi implements EntityHistoryInterface
     #[ORM\ManyToOne]
     private ?Partner $partner = null;
 
+    #[ORM\Column]
+    private ?bool $waitingNotification = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->isPublic = false;
         $this->isSanitized = true;
         $this->suiviFiles = new ArrayCollection();
+        $this->waitingNotification = false;
     }
 
-    public function setSuiviTransformerService(SuiviTransformerService $suiviTransformerService): void
+    public function setSuiviTransformerService(?SuiviTransformerService $suiviTransformerService): void
     {
         $this->suiviTransformerService = $suiviTransformerService;
     }
@@ -400,6 +404,18 @@ class Suivi implements EntityHistoryInterface
     public function setPartner(?Partner $partner): static
     {
         $this->partner = $partner;
+
+        return $this;
+    }
+
+    public function isWaitingNotification(): ?bool
+    {
+        return $this->waitingNotification;
+    }
+
+    public function setWaitingNotification(?bool $waitingNotification): static
+    {
+        $this->waitingNotification = $waitingNotification;
 
         return $this;
     }

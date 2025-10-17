@@ -1,27 +1,24 @@
-<dialog aria-labelledby="fr-modal-add-suivi-title" id="fr-modal-add-suivi" class="fr-modal">
+<dialog aria-labelledby="fr-modal-edit-suivi-title" id="fr-modal-edit-suivi" class="fr-modal">
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-10 fr-col-lg-10">
                 <div class="fr-modal__body">
                     <div class="fr-modal__header">
-                        <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-add-suivi">Fermer</button>
+                       <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-suivi">Fermer</button>
                     </div>
                     <div class="fr-modal__content">
-                        <h1 id="fr-modal-add-suivi-title" class="fr-modal__title">
-                            Ajouter un suivi
-                        </h1>
-                        {% include "back/signalement/view/add-edit-suivi-form.html.twig" with {'form': addSuiviForm, 'formId': 'signalement-add-suivi-form'} %}
+                        <h1 id="fr-modal-edit-suivi-title" class="fr-modal__title">Modifier le suivi</h1>
+                        <div id="fr-modal-edit-suivi-form-container">Chargement en cours...</div>
                     </div>
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <li>
-                                <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line"
-                                        form="signalement-add-suivi-form" id="signalement-add-suivi-submit">
-                                    Enregistrer le suivi interne
+                                <button class="fr-btn fr-icon-check-line" form="fr-modal-edit-suivi-form" type="submit">
+                                    Valider
                                 </button>
                             </li>
                             <li>
-                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-add-suivi" type="button">
+                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-edit-suivi" type="button">
                                     Annuler
                                 </button>
                             </li>

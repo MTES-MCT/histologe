@@ -59,6 +59,10 @@
     <div data-ajax-form>
         {% include 'back/signalement/view/edit-modals/edit-file.html.twig' %}
     </div>
+    <div data-ajax-form>
+        {% include 'back/signalement/view/edit-modals/edit-suivi.html.twig' %}
+    </div>
+    {% include '_partials/_modal_historique_affectation.html.twig' %}
 
     {% if is_granted('SIGN_REOPEN', signalement) %}
         {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}

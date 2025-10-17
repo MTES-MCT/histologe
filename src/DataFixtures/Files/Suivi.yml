@@ -94,6 +94,7 @@ suivis:
   signalement: "2024-12"
   type: 3
   category: "MESSAGE_PARTNER"
+  force_notifications: 1
 - 
   created_by: api-02@signal-logement.fr
   description: "On avance sur le dossier, est-ce que d'autres action sont en cours ?"
@@ -101,6 +102,7 @@ suivis:
   signalement: "2024-12"
   type: 3
   category: "MESSAGE_PARTNER"
+  force_notifications: 1
 - 
   created_by: api-02@signal-logement.fr
   description: "Le signalement a été cloturé pour tous les partenaires avec le motif suivant <br /><strong>Refus de visite</strong><br /><strong>Desc. : </strong>bla bla bla<br />"

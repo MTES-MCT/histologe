@@ -33,7 +33,7 @@ class SuiviCreateControllerTest extends WebTestCase
     /**
      * @dataProvider provideData
      */
-    public function testCreateSuivi(string $signalementUuid, bool $notifyUsager, int $nbMailSent): void
+    public function testCreateSuivi(string $signalementUuid, bool $notifyUsager): void
     {
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $firstFile = $signalement?->getFiles()?->first() ?? null;
@@ -59,7 +59,9 @@ class SuiviCreateControllerTest extends WebTestCase
             $suiviCreated = $signalement->getSuivis()->last();
 
             $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
-            $this->assertEmailCount($nbMailSent);
+            $this->assertTrue($suiviCreated->isWaitingNotification());
+            $this->assertEquals($notifyUsager, $suiviCreated->getIsPublic());
+            $this->assertEmailCount(0);
 
             $crawler = new Crawler($suiviCreated->getDescription());
             $links = $crawler->filter('a.fr-link');
@@ -97,9 +99,9 @@ class SuiviCreateControllerTest extends WebTestCase
 
     public function provideData(): \Generator
     {
-        yield 'test create suivi with usager notification' => ['00000000-0000-0000-2022-000000000006', true, 2];
-        yield 'test create suivi with no usager notification' => ['00000000-0000-0000-2022-000000000006', false, 1, '00000000-0000-0000-2022-000000000006'];
-        yield 'test create suivi with unknown signalement' => ['0000', false, 1];
+        yield 'test create suivi with usager notification' => ['00000000-0000-0000-2022-000000000006', true];
+        yield 'test create suivi with no usager notification' => ['00000000-0000-0000-2022-000000000006', false];
+        yield 'test create suivi with unknown signalement' => ['0000', false];
     }
 
     public function provideDataFailure403(): \Generator

@@ -5,12 +5,14 @@ namespace App\DataFixtures\Loader;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
+use App\Event\SuiviCreatedEvent;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -21,6 +23,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         private readonly UserRepository $userRepository,
         private readonly ParameterBagInterface $parameterBag,
         private readonly SuiviManager $suiviManager,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -97,6 +100,11 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             context: $context,
             flush: false,
         );
+        if (isset($row['force_notifications']) && $row['force_notifications']) {
+            $suivi->setWaitingNotification(false);
+            $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME); // @phpstan-ignore-line
+        }
+
         $manager->persist($suivi);
     }
 

@@ -189,7 +189,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testDeleteSuivi(): void
+    public function testDeleteSuiviLogical(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
 
@@ -198,6 +198,8 @@ class SignalementActionControllerTest extends WebTestCase
 
         $description = 'Un petit message de rappel afin d&#039;y revenir plus tard';
         $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
+        $suivi->setCreatedAt(new \DateTimeImmutable('-2 hours'));
+        $this->client->getContainer()->get('doctrine')->getManager()->flush();
 
         $this->client->request(
             'POST',
@@ -214,6 +216,109 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertNotEquals($description, $suivi->getDescription());
         $this->assertStringContainsString(Suivi::DESCRIPTION_DELETED, $suivi->getDescription());
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+    }
+
+    public function testDeleteSuiviPhysical(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000006']);
+
+        $route = $this->router->generate('back_signalement_delete_suivi', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $description = 'Un petit message de rappel afin d&#039;y revenir plus tard';
+        $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
+        $suivi->setCreatedAt(new \DateTimeImmutable('-2 minutes'));
+        $this->client->getContainer()->get('doctrine')->getManager()->flush();
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'suivi' => $suivi->getId(),
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_suivi_'.$signalement->getId()),
+            ]
+        );
+
+        $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
+        $this->assertNull($suivi);
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+    }
+
+    public function testEditSuiviSuccess(): void
+    {
+        $description = 'Un petit message de rappel afin d&#039;y revenir plus tard';
+        $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
+        $suivi->setCreatedAt(new \DateTimeImmutable('-2 minutes'));
+        $this->client->getContainer()->get('doctrine')->getManager()->flush();
+
+        $suiviId = $suivi->getId();
+        $route = $this->router->generate('back_signalement_edit_suivi', ['suivi' => $suiviId]);
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'add_suivi' => [
+                    'isPublic' => '1',
+                    'description' => 'Un message de suivi modifié',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_suivi'),
+                ],
+            ]
+        );
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertResponseStatusCodeSame(200);
+        $suivi = $this->suiviRepository->find($suiviId);
+        $this->assertEquals('Un message de suivi modifié', $suivi->getDescription());
+        $this->assertTrue($suivi->getIsPublic());
+    }
+
+    public function testEditSuiviExpired(): void
+    {
+        $description = 'Un petit message de rappel afin d&#039;y revenir plus tard';
+        $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
+        $suivi->setCreatedAt(new \DateTimeImmutable('-30 minutes'));
+        $this->client->getContainer()->get('doctrine')->getManager()->flush();
+
+        $suiviId = $suivi->getId();
+        $route = $this->router->generate('back_signalement_edit_suivi', ['suivi' => $suiviId]);
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'add_suivi' => [
+                    'isPublic' => '1',
+                    'description' => 'Un message de suivi modifié',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_suivi'),
+                ],
+            ]
+        );
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testEditSuiviUnauthorized(): void
+    {
+        $suivi = $this->suiviRepository->findOneBy(['category' => 'SIGNALEMENT_IS_ACTIVE']);
+        $suivi->setCreatedAt(new \DateTimeImmutable('-2 minutes'));
+        $this->client->getContainer()->get('doctrine')->getManager()->flush();
+
+        $suiviId = $suivi->getId();
+        $route = $this->router->generate('back_signalement_edit_suivi', ['suivi' => $suiviId]);
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'add_suivi' => [
+                    'isPublic' => '1',
+                    'description' => 'Un message de suivi modifié',
+                    '_token' => $this->generateCsrfToken($this->client, 'add_suivi'),
+                ],
+            ]
+        );
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertResponseStatusCodeSame(403);
     }
 
     public function testSwitchValue(): void

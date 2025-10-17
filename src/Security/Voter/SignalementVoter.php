@@ -27,6 +27,7 @@ class SignalementVoter extends Voter
     public const string ADD_VISITE = 'SIGN_ADD_VISITE';
     public const string EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SEE_NDE = 'SIGN_SEE_NDE';
+    public const string CREATE_SUIVI = 'CREATE_SUIVI';
 
     public function __construct(
         private readonly Security $security,
@@ -48,6 +49,7 @@ class SignalementVoter extends Voter
                 self::EDIT_NDE,
                 self::SEE_NDE,
                 self::DELETE_DRAFT,
+                self::CREATE_SUIVI,
             ])
             && ($subject instanceof Signalement);
     }
@@ -83,6 +85,7 @@ class SignalementVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
+            self::CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
             default => false,
         };
     }
@@ -241,5 +244,26 @@ class SignalementVoter extends Voter
         }
 
         return false;
+    }
+
+    private function canCreateSuivi(Signalement $signalement, User $user, ?Vote $vote = null): bool
+    {
+        if (!$user->isSuperAdmin() && !$user->hasPartnerInTerritory($signalement->getTerritory())) {
+            $vote?->addReason('L\'utilisateur n\'a pas les droits suffisants dans le territoire demandé.');
+
+            return false;
+        }
+        if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
+            return false;
+        }
+        if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
+            return true;
+        }
+
+        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+
+        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+            return $affectation->getPartner()->getId() === $partner->getId() && AffectationStatus::ACCEPTED == $affectation->getStatut();
+        })->count() > 0;
     }
 }
