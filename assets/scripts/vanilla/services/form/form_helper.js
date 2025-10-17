@@ -27,13 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export function initTinyMCE(selector) {
-  tinymce.init({
-    selector: selector,
-    browser_spellcheck: true,
-    license_key: 'gpl',
-    plugins: 'lists',
-    toolbar: 'undo redo | styleselect | bold italic | numlist bullist | mybutton',
-    menubar: false,
-    height: 320,
-  });
+  const editor = document.querySelector(selector);
+  if (editor !== null) {
+    tinymce.init({
+      selector: selector,
+      browser_spellcheck: true,
+      license_key: 'gpl',
+      plugins: 'lists',
+      toolbar: 'undo redo | styleselect | bold italic | numlist bullist | mybutton',
+      menubar: false,
+      height: 320,
+    });
+  }
 }
