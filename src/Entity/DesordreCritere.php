@@ -43,6 +43,12 @@ class DesordreCritere
     #[ORM\OneToMany(mappedBy: 'desordreCritere', targetEntity: DesordrePrecision::class, orphanRemoval: true)]
     private Collection $desordrePrecisions;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $configPrecisionLibreType = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $configPrecisionLibreLabel = null;
+
     public function __construct()
     {
         $this->desordrePrecisions = new ArrayCollection();
@@ -151,6 +157,30 @@ class DesordreCritere
                 $desordrePrecision->setDesordreCritere(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getConfigPrecisionLibreType(): ?string
+    {
+        return $this->configPrecisionLibreType;
+    }
+
+    public function setConfigPrecisionLibreType(?string $configPrecisionLibreType): static
+    {
+        $this->configPrecisionLibreType = $configPrecisionLibreType;
+
+        return $this;
+    }
+
+    public function getConfigPrecisionLibreLabel(): ?string
+    {
+        return $this->configPrecisionLibreLabel;
+    }
+
+    public function setConfigPrecisionLibreLabel(?string $configPrecisionLibreLabel): static
+    {
+        $this->configPrecisionLibreLabel = $configPrecisionLibreLabel;
 
         return $this;
     }

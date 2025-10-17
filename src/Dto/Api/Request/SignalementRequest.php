@@ -852,5 +852,18 @@ class SignalementRequest implements RequestInterface
                 $context->buildViolation('La date d\'entrée dans le logement ne peut pas être dans le futur.')->atPath('dateEntreeLogement')->addViolation();
             }
         }
+        $identifiants = [];
+        foreach ($this->desordres as $index => $desordre) {
+            if (null !== $desordre->identifiant) {
+                if (in_array($desordre->identifiant, $identifiants)) {
+                    $context->buildViolation('Un désordre avec l\'identifiant "{{ identifiant }}" est déjà présent dans la liste.')
+                        ->setParameter('{{ identifiant }}', $desordre->identifiant)
+                        ->atPath("desordres[$index].identifiant")
+                        ->addViolation();
+                } else {
+                    $identifiants[] = $desordre->identifiant;
+                }
+            }
+        }
     }
 }

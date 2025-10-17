@@ -87,6 +87,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_batiment_isolation_dernier_etage_toit_sous_toit_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_isolation_dernier_etage_toit" 
     coef: 3
@@ -95,6 +96,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_batiment_isolation_dernier_etage_toit_dernier_etage"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_isolation_dernier_etage_toit" 
     coef: 3
@@ -103,6 +105,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_batiment_isolation_dernier_etage_toit_sous_combles"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_isolation_dernier_etage_toit" 
     coef: 3
@@ -111,6 +114,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_batiment_isolation_dernier_etage_toit_maison_individuelle"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_isolation_infiltration_eau" 
     coef: 2
@@ -119,6 +123,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_batiment_isolation_infiltration_eau_au_sol_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_isolation_infiltration_eau" 
     coef: 3
@@ -127,6 +132,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_batiment_isolation_infiltration_eau_sous_sol"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_isolation_infiltration_eau" 
     coef: 3
@@ -135,6 +141,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_batiment_isolation_infiltration_eau_rdc"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_isolation_infiltration_eau" 
     coef: 3
@@ -143,6 +150,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_maintenance_ascenseur" 
     coef: 6
@@ -247,6 +255,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_securite_murs_fissures" 
     coef: 2
@@ -255,6 +264,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_batiment_securite_murs_fissures_details_mur_porteur_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_securite_murs_fissures" 
     coef: 2
@@ -263,6 +273,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_batiment_securite_murs_fissures_details_mur_porteur_nsp"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_batiment_securite_balcons" 
     coef: 6
@@ -370,6 +381,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_cuisine_collective_oui"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_cuisine" 
     coef: 1
@@ -378,6 +390,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_cuisine_collective_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_douche" 
     coef: 0
@@ -386,6 +399,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_douche_collective_oui"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_douche" 
     coef: 1
@@ -394,6 +408,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_type_composition_logement_douche_collective_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_wc" 
     coef: 0
@@ -402,6 +417,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_type_composition_logement_wc_collectif_oui"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_wc" 
     coef: 1
@@ -410,6 +426,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_type_composition_logement_wc_collectif_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_wc" 
     coef: 3
@@ -419,6 +436,7 @@ desordre_precision:
     desordre_precision_slug: "desordres_type_composition_logement_wc_cuisine_ensemble"
     is_suroccupation: 0
     is_insalubrite: 1
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_suroccupation" 
     coef: 0
@@ -427,6 +445,7 @@ desordre_precision:
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_type_composition_logement_suroccupation_non_allocataire"
     is_suroccupation: 1
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_type_composition_logement_suroccupation" 
     coef: 0
@@ -435,6 +454,7 @@ desordre_precision:
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_type_composition_logement_suroccupation_allocataire"
     is_suroccupation: 1
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_eau_eau_potable" 
     coef: 3
@@ -468,6 +488,7 @@ desordre_precision:
     desordre_precision_slug: "desordres_logement_aeration_aucune_aeration_pieces_tout"
     is_suroccupation: 0
     is_insalubrite: 1
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_aeration_aucune_aeration" 
     coef: 2
@@ -500,6 +521,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_tout_nettoyage_oui"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 1
@@ -532,6 +554,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_tout_nettoyage_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 0.5
@@ -564,6 +587,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_aeration_ventilation_defectueuse_details_pieces_tout_nettoyage_nsp"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_aeration_ventilation_defectueuse" 
     coef: 0.5
@@ -596,6 +620,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_fenetres_permeables_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_chauffage_details_fenetres_permeables" 
     coef: 0.8
@@ -628,6 +653,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_chauffage_type_aucun_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_chauffage_type_aucun" 
     coef: 1.5
@@ -660,6 +686,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_difficultes_chauffage_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_chauffage_details_difficultes_chauffage" 
     coef: 0.5
@@ -692,6 +719,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'NON_DECENCE_ENERGETIQUE']
     desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_KO_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_chauffage_details_chauffage_KO" 
     coef: 1.5
@@ -924,6 +952,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_securite_sol_glissant_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_securite_sol_glissant" 
     coef: 1
@@ -956,6 +985,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_securite_sol_dangereux_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_securite_sol_dangereux" 
     coef: 2
@@ -988,6 +1018,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_securite_balcons_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_securite_balcons" 
     coef: 4
@@ -1028,6 +1059,7 @@ desordre_precision:
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_oui"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 3
@@ -1060,6 +1092,7 @@ desordre_precision:
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 2
@@ -1092,6 +1125,7 @@ desordre_precision:
     qualification: ['INSALUBRITE']
     desordre_precision_slug: "desordres_logement_securite_plomb_pieces_tout_diagnostique_nsp"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_securite_plomb" 
     coef: 2
@@ -1148,6 +1182,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_electricite_manque_prises_details_multiprises_oui"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_electricite_manque_prises" 
     coef: 0.25
@@ -1156,6 +1191,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_electricite_manque_prises_details_multiprises_non"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_electricite_manque_prises" 
     coef: 0.25
@@ -1164,6 +1200,7 @@ desordre_precision:
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_electricite_manque_prises_details_multiprises_nsp"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_cafards" 
     coef: 0
@@ -1172,6 +1209,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_cafards_details_date_before_movein"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_cafards" 
     coef: 0
@@ -1180,6 +1218,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_cafards_details_date_after_movein"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_cafards" 
     coef: 0
@@ -1188,6 +1227,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_cafards_details_date_nsp"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_rongeurs" 
     coef: 0
@@ -1196,6 +1236,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_rongeurs_details_date_before_movein"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_rongeurs" 
     coef: 0
@@ -1204,6 +1245,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_rongeurs_details_date_after_movein"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_rongeurs" 
     coef: 0
@@ -1212,6 +1254,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_rongeurs_details_date_nsp"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_punaises" 
     coef: 0
@@ -1220,6 +1263,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_punaises_details_date_before_movein"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_punaises" 
     coef: 0
@@ -1228,6 +1272,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_punaises_details_date_after_movein"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_punaises" 
     coef: 0
@@ -1236,6 +1281,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_punaises_details_date_nsp"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_autres" 
     coef: 0
@@ -1244,6 +1290,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_autres_details_date_before_movein"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_autres" 
     coef: 0
@@ -1252,6 +1299,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_autres_details_date_after_movein"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_nuisibles_autres" 
     coef: 0
@@ -1260,6 +1308,7 @@ desordre_precision:
     qualification: ['NON_DECENCE']
     desordre_precision_slug: "desordres_logement_nuisibles_autres_details_date_nsp"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_bruit_exterieur" 
     coef: 1
@@ -1285,6 +1334,7 @@ desordre_precision:
     desordre_precision_slug: "desordres_logement_lumiere_pas_lumiere_pieces_tout"
     is_suroccupation: 0
     is_insalubrite: 1
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_lumiere_pas_lumiere" 
     coef: 12
@@ -1317,6 +1367,7 @@ desordre_precision:
     qualification: ['RSD']
     desordre_precision_slug: "desordres_logement_lumiere_pas_volets_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_lumiere_pas_volets" 
     coef: 3
@@ -1374,6 +1425,7 @@ desordre_precision:
     desordre_precision_slug: "desordres_logement_lumiere_plafond_trop_bas_toutes_pieces"
     is_suroccupation: 0
     is_insalubrite: 1
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_proprete" 
     coef: 0
@@ -1382,6 +1434,7 @@ desordre_precision:
     qualification: ['RSD', 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL']
     desordre_precision_slug: "desordres_logement_proprete_pieces_tout"
     is_suroccupation: 0
+    config_is_unique: 1
   -
     desordre_critere_slug: "desordres_logement_proprete" 
     coef: 0

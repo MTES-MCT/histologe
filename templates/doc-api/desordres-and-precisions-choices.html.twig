@@ -16,6 +16,19 @@
                         <br>
                     {% endif %}
                 {% endfor %}
+
+                <h2 class="fr-h3 fr-mt-10v">Liste des identifiants de criteres et précisions acceptant des précisions libres</h2>
+                {% for critere in desordreCriteres %}
+                    {% if critere.getConfigPrecisionLibreType is same as 'critere' %}
+                        '{{ critere.slugCritere }}',
+                        <br>
+                    {% elseif critere.getConfigPrecisionLibreType is same as 'precisions' %}
+                        {% for precision in critere.desordrePrecisions %}
+                            '{{ precision.desordrePrecisionSlug }}',
+                            <br>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
             </div>
                 
             <div class="fr-col">

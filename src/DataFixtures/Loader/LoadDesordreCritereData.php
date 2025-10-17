@@ -39,6 +39,12 @@ class LoadDesordreCritereData extends Fixture implements OrderedFixtureInterface
             ->setSlugCritere($row['slug_critere'])
             ->setLabelCritere($row['label_critere'])
             ->setDesordreCategorie($this->desordreCategorieRepository->findOneBy(['label' => $row['desordre_categorie_label']]));
+        if (isset($row['config_precision_libre_type'])) {
+            $desordreCritere->setConfigPrecisionLibreType($row['config_precision_libre_type']);
+        }
+        if (isset($row['config_precision_libre_label'])) {
+            $desordreCritere->setConfigPrecisionLibreLabel($row['config_precision_libre_label']);
+        }
 
         $manager->persist($desordreCritere);
     }

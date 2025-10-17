@@ -343,7 +343,142 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
         $errors = json_encode($response['errors']);
-        $this->assertStringContainsString('Au moins une pr\u00e9cision doit \u00eatre fournie pour le d\u00e9sordre \" desordres_logement_humidite_salle_de_bain \"', $errors);
+        $this->assertStringContainsString('Au moins une pr\u00e9cision doit \u00eatre fournie pour le d\u00e9sordre \"desordres_logement_humidite_salle_de_bain\"', $errors);
+
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function testCreateSignalementWithDuplicateDesordres(): void
+    {
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
+        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $this->client->loginUser($user, 'api');
+
+        $payload = $this->getFullPayload();
+        $payload['partenaireUuid'] = $partner->getUuid();
+        $payload['desordres'][] = $payload['desordres'][0];
+
+        $this->client->request(
+            method: 'POST',
+            uri: $this->router->generate('api_signalements_create_post'),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode($payload)
+        );
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertCount(1, $response['errors']);
+        $errors = json_encode($response['errors']);
+        $this->assertStringContainsString('Un d\u00e9sordre avec l\'identifiant \"desordres_logement_humidite_salle_de_bain\" est d\u00e9j\u00e0 pr\u00e9sent dans la liste.', $errors);
+
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function testCreateSignalementWithDuplicatePrecisionsInDesordres(): void
+    {
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
+        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $this->client->loginUser($user, 'api');
+
+        $payload = $this->getFullPayload();
+        $payload['partenaireUuid'] = $partner->getUuid();
+        $payload['desordres'][0]['precisions'][] = 'desordres_logement_humidite_salle_de_bain_details_fuite_non';
+
+        $this->client->request(
+            method: 'POST',
+            uri: $this->router->generate('api_signalements_create_post'),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode($payload)
+        );
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertCount(1, $response['errors']);
+        $errors = json_encode($response['errors']);
+        $this->assertStringContainsString('La pr\u00e9cision \"desordres_logement_humidite_salle_de_bain_details_fuite_non\" est fournie en doublon pour le d\u00e9sordre \"desordres_logement_humidite_salle_de_bain\"', $errors);
+
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function testCreateSignalementWithInvalidUniquePrecisionsInDesordres(): void
+    {
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
+        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $this->client->loginUser($user, 'api');
+
+        $payload = $this->getFullPayload();
+        $payload['partenaireUuid'] = $partner->getUuid();
+        $desordre = [
+            'identifiant' => 'desordres_logement_electricite_manque_prises',
+            'precisions' => [
+                'desordres_logement_electricite_manque_prises_details_multiprises_non',
+                'desordres_logement_electricite_manque_prises_details_multiprises_oui',
+            ],
+        ];
+        $payload['desordres'][] = $desordre;
+
+        $this->client->request(
+            method: 'POST',
+            uri: $this->router->generate('api_signalements_create_post'),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode($payload)
+        );
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertCount(2, $response['errors']);
+        $errors = json_encode($response['errors']);
+        $this->assertStringContainsString('La pr\u00e9cision \"desordres_logement_electricite_manque_prises_details_multiprises_non\" ne doit pas \u00eatre cumul\u00e9e avec d\'autres pr\u00e9cisions pour le d\u00e9sordre \"desordres_logement_electricite_manque_prises\"', $errors);
+
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
+    }
+
+    public function testCreateSignalementWithInvalidPrecisionLibres(): void
+    {
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
+        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $this->client->loginUser($user, 'api');
+
+        $payload = $this->getFullPayload();
+        $payload['partenaireUuid'] = $partner->getUuid();
+        $payload['desordres'][0]['precisionLibres'][] = [
+            'identifiant' => 'desordres_batiment_nuisibles_autres',
+            'description' => 'Invasion de fourmis.',
+        ];
+        $payload['desordres'][1]['precisionLibres'][0]['identifiant'] = 'desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre';
+        $desordre = [
+            'identifiant' => 'desordres_logement_lumiere_plafond_trop_bas',
+            'precisions' => [
+                'desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre',
+                'desordres_logement_lumiere_plafond_trop_bas_cuisine',
+            ],
+            'precisionLibres' => [
+                [
+                    'identifiant' => 'desordres_logement_lumiere_plafond_trop_bas_salle_de_bain',
+                    'description' => '170',
+                ],
+            ],
+        ];
+        $payload['desordres'][] = $desordre;
+
+        $this->client->request(
+            method: 'POST',
+            uri: $this->router->generate('api_signalements_create_post'),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode($payload)
+        );
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertCount(3, $response['errors']);
+        $errors = json_encode($response['errors']);
+        $this->assertStringContainsString('Le d\u00e9sordre \"desordres_logement_humidite_salle_de_bain\" n\'accepte pas de description libre.', $errors);
+        $this->assertStringContainsString('Le d\u00e9sordre \"desordres_batiment_nuisibles_autres\" ne correspond pas avec la pr\u00e9cision libre \"desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre\".', $errors);
+        $this->assertStringContainsString('La pr\u00e9cision libre \"desordres_logement_lumiere_plafond_trop_bas_salle_de_bain\" ne correspond pas avec les pr\u00e9cisions fournies pour le d\u00e9sordre \"desordres_logement_lumiere_plafond_trop_bas\".', $errors);
 
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }

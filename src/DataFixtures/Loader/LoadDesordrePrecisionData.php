@@ -59,6 +59,10 @@ class LoadDesordrePrecisionData extends Fixture implements OrderedFixtureInterfa
             }
         }
 
+        if (isset($row['config_is_unique'])) {
+            $desordrePrecision->setConfigIsUnique($row['config_is_unique']);
+        }
+
         $manager->persist($desordrePrecision);
     }
 
