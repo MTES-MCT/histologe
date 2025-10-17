@@ -35,13 +35,16 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         if (Suivi::CONTEXT_INTERVENTION === $suivi->getContext()) {
             return;
         }
-        if (in_array($suivi->getSignalement()->getStatut(), SignalementStatus::excludedStatuses())) {
+        $signalementStatus = $suivi->getSignalement()->getStatut();
+        if (in_array($signalementStatus, SignalementStatus::excludedStatuses(includeInjonctionBailleur: false))) {
             return;
         }
         if ($suivi->isWaitingNotification()) {
             return;
         }
-        $this->sendToAdminAndPartners($suivi);
+        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalementStatus) {
+            $this->sendToAdminAndPartners($suivi);
+        }
         $this->sendToUsagers($suivi);
     }
 

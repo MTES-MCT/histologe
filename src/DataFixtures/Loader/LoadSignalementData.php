@@ -16,6 +16,7 @@ use App\Entity\File;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
+use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
@@ -36,10 +37,13 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 {
+    private ?User $admin = null;
+
     public function __construct(
         private readonly TerritoryRepository $territoryRepository,
         private readonly BailleurRepository $bailleurRepository,
@@ -53,6 +57,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private readonly FileFactory $fileFactory,
         private readonly UserManager $userManager,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -61,6 +66,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
+        $this->admin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         $signalementRows = Yaml::parseFile(__DIR__.'/../Files/Signalement.yml');
         foreach ($signalementRows['signalements'] as $row) {
             $this->loadSignalements($manager, $row);
@@ -485,6 +491,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 );
                 $manager->persist($file);
             }
+        }
+        if (!$signalement->getCreatedFrom() && !$signalement->getCreatedBy()) {
+            $signalement->setCreatedBy($this->admin);
         }
         $manager->persist($signalement);
         $this->userManager->createUsagerFromSignalement($signalement);
