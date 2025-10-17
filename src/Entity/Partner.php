@@ -573,6 +573,22 @@ class Partner implements EntityHistoryInterface
         return $this->emailDeliveryIssue;
     }
 
+    public function hasEmailIssue(): bool
+    {
+        $partnerReachable = !empty($this->getEmail()) && null === $this->getEmailDeliveryIssue();
+
+        $eligibleUsers = $this->getUsers()->filter(static function (User $user): bool {
+            return UserStatus::ACTIVE === $user->getStatut()
+                && ($user->getIsMailingActive() || $user->getIsMailingSummary());
+        });
+
+        $userReachable = $eligibleUsers->exists(static function ($key, User $user): bool {
+            return !empty($user->getEmail()) && null === $user->getEmailDeliveryIssue();
+        });
+
+        return !($partnerReachable || $userReachable);
+    }
+
     public function setEmailDeliveryIssue(?EmailDeliveryIssue $emailDeliveryIssue): static
     {
         $this->emailDeliveryIssue = $emailDeliveryIssue;

@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -69,6 +70,9 @@ class SignalementEditController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{uuid:signalement}/edit-coordonnees-tiers', name: 'back_signalement_edit_coordonnees_tiers', methods: 'POST')]
     public function editCoordonneesTiers(
         Signalement $signalement,
