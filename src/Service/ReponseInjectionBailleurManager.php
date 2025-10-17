@@ -46,12 +46,8 @@ class ReponseInjectionBailleurManager
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
                 $this->entityManager->flush();
-                $hasAssignablePartners = $this->autoAssigner->assign($signalement, true);
-                if (count($hasAssignablePartners)) {
-                    $this->autoAssigner->assign($signalement);
-                } else {
-                    $this->notificationAndMailSender->sendNewSignalement($signalement);
-                }
+                $this->notificationAndMailSender->sendNewSignalement($signalement);
+                $this->autoAssigner->assign($signalement);
                 break;
         }
     }

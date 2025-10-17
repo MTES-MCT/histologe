@@ -27,15 +27,27 @@
 						Votre réponse
 						<br>
 						<span class="info">
-							//TODO : Aucune
+							{% if suiviReponse %}
+								{{ suiviReponse.category.labelReponseBailleur() }}
+							{% else %}
+								Aucune
+							{% endif %}
 						</span>
 					</div>
 					<div class="fr-col-12 fr-col-md-6">
-						Réponse attendue d'ici le
-						<br>
-						<span class="info">
-							{{ dateLimit|date('d/m/Y') }}
-						</span>
+						{% if suiviReponse %}
+							Réponse donnée le
+							<br>
+							<span class="info">
+								{{ suiviReponse.createdAt|date('d/m/Y') }}
+							</span>
+						{% else %}
+							Réponse attendue d'ici le
+							<br>
+							<span class="info">
+								{{ dateLimit|date('d/m/Y') }}
+							</span>
+						{% endif %}
 					</div>
 				</div>	
 			</div>
@@ -173,8 +185,24 @@
 		</div>
 
 		<div class="fr-col-12 fr-col-md-8 fr-col-offset-md-2">
-			<h2 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Vous engagez-vous à résoudre les désordres ?</h2>
-			{{ form(form) }}
+			{% if suiviReponse %}
+				{% if suiviReponse.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_NON %}
+					{# pas d'action possible #}
+				{% else %}
+					<h2 class="title-blue-france fr-mb-1w fr-text--center">Contrat d'engagement</h2>
+					<div class="fr-consent-placeholder">
+						<h4 class="fr-h6">Je m'engage à résoudre les désordres</h4>
+						<p class="fr-mt-5w">{{signalement.prenomProprio}} {{signalement.nomProprio}} le {{ suiviReponse.createdAt|date('d/m/Y') }}</p>
+					</div>
+					<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
+					{% if form is not null %}
+						{{ form(form) }}
+					{% endif %}
+				{% endif %}
+			{% else %}
+				<h2 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Vous engagez-vous à résoudre les désordres ?</h2>
+				{{ form(form) }}
+			{% endif %}
 		</div>
 
 	</div>

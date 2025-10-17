@@ -44,6 +44,17 @@ enum SuiviCategory: string
         return self::getLabelList()[$this->name];
     }
 
+    public function labelReponseBailleur(): string
+    {
+        $reponseList = [
+            self::INJONCTION_BAILLEUR_REPONSE_OUI->name => 'Oui',
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE->name => 'Oui avec aide',
+            self::INJONCTION_BAILLEUR_REPONSE_NON->name => 'Non',
+        ];
+
+        return $reponseList[$this->name];
+    }
+
     /** @return array<string, string> */
     public static function getLabelList(): array
     {
@@ -91,6 +102,16 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
             self::INJONCTION_BAILLEUR_REPONSE_NON,
             self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
+        ];
+    }
+
+    /** @return array<SuiviCategory> */
+    public static function injonctionBailleurReponseCategories(): array
+    {
+        return [
+            self::INJONCTION_BAILLEUR_REPONSE_OUI,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_NON,
         ];
     }
 }
