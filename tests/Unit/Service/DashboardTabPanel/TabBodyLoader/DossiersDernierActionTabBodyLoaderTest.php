@@ -32,6 +32,7 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
 
         $expectedData = ['foo' => 'bar'];
         $expectedKpi = [
+            'injonctions' => 2,
             'comptes_en_attente' => 3,
             'comptes_pb_email' => 0,
             'partenaires_non_notifiables' => 2,
@@ -43,6 +44,10 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
             ->method('getDernierActionDossiers')
             ->with($tabQueryParameters)
             ->willReturn($expectedData);
+        $tabDataManager->expects($this->once())
+            ->method('countInjonctions')
+            ->with($tabQueryParameters)
+            ->willReturn($expectedKpi['injonctions']);
         $tabDataManager->expects($this->once())
             ->method('countUsersPendingToArchive')
             ->with($tabQueryParameters)

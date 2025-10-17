@@ -2419,6 +2419,29 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function countInjonctions(
+        User $user,
+        ?TabQueryParameters $params,
+    ): int {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.statut = :statut')
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
+
+        $qb->select('COUNT(DISTINCT s.id)');
+
+        if ($params?->territoireId) {
+            $qb
+                ->andWhere('s.territory = :territoireId')
+                ->setParameter('territoireId', $params->territoireId);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb
+                ->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
     public function findInjonctionFilteredPaginated(
         SearchSignalementInjonction $searchSignalementInjonction,
         int $maxResult,
