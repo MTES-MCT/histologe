@@ -209,10 +209,14 @@ class TabDataManager
         ?TabQueryParameters $tabQueryParameters = null,
         array $territoires = [],
     ): TabDossierResult {
-        $tabQueryParameters = $this->initTabQueryParametersPartenairesId(
-            $tabQueryParameters,
-            $territoires,
-        );
+        /** @var User $user */
+        $user = $this->security->getUser();
+        if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
+            $tabQueryParameters = $this->initTabQueryParametersPartenairesId(
+                $tabQueryParameters,
+                $territoires,
+            );
+        }
 
         $dossiers = $this->signalementRepository->findNewDossiersFrom(
             signalementStatus: $signalementStatus,
