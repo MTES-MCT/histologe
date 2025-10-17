@@ -89,6 +89,7 @@ class SignalementDraftManager extends AbstractManager
                     ['code' => $signalement->getCodeSuivi()],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),
+                'signalementStatus' => $signalement->getStatut(),
             ];
         }
 

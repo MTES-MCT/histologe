@@ -2371,7 +2371,20 @@
                 "label": "Valider mon signalement",
                 "slug": "validation_signalement_next",
                 "action": "goto.save:confirmation_signalement",
-                "customCss": "fr-btn--icon-left fr-icon-check-line"
+                "customCss": "fr-btn--icon-left fr-icon-check-line",
+                "conditional": {
+                  "show": "formStore.data.injonction_bailleur_choice !== 'oui'"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Valider mon signalement (injonction bailleur TODO)",
+                "slug": "validation_signalement_next_injonction",
+                "action": "goto.save:eligibilite_injonction",
+                "customCss": "fr-btn--icon-left fr-icon-check-line",
+                "conditional": {
+                  "show": "formStore.data.injonction_bailleur_choice === 'oui'"
+                }
               },
               {
                 "type": "SignalementFormButton",
@@ -2379,6 +2392,61 @@
                 "slug": "validation_signalement_previous",
                 "action": "goto:utilisation_service",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "SignalementFormScreen",
+    "label": "Résultat de l'éligibilité à l'injonction",
+    "description": "TODO textes",
+    "slug": "eligibilite_injonction",
+    "screenCategory": "Récapitulatif",
+    "components": {
+      "body": [
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Félicitations pour ton éligibilité mec !",
+          "slug": "eligibilite_injonction_ok",
+          "description": "détails éligibilité",
+          "components": {
+            "body": [
+            ]
+          },
+          "conditional": {
+            "show": "formStore.data.signalementStatus === 'INJONCTION_BAILLEUR'"
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "Dommage !",
+          "slug": "eligibilite_injonction_ko",
+          "description": "Déso, t'es pas éligible à l'injonction automatisée. Mais t'inquiète, le PDLHI est là pour t'aider !",
+          "components": {
+            "body": [
+            ]
+          },
+          "conditional": {
+            "show": "formStore.data.signalementStatus !== 'INJONCTION_BAILLEUR'"
+          }
+        }
+      ],
+      "footer": [
+        {
+          "type": "SignalementFormSubscreen",
+          "slug": "eligibilite_injonction_footer",
+          "customCss": "button-group-footer",
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "eligibilite_injonction_next",
+                "action": "goto:confirmation_signalement",
+                "customCss": "fr-btn--icon-left fr-icon-check-line"
               }
             ]
           }
