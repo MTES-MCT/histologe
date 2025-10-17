@@ -1,4 +1,5 @@
 import { initSearchAndSelectBadges } from '../../services/component/component_search_and_select_badges';
+import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
 
 let boFormSignalementCurrentTabIsDirty = false;
 let boFormNeedRefreshValidationTab = true;
@@ -124,6 +125,7 @@ function saveCurrentTab(event) {
               errorAlertStr +
               document.querySelector('#tabpanel-' + currentTabName + '-panel').innerHTML;
           }
+          attacheAutocompleteAddressEvents();
         }
         initBoFormSignalementSubmit(currentTabName);
       });

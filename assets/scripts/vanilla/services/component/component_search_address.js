@@ -1,9 +1,12 @@
-if (document.querySelector('[data-fr-adresse-autocomplete]')) {
-  attachAutocompleteClickOutsideEvent();
+export function attacheAutocompleteAddressEvents() {
+  if (document.querySelector('[data-fr-adresse-autocomplete]')) {
+    attachAutocompleteClickOutsideEvent();
+  }
+  document.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((inputAdresse) => {
+    attacheAutocompleteAddressEvent(inputAdresse);
+  });
 }
-document.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((inputAdresse) => {
-  attacheAutocompleteAddressEvent(inputAdresse);
-});
+attacheAutocompleteAddressEvents();
 
 document
   .querySelector('#form-edit-address-adresse')
