@@ -50,13 +50,15 @@
                     <h2 class="fr-mb-8v">Administrer mon territoire</h2>
                 {% endif %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {% include 'back/dashboard/components/_tuile.html.twig' with {
-                        icon_path: 'img/picto-dsfr/paint.svg',
-                        title: 'Injonctions bailleur (parc privé)',
-                        badge_class: 'fr-badge--info',
-                        badge_label: singular_or_plural(items.data_kpi.injonctions, ' injonction', 'injonctions'),
-                        link: path('back_injonction_signalement_index', { territoire: items.territory_id })
-                    } %}
+                    {% if is_granted('SEE_INJONCTION_BAILLEUR', app.user) %}
+                        {% include 'back/dashboard/components/_tuile.html.twig' with {
+                            icon_path: 'img/picto-dsfr/paint.svg',
+                            title: 'Injonctions bailleur (parc privé)',
+                            badge_class: 'fr-badge--info',
+                            badge_label: singular_or_plural(items.data_kpi.injonctions, ' injonction', 'injonctions'),
+                            link: path('back_injonction_signalement_index', { territoire: items.territory_id })
+                        } %}
+                    {% endif %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {
                         icon_path: 'img/picto-dsfr/warning.svg',
                         title: 'Comptes bientôt archivés',
