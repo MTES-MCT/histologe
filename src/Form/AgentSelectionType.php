@@ -32,7 +32,7 @@ class AgentSelectionType extends AbstractType
             'multiple' => true,
             'expanded' => true,
             'label_html' => true,
-            'label' => '<strong>' . htmlspecialchars($options['label']) . '</strong>',
+            'label' => '<strong>'.htmlspecialchars($options['label']).'</strong>',
         ]);
     }
 
