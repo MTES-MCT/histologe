@@ -41,7 +41,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         }
         if ($suivi->isWaitingNotification()) {
             return;
-        }        
+        }
         if (SignalementStatus::INJONCTION_BAILLEUR !== $signalementStatus) {
             $this->sendToAdminAndPartners($suivi);
         }
