@@ -13,51 +13,77 @@ use OpenApi\Attributes as OA;
 class Desordre
 {
     #[OA\Property(
+        description: 'Identifiant du désordre.',
+        example: 'desordres_logement_humidite_salle_de_bain'
+    )]
+    public ?string $identifiant = null;
+    #[OA\Property(
+        description: 'Libellé du désordre.',
+        example: 'Le logement est humide et a des traces de moisissures'
+    )]
+    public string $libelle;
+    /** @var array<string, string> */
+    #[OA\Property(
+        description: 'Tableau d\'identifiants des précisions du désordre.',
+        example: [
+            'desordres_logement_humidite_salle_de_bain_details_machine_non' => 'Dans : La salle de bain, salle d\'eau et / ou les toilettes - Machine à laver, sèche-linge ou lave vaisselle : non',
+            'desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_oui' => 'Dans : La salle de bain, salle d\'eau et / ou les toilettes - Moisissure après nettoyage : oui',
+        ]
+    )]
+    public array $precisions = [];
+    /** @var array<int, array{identifiant: string, description: string}> */
+    #[OA\Property(
+        description: 'Tableau des précisions libre du désordre.',
+        example: [
+            'identifiant' => 'desordres_batiment_nuisibles_autres',
+            'description' => 'Invasion de fourmis.',
+        ]
+    )]
+    public array $precisionsLibres = [];
+
+    /**
+     * @param array<string, mixed>  $data
+     * @param array<string, string> $precisionsLibres
+     */
+    #[OA\Property(
         description: 'Catégorie du désordre.',
         example: 'Eau potable / assainissement'
     )]
-    public string $categorie;
-    #[OA\Property(
-        description: 'Zone exacte du logement ou du bâtiment où le désordre est constaté.',
-        enum: ['BATIMENT', 'LOGEMENT'],
-        example: 'LOGEMENT',
-        nullable: true
-    )]
-    public ?string $zone;
-    /** @var array<string> $details */
-    #[OA\Property(
-        description: 'Liste des observations détaillées associées au désordre.',
-        example: [
-            "Il n'y a pas d'eau potable dans le logement",
-            "L'évacuation des eaux ne marche pas (mauvaises odeurs, pas d'évacuation, fuites...)",
-            "Il n'y a pas d'eau chaude dans le logement",
-        ],
-        nullable: true
-    )]
-    public array $details = [];
-
-    /**
-     * @param array<string, mixed> $data
-     */
     public function __construct(
-        string $categorie,
         array $data,
-        ?string $zone = null,
+        array $precisionsLibres = [],
     ) {
-        $this->categorie = $categorie;
-        $this->zone = $zone;
         foreach ($data as $label => $detail) {
-            $details = $label;
             if ($detail instanceof Criticite && $detail->getLabel()) {
-                $details .= \PHP_EOL.' - '.$detail->getLabel();
+                $this->identifiant = '__citicite_historique__';
+                $this->libelle = $label;
+                $this->precisions['__citicite_historique__'] = $detail->getLabel();
             } else {
                 foreach ($detail as $desordrePrecision) {
-                    if ($desordrePrecision instanceof DesordrePrecision && $desordrePrecision->getLabel()) {
-                        $details .= \PHP_EOL.' - '.strip_tags(str_replace('<br>', \PHP_EOL, $desordrePrecision->getLabel()));
+                    if ($desordrePrecision instanceof DesordrePrecision) {
+                        $this->libelle = $desordrePrecision->getDesordreCritere()->getLabelCritere();
+                        if ($desordrePrecision->getDesordreCritere()->getDesordrePrecisions()->count() > 1) {
+                            $this->identifiant = $desordrePrecision->getDesordreCritere()->getSlugCritere();
+                            $labelCleaned = strip_tags(str_replace('<br>', ' - ', $desordrePrecision->getLabel()));
+                            $this->precisions[$desordrePrecision->getDesordrePrecisionSlug()] = $labelCleaned;
+                            if (isset($precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()]) && $precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()]) {
+                                $this->precisionsLibres[] = [
+                                    'identifiant' => $desordrePrecision->getDesordrePrecisionSlug(),
+                                    'description' => $precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()],
+                                ];
+                            }
+                        } else {
+                            $this->identifiant = $desordrePrecision->getDesordrePrecisionSlug();
+                            if (isset($precisionsLibres[$this->identifiant]) && $precisionsLibres[$this->identifiant]) {
+                                $this->precisionsLibres[] = [
+                                    'identifiant' => $this->identifiant,
+                                    'description' => $precisionsLibres[$this->identifiant],
+                                ];
+                            }
+                        }
                     }
                 }
             }
-            $this->details[] = $details;
         }
     }
 }

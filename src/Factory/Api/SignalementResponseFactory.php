@@ -305,14 +305,14 @@ readonly class SignalementResponseFactory
         $desordres = [];
         $desordresInfos = $this->signalementDesordresProcessor->process($signalement);
         if (!$signalement->isV2()) {
-            foreach ($desordresInfos['criticitesArranged'] as $label => $data) {
-                $desordres[] = new Desordre($label, $data);
+            foreach ($desordresInfos['criticitesArranged'] as $data) {
+                $desordres[] = new Desordre($data);
             }
         } else {
             foreach (DesordreCritereZone::getLabelList() as $zone => $unused) {
                 if (isset($desordresInfos['criticitesArranged'][$zone])) {
-                    foreach ($desordresInfos['criticitesArranged'][$zone] as $label => $data) {
-                        $desordres[] = new Desordre($label, $data, $zone);
+                    foreach ($desordresInfos['criticitesArranged'][$zone] as $data) {
+                        $desordres[] = new Desordre($data, $signalement->getJsonContent());
                     }
                 }
             }
