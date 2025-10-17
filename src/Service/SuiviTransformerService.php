@@ -7,6 +7,7 @@ use App\Entity\Enum\DocumentType;
 use App\Repository\DesordreCritereRepository;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Doctrine\Common\Collections\Collection;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviTransformerService
@@ -15,6 +16,7 @@ class SuiviTransformerService
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly UrlSignerInterface $urlSigner,
         private readonly DesordreCritereRepository $desordreCritereRepository,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -67,7 +69,12 @@ class SuiviTransformerService
                         if (!$desordreCritere) {
                             $desordreCritere = $this->desordreCritereRepository->findOneBy(['slugCategorie' => $suiviFile->getFile()->getDesordreSlug()]);
                         }
-                        $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().' - '.$desordreCritere->getLabelCritere().')</small>';
+                        if ($desordreCritere) {
+                            $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().' - '.$desordreCritere->getLabelCritere().')</small>';
+                        } else {
+                            $this->logger->error(\sprintf('$desordreCritere not found with slugCritere or slugCategorie = %s', $suiviFile->getFile()->getDesordreSlug()));
+                            $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().' - désordre non défini)</small>';
+                        }
                     } else {
                         $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().')</small>';
                     }
