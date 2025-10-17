@@ -8,6 +8,7 @@ use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
+use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
@@ -345,29 +346,29 @@ class SignalementBuilder
             return $this;
         }
 
-        // Sort de la fonction si le signalement a au moins un désordre critique
-        if (!$this->signalement->getDesordrePrecisions()->isEmpty()) {
-            foreach ($this->signalement->getDesordrePrecisions() as $desordrePrecision) {
-                if ($desordrePrecision->getIsDanger()) {
-                    return $this;
-                }
+        // Sort de la fonction si le signalement a la qualification DANGER
+        foreach ($this->signalement->getSignalementQualifications() as $qualification) {
+            if (Qualification::DANGER === $qualification->getQualification()) {
+                return $this;
             }
         }
 
         $arrayDepts = json_decode($this->featureInjonctionBailleurDepts, true);
 
         // Pour entrer dans le statut injonction bailleur il faut :
-        // - que le signalement n'ait pas de désordre critique (au-dessus)
+        // - que le signalement n'ait pas de qualification danger (au-dessus)
         // - que l'usager ait dit ok : injonction_bailleur_choice = 'oui'
         // - que le signalement soit fait par un locataire
         // - que le logement ne soit pas un logement social
         // - que l'usager ait contacté son bailleur
+        // - qu'on dispose du mail ou de l'adresse du bailleur
         // - que le territoire soit ouvert
         if (
             !empty($this->payload['injonction_bailleur_choice']) && 'oui' === $this->payload['injonction_bailleur_choice']
             && ProfileDeclarant::LOCATAIRE === $this->signalement->getProfileDeclarant()
             && !$this->signalement->getIsLogementSocial()
             && $this->signalement->getIsProprioAverti()
+            && (!empty($this->signalement->getMailProprio()) || !empty($this->signalement->getAdresseProprio()))
             && \in_array($this->signalement->getTerritory()->getZip(), $arrayDepts, true)
         ) {
             $this->signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);

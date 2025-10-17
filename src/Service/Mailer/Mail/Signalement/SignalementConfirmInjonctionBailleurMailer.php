@@ -43,7 +43,13 @@ class SignalementConfirmInjonctionBailleurMailer extends AbstractNotificationMai
             'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'signalement_isProprioAverti' => $signalement->getIsProprioAverti(),
             'attach' => $attachment,
-            'lien_suivi' => '', // TODO : dossier bailleur
+            'lien_suivi' => $this->generateLink(
+                'app_login_bailleur',
+                [
+                    'bailleur_reference' => $signalement->getReference(),
+                    'bailleur_code' => $signalement->getLoginBailleur(),
+                ]
+            ),
         ];
     }
 }
