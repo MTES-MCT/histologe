@@ -84,11 +84,19 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             || !$count;
 
         if ($needsPartnerJoin) {
-            $qb->leftJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId');
+            $joinType = ($searchInterconnexion->getTerritory() || $searchInterconnexion->getPartner())
+                ? 'innerJoin'
+                : 'leftJoin';
+
+            $qb->{$joinType}(Partner::class, 'p', 'WITH', 'p.id = j.partnerId');
         }
 
         if ($needsSignalementJoin) {
-            $qb->leftJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
+            $joinType = $searchInterconnexion->getReference()
+                ? 'innerJoin'
+                : 'leftJoin';
+
+            $qb->{$joinType}(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
         }
 
         if ($searchInterconnexion->getTerritory()) {
