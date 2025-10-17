@@ -194,8 +194,8 @@
 						<h4 class="fr-h6">Je m'engage à résoudre les désordres</h4>
 						<p class="fr-mt-5w">{{signalement.prenomProprio}} {{signalement.nomProprio}} le {{ suiviReponse.createdAt|date('d/m/Y') }}</p>
 					</div>
-					<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
 					{% if form is not null %}
+					<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
 						{{ form(form) }}
 					{% endif %}
 				{% endif %}
