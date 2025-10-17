@@ -64,6 +64,9 @@ class SuiviTransformerService
                 if ($suiviFile->getFile()->getDocumentType() && DocumentType::AUTRE !== $suiviFile->getFile()->getDocumentType()) {
                     if (DocumentType::PHOTO_SITUATION === $suiviFile->getFile()->getDocumentType() && null !== $suiviFile->getFile()->getDesordreSlug()) {
                         $desordreCritere = $this->desordreCritereRepository->findOneBy(['slugCritere' => $suiviFile->getFile()->getDesordreSlug()]);
+                        if (!$desordreCritere) {
+                            $desordreCritere = $this->desordreCritereRepository->findOneBy(['slugCategorie' => $suiviFile->getFile()->getDesordreSlug()]);
+                        }
                         $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().' - '.$desordreCritere->getLabelCritere().')</small>';
                     } else {
                         $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().')</small>';
