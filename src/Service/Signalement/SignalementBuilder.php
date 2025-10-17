@@ -8,6 +8,8 @@ use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
+use App\Entity\Enum\Qualification;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
@@ -30,6 +32,7 @@ use App\Specification\Signalement\SuroccupationSpecification;
 use App\Utils\DataPropertyArrayFilter;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\TransactionRequiredException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class SignalementBuilder
 {
@@ -58,6 +61,10 @@ class SignalementBuilder
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private readonly ZipcodeProvider $zipcodeProvider,
+        #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR')]
+        private bool $featureInjonctionBailleurEnabled = false,
+        #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR_DEPTS')]
+        private string $featureInjonctionBailleurDepts = '',
     ) {
     }
 
@@ -329,6 +336,43 @@ class SignalementBuilder
             ->setIsRelogement($this->isDemandeRelogement())
             ->setDateEntree($this->resolveDateEmmenagement())
             ->setIsConstructionAvant1949($this->isConstructionAvant1949($anneeConstruction));
+
+        return $this;
+    }
+
+    public function withStatus(): self
+    {
+        if (!$this->featureInjonctionBailleurEnabled || empty($this->featureInjonctionBailleurDepts)) {
+            return $this;
+        }
+
+        // Sort de la fonction si le signalement a la qualification DANGER
+        foreach ($this->signalement->getSignalementQualifications() as $qualification) {
+            if (Qualification::DANGER === $qualification->getQualification()) {
+                return $this;
+            }
+        }
+
+        $arrayDepts = json_decode($this->featureInjonctionBailleurDepts, true);
+
+        // Pour entrer dans le statut injonction bailleur il faut :
+        // - que le signalement n'ait pas de qualification danger (au-dessus)
+        // - que l'usager ait dit ok : injonction_bailleur_choice = 'oui'
+        // - que le signalement soit fait par un locataire
+        // - que le logement ne soit pas un logement social
+        // - que l'usager ait contacté son bailleur
+        // - qu'on dispose du mail ou de l'adresse du bailleur
+        // - que le territoire soit ouvert
+        if (
+            !empty($this->payload['injonction_bailleur_choice']) && 'oui' === $this->payload['injonction_bailleur_choice']
+            && ProfileDeclarant::LOCATAIRE === $this->signalement->getProfileDeclarant()
+            && !$this->signalement->getIsLogementSocial()
+            && $this->signalement->getIsProprioAverti()
+            && (!empty($this->signalement->getMailProprio()) || !empty($this->signalement->getAdresseProprio()))
+            && \in_array($this->signalement->getTerritory()->getZip(), $arrayDepts, true)
+        ) {
+            $this->signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
+        }
 
         return $this;
     }

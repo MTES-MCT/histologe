@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\SignalementDraft;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
@@ -72,7 +73,9 @@ class SignalementBuilderTest extends KernelTestCase
             $criticiteCalculator,
             $signalementQualificationUpdater,
             $desordreCompositionLogementLoader,
-            $zipcodeProvider
+            $zipcodeProvider,
+            true,
+            '["30","34","13"]',
         );
     }
 
@@ -215,6 +218,42 @@ class SignalementBuilderTest extends KernelTestCase
             ->build()
         ;
         $this->assertEquals('0', $signalement->getIsAllocataire());
+
+        $this->entityManager->commit();
+    }
+
+    public function testBuildSignalementInjonctionBailleur(): void
+    {
+        $this->entityManager->beginTransaction();
+
+        $payload = json_decode(
+            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            true
+        );
+        $payload['signalement_concerne_logement_social_autre_tiers'] = 'non';
+        $payload['injonction_bailleur_choice'] = 'oui';
+        unset($payload['desordres_logement_electricite_installation_dangereuse']);
+        unset($payload['desordres_logement_electricite_manque_prises_details_multiprises']);
+
+        $signalementDraft = (new SignalementDraft())
+            ->setPayload($payload)
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setStatus(SignalementDraftStatus::EN_COURS)
+            ->setCurrentStep('informations_complementaires')
+            ->setEmailDeclarant($payload['vos_coordonnees_occupant_email']);
+
+        $signalement = $this->signalementBuilder
+            ->createSignalementBuilderFrom($signalementDraft)
+            ->withAdressesCoordonnees()
+            ->withTypeCompositionLogement()
+            ->withSituationFoyer()
+            ->withProcedure()
+            ->withInformationComplementaire()
+            ->withDesordres()
+            ->withStatus()
+            ->build()
+        ;
+        $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
 
         $this->entityManager->commit();
     }

@@ -1,21 +1,14 @@
 {% extends 'emails/base_email.html.twig' %}
 
 {% block body %}
-    <p>Bonjour,</p>
+    <p>Bonjour TODO,</p>
     <p>
         Nous avons bien reçu votre signalement concernant le logement situé <br>
         <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong><br>
-        Vous recevrez par e-mail les mises à jour concernant votre signalement.
+        Votre bailleur est averti de votre signalement.<br>
+        Si il ne répond pas dans les trois prochaines semaines, le signalement sera transmis automatiquement aux services compétents.
     </p>
-    {% if not signalement_isProprioAverti %}
-        <p>
-            Vous avez mentionné ne pas encore avoir alerté votre propriétaire. Il est nécessaire de l'informer de la
-            situation. Vous trouverez ci-joint un modèle de courrier pour alerter votre propriétaire.
-        </p>
-        <p><strong>Si vous êtes propriétaire occupant, merci de ne pas tenir compte de la demande d'information et
-                du fichier ci-joint</strong></p>
-    {% endif %}
-    <p>Pour suivre l'avancée de votre dossier ou nous envoyer un message, cliquez sur le bouton ci-dessous :</p>
+    <p>Pour suivre l'avancée de votre dossier, cliquez sur le bouton ci-dessous :</p>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
            style="text-align: center">
         <tbody>
