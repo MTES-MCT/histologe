@@ -81,8 +81,11 @@ class ExportIterableQuery
             MAX(vli.scheduledAt) AS interventionScheduledAt,
             MAX(vli.nbVisites) AS interventionNbVisites
             '
-        )->leftJoin('s.situations', 'situations')
-            ->leftJoin('s.criteres', 'criteres')
+        )
+
+            ->leftJoin('s.criticites', 'criticites')
+            ->leftJoin('criticites.critere', 'criteres')
+            ->leftJoin('criteres.situation', 'situations')
             ->leftJoin('s.desordrePrecisions', 'desordrePrecisions')
             ->leftJoin('desordrePrecisions.desordreCritere', 'desordreCriteres')
             ->leftJoin('desordreCriteres.desordreCategorie', 'desordreCategories')
