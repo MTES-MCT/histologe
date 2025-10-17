@@ -3,6 +3,7 @@
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\User;
+use App\Security\Voter\UserVoter;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
@@ -27,12 +28,14 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
         $data['data'] = $this->tabDataManager->getDernierActionDossiers($this->tabQueryParameters);
         if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
             $data['data_kpi'] = [
-                'injonctions' => $this->tabDataManager->countInjonctions($this->tabQueryParameters),
                 'comptes_en_attente' => $this->tabDataManager->countUsersPendingToArchive($this->tabQueryParameters),
                 'comptes_pb_email' => $this->tabDataManager->countUsersPbEmail($this->tabQueryParameters),
                 'partenaires_non_notifiables' => $this->tabDataManager->countPartenairesNonNotifiables($this->tabQueryParameters),
                 'partenaires_interfaces' => $this->tabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
             ];
+            if ($this->security->isGranted(UserVoter::SEE_INJONCTION_BAILLEUR, $user)) {
+                $data['data_kpi']['injonctions'] = $this->tabDataManager->countInjonctions($this->tabQueryParameters);
+            }
         }
         if ($user->isSuperAdmin()) {
             $data['data_interconnexion'] = $this->tabDataManager->getInterconnexions($this->tabQueryParameters);
