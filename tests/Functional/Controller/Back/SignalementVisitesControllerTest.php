@@ -214,4 +214,40 @@ class SignalementVisitesControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(403);
     }
+
+    public function testEditPastVisiteDone(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000010']);
+        $interventionId = $signalement->getInterventions()->first()->getId();
+
+        $route = $this->router->generate('back_signalement_visite_edit', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'visite-edit' => [
+                    'concludeProcedure' => [
+                        'NON_DECENCE',
+                        'RSD',
+                        'INSALUBRITE',
+                    ],
+                    'details' => 'Hello world',
+                    'intervention' => $interventionId,
+                ],
+                '_token' => $this->generateCsrfToken(
+                    $this->client,
+                    'signalement_edit_visit_'.$interventionId
+                ),
+            ]
+        );
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+
+        $this->assertEmailCount(1);
+    }
 }
