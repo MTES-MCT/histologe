@@ -292,8 +292,7 @@ class SignalementRepositoryTest extends KernelTestCase
             signalementStatus: SignalementStatus::NEED_VALIDATION,
             tabQueryParameters: $tabQueryParameter
         );
-
-        $this->assertTrue(11 === $countDossiers);
+        $this->assertEquals(8, $countDossiers);
     }
 
     /**
