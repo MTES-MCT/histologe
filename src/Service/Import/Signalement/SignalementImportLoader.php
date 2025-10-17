@@ -271,9 +271,7 @@ class SignalementImportLoader
 
                     if (null !== $criticite) {
                         $signalement
-                            ->addCriticite($criticite)
-                            ->addSituation($critere->getSituation())
-                            ->addCritere($critere);
+                            ->addCriticite($criticite);
                     }
                 } catch (\Throwable $exception) {
                     $this->logger->error($critereLabel.' - '.$exception->getMessage());

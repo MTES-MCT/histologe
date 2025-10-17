@@ -34,14 +34,6 @@ signalements:
     usager_abandon_procedure: 1
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      -  "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -81,14 +73,6 @@ signalements:
     territory: "Ain"
     tags:
       - "Peril"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -126,14 +110,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -171,14 +147,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -216,14 +184,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -260,14 +220,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -303,14 +255,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -348,14 +292,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -392,14 +328,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -436,14 +364,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -480,14 +400,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -526,14 +438,6 @@ signalements:
     territory: "Ain"
     tags:
       - "Peril"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -572,14 +476,6 @@ signalements:
     territory: "Ain"
     tags:
       - "Peril"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -619,14 +515,6 @@ signalements:
     territory: "Ain"
     tags:
       - "Peril"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -665,8 +553,6 @@ signalements:
     territory: "Ain"
     is_imported: true
     tags: []
-    situations: []
-    criteres: []
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000002"
@@ -701,8 +587,6 @@ signalements:
     nb_occupants_logement: 2
     territory: "Rhône"
     tags: []
-    situations: []
-    criteres: []
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000003"
@@ -736,8 +620,6 @@ signalements:
     nb_occupants_logement: 2
     territory: "Métropole de Lyon"
     tags: []
-    situations: []
-    criteres: []
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000004"
@@ -771,8 +653,6 @@ signalements:
     nb_occupants_logement: 2
     territory: "Métropole de Lyon"
     tags: []
-    situations: []
-    criteres: []
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000005"
@@ -806,8 +686,6 @@ signalements:
     nb_occupants_logement: 2
     territory: "Rhône"
     tags: []
-    situations: []
-    criteres: []
     criticites: []
   -
     uuid: "00000000-0000-0000-2023-000000000006"
@@ -841,14 +719,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -885,12 +755,6 @@ signalements:
     nb_occupants_logement: 2
     territory: "Yonne"
     tags: []
-    situations:
-      - "le confort du logement"
-      - "le confort du logement"
-    criteres:
-      - "Mon logement est mal isolé."
-      - "J’utilise un appareil d'appoint pour le chauffage."
     criticites:
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
       - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
@@ -929,12 +793,6 @@ signalements:
     nb_occupants_logement: 2
     territory: "Puy-de-Dôme"
     tags: []
-    situations:
-      - "le confort du logement"
-      - "le confort du logement"
-    criteres:
-      - "Mon logement est mal isolé."
-      - "J’utilise un appareil d'appoint pour le chauffage."
     criticites:
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
       - "J’utilise plusieurs chauffages d'appoint et/ou des pièces principales ne possèdent pas de moyen de chauffage."
@@ -973,12 +831,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "l'état du bâtiment"
-      - "le confort du logement"
-    criteres:
-      - "Les murs et plafonds intérieurs sont mal entretenus"
-      - "J'ai un problème de ventilation dans mon logement."
     criticites:
       - "la peinture est sale et non entretenue."
       - "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."
@@ -1014,12 +866,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "l'état du bâtiment"
-      - "le confort du logement"
-    criteres:
-      - "Les murs et plafonds intérieurs sont mal entretenus"
-      - "J'ai un problème de ventilation dans mon logement."
     criticites:
       - "la peinture est sale et non entretenue."
       - "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."
@@ -1058,12 +904,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "l'état du bâtiment"
-      - "le confort du logement"
-    criteres:
-      - "Les murs et plafonds intérieurs sont mal entretenus"
-      - "J'ai un problème de ventilation dans mon logement."
     criticites:
       - "la peinture est sale et non entretenue."
       - "il n’y a pas de ventilation dans au moins deux pièces parmi : les WC, la salle de bain et la cuisine."
@@ -1103,14 +943,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1151,14 +983,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1200,14 +1024,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1245,14 +1061,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1290,14 +1098,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1336,14 +1136,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1381,14 +1173,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1427,14 +1211,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1474,14 +1250,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-      - "la sécurité des occupants"
-      - "l'état et propreté du logement"
-    criteres:
-      - "Les déchets sont mal stockés."
-      - "La protection incendie n’est pas adaptée."
-      - "Les sols sont humides."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
       - "il n’y a pas de détecteur OU l’évacuation du logement est complexe (une seule sortie étroite, étage élevé, absence de fenêtre, escalier peu praticable…)."
@@ -1522,10 +1290,6 @@ signalements:
     territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
-    situations:
-      - "la vie commune et le voisinage"
-    criteres:
-      - "Les déchets sont mal stockés."
     criticites:
       - "les déchets ne peuvent être stockés nulle part. Il y a des ordures stockées n’importe où à l'intérieur ou à l'extérieur du bâtiment."
   -
@@ -1713,12 +1477,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Pas-de-Calais"
-    situations:
-      - "le confort du logement"
-    criteres:
-      - "De l’air s’infiltre dans mon logement."
-      - "Mes factures de chauffage sont anormalement élevées."
-      - "Mon logement est mal isolé."
     criticites:
       - "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
       - "Ma facture est trop élevée et le chauffage est limité dans le logement."
@@ -1754,12 +1512,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Bouches-du-Rhône"
-    situations:
-      - "le confort du logement"
-    criteres:
-      - "De l’air s’infiltre dans mon logement."
-      - "Mes factures de chauffage sont anormalement élevées."
-      - "Mon logement est mal isolé."
     criticites:
       - "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
       - "Ma facture est trop élevée et le chauffage est limité dans le logement."
@@ -1793,12 +1545,6 @@ signalements:
     is_rsa: 0
     nb_occupants_logement: 4
     territory: "Seine-Saint-Denis"
-    situations:
-      - "le confort du logement"
-    criteres:
-      - "De l’air s’infiltre dans mon logement."
-      - "Mes factures de chauffage sont anormalement élevées."
-      - "Mon logement est mal isolé."
     criticites:
       - "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
       - "Ma facture est trop élevée et le chauffage est limité dans le logement."

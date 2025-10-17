@@ -56,14 +56,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
     private ?ProfileDeclarant $profileDeclarant = null;
 
-    /** @var Collection<int, Situation> $situations */
-    #[ORM\ManyToMany(targetEntity: Situation::class, inversedBy: 'signalements')]
-    private Collection $situations;
-
-    /** @var Collection<int, Critere> $criteres */
-    #[ORM\ManyToMany(targetEntity: Critere::class, inversedBy: 'signalements')]
-    private Collection $criteres;
-
     /** @var Collection<int, Criticite> $criticites */
     #[ORM\ManyToMany(targetEntity: Criticite::class, inversedBy: 'signalements')]
     private Collection $criticites;
@@ -518,8 +510,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function __construct()
     {
-        $this->situations = new ArrayCollection();
-        $this->criteres = new ArrayCollection();
         $this->criticites = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->statut = SignalementStatus::NEED_VALIDATION;
@@ -561,54 +551,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection<int, Situation>
-     */
-    public function getSituations(): Collection
-    {
-        return $this->situations;
-    }
-
-    public function addSituation(Situation $situation): self
-    {
-        if (!$this->situations->contains($situation)) {
-            $this->situations[] = $situation;
-        }
-
-        return $this;
-    }
-
-    public function removeSituation(Situation $situation): self
-    {
-        $this->situations->removeElement($situation);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Critere>
-     */
-    public function getCriteres(): Collection
-    {
-        return $this->criteres;
-    }
-
-    public function addCritere(Critere $critere): self
-    {
-        if (!$this->criteres->contains($critere)) {
-            $this->criteres[] = $critere;
-        }
-
-        return $this;
-    }
-
-    public function removeCritere(Critere $critere): self
-    {
-        $this->criteres->removeElement($critere);
-
-        return $this;
     }
 
     /**

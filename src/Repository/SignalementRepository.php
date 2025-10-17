@@ -304,7 +304,9 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel')
-            ->leftJoin('s.situations', 'sit')
+            ->leftJoin('s.criticites', 'criticites')
+            ->leftJoin('criticites.critere', 'critere')
+            ->leftJoin('critere.situation', 'sit')
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', SignalementStatus::excludedStatuses());
 
@@ -337,7 +339,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->addSelect('SUM(CASE WHEN c.type = :logement THEN 1 ELSE 0 END) AS critere_logement_count')
             ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :batimentString THEN 1 ELSE 0 END) AS desordrecritere_batiment_count')
             ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :logementString THEN 1 ELSE 0 END) AS desordrecritere_logement_count')
-            ->leftJoin('s.criteres', 'c')
+            ->leftJoin('s.criticites', 'criticites')
+            ->leftJoin('criticites.critere', 'c')
             ->leftJoin('s.desordrePrecisions', 'dp')
             ->leftJoin('dp.desordreCritere', 'dc')
             ->setParameter('batiment', 1)
@@ -649,7 +652,9 @@ class SignalementRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('COUNT(s.id) AS count, sit.id, sit.menuLabel');
-        $qb->leftJoin('s.situations', 'sit');
+        $qb->leftJoin('s.criticites', 'criticites');
+        $qb->leftJoin('criticites.critere', 'critere');
+        $qb->leftJoin('critere.situation', 'sit');
 
         $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 

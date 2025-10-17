@@ -34,10 +34,6 @@ class Situation
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
 
-    /** @var Collection<int, Signalement> $signalements */
-    #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'situations')]
-    private Collection $signalements;
-
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $icon;
 
@@ -48,7 +44,6 @@ class Situation
     {
         $this->isArchive = false;
         $this->criteres = new ArrayCollection();
-        $this->signalements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -142,33 +137,6 @@ class Situation
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Signalement>
-     */
-    public function getSignalements(): Collection
-    {
-        return $this->signalements;
-    }
-
-    public function addSignalement(Signalement $signalement): self
-    {
-        if (!$this->signalements->contains($signalement)) {
-            $this->signalements[] = $signalement;
-            $signalement->addSituation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSignalement(Signalement $signalement): self
-    {
-        if ($this->signalements->removeElement($signalement)) {
-            $signalement->removeSituation($this);
-        }
 
         return $this;
     }
