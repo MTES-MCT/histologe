@@ -550,6 +550,7 @@ class SignalementCreateController extends AbstractController
                 $params = [];
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
+            $signalement->setCreatedAt(new \DateTimeImmutable());
             $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
             $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
             $fileRepository->updateIsWaitingSuiviForSignalement($signalement);
