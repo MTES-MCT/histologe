@@ -7,6 +7,7 @@ use App\Entity\Enum\DocumentType;
 use App\Repository\DesordreCritereRepository;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Doctrine\Common\Collections\Collection;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SuiviTransformerService
@@ -15,6 +16,7 @@ class SuiviTransformerService
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly UrlSignerInterface $urlSigner,
         private readonly DesordreCritereRepository $desordreCritereRepository,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -64,7 +66,15 @@ class SuiviTransformerService
                 if ($suiviFile->getFile()->getDocumentType() && DocumentType::AUTRE !== $suiviFile->getFile()->getDocumentType()) {
                     if (DocumentType::PHOTO_SITUATION === $suiviFile->getFile()->getDocumentType() && null !== $suiviFile->getFile()->getDesordreSlug()) {
                         $desordreCritere = $this->desordreCritereRepository->findOneBy(['slugCritere' => $suiviFile->getFile()->getDesordreSlug()]);
-                        $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().' - '.$desordreCritere->getLabelCritere().')</small>';
+                        if (!$desordreCritere) {
+                            $desordreCritere = $this->desordreCritereRepository->findOneBy(['slugCategorie' => $suiviFile->getFile()->getDesordreSlug()]);
+                        }
+                        if ($desordreCritere) {
+                            $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().' - '.$desordreCritere->getLabelCritere().')</small>';
+                        } else {
+                            $this->logger->error(\sprintf('$desordreCritere not found with slugCritere or slugCategorie = %s', $suiviFile->getFile()->getDesordreSlug()));
+                            $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().' - désordre non défini)</small>';
+                        }
                     } else {
                         $description .= ' <small>('.$suiviFile->getFile()->getDocumentType()->label().')</small>';
                     }
