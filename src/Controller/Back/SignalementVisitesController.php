@@ -28,8 +28,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/bo/signalements')]
 class SignalementVisitesController extends AbstractController
 {
-    private const SUCCESS_MSG_ADD = 'La date de visite a bien été définie.';
-    private const SUCCESS_MSG_CONFIRM = 'Les informations de la visite ont bien été renseignées.';
+    private const string SUCCESS_MSG_ADD = 'La date de visite a bien été définie.';
+    private const string SUCCESS_MSG_CONFIRM = 'Les informations de la visite ont bien été renseignées.';
 
     private function getSecurityRedirect(Signalement $signalement, Request $request, string $tokenName): ?Response
     {
