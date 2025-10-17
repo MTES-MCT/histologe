@@ -329,6 +329,9 @@ export default defineComponent({
         if (requestResponse.lienSuivi) {
           formStore.data.lienSuivi = requestResponse.lienSuivi
         }
+        if (requestResponse.signalementStatus) {
+          formStore.data.signalementStatus = requestResponse.signalementStatus
+        }
       }
 
       if (formStore.screenData) {
