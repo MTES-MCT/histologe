@@ -9,6 +9,9 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
+/**
+ * @implements UserProviderInterface<SignalementBailleur>
+ */
 class SignalementBailleurProvider implements UserProviderInterface
 {
     public function __construct(
@@ -18,6 +21,7 @@ class SignalementBailleurProvider implements UserProviderInterface
 
     /**
      * @throws NonUniqueResultException
+     * @param non-empty-string $signalementUuid
      */
     public function loadUserByIdentifier(string $signalementUuid): UserInterface
     {

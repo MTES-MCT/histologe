@@ -53,6 +53,6 @@ class WidgetVoter extends Voter
         $role = $user->getRoles();
         $widgetParams = $this->parameterBag->get($widget->getType());
 
-        return \in_array(array_shift($role), $widgetParams['roles']);
+        return \in_array(array_shift($role), $widgetParams['roles']);// @phpstan-ignore-line
     }
 }
