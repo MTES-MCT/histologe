@@ -26,13 +26,11 @@ class SignalementUpdatedListener
             if ('mailOccupant' === $key) {
                 $user = $signalement->getSignalementUsager()?->getOccupant();
                 $user?->setEmail($new);
-                $user?->setEmailDeliveryIssue(null);
             }
 
             if ('mailDeclarant' === $key) {
                 $user = $signalement->getSignalementUsager()?->getDeclarant();
                 $user?->setEmail($new);
-                $user?->setEmailDeliveryIssue(null);
             }
         }
     }

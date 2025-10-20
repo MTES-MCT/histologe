@@ -408,4 +408,15 @@ class PartnerRepository extends ServiceEntityRepository
         ->getQuery()
         ->getOneOrNullResult();
     }
+
+    /**
+     * @return Partner[]
+     */
+    public function findPartnerWithEmailDeliveryIssue(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.emailDeliveryIssue IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
 }
