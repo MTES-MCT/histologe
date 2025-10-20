@@ -13,7 +13,7 @@ if (reponseInjonctionBailleurDescription) {
   });
 
   function toggleBailleurDescription(value) {
-    if (value === '2' || value === '3') {
+    if (value === 'REPONSE_OUI_AVEC_AIDE' || value === 'REPONSE_NON') {
       descriptionContainer.classList.remove('fr-hidden');
     } else {
       descriptionContainer.classList.add('fr-hidden');

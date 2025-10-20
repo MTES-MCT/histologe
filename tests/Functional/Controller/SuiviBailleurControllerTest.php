@@ -38,7 +38,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertStringContainsString('Aucune', $crawler->filter('.signalement-card .info')->eq(2)->text());
 
         $form = $crawler->filter('form[name="reponse_injonction_bailleur"]')->form();
-        $form['reponse_injonction_bailleur[reponse]'] = (string) ReponseInjonctionBailleur::REPONSE_OUI;
+        $form['reponse_injonction_bailleur[reponse]'] = ReponseInjonctionBailleur::REPONSE_OUI;
         $form['reponse_injonction_bailleur[description]'] = '';
         $client->submit($form);
 
@@ -81,7 +81,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertStringContainsString('Monsieur Talau Clément', $crawler->filter('.signalement-card .info')->eq(0)->text());
 
         $form = $crawler->filter('form[name="reponse_injonction_bailleur"]')->form();
-        $form['reponse_injonction_bailleur[reponse]'] = (string) ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE;
+        $form['reponse_injonction_bailleur[reponse]'] = ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE;
         $form['reponse_injonction_bailleur[description]'] = 'Bon allez, dites moi ce que je dois faire.';
         $client->submit($form);
 
@@ -123,7 +123,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertStringContainsString('2025-11', $crawler->filter('.signalement-card .info')->eq(1)->text());
 
         $form = $crawler->filter('form[name="reponse_injonction_bailleur"]')->form();
-        $form['reponse_injonction_bailleur[reponse]'] = (string) ReponseInjonctionBailleur::REPONSE_NON;
+        $form['reponse_injonction_bailleur[reponse]'] = ReponseInjonctionBailleur::REPONSE_NON;
         $form['reponse_injonction_bailleur[description]'] = 'Même pas peur.';
         $client->submit($form);
 

@@ -11,13 +11,14 @@ use App\Manager\SuiviManager;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ReponseInjectionBailleurManager
+class InjonctionBailleurService
 {
+    public const string DELAIS_DE_REPONSE = '3 weeks';
+
     public function __construct(
         private readonly SuiviManager $suiviManager,
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly AutoAssigner $autoAssigner,
-
         private readonly EntityManagerInterface $entityManager,
     ) {
     }

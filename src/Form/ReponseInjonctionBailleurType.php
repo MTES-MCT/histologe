@@ -15,7 +15,7 @@ class ReponseInjonctionBailleurType extends AbstractType
     {
         $builder
             ->add('reponse', ChoiceType::class, [
-                'label' => 'Réponse',
+                'label' => 'Je m\'engage à résoudre les désordres',
                 'choices' => [
                     'Oui' => ReponseInjonctionBailleur::REPONSE_OUI,
                     'Oui avec aide' => ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE,
@@ -27,6 +27,7 @@ class ReponseInjonctionBailleurType extends AbstractType
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Commentaire',
+                'help' => 'Dix (10) caractères minimum',
                 'attr' => [
                     'rows' => 5,
                 ],

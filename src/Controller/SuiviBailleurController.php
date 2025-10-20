@@ -9,7 +9,7 @@ use App\Form\ReponseInjonctionBailleurType;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Security\User\SignalementBailleur;
-use App\Service\ReponseInjectionBailleurManager;
+use App\Service\InjonctionBailleurService;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ class SuiviBailleurController extends AbstractController
         SignalementRepository $signalementRepository,
         SuiviRepository $suiviRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
-        ReponseInjectionBailleurManager $reponseInjectionBailleurManager,
+        InjonctionBailleurService $injonctionBailleurService,
         EntityManagerInterface $entityManager,
     ): Response {
         /**
@@ -35,7 +35,7 @@ class SuiviBailleurController extends AbstractController
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
-        $dateLimit = $signalement->getCreatedAt()->modify('+3 weeks -1 day');
+        $dateLimit = $signalement->getCreatedAt()->modify('+'.InjonctionBailleurService::DELAIS_DE_REPONSE.' -1 day');
         $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
 
         if ($suiviReponse) {
@@ -60,7 +60,7 @@ class SuiviBailleurController extends AbstractController
             ]);
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $reponseInjectionBailleurManager->handleResponse($reponseInjonctionBailleur);
+                $injonctionBailleurService->handleResponse($reponseInjonctionBailleur);
                 $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
 
                 return $this->redirectToRoute('front_dossier_bailleur');
