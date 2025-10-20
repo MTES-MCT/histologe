@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Dto\ReponseInjonctionBailleur;
+use App\Dto\StopProcedure;
 use App\Entity\Enum\SuiviCategory;
 use App\Form\CoordonneesBailleurType;
 use App\Form\ReponseInjonctionBailleurType;
+use App\Form\StopProcedureType;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Security\User\SignalementBailleur;
@@ -38,6 +40,7 @@ class SuiviBailleurController extends AbstractController
         $dateLimit = $signalement->getCreatedAt()->modify('+'.InjonctionBailleurService::DELAIS_DE_REPONSE.' -1 day');
         $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
 
+        $formStopProcedure = null;
         if ($suiviReponse) {
             $form = null;
             if (!$signalement->getMailProprio()) {
@@ -48,6 +51,22 @@ class SuiviBailleurController extends AbstractController
                 if ($form->isSubmitted() && $form->isValid()) {
                     $entityManager->flush();
                     $this->addFlash('success', 'Vos coordonnées ont été enregistrées avec succès.');
+
+                    return $this->redirectToRoute('front_dossier_bailleur');
+                }
+            }
+            if (in_array($suiviReponse->getCategory(), [SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI, SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE], true)) {
+                $stopProcedure = new StopProcedure();
+                $stopProcedure->setSignalement($signalement);
+
+                $formStopProcedure = $this->createForm(StopProcedureType::class, $stopProcedure, [
+                    'action' => $this->generateUrl('front_dossier_bailleur').'#form_reponse_injonction_bailleur_title',
+                ]);
+                $formStopProcedure->handleRequest($request);
+
+                if ($formStopProcedure->isSubmitted() && $formStopProcedure->isValid()) {
+                    $injonctionBailleurService->handleStopProcedure($stopProcedure);
+                    $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
 
                     return $this->redirectToRoute('front_dossier_bailleur');
                 }
@@ -73,6 +92,7 @@ class SuiviBailleurController extends AbstractController
             'suiviReponse' => $suiviReponse,
             'dateLimit' => $dateLimit,
             'form' => $form,
+            'formStopProcedure' => $formStopProcedure,
         ]);
     }
 }

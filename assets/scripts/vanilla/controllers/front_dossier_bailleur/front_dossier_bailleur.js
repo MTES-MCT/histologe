@@ -21,3 +21,12 @@ if (reponseInjonctionBailleurDescription) {
   }
 
 }
+
+const stopProcedureBtn = document.querySelector('#stop-procedure-btn');
+const stopProcedureForm = document.querySelector('#stop-procedure-form-container');
+
+if (stopProcedureBtn && stopProcedureForm) {
+    stopProcedureBtn.addEventListener('click', () => {
+        stopProcedureForm.classList.toggle('fr-hidden');
+    });
+}

@@ -38,6 +38,8 @@ enum SuiviCategory: string
     case INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE = 'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE';
     case INJONCTION_BAILLEUR_REPONSE_NON = 'INJONCTION_BAILLEUR_REPONSE_NON';
     case INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE = 'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE';
+    case INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR = 'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR';
+    case INJONCTION_BAILLEUR_COMMENTAIRE_ARRET = 'INJONCTION_BAILLEUR_COMMENTAIRE_ARRET';
 
     public function label(): string
     {
@@ -91,6 +93,7 @@ enum SuiviCategory: string
             'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE' => 'Réponse du bailleur : Oui avec aide',
             'INJONCTION_BAILLEUR_REPONSE_NON' => 'Réponse du bailleur : Non',
             'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE' => 'Commentaire du bailleur',
+            'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR' => 'Le bailleur a souhaité arrêter l\'injonction et basculer en procédure classique',
         ];
     }
 
@@ -113,6 +116,7 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
             self::INJONCTION_BAILLEUR_REPONSE_NON,
             self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
+            self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
         ];
     }
 

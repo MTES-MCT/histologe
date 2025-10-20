@@ -185,23 +185,42 @@
 		</div>
 
 		<div class="fr-col-12 fr-col-md-8 fr-col-offset-md-2">
-			{% if suiviReponse %}
-				{% if suiviReponse.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_NON %}
-					{# pas d'action possible #}
-				{% else %}
-					<h2 class="title-blue-france fr-mb-1w fr-text--center">Contrat d'engagement</h2>
-					<div class="fr-consent-placeholder">
-						<h4 class="fr-h6">Je m'engage à résoudre les désordres</h4>
-						<p class="fr-mt-5w">{{signalement.prenomProprio}} {{signalement.nomProprio}} le {{ suiviReponse.createdAt|date('d/m/Y') }}</p>
-					</div>
-					{% if form is not null %}
-					<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
-						{{ form(form) }}
+			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}				
+				{% if suiviReponse %}
+					{% if suiviReponse.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_NON %}
+						{# pas d'action possible #}
+					{% else %}
+						<h2 class="title-blue-france fr-mb-1w fr-text--center">Contrat d'engagement</h2>
+						<div class="fr-consent-placeholder">
+							<h4 class="fr-h6">Je m'engage à résoudre les désordres</h4>
+							<p class="fr-mt-5w">{{signalement.prenomProprio}} {{signalement.nomProprio}} le {{ suiviReponse.createdAt|date('d/m/Y') }}</p>
+						</div>
+						{% if form is not null %}
+						<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
+							{{ form(form) }}
+						{% endif %}
+						<div class="fr-mt-3w">
+							<button type="button" id="stop-procedure-btn" class="fr-btn fr-btn--secondary">Arrêter la procédure</button>
+						</div>
+
+						<div id="stop-procedure-form-container" class="fr-hidden fr-mt-2w">
+							{{ form_start(formStopProcedure) }}
+							{{ form_row(formStopProcedure.description) }}
+							<button type="submit" class="fr-btn fr-btn--secondary fr-mt-1w">Confirmer</button>
+							{{ form_end(formStopProcedure) }}
+						</div>
 					{% endif %}
+				{% else %}
+					<h2 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h2>
+					{{ form(form) }}
 				{% endif %}
 			{% else %}
-				<h2 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h2>
-				{{ form(form) }}
+				{# TODO : le signalement peut être passé en procédure classique pour plusieurs raisons, gérer les différents cas ici. #}
+				<div class="fr-alert fr-alert--info">
+					<p>
+						Votre demande a bien été prise en compte, le dossier a été transféré aux partenaires compétents qui reviendront vers vous si besoin.
+					</p>
+				</div>				
 			{% endif %}
 		</div>
 
