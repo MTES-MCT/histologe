@@ -4,21 +4,22 @@ namespace App\EventListener;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
-use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 
-#[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: User::class)]
+#[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: User::class)]
 class UserUpdatedListener
 {
-    public function postUpdate(User $user, PostUpdateEventArgs $event): void
+    public function preUpdate(User $user, PreUpdateEventArgs $eventArgs): void
     {
-        $unitOfWork = $event->getObjectManager()->getUnitOfWork();
-
-        foreach ($unitOfWork->getEntityChangeSet($user) as $key => $change) {
-            if ('email' === $key) {
-                $user->setEmailDeliveryIssue(null);
-                break;
-            }
+        if (!$eventArgs->hasChangedField('email')) {
+            return;
         }
+
+        if (null === $user->getEmailDeliveryIssue()) {
+            return;
+        }
+
+        $user->setEmailDeliveryIssue(null);
     }
 }
