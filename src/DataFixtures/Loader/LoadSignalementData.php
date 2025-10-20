@@ -23,11 +23,9 @@ use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\UserManager;
 use App\Repository\BailleurRepository;
-use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\SignalementDraftRepository;
-use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
@@ -43,8 +41,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private readonly TerritoryRepository $territoryRepository,
         private readonly BailleurRepository $bailleurRepository,
-        private readonly SituationRepository $situationRepository,
-        private readonly CritereRepository $critereRepository,
         private readonly CriticiteRepository $criticiteRepository,
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly SignalementDraftRepository $signalementDraftRepository,
@@ -187,18 +183,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (isset($row['tags'])) {
             foreach ($row['tags'] as $tag) {
                 $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag, 'territory' => $signalement->getTerritory()]));
-            }
-        }
-
-        if (isset($row['situations'])) {
-            foreach ($row['situations'] as $situation) {
-                $signalement->addSituation($this->situationRepository->findOneBy(['label' => $situation]));
-            }
-        }
-
-        if (isset($row['criteres'])) {
-            foreach ($row['criteres'] as $critere) {
-                $signalement->addCritere($this->critereRepository->findOneBy(['label' => $critere]));
             }
         }
 
