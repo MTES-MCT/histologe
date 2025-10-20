@@ -51,10 +51,11 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
             throw new CustomUserMessageAuthenticationException('Code de suivi invalide');
         }
 
-        $visitorType = $request->request->get('visitor-type');
-        $firstLetterPrenom = $request->request->get('login-first-letter-prenom', '');
-        $firstLetterNom = $request->request->get('login-first-letter-nom', '');
-        $codePostal = $request->request->get('login-code-postal', '');
+        $visitorType = (string) $request->request->get('visitor-type');
+        $firstLetterPrenom = (string) $request->request->get('login-first-letter-prenom', '');
+        $firstLetterNom = (string) $request->request->get('login-first-letter-nom', '');
+        $codePostal = (string) $request->request->get('login-code-postal', '');
+        $csrfToken = (string) $request->request->get('_csrf_token');
 
         if (empty($firstLetterPrenom)) {
             throw new CustomUserMessageAuthenticationException('Veuillez saisir la première lettre du prénom.');
@@ -94,7 +95,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
                     $usagerData['user'] ?? null,
                 );
             }),
-            [new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token'))]
+            [new CsrfTokenBadge('authenticate', $csrfToken)]
         );
     }
 
