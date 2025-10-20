@@ -175,6 +175,38 @@ class SignalementControllerTest extends WebTestCase
         $this->assertStringContainsString('arrêt de procédure : '.$details, $lastSuivi->getDescription());
     }
 
+    public function testSuiviSignalementProcedureAbandonOnInjonctionBailleur(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_abandon', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $reason = 'Le problème est résolu';
+        $details = 'Le propriétaire a effectué les réparations nécessaires';
+        $client->request('POST', $urlSuiviSignalementUserResponse, [
+            'usager_cancel_procedure' => [
+                'reason' => $reason,
+                'details' => $details,
+                '_token' => $this->generateCsrfToken($client, 'usager_cancel_procedure'),
+            ],
+        ]);
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
+        $this->assertTrue($signalement->getIsUsagerAbandonProcedure());
+        $this->assertEquals(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
+        /** @var Suivi $lastSuivi */
+        $lastSuivi = $signalement->getSuivis()->last();
+        $this->assertEquals($lastSuivi->getCategory(), SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER);
+    }
+
     public function testSuiviSignalementProcedurePoursuite(): void
     {
         $client = static::createClient();
@@ -208,6 +240,54 @@ class SignalementControllerTest extends WebTestCase
         $this->assertStringContainsString($signalementUser->getUser()->getNomComplet(), $lastSuivi->getDescription());
         $this->assertStringContainsString('vouloir poursuivre la procédure', $lastSuivi->getDescription());
         $this->assertStringContainsString('Commentaire : '.$details, $lastSuivi->getDescription());
+    }
+
+    public function testSuiviSignalementProcedureBascule(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_bascule', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $details = 'C\'est trop lent, rien ne se passe !';
+        $client->request('POST', $urlSuiviSignalementUserResponse, [
+            'usager_bascule_procedure' => [
+                'details' => $details,
+                '_token' => $this->generateCsrfToken($client, 'usager_bascule_procedure'),
+            ],
+        ]);
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
+        $this->assertNull($signalement->getIsUsagerAbandonProcedure());
+        $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+        /** @var Suivi $lastSuivi */
+        $lastSuivi = $signalement->getSuivis()->last();
+        $this->assertEquals($lastSuivi->getCategory(), SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER);
+    }
+
+    public function testSuiviSignalementProcedureBasculeOnActiveSignalement(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-10']);
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_bascule', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $client->request('GET', $urlSuiviSignalementUserResponse);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
     /**
