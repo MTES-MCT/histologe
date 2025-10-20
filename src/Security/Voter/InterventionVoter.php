@@ -12,6 +12,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Intervention>
+ */
 class InterventionVoter extends Voter
 {
     public const string EDIT_VISITE = 'INTERVENTION_EDIT_VISITE';

@@ -10,6 +10,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
+/**
+ * @extends Voter<string, User>
+ */
 class UserVoter extends Voter
 {
     public const string EDIT = 'USER_EDIT';
