@@ -1,0 +1,27 @@
+<div class="fr-notice fr-notice--weather-purple">
+    <div class="fr-container">
+        <div class="fr-notice__body">
+            <p>
+                <span class="fr-notice__title">
+                    {{ random([
+                        'Sapristi !',
+                        'Sacrebleu !',
+                        'Hello !',
+                        'Attention !'
+                    ]) }}</span>
+                <span class="fr-notice__desc">
+                    {{ random([
+                        'Personne n\'est irremplaçable, demande au gosse des barres Kinder.',
+                        'Même Ronaldo peut finir au MacDo.',
+                        'Si c\'est marqué sur internet, c\'est p\'t-être faux mais c\'est p\'t-être vrai',
+                        'Fais le mal tout le monde s’en rappelle, fais le bien personne s’en souvient.',
+                        'Il faut avoir été innocent tous les soirs, pour se permettre de juger qui que ce soit.',
+                        'Claque pas des genoux, ou t\'es viré de la cour.',
+                        'Jamais dans la tendance, toujours dans la bonne direction.'
+                    ]) }}
+                </span>
+            </p>
+            <button title="Masquer le message" onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
+        </div>
+    </div>
+</div>
