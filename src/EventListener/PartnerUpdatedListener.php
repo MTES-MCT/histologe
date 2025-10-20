@@ -10,9 +10,9 @@ use Doctrine\ORM\Events;
 #[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Partner::class)]
 class PartnerUpdatedListener
 {
-    public function preUpdate(Partner $partner, PreUpdateEventArgs $args): void
+    public function preUpdate(Partner $partner, PreUpdateEventArgs $eventArgs): void
     {
-        if (!$args->hasChangedField('email')) {
+        if (!$eventArgs->hasChangedField('email')) {
             return;
         }
 

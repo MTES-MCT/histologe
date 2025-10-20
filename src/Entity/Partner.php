@@ -583,7 +583,7 @@ class Partner implements EntityHistoryInterface
         });
 
         $userReachable = $eligibleUsers->exists(static function ($key, User $user): bool {
-            return !empty($user->getEmail()) && null === $user->getEmailDeliveryIssue();
+            return null === $user->getEmailDeliveryIssue();
         });
 
         return !($partnerReachable || $userReachable);
