@@ -14,6 +14,7 @@ use App\Entity\Suivi;
 use App\Event\SuiviViewedEvent;
 use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
+use App\Form\UsagerBasculeProcedureType;
 use App\Form\UsagerCancelProcedureType;
 use App\Form\UsagerPoursuivreProcedureType;
 use App\Manager\SignalementDraftManager;
@@ -30,7 +31,9 @@ use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\NotificationAndMailSender;
 use App\Service\Security\FileScanner;
+use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDuplicateChecker;
@@ -769,6 +772,55 @@ class SignalementController extends AbstractController
         }
 
         return $this->render('front/suivi_signalement_poursuivre_procedure_validation.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/procedure/bascule', name: 'front_suivi_signalement_procedure_bascule', methods: ['GET', 'POST'])]
+    public function suiviSignalementProcedureBascule(
+        Request $request,
+        string $code,
+        SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
+        SuiviManager $suiviManager,
+        AutoAssigner $autoAssigner,
+        NotificationAndMailSender $notificationAndMailSender,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_BASCULE_PROCEDURE', $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+        $user = $signalementUser->getUser();
+
+        $form = $this->createForm(UsagerBasculeProcedureType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $description = $user->getNomComplet().' a indiqué vouloir basculer de la procédure d\'injonction bailleur vers la procédure administrative <br>
+            Commentaire : '.$form->get('details')->getData();
+
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                type: Suivi::TYPE_USAGER,
+                category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+                user: $user,
+                isPublic: true,
+            );
+
+            $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+            $signalementManager->save($signalement);
+            $autoAssigner->assign($signalement);
+            $notificationAndMailSender->sendNewSignalement($signalement);
+
+            $this->addFlash('success', 'Votre demande a bien été prise en compte. Votre signalement a été transmis à l\'administration.');
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/suivi_signalement_poursuivre_procedure_bascule.html.twig', [
             'signalement' => $signalement,
             'form' => $form->createView(),
         ]);

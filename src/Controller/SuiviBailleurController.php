@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\ReponseInjonctionBailleur;
+use App\Entity\Enum\SignalementStatus;
 use App\Dto\StopProcedure;
 use App\Entity\Enum\SuiviCategory;
 use App\Form\CoordonneesBailleurType;
@@ -41,9 +42,8 @@ class SuiviBailleurController extends AbstractController
         $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
         $suiviBasculeProcedure = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR]);
 
-        $formStopProcedure = null;
-        if ($suiviReponse) {
-            $form = null;
+        $form = null;
+        if ($suiviReponse && SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
             if (!$signalement->getMailProprio()) {
                 $form = $this->createForm(CoordonneesBailleurType::class, $signalement, [
                     'action' => $this->generateUrl('front_dossier_bailleur').'#form_coordonnees_bailleur_title',
@@ -72,7 +72,7 @@ class SuiviBailleurController extends AbstractController
                     return $this->redirectToRoute('front_dossier_bailleur');
                 }
             }
-        } else {
+        } elseif (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
             $reponseInjonctionBailleur = new ReponseInjonctionBailleur();
             $reponseInjonctionBailleur->setSignalement($signalement);
             $form = $this->createForm(ReponseInjonctionBailleurType::class, $reponseInjonctionBailleur, [
