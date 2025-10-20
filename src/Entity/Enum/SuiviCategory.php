@@ -42,6 +42,7 @@ enum SuiviCategory: string
     case INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR = 'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR';
     case INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE = 'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE';
     case INJONCTION_BAILLEUR_EXPIREE = 'INJONCTION_BAILLEUR_EXPIREE';
+    case INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER = 'INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER';
 
     public function label(): string
     {
@@ -95,6 +96,8 @@ enum SuiviCategory: string
             'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE' => 'Réponse du bailleur : Oui avec aide',
             'INJONCTION_BAILLEUR_REPONSE_NON' => 'Réponse du bailleur : Non',
             'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE' => 'Commentaire du bailleur',
+            'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER' => 'Bascule en procédure administrative par l\'usager',
+            'INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER' => 'Clôture du dossier en injonction bailleur par l\'usager',
             'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR' => 'Le bailleur a souhaité arrêter l\'injonction et basculer en procédure classique',
             'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE' => 'Commentaire du bailleur sur l\'arrêt de l\'injonction',
             'INJONCTION_BAILLEUR_EXPIREE' => 'Injonction bailleur expirée',
@@ -123,6 +126,7 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_REPONSE_NON,
             self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+            self::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_EXPIREE,

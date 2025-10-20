@@ -695,16 +695,25 @@ class SignalementController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $signalement->setIsUsagerAbandonProcedure(true);
 
-            $description = $user->getNomComplet().' souhaite fermer son dossier sur '
-                .$this->getParameter('platform_name')
-                .' pour le motif suivant : '.$form->get('reason')->getData().'<br>'
-                .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
+            if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+                $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
+                $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
+                $description = $user->getNomComplet().' à cloturer son dossier en injonction bailleur pour le motif suivant :
+                    '.$form->get('reason')->getData().'<br>'
+                    .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
+            } else {
+                $category = SuiviCategory::DEMANDE_ABANDON_PROCEDURE;
+                $description = $user->getNomComplet().' souhaite fermer son dossier sur '
+                    .$this->getParameter('platform_name')
+                    .' pour le motif suivant : '.$form->get('reason')->getData().'<br>'
+                    .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
+            }
 
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_USAGER,
-                category: SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
+                category: $category,
                 user: $user,
                 isPublic: true,
             );
