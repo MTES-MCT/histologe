@@ -161,7 +161,7 @@ class SignalementEditControllerTest extends WebTestCase
             'civilite' => 'mme',
             'nom' => 'Monfort',
             'prenom' => 'Nelson',
-            'mail' => 'nelson.monfort@yopmail.com',
+            'mail' => sprintf('nelson.%s@yopmail.com', uniqid()), // use new email in order to avoid unique integrity constraint violation
             'telephone' => '+33240556677',
             'telephoneBis' => '0611451264',
         ];

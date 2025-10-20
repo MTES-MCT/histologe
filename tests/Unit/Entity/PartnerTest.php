@@ -7,6 +7,7 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -15,13 +16,36 @@ class PartnerTest extends KernelTestCase
 {
     use FixturesHelper;
 
-    public function testPartnerWithUserIsValid(): void
+    private EntityManagerInterface $entityManager;
+
+    protected function setUp(): void
     {
         self::bootKernel();
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-        $validator = self::getContainer()->get('validator');
+        $this->entityManager = self::getContainer()->get('doctrine')->getManager();
+    }
 
-        $territory = $entityManager->getRepository(Territory::class)->find(1);
+    /**
+     * @dataProvider provideMailData
+     */
+    public function testPartnerHasEmailIssue(string $email, bool $hasIssue): void
+    {
+        /** @var Partner $partner */
+        $partner = $this->entityManager->getRepository(Partner::class)->findOneBy(['email' => $email]);
+
+        $this->assertNotNull($partner->getEmailDeliveryIssue());
+        $this->assertEquals($hasIssue, $partner->hasEmailIssue());
+    }
+
+    public function provideMailData(): \Generator
+    {
+        yield 'Partner KO with user OK' => ['partenaire-13-01@signal-logement.fr', false];
+        yield 'Partner KO with user KO' => ['partenaire-01-04@signal-logement.fr', true];
+    }
+
+    public function testPartnerWithUserIsValid(): void
+    {
+        $validator = self::getContainer()->get('validator');
+        $territory = $this->entityManager->getRepository(Territory::class)->find(1);
         $faker = Factory::create();
 
         $partner = (new Partner())
@@ -73,8 +97,7 @@ class PartnerTest extends KernelTestCase
      */
     public function testCreatePartnerNoValidWithEmailExistInTerritory(int $zip, int $countErrors): void
     {
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-        $territory = $entityManager->getRepository(Territory::class)->find($zip);
+        $territory = $this->entityManager->getRepository(Territory::class)->find($zip);
         $partner = (new Partner())
             ->setNom('Random partner')
             ->setEmail('partenaire-13-01@signal-logement.fr')
@@ -90,7 +113,6 @@ class PartnerTest extends KernelTestCase
     public function provideDataForTestPartnerWithEmail(): \Generator
     {
         yield 'Create partner not valid with email exists in territory' => [13, 1];
-
         yield 'Create partner valid with email exists in territory' => [1, 0];
     }
 }
