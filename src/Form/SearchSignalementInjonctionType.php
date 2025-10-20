@@ -32,6 +32,16 @@ class SearchSignalementInjonctionType extends AbstractType
             $builder->add('territoire', TerritoryChoiceType::class);
         }
 
+        $builder->add('injonctionAvecAide', ChoiceType::class, [
+            'choices' => [
+                'Oui' => 'oui',
+                'Non' => 'non',
+            ],
+            'required' => false,
+            'placeholder' => 'Tous',
+            'label' => 'Injonction avec aide',
+        ]);
+
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
                 'Ordre croissant' => 's.id-ASC',

@@ -38,18 +38,22 @@
 
     {{ form_start(form) }}
 
-    {% if is_granted('ROLE_ADMIN') %}
     <section class="fr-col-12">
         {{ form_errors(form) }}
-        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">        
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12 fr-col-lg-4">
+                    {{ form_row(form.territoire) }}
+                </div>
+            {% endif %}
             <div class="fr-col-12 fr-col-lg-4">
-                {{ form_row(form.territoire) }}
+                {{ form_row(form.injonctionAvecAide) }}
             </div>
             <div class="fr-col-12 fr-col-lg-4">
                 <a href="{{ path('back_injonction_signalement_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
+        </div>
     </section>
-    {% endif %}
 
     <section class="fr-col-12 fr-py-5v">
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement trouvé', 'signalements trouvés') }}</h2>

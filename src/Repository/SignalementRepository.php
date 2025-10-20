@@ -2419,13 +2419,17 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function countInjonctions(
+    public function countInjonctionsAvecAide(
         User $user,
         ?TabQueryParameters $params,
     ): int {
         $qb = $this->createQueryBuilder('s')
             ->where('s.statut = :statut')
-            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->leftJoin('s.suivis', 'su')
+            ->distinct()
+            ->andWhere('su.category = :aideCategory')
+            ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
 
         $qb->select('COUNT(DISTINCT s.id)');
 
@@ -2452,6 +2456,36 @@ class SignalementRepository extends ServiceEntityRepository
 
         if (!empty($searchSignalementInjonction->getTerritoire())) {
             $queryBuilder->andWhere('s.territory = :territory')->setParameter('territory', $searchSignalementInjonction->getTerritoire());
+        }
+
+        if (!empty($searchSignalementInjonction->getInjonctionAvecAide())) {
+            if ('oui' === $searchSignalementInjonction->getInjonctionAvecAide()) {
+                $queryBuilder->andWhere(
+                    $queryBuilder->expr()->exists(
+                        $this->createQueryBuilder('s2')
+                            ->select('1')
+                            ->join('s2.suivis', 'su2')
+                            ->where('s2 = s')
+                            ->andWhere('su2.category = :aideCategory')
+                            ->getDQL()
+                    )
+                );
+            } else {
+                $queryBuilder->andWhere(
+                    $queryBuilder->expr()->not(
+                        $queryBuilder->expr()->exists(
+                            $this->createQueryBuilder('s3')
+                                ->select('1')
+                                ->join('s3.suivis', 'su3')
+                                ->where('s3 = s')
+                                ->andWhere('su3.category = :aideCategory')
+                                ->getDQL()
+                        )
+                    )
+                );
+            }
+
+            $queryBuilder->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
         }
 
         if (!empty($searchSignalementInjonction->getOrderType())) {

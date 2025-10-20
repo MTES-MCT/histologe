@@ -56,7 +56,7 @@
                             title: 'Injonctions bailleur (parc privé)',
                             badge_class: 'fr-badge--info',
                             badge_label: singular_or_plural(items.data_kpi.injonctions, ' injonction', 'injonctions'),
-                            link: path('back_injonction_signalement_index', { territoire: items.territory_id })
+                            link: path('back_injonction_signalement_index', { territoire: items.territory_id, injonctionAvecAide: 'oui'})
                         } %}
                     {% endif %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {

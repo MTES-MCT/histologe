@@ -98,12 +98,12 @@ class TabDataManagerTest extends WebTestCase
         $this->assertSame('uuid-123', $result[0]->uuid);
     }
 
-    public function testCountInjonctions(): void
+    public function testCountInjonctionsAvecAide(): void
     {
         /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
-        $this->signalementRepository->method('countInjonctions')->willReturn(5);
+        $this->signalementRepository->method('countInjonctionsAvecAide')->willReturn(5);
 
         $tabDataManager = new TabDataManager(
             $this->security,
@@ -116,7 +116,7 @@ class TabDataManagerTest extends WebTestCase
             $this->tabCountKpiBuilder,
         );
 
-        $result = $tabDataManager->countInjonctions();
+        $result = $tabDataManager->countInjonctionsAvecAide();
         $this->assertSame(5, $result);
     }
 

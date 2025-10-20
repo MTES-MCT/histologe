@@ -34,7 +34,7 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
                 'partenaires_interfaces' => $this->tabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
             ];
             if ($this->security->isGranted(UserVoter::SEE_INJONCTION_BAILLEUR, $user)) {
-                $data['data_kpi']['injonctions'] = $this->tabDataManager->countInjonctions($this->tabQueryParameters);
+                $data['data_kpi']['injonctions'] = $this->tabDataManager->countInjonctionsAvecAide($this->tabQueryParameters);
             }
         }
         if ($user->isSuperAdmin()) {

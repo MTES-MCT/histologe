@@ -272,7 +272,7 @@ class SignalementRepositoryTest extends KernelTestCase
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function testCountInjonctions(): void
+    public function testCountInjonctionsAvecAide(): void
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
@@ -287,7 +287,7 @@ class SignalementRepositoryTest extends KernelTestCase
             orderBy: 'DESC',
         );
 
-        $countInjonctions = $signalementRepository->countInjonctions(
+        $countInjonctions = $signalementRepository->countInjonctionsAvecAide(
             user: $user,
             params: $tabQueryParameter
         );
