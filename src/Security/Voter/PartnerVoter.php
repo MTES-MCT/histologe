@@ -9,6 +9,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Partner>
+ */
 class PartnerVoter extends Voter
 {
     public const string CREATE = 'PARTNER_CREATE';

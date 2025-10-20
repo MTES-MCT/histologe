@@ -11,6 +11,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, File>
+ */
 class FileVoter extends Voter
 {
     public const string DELETE = 'FILE_DELETE';
@@ -21,7 +24,8 @@ class FileVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE, self::EDIT_DOCUMENT, self::DELETE_DOCUMENT]) && $subject instanceof File;
+        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE, self::EDIT_DOCUMENT, self::DELETE_DOCUMENT]) 
+            && $subject instanceof File;
     }
 
     /**

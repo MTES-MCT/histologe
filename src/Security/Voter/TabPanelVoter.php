@@ -8,6 +8,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, string>
+ */
 class TabPanelVoter extends Voter
 {
     public const string VIEW_TAB_PANEL = 'VIEW_TAB_PANEL';
