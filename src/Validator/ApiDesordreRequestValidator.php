@@ -53,7 +53,7 @@ class ApiDesordreRequestValidator extends ConstraintValidator
                     ->atPath('identifiant')
                     ->addViolation();
             }
-            $existingPrecisions = [];
+            $selectedPrecisions = [];
             foreach ($desordreRequest->precisions as $index => $precisionSlug) {
                 // contrôle de la cohérence entre le critere et les précisions
                 if (!in_array($precisionSlug, $existingPrecisionSlugs)) {
@@ -63,13 +63,13 @@ class ApiDesordreRequestValidator extends ConstraintValidator
                         ->addViolation();
                 }
                 // controle des doublons de précisions
-                if (in_array($precisionSlug, $existingPrecisions)) {
+                if (in_array($precisionSlug, $selectedPrecisions)) {
                     $this->context
                         ->buildViolation('La précision "'.$precisionSlug.'" est fournie en doublon pour le désordre "'.$desordreRequest->identifiant.'"')
                         ->atPath('precisions['.$index.']')
                         ->addViolation();
                 }
-                $existingPrecisions[] = $precisionSlug;
+                $selectedPrecisions[] = $precisionSlug;
                 // controle des précisions uniques
                 $precision = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $precisionSlug]);
                 if ($precision->getconfigIsUnique() && count($desordreRequest->precisions) > 1) {
