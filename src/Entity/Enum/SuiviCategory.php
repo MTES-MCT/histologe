@@ -95,6 +95,17 @@ enum SuiviCategory: string
     }
 
     /** @return array<SuiviCategory> */
+    public static function CategoriesSubmittedByBailleur(): array
+    {
+        return [
+            self::INJONCTION_BAILLEUR_REPONSE_OUI,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_NON,
+            self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
+        ];
+    }
+
+    /** @return array<SuiviCategory> */
     public static function injonctionBailleurCategories(): array
     {
         return [
