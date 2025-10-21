@@ -43,11 +43,11 @@
             {% endif %}
         </div>
 
-        {% set nbCol = is_granted('DELETE_SUIVI', suivi) or is_granted('EDIT_SUIVI', suivi) ? '6' : '7' %}
-        <div class="fr-col-{{ nbCol }} bloc-suivi-content-row fr-pl-3v">
+        <div class="fr-col-6 bloc-suivi-content-row fr-pl-3v">
         {{ transform_suivi_description(suivi)|raw}}
         </div>
-        <div class="fr-col-2">
+        {% set nbCol = is_granted('DELETE_SUIVI', suivi) or is_granted('EDIT_SUIVI', suivi) ? '2' : '3' %}
+        <div class="fr-col-{{ nbCol }}">
             {% if suivi.isPublic %}
                 <span class="fr-badge fr-badge--no-icon" title="Visible par l'usager">Visible par l'usager</span>
             {% else %}
