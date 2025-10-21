@@ -47,7 +47,7 @@ class EsaboraManagerTest extends KernelTestCase
     private MockObject|EntityManager $entityManager;
     private MockObject|ZipHelper $zipHelper;
     private MockObject|FileScanner $fileScanner;
-    private MockObject|UploadHandlerService $uploadHander;
+    private MockObject|UploadHandlerService $uploadHandler;
     private MockObject|ImageManipulationHandler $imageManipulationHandler;
     private MockObject|FileFactory $fileFactory;
     private MockObject|SignalementQualificationUpdater $signalementQualificationUpdater;
@@ -67,7 +67,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->zipHelper = $this->createMock(ZipHelper::class);
         $this->fileScanner = $this->createMock(FileScanner::class);
-        $this->uploadHander = $this->createMock(UploadHandlerService::class);
+        $this->uploadHandler = $this->createMock(UploadHandlerService::class);
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
         $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
@@ -127,7 +127,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->entityManager,
             $this->zipHelper,
             $this->fileScanner,
-            $this->uploadHander,
+            $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
@@ -210,7 +210,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->entityManager,
             $this->zipHelper,
             $this->fileScanner,
-            $this->uploadHander,
+            $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
@@ -263,7 +263,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->entityManager,
             $this->zipHelper,
             $this->fileScanner,
-            $this->uploadHander,
+            $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,
@@ -324,7 +324,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->entityManager,
             $this->zipHelper,
             $this->fileScanner,
-            $this->uploadHander,
+            $this->uploadHandler,
             $this->imageManipulationHandler,
             $this->fileFactory,
             $this->signalementQualificationUpdater,

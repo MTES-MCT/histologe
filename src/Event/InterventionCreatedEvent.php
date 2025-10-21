@@ -18,6 +18,7 @@ class InterventionCreatedEvent extends Event
         private readonly Intervention $intervention,
         private readonly User $user,
         private readonly Partner $partner,
+        private readonly ?string $source = null,
     ) {
     }
 
@@ -44,5 +45,10 @@ class InterventionCreatedEvent extends Event
     public function getPartner(): ?Partner
     {
         return $this->partner;
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
     }
 }

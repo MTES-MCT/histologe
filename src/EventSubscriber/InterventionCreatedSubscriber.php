@@ -7,6 +7,7 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
 use App\Manager\SuiviManager;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
@@ -33,7 +34,12 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     public function onInterventionCreated(InterventionCreatedEvent $event): void
     {
         $intervention = $event->getIntervention();
+        $signalement = $intervention->getSignalement();
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
+        $isPublic = true;
+        if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
+            $isPublic = false;
+        }
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
             description: $description,
@@ -41,9 +47,14 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             category : SuiviCategory::INTERVENTION_IS_CREATED,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            isPublic: true,
+            isPublic: $isPublic,
             context: Suivi::CONTEXT_INTERVENTION,
         );
+
+        if (EsaboraSISHService::NAME_SI === $event->getSource()) {
+            $suivi->setSource(EsaboraSISHService::NAME_SI);
+        }
+
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()
             && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')

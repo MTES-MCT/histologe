@@ -202,7 +202,12 @@ class EsaboraManager
                 }
 
                 $this->eventDispatcher->dispatch(
-                    new InterventionCreatedEvent($newIntervention, $this->adminUser, $affectation->getPartner()),
+                    new InterventionCreatedEvent(
+                        $newIntervention,
+                        $this->adminUser,
+                        $affectation->getPartner(),
+                        EsaboraSISHService::NAME_SI
+                    ),
                     InterventionCreatedEvent::NAME
                 );
             }
@@ -251,7 +256,12 @@ class EsaboraManager
                 [ProcedureType::INSALUBRITE]
             );
             $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent($intervention, $this->adminUser, $affectation->getPartner()),
+                new InterventionCreatedEvent(
+                    $intervention,
+                    $this->adminUser,
+                    $affectation->getPartner(),
+                    EsaboraSISHService::NAME_SI
+                ),
                 InterventionCreatedEvent::NAME
             );
         }
@@ -326,9 +336,9 @@ class EsaboraManager
             filename: $fileName,
             title: $originalName,
             signalement: $suivi->getSignalement(),
+            partner: $suivi->getPartner(),
             scannedAt: new \DateTimeImmutable(),
             isVariantsGenerated: $variantsGenerated,
-            partner: $suivi->getPartner(),
         );
         $this->entityManager->persist($file);
         $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());

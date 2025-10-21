@@ -12,6 +12,7 @@ use App\Factory\NotificationFactory;
 use App\Manager\SignalementManager;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -37,7 +38,16 @@ class VisiteNotifier
         Suivi $suivi,
         ?\DateTimeImmutable $previousDate = null,
     ): void {
-        $toRecipients = $intervention->getSignalement()->getMailUsagers();
+        $signalement = $intervention->getSignalement();
+        $toRecipients = [];
+        if (EsaboraSISHService::NAME_SI === $suivi->getSource()
+            && !$signalement->isTiersDeclarant()
+        ) {
+            $toRecipients = [$intervention->getSignalement()->getMailOccupant()];
+        } elseif (empty($suivi->getSource())) {
+            $toRecipients = $intervention->getSignalement()->getMailUsagers();
+        }
+
         $this->notificationAndMailSender->createInAppUsagersNotifications($suivi);
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
@@ -105,7 +115,12 @@ class VisiteNotifier
             if ($user === $currentUser) {
                 continue;
             }
-            $this->notifyAgent(user: $user, suivi: $suivi, notificationMailerType: $notificationMailerType, intervention: $intervention);
+            $this->notifyAgent(
+                user: $user,
+                suivi: $suivi,
+                intervention: $intervention,
+                notificationMailerType: $notificationMailerType
+            );
         }
     }
 
@@ -129,7 +144,11 @@ class VisiteNotifier
     ): void {
         $subs = $this->userSignalementSubscriptionRepository->findForIntervention($intervention);
         foreach ($subs as $subscription) {
-            $this->notifyAgent(user: $subscription->getUser(), notificationMailerType: $notificationMailerType, intervention: $intervention);
+            $this->notifyAgent(
+                user: $subscription->getUser(),
+                intervention: $intervention,
+                notificationMailerType: $notificationMailerType
+            );
         }
     }
 
@@ -140,7 +159,11 @@ class VisiteNotifier
     ): void {
         $subs = $this->userSignalementSubscriptionRepository->findForAffectation($affectation);
         foreach ($subs as $subscription) {
-            $this->notifyAgent(user: $subscription->getUser(), suivi: $suivi, notificationMailerType: $notificationMailerType, affectation: $affectation);
+            $this->notifyAgent(
+                user: $subscription->getUser(),
+                suivi: $suivi, notificationMailerType:
+                $notificationMailerType, affectation: $affectation
+            );
         }
     }
 
@@ -165,7 +188,11 @@ class VisiteNotifier
             }
         }
         if ($suivi) {
-            $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+            $notification = $this->notificationFactory->createInstanceFrom(
+                user: $user,
+                type: NotificationType::NOUVEAU_SUIVI,
+                suivi: $suivi
+            );
             $this->entityManager->persist($notification);
             $this->entityManager->flush();
         }
@@ -174,7 +201,9 @@ class VisiteNotifier
     public function notifyVisiteToConclude(Intervention $intervention): int
     {
         $signalement = $intervention->getSignalement();
-        $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId(), $signalement->getInseeOccupant());
+        $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins(
+            $signalement->getTerritory()->getId(), $signalement->getInseeOccupant()
+        );
 
         foreach ($listUsersToNotify as $user) {
             if ($user->getIsMailingActive()) {
