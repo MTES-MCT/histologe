@@ -7,6 +7,7 @@ use App\Form\SearchUserType;
 use App\Messenger\Message\InactiveUserExportMessage;
 use App\Messenger\Message\UserExportMessage;
 use App\Repository\UserRepository;
+use App\Service\EmailAlertChecker;
 use App\Service\ListFilters\SearchUser;
 use App\Service\UserExportLoader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,21 +20,25 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/utilisateurs')]
 #[IsGranted('ROLE_ADMIN_TERRITORY')]
-class BackUserController extends AbstractController
+class UserController extends AbstractController
 {
     #[Route('/', name: 'back_user_index', methods: ['GET'])]
     public function index(
         Request $request,
         UserRepository $userRepository,
+        EmailAlertChecker $emailAlertChecker,
         #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);
+
+        $emailsWithAlert = $emailAlertChecker->buildUserEmailAlert($paginatedUsers);
 
         return $this->render('back/user/index.html.twig', [
             'form' => $form,
             'searchUser' => $searchUser,
             'users' => $paginatedUsers,
             'pages' => (int) ceil($paginatedUsers->count() / $maxListPagination),
+            'emailsWithAlert' => $emailsWithAlert,
         ]);
     }
 
@@ -48,7 +53,7 @@ class BackUserController extends AbstractController
         $user = $this->getUser();
         $originalMethod = $request->getMethod();
         $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handlning the form
-        [$form, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);
+        [, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);
         if ('POST' === $originalMethod) {
             $format = $request->request->get('file-format');
             if (!in_array($format, ['csv', 'xlsx'])) {

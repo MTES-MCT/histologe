@@ -146,7 +146,7 @@
                     <td>{{ user.roleLabel() }}</td>
                     <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
                     <td>
-                        {% if user.emailDeliveryIssue.event.value|default(false) %}
+                        {% if user.email and emailsWithAlert[user.email]|default(false) %}
                             <span class="fr-badge fr-badge--warning fr-badge--sm">OUI</span>
                         {% else %}
                             Non

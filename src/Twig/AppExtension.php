@@ -7,6 +7,7 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
 use App\Entity\Suivi;
+use App\Service\EmailAlertChecker;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -178,6 +179,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
             new TwigFunction('show_email_alert', [EmailFormatValidator::class, 'isInvalidEmail']),
+            new TwigFunction('show_email_alert_brevo', [EmailAlertChecker::class, 'hasUsagerEmailAlert']),
             new TwigFunction('user_avatar_or_placeholder', [UserAvatar::class, 'userAvatarOrPlaceholder'], ['is_safe' => ['html']]),
             new TwigFunction('singular_or_plural', [$this, 'displaySingularOrPlural']),
             new TwigFunction('transform_suivi_description', [$this, 'transformSuiviDescription']),
