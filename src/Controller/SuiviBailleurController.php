@@ -39,6 +39,7 @@ class SuiviBailleurController extends AbstractController
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
         $dateLimit = $signalement->getCreatedAt()->modify('+'.InjonctionBailleurService::DELAIS_DE_REPONSE.' -1 day');
         $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
+        $suiviBasculeProcedure = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR]);
 
         $formStopProcedure = null;
         if ($suiviReponse) {
@@ -90,6 +91,7 @@ class SuiviBailleurController extends AbstractController
             'signalement' => $signalement,
             'infoDesordres' => $infoDesordres,
             'suiviReponse' => $suiviReponse,
+            'suiviBasculeProcedure' => $suiviBasculeProcedure,
             'dateLimit' => $dateLimit,
             'form' => $form,
             'formStopProcedure' => $formStopProcedure,

@@ -8,13 +8,9 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\User;
 use App\Manager\SuiviManager;
-use App\Repository\UserRepository;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class InjonctionBailleurService
 {
@@ -25,9 +21,6 @@ class InjonctionBailleurService
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly AutoAssigner $autoAssigner,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository $userRepository,
-        private readonly ParameterBagInterface $parameterBag,
-        private readonly Security $security,
     ) {
     }
 
@@ -76,11 +69,6 @@ class InjonctionBailleurService
         $signalement = $stopProcedure->getSignalement();
         $description = $stopProcedure->getDescription();
 
-        $adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
-        // TODO : est-ce que le bailleur est vraiment un user ?
-        /** @var User $user */
-        $user = $this->security->getUser();
-
         $contenu = 'Le bailleur souhaite arrêter la procédure d\'injonction, le signalement va être pris en charge par les partenaires compétents.';
         $category = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR;
         $this->suiviManager->createSuivi(
@@ -88,7 +76,6 @@ class InjonctionBailleurService
             description: $contenu,
             type: Suivi::TYPE_AUTO,
             category: $category,
-            user: $adminUser,
             isPublic: true
         );
 
@@ -96,8 +83,7 @@ class InjonctionBailleurService
             signalement: $signalement,
             description: $description,
             type: Suivi::TYPE_AUTO,
-            user: $user,
-            category: SuiviCategory::INJONCTION_BAILLEUR_COMMENTAIRE_ARRET,
+            category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
         );
 
         $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
