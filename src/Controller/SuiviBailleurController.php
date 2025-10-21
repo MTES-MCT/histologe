@@ -61,7 +61,7 @@ class SuiviBailleurController extends AbstractController
                 $stopProcedure->setSignalement($signalement);
 
                 $formStopProcedure = $this->createForm(StopProcedureType::class, $stopProcedure, [
-                    'action' => $this->generateUrl('front_dossier_bailleur').'#form_reponse_injonction_bailleur_title',
+                    'action' => $this->generateUrl('front_dossier_bailleur'),
                 ]);
                 $formStopProcedure->handleRequest($request);
 

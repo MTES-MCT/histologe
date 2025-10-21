@@ -203,12 +203,11 @@
 							<button type="button" id="stop-procedure-btn" class="fr-btn fr-btn--secondary">Arrêter la procédure</button>
 						</div>
 
-						<div id="stop-procedure-form-container" class="fr-hidden fr-mt-2w">
-							{{ form_start(formStopProcedure) }}
-							{{ form_row(formStopProcedure.description) }}
-							<button type="submit" class="fr-btn fr-btn--secondary fr-mt-1w">Confirmer</button>
-							{{ form_end(formStopProcedure) }}
-						</div>
+						{% if formStopProcedure is not null %}
+							<div id="stop-procedure-form-container" class="fr-hidden fr-mt-2w">
+								{{ form(formStopProcedure) }}
+							</div>
+						{% endif %}
 					{% endif %}
 				{% else %}
 					<h2 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h2>
