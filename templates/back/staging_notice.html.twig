@@ -1,33 +1,42 @@
+{% set getFunky = ('mathilde' in app.user.email or 'numa' in app.user.email or 'helene' in app.user.email or 'saidi' in app.user.email or 'emilien' in app.user.email) %}
 <div class="fr-notice fr-notice--weather-purple">
     <div class="fr-container">
         <div class="fr-notice__body">
             <p>
                 <span class="fr-notice__title">
-                    {{ random([
-                        'Sapristi !',
-                        'Sacrebleu !',
-                        'Hello !',
-                        'Attention !',
-                        'Diantre !',
-                        'Fichtre !',
-                        'Bigre !',
-                    ]) }}</span>
+                    {% set titleList = ['Bonjour !'] %}
+                    {% if (getFunky) %}
+                        {% set titleList = [
+                            'Sapristi !',
+                            'Sacrebleu !',
+                            'Hello !',
+                            'Attention !',
+                            'Diantre !',
+                            'Fichtre !',
+                            'Bigre !',
+                        ] %}
+                    {% endif %}
+                    {{ random(titleList) }}</span>
                 <span class="fr-notice__desc">
-                    {{ random([
-                        'Personne n\'est irremplaçable, demande au gosse des barres Kinder.',
-                        'Même Ronaldo peut finir au MacDo.',
-                        'Si c\'est marqué sur internet, c\'est p\'t-être faux mais c\'est p\'t-être vrai',
-                        'Fais le mal tout le monde s’en rappelle, fais le bien personne s’en souvient.',
-                        'Il faut avoir été innocent tous les soirs, pour se permettre de juger qui que ce soit.',
-                        'Claque pas des genoux, ou t\'es viré de la cour.',
-                        'Jamais dans la tendance, toujours dans la bonne direction.',
-                        'Tu ne trouveras pas de maqueraux dans une boite de thons, tu trouveras quelques thons dans une boite de macs.',
-                        'Ne niez même pas les misères que vous lui faites, elle n\'a pas d\'autre tort que d\'avoir une autre tête.',
-                        'Petit problème : voyou au féminin ça fait jamais voyelle',
-                        'J\'aime mon pays, comment peux-tu en douter ? J\'aime aussi le seigneur car il pardonnera mes péchés.',
-                        'Combien de milliers d\'enfants dans les décombres des camps, deviendront combattants ?',
-                        'L\'escargot Léo, Léo, Léo L\'escargot a sa coquille sur le dos.'
-                    ]) }}
+                    {% set descList = ['Vous utilisez une application de test. Vos modifications n\'auront pas d\'impact sur les données réelles.'] %}
+                    {% if (getFunky) %}
+                        {% set descList = [
+                            'Personne n\'est irremplaçable, demande au gosse des barres Kinder.',
+                            'Même Ronaldo peut finir au MacDo.',
+                            'Si c\'est marqué sur internet, c\'est p\'t-être faux mais c\'est p\'t-être vrai',
+                            'Fais le mal tout le monde s’en rappelle, fais le bien personne s’en souvient.',
+                            'Il faut avoir été innocent tous les soirs, pour se permettre de juger qui que ce soit.',
+                            'Claque pas des genoux, ou t\'es viré de la cour.',
+                            'Jamais dans la tendance, toujours dans la bonne direction.',
+                            'Tu ne trouveras pas de maqueraux dans une boite de thons, tu trouveras quelques thons dans une boite de macs.',
+                            'Ne niez même pas les misères que vous lui faites, elle n\'a pas d\'autre tort que d\'avoir une autre tête.',
+                            'Petit problème : voyou au féminin ça fait jamais voyelle',
+                            'J\'aime mon pays, comment peux-tu en douter ? J\'aime aussi le seigneur car il pardonnera mes péchés.',
+                            'Combien de milliers d\'enfants dans les décombres des camps, deviendront combattants ?',
+                            'L\'escargot Léo, Léo, Léo L\'escargot a sa coquille sur le dos.'
+                        ] %}
+                    {% endif %}
+                    {{ random(descList) }}
                 </span>
             </p>
             <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>

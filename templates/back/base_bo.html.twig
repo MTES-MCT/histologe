@@ -6,7 +6,7 @@
     {% include 'back/nav_bo.html.twig' %}
     {% block notice %}{% endblock %}
     <main id="container-horizontal" class="{{ app.request.get('_route') in ['back_cartographie'] ? '' : 'fr-mb-5v'}}">
-        {% if 'staging' in app_url %}
+        {% if display_staging_notice %}
             {% include 'back/staging_notice.html.twig' %}
         {% endif %}
 
