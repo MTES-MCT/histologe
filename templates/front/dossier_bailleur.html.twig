@@ -9,9 +9,86 @@
 
 		<div class="fr-col-12 fr-col-md-6">
 			<h1 class="title-blue-france">Détails du dossier</h1>
+			<div class="signalement-card fr-mb-3w">
+				<div class="fr-grid-row fr-grid-row--gutters">
+					<div class="fr-col-12 fr-col-md-6">
+						Déclarant
+						<br>
+						<span class="info">
+							{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
+						</span>
+					</div>
+					<div class="fr-col-12 fr-col-md-6">
+						Référence du dossier
+						<br>
+						<span class="info">#{{ signalement.reference }}</span>
+					</div>
+					<div class="fr-col-12 fr-col-md-6">
+						Votre réponse
+						<br>
+						<span class="info">
+							{% if suiviReponse %}
+								{{ suiviReponse.category.labelReponseBailleur() }}
+							{% else %}
+								Aucune
+							{% endif %}
+						</span>
+					</div>
+					<div class="fr-col-12 fr-col-md-6">
+						{% if suiviReponse %}
+							Réponse donnée le
+							<br>
+							<span class="info">
+								{{ suiviReponse.createdAt|date('d/m/Y') }}
+							</span>
+						{% else %}
+							Réponse attendue d'ici le
+							<br>
+							<span class="info">
+								{{ dateLimit|date('d/m/Y') }}
+							</span>
+						{% endif %}
+					</div>
+				</div>	
+			</div>
+		</div>
 
+		<div class="fr-col-12 fr-col-md-6">
 			<h3 class="fr-h5 fr-mb-3v">Coordonnées</h3>
 			<div class="fr-mb-1w">
+				<strong>Vos Coordonnées (bailleur)</strong>
+			</div>
+			{{signalement.nomProprio}}
+			{% if signalement.prenomProprio %}
+				{{ signalement.prenomProprio }}
+			{% endif %}
+			{% if signalement.adresseProprio %}
+				<br>
+				{{ signalement.adresseProprio }}
+			{% endif %}
+			{% if signalement.codePostalProprio %}
+				{{ signalement.codePostalProprio }}
+			{% endif %}
+			{% if signalement.villeProprio %}
+				{{ signalement.villeProprio }}
+			{% endif %}
+			{% if signalement.mailProprio %}
+				<br>
+				{{ signalement.mailProprio }}
+				{% if show_email_alert(signalement.mailProprio) %}
+					<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+				{% endif %}
+			{% endif %}
+			{% if signalement.telProprio %}
+				<br>
+				{{ signalement.telProprioDecoded|phone }}
+			{% endif %}
+			{% if signalement.telProprioSecondaire %}
+				<br>
+				{{ signalement.telProprioSecondaireDecoded|phone }}
+			{% endif %}
+
+			<div class="fr-mb-1w fr-mt-2w">
 				<strong>Adresse du logement</strong>
 			</div>
 			{{ signalement.adresseOccupant }}
@@ -21,7 +98,9 @@
 				<br>
 				{{signalement.complementAdresseOccupant}}
 			{% endif %}	
+		</div>
 
+		<div class="fr-col-12 fr-col-md-6">
 			<h2 class="title-blue-france fr-mb-1w">Déclaration</h2>
 			{% if signalement.debutDesordres is not null %}
 				<ul>
@@ -48,29 +127,84 @@
 					{% include 'front/_partials/_desordre.html.twig' %}
 				{% endfor %}
 			{% endif %}
-
 		</div>
 
 		<div class="fr-col-12 fr-col-md-6">
-			<h2 class="title-blue-france fr-mb-1w">Allez-vous réagir avant que Vikie se fâche ?</h2>
-			<ul class="fr-btns-group fr-btns-group--center">
-				<li>
-					<a href="#" class="fr-btn fr-btn--success">
-						Oui
-					</a>
-				</li>
-				<li>
-					<a href="#" class="fr-btn fr-btn--orange">
-						P'têt ben qu'oui, p'têt ben qu'non
-					</a>
-				</li>
-				<li>
-					<a href="#" class="fr-btn fr-btn--danger">
-						Non
-					</a>
-				</li>
-			</ul>
+			<h2 class="title-blue-france fr-mb-1w">Les photos et documents du dossier</h2>
+			{% set photos = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeImage) %}
+			{% set docs = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeDocument and not photo.isSuspicious) %}
+			{% if photos is empty and docs is empty %}
+				Aucun document ou photo disponible
+			{% endif %}
+			{% if photos is not empty %}
+				<p>Cliquez sur une photo pour l'afficher dans un nouvel onglet.</p>
+				<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+					{% for photo in photos %}
+						<div class="fr-col-6 fr-col-md-4 fr-rounded signalement-file-item">
+							<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
+								style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
+								>
+								<a  href="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'resize'})) }}" target="_blank" rel="noopener"
+									class="fr-btn fr-btn--sm fr-icon-eye-line" 
+									title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
+								></a>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+			{% if docs is not empty %}
+				<p>Cliquez sur le document pour l'ouvrir dans un nouvel onglet.</p>
+				<div class="fr-grid-row fr-grid-row--gutters">
+				{% for doc in docs %}			
+					<div class="fr-col-12 fr-background-alt--grey fr-mb-2w">
+						<div class="fr-grid-row">
+							<div class="fr-col-6">
+								<span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
+							</div>
+							<div class="fr-col-6 fr-text--right">
+								<small>{{ doc.createdAt is defined ? doc.createdAt|date('d/m/Y') : 'N/R' }}</small>
+							</div>
+							<div class="fr-col-12 fr-p-2v">
+								<i><strong>{{ doc.title }}</strong></i>
+							</div>
+							<div class="fr-col-12">
+								<a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
+								class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-eye-fill img-box"
+								title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
+								target="_blank"
+								rel="noopener">
+									Afficher
+								</a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+				</div>
+			{% endif %}
 		</div>
+
+		<div class="fr-col-12 fr-col-md-8 fr-col-offset-md-2">
+			{% if suiviReponse %}
+				{% if suiviReponse.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_NON %}
+					{# pas d'action possible #}
+				{% else %}
+					<h2 class="title-blue-france fr-mb-1w fr-text--center">Contrat d'engagement</h2>
+					<div class="fr-consent-placeholder">
+						<h4 class="fr-h6">Je m'engage à résoudre les désordres</h4>
+						<p class="fr-mt-5w">{{signalement.prenomProprio}} {{signalement.nomProprio}} le {{ suiviReponse.createdAt|date('d/m/Y') }}</p>
+					</div>
+					{% if form is not null %}
+					<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
+						{{ form(form) }}
+					{% endif %}
+				{% endif %}
+			{% else %}
+				<h2 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h2>
+				{{ form(form) }}
+			{% endif %}
+		</div>
+
 	</div>
 </main>
 {% endblock %}

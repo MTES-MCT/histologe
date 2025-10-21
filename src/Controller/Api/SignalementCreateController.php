@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\Event\SignalementCreatedEvent;
 use App\Factory\Api\SignalementResponseFactory;
 use App\Manager\SignalementManager;
-use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\AutoAssigner;
@@ -43,7 +42,6 @@ class SignalementCreateController extends AbstractController
         private readonly SignalementRepository $signalementRepository,
         private readonly SignalementManager $signalementManager,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
-        private readonly UserManager $userManager,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly EntityManagerInterface $entityManager,
         private readonly EventDispatcherInterface $eventDispatcher,
@@ -257,14 +255,8 @@ class SignalementCreateController extends AbstractController
         $signalement->setReference($this->referenceGenerator->generate($signalement->getTerritory()));
         $this->signalementRepository->save($signalement, true);
         $this->entityManager->commit();
-        $hasAssignablePartners = $this->autoAssigner->assign($signalement, true);
-        if (count($hasAssignablePartners)) {
-            $this->userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
-            $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
-            $this->autoAssigner->assign($signalement);
-        } else {
-            $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME); // @phpstan-ignore-line
-        }
+        $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME); // @phpstan-ignore-line
+        $this->autoAssigner->assign($signalement);
 
         $resource = $this->signalementResponseFactory->createFromSignalement($signalement);
 

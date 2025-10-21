@@ -33,13 +33,26 @@ enum SuiviCategory: string
     case MESSAGE_ESABORA_SCHS = 'MESSAGE_ESABORA_SCHS';
     case MESSAGE_PARTNER = 'MESSAGE_PARTNER';
 
-    // cas liées à l'injonction bailleur (virtuel pour le moment)
-    case INJONCTION_BAILLEUR_EXPIREE = 'INJONCTION_BAILLEUR_EXPIREE';
-    case INJONCTION_BAILLEUR_REPONSE_OK = 'INJONCTION_BAILLEUR_REPONSE_OK';
+    // cas liées à l'injonction bailleur
+    case INJONCTION_BAILLEUR_REPONSE_OUI = 'INJONCTION_BAILLEUR_REPONSE_OUI';
+    case INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE = 'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE';
+    case INJONCTION_BAILLEUR_REPONSE_NON = 'INJONCTION_BAILLEUR_REPONSE_NON';
+    case INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE = 'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE';
 
     public function label(): string
     {
         return self::getLabelList()[$this->name];
+    }
+
+    public function labelReponseBailleur(): string
+    {
+        $reponseList = [
+            self::INJONCTION_BAILLEUR_REPONSE_OUI->name => 'Oui',
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE->name => 'Oui avec aide',
+            self::INJONCTION_BAILLEUR_REPONSE_NON->name => 'Non',
+        ];
+
+        return $reponseList[$this->name];
     }
 
     /** @return array<string, string> */
@@ -74,8 +87,21 @@ enum SuiviCategory: string
             'DEMANDE_POURSUITE_PROCEDURE' => 'Demande de poursuite de procédure par l\'usager',
             'MESSAGE_ESABORA_SCHS' => 'Message Esabora SCHS',
             'MESSAGE_PARTNER' => 'Suivi du partenaire',
-            'INJONCTION_BAILLEUR_EXPIREE' => 'Injonction bailleur expirée',
-            'INJONCTION_BAILLEUR_REPONSE_OK' => 'Réponse favorable à l\'injonction bailleur',
+            'INJONCTION_BAILLEUR_REPONSE_OUI' => 'Réponse du bailleur : Oui',
+            'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE' => 'Réponse du bailleur : Oui avec aide',
+            'INJONCTION_BAILLEUR_REPONSE_NON' => 'Réponse du bailleur : Non',
+            'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE' => 'Commentaire du bailleur',
+        ];
+    }
+
+    /** @return array<SuiviCategory> */
+    public static function CategoriesSubmittedByBailleur(): array
+    {
+        return [
+            self::INJONCTION_BAILLEUR_REPONSE_OUI,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_NON,
+            self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
         ];
     }
 
@@ -83,8 +109,20 @@ enum SuiviCategory: string
     public static function injonctionBailleurCategories(): array
     {
         return [
-            self::INJONCTION_BAILLEUR_EXPIREE,
-            self::INJONCTION_BAILLEUR_REPONSE_OK,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_NON,
+            self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
+        ];
+    }
+
+    /** @return array<SuiviCategory> */
+    public static function injonctionBailleurReponseCategories(): array
+    {
+        return [
+            self::INJONCTION_BAILLEUR_REPONSE_OUI,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_NON,
         ];
     }
 }

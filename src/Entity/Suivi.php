@@ -189,6 +189,9 @@ class Suivi implements EntityHistoryInterface
 
             return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
         }
+        if (in_array($this->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
+            return 'Bailleur';
+        }
         if ($this->getCreatedAt()->format('Y') >= 2024) {
             return 'Occupant ou déclarant';
         }
