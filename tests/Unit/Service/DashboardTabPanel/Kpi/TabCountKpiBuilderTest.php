@@ -19,21 +19,17 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class TabCountKpiBuilderTest extends TestCase
 {
-    protected MockObject|SignalementRepository $signalementRepository;
-    protected MockObject|SuiviRepository $suiviRepository;
-    protected MockObject|Security $security;
+    protected MockObject&SignalementRepository $signalementRepository;
+    protected MockObject&SuiviRepository $suiviRepository;
+    protected MockObject&Security $security;
     protected MockObject|TabCountKpiBuilder $tabCountKpiBuilder;
-    protected MockObject|TabCountKpiCacheHelper $tabCountKpiCacheHelper;
+    protected MockObject&TabCountKpiCacheHelper $tabCountKpiCacheHelper;
 
     protected function setUp(): void
     {
-        /* @var MockObject&SignalementRepository */
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
-        /* @var MockObject&SuiviRepository */
         $this->suiviRepository = $this->createMock(SuiviRepository::class);
-        /* @var MockObject&Security */
         $this->security = $this->createMock(Security::class);
-        /* @var MockObject&TabCountKpiCacheHelper */
         $this->tabCountKpiCacheHelper = $this->createMock(TabCountKpiCacheHelper::class);
 
         $this->tabCountKpiBuilder = new TabCountKpiBuilder(

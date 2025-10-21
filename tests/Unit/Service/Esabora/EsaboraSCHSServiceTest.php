@@ -25,7 +25,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
     public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/schs/';
 
     private MockObject|UploadHandlerService $uploadHandlerService;
-    private LoggerInterface $logger;
+    private MockObject|LoggerInterface $logger;
     private ?string $tempFilepath;
 
     protected function setUp(): void
