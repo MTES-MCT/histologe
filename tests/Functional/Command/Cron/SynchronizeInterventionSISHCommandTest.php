@@ -15,7 +15,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
     /**
      * @dataProvider provideNbMailSent
      */
-    public function testSendNoMail(ProfileDeclarant $profileDeclarant, int $nbMail): void
+    public function testSendMail(ProfileDeclarant $profileDeclarant, int $nbMail): void
     {
         $kernel = self::bootKernel();
 
@@ -47,7 +47,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
 
     public function provideNbMailSent(): \Generator
     {
-        yield 'Signalement submitted by tiers_pro' => [ProfileDeclarant::TIERS_PRO, 1];
-        yield 'Signalement submitted by locataire' => [ProfileDeclarant::LOCATAIRE, 5];
+        yield 'Get only cron mail with signalement submitted by tiers_pro' => [ProfileDeclarant::TIERS_PRO, 1];
+        yield 'Gel all the mail with signalement submitted by locataire' => [ProfileDeclarant::LOCATAIRE, 5];
     }
 }
