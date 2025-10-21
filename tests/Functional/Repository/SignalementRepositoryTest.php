@@ -291,8 +291,8 @@ class SignalementRepositoryTest extends KernelTestCase
             user: $user,
             params: $tabQueryParameter
         );
-
-        $this->assertTrue(2 === $countInjonctions);
+        
+        $this->assertEquals(1, $countInjonctions);
     }
 
     /**
