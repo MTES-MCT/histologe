@@ -16,21 +16,10 @@ class SignalementUpdatedListener
     {
         $unitOfWork = $event->getObjectManager()->getUnitOfWork();
 
-        foreach ($unitOfWork->getEntityChangeSet($signalement) as $key => $change) {
-            $old = $change[0];
-            $new = $change[1];
-            if ($old != $new) {
+        foreach ($unitOfWork->getEntityChangeSet($signalement) as $change) {
+            if ($change[0] != $change[1]) {
                 $this->updateOccurred = true;
-            }
-
-            if ('mailOccupant' === $key) {
-                $user = $signalement->getSignalementUsager()?->getOccupant();
-                $user?->setEmail($new);
-            }
-
-            if ('mailDeclarant' === $key) {
-                $user = $signalement->getSignalementUsager()?->getDeclarant();
-                $user?->setEmail($new);
+                break;
             }
         }
     }

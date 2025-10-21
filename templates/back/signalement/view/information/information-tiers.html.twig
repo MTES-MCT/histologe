@@ -51,6 +51,9 @@
             {% if signalement.signalementUsager.declarant.emailDeliveryIssue.event.value|default(false) %}
                 <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
             {% endif %}
+            {% if show_email_alert_brevo('declarant', signalement.mailDeclarant) %}
+                <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
+            {% endif %}
         {% endif %}
     </div>
     <div class="fr-col-12">

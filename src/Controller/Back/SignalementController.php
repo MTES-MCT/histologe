@@ -42,6 +42,7 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
+use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
@@ -61,6 +62,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
 {
+    public function __construct(private EmailAlertChecker $emailAlertBuilder)
+    {
+    }
+
     /**
      * @throws \DateMalformedStringException
      * @throws Exception
@@ -314,6 +319,7 @@ class SignalementController extends AbstractController
             'signalementsOnSameAddress' => $signalementsOnSameAddress,
             'isUserSubscribed' => $isUserSubscribed,
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
+            'partnerEmailAlerts' => $this->emailAlertBuilder->buildPartnerEmailAlert($signalement),
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);
@@ -366,8 +372,8 @@ class SignalementController extends AbstractController
             $entity = $affectationManager->closeAffectation(
                 affectation: $affectation,
                 user: $user,
-                partner: $partner,
                 motif: $signalementAffectationClose->getMotifCloture(),
+                partner: $partner,
                 message: $signalementAffectationClose->getDescription(),
                 files: $signalementAffectationClose->getFiles(),
                 flush: true
