@@ -6,3 +6,5 @@ echo "Clear older records from entities..."
 php bin/console app:clear-entities
 echo "Clear tmp folder from object storage S3..."
 php bin/console app:clear-storage-tmp-folder
+echo "Update signalement INJONCTION TO NEED_VALIDATION after weeks"
+php bin/console app:reset-injonction-no-response
