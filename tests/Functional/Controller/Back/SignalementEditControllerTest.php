@@ -93,6 +93,12 @@ class SignalementEditControllerTest extends WebTestCase
 
         $this->client->request('POST', $route, [], [], [], json_encode($payload));
 
+        if (($payload['mail'] ?? null) === 'nawell.mapaire@yopmail.com') {
+            $userRepository = static::getContainer()->get(UserRepository::class);
+            $user = $userRepository->findOneBy(['email' => $payload['mail']]);
+            $this->assertNull($user->getEmailDeliveryIssue());
+        }
+
         $this->assertResponseIsSuccessful();
     }
 
@@ -155,13 +161,13 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadCoordonneesFoyer(): array
+    private function getPayloadCoordonneesFoyer(string $email = 'nelson@yopmail.com'): array
     {
         return [
             'civilite' => 'mme',
             'nom' => 'Monfort',
             'prenom' => 'Nelson',
-            'mail' => sprintf('nelson.%s@yopmail.com', uniqid()), // use new email in order to avoid unique integrity constraint violation
+            'mail' => $email,
             'telephone' => '+33240556677',
             'telephoneBis' => '0611451264',
         ];
@@ -298,6 +304,12 @@ class SignalementEditControllerTest extends WebTestCase
         yield 'Edition Coordonnées du foyer' => [
             'back_signalement_edit_coordonnees_foyer',
             $this->getPayloadCoordonneesFoyer(),
+            'signalement_edit_coordonnees_foyer_',
+        ];
+
+        yield 'Edition Coordonnées du foyer with user exists' => [
+            'back_signalement_edit_coordonnees_foyer',
+            $this->getPayloadCoordonneesFoyer('nawell.mapaire@yopmail.com'),
             'signalement_edit_coordonnees_foyer_',
         ];
 
