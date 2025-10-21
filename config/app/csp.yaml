@@ -41,6 +41,7 @@ parameters:
       - "https://fonts.gstatic.com"
     frame-src:
       - "'self'"
+      - "blob:"
     object-src:
       - "'self'"
       - "blob:"
