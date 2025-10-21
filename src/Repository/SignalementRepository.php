@@ -2426,12 +2426,11 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s')
             ->where('s.statut = :statut')
             ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
-            ->leftJoin('s.suivis', 'su')
-            ->distinct()
+            ->innerJoin('s.suivis', 'su')
             ->andWhere('su.category = :aideCategory')
             ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
 
-        $qb->select('COUNT(DISTINCT s.id)');
+        $qb->select('COUNT(s.id)');
 
         if ($params?->territoireId) {
             $qb
