@@ -199,11 +199,11 @@
 						<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
 							{{ form(form) }}
 						{% endif %}
-						<div class="fr-mt-3w">
-							<button type="button" id="stop-procedure-btn" class="fr-btn fr-btn--secondary">Arrêter la procédure</button>
-						</div>
-
 						{% if formStopProcedure is not null %}
+							<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_stop_procedure_bailleur_title">Arrêter la procédure</h2>
+							<div class="fr-mt-3w">
+								<button type="button" id="stop-procedure-btn" class="fr-btn fr-btn--secondary">Arrêter la procédure</button>
+							</div>
 							<div id="stop-procedure-form-container" class="fr-hidden fr-mt-2w">
 								{{ form(formStopProcedure) }}
 							</div>

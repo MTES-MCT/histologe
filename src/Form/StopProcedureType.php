@@ -3,8 +3,8 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -15,7 +15,6 @@ class StopProcedureType extends AbstractType
     {
         $builder
             ->add('description', TextareaType::class, [
-                'required' => false,
                 'label' => 'Commentaire',
                 'help' => 'Dix (10) caractères minimum',
                 'attr' => [
