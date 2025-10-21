@@ -72,7 +72,7 @@ class ApiDesordreRequestValidator extends ConstraintValidator
                 $selectedPrecisions[] = $precisionSlug;
                 // controle des précisions uniques
                 $precision = $this->desordrePrecisionRepository->findOneBy(['desordrePrecisionSlug' => $precisionSlug]);
-                if ($precision->getconfigIsUnique() && count($desordreRequest->precisions) > 1) {
+                if ($precision && $precision->getconfigIsUnique() && count($desordreRequest->precisions) > 1) {
                     $this->context
                         ->buildViolation('La précision "'.$precisionSlug.'" ne doit pas être cumulée avec d\'autres précisions pour le désordre "'.$desordreRequest->identifiant.'"')
                         ->atPath('precisions['.$index.']')
