@@ -21,3 +21,18 @@ if (reponseInjonctionBailleurDescription) {
   }
 
 }
+
+const stopProcedureBtn = document.querySelector('#stop-procedure-btn');
+const stopProcedureForm = document.querySelector('#stop-procedure-form-container');
+
+if (stopProcedureBtn && stopProcedureForm) {
+  stopProcedureBtn.addEventListener('click', () => {
+      stopProcedureForm.classList.toggle('fr-hidden');
+      stopProcedureBtn.classList.toggle('fr-hidden');
+  });
+  const stopProcedureError = stopProcedureForm.querySelector('form div#stop_procedure div.fr-input-group.fr-input-group--error');
+  if(stopProcedureError){
+    stopProcedureForm.classList.remove('fr-hidden');
+    stopProcedureBtn.classList.add('fr-hidden');
+  }    
+}

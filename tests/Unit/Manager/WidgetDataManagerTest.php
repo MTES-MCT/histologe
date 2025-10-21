@@ -18,17 +18,14 @@ use PHPUnit\Framework\TestCase;
 class WidgetDataManagerTest extends TestCase
 {
     private WidgetDataManager $widgetDataManager;
-    private SignalementRepository|MockObject $signalementRepositoryMock;
-    private JobEventRepository|MockObject $jobEventRepositoryMock;
-    private MockObject|AffectationRepository $affectationRepositoryMock;
+    private MockObject&SignalementRepository $signalementRepositoryMock;
+    private MockObject&JobEventRepository $jobEventRepositoryMock;
+    private MockObject&AffectationRepository $affectationRepositoryMock;
 
     protected function setUp(): void
     {
-        /* @var SignalementRepository&MockObject */
         $this->signalementRepositoryMock = $this->createMock(SignalementRepository::class);
-        /* @var JobEventRepository&MockObject */
         $this->jobEventRepositoryMock = $this->createMock(JobEventRepository::class);
-        /* @var AffectationRepository&MockObject */
         $this->affectationRepositoryMock = $this->createMock(AffectationRepository::class);
         /** @var WidgetDataKpiBuilder&MockObject $widgetDataKpiBuilderMock */
         $widgetDataKpiBuilderMock = $this->createMock(WidgetDataKpiBuilder::class);
