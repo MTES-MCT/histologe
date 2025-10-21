@@ -161,8 +161,7 @@ class VisiteNotifier
         foreach ($subs as $subscription) {
             $this->notifyAgent(
                 user: $subscription->getUser(),
-                suivi: $suivi, notificationMailerType:
-                $notificationMailerType, affectation: $affectation
+                suivi: $suivi, notificationMailerType: $notificationMailerType, affectation: $affectation
             );
         }
     }
