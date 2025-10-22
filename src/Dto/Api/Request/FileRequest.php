@@ -51,6 +51,7 @@ class FileRequest implements RequestInterface
             'PROCEDURE_ARRETE_MUNICIPAL',
             'PROCEDURE_SAISINE',
             'BAILLEUR_DEVIS_POUR_TRAVAUX',
+            'FACTURE',
         ],
         message: 'Veuillez choisir une valeur valide pour le type de document. {{ choices }}'
     )]
