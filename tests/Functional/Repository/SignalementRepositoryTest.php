@@ -172,7 +172,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertEquals(1, \count($signalementsArchived));
     }
 
-    public function testFindAllForEmailAndAddressWithValue(): void
+    public function testFindAllForEmailAndAddressWithTiersValueDouble(): void
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
@@ -181,8 +181,25 @@ class SignalementRepositoryTest extends KernelTestCase
             '3 rue Mars',
             '13015',
             'Marseille',
+            true,
+            'Fragione'
         );
         $this->assertEquals(1, \count($emailExistingSignalements));
+    }
+
+    public function testFindAllForEmailAndAddressWithTiersValueNoDouble(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $emailExistingSignalements = $signalementRepository->findAllForEmailAndAddress(
+            'admin-partenaire-13-01@signal-logement.fr',
+            '3 rue Mars',
+            '13015',
+            'Marseille',
+            true,
+            'Mussard'
+        );
+        $this->assertEquals(0, \count($emailExistingSignalements));
     }
 
     public function testFindAllForEmailAndAddressWithNullValue(): void
