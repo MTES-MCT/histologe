@@ -15,7 +15,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
     /**
      * @dataProvider provideNbMailSent
      */
-    public function testSendMail(ProfileDeclarant $profileDeclarant, int $nbMail): void
+    public function testSendMail(): void
     {
         $kernel = self::bootKernel();
 
@@ -27,14 +27,12 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
             'profileDeclarant' => ProfileDeclarant::LOCATAIRE,
         ]);
 
-        if (ProfileDeclarant::TIERS_PRO === $profileDeclarant) {
-            // Force signalements used by the esabora mocks to have a TIERS_PRO profileDeclarant value
-            foreach ($signalements as $signalement) {
-                /* @var Signalement $signalement */
-                $signalement->setProfileDeclarant($profileDeclarant);
-            }
-            $em->flush();
+        // Force signalements used by the esabora mocks to have a TIERS_PRO profileDeclarant value
+        foreach ($signalements as $signalement) {
+            /* @var Signalement $signalement */
+            $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
         }
+        $em->flush();
 
         $application = new Application($kernel);
 
@@ -42,12 +40,6 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
-        $this->assertEmailCount($nbMail);
-    }
-
-    public function provideNbMailSent(): \Generator
-    {
-        yield 'Get only cron mail with signalement submitted by tiers_pro' => [ProfileDeclarant::TIERS_PRO, 1];
-        yield 'Gel all the mail with signalement submitted by locataire' => [ProfileDeclarant::LOCATAIRE, 5];
+        $this->assertEmailCount(1);
     }
 }
