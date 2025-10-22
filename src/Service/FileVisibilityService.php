@@ -25,10 +25,20 @@ class FileVisibilityService
             if (empty($partnerTypes) && empty($partnerCompetences)) {
                 return true;
             }
+            if ($f->getTerritory()) {
+                $partners = [$user->getPartnerInTerritory($f->getTerritory())];
+            } else {
+                $partners = $user->getPartners();
+            }
 
-            foreach ($user->getPartners() as $partner) {
+            foreach ($partners as $partner) {
+                if (!$partner) {
+                    continue;
+                }
+
                 $competenceMatches = $this->enumsIntersect($partner->getCompetence(), $f->getPartnerCompetence());
                 $typeMatches = $this->enumsIntersect([$partner->getType()], $f->getPartnerType() ?? []);
+
                 if ($typeMatches && $competenceMatches) {
                     return true;
                 }
