@@ -49,9 +49,13 @@ class DesordrePrecision
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'desordrePrecisions')]
     private Collection $signalement;
 
+    #[ORM\Column]
+    private ?bool $configIsUnique = null;
+
     public function __construct()
     {
         $this->signalement = new ArrayCollection();
+        $this->configIsUnique = false;
     }
 
     public function getId(): ?int
@@ -163,5 +167,17 @@ class DesordrePrecision
     public function getSignalement(): Collection
     {
         return $this->signalement;
+    }
+
+    public function getConfigIsUnique(): ?bool
+    {
+        return $this->configIsUnique;
+    }
+
+    public function setConfigIsUnique(bool $configIsUnique): static
+    {
+        $this->configIsUnique = $configIsUnique;
+
+        return $this;
     }
 }

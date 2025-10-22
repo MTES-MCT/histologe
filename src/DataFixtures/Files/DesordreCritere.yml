@@ -125,6 +125,8 @@ desordre_critere:
     zone_categorie: "BATIMENT"
     slug_critere: "desordres_batiment_nuisibles_autres"
     label_critere: "Il y a un autre type de nuisibles"
+    config_precision_libre_type: 'critere'
+    config_precision_libre_label: 'Précisez le type de nuisible'
   -
     desordre_categorie_label: "Structure du bâti" 
     slug_categorie: "desordres_batiment_securite"
@@ -454,6 +456,8 @@ desordre_critere:
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_nuisibles_autres"
     label_critere: "Il y a un autre type de nuisibles"
+    config_precision_libre_type: 'critere'
+    config_precision_libre_label: 'Précisez le type de nuisible'
   -
     desordre_categorie_label: "Structure / équipements" 
     slug_categorie: "desordres_logement_bruit"
@@ -489,6 +493,8 @@ desordre_critere:
     zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_lumiere_plafond_trop_bas"
     label_critere: "Les plafonds sont trop bas"
+    config_precision_libre_type: 'precisions'
+    config_precision_libre_label: 'Pour chaque précision vous pouvez préciser la hauteur du plafond (en cm)'
   -
     desordre_categorie_label: "Incurie"
     slug_categorie: "desordres_logement_proprete"
