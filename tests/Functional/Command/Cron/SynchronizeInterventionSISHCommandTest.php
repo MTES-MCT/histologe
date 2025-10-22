@@ -12,9 +12,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class SynchronizeInterventionSISHCommandTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideNbMailSent
-     */
     public function testSendMail(): void
     {
         $kernel = self::bootKernel();
