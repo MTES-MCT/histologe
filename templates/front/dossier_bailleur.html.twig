@@ -228,13 +228,6 @@
 				{% endif %}		
 			{% else %}
 				<p class="fr-text--center"><strong>Le signalement est à présent clos.</strong></p>
-			{% elseif signalement.statut in [
-				enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION,
-				enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE
-				] %}
-				<p class="fr-text--center"><strong>Le signalement est à présent en procédure administrative.</strong></p>
-			{% else %}
-				<p class="fr-text--center"><strong>Le signalement est à présent clos.</strong></p>
 			{% endif %}
 		</div>
 

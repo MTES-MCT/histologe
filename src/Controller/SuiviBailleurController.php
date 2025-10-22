@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Dto\ReponseInjonctionBailleur;
-use App\Entity\Enum\SignalementStatus;
 use App\Dto\StopProcedure;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Form\CoordonneesBailleurType;
 use App\Form\ReponseInjonctionBailleurType;
@@ -43,6 +43,7 @@ class SuiviBailleurController extends AbstractController
         $suiviBasculeProcedure = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR]);
 
         $form = null;
+        $formStopProcedure = null;
         if ($suiviReponse && SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
             if (!$signalement->getMailProprio()) {
                 $form = $this->createForm(CoordonneesBailleurType::class, $signalement, [

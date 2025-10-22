@@ -698,7 +698,7 @@ class SignalementController extends AbstractController
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
                 $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
                 $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
-                $description = $user->getNomComplet().' à cloturer son dossier en injonction bailleur pour le motif suivant :
+                $description = $user->getNomComplet().' a clôturé son dossier en injonction bailleur pour le motif suivant :
                     '.$form->get('reason')->getData().'<br>'
                     .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
             } else {
