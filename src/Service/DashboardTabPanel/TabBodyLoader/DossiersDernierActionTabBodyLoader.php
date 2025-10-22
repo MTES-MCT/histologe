@@ -3,6 +3,7 @@
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\User;
+use App\Security\Voter\UserVoter;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
@@ -32,6 +33,9 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
                 'partenaires_non_notifiables' => $this->tabDataManager->countPartenairesNonNotifiables($this->tabQueryParameters),
                 'partenaires_interfaces' => $this->tabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
             ];
+            if ($this->security->isGranted(UserVoter::SEE_INJONCTION_BAILLEUR, $user)) {
+                $data['data_kpi']['injonctions'] = $this->tabDataManager->countInjonctionsAvecAide($this->tabQueryParameters);
+            }
         }
         if ($user->isSuperAdmin()) {
             $data['data_interconnexion'] = $this->tabDataManager->getInterconnexions($this->tabQueryParameters);

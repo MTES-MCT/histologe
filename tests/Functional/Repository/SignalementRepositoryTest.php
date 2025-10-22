@@ -272,6 +272,33 @@ class SignalementRepositoryTest extends KernelTestCase
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
+    public function testCountInjonctionsAvecAide(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+
+        $tabQueryParameter = new TabQueryParameters(
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+
+        $countInjonctions = $signalementRepository->countInjonctionsAvecAide(
+            user: $user,
+            params: $tabQueryParameter
+        );
+
+        $this->assertEquals(1, $countInjonctions);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function testCountNewDossiersFromFormulaireUsager(): void
     {
         /** @var SignalementRepository $signalementRepository */

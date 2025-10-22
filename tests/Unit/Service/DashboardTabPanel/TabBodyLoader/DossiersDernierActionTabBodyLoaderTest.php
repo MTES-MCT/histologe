@@ -36,6 +36,7 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
             'comptes_pb_email' => 0,
             'partenaires_non_notifiables' => 2,
             'partenaires_interfaces' => 1,
+            'injonctions' => 2,
         ];
         $expectedInterconnexion = ['hasErrorsLastDay' => false];
 
@@ -43,6 +44,10 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
             ->method('getDernierActionDossiers')
             ->with($tabQueryParameters)
             ->willReturn($expectedData);
+        $tabDataManager->expects($this->once())
+            ->method('countInjonctionsAvecAide')
+            ->with($tabQueryParameters)
+            ->willReturn($expectedKpi['injonctions']);
         $tabDataManager->expects($this->once())
             ->method('countUsersPendingToArchive')
             ->with($tabQueryParameters)

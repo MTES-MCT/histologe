@@ -99,6 +99,16 @@ class TabDataManager
         return $tabDossiers;
     }
 
+    public function countInjonctionsAvecAide(?TabQueryParameters $tabQueryParameters = null): int
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $injonctions = $this->signalementRepository->countInjonctionsAvecAide($user, $tabQueryParameters);
+
+        return $injonctions;
+    }
+
     public function countUsersPendingToArchive(?TabQueryParameters $tabQueryParameters = null): int
     {
         /** @var User $user */

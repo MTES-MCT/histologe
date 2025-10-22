@@ -15,6 +15,7 @@ class SearchSignalementInjonction
     private User $user;
     private ?Territory $territoire = null;
     private ?string $orderType = null;
+    private ?string $injonctionAvecAide = null;
 
     public function __construct(User $user)
     {
@@ -37,6 +38,16 @@ class SearchSignalementInjonction
     public function setTerritoire(?Territory $territoire): void
     {
         $this->territoire = $territoire;
+    }
+
+    public function getInjonctionAvecAide(): ?string
+    {
+        return $this->injonctionAvecAide;
+    }
+
+    public function setInjonctionAvecAide(?string $injonctionAvecAide): void
+    {
+        $this->injonctionAvecAide = $injonctionAvecAide;
     }
 
     public function getOrderType(): ?string
