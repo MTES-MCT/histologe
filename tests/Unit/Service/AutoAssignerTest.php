@@ -37,7 +37,13 @@ class AutoAssignerTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->userManager = self::getContainer()->get(UserManager::class);

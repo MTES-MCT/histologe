@@ -6,7 +6,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SignalementBailleur implements UserInterface
 {
-
     /**
      * @param non-empty-string $userIdentifier
      */

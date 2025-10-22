@@ -8,6 +8,7 @@ use App\EventListener\SecurityApiExceptionListener;
 use App\Repository\PartnerRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -20,7 +21,13 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->partnerAuthorizedResolver = new PartnerAuthorizedResolver($this->partnerRepository);
     }

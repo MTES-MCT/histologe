@@ -42,7 +42,13 @@ class UserManagerTest extends KernelTestCase
         $this->passwordHasherFactory = static::getContainer()->get(PasswordHasherFactoryInterface::class);
         $this->tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->signalementUsagerManager = new SignalementUsagerManager($this->managerRegistry, SignalementUsager::class);
         $this->userFactory = static::getContainer()->get(UserFactory::class);
         $this->userManager = new UserManager(
