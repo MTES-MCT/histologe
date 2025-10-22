@@ -8,6 +8,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\Notification\NotificationCounter;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class NotificationCounterTest extends KernelTestCase
@@ -17,7 +18,13 @@ class NotificationCounterTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
     }
 
     public function testCountUnseenNotification(): void

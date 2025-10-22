@@ -20,8 +20,9 @@ class SignalementBailleurProvider implements UserProviderInterface
     }
 
     /**
-     * @throws NonUniqueResultException
      * @param non-empty-string $signalementUuid
+     *
+     * @throws NonUniqueResultException
      */
     public function loadUserByIdentifier(string $signalementUuid): UserInterface
     {
