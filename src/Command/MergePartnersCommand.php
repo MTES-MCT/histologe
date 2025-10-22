@@ -86,7 +86,7 @@ class MergePartnersCommand extends Command
 
             // Transfer all affectations from source to destination partner
             $affectationsCount = $this->transferAffectations($sourcePartner, $destinationPartner, $io);
-            $io->success(sprintf('Transferred %d affectation(s).', $affectationsCount));
+            $io->success(sprintf('Transferred %d affectation(s). %d duplicate affectations removed.', $affectationsCount['transferred'], $affectationsCount['removed_duplicates']));
 
             // Transfer users from source to destination partner
             $usersCount = $this->transferUsers($sourcePartner, $destinationPartner, $io);
@@ -110,10 +110,14 @@ class MergePartnersCommand extends Command
         }
     }
 
-    private function transferAffectations(Partner $sourcePartner, Partner $destinationPartner, SymfonyStyle $io): int
+    /** @return array<int> */
+    private function transferAffectations(Partner $sourcePartner, Partner $destinationPartner, SymfonyStyle $io): array
     {
         $affectations = $sourcePartner->getAffectations();
-        $count = 0;
+        $count = [
+            'transferred' => 0,
+            'removed_duplicates' => 0,
+        ];
 
         foreach ($affectations as $affectation) {
             /** @var Affectation $affectation */
@@ -126,15 +130,16 @@ class MergePartnersCommand extends Command
 
             if ($existingAffectation) {
                 $io->warning(sprintf(
-                    'Affectation already exists for signalement #%d and destination partner. Removing the duplicate affectation.',
-                    $affectation->getSignalement()->getId()
+                    'Affectation already exists for signalement %s and destination partner. Removing the duplicate affectation.',
+                    $affectation->getSignalement()->getReference()
                 ));
                 // Remove the duplicate affectation from source partner
                 $this->entityManager->remove($affectation);
+                ++$count['removed_duplicates'];
             } else {
                 // Transfer affectation to destination partner
                 $affectation->setPartner($destinationPartner);
-                ++$count;
+                ++$count['transferred'];
             }
         }
 
@@ -155,10 +160,17 @@ class MergePartnersCommand extends Command
             if (!$user->hasPartner($destinationPartner)) {
                 // Transfer user to destination partner
                 $userPartner->setPartner($destinationPartner);
+                $io->info(sprintf(
+                    'User "%s" (ID: %d) transferred from %s to %s.',
+                    $user->getEmail(),
+                    $user->getId(),
+                    $sourcePartner->getNom(),
+                    $destinationPartner->getNom(),
+                ));
                 ++$count;
             } else {
                 $io->warning(sprintf(
-                    'User "%s" (ID: %d) is already in destination partner. Removing duplicate.',
+                    'User "%s" (ID: %d) is already in destination partner. Removing useless relationship.',
                     $user->getEmail(),
                     $user->getId()
                 ));
