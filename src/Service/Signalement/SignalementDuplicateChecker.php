@@ -28,7 +28,8 @@ class SignalementDuplicateChecker
             $signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
             $signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
             $signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
-            $isTiersDeclarant
+            $isTiersDeclarant,
+            $isTiersDeclarant ? $signalementDraftRequest->getCoordonneesOccupantNom() : null,
         );
 
         $existingSignalementDraft = $this->signalementDraftManager->findSignalementDraftByAddressAndMail(

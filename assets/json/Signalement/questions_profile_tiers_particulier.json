@@ -96,7 +96,7 @@
                 "type": "SignalementFormButton",
                 "label": "Suivant",
                 "slug": "vos_coordonnees_tiers_next",
-                "action": "goto.save:coordonnees_occupant",
+                "action": "goto:coordonnees_occupant",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
               },
               {
