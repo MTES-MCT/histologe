@@ -55,9 +55,9 @@ class Desordre
     ) {
         foreach ($data as $label => $detail) {
             if ($detail instanceof Criticite && $detail->getLabel()) {
-                $this->identifiant = '__citicite_historique__';
+                $this->identifiant = '__criticite_historique__';
                 $this->libelle = $label;
-                $this->precisions['__citicite_historique__'] = $detail->getLabel();
+                $this->precisions['__criticite_historique__'] = $detail->getLabel();
             } else {
                 foreach ($detail as $desordrePrecision) {
                     if ($desordrePrecision instanceof DesordrePrecision) {
@@ -66,7 +66,7 @@ class Desordre
                             $this->identifiant = $desordrePrecision->getDesordreCritere()->getSlugCritere();
                             $labelCleaned = strip_tags(str_replace('<br>', ' - ', $desordrePrecision->getLabel()));
                             $this->precisions[$desordrePrecision->getDesordrePrecisionSlug()] = $labelCleaned;
-                            if (isset($precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()]) && $precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()]) {
+                            if (!empty($precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()])) {
                                 $this->precisionsLibres[] = [
                                     'identifiant' => $desordrePrecision->getDesordrePrecisionSlug(),
                                     'description' => $precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()],
@@ -74,7 +74,7 @@ class Desordre
                             }
                         } else {
                             $this->identifiant = $desordrePrecision->getDesordrePrecisionSlug();
-                            if (isset($precisionsLibres[$this->identifiant]) && $precisionsLibres[$this->identifiant]) {
+                            if (!empty($precisionsLibres[$this->identifiant])) {
                                 $this->precisionsLibres[] = [
                                     'identifiant' => $this->identifiant,
                                     'description' => $precisionsLibres[$this->identifiant],
