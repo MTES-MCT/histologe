@@ -7,6 +7,7 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Service\Signalement\DesordreTraitement\DesordreLogementElectriciteManquePrises;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementOuiNon;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class DesordreLogementElectriciteManquePrisesTest extends KernelTestCase
@@ -17,7 +18,13 @@ class DesordreLogementElectriciteManquePrisesTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->desordreTraitementOuiNon = static::getContainer()->get(DesordreTraitementOuiNon::class);
     }
 

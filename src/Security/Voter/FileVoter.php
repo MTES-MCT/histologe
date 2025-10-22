@@ -24,7 +24,7 @@ class FileVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE, self::EDIT_DOCUMENT, self::DELETE_DOCUMENT]) 
+        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE, self::EDIT_DOCUMENT, self::DELETE_DOCUMENT])
             && $subject instanceof File;
     }
 

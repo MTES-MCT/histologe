@@ -10,6 +10,7 @@ use App\Repository\AffectationRepository;
 use App\Service\ImageManipulationHandler;
 use App\Service\Interconnection\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -25,7 +26,13 @@ class IdossServiceTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
     }
 
     protected function getIdossService(MockHttpClient $mockHttpClient): IdossService

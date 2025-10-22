@@ -15,6 +15,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -30,7 +31,13 @@ class AutoAssignerTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
