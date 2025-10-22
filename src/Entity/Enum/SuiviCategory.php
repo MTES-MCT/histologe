@@ -40,6 +40,7 @@ enum SuiviCategory: string
     case INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE = 'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE';
     case INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR = 'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR';
     case INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE = 'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE';
+    case INJONCTION_BAILLEUR_EXPIREE = 'INJONCTION_BAILLEUR_EXPIREE';
 
     public function label(): string
     {
@@ -95,6 +96,7 @@ enum SuiviCategory: string
             'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE' => 'Commentaire du bailleur',
             'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR' => 'Le bailleur a souhaité arrêter l\'injonction et basculer en procédure classique',
             'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE' => 'Commentaire du bailleur sur l\'arrêt de l\'injonction',
+            'INJONCTION_BAILLEUR_EXPIREE' => 'Réponse favorable à l\'injonction bailleur',
         ];
     }
 

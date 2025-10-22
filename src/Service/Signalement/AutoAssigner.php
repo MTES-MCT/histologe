@@ -19,8 +19,9 @@ use App\Specification\Affectation\ProcedureSuspecteeSpecification;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
 use App\Specification\AndSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use Doctrine\DBAL\Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 class AutoAssigner
 {
@@ -29,17 +30,18 @@ class AutoAssigner
     private array $affectedPartnersNames = [];
 
     public function __construct(
-        private SignalementManager $signalementManager,
-        private AffectationManager $affectationManager,
-        private UserManager $userManager,
-        private ParameterBagInterface $parameterBag,
-        private PartnerRepository $partnerRepository,
-        private LoggerInterface $logger,
+        private readonly SignalementManager $signalementManager,
+        private readonly AffectationManager $affectationManager,
+        private readonly UserManager $userManager,
+        private readonly PartnerRepository $partnerRepository,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     /**
      * @return array<int, Partner>
+     *
+     * @throws ExceptionInterface|Exception
      */
     public function assign(Signalement $signalement, bool $simulation = false): array
     {
@@ -60,8 +62,7 @@ class AutoAssigner
 
             return [];
         }
-        $adminEmail = $this->parameterBag->get('user_system_email');
-        $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
+        $adminUser = $this->userManager->getSystemUser();
         $partners = $this->partnerRepository->findPartnersByLocalization($signalement, $simulation);
         $assignablePartners = [];
 
@@ -99,10 +100,11 @@ class AutoAssigner
 
     /**
      * @param array<Partner> $assignablePartners
+     *
+     * @throws ExceptionInterface
      */
     private function assignPartners(Signalement $signalement, ?User $adminUser, array $assignablePartners): void
     {
-        /** @var Partner $partner */
         foreach ($assignablePartners as $partner) {
             $affectation = $this->affectationManager->createAffectationFrom(
                 $signalement,

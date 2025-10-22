@@ -18,7 +18,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AutoAssignerTest extends KernelTestCase
 {
@@ -209,15 +208,12 @@ class AutoAssignerTest extends KernelTestCase
 
         /** @var UserManager|MockObject $userManager */
         $userManager = $this->createMock(UserManager::class);
-        /** @var ParameterBagInterface|MockObject $parameterBag */
-        $parameterBag = $this->createMock(ParameterBagInterface::class);
         /** @var LoggerInterface $logger */
         $logger = $this->createMock(LoggerInterface::class);
         $autoAssigner = new AutoAssigner(
             $this->signalementManager,
             $this->affectationManager,
             $userManager,
-            $parameterBag,
             $this->partnerRepository,
             $logger,
         );

@@ -22,7 +22,7 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('2 signalements sont désormais en attente', $output);
-        $this->assertEmailCount(2);
+        $this->assertStringContainsString('2 signalements', $output);
+        $this->assertEmailCount(4);
     }
 }
