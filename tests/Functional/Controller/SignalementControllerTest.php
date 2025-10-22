@@ -36,7 +36,7 @@ class SignalementControllerTest extends WebTestCase
         yield 'Brouillon' => [SignalementStatus::DRAFT->value];
         yield 'Brouillon de signalement' => [SignalementStatus::DRAFT_ARCHIVED->value];
         yield 'En médiation' => [SignalementStatus::INJONCTION_BAILLEUR->value];
-        yield 'Injonction clôturé' => [SignalementStatus::INJONCTION_CLOSED->value];
+        yield 'Injonction clôturée' => [SignalementStatus::INJONCTION_CLOSED->value];
     }
 
     /**

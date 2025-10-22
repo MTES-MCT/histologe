@@ -40,7 +40,7 @@ enum SignalementStatus: string
             self::ARCHIVED->name => 'archivé',
             self::DRAFT_ARCHIVED->name => 'brouillon archivé',
             self::INJONCTION_BAILLEUR->name => 'injonction bailleur',
-            self::INJONCTION_CLOSED->name => 'injonction clôturé',
+            self::INJONCTION_CLOSED->name => 'injonction clôturée',
         ];
     }
 

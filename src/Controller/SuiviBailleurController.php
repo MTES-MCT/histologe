@@ -44,47 +44,49 @@ class SuiviBailleurController extends AbstractController
 
         $form = null;
         $formStopProcedure = null;
-        if ($suiviReponse && SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
-            if (!$signalement->getMailProprio()) {
-                $form = $this->createForm(CoordonneesBailleurType::class, $signalement, [
-                    'action' => $this->generateUrl('front_dossier_bailleur').'#form_coordonnees_bailleur_title',
+        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            if ($suiviReponse) {
+                if (!$signalement->getMailProprio()) {
+                    $form = $this->createForm(CoordonneesBailleurType::class, $signalement, [
+                        'action' => $this->generateUrl('front_dossier_bailleur').'#form_coordonnees_bailleur_title',
+                    ]);
+                    $form->handleRequest($request);
+                    if ($form->isSubmitted() && $form->isValid()) {
+                        $entityManager->flush();
+                        $this->addFlash('success', 'Vos coordonnées ont été enregistrées avec succès.');
+
+                        return $this->redirectToRoute('front_dossier_bailleur');
+                    }
+                }
+                if (in_array($suiviReponse->getCategory(), [SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI, SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE], true)) {
+                    $stopProcedure = new StopProcedure();
+                    $stopProcedure->setSignalement($signalement);
+
+                    $formStopProcedure = $this->createForm(StopProcedureType::class, $stopProcedure, [
+                        'action' => $this->generateUrl('front_dossier_bailleur').'#form_stop_procedure_bailleur_title',
+                    ]);
+                    $formStopProcedure->handleRequest($request);
+
+                    if ($formStopProcedure->isSubmitted() && $formStopProcedure->isValid()) {
+                        $injonctionBailleurService->handleStopProcedure($stopProcedure);
+                        $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
+
+                        return $this->redirectToRoute('front_dossier_bailleur');
+                    }
+                }
+            } else {
+                $reponseInjonctionBailleur = new ReponseInjonctionBailleur();
+                $reponseInjonctionBailleur->setSignalement($signalement);
+                $form = $this->createForm(ReponseInjonctionBailleurType::class, $reponseInjonctionBailleur, [
+                    'action' => $this->generateUrl('front_dossier_bailleur').'#form_reponse_injonction_bailleur_title',
                 ]);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $entityManager->flush();
-                    $this->addFlash('success', 'Vos coordonnées ont été enregistrées avec succès.');
-
-                    return $this->redirectToRoute('front_dossier_bailleur');
-                }
-            }
-            if (in_array($suiviReponse->getCategory(), [SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI, SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE], true)) {
-                $stopProcedure = new StopProcedure();
-                $stopProcedure->setSignalement($signalement);
-
-                $formStopProcedure = $this->createForm(StopProcedureType::class, $stopProcedure, [
-                    'action' => $this->generateUrl('front_dossier_bailleur').'#form_stop_procedure_bailleur_title',
-                ]);
-                $formStopProcedure->handleRequest($request);
-
-                if ($formStopProcedure->isSubmitted() && $formStopProcedure->isValid()) {
-                    $injonctionBailleurService->handleStopProcedure($stopProcedure);
+                    $injonctionBailleurService->handleResponse($reponseInjonctionBailleur);
                     $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
 
                     return $this->redirectToRoute('front_dossier_bailleur');
                 }
-            }
-        } elseif (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
-            $reponseInjonctionBailleur = new ReponseInjonctionBailleur();
-            $reponseInjonctionBailleur->setSignalement($signalement);
-            $form = $this->createForm(ReponseInjonctionBailleurType::class, $reponseInjonctionBailleur, [
-                'action' => $this->generateUrl('front_dossier_bailleur').'#form_reponse_injonction_bailleur_title',
-            ]);
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                $injonctionBailleurService->handleResponse($reponseInjonctionBailleur);
-                $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
-
-                return $this->redirectToRoute('front_dossier_bailleur');
             }
         }
 
