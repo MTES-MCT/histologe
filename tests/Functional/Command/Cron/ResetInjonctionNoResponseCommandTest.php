@@ -21,20 +21,29 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('2 signalements', $output);
-        /** @var NotificationEmail $email1 */
-        $email1 = $this->getMailerMessage();
-        /** @var NotificationEmail $email2 */
-        $email2 = $this->getMailerMessage(1);
-        /** @var NotificationEmail $email3 */
-        $email3 = $this->getMailerMessage(2);
-        /** @var NotificationEmail $email4 */
-        $email4 = $this->getMailerMessage(3);
-
-        $this->assertSame('Usager Nouveau Suivi Signalement', $email1->getHeaders()->get('X-Tag')->getBody());
-        $this->assertSame('Usager Nouveau Suivi Signalement', $email2->getHeaders()->get('X-Tag')->getBody());
-        $this->assertSame('Usager Validation Signalement', $email3->getHeaders()->get('X-Tag')->getBody());
-        $this->assertSame('Pro Nouvelle affectation', $email4->getHeaders()->get('X-Tag')->getBody());
-
         $this->assertEmailCount(4);
+        $expectedTags = [
+            'Usager Nouveau Suivi Signalement',
+            'Usager Nouveau Suivi Signalement',
+            'Usager Validation Signalement',
+            'Pro Nouvelle affectation',
+        ];
+
+        for ($i = 0; $i < 4; ++$i) {
+            /** @var NotificationEmail $email */
+            $email = $this->getMailerMessage($i);
+            $xTag = $email->getHeaders()->get('X-Tag')->getBody();
+            $this->assertNotEmpty($xTag, "La valeur de l'en-tête X-Tag est vide dans l'email $i");
+            $actualTags[] = $xTag;
+        }
+
+        $this->assertEmpty(
+            array_diff($expectedTags, $actualTags),
+            sprintf(
+                'Les X-Tag ne correspondent pas. Attendu : %s. Reçu : %s.',
+                implode(', ', $expectedTags),
+                implode(', ', $actualTags)
+            )
+        );
     }
 }
