@@ -7,6 +7,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Form\AgentSelectionType;
+use App\Repository\AffectationRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -43,7 +44,8 @@ class AgentsSelectionTypeTest extends KernelTestCase
             $this->assertStringContainsString('@', $labelHtml);
 
             preg_match('/<small[^>]*>(.*?)<\/small>/', $labelHtml, $match);
-            $roleRaw = trim(strip_tags($match[1]));
+            /** @var string $roleRaw */
+            $roleRaw = isset($match[1]) ? trim(strip_tags($match[1])) : '';
             if (UserStatus::INACTIVE === $user->getStatut()) {
                 $this->assertStringContainsString('fr-icon-warning-line', $labelHtml);
                 $this->assertStringContainsString('Compte inactif', $roleRaw);

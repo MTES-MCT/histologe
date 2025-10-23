@@ -45,10 +45,10 @@ class JsonLoginAuthenticatorTest extends TestCase
 
     public function testSupports(): void
     {
-        $request = Request::create('/api/login', 'POST', [], [], [], [], json_encode(['email' => 'user@example.com', 'password' => 'password']));
+        $request = Request::create('/api/login', 'POST', [], [], [], [], (string) json_encode(['email' => 'user@example.com', 'password' => 'password']));
         $this->assertTrue($this->authenticator->supports($request));
 
-        $request = Request::create('/api/login', 'POST', [], [], [], [], json_encode(['email' => 'user@example.com']));
+        $request = Request::create('/api/login', 'POST', [], [], [], [], (string) json_encode(['email' => 'user@example.com']));
         $this->assertFalse($this->authenticator->supports($request));
     }
 
@@ -59,7 +59,7 @@ class JsonLoginAuthenticatorTest extends TestCase
         $user->setRoles([User::ROLE_API_USER]);
         $user->setStatut(UserStatus::ACTIVE);
 
-        $request = Request::create('/api/login', 'POST', [], [], [], [], json_encode(['email' => 'user@example.com', 'password' => 'password']));
+        $request = Request::create('/api/login', 'POST', [], [], [], [], (string) json_encode(['email' => 'user@example.com', 'password' => 'password']));
         $passport = $this->authenticator->authenticate($request);
 
         $this->assertInstanceOf(Passport::class, $passport);
