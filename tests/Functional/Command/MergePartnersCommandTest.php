@@ -47,7 +47,6 @@ class MergePartnersCommandTest extends KernelTestCase
 
     public function testMergePartnersWithSuccess(): void
     {
-        // Given: Use existing partners from fixtures
         $sourcePartner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
         $destinationPartner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-01']);
 
@@ -77,7 +76,6 @@ class MergePartnersCommandTest extends KernelTestCase
             $initialSubscriptionCounts[$user->getId()] = $this->subscriptionRepository->count(['user' => $user]);
         }
 
-        // When: Execute command
         $this->commandTester->execute([
             '--source-partner-id' => $sourcePartnerId,
             '--destination-partner-id' => $destinationPartnerId,
@@ -140,19 +138,16 @@ class MergePartnersCommandTest extends KernelTestCase
 
     public function testMergePartnersWithSameIdsFails(): void
     {
-        // Given: Use existing partner from fixtures
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
         $this->assertNotNull($partner, 'Partner should exist in fixtures');
 
         $partnerId = $partner->getId();
 
-        // When: Execute command with same IDs
         $this->commandTester->execute([
             '--source-partner-id' => $partnerId,
             '--destination-partner-id' => $partnerId,
         ], ['interactive' => false]);
 
-        // Then: Command should fail
         $this->assertEquals(1, $this->commandTester->getStatusCode());
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Source and destination partner IDs must be different', $output);
@@ -160,28 +155,23 @@ class MergePartnersCommandTest extends KernelTestCase
 
     public function testMergePartnersWithInvalidSourceIdFails(): void
     {
-        // Given: Use existing destination partner from fixtures
         $destinationPartner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
         $this->assertNotNull($destinationPartner, 'Destination partner should exist in fixtures');
 
-        // When: Execute command with invalid source ID
         $this->commandTester->execute([
             '--source-partner-id' => 99999,
             '--destination-partner-id' => $destinationPartner->getId(),
         ], ['interactive' => false]);
 
-        // Then: Command should fail
         $this->assertEquals(1, $this->commandTester->getStatusCode());
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Source partner with ID 99999 not found', $output);
 
-        // When: Execute command with invalid destination ID
         $this->commandTester->execute([
             '--source-partner-id' => $destinationPartner->getId(),
             '--destination-partner-id' => 99999,
         ], ['interactive' => false]);
 
-        // Then: Command should fail
         $this->assertEquals(1, $this->commandTester->getStatusCode());
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Destination partner with ID 99999 not found', $output);

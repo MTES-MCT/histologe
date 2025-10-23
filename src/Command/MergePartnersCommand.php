@@ -40,14 +40,12 @@ class MergePartnersCommand extends Command
         $sourcePartnerId = (int) $input->getOption('source-partner-id');
         $destinationPartnerId = (int) $input->getOption('destination-partner-id');
 
-        // Validation: IDs must be different
         if ($sourcePartnerId === $destinationPartnerId) {
             $io->error('Source and destination partner IDs must be different.');
 
             return Command::FAILURE;
         }
 
-        // Load partners
         $sourcePartner = $this->partnerRepository->find($sourcePartnerId);
         if (!$sourcePartner) {
             $io->error(sprintf('Source partner with ID %d not found.', $sourcePartnerId));
@@ -62,16 +60,29 @@ class MergePartnersCommand extends Command
             return Command::FAILURE;
         }
 
-        // Display confirmation
+        if ($sourcePartner->getTerritory() !== $destinationPartner->getTerritory()) {
+            $io->error('Source and destination partners belong to different territories.');
+
+            return Command::FAILURE;
+        }
+
         $io->section('Partners Information');
         $io->table(
             ['Property', 'Source Partner (to be archived)', 'Destination Partner'],
             [
                 ['ID', $sourcePartner->getId(), $destinationPartner->getId()],
                 ['Name', $sourcePartner->getNom(), $destinationPartner->getNom()],
-                ['Territory', $sourcePartner->getTerritory()?->getName() ?? 'N/A', $destinationPartner->getTerritory()?->getName() ?? 'N/A'],
             ]
         );
+
+        $affectationStatusChanges = $this->previewAffectationStatusChanges($sourcePartner, $destinationPartner);
+        if (!empty($affectationStatusChanges)) {
+            $io->section('Affectation Status Changes Preview');
+            $io->table(
+                ['Change Type', 'Count', 'Details'],
+                $affectationStatusChanges
+            );
+        }
 
         if (!$io->confirm('Do you want to proceed with the merge?', true)) {
             $io->info('Operation cancelled.');
@@ -82,22 +93,15 @@ class MergePartnersCommand extends Command
         $io->section('Starting merge process...');
 
         try {
-            $this->entityManager->beginTransaction();
-
-            // Transfer all affectations from source to destination partner
             $affectationsCount = $this->transferAffectations($sourcePartner, $destinationPartner, $io);
             $io->success(sprintf('Transferred %d affectation(s). %d duplicate affectations removed.', $affectationsCount['transferred'], $affectationsCount['removed_duplicates']));
 
-            // Transfer users from source to destination partner
             $usersCount = $this->transferUsers($sourcePartner, $destinationPartner, $io);
             $io->success(sprintf('Transferred %d user(s).', $usersCount));
 
-            // Archive source partner (logical deletion)
             $sourcePartner->setIsArchive(true);
             $this->entityManager->flush();
             $io->success(sprintf('Partner "%s" (ID: %d) has been archived.', $sourcePartner->getNom(), $sourcePartner->getId()));
-
-            $this->entityManager->commit();
 
             $io->success('Merge completed successfully!');
 
@@ -143,8 +147,6 @@ class MergePartnersCommand extends Command
             }
         }
 
-        $this->entityManager->flush();
-
         return $count;
     }
 
@@ -179,8 +181,101 @@ class MergePartnersCommand extends Command
             }
         }
 
-        $this->entityManager->flush();
-
         return $count;
+    }
+
+    /**
+     * Preview affectation status changes that will occur during merge.
+     *
+     * @return array<int, array<string>>
+     */
+    private function previewAffectationStatusChanges(Partner $sourcePartner, Partner $destinationPartner): array
+    {
+        $changes = [];
+        $duplicatesToRemove = 0;
+        $duplicatesWithDifferentStatus = [];
+
+        foreach ($sourcePartner->getAffectations() as $affectation) {
+            /** @var Affectation $affectation */
+            $existingAffectation = $this->entityManager->getRepository(Affectation::class)
+                ->findOneBy([
+                    'signalement' => $affectation->getSignalement(),
+                    'partner' => $destinationPartner,
+                ]);
+
+            if ($existingAffectation) {
+                ++$duplicatesToRemove;
+
+                // Check if statuses are different
+                if ($affectation->getStatut() !== $existingAffectation->getStatut()) {
+                    $duplicatesWithDifferentStatus[] = [
+                        'reference' => $affectation->getSignalement()->getReference(),
+                        'sourceStatus' => $affectation->getStatut()->label(),
+                        'destinationStatus' => $existingAffectation->getStatut()->label(),
+                    ];
+                }
+            }
+        }
+
+        $totalAffectations = $sourcePartner->getAffectations()->count();
+        $affectationsToTransfer = $totalAffectations - $duplicatesToRemove;
+
+        if ($affectationsToTransfer > 0) {
+            $changes[] = [
+                'Transfer',
+                $affectationsToTransfer,
+                sprintf('%d affectation(s) will be transferred to destination partner', $affectationsToTransfer),
+            ];
+        }
+
+        if ($duplicatesToRemove > 0) {
+            $duplicatesWithSameStatus = $duplicatesToRemove - \count($duplicatesWithDifferentStatus);
+            $changes[] = [
+                'Duplicate removal',
+                $duplicatesToRemove,
+                sprintf('%d duplicate affectation(s) will be removed (already exist in destination)', $duplicatesToRemove),
+            ];
+
+            // Add details for duplicates with same status
+            if ($duplicatesWithSameStatus > 0) {
+                $changes[] = [
+                    '  ↳ Same status',
+                    $duplicatesWithSameStatus,
+                    sprintf('%d affectation(s) with identical status will be removed', $duplicatesWithSameStatus),
+                ];
+            }
+
+            // Add details for duplicates with different statuses
+            if (!empty($duplicatesWithDifferentStatus)) {
+                $changes[] = [
+                    '  ↳ Status conflicts',
+                    \count($duplicatesWithDifferentStatus),
+                    sprintf('%d affectation(s) with different status:', \count($duplicatesWithDifferentStatus)),
+                ];
+
+                foreach ($duplicatesWithDifferentStatus as $duplicate) {
+                    $changes[] = [
+                        '     •',
+                        '',
+                        sprintf(
+                            'Signalement %s: source "%s" removed, destination "%s" kept',
+                            $duplicate['reference'],
+                            $duplicate['sourceStatus'],
+                            $duplicate['destinationStatus']
+                        ),
+                    ];
+                }
+            }
+        }
+
+        if (empty($changes)) {
+            $changes[] = [
+                'No changes',
+                0,
+                'No affectations to transfer',
+            ];
+        }
+
+        return $changes;
     }
 }
