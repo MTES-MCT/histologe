@@ -1083,8 +1083,12 @@ class SignalementRepository extends ServiceEntityRepository
         ?string $zipcode,
         ?string $city,
         bool $isTiersDeclarant = true,
+        ?string $nomOccupant = null,
     ): array {
         if (empty($email) || empty($address) || empty($zipcode) || empty($city)) {
+            return [];
+        }
+        if ($isTiersDeclarant && empty($nomOccupant)) {
             return [];
         }
 
@@ -1092,7 +1096,9 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('s');
         if ($isTiersDeclarant) {
-            $qb->andWhere('s.mailDeclarant = :email')->setParameter('email', $email);
+            $qb
+                ->andWhere('s.mailDeclarant = :email')->setParameter('email', $email)
+                ->andWhere('s.nomOccupant = :nomOccupant')->setParameter('nomOccupant', $nomOccupant);
         } else {
             $qb->andWhere('s.mailOccupant = :email')->setParameter('email', $email);
         }

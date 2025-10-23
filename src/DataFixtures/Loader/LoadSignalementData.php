@@ -88,7 +88,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $signalement = (new Signalement())
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setProfileDeclarant(ProfileDeclarant::from($row['profile_declarant']))
-            ->setNomOccupant($faker->lastName())
+            ->setNomOccupant($row['nom_occupant'] ?? $faker->lastName())
             ->setPrenomOccupant($faker->firstName())
             ->setTelOccupant($phoneNumber)
             ->setAdresseOccupant($row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress()))

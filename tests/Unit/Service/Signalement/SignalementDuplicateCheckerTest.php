@@ -72,6 +72,7 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         $signalementDraftRequest->setAdresseLogementAdresseDetailCodePostal($signalement->getCpOccupant());
         $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getVilleOccupant());
         $signalementDraftRequest->setCoordonneesOccupantEmail($signalement->getMailOccupant());
+        $signalementDraftRequest->setCoordonneesOccupantNom($signalement->getNomOccupant());
         $signalementDraftRequest->setVosCoordonneesTiersEmail($signalement->getMailDeclarant());
 
         $signalementDuplicateChecker = static::getContainer()->get(SignalementDuplicateChecker::class);
