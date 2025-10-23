@@ -27,7 +27,7 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
 
         /** @var SignalementDraftRequestSerializer $serializer */
         $serializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
-        $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
+        $payloadLocataireSignalement = (string) file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
             $payloadLocataireSignalement,
@@ -64,7 +64,7 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
 
         /** @var SignalementDraftRequestSerializer $serializer */
         $serializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
-        $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
+        $payloadLocataireSignalement = (string) file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
             $payloadLocataireSignalement,
@@ -103,7 +103,7 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
 
         /** @var SignalementDraftRequestSerializer $serializer */
         $serializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
-        $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
+        $payloadLocataireSignalement = (string) file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
             $payloadLocataireSignalement,

@@ -54,6 +54,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
             ->method('findAffectationSubscribedToEsabora')
             ->willReturn($affectations);
 
+        /** @var ParameterBagInterface $parameterBag */
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
 

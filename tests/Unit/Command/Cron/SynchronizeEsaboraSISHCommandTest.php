@@ -50,6 +50,7 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
 
         $serializerMock = $this->createMock(SerializerInterface::class);
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
+        /** @var ParameterBagInterface $parameterBag */
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
 
         $esaboraManagerMock = $this->createMock(EsaboraManager::class);

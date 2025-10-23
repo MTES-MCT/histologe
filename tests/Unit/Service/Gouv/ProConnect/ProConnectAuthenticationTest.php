@@ -54,7 +54,7 @@ class ProConnectAuthenticationTest extends KernelTestCase
             ->method('requestToken')
             ->willReturn(new OAuth2TokenResponse(['access_token' => 'dummy', 'id_token' => 'dummy']));
 
-        $jwksFile = file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
+        $jwksFile = (string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
         $httpClient
             ->expects(self::once())
             ->method('getJWKS')

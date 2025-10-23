@@ -14,9 +14,11 @@ class SignalementExportPdfTest extends KernelTestCase
     public function testGeneratePdf(): void
     {
         self::bootKernel();
+        /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $signalementExportPdfGenerator = new SignalementExportPdfGenerator($parameterBag);
 
+        /** @var Environment $twig */
         $twig = static::getContainer()->get(Environment::class);
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
