@@ -75,6 +75,9 @@
             <th scope="col">Adresse du logement</th>
             <th scope="col">Nom de l'occupant</th>
             <th scope="col">Nom du bailleur</th>
+            {% if is_granted('ROLE_ADMIN') %}
+                <th scope="col">Actions</th>
+            {% endif %}
         {% endset %}
 
         {% set tableBody %}
@@ -88,6 +91,13 @@
                     <td>{{ signalement.getAddressCompleteOccupant() }}</td>
                     <td>{{ signalement.prenomOccupant ~ ' ' ~ signalement.nomOccupant }}</td>
                     <td>{{ signalement.getDisplayedNomProprio() }}</td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>
+                            <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line" target="_blank" rel="noopener">
+                                Courrier bailleur
+                            </a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% else %}
                 <tr>

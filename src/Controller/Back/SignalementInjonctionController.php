@@ -2,16 +2,20 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\SearchSignalementInjonctionType;
 use App\Repository\SignalementRepository;
 use App\Security\Voter\UserVoter;
 use App\Service\ListFilters\SearchSignalementInjonction;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalement-injonction')]
@@ -41,6 +45,27 @@ class SignalementInjonctionController extends AbstractController
             'searchSignalement' => $searchSignalementInjonction,
             'signalements' => $paginatedSignalementInjonction,
             'pages' => (int) ceil($paginatedSignalementInjonction->count() / $maxListPagination),
+        ]);
+    }
+
+    #[Route('/{uuid:signalement}/courrier-bailleur', name: 'back_injonction_signalement_courrier_bailleur', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function courrierBailleur(
+        Signalement $signalement,
+    ): Response {
+        $writer = new PngWriter();
+
+        $url = $this->generateUrl('app_login_bailleur', [
+            'reference' => $signalement->getUuid(),
+            'login_bailleur' => $signalement->getLoginBailleur(),
+        ], referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
+        $qrCode = new QrCode(data: $url);
+
+        $result = $writer->write($qrCode);
+
+        return $this->render('back/signalement-injonction/courrier-bailleur.html.twig', [
+            'signalement' => $signalement,
+            'qrCode' => $result->getDataUri(),
         ]);
     }
 }

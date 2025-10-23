@@ -1,0 +1,22 @@
+<div>
+    {{ signalement.displayedNomProprio }}
+    <br>
+    {{ signalement.adresseProprio }}
+    <hr>
+    <br>
+    Police du logement bonjour.
+    <br>
+    Nous avons reçu un signalement concernant le logement situé "<strong>{{ signalement.addressCompleteOccupant }}</strong>".
+    <br>
+    <br>
+    Merci de vous connecter sur "<strong>{{ url('app_login_bailleur') }}</strong>" avec les codes suivant
+    <br>
+    Référence : "<strong>{{ signalement.reference }}</strong>"
+    <br>
+    Login bailleur : "<strong>{{ signalement.loginBailleur }}</strong>"
+    <br>
+    <br>
+    Ou en utilisant le QR code ci-dessous :
+</div>
+
+<img src="{{ qrCode }}">
