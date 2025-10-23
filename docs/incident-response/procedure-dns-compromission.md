@@ -15,12 +15,17 @@ Un tiers non autorisé a profité de l’absence temporaire de l’administrateu
     - [ ] Informer l’équipe produit et les responsables techniques.
 
 2. **Isoler le compte compromis**
-    - [ ] [scalingo] Vérifier que le domaine est toujours attaché au container de production  
-      *(Container de production → Paramètres → Domaines)*
-    - [ ] [scalingo] Arrêter temporairement le container de production.
     - [ ] [ovh] Révoquer immédiatement les identifiants du compte administrateur OVH.
     - [ ] [ovh] Désactiver les clés API : <https://www.ovh.com/manager/#/iam/api-keys/onboarding>
     - [ ] [ovh] Désactiver les clés SSH : <https://www.ovh.com/manager/#/billing/autorenew/ssh>
+
+3. **Vérification de la zone**
+    - [ ] Auditer la zone DNS <https://www.zonemaster.net>, analyser l'onglet erreur et critique
+    - [ ] [ovh] Vérifier les serveurs DNS dérrière le domaine sont bien ceux d'OVH
+    - [ ] [scalingo] Arrêter temporairement le container de production.
+    - [ ] [scalingo] Vérifier que le domaine est toujours attaché au container de production  
+    - [ ] [scalingo] Vérifier que le certificat TLS est à jour
+            -   *(Container de production → Paramètres → Domaines)*
 
 ---
 
@@ -44,6 +49,7 @@ Un tiers non autorisé a profité de l’absence temporaire de l’administrateu
     - [ ] Utiliser des outils en ligne pour suivre la propagation :
         - <https://dnspropagation.net/>
         - <https://www.whatsmydns.net/>
+        - <https://www.zonemaster.net/fr/run-test>
 
 4. **Exporter la zone corrigée**
     - [ ] Exporter la version corrigée dans Vaultwarden :
