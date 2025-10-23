@@ -96,7 +96,7 @@ enum SuiviCategory: string
             'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE' => 'Commentaire du bailleur',
             'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR' => 'Le bailleur a souhaité arrêter l\'injonction et basculer en procédure classique',
             'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE' => 'Commentaire du bailleur sur l\'arrêt de l\'injonction',
-            'INJONCTION_BAILLEUR_EXPIREE' => 'Réponse favorable à l\'injonction bailleur',
+            'INJONCTION_BAILLEUR_EXPIREE' => 'Injonction bailleur expirée',
         ];
     }
 
@@ -123,6 +123,7 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
+            self::INJONCTION_BAILLEUR_EXPIREE,
         ];
     }
 
