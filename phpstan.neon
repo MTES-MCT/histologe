@@ -6,8 +6,12 @@ parameters:
 	excludePaths:
 		- .php-cs-fixer.dist.php
 		- tools
+	symfony:
+		container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
+		console_application_loader: tests/phpstan-bootstrap.php
 	treatPhpDocTypesAsCertain: false
 	reportUnmatchedIgnoredErrors: false
+	checkMissingIterableValueType: false
 	bootstrapFiles:
 		- tools/wiremock/src/Mock/AppMock.php
 	ignoreErrors:

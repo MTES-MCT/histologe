@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Service\Files;
 use App\Service\Files\ZipHelper;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ZipHelperTest extends KernelTestCase
 {
@@ -14,7 +15,11 @@ class ZipHelperTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->zipService = new ZipHelper(static::getContainer()->get(ParameterBagInterface::class), static::getContainer()->get('slugger'));
+        /** @var ParameterBagInterface $parameterBag */
+        $parameterBag = $kernel->getContainer()->get(ParameterBagInterface::class);
+        /** @var SluggerInterface $slugger */
+        $slugger = $kernel->getContainer()->get('slugger');
+        $this->zipService = new ZipHelper($parameterBag, $slugger);
     }
 
     public function testGetZipFromBase64(): void
