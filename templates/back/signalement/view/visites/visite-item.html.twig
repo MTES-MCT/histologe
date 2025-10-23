@@ -80,7 +80,7 @@
         <div class="fr-col-12">
             <strong>
                 Commentaire du partenaire :
-                {% if intervention.conclusionVisiteEditedAt is defined %}
+                {% if intervention.conclusionVisiteEditedAt is defined and intervention.conclusionVisiteEditedAt is not null %}
                     <i>(édité le {{ intervention.conclusionVisiteEditedAt|date('d/m/Y') }})</i>
                 {% endif %}
             </strong>

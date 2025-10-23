@@ -32,15 +32,21 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
         if (InterventionType::VISITE === $intervention->getType()) {
             $currentUser = $event->getUser();
             $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
-            $description = sprintf(
-                'Les informations sur la visite du logement effectuée le %s par %s ont été modifiées.<br><br> %s du logement %s : <br>%s.<br><br>Commentaire opérateur : %s',
-                $intervention->getScheduledAtFormated(),
-                $partnerName,
-                count($intervention->getConcludeProcedure()) > 1 ? 'Les nouvelles situations observées' : 'La nouvelle situation observé',
-                count($intervention->getConcludeProcedure()) > 1 ? 'sont' : 'est',
-                $intervention->getConcludeProcedureString(),
-                $intervention->getDetails()
-            );
+            if (empty($intervention->getChangesForMail())) {
+                $description = 'Edition de la conclusion de la visite par '.$partnerName.'.<br>';
+                $description .= 'Commentaire opérateur :<br>';
+                $description .= $intervention->getDetails();
+            } else {
+                $description = sprintf(
+                    'Les informations sur la visite du logement effectuée le %s par %s ont été modifiées.<br><br> %s du logement %s : <br>%s.<br><br>Commentaire opérateur : %s',
+                    $intervention->getScheduledAtFormated(),
+                    $partnerName,
+                    count($intervention->getConcludeProcedure()) > 1 ? 'Les nouvelles situations observées' : 'La nouvelle situation observé',
+                    count($intervention->getConcludeProcedure()) > 1 ? 'sont' : 'est',
+                    $intervention->getConcludeProcedureString(),
+                    $intervention->getDetails()
+                );
+            }
 
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
