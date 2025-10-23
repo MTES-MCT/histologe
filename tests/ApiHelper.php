@@ -31,9 +31,17 @@ trait ApiHelper
 
         $records = $testHandler->getRecords();
         $apiLogs = array_filter($records, function (LogRecord $record) {
-            return str_starts_with((string) $record['message'], 'API Request');
-        });
+            $message = $record['message'];
+            if (!is_string($message)) {
+                $message = match (true) {
+                    $message instanceof \DateTimeInterface => $message->format(\DATE_ATOM),
+                    is_scalar($message) => (string) $message,
+                    default => '',
+                };
+            }
 
+            return str_starts_with($message, 'API Request');
+        });
         $this->assertCount(1, $apiLogs, 'Il devrait y avoir exactement un log API Request');
     }
 }

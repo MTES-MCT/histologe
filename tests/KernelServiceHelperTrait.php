@@ -13,10 +13,12 @@ trait KernelServiceHelperTrait
      */
     protected function getService(string $service): object
     {
+        /** @var T $obj */
         $obj = static::getContainer()->get($service);
-        assert(null !== $obj);
+        if (null === $obj) {
+            throw new \LogicException(sprintf('Service %s not found.', $service));
+        }
 
-        /* @var T $obj */
         return $obj;
     }
 }

@@ -196,6 +196,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
         $searchPartner->setTerritoire($territory);
         $partnerPaginator = $this->partnerRepository->getPartners(50, $searchPartner);
+        /** @var array{0: Partner} $partner */
         foreach ($partnerPaginator as $partner) {
             $this->assertFalse($partner[0]->receiveEmailNotifications());
         }

@@ -58,6 +58,10 @@ class DossierMessageFactoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => $reference]);
         if ('2024-01' === $reference) {
             $affectation = $signalement->getAffectations()->first();
+
+            if (!$affectation) {
+                $this->fail('No affectation found for the signalemet');
+            }
         } else {
             /** @var PartnerRepository $partnerRepository */
             $partnerRepository = $this->entityManager->getRepository(Partner::class);
