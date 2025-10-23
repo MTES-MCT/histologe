@@ -15,7 +15,6 @@ use App\Entity\UserSignalementSubscription;
 use App\Factory\NotificationFactory;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
-use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -259,12 +258,6 @@ class NotificationAndMailSender
         ?Signalement $signalement = null,
         ?string $description = null,
     ): void {
-        $isFromSish = false;
-        if ($suivi && EsaboraSISHService::class === $suivi->getSource()) {
-            $isFromSish = true;
-            $signalement = $suivi->getSignalement();
-        }
-
         foreach ($recipients as $user) {
             if (!($user instanceof User)) {
                 continue;
@@ -272,11 +265,6 @@ class NotificationAndMailSender
             if (in_array($type, [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT]) && $user === $suivi->getCreatedBy()) {
                 continue;
             }
-
-            if ($isFromSish && $signalement->isTiersDeclarant()) {
-                continue;
-            }
-
             $this->createInAppNotification(
                 user: $user,
                 type: $type,

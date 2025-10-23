@@ -45,8 +45,8 @@ class SignalementCreateControllerTest extends WebTestCase
         );
 
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
-        $signalementUuuid = json_decode($this->client->getResponse()->getContent(), true)['uuid'];
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
+        $signalementUuid = json_decode($this->client->getResponse()->getContent(), true)['uuid'];
+        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $this->assertNotNull($signalement);
         $this->assertEquals($signalement->getCreatedByPartner()->getId(), $partner->getId());
 
