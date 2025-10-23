@@ -77,7 +77,12 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
 
         $nbSuiviInterventionPlanned = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::INTERVENTION_IS_CREATED, 'signalement' => $intervention->getSignalement()]);
         $this->assertEquals(1, $nbSuiviInterventionPlanned);
-        $this->assertStringContainsString('Visite programmée :', $intervention->getSignalement()->getSuivis()->last()->getDescription());
+
+        $suivi = $intervention->getSignalement()->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the intervention');
+        }
+        $this->assertStringContainsString('Visite programmée :', $suivi->getDescription());
     }
 
     public function testBuildVisiteDescriptionTimezone(): void
@@ -118,7 +123,11 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
             InterventionCreatedEvent::NAME
         );
 
-        $this->assertStringContainsString($dateDay, $intervention->getSignalement()->getSuivis()->last()->getDescription());
+        $suivi = $intervention->getSignalement()->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the intervention');
+        }
+        $this->assertStringContainsString($dateDay, $suivi->getDescription());
     }
 
     public function testInterventionVisitInPast(): void
