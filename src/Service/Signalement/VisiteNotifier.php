@@ -12,7 +12,6 @@ use App\Factory\NotificationFactory;
 use App\Manager\SignalementManager;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
-use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -38,16 +37,7 @@ class VisiteNotifier
         Suivi $suivi,
         ?\DateTimeImmutable $previousDate = null,
     ): void {
-        $signalement = $intervention->getSignalement();
-        $toRecipients = [];
-        if (EsaboraSISHService::NAME_SI === $suivi->getSource()
-            && !$signalement->isTiersDeclarant()
-        ) {
-            $toRecipients = [$intervention->getSignalement()->getMailOccupant()];
-        } elseif (empty($suivi->getSource())) {
-            $toRecipients = $intervention->getSignalement()->getMailUsagers();
-        }
-
+        $toRecipients = $intervention->getSignalement()->getMailUsagers();
         $this->notificationAndMailSender->createInAppUsagersNotifications($suivi);
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
