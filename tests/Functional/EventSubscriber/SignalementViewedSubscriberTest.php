@@ -33,7 +33,9 @@ class SignalementViewedSubscriberTest extends WebTestCase
     {
         static::createClient();
         $this->addressServiceMock = $this->createMock(AddressService::class);
-        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $this->entityManager = $em;
         $this->signalementManager = static::getContainer()->get(SignalementManager::class);
         $this->signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
             'uuid' => '00000000-0000-0000-2025-000000000007',

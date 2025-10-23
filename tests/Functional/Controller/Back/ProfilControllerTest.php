@@ -69,7 +69,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertJson(json_encode(['code' => Response::HTTP_OK]));
+        $this->assertJson((string) json_encode(['code' => Response::HTTP_OK]));
         $this->assertEquals('Doe', $this->user->getNom());
         $this->assertEquals('John', $this->user->getPrenom());
         $this->assertEquals('Directeur', $this->user->getFonction());
@@ -113,7 +113,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertJson(json_encode(['code' => Response::HTTP_OK]));
+        $this->assertJson((string) json_encode(['code' => Response::HTTP_OK]));
         $this->assertEquals('Doe', $this->user->getNom());
         $this->assertEquals('John', $this->user->getPrenom());
         $this->assertEquals('Directeur', $this->user->getFonction());
@@ -151,7 +151,7 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'errors' => [
                 'profil_edit_infos[avatar]' => [
                     'errors' => ['Le fichier est infecté'],
@@ -186,7 +186,7 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'errors' => [
                 'profil_edit_infos[avatar]' => [
                     'errors' => ['Veuillez télécharger une image valide (JPEG, PNG ou GIF)'],
@@ -226,7 +226,7 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'errors' => [
                 'profil_edit_infos[prenom]' => [
                     'errors' => ['Le prénom ne peut pas être vide'],
@@ -305,7 +305,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[email]' => [
@@ -327,7 +327,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[email]' => [
@@ -349,7 +349,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[email]' => [
@@ -371,7 +371,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[email]' => [
@@ -393,7 +393,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[email]' => [
@@ -416,7 +416,7 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[code]' => '123456',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_OK,
         ]));
     }
@@ -432,7 +432,7 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[code]' => 'wrong_code',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[code]' => [
@@ -453,7 +453,7 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[code]' => '',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[code]' => [
@@ -475,7 +475,7 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[code]' => '123456',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[code]' => [
@@ -498,7 +498,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[code]' => [
@@ -522,7 +522,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[code]' => [
@@ -545,7 +545,7 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[code]' => '123456',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_UNAUTHORIZED,
             'message' => 'Une erreur s\'est produite. Veuillez actualiser la page.',
         ]));
@@ -565,7 +565,7 @@ class ProfilControllerTest extends WebTestCase
         $this->assertEmailCount(1);
 
         $this->assertResponseIsSuccessful();
-        $this->assertJson(json_encode(['code' => Response::HTTP_OK]));
+        $this->assertJson((string) json_encode(['code' => Response::HTTP_OK]));
 
         $this->assertTrue($this->client->getContainer()->get('security.password_hasher')
             ->isPasswordValid($this->user, 'NewPassword!123'));
@@ -585,7 +585,7 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'password-repeat' => [
@@ -609,7 +609,7 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'password' => [
@@ -632,7 +632,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'password' => [
@@ -655,7 +655,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'password' => [
@@ -678,7 +678,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_UNAUTHORIZED,
             'message' => 'Une erreur s\'est produite. Veuillez actualiser la page.',
         ]));
@@ -697,7 +697,7 @@ class ProfilControllerTest extends WebTestCase
         ]);
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'password-current' => [
@@ -714,7 +714,7 @@ class ProfilControllerTest extends WebTestCase
         $form = $crawler->filter('#notification_email_form')->form();
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson(json_encode([
+        $this->assertJson((string) json_encode([
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'isMailingSummary' => [

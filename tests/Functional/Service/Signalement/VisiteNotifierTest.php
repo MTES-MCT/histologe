@@ -12,6 +12,7 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\VisiteNotifier;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class VisiteNotifierTest extends KernelTestCase
@@ -22,6 +23,7 @@ class VisiteNotifierTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $signalementManager = static::getContainer()->get(SignalementManager::class);
         $notificationFactory = static::getContainer()->get(NotificationFactory::class);

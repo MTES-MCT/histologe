@@ -106,7 +106,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(400);
         $this->assertStringContainsString(
             'Token CSRF invalide ou param\u00e8tre manquant, veuillez recharger la page',
-            $this->client->getResponse()->getContent()
+            (string) $this->client->getResponse()->getContent()
         );
     }
 
@@ -138,7 +138,7 @@ class SignalementFileControllerTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
-        $this->assertEquals('{"response":"success"}', $this->client->getResponse()->getContent());
+        $this->assertEquals('{"response":"success"}', (string) $this->client->getResponse()->getContent());
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
@@ -152,6 +152,9 @@ class SignalementFileControllerTest extends WebTestCase
         $file = $signalement->getFiles()->filter(function ($file) {
             return $file->isTypeImage();
         })->current();
+        if (!$file) {
+            $this->fail('No file found for the signalement');
+        }
 
         $message = 'Je vais écrire un roman, lorem ipsum dolor sit amet, consectetur adipiscing elit.
         Nulla nec purus feugiat, ultricies nunc nec, tincidunt nunc. Nulla facilisi.
@@ -172,7 +175,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(400);
         $this->assertStringContainsString(
             'La description ne doit pas d\u00e9passer 255 caract\u00e8res',
-            $this->client->getResponse()->getContent()
+            (string) $this->client->getResponse()->getContent()
         );
     }
 }

@@ -69,7 +69,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
             [],
             [],
             [],
-            json_encode($payload)
+            (string) json_encode($payload)
         );
 
         /** @var Signalement $signalement */

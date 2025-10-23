@@ -23,7 +23,7 @@ class UserGetMeControllerTest extends WebTestCase
         $client->request('GET', '/api/users/me');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
 
         foreach ($response['partenairesAutorises'] as $partner) {
             $this->assertArrayHasKey('uuid', $partner);

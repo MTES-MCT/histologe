@@ -30,9 +30,9 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-7']);
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
-
+        $partner = $user->getPartners()->first() ?: null;
         $affectation = (new Affectation())
-            ->setPartner($user->getPartners()->first())
+            ->setPartner($partner)
             ->setTerritory($user->getFirstTerritory())
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setAnsweredBy($user)
@@ -53,14 +53,15 @@ class FirstAffectationAcceptedSpecificationTest extends KernelTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-20']);
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
 
+        $partner = $user->getPartners()->first() ?: null;
         $intervention = (new Intervention())
-            ->setPartner($user->getPartners()->first())
+            ->setPartner($partner)
             ->setStatus(Intervention::STATUS_PLANNED)
             ->setType(InterventionType::VISITE)
             ->setScheduledAt((new \DateTimeImmutable())->modify('+1 month'));
 
         $affectation = (new Affectation())
-            ->setPartner($user->getPartners()->first())
+            ->setPartner($partner)
             ->setTerritory($user->getFirstTerritory())
             ->setAnsweredAt(new \DateTimeImmutable())
             ->setAnsweredBy($user)
