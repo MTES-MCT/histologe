@@ -5,55 +5,75 @@ namespace App\EventListener;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Intervention;
+use App\Service\HtmlCleaner;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
-use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 
-#[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: Intervention::class)]
+#[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Intervention::class)]
 class InterventionEditedListener
 {
-    public function postUpdate(Intervention $intervention, PostUpdateEventArgs $event): void
+    public function preUpdate(Intervention $intervention, PreUpdateEventArgs $event): void
     {
-        $changeSet = $event->getObjectManager()
-            ->getUnitOfWork()
-            ->getEntityChangeSet($intervention);
+        if (!$this->supports($intervention, $event)) {
+            return;
+        }
 
-        if ($this->supports($intervention) && (isset($changeSet['details']) || isset($changeSet['concludeProcedure']))) {
-            $intervention->setConclusionVisiteEditedAt(new \DateTimeImmutable());
+        $changes = [];
+        if ($event->hasChangedField('details')) {
+            if (empty($event->getOldValue('details'))) { // no need to compare
+                return;
+            }
+            $before = HtmlCleaner::clean($event->getOldValue('details'));
+            $after = HtmlCleaner::clean($event->getNewValue('details'));
 
-            $fields = ['details', 'concludeProcedure'];
-            $changes = [];
-
-            foreach ($fields as $field) {
-                if (!isset($changeSet[$field])) {
-                    continue;
-                }
-                $before = $changeSet[$field][0] ?? null;
-                $after = $changeSet[$field][1] ?? null;
-
-                if ('concludeProcedure' === $field) {
-                    $before = is_array($before)
-                        ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $before)
-                        : [];
-                    $after = is_array($after)
-                        ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $after)
-                        : [];
-                }
-
-                if (!empty($before) || !empty($after)) {
-                    $changes[$field] = [
-                        'old' => is_array($before) ? implode(', ', $before) : $before,
-                        'new' => is_array($after) ? implode(', ', $after) : $after,
-                    ];
-                }
+            if ($before === $after) {
+                return;
             }
 
+            if (!empty($after)) {
+                $changes['details'] = [
+                    'old' => $before,
+                    'new' => $after,
+                ];
+            }
+        }
+
+        if ($event->hasChangedField('concludeProcedure')) {
+            $before = $event->getOldValue('concludeProcedure') ?? [];
+            $after = $event->getNewValue('concludeProcedure') ?? [];
+            if (empty($before)) { // no need to compare
+                return;
+            }
+
+            $before = is_array($before)
+                ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $before)
+                : [];
+            $after = is_array($after)
+                ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $after)
+                : [];
+
+            if ($before === $after) {
+                return;
+            }
+
+            if (!empty($after)) {
+                $changes['concludeProcedure'] = [
+                    'old' => implode(', ', $before),
+                    'new' => implode(', ', $after),
+                ];
+            }
+        }
+
+        if (!empty($changes)) {
             $intervention->setChangesForMail($changes);
+            $intervention->setConclusionVisiteEditedAt(new \DateTimeImmutable());
         }
     }
 
-    public function supports(Intervention $intervention): bool
+    public function supports(Intervention $intervention, PreUpdateEventArgs $event): bool
     {
-        return Intervention::STATUS_DONE === $intervention->getStatus() && InterventionType::VISITE === $intervention->getType();
+        return Intervention::STATUS_DONE === $intervention->getStatus()
+            && InterventionType::VISITE === $intervention->getType();
     }
 }
