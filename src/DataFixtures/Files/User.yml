@@ -40,6 +40,8 @@ users:
     partner: "Administrateurs Signal-logement"
     statut: "ACTIVE"
     is_mailing_active: 0
+    has_done_subscription_choice: 1
+    has_checked_last_cgu: 1
   -
     email: admin-02@signal-logement.fr
     roles: "[\"ROLE_ADMIN\"]"
@@ -59,6 +61,8 @@ users:
     statut: "ACTIVE"
     is_mailing_active: 1
     is_mailing_summary: 0
+    has_done_subscription_choice: 1
+    has_checked_last_cgu: 1
   -
     email: admin-territoire-13-02@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -150,6 +154,8 @@ users:
     statut: "ACTIVE"
     is_mailing_active: 1
     last_login_at: '-1 year'
+    has_done_subscription_choice: 1
+    has_checked_last_cgu: 1
   -
     email: user-13-02@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
