@@ -19,7 +19,9 @@ class CiviliteMapperTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $this->entityManager = $em;
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
     }
 

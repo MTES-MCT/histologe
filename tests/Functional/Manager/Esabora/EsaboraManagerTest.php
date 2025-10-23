@@ -102,10 +102,10 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertNotEquals($expectedAffectationStatus, $affectation->getStatut());
 
         $basePath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
-        $responseEsabora = file_get_contents($basePath.$filename);
+        $responseEsabora = (string) file_get_contents($basePath.$filename);
         $dossierResponse = str_contains($filename, 'sish')
-                ? new DossierStateSISHResponse(json_decode($responseEsabora, true), 200)
-                : new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
+                ? new DossierStateSISHResponse(json_decode((string) $responseEsabora, true), 200)
+                : new DossierStateSCHSResponse(json_decode((string) $responseEsabora, true), 200);
 
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
@@ -221,10 +221,10 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertNotEquals($expectedAffectationStatus, $affectation->getStatut());
 
         $basePath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
-        $responseEsabora = file_get_contents($basePath.$filename);
+        $responseEsabora = (string) file_get_contents($basePath.$filename);
         $dossierResponse = str_contains($filename, 'sish')
-                ? new DossierStateSISHResponse(json_decode($responseEsabora, true), 200)
-                : new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
+                ? new DossierStateSISHResponse(json_decode((string) $responseEsabora, true), 200)
+                : new DossierStateSCHSResponse(json_decode((string) $responseEsabora, true), 200);
 
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
@@ -300,12 +300,20 @@ class EsaboraManagerTest extends KernelTestCase
 
         $dossierVisite = $this->getDossierVisiteSISHCollectionResponse()->getCollection()[0];
         $affectation = $signalement->getAffectations()->first();
-
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
         $esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
         $this->entityManager->flush();
         $this->entityManager->refresh($signalement);
         $suivi = $signalement->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the signalement');
+        }
         $intervention = $signalement->getInterventions()->first();
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
 
         $this->assertStringContainsString('Visite de contrôle réalisée', $suivi->getDescription());
         $this->assertEquals(Intervention::STATUS_DONE, $intervention->getStatus(), 'Le statut doit être DONE après application du workflow confirm');

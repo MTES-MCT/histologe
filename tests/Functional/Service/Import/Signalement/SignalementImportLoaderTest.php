@@ -92,7 +92,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);
-        $headers = array_keys($this->getData()[0]);
+        $headers = array_map('strval', array_keys($this->getData()[0]));
         $signalementImportLoader->load($territory, $this->getData(), $headers);
 
         $this->assertArrayHasKey('count_signalement', $signalementImportLoader->getMetadata());

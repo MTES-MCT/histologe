@@ -38,7 +38,7 @@ class SignalementListControllerTest extends WebTestCase
         $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode((string) $client->getResponse()->getContent(), true);
 
-        $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
+        $this->assertEquals($results, $result['pagination']['total_items'], (string) json_encode($result['list']));
     }
 
     public function provideNewFilterSearch(): \Generator
@@ -281,7 +281,7 @@ class SignalementListControllerTest extends WebTestCase
         $client->request('GET', $route, $filter, [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode((string) $client->getResponse()->getContent(), true);
 
-        $this->assertEquals($results, $result['pagination']['total_items'], json_encode($result['list']));
+        $this->assertEquals($results, $result['pagination']['total_items'], (string) json_encode($result['list']));
     }
 
     /**

@@ -98,9 +98,13 @@ class AffectationManagerTest extends WebTestCase
         $affectationRepository = $this->managerRegistry->getRepository(Affectation::class);
         /** @var Affectation $affectationAccepted */
         $affectationAccepted = $affectationRepository->findOneBy(['statut' => AffectationStatus::ACCEPTED]);
+        $firstUser = $affectationAccepted->getPartner()->getUsers()->first();
+        if (!$firstUser) {
+            $this->fail('No user found for the affectation');
+        }
         /** @var User $user */
         $user = $this->managerRegistry->getRepository(User::class)->findOneBy(
-            ['email' => $affectationAccepted->getPartner()->getUsers()->first()->getEmail()]
+            ['email' => $firstUser->getEmail()]
         );
         $this->client->loginUser($user);
         $partner = $user->getPartnerInTerritoryOrFirstOne($affectationAccepted->getSignalement()->getTerritory());

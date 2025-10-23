@@ -1,15 +1,15 @@
 <?php
 
-use Symfony\Component\Dotenv\Dotenv;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use App\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Dotenv\Dotenv;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
-if (file_exists(__DIR__ . '/../config/bootstrap.php')) {
-    require __DIR__ . '/../config/bootstrap.php';
+if (file_exists(__DIR__.'/../config/bootstrap.php')) {
+    require __DIR__.'/../config/bootstrap.php';
 } elseif (method_exists(Dotenv::class, 'bootEnv')) {
-    (new Dotenv())->bootEnv(__DIR__ . '/../.env');
+    (new Dotenv())->bootEnv(__DIR__.'/../.env');
 }
 
 // Crée et boot le kernel

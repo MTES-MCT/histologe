@@ -45,8 +45,8 @@ class HistoryEntryControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertJson($this->client->getResponse()->getContent());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertJson((string) $this->client->getResponse()->getContent());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('historyEntries', $response);
         $this->assertArrayHasKey('Partenaire 13-01', $response['historyEntries']);
@@ -64,8 +64,8 @@ class HistoryEntryControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(403);
 
-        $this->assertJson($this->client->getResponse()->getContent());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertJson((string) $this->client->getResponse()->getContent());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('response', $response);
         $this->assertEquals('error', $response['response']);

@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Signalement;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
@@ -100,6 +101,7 @@ class PhotoHelperTest extends KernelTestCase
 
     public function testGetPhotosBySlug(): void
     {
+        /** @var Signalement $signalement */
         $signalement = $this->signalementManager->findOneBy(['reference' => '2023-27']);
 
         $desordrePrecisionSlug = 'desordres_batiment_proprete_interieur';
@@ -116,6 +118,7 @@ class PhotoHelperTest extends KernelTestCase
 
     public function testGetSortedPhotos(): void
     {
+        /** @var Signalement $signalement */
         $signalement = $this->signalementManager->findOneBy(['reference' => '2023-27']);
 
         $photos = PhotoHelper::getSortedPhotos($signalement);

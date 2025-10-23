@@ -46,7 +46,7 @@ class LoadEpciCommandTest extends KernelTestCase
 
     private function getEpciAllResponse(): string
     {
-        return json_encode([
+        return (string) json_encode([
             [
                 'nom' => 'CC d\'Erdre et Gesvres',
                 'code' => '244400503',
@@ -64,7 +64,7 @@ class LoadEpciCommandTest extends KernelTestCase
 
     private function getEpciErdreGesvresCommunes(): string
     {
-        return json_encode([
+        return (string) json_encode([
             ['nom' => 'Petit-Mars', 'codesPostaux' => ['44390'], 'code' => '44122'],
             ['nom' => 'Saint-Mars-du-Désert', 'codesPostaux' => ['44850'], 'code' => '44179'],
         ]);
@@ -72,7 +72,7 @@ class LoadEpciCommandTest extends KernelTestCase
 
     private function getEpciPaysAncenis(): string
     {
-        return json_encode([
+        return (string) json_encode([
             ['nom' => 'Le Cellier', 'codesPostaux' => ['44850'], 'code' => '44028'],
             ['nom' => 'Ligné', 'codesPostaux' => ['44850'], 'code' => '44082'],
         ]);
@@ -80,7 +80,7 @@ class LoadEpciCommandTest extends KernelTestCase
 
     private function getEpciAixMarseilleProvence(): string
     {
-        return json_encode([
+        return (string) json_encode([
             [
                 'nom' => 'Marseille',
                 'code' => '13055',

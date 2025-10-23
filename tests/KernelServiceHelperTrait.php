@@ -16,6 +16,7 @@ trait KernelServiceHelperTrait
         $obj = static::getContainer()->get($service);
         assert(null !== $obj);
 
+        /* @var T $obj */
         return $obj;
     }
 }

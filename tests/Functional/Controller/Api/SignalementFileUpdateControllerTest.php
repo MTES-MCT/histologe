@@ -41,10 +41,10 @@ class SignalementFileUpdateControllerTest extends WebTestCase
             method: 'PATCH',
             uri: $this->router->generate('api_signalements_files_patch', ['uuid' => $file->getUuid()]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
         $this->assertEquals($payload['documentType'], $response['documentType']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -63,10 +63,10 @@ class SignalementFileUpdateControllerTest extends WebTestCase
             method: 'PATCH',
             uri: $this->router->generate('api_signalements_files_patch', ['uuid' => $file->getUuid()]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
         $this->assertNull($response['description']);
         $this->assertEquals('PROCEDURE_ARRETE_PREFECTORAL', $response['documentType']);
@@ -82,7 +82,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
             method: 'PATCH',
             uri: $this->router->generate('api_signalements_files_patch', ['uuid' => '1234']),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
@@ -102,7 +102,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
             method: 'PATCH',
             uri: $this->router->generate('api_signalements_files_patch', ['uuid' => $file->getUuid()]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
@@ -124,10 +124,10 @@ class SignalementFileUpdateControllerTest extends WebTestCase
             method: 'PATCH',
             uri: $this->router->generate('api_signalements_files_patch', ['uuid' => $file->getUuid()]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
         $this->assertEquals($payload['documentType'], $response['documentType']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);

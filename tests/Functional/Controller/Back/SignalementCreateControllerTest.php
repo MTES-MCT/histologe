@@ -52,7 +52,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('hasDuplicates', $response);
         $this->assertTrue($response['hasDuplicates']);
         $this->assertStringContainsString('Voir les signalements', $response['labelBtnDuplicates']);
@@ -66,7 +66,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $this->client->submit($form);
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
@@ -100,7 +100,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('hasDuplicates', $response);
         $this->assertTrue($response['hasDuplicates']);
         $this->assertStringContainsString('Voir mes brouillons', $response['labelBtnDuplicates']);
@@ -115,7 +115,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $this->client->submit($form);
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
@@ -190,7 +190,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
@@ -222,7 +222,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('tabContent', $response);
         $this->assertStringContainsString('pas le droit de créer un signalement sur ce territoire.', $response['tabContent']);
     }
@@ -241,7 +241,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertTrue($response['redirect']);
 
@@ -268,7 +268,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertTrue($response['redirect']);
 
@@ -295,7 +295,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertTrue($response['redirect']);
 
@@ -319,7 +319,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertTrue($response['redirect']);
 
@@ -346,7 +346,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertTrue($response['redirect']);
 
@@ -372,7 +372,7 @@ class SignalementCreateControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
         $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
@@ -406,7 +406,7 @@ class SignalementCreateControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $signalementUsager = $this->signalementUsagerRepository->findOneBy(['signalement' => $signalement]);
         $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
         $this->assertNull($signalementUsager->getDeclarant());
@@ -437,7 +437,7 @@ class SignalementCreateControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
         $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']);
@@ -468,7 +468,7 @@ class SignalementCreateControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
         $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
@@ -499,7 +499,7 @@ class SignalementCreateControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
         $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']);

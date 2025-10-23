@@ -442,7 +442,7 @@ class SignalementControllerTest extends WebTestCase
         $router = $client->getContainer()->get(RouterInterface::class);
         $urlPutSignalement = $router->generate('envoi_formulaire_signalement_draft');
 
-        $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../files/post_signalement_draft_payload.json');
+        $payloadLocataireSignalement = (string) file_get_contents(__DIR__.'../../../files/post_signalement_draft_payload.json');
 
         $client->request('POST', $urlPutSignalement, [], [], [], $payloadLocataireSignalement);
 
@@ -467,7 +467,7 @@ class SignalementControllerTest extends WebTestCase
             'uuid' => $uuidSignalement,
         ]);
 
-        $payloadLocataireSignalement = file_get_contents(
+        $payloadLocataireSignalement = (string) file_get_contents(
             __DIR__.'../../../../src/DataFixtures/Files/signalement_draft_payload/'.$path
         );
 
@@ -502,7 +502,7 @@ class SignalementControllerTest extends WebTestCase
             'uuid' => '00000000-0000-0000-2024-locataire003',
         ]);
 
-        $payloadLocataireSignalement = file_get_contents(
+        $payloadLocataireSignalement = (string) file_get_contents(
             __DIR__.'../../../files/post_signalement_draft_payload.json'
         );
 

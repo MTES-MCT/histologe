@@ -8,6 +8,7 @@ use App\Event\SuiviViewedEvent;
 use App\Repository\NotificationRepository;
 use App\Service\Signalement\SuiviSeenMarker;
 use App\Tests\UserHelper;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -35,9 +36,10 @@ class SuiviSeenMarkerTest extends KernelTestCase
         $notificationRepository = $container->get(NotificationRepository::class);
         $marker = new SuiviSeenMarker($notificationRepository);
         $marker->markSeenByUsager($signalement);
-
-        $publicSuivis = $signalement->getSuivis()->filter(fn ($s) => $s->getIsPublic())->toArray();
-        $internalSuivis = $signalement->getSuivis()->filter(fn ($s) => !$s->getIsPublic())->toArray();
+        /** @var Collection<int, Suivi> $suivis */
+        $suivis = $signalement->getSuivis();
+        $publicSuivis = $suivis->filter(fn (Suivi $s, int $i): bool => $s->getIsPublic())->toArray();
+        $internalSuivis = $suivis->filter(fn (Suivi $s, int $i): bool => !$s->getIsPublic())->toArray();
         /** @var Suivi $suivi */
         foreach ($publicSuivis as $suivi) {
             $this->assertTrue(

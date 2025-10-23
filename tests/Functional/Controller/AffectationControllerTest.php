@@ -59,8 +59,11 @@ class AffectationControllerTest extends WebTestCase
 
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => self::SIGNALEMENT_REFERENCE]);
-
-        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_deny', ['affectation' => $signalement->getAffectations()->first()->getId()]);
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $routeAffectationResponse = $this->router->generate('back_signalement_affectation_deny', ['affectation' => $affectation->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'refus_affectation');
         $this->client->request('POST', $routeAffectationResponse, [
@@ -82,7 +85,7 @@ class AffectationControllerTest extends WebTestCase
         );
         $this->assertEquals(Suivi::TYPE_AUTO, $suivi->getType());
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
@@ -219,7 +222,7 @@ class AffectationControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(400);
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('errors', $response);
     }
 
@@ -339,11 +342,15 @@ class AffectationControllerTest extends WebTestCase
         $routeAffectationResponse = $this->router->generate('back_signalement_remove_partner', [
             'uuid' => $signalement->getUuid(),
         ]);
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
         $this->client->request('POST', $routeAffectationResponse, [
-            'affectation' => $signalement->getAffectations()->first()->getId(),
+            'affectation' => $affectation->getId(),
             '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
         ]);
-        $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
+        $this->assertSame('{"status":"success"}', (string) $this->client->getResponse()->getContent());
     }
 
     public function testRemoveAffectationFromOtherSignalement(): void
@@ -366,7 +373,7 @@ class AffectationControllerTest extends WebTestCase
             'affectation' => $affectation->getId(),
             '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
         ]);
-        $this->assertSame('{"status":"denied"}', $this->client->getResponse()->getContent());
+        $this->assertSame('{"status":"denied"}', (string) $this->client->getResponse()->getContent());
         $this->assertResponseStatusCodeSame(403);
     }
 }
