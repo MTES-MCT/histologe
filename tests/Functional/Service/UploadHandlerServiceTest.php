@@ -88,15 +88,21 @@ class UploadHandlerServiceTest extends KernelTestCase
     {
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-
+        /** @var MockObject&FilesystemOperator $fileSystem  */
+        $fileSystem = $this->createMock(FilesystemOperator::class);
+        /** @var MockObject&FilenameGenerator $fileName  */
+        $fileName = $this->createMock(FilenameGenerator::class);
+        /** @var MockObject&LoggerInterface $logger  */
+        $logger = $this->createMock(LoggerInterface::class);
         $uploadHandlerService = new UploadHandlerService(
-            $this->createMock(FilesystemOperator::class),
+            $fileSystem,
             $parameterBag,
-            $this->createMock(LoggerInterface::class),
-            $this->createMock(FilenameGenerator::class),
+            $logger,
+            $fileName,
             $this->fileRepository
         );
 
+        /** @var MockObject&UploadedFile $uploadedFileMock  */
         $uploadedFileMock = $this->createMock(UploadedFile::class);
         $uploadedFileMock
             ->expects($this->exactly(2))
@@ -112,15 +118,21 @@ class UploadHandlerServiceTest extends KernelTestCase
     {
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-
+        /** @var MockObject&FilesystemOperator $fileSystem  */
+        $fileSystem = $this->createMock(FilesystemOperator::class);
+        /** @var MockObject&FilenameGenerator $fileName  */
+        $fileName = $this->createMock(FilenameGenerator::class);
+        /** @var MockObject&LoggerInterface $logger  */
+        $logger = $this->createMock(LoggerInterface::class);
         $uploadHandlerService = new UploadHandlerService(
-            $this->createMock(FilesystemOperator::class),
+            $fileSystem,
             $parameterBag,
-            $this->createMock(LoggerInterface::class),
-            $this->createMock(FilenameGenerator::class),
+            $logger,
+            $fileName,
             $this->fileRepository
         );
 
+        /** @var MockObject&UploadedFile $uploadedFileMock  */
         $uploadedFileMock = $this->createMock(UploadedFile::class);
         $uploadedFileMock
             ->expects($this->atLeast(1))

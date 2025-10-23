@@ -24,8 +24,8 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
     public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/schs/';
 
-    private MockObject|UploadHandlerService $uploadHandlerService;
-    private MockObject|LoggerInterface $logger;
+    private MockObject&UploadHandlerService $uploadHandlerService;
+    private MockObject&LoggerInterface $logger;
     private ?string $tempFilepath;
 
     protected function setUp(): void
@@ -50,7 +50,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
         $response = $esaboraService->pushDossier($this->getDossierMessageSCHS());
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertStringContainsString('insert', $response->getContent());
+        $this->assertStringContainsString('insert', (string) $response->getContent());
     }
 
     /**

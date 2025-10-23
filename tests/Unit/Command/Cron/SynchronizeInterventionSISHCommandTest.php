@@ -12,6 +12,7 @@ use App\Service\Interconnection\Esabora\Handler\InterventionArreteServiceHandler
 use App\Service\Interconnection\Esabora\Handler\InterventionVisiteServiceHandler;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -57,9 +58,12 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
-
+        /** @var MockObject&InterventionVisiteServiceHandler $visiteHandler */
         $visiteHandler = $this->createMock(InterventionVisiteServiceHandler::class);
+        /** @var MockObject&InterventionArreteServiceHandler $arreteHandler */
         $arreteHandler = $this->createMock(InterventionArreteServiceHandler::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
         $command = $application->add(new SynchronizeInterventionSISHCommand(
             $esaboraManagerMock,
             $jobEventManagerMock,
@@ -67,7 +71,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
             $serializerMock,
             $notificationMailerRegistry,
             $parameterBag,
-            self::getContainer()->get('doctrine')->getManager(),
+            $entityManager,
             [$visiteHandler, $arreteHandler],
         ));
 
