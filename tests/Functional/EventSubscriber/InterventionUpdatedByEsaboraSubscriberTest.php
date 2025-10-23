@@ -66,6 +66,11 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
 
         $this->assertEmailCount(1);
         $this->assertEquals(2, $intervention->getSignalement()->getSuivis()->count());
-        $this->assertStringContainsString('a été modifiée', $intervention->getSignalement()->getSuivis()->last()->getDescription());
+
+        $suivi = $intervention->getSignalement()->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the intervention');
+        }
+        $this->assertStringContainsString('a été modifiée', $suivi->getDescription());
     }
 }

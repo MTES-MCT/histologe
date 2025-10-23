@@ -126,7 +126,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         int $countSignalements = 0,
         string $method = 'findSignalementsSplittedCreatedBefore',
     ): MockObject&SignalementRepository {
-        /* @var MockObject&SignalementRepository $signalementRepository */
+        /** @var MockObject&SignalementRepository $signalementRepository */
         $signalementRepository
             ->expects($this->once())
             ->method($method)

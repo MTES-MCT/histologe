@@ -40,7 +40,7 @@ class UserRepositoryTest extends KernelTestCase
         foreach ($users as $user) {
             $this->assertArrayHasKey('email', $user);
             if (!empty($user['signalements'])) {
-                $this->assertEquals($user['nb_signalements'], \count(explode(',', $user['signalements'])));
+                $this->assertEquals($user['nb_signalements'], \count(explode(',', (string) $user['signalements'])));
             }
         }
     }
