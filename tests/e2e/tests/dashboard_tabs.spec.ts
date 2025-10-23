@@ -1,6 +1,9 @@
 import { test } from '@playwright/test';
 
 test('dashboard tabs for admin', async ({page}) => {
+    // Nettoyer le contexte pour avoir une session propre
+    await page.context().clearCookies();
+
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('admin-01@signal-logement.fr');
@@ -26,6 +29,9 @@ test('dashboard tabs for admin', async ({page}) => {
 });
 
 test('dashboard tabs for RT', async ({page}) => {
+    // Nettoyer le contexte pour avoir une session propre
+    await page.context().clearCookies();
+
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('admin-territoire-13-01@signal-logement.fr');
@@ -48,6 +54,9 @@ test('dashboard tabs for RT', async ({page}) => {
 
 
 test('dashboard tabs for Agent', async ({page}) => {
+    // Nettoyer le contexte pour avoir une session propre
+    await page.context().clearCookies();
+
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('user-13-01@signal-logement.fr');
