@@ -84,7 +84,7 @@
 								{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
 									<p class="fr-tile__detail">
 										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
-											L'injonction bailleur de votre signalement est en cours.
+											Votre signalement est en attente d'une réponse de votre bailleur.
 										</a>
 									</p>            
 									<div class="fr-tile__start">
