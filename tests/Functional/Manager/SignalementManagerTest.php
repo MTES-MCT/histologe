@@ -23,6 +23,8 @@ use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\ListPaginatorQuery;
+use App\Repository\SignalementRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -70,7 +72,9 @@ class SignalementManagerTest extends WebTestCase
     protected function setUp(): void
     {
         $client = static::createClient();
-        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $this->entityManager = $em;
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
@@ -123,6 +127,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testFindAllPartnersAffectedAndNotAffectedBySignalementLocalization(): void
     {
+        /** @var Signalement $signalement */
         $signalement = $this->signalementManager->findOneBy(['territory' => self::TERRITORY_13]);
         $partners = $this->signalementManager->findAllPartners($signalement);
 
@@ -143,9 +148,13 @@ class SignalementManagerTest extends WebTestCase
             ->setSignalement($signalementActive)
             ->setMotifCloture(MotifCloture::tryFrom('TRAVAUX_FAITS_OU_EN_COURS'))
             ->setDescription('Tous les problèmes ont été résolus en moins de 15 ans');
+        $affectation = $signalementActive->getAffectations()->first() ?: null;
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
         $signalementClosed = $this->signalementManager->closeSignalementForAllPartners(
             $signalementAffectationClose,
-            $signalementActive->getAffectations()->first()->getPartner()
+            $affectation->getPartner()
         );
 
         $this->assertEquals($signalementActive->getComCloture(), 'Tous les problèmes ont été résolus en moins de 15 ans');
@@ -171,6 +180,7 @@ class SignalementManagerTest extends WebTestCase
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
+        /** @var Signalement $signalement */
         $signalement = $this->signalementManager->createOrUpdate(
             $territory,
             $this->getSignalementData('2023-2'),
@@ -186,6 +196,7 @@ class SignalementManagerTest extends WebTestCase
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
+        /** @var Signalement $signalement */
         $signalement = $this->signalementManager->createOrUpdate(
             $territory,
             $this->getSignalementData('2023-1'),
@@ -204,6 +215,7 @@ class SignalementManagerTest extends WebTestCase
         $signalementImported = $signalementRepository->findOneBy(['isImported' => true]);
 
         $signalementImportedClone = clone $signalementImported;
+        /** @var Signalement $signalement */
         $signalement = $this->signalementManager->update(
             $signalementImportedClone,
             $this->getSignalementData(),
@@ -218,6 +230,7 @@ class SignalementManagerTest extends WebTestCase
 
     public function testUpdateFromEmptyCompositionLogementRequest(): void
     {
+        /** @var Signalement $signalement */
         $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
         $emptyCompositionLogementRequest = new CompositionLogementRequest(
             type: '',

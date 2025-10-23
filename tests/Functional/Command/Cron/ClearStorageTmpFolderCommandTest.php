@@ -20,16 +20,16 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class ClearStorageTmpFolderCommandTest extends KernelTestCase
 {
     private MockObject&FilesystemOperator $fileStorage;
-    private MockObject&ParameterBagInterface $parameterBag;
-    private MockObject&NotificationMailerRegistry $mailerRegistry;
+    private ParameterBagInterface $parameterBag;
+    private NotificationMailerRegistry $mailerRegistry;
     private MockObject&LoggerInterface $logger;
-    private MockObject&FileRepository $fileRepository;
-    private MockObject&UploadHandlerService $uploadHandlerService;
+    private FileRepository $fileRepository;
+    private UploadHandlerService $uploadHandlerService;
 
     protected function setUp(): void
     {
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
-        $this->parameterBag = self::getContainer()->getParameterBag();
+        $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
         $this->mailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->fileRepository = self::getContainer()->get(FileRepository::class);

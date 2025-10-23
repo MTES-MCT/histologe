@@ -38,6 +38,10 @@ class CsvWriterTest extends KernelTestCase
         $csvWriter->close();
 
         $file = file($filepath, \FILE_SKIP_EMPTY_LINES);
+
+        if (false === $file) {
+            throw new \RuntimeException("Impossible de lire le fichier $filepath");
+        }
         $this->assertCount($i + 1, $file);
         $this->assertFileExists($filepath);
         $this->assertFileIsWritable($filepath);

@@ -86,8 +86,11 @@ class AffectationUpdateControllerTest extends WebTestCase
                 return 'Partenaire 13-01' === $affectation->getPartner()->getNom();
             })->current();
         }
-        $this->patchAffectation($affectation?->getUuid(), $payload);
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $this->patchAffectation($affectation->getUuid(), $payload);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertEquals($httpCodeStatus, $this->client->getResponse()->getStatusCode());
         $this->assertStringContainsString($errorMessage, $response['message']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -105,7 +108,7 @@ class AffectationUpdateControllerTest extends WebTestCase
             method: 'PATCH',
             uri: '/api/affectations/'.$affectationUuid,
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
     }
 

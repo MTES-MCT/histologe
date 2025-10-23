@@ -30,7 +30,7 @@ class CguControllerTest extends WebTestCase
         $client->request(
             method: 'POST',
             uri: $route,
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals('20/08/2025', $user->getCguVersionChecked());

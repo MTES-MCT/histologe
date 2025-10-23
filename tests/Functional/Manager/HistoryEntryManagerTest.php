@@ -49,7 +49,9 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->requestStack = static::getContainer()->get(RequestStack::class);
         $this->commandContext = static::getContainer()->get(CommandContext::class);
-        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $this->entityManager = $em;
         $this->historyEntryManager = new HistoryEntryManager(
             $this->historyEntryFactory,
             $this->historyEntryRepository,

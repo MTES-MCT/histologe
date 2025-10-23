@@ -7,6 +7,7 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Service\Signalement\DesordreTraitement\DesordreBatimentSecuriteMursFissures;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementOuiNon;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class DesordreBatimentSecuriteMursFissuresTest extends KernelTestCase

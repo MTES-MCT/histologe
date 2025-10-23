@@ -108,7 +108,7 @@ class SecurityControllerTest extends WebTestCase
             'email' => $email,
             'password' => $password,
         ];
-        $client->request('POST', '/api/login', [], [], [], json_encode($payload));
+        $client->request('POST', '/api/login', [], [], [], (string) json_encode($payload));
         $this->assertResponseStatusCodeSame($status);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }

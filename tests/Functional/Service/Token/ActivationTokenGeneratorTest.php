@@ -15,7 +15,9 @@ class ActivationTokenGeneratorTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get('doctrine.orm.entity_manager');
+        $this->entityManager = $em;
     }
 
     public function testValidateTokenActivation(): void

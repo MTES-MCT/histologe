@@ -68,7 +68,11 @@ class UserManagerTest extends KernelTestCase
         /** @var User $userNewPartner */
         $userNewPartner = $this->getTransferedUserToPartner('user-01-01@signal-logement.fr', 'Partenaire 01-02');
 
-        $this->assertEquals('Partenaire 01-02', $userNewPartner->getPartners()->first()->getNom());
+        $partner = $userNewPartner->getPartners()->first() ?: null;
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
+        $this->assertEquals('Partenaire 01-02', $partner->getNom());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, ' Cliquez ci-dessous pour vous connecter à votre compte');
@@ -79,7 +83,11 @@ class UserManagerTest extends KernelTestCase
         /** @var User $userNewPartner */
         $userNewPartner = $this->getTransferedUserToPartner('user-13-03@signal-logement.fr', 'Partenaire 13-03');
 
-        $this->assertEquals('Partenaire 13-03', $userNewPartner->getPartners()->first()->getNom());
+        $partner = $userNewPartner->getPartners()->first() ?: null;
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
+        $this->assertEquals('Partenaire 13-03', $partner->getNom());
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
         $this->assertEmailHtmlBodyContains($email, 'Cliquez ci-dessous pour activer votre compte et définir votre mot de passe');
@@ -94,7 +102,11 @@ class UserManagerTest extends KernelTestCase
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => $userEmail]);
 
-        $this->userManager->transferUserToPartner($user, $user->getPartners()->first(), $partner);
+        $partner = $user->getPartners()->first() ?: null;
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
+        $this->userManager->transferUserToPartner($user, $partner, $partner);
 
         return $userRepository->findOneBy(['email' => $userEmail]);
     }

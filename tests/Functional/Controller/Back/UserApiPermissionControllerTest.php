@@ -124,6 +124,9 @@ class UserApiPermissionControllerTest extends WebTestCase
 
         $userApi = $userRepository->findOneBy(['email' => 'api-reunion-epci@signal-logement.fr']);
         $permission = $userApi->getUserApiPermissions()->first();
+        if (!$permission) {
+            $this->fail('No permission found for the userApi');
+        }
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -138,7 +141,7 @@ class UserApiPermissionControllerTest extends WebTestCase
                 'partnerType' => 'EPCI',
             ],
         ]);
-        $this->assertStringContainsString('Cette permission API existe déjà pour', $client->getResponse()->getContent());
+        $this->assertStringContainsString('Cette permission API existe déjà pour', (string) $client->getResponse()->getContent());
     }
 
     public function testPermissionEdit(): void
@@ -151,6 +154,9 @@ class UserApiPermissionControllerTest extends WebTestCase
 
         $userApi = $userRepository->findOneBy(['email' => 'api-reunion-epci@signal-logement.fr']);
         $permission = $userApi->getUserApiPermissions()->first();
+        if (!$permission) {
+            $this->fail('No permission found for the userApi');
+        }
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -179,6 +185,9 @@ class UserApiPermissionControllerTest extends WebTestCase
 
         $userApi = $userRepository->findOneBy(['email' => 'api-reunion-epci@signal-logement.fr']);
         $permission = $userApi->getUserApiPermissions()->first();
+        if (!$permission) {
+            $this->fail('No permission found for the userApi');
+        }
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -238,6 +247,6 @@ class UserApiPermissionControllerTest extends WebTestCase
                 'email' => 'api-01@signal-logement.fr ',
             ],
         ]);
-        $this->assertStringContainsString('&quot;api-01@signal-logement.fr&quot; existe déja, merci de saisir un nouvel e-mail', $client->getResponse()->getContent());
+        $this->assertStringContainsString('&quot;api-01@signal-logement.fr&quot; existe déja, merci de saisir un nouvel e-mail', (string) $client->getResponse()->getContent());
     }
 }

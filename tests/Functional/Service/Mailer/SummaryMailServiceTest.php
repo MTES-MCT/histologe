@@ -37,7 +37,7 @@ class SummaryMailServiceTest extends KernelTestCase
         $this->assertEmailCount(1);
         /** @var NotificationEmail $mail */
         $mail = $this->getMailerMessages()[0];
-        $mailHtml = $mail->getHtmlBody();
+        $mailHtml = (string) $mail->getHtmlBody();
         $this->assertStringContainsString('Nouveaux signalements', $mailHtml);
         $this->assertStringContainsString('Nouveaux suivis', $mailHtml);
         $this->assertStringContainsString('Clôtures de signalements', $mailHtml);
@@ -54,7 +54,7 @@ class SummaryMailServiceTest extends KernelTestCase
         $this->assertEmailCount(1);
         /** @var NotificationEmail $mail */
         $mail = $this->getMailerMessages()[0];
-        $mailHtml = $mail->getHtmlBody();
+        $mailHtml = (string) $mail->getHtmlBody();
         $this->assertStringContainsString('Affectation sur le signalement', $mailHtml);
     }
 

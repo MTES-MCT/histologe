@@ -6,6 +6,7 @@ use App\Entity\DesordrePrecision;
 use App\Repository\DesordrePrecisionRepository;
 use App\Service\Signalement\DesordreTraitement\DesordreBatimentSecuriteEscalier;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class DesordreBatimentSecuriteEscalierTest extends KernelTestCase
