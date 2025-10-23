@@ -22,8 +22,8 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
     public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
 
-    private MockObject|UploadHandlerService $uploadHandlerService;
-    private MockObject|LoggerInterface $logger;
+    private MockObject&UploadHandlerService $uploadHandlerService;
+    private MockObject&LoggerInterface $logger;
     private ?string $tempFilepath;
 
     protected function setUp(): void

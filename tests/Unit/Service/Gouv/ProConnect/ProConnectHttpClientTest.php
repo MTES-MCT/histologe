@@ -196,11 +196,11 @@ class ProConnectHttpClientTest extends TestCase
         $logoutRequest = new LogoutRequest('fake_token', 'fake_state', 'https://myapp.com/logout');
         $url = $client->getLogoutUrl($logoutRequest);
         $urlParsed = parse_url($url);
-        if ($urlParsed === false) {
-            self::fail('Invalid URL returned: ' . $url);
+        if (false === $urlParsed) {
+            self::fail('Invalid URL returned: '.$url);
         }
         if (!isset($urlParsed['query'])) {
-            self::fail('URL has no query part: ' . $url);
+            self::fail('URL has no query part: '.$url);
         }
         parse_str($urlParsed['query'], $params);
         $this->assertEquals('fake_token', $params['id_token_hint']);

@@ -13,6 +13,8 @@ use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Esabora\Response\DossierEventsSCHSCollectionResponse;
 use App\Service\Interconnection\Esabora\Response\DossierStateSCHSResponse;
 use App\Service\Mailer\NotificationMailerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -38,6 +40,7 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
 
         $affectation = (new Affectation())->setSignalement(new Signalement())->setPartner(new Partner());
 
+        /** @var EsaboraSCHSService&MockObject $esaboraServiceMock */
         $esaboraServiceMock = $this->createMock(EsaboraSCHSService::class);
         $esaboraServiceMock
             ->expects($this->atLeast(1))
@@ -51,6 +54,7 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
             ->with($affectation)
             ->willReturn($dossierEventResponse);
 
+        /** @var AffectationRepository&MockObject $affectationRepositoryMock */
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
 
         $affectations = [
@@ -62,13 +66,17 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
             ->method('findAffectationSubscribedToEsabora')
             ->willReturn($affectations);
 
+        /** @var SerializerInterface&MockObject $serializerMock */
         $serializerMock = $this->createMock(SerializerInterface::class);
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
 
+        /** @var EsaboraManager&MockObject $esaboraManagerMock */
         $esaboraManagerMock = $this->createMock(EsaboraManager::class);
 
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
         $command = $application->add(new SynchronizeEsaboraSCHSCommand(
             $esaboraServiceMock,
             $esaboraManagerMock,
@@ -78,7 +86,7 @@ class SynchronizeEsaboraSCHSCommandTest extends KernelTestCase
             $parameterBag,
             self::getContainer()->get('logger'),
             self::getContainer()->get('doctrine')->getRepository(Suivi::class),
-            self::getContainer()->get('doctrine')->getManager(),
+            $entityManager,
         ));
 
         $commandTester = new CommandTester($command);

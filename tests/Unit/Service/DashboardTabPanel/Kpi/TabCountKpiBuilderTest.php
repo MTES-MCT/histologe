@@ -22,7 +22,7 @@ class TabCountKpiBuilderTest extends TestCase
     protected MockObject&SignalementRepository $signalementRepository;
     protected MockObject&SuiviRepository $suiviRepository;
     protected MockObject&Security $security;
-    protected MockObject|TabCountKpiBuilder $tabCountKpiBuilder;
+    protected TabCountKpiBuilder $tabCountKpiBuilder;
     protected MockObject&TabCountKpiCacheHelper $tabCountKpiCacheHelper;
 
     protected function setUp(): void

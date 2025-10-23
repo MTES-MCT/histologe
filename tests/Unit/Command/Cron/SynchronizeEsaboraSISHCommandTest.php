@@ -10,6 +10,8 @@ use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -30,6 +32,7 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
         $responseEsabora = json_decode((string) file_get_contents($filepath), true);
         $dossierResponse = new DossierStateSISHResponse($responseEsabora, 200);
 
+        /** @var EsaboraSISHService&MockObject $esaboraServiceMock */
         $esaboraServiceMock = $this->createMock(EsaboraSISHService::class);
         $esaboraServiceMock
             ->expects($this->atLeast(1))
@@ -37,6 +40,7 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
             ->with($affectation = $this->getAffectation(PartnerType::ARS))
             ->willReturn($dossierResponse);
 
+        /** @var AffectationRepository&MockObject $affectationRepositoryMock */
         $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
 
         $affectations = [
@@ -48,13 +52,17 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
             ->method('findAffectationSubscribedToEsabora')
             ->willReturn($affectations);
 
+        /** @var SerializerInterface&MockObject $serializerMock */
         $serializerMock = $this->createMock(SerializerInterface::class);
         $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
 
+        /** @var EsaboraManager&MockObject $esaboraManagerMock */
         $esaboraManagerMock = $this->createMock(EsaboraManager::class);
 
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
         $command = $application->add(new SynchronizeEsaboraSISHCommand(
             $esaboraServiceMock,
             $esaboraManagerMock,
@@ -62,7 +70,7 @@ class SynchronizeEsaboraSISHCommandTest extends KernelTestCase
             $serializerMock,
             $notificationMailerRegistry,
             $parameterBag,
-            self::getContainer()->get('doctrine')->getManager(),
+            $entityManager,
         ));
 
         $commandTester = new CommandTester($command);
