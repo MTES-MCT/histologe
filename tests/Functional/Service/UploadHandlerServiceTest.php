@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class UploadHandlerServiceTest extends KernelTestCase
 {
     private MockObject&FilesystemOperator $filesystemOperator;
-    private MockObject&ParameterBagInterface $parameterBag;
+    private ParameterBagInterface $parameterBag;
     private MockObject&LoggerInterface $logger;
     private MockObject&FilenameGenerator $filenameGenerator;
     private MockObject&FileRepository $fileRepository;

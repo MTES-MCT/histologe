@@ -47,7 +47,7 @@ class RialServiceTest extends TestCase
     private function getRialService(string $file): RialService
     {
         /** @var string $responseFile */
-        $responseFile = file_get_contents($file);
+        $responseFile = (string) file_get_contents($file);
         /** @var LoggerInterface $logger */
         $logger = $this->createMock(LoggerInterface::class);
         $mockResponse = new MockResponse($responseFile);

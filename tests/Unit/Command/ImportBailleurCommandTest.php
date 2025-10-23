@@ -19,7 +19,7 @@ class ImportBailleurCommandTest extends KernelTestCase
     private MockObject&BailleurLoader $bailleurLoader;
     private MockObject&UploadHandlerService $uploadHandlerServiceMock;
     private MockObject&FilesystemOperator $fileStorage;
-    private MockObject&ParameterBagInterface $parameterBag;
+    private ParameterBagInterface $parameterBag;
 
     protected function setUp(): void
     {

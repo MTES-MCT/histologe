@@ -22,7 +22,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
     use FixturesHelper;
 
     private MockObject&FilesystemOperator $fileStorage;
-    private MockObject&ParameterBagInterface $parameterBag;
+    private ParameterBagInterface $parameterBag;
     private MockObject&TerritoryManager $territoryManager;
     private MockObject&CsvParser $csvParser;
     private MockObject&GridAffectationLoader $gridAffectationLoader;
