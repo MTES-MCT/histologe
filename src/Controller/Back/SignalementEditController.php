@@ -39,7 +39,7 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
-        if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $payload['_token'])) {
+        if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), (string) $payload['_token'])) {
             /** @var AdresseOccupantRequest $adresseOccupantRequest */
             $adresseOccupantRequest = $serializer->deserialize(
                 json_encode($payload),
@@ -84,7 +84,7 @@ class SignalementEditController extends AbstractController
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_tiers_'.$signalement->getId(),
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             /** @var CoordonneesTiersRequest $coordonneesTiersRequest */
             $coordonneesTiersRequest = $serializer->deserialize(
@@ -128,7 +128,7 @@ class SignalementEditController extends AbstractController
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_foyer_'.$signalement->getId(),
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             /** @var CoordonneesFoyerRequest $coordonneesFoyerRequest */
             $coordonneesFoyerRequest = $serializer->deserialize(
@@ -176,7 +176,7 @@ class SignalementEditController extends AbstractController
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_bailleur_'.$signalement->getId(),
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             /** @var CoordonneesBailleurRequest $coordonneesBailleurRequest */
             $coordonneesBailleurRequest = $serializer->deserialize(
@@ -227,7 +227,7 @@ class SignalementEditController extends AbstractController
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_agence_'.$signalement->getId(),
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             /** @var CoordonneesAgenceRequest $coordonneesAgenceRequest */
             $coordonneesAgenceRequest = $serializer->deserialize(
@@ -278,7 +278,7 @@ class SignalementEditController extends AbstractController
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_informations_logement_'.$signalement->getId(),
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             /** @var InformationsLogementRequest $informationsLogementRequest */
             $informationsLogementRequest = $serializer->deserialize(
@@ -328,7 +328,7 @@ class SignalementEditController extends AbstractController
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_composition_logement_'.$signalement->getId(),
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             /** @var CompositionLogementRequest $compositionLogementRequest */
             $compositionLogementRequest = $serializer->deserialize(
@@ -381,7 +381,7 @@ class SignalementEditController extends AbstractController
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_situation_foyer_'.$signalement->getId(),
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             /** @var SituationFoyerRequest $situationFoyerRequest */
             $situationFoyerRequest = $serializer->deserialize(
@@ -428,7 +428,7 @@ class SignalementEditController extends AbstractController
         $payload = $request->getPayload()->all();
         if ($this->isCsrfTokenValid(
             'signalement_edit_procedure_demarches_'.$signalement->getId(),
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             /** @var ProcedureDemarchesRequest $procedureDemarchesRequest */
             $procedureDemarchesRequest = $serializer->deserialize(
