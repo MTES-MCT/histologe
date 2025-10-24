@@ -35,10 +35,10 @@ env:
   MAINTENANCE_BANNER_MESSAGE: 'Une opération de maintenance est en cours'
   AXIOS_TIMEOUT: 30000
   LIMIT_DAILY_RELANCES_BY_REQUEST: 275
-  FORMS_SUBMIT_LIMITER_LIMIT: 10
-  FORMS_SUBMIT_LIMITER_INTERVAL: '20 minutes'
-  API_LIMITER_LIMIT: 60
-  API_LIMITER_INTERVAL: '1 minute'
+  FORMS_SUBMIT_LIMITER_LIMIT: 1000
+  FORMS_SUBMIT_LIMITER_INTERVAL: '1 hour'
+  API_LIMITER_LIMIT: 1000
+  API_LIMITER_INTERVAL: '1 hour'
   FEATURE_2FA_EMAIL_ENABLED: 1
   MISE_EN_BERNE_ENABLE: 0
   CLAMAV_SCAN_ENABLE: 0
@@ -175,9 +175,35 @@ jobs:
         working-directory: tests/e2e
         run: npx playwright test
 
+      - name: Upload test screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots
+          path: /tmp/*.png
+          if-no-files-found: ignore
+
+      - name: Upload Playwright artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            tests/e2e/test-results/
+            tests/e2e/playwright-report/
+          if-no-files-found: ignore
+
       - name: Check server logs
         if: ${{ always() }}
-        run: docker compose logs signal_logement_phpfpm
+        run: |
+          echo "=== PHP-FPM logs ==="
+          docker compose logs signal_logement_phpfpm --tail=200
+          echo "=== MySQL logs ==="
+          docker compose logs signal_logement_mysql --tail=50
+          echo "=== Redis logs ==="
+          docker compose logs signal_logement_redis --tail=50
+          echo "=== Nginx logs ==="
+          docker compose logs signal_logement_nginx --tail=100
 
       - name: Check build output inside container
         if: ${{ always() }}
