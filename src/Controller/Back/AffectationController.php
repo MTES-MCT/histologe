@@ -50,7 +50,7 @@ class AffectationController extends AbstractController
         TagAwareCacheInterface $cache,
     ): RedirectResponse|JsonResponse {
         $this->denyAccessUnlessGranted(AffectationVoter::TOGGLE, $signalement);
-        if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->get('_token'))) {
             $unnotifiedPartners = [];
             $data = $request->get('signalement-affectation');
             if (isset($data['partners'])) {
@@ -109,7 +109,7 @@ class AffectationController extends AbstractController
         if (!$affectation || $affectation->getSignalement()->getId() !== $signalement->getId()) {
             return $this->json(['status' => 'denied'], 403);
         }
-        if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), (string) $request->get('_token'))) {
             $partnersIdToRemove = [];
             $partnersIdToRemove[] = $affectation->getPartner()->getId();
             $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
@@ -128,7 +128,7 @@ class AffectationController extends AbstractController
         Request $request,
     ): RedirectResponse {
         $this->denyAccessUnlessGranted(AffectationVoter::AFFECTATION_REINIT, $affectation);
-        if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), (string) $request->get('_token'))) {
             /** @var User $user */
             $user = $this->getUser();
             $this->affectationManager->removeAffectationAndSubscriptions($affectation);
@@ -185,7 +185,7 @@ class AffectationController extends AbstractController
 
             return $this->json(['redirect' => true, 'url' => $url]);
         }
-        if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), (string) $request->get('_token'))) {
             $this->affectationManager->updateAffectation(
                 affectation: $affectation,
                 user: $user,

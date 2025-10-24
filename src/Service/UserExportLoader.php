@@ -37,6 +37,7 @@ readonly class UserExportLoader
         $sheet = $spreadsheet->getActiveSheet();
         $headers = array_map(fn ($column) => $column['label'], self::getColumnForUser($searchUser->getUser()));
         $sheetData = [$headers];
+        /** @var array<int, User> $list */
         $list = $this->userRepository->findFiltered($searchUser);
         foreach ($list as $user) {
             $rowArray = [];
