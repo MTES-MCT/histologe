@@ -61,8 +61,8 @@ class SignalementInjonctionController extends AbstractController
         $writer = new PngWriter();
 
         $url = $this->generateUrl('app_login_bailleur', [
-            'reference' => $signalement->getUuid(),
-            'login_bailleur' => $signalement->getLoginBailleur(),
+            'bailleur_reference' => $signalement->getReference(),
+            'bailleur_code' => $signalement->getLoginBailleur(),
         ], referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
         $qrCode = new QrCode(data: $url);
 
