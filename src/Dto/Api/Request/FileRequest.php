@@ -30,6 +30,7 @@ class FileRequest implements RequestInterface
             <li>`PROCEDURE_ARRETE_MUNICIPAL`</li>
             <li>`PROCEDURE_SAISINE`</li>
             <li>`BAILLEUR_DEVIS_POUR_TRAVAUX`</li>
+            <li>`FACTURE`</li>
         </ul>
         ',
         example: 'BAILLEUR_REPONSE_BAILLEUR'
@@ -51,6 +52,7 @@ class FileRequest implements RequestInterface
             'PROCEDURE_ARRETE_MUNICIPAL',
             'PROCEDURE_SAISINE',
             'BAILLEUR_DEVIS_POUR_TRAVAUX',
+            'FACTURE',
         ],
         message: 'Veuillez choisir une valeur valide pour le type de document. {{ choices }}'
     )]
