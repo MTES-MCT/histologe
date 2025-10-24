@@ -15,6 +15,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.10",
         "dompdf/dompdf": "^3.1",
+        "endroid/qr-code": "^6.0",
         "getbrevo/brevo-php": "^1.0",
         "giggsey/libphonenumber-for-php": "^8.13",
         "intervention/image": "^2.7",
