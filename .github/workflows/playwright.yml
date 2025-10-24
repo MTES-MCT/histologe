@@ -30,10 +30,10 @@ env:
   MAINTENANCE_BANNER_MESSAGE: 'Une opération de maintenance est en cours'
   AXIOS_TIMEOUT: 30000
   LIMIT_DAILY_RELANCES_BY_REQUEST: 275
-  FORMS_SUBMIT_LIMITER_LIMIT: 10
-  FORMS_SUBMIT_LIMITER_INTERVAL: '20 minutes'
-  API_LIMITER_LIMIT: 60
-  API_LIMITER_INTERVAL: '1 minute'
+  FORMS_SUBMIT_LIMITER_LIMIT: 1000
+  FORMS_SUBMIT_LIMITER_INTERVAL: '1 hour'
+  API_LIMITER_LIMIT: 1000
+  API_LIMITER_INTERVAL: '1 hour'
   FEATURE_2FA_EMAIL_ENABLED: 1
   MISE_EN_BERNE_ENABLE: 0
   CLAMAV_SCAN_ENABLE: 0
@@ -166,29 +166,27 @@ jobs:
           npm ci
           npx playwright install --with-deps
 
-      - name: Monitor PHP-FPM status during tests
-        run: |
-          # Surveiller les workers PHP-FPM en arrière-plan
-          while true; do
-            echo "=== $(date) - PHP-FPM status ==="
-            docker compose exec -T signal_logement_phpfpm php-fpm -t 2>&1 || echo "PHP-FPM test failed"
-            docker compose exec -T signal_logement_phpfpm pgrep -a php-fpm | wc -l | xargs echo "PHP-FPM processes:"
-            sleep 10
-          done &
-          MONITOR_PID=$!
-          echo "Monitor PID: $MONITOR_PID"
-          echo "$MONITOR_PID" > /tmp/monitor.pid
-
       - name: Run Playwright tests
         working-directory: tests/e2e
         run: npx playwright test
 
-      - name: Stop monitoring
+      - name: Upload test screenshots
         if: ${{ always() }}
-        run: |
-          if [ -f /tmp/monitor.pid ]; then
-            kill $(cat /tmp/monitor.pid) 2>/dev/null || true
-          fi
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots
+          path: /tmp/*.png
+          if-no-files-found: ignore
+
+      - name: Upload Playwright artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            tests/e2e/test-results/
+            tests/e2e/playwright-report/
+          if-no-files-found: ignore
 
       - name: Check server logs
         if: ${{ always() }}
