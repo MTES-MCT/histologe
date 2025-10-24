@@ -2415,6 +2415,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
     public function findOneForLoginBailleur(string $reference, string $loginBailleur): ?Signalement
     {
         return $this->createQueryBuilder('s')
@@ -2465,7 +2468,9 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
 
         if (!empty($searchSignalementInjonction->getTerritoire())) {
-            $queryBuilder->andWhere('s.territory = :territory')->setParameter('territory', $searchSignalementInjonction->getTerritoire());
+            $queryBuilder
+                ->andWhere('s.territory = :territory')
+                ->setParameter('territory', $searchSignalementInjonction->getTerritoire());
         }
 
         if (!empty($searchSignalementInjonction->getInjonctionAvecAide())) {
@@ -2508,8 +2513,23 @@ class SignalementRepository extends ServiceEntityRepository
         $firstResult = ($searchSignalementInjonction->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
-        $paginator = new Paginator($queryBuilder->getQuery());
+        return new Paginator($queryBuilder->getQuery());
+    }
 
-        return $paginator;
+    /**
+     * @return Signalement[]
+     *
+     * @throws \Exception
+     */
+    public function findInjonctionBeforePeriod(string $period): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.statut = :statut')
+            ->andWhere('s.createdAt <= :date')
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('date', (new \DateTimeImmutable())->modify('-'.$period))
+            ->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -11,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SuiviCreatedSubscriber implements EventSubscriberInterface
 {
-    private const SEPARATOR_MOTIF_REFUS = 'Plus précisément :<br />';
+    private const string SEPARATOR_MOTIF_REFUS = 'Plus précisément :<br />';
 
     public function __construct(
         private readonly NotificationAndMailSender $notificationAndMailSender,

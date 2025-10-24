@@ -12,6 +12,15 @@ auto_affectation_rules:
     territory: "Hérault"
     status: "ACTIVE"
     profile_declarant: "all"
+    partner_type: "CONSEIL_DEPARTEMENTAL"
+    insee_to_include: '34057'
+    insee_to_exclude: null
+    parc: "all"
+    allocataire: "all"
+  -
+    territory: "Hérault"
+    status: "ACTIVE"
+    profile_declarant: "all"
     partner_type: "COMMUNE_SCHS"
     insee_to_include: ''
     insee_to_exclude: null

@@ -188,6 +188,9 @@ upload: ## Push objects to S3 Bucket
 sync-sish: ## Synchronize sish status and intervention
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh ./scripts/sync-esabora-sish.sh
 
+clean-tasks: ## Clean & Reset task
+	@$(DOCKER_COMP) exec signal_logement_phpfpm sh ./scripts/clean.sh
+
 ## Quality
 test: ## Run all tests
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(PHPUNIT) $(FILE) --stop-on-failure --testdox -d memory_limit=-1"
