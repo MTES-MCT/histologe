@@ -15,10 +15,17 @@ class SignalementFoVoter extends Voter
     public const string SIGN_USAGER_VIEW = 'SIGN_USAGER_VIEW';
     public const string SIGN_USAGER_ADD_SUIVI = 'SIGN_USAGER_ADD_SUIVI';
     public const string SIGN_USAGER_EDIT = 'SIGN_USAGER_EDIT';
+    public const string SIGN_USAGER_BASCULE_PROCEDURE = 'SIGN_USAGER_BASCULE_PROCEDURE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::SIGN_USAGER_ADD_SUIVI, self::SIGN_USAGER_VIEW, self::SIGN_USAGER_EDIT]) && ($subject instanceof Signalement);
+        return \in_array($attribute, [
+            self::SIGN_USAGER_ADD_SUIVI,
+            self::SIGN_USAGER_VIEW,
+            self::SIGN_USAGER_EDIT,
+            self::SIGN_USAGER_BASCULE_PROCEDURE,
+        ])
+            && ($subject instanceof Signalement);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -36,6 +43,7 @@ class SignalementFoVoter extends Voter
             self::SIGN_USAGER_VIEW => $this->canUsagerView($subject, $user),
             self::SIGN_USAGER_ADD_SUIVI => $this->canUsagerAddSuivi($subject, $user),
             self::SIGN_USAGER_EDIT => $this->canUsagerEdit($subject),
+            self::SIGN_USAGER_BASCULE_PROCEDURE => $this->canUsagerBasculeProcedure($subject, $user),
             default => false,
         };
     }
@@ -74,6 +82,15 @@ class SignalementFoVoter extends Voter
             SignalementStatus::NEED_VALIDATION,
             SignalementStatus::INJONCTION_BAILLEUR,
         ])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function canUsagerBasculeProcedure(Signalement $signalement, SignalementUser $user): bool
+    {
+        if ($this->canUsagerView($signalement, $user) && SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
             return true;
         }
 

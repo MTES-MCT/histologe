@@ -81,14 +81,25 @@
 									</div>    
 								{% endif %}   
 							{% else %}
-							  	<p class="fr-tile__detail">
-									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
-										Votre signalement est en cours de validation.
-									</a>
-								</p>            
-								<div class="fr-tile__start">
-									<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info">Validation en cours</p>           
-								</div>
+								{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+									<p class="fr-tile__detail">
+										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
+											Votre signalement est en attente d'une réponse de votre bailleur.
+										</a>
+									</p>            
+									<div class="fr-tile__start">
+										<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info">Injonction bailleur</p>           
+									</div>
+								{% else %}
+									<p class="fr-tile__detail">
+										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
+											Votre signalement est en cours de validation.
+										</a>
+									</p>            
+									<div class="fr-tile__start">
+										<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info">Validation en cours</p>           
+									</div>
+								{% endif %} 
 							{% endif %}  
 						{% endif %}     
 					</div>    

@@ -209,7 +209,7 @@
 							</div>
 						{% endif %}
 					{% endif %}
-				{% else %}
+				{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
 					<h2 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h2>
 					{{ form(form) }}
 				{% endif %}
