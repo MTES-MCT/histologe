@@ -15,6 +15,8 @@ readonly class MenuBuilder
         private readonly bool $featureNewDashboard,
         #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
         private readonly bool $featureNewDocumentSpace,
+        #[Autowire(env: 'FEATURE_ANNUAIRE')]
+        private readonly bool $featureAnnuaire,
     ) {
     }
 
@@ -67,7 +69,15 @@ readonly class MenuBuilder
         ;
 
         $territoryFilesSubMenu = null;
-        if ($this->featureNewDocumentSpace) {
+        $mesOutilsSubMenu = null;
+        if ($this->featureAnnuaire) {
+            $mesOutilsSubMenu = (new MenuItem(label: 'Mes outils', roleGranted: User::ROLE_USER));
+            if ($this->featureNewDocumentSpace) {
+                $mesOutilsSubMenu->addChild(new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
+            }
+            $mesOutilsSubMenu->addChild(new MenuItem(label: 'Annuaire des agents', route: 'back_annuaire_index', roleGranted: User::ROLE_USER));
+            $mesOutilsSubMenu->addChild(new MenuItem(label: 'Documentation', externalLink: 'https://documentation.signal-logement.beta.gouv.fr', roleGranted: User::ROLE_USER));
+        } elseif ($this->featureNewDocumentSpace) {
             $territoryFilesSubMenu = (new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
         }
 
@@ -112,6 +122,9 @@ readonly class MenuBuilder
         ;
         if (null !== $territoryFilesSubMenu) {
             $menu->addChild($territoryFilesSubMenu);
+        }
+        if (null !== $mesOutilsSubMenu) {
+            $menu->addChild($mesOutilsSubMenu);
         }
 
         return $menu;
