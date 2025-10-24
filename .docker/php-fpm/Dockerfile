@@ -49,4 +49,7 @@ RUN sed -E -i -e 's/memory_limit = 128M/memory_limit = 512M/' "$PHP_INI_DIR/php.
     && sed -E -i -e 's/post_max_size = 8M/post_max_size = 75M/' "$PHP_INI_DIR/php.ini" \
     && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 75M/' "$PHP_INI_DIR/php.ini"
 
+# Copy custom PHP-FPM pool configuration
+COPY www.conf /usr/local/etc/php-fpm.d/www.conf
+
 WORKDIR /app/
