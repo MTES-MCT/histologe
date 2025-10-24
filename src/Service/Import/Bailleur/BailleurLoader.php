@@ -67,8 +67,8 @@ class BailleurLoader
                     continue;
                 }
                 $isNew = false;
-                $baileurNomSanitized = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurNom));
-                $bailleurRaisonSocialeSanitized = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurRaisonSociale));
+                $baileurNomSanitized = (string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurNom));
+                $bailleurRaisonSocialeSanitized = (string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurRaisonSociale));
                 if (isset($this->bailleurs[$baileurNomSanitized])) {
                     $bailleur = $this->bailleurs[$baileurNomSanitized];
                 } elseif ($bailleurRaisonSocialeSanitized && isset($this->bailleurs[$bailleurRaisonSocialeSanitized])) {

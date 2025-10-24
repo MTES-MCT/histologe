@@ -98,8 +98,8 @@ class JobEventHttpClient implements HttpClientInterface
         $this->jobEventManager->createJobEvent(
             service: $jobEventMetaData->getService(),
             action: $jobEventMetaData->getAction(),
-            message: json_encode($payload),
-            response: $responseContent,
+            message: (string) json_encode($payload),
+            response: (string) $responseContent,
             status: Response::HTTP_OK === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
             codeStatus: $statusCode,
             signalementId: $jobEventMetaData->getSignalementId(),

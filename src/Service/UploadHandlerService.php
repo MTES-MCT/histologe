@@ -63,7 +63,7 @@ class UploadHandlerService
         try {
             $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
             $fileResource = fopen($file->getPathname(), 'r');
-            if ($fileResource === false) {
+            if (false === $fileResource) {
                 throw new FileException(sprintf('Impossible d’ouvrir le fichier : %s', $file->getPathname()));
             }
             $this->fileStorage->writeStream($distantFolder.$newFilename, $fileResource);
@@ -277,8 +277,8 @@ class UploadHandlerService
             $tmpFilepath = $file->getPathname();
 
             $fileResource = fopen($tmpFilepath, 'r');
-            if ($fileResource === false) {
-                throw new FileSystemException(sprintf('Impossible d’ouvrir le fichier : %s', $file->getPathname()));
+            if (false === $fileResource) {
+                throw new FileException(sprintf('Impossible d’ouvrir le fichier : %s', $file->getPathname()));
             }
             $this->fileStorage->writeStream($newFilename, $fileResource);
             fclose($fileResource);
@@ -310,6 +310,7 @@ class UploadHandlerService
 
         return null;
     }
+
     /**
      * @throws FilesystemException
      */
@@ -317,26 +318,20 @@ class UploadHandlerService
     {
         try {
             $resourceBucket = $this->fileStorage->read($from);
-
-            if ($resourceBucket === false || $resourceBucket === null) {
-                throw new FileException(sprintf('Lecture impossible depuis le bucket : %s', $from));
-            }
-
             $resourceFileSystem = @fopen($to, 'w');
-            if ($resourceFileSystem === false) {
+            if (false === $resourceFileSystem) {
                 throw new FileException(sprintf('Impossible de créer le fichier temporaire : %s', $to));
             }
 
             $bytesWritten = fwrite($resourceFileSystem, $resourceBucket);
-            if ($bytesWritten === false) {
+            if (false === $bytesWritten) {
                 throw new FileException(sprintf('Erreur d’écriture dans le fichier temporaire : %s', $to));
             }
 
             fclose($resourceFileSystem);
-
-        } catch (FileException $e) {
+        } catch (FilesystemException $e) {
             $this->logger->error($e->getMessage());
-            throw new FilesystemException('Erreur lors de la création du fichier temporaire depuis le bucket.', 0, $e);
+            throw new FileException('Erreur lors de la création du fichier temporaire depuis le bucket.', 0, $e);
         }
     }
 

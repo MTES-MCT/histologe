@@ -289,7 +289,10 @@ class EsaboraManager
             context: Suivi::CONTEXT_SCHS,
             flush: false,
         );
-        $suivi->setCreatedAt(\DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate()));
+        $createdAt = \DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate());
+        assert($createdAt instanceof \DateTimeImmutable);
+
+        $suivi->setCreatedAt($createdAt);
         $suivi->setOriginalData($event->getOriginalData());
         $this->entityManager->persist($suivi);
 

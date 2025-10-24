@@ -54,7 +54,7 @@ class HistoryEntryManager extends AbstractManager
 
     /**
      * @param EntityHistoryInterface|Collection<int, EntityHistoryInterface> $entityHistory
-     * @param array<string, mixed> $changes
+     * @param array<string, mixed>                                           $changes
      *
      * @throws ExceptionInterface
      */

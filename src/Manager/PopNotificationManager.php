@@ -33,6 +33,7 @@ class PopNotificationManager extends Manager
             $this->persist($popNotification);
             $popNotification->setUser($user);
         }
+        /* @var PopNotification $popNotification, */
         switch ($type) {
             case 'addPartner':
                 $this->managePartners($popNotification, $partner, 'add');

@@ -128,6 +128,9 @@ class AutoAssigner
                 $partner,
                 $adminUser
             );
+            if (is_bool($affectation)) {
+                continue;
+            }
             $signalement->addAffectation($affectation);
             ++$this->countAffectations;
             $this->affectedPartnersNames[] = $partner->getNom();

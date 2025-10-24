@@ -2272,7 +2272,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Signalement[]
+     * @return array<int, array<string, mixed>>
      */
     public function findActiveSignalementsWithInvalidEmails(User $user, ?TabQueryParameters $params): array
     {

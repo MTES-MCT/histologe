@@ -39,7 +39,8 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
-        if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), (string) $payload['_token'])) {
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $token)) {
             /** @var AdresseOccupantRequest $adresseOccupantRequest */
             $adresseOccupantRequest = $serializer->deserialize(
                 json_encode($payload),
@@ -82,9 +83,10 @@ class SignalementEditController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_tiers_'.$signalement->getId(),
-            (string) $payload['_token']
+            $token
         )) {
             /** @var CoordonneesTiersRequest $coordonneesTiersRequest */
             $coordonneesTiersRequest = $serializer->deserialize(
@@ -126,9 +128,10 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_foyer_'.$signalement->getId(),
-            (string) $payload['_token']
+            $token
         )) {
             /** @var CoordonneesFoyerRequest $coordonneesFoyerRequest */
             $coordonneesFoyerRequest = $serializer->deserialize(
@@ -174,9 +177,10 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_bailleur_'.$signalement->getId(),
-            (string) $payload['_token']
+            $token
         )) {
             /** @var CoordonneesBailleurRequest $coordonneesBailleurRequest */
             $coordonneesBailleurRequest = $serializer->deserialize(
@@ -225,9 +229,10 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
             'signalement_edit_coordonnees_agence_'.$signalement->getId(),
-            (string) $payload['_token']
+            $token
         )) {
             /** @var CoordonneesAgenceRequest $coordonneesAgenceRequest */
             $coordonneesAgenceRequest = $serializer->deserialize(
@@ -276,9 +281,10 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
             'signalement_edit_informations_logement_'.$signalement->getId(),
-            (string) $payload['_token']
+            $token
         )) {
             /** @var InformationsLogementRequest $informationsLogementRequest */
             $informationsLogementRequest = $serializer->deserialize(
@@ -326,9 +332,10 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
             'signalement_edit_composition_logement_'.$signalement->getId(),
-            (string) $payload['_token']
+            $token
         )) {
             /** @var CompositionLogementRequest $compositionLogementRequest */
             $compositionLogementRequest = $serializer->deserialize(
@@ -379,9 +386,10 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
             'signalement_edit_situation_foyer_'.$signalement->getId(),
-            (string) $payload['_token']
+            $token
         )) {
             /** @var SituationFoyerRequest $situationFoyerRequest */
             $situationFoyerRequest = $serializer->deserialize(
@@ -426,9 +434,10 @@ class SignalementEditController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
             'signalement_edit_procedure_demarches_'.$signalement->getId(),
-            (string) $payload['_token']
+            $token
         )) {
             /** @var ProcedureDemarchesRequest $procedureDemarchesRequest */
             $procedureDemarchesRequest = $serializer->deserialize(

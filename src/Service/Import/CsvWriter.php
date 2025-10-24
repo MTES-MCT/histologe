@@ -35,12 +35,15 @@ class CsvWriter
     public function writeRow(array $row): void
     {
         $this->fileResource = fopen($this->filepath, 'a');
+        if (false === $this->fileResource) {
+            throw new \RuntimeException("Impossible d'ouvrir le fichier {$this->filepath}");
+        }
         fputcsv(
             $this->fileResource,
             $row,
-            $this->options['delimiter'],
-            $this->options['enclosure'],
-            $this->options['escape'],
+            (string) $this->options['delimiter'],
+            (string) $this->options['enclosure'],
+            (string) $this->options['escape'],
         );
     }
 

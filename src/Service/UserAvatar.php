@@ -25,10 +25,10 @@ class UserAvatar implements RuntimeExtensionInterface
             return $this->renderPlaceholder($zipCode, $size, $ariaHidden);
         }
 
-        $bucketFilepath = $this->parameterBag->get('url_bucket') . '/' . $filename;
+        $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
         $data = @file_get_contents($bucketFilepath);
 
-        if ($data === false) {
+        if (false === $data) {
             return $this->renderPlaceholder($zipCode, $size, $ariaHidden);
         }
 

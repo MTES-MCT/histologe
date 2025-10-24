@@ -27,12 +27,12 @@ class EmailFormatValidator
         $rfcValidation = new RFCValidation();
         $emailValid = $eguliasValidator->isValid($value, $rfcValidation);
 
-            $atPos = strrchr($value, '@');
-    if ($atPos === false) {
-        return false;
-    }
+        $atPos = strrchr($value, '@');
+        if (false === $atPos) {
+            return false;
+        }
 
-    $domain = substr($atPos, 1);
+        $domain = substr($atPos, 1);
         $domainParts = explode('.', $domain);
         $extension = end($domainParts);
 

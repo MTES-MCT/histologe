@@ -411,7 +411,7 @@ class PartnerController extends AbstractController
         $formUserPartner->handleRequest($request);
         if ($formUserPartner->isSubmitted() && $formUserPartner->isValid()) {
             $userExist = $userManager->findOneBy(['email' => $user->getEmail()]);
-            if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+            if ($userExist instanceof User && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
                 $addUserOnPartnerRoute = $this->generateUrl('back_partner_add_user_multi', ['id' => $partner->getId()]);
                 $formMultiMail = $this->createForm(UserPartnerEmailType::class, $user, ['action' => $addUserOnPartnerRoute]);
                 $content = $this->renderView('_partials/_modal_user_create_multi.html.twig', ['formMultiMail' => $formMultiMail, 'user' => $userExist, 'partner' => $partner]);
@@ -422,7 +422,7 @@ class PartnerController extends AbstractController
             if (null === $user->getIsMailingSummary()) {
                 $user->setIsMailingSummary(true);
             }
-            if ($userExist) {
+            if ($userExist instanceof User) {
                 $userExist->setNom($user->getNom());
                 $userExist->setPrenom($user->getPrenom());
                 $userExist->setIsMailingActive($user->getIsMailingActive());
