@@ -30,6 +30,7 @@ class FileRequest implements RequestInterface
             <li>`PROCEDURE_ARRETE_MUNICIPAL`</li>
             <li>`PROCEDURE_SAISINE`</li>
             <li>`BAILLEUR_DEVIS_POUR_TRAVAUX`</li>
+            <li>`FACTURE`</li>
         </ul>
         ',
         example: 'BAILLEUR_REPONSE_BAILLEUR'
