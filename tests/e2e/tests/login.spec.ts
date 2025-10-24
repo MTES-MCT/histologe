@@ -30,19 +30,35 @@ test('login for bailleur', async ({page, context}) => {
   await context.clearCookies();
   await context.clearPermissions();
 
-  await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/login-bailleur`);
+  const baseUrl = process.env.BASE_URL ?? 'http://localhost:8080';
+  console.log(`[TEST] Starting bailleur login test - Base URL: ${baseUrl}`);
+
+  await page.goto(`${baseUrl}/login-bailleur`);
+  console.log(`[TEST] Navigated to login-bailleur, current URL: ${page.url()}`);
 
   // Attendre que la page soit complètement chargée
   await page.waitForLoadState('networkidle');
+  console.log(`[TEST] Page loaded, taking screenshot before form fill`);
+  await page.screenshot({ path: '/tmp/bailleur-before-login.png', fullPage: true });
 
   await page.getByRole('textbox', { name: 'Référence du dossier' }).click();
   await page.getByRole('textbox', { name: 'Référence du dossier' }).fill('2025-12');
   await page.getByRole('textbox', { name: 'Code de connexion' }).click();
   await page.getByRole('textbox', { name: 'Code de connexion' }).fill('salutsalut');
+
+  console.log(`[TEST] Form filled, clicking submit button`);
   await page.getByRole('button', { name: 'Envoyer' }).click();
 
   // Attendre explicitement la navigation après le submit
-  await page.waitForURL('**/bailleur/**', { timeout: 10000 });
+  console.log(`[TEST] Waiting for navigation to bailleur page`);
+  try {
+    await page.waitForURL('**/bailleur/**', { timeout: 10000 });
+    console.log(`[TEST] Navigation successful, current URL: ${page.url()}`);
+  } catch (e) {
+    console.error(`[TEST] Navigation failed! Current URL: ${page.url()}`);
+    await page.screenshot({ path: '/tmp/bailleur-after-submit-error.png', fullPage: true });
+    throw e;
+  }
 
   await page.getByRole('heading', { name: 'Détails du dossier' }).click();
   await page.getByText('Monsieur Mulder Fox').click();
