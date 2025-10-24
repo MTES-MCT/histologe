@@ -80,6 +80,7 @@ class SignalementDraftHelper
             && 'oui' === $signalementDraftRequest->getInfoProcedureBailleurPrevenu()
             && !empty($signalementDraftRequest->getInfoProcedureBailDate())
         ) {
+            /** @var \DateTimeImmutable $dateBailleurPrevenu */
             $dateBailleurPrevenu = \DateTimeImmutable::createFromFormat('d/m/Y', '01/'.$signalementDraftRequest->getInfoProcedureBailDate());
             $dateToday = $this->clock->now();
             $durationSincePrevenu = $dateToday->diff($dateBailleurPrevenu);

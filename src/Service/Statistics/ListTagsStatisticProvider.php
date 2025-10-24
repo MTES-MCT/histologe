@@ -12,7 +12,7 @@ class ListTagsStatisticProvider
     {
     }
 
-    /** @return array<string, string> */
+    /** @return array<int, string> */
     public function getData(?Territory $territory): array
     {
         $data = [];
@@ -20,7 +20,7 @@ class ListTagsStatisticProvider
             $tagList = $this->tagsRepository->findAllActive($territory);
             /** @var Tag $tagItem */
             foreach ($tagList as $tagItem) {
-                $data[$tagItem->getId()] = $tagItem->getLabel();
+                $data[(int) $tagItem->getId()] = (string) $tagItem->getLabel();
             }
         }
 

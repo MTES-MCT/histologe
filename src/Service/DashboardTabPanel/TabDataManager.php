@@ -118,6 +118,7 @@ class TabDataManager
             $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
         }
 
+        /** @var array<int, User> $users */
         $users = $this->userRepository->findUsersPendingToArchive($user, $territories);
 
         return \count($users);

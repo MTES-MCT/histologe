@@ -32,8 +32,8 @@ class AttributeParser
         ProfileDeclarant $profileDeclarant,
         bool $isNewForm = true,
     ): string {
-    assert(class_exists($class));
-    assert($field !== '');
+        assert(class_exists($class));
+        assert('' !== $field);
         $attributes = self::parse($class, $field, NotBlank::class);
         $groups = [];
         if (!empty($attributes)) {
