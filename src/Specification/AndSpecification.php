@@ -11,7 +11,7 @@ class AndSpecification implements SpecificationInterface
 
     public function __construct(SpecificationInterface ...$specifications)
     {
-        $this->specifications = $specifications;
+        $this->specifications = array_values($specifications);
     }
 
     public function isSatisfiedBy(SpecificationContextInterface $context): bool

@@ -95,6 +95,7 @@ class BackUserController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
+        /** @var array<int, User> $users */
         $users = $userRepository->findUsersPendingToArchive($user);
 
         if ('POST' === $request->getMethod()) {
