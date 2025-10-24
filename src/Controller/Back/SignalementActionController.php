@@ -370,7 +370,7 @@ class SignalementActionController extends AbstractController
         if (!$featureNewDashboard) {
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
-        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('subscribe', $token)) {
             $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
@@ -404,7 +404,7 @@ class SignalementActionController extends AbstractController
         if (!$featureNewDashboard) {
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
-        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
         $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents en charge du dossier et vous ne recevrez plus les mises à jour du dossier.';
 
         /** @var User $user */
