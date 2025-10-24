@@ -136,7 +136,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
         return $fileName;
     }
-    
+
     /**
      * @param non-empty-string $tag
      */

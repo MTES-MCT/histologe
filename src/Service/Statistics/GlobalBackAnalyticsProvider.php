@@ -24,7 +24,7 @@ class GlobalBackAnalyticsProvider
     {
         $territories = [];
         if ($territory) {
-            $territories[$territory->getId()] = $territory;
+            $territories[(int) $territory->getId()] = $territory;
         }
         $data = [];
         $data['count_signalement'] = $this->getCountSignalementData($territory, $partners);

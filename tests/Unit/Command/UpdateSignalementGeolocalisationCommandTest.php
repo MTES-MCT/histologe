@@ -122,11 +122,10 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
     }
 
     private function createMockSignalementRepository(
-        MockObject $signalementRepository,
+        MockObject&SignalementRepository $signalementRepository,
         int $countSignalements = 0,
         string $method = 'findSignalementsSplittedCreatedBefore',
     ): MockObject&SignalementRepository {
-        /** @var MockObject&SignalementRepository $signalementRepository */
         $signalementRepository
             ->expects($this->once())
             ->method($method)

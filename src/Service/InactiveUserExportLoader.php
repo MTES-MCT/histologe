@@ -19,6 +19,7 @@ readonly class InactiveUserExportLoader
         $sheet = $spreadsheet->getActiveSheet();
         $headers = ['ID', 'Nom', 'Prénom', 'Email', 'Partenaire', 'Date de création', 'Dernière connexion', 'Date d\'archivage prévue'];
         $sheetData = [$headers];
+        /** @var array<int, User> $list */
         $list = $this->userRepository->findUsersPendingToArchive($user);
         foreach ($list as $item) {
             $partnerName = '';
