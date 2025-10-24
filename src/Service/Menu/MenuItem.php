@@ -18,6 +18,7 @@ class MenuItem
         private readonly string $roleGranted = '',
         private readonly string $roleNotGranted = '',
         private readonly bool $featureEnable = true,
+        private readonly string $externalLink = '',
     ) {
     }
 
@@ -72,6 +73,11 @@ class MenuItem
     public function isFeatureEnable(): bool
     {
         return $this->featureEnable;
+    }
+
+    public function getExternalLink(): string
+    {
+        return $this->externalLink;
     }
 
     public function getBaseRoute(): string

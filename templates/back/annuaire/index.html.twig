@@ -1,0 +1,60 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Annuaire des agents{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Annuaire',
+            'level2Link': '',
+            'level2Label': ''
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                {% if is_granted('ROLE_ADMIN') and territories|length > 0 %}
+                    <div class="fr-col-8">
+                        <h1 class="fr-mb-0">Annuaire des agents du {{ territories[0].name }}</h1>
+                    </div>
+                    <div class="fr-col-4 fr-text--right">
+                        <a href="{{ path('back_annuaire_export') }}?territory={{ territories[0].id }}" class="fr-btn" title="Exporter l'annuaire">Exporter l'annuaire</a>
+                    </div>
+                {% else %}
+                    <div class="fr-col-8">
+                        <h1 class="fr-mb-0">Annuaire des agents</h1>
+                    </div>
+                    <div class="fr-col-4 fr-text--right">
+                        <a href="{{ path('back_annuaire_export') }}" class="fr-btn" title="Exporter l'annuaire">Exporter l'annuaire</a>
+                    </div>
+                {% endif %}
+            </div>
+        </header>
+
+    </section>
+
+    <section class="fr-container--fluid">
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-col-md-6">
+                {% if is_granted('ROLE_ADMIN') and territories|length == 0 %}
+                    {% for territory in territoriesList %}
+                        <ul>
+                            <li><a href="{{ path('back_annuaire_index') }}?territory={{ territory.id }}">{{ territory.zip }} {{ territory.name }}</a></li>
+                        </ul>
+                    {% endfor %}
+                {% endif %}
+
+                {% for partner in partners %}
+                    {% if partner.users|length %}
+                        <h2>{{ partner.nom }}</h2>
+                        <ul>
+                            {% for user in partner.users %}
+                                <li>{{ user.nomComplet }} - {{ user.email }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

@@ -32,6 +32,7 @@ env:
   FEATURE_INJONCTION_BAILLEUR_DEPTS: '["30","34"]'
   FEATURE_EDITION_SUIVI: 1
   DELAY_SUIVI_EDITABLE_IN_MINUTES: 20
+  FEATURE_ANNUAIRE: 1
 jobs:
   code-quality:
     name: Signal-logement (PHP ${{ matrix.php-versions }})
