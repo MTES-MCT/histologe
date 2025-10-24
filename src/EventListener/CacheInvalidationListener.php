@@ -9,6 +9,7 @@ use App\Service\CacheCommonKeyGenerator;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\EntityManager;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,17 +29,23 @@ class CacheInvalidationListener
         private readonly Security $security,
     ) {
     }
-
+/**
+ * @param LifecycleEventArgs<EntityManager> $args
+ */
     public function postPersist(LifecycleEventArgs $args): void
     {
         $this->invalidateCacheWidgetDataKpi($args);
     }
-
+/**
+ * @param LifecycleEventArgs<EntityManager> $args
+ */
     public function postUpdate(LifecycleEventArgs $args): void
     {
         $this->invalidateCacheWidgetDataKpi($args);
     }
-
+/**
+ * @param LifecycleEventArgs<EntityManager> $args
+ */
     public function postRemove(LifecycleEventArgs $args): void
     {
         $this->invalidateCacheWidgetDataKpi($args);
@@ -48,7 +55,9 @@ class CacheInvalidationListener
     {
         return $entity instanceof Signalement || $entity instanceof Notification;
     }
-
+/**
+ * @param LifecycleEventArgs<EntityManager> $args
+ */
     private function invalidateCacheWidgetDataKpi(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();

@@ -15,7 +15,7 @@ class CodeInseeSpecification implements SpecificationInterface
      */
     public function __construct(private string|array $inseeToInclude, private ?array $inseeToExclude)
     {
-        if ('' !== $inseeToInclude) {
+        if ('' !== $inseeToInclude && is_string($inseeToInclude)) {
             $this->inseeToInclude = explode(',', $inseeToInclude);
         } else {
             $this->inseeToInclude = $inseeToInclude;
@@ -51,6 +51,6 @@ class CodeInseeSpecification implements SpecificationInterface
 
     private function isInseeIncluded(string $insee): bool
     {
-        return !empty($this->inseeToInclude) && \in_array($insee, $this->inseeToInclude);
+        return !empty($this->inseeToInclude) && is_array($this->inseeToInclude) && \in_array($insee, $this->inseeToInclude);
     }
 }

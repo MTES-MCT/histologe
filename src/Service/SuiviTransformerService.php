@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Controller\FileController;
 use App\Entity\Enum\DocumentType;
+use App\Entity\SuiviFile;
 use App\Repository\DesordreCritereRepository;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Doctrine\Common\Collections\Collection;
@@ -20,6 +21,9 @@ class SuiviTransformerService
     ) {
     }
 
+    /**
+     * @param Collection<int, SuiviFile> $suiviFiles
+     */
     public function transformDescription(string $description, Collection $suiviFiles): string
     {
         $description = $this->replaceStaticLinkToFiles($description);
@@ -47,6 +51,9 @@ class SuiviTransformerService
         return $description;
     }
 
+    /**
+     * @param Collection<int, SuiviFile> $suiviFiles
+     */
     private function addLinkToFiles(Collection $suiviFiles): string
     {
         if ($suiviFiles->isEmpty()) {

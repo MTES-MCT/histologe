@@ -109,7 +109,7 @@ class NotificationController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), $request->get('_token'))) {
+        if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), (string) $request->get('_token'))) {
             $em->remove($notification);
             $em->flush();
             $widgetDataManagerCache->invalidateCacheForUser($user->getPartnersTerritories());

@@ -40,7 +40,7 @@ class EntityHistoryListener
         private readonly string $historyTrackingEnable,
     ) {
     }
-
+    
     public function onFlush(OnFlushEventArgs $eventArgs): void
     {
         if (!$this->historyTrackingEnable) {
