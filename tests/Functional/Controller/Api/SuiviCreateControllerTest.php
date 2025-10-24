@@ -38,21 +38,30 @@ class SuiviCreateControllerTest extends WebTestCase
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $firstFile = $signalement?->getFiles()?->first() ?? null;
         $lastFile = $signalement?->getFiles()?->last() ?? null;
-        $partnerUuid = $signalement?->getAffectations()->first()->getPartner()->getUuid();
+        if (!$firstFile) {
+            $this->fail('No file found for the signalement');
+        }
+        if (!$lastFile) {
+            $this->fail('No file found for the signalement');
+        }
+
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $partnerUuid = $affectation->getPartner()->getUuid();
         $payload = [
             'description' => 'lorem ipsum dolor sit <em>amet</em>',
             'notifyUsager' => $notifyUsager,
             'partenaireUuid' => $partnerUuid,
         ];
 
-        if (null !== $firstFile && null !== $lastFile) {
-            $payload['files'] = [$firstFile->getUuid(), $lastFile->getUuid()];
-        }
+        $payload['files'] = [$firstFile->getUuid(), $lastFile->getUuid()];
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_suivis_post', ['uuid' => $signalementUuid]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
         if ('0000' !== $signalementUuid) {
             /** @var Suivi $suiviCreated */
@@ -87,11 +96,11 @@ class SuiviCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_suivis_post', ['uuid' => $signalementUuid]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
-        $content = json_decode($this->client->getResponse()->getContent(), true);
+        $content = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertStringContainsString('Access Denied', $content['message']);
         $this->assertStringContainsString($errorMessage, $content['message']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);

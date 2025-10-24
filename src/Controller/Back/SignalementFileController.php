@@ -72,7 +72,7 @@ class SignalementFileController extends AbstractController
         } else {
             $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         }
-        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
+        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
         $documentType = DocumentType::AUTRE;
@@ -111,6 +111,7 @@ class SignalementFileController extends AbstractController
         } else {
             $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         }
+        /** @var FileRepository $fileRepository */
         $fileRepository = $entityManager->getRepository(File::class);
         /** @var User $user */
         $user = $this->getUser();
@@ -173,7 +174,7 @@ class SignalementFileController extends AbstractController
         $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
         $this->denyAccessUnlessGranted('FILE_DELETE', $file);
         $fragment = in_array($request->get('hash_src'), ['activite', 'situation']) ? $request->get('hash_src') : 'documents';
-        if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->get('_token'))) {
             $message = 'Token CSRF invalide, veuillez recharger la page';
             if ('1' === $request->get('is_draft')) {
                 return $this->json(['message' => $message], Response::HTTP_BAD_REQUEST);
@@ -249,7 +250,7 @@ class SignalementFileController extends AbstractController
         InterventionRepository $interventionRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
-        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), (string) $request->get('_token'))) {
             $errorMsg = 'Token CSRF invalide, veuillez recharger la page';
 
             return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
@@ -316,7 +317,7 @@ class SignalementFileController extends AbstractController
         if (!$rotate) {
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
         }
-        if (!$this->isCsrfTokenValid('save_file_rotation', $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('save_file_rotation', (string) $request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci de réessayer.');
 
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));

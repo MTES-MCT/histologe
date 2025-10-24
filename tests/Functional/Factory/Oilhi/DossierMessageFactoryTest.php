@@ -41,7 +41,9 @@ class DossierMessageFactoryTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get('doctrine.orm.entity_manager');
+        $this->entityManager = $em;
         $this->logger = self::getContainer()->get('logger');
         $this->serializer = self::getContainer()->get('serializer');
         $this->urlSigner = self::getContainer()->get(UrlSignerInterface::class);
@@ -56,6 +58,10 @@ class DossierMessageFactoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => $reference]);
         if ('2024-01' === $reference) {
             $affectation = $signalement->getAffectations()->first();
+
+            if (!$affectation) {
+                $this->fail('No affectation found for the signalemet');
+            }
         } else {
             /** @var PartnerRepository $partnerRepository */
             $partnerRepository = $this->entityManager->getRepository(Partner::class);
@@ -66,6 +72,7 @@ class DossierMessageFactoryTest extends KernelTestCase
                 ->setTerritory($signalement->getTerritory());
         }
 
+        /** @var UrlGeneratorInterface $urlGenerator */
         $urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
 
         $dossierMessageFactory = new DossierMessageFactory($urlGenerator, true, $this->urlSigner);
@@ -136,7 +143,7 @@ class DossierMessageFactoryTest extends KernelTestCase
 
         $response = $hookZapierService->pushDossier($dossierMessage);
 
-        $responseData = json_decode($response->getContent(), true);
+        $responseData = json_decode((string) $response->getContent(), true);
         $this->assertArrayHasKey('message', $responseData);
         $this->assertEquals('HTTP request failed', $responseData['message']);
     }

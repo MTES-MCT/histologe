@@ -80,7 +80,7 @@ class SignalementDraftManager extends AbstractManager
         }
         $this->save($signalementDraft);
 
-        if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus() && isset($signalement)) {
+        if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus() && isset($signalement) && $signalement) {
             return [
                 'uuid' => $signalementDraft->getUuid(),
                 'signalementReference' => $signalement->getReference(),

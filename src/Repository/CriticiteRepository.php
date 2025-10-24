@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Criticite>
+ *
  * @method Criticite|null find($id, $lockMode = null, $lockVersion = null)
  * @method Criticite|null findOneBy(array $criteria, array $orderBy = null)
  * @method Criticite[]    findAll()

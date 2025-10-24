@@ -12,6 +12,7 @@ use App\Repository\InterventionRepository;
 use App\Repository\UserRepository;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -22,13 +23,21 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
     }
 
     public function testBuildVisiteUpdated(): void
     {
         $eventDispatcher = new EventDispatcher();
+        /** @var VisiteNotifier $visiteNotifier */
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        /** @var SuiviManager $suiviManager */
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         /** @var InterventionRepository $interventionRepository */
@@ -57,6 +66,11 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
 
         $this->assertEmailCount(1);
         $this->assertEquals(2, $intervention->getSignalement()->getSuivis()->count());
-        $this->assertStringContainsString('a été modifiée', $intervention->getSignalement()->getSuivis()->last()->getDescription());
+
+        $suivi = $intervention->getSignalement()->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the intervention');
+        }
+        $this->assertStringContainsString('a été modifiée', $suivi->getDescription());
     }
 }

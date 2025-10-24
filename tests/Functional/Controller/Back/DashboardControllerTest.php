@@ -14,6 +14,7 @@ class DashboardControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $router = self::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
         $client->loginUser($user);
@@ -28,6 +29,7 @@ class DashboardControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $router = self::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
 
         $partnerUser = $userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
@@ -46,6 +48,7 @@ class DashboardControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $router = self::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $adminUser = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
         $client->loginUser($adminUser);
@@ -62,6 +65,7 @@ class DashboardControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $router = self::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $adminUser = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
         $client->loginUser($adminUser);
@@ -77,6 +81,7 @@ class DashboardControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $router = self::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $adminUser = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
         $client->loginUser($adminUser);
@@ -97,6 +102,7 @@ class DashboardControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $router = self::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $adminUser = $userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
         $client->loginUser($adminUser);

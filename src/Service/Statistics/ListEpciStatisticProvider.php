@@ -12,7 +12,7 @@ class ListEpciStatisticProvider
     {
     }
 
-    /** @return array<string, string> */
+    /** @return array<int, string> */
     public function getData(?Territory $territory): array
     {
         $data = [];
@@ -20,7 +20,7 @@ class ListEpciStatisticProvider
             $epciList = $this->epciRepository->findAllByTerritory($territory);
             /** @var Epci $epciItem */
             foreach ($epciList as $epciItem) {
-                $data[$epciItem->getId()] = $epciItem->getNom();
+                $data[(int) $epciItem->getId()] = (string) $epciItem->getNom();
             }
         }
 

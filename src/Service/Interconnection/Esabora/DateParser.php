@@ -19,6 +19,7 @@ class DateParser
             return $dateLocaleParsed->setTimezone($toTimezone);
         }
         $dateParsed = \DateTimeImmutable::createFromFormat(AbstractEsaboraService::FORMAT_DATE, $date);
+        assert($dateParsed instanceof \DateTimeImmutable);
 
         return $dateParsed->setTime(0, 0);
     }

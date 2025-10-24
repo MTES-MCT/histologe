@@ -111,7 +111,7 @@ class SignalementActionControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertStringContainsString('Le message doit contenir au moins 10 caract\u00e8res.', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Le message doit contenir au moins 10 caract\u00e8res.', (string) $this->client->getResponse()->getContent());
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
     }
 
@@ -168,7 +168,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertResponseStatusCodeSame(400);
-        $this->assertStringContainsString('Le choix s\u00e9lectionn\u00e9 est invalide.', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Le choix s\u00e9lectionn\u00e9 est invalide.', (string) $this->client->getResponse()->getContent());
     }
 
     public function testAddSuiviSignalementError(): void
@@ -185,7 +185,7 @@ class SignalementActionControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertStringContainsString('Le contenu du suivi doit contenir au moins 10 caract\u00e8res.', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Le contenu du suivi doit contenir au moins 10 caract\u00e8res.', (string) $this->client->getResponse()->getContent());
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
     }
 
@@ -337,7 +337,7 @@ class SignalementActionControllerTest extends WebTestCase
             ]
         );
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertEquals('{"response":"error"}', $this->client->getResponse()->getContent());
+        $this->assertEquals('{"response":"error"}', (string) $this->client->getResponse()->getContent());
 
         $this->client->request(
             'POST',
@@ -348,7 +348,7 @@ class SignalementActionControllerTest extends WebTestCase
             ]
         );
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertEquals('{"response":"success"}', $this->client->getResponse()->getContent());
+        $this->assertEquals('{"response":"success"}', (string) $this->client->getResponse()->getContent());
 
         $this->client->request(
             'POST',
@@ -358,10 +358,15 @@ class SignalementActionControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_switch_value_'.$signalement->getUuid()),
             ]
         );
+
+        $tag = $signalement->getTags()->first();
+        if (!$tag) {
+            $this->fail('No tag found for the signalement');
+        }
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertEquals('{"response":"success"}', $this->client->getResponse()->getContent());
+        $this->assertEquals('{"response":"success"}', (string) $this->client->getResponse()->getContent());
         $this->assertEquals(1, $signalement->getTags()->count());
-        $this->assertEquals(3, $signalement->getTags()->first()->getId());
+        $this->assertEquals(3, $tag->getId());
     }
 
     /**
@@ -369,7 +374,7 @@ class SignalementActionControllerTest extends WebTestCase
      */
     public function testsetRnbId(string $uuid, bool $isGeolocUpdated): void
     {
-        $buildingData = json_decode(file_get_contents(__DIR__.'/../../../files/betagouv/get_api_rnb_buildings_response.json'), true);
+        $buildingData = json_decode((string) file_get_contents(__DIR__.'/../../../files/betagouv/get_api_rnb_buildings_response.json'), true);
         $building = new RnbBuilding($buildingData['results'][0]);
         $rnbService = $this->createMock(RnbService::class);
         if ($isGeolocUpdated) {
@@ -530,6 +535,9 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertNotNull($sub);
         $partnerUsers = $partner->getUsers();
         $otherAgent = $partnerUsers->filter(fn ($u) => $u !== $user)->first();
+        if (!$otherAgent) {
+            $this->fail('No other agent found for the partner');
+        }
 
         $route = $this->router->generate('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
 

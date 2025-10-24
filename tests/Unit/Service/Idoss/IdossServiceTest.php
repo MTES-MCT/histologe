@@ -6,9 +6,11 @@ use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
+use App\Repository\AffectationRepository;
 use App\Service\ImageManipulationHandler;
 use App\Service\Interconnection\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -24,19 +26,26 @@ class IdossServiceTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
     }
 
     protected function getIdossService(MockHttpClient $mockHttpClient): IdossService
     {
-        /** @var ContainerBagInterface|MockObject $containerBagInterface */
+        /** @var ContainerBagInterface&MockObject $containerBagInterface */
         $containerBagInterface = $this->createMock(ContainerBagInterface::class);
-        /** @var JobEventManager|MockObject $jobEventManager */
+        /** @var JobEventManager&MockObject $jobEventManager */
         $jobEventManager = $this->createMock(JobEventManager::class);
-        /** @var SerializerInterface|MockObject $serializerMock */
+        /** @var SerializerInterface&MockObject $serializerMock */
         $serializerMock = $this->createMock(SerializerInterface::class);
-        /** @var ImageManipulationHandler|MockObject $imageManipulationHandlerMock */
+        /** @var ImageManipulationHandler&MockObject $imageManipulationHandlerMock */
         $imageManipulationHandlerMock = $this->createMock(ImageManipulationHandler::class);
+        /** @var LoggerInterface&MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         return new IdossService(
@@ -54,6 +63,8 @@ class IdossServiceTest extends KernelTestCase
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
+
+        /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
 
@@ -77,6 +88,8 @@ class IdossServiceTest extends KernelTestCase
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
+
+        /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $affectation->getPartner()->setIdossToken('TEST');
@@ -99,6 +112,8 @@ class IdossServiceTest extends KernelTestCase
     {
         $partnerRepository = $this->entityManager->getRepository(Partner::class);
         $partner = $partnerRepository->findOneBy(['email' => 'partenaire-13-05@signal-logement.fr']);
+
+        /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectation = $affectationRepository->findOneBy(['partner' => $partner]);
         $affectation->getPartner()->setIdossToken('TEST');

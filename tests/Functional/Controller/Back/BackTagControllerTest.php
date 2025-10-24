@@ -107,7 +107,7 @@ class BackTagControllerTest extends WebTestCase
             $tag = $tagRepository->findOneBy(['label' => 'Moisissure', 'isArchive' => 0, 'territory' => '13']);
             $this->assertNotNull($tag);
         } else {
-            $this->assertStringContainsString($message, $this->client->getResponse()->getContent());
+            $this->assertStringContainsString($message, (string) $this->client->getResponse()->getContent());
         }
     }
 
@@ -138,7 +138,7 @@ class BackTagControllerTest extends WebTestCase
             $tag = $tagRepository->find($tagId);
             $this->assertEquals('Urgent MAJ', $tag->getLabel());
         } else {
-            $this->assertStringContainsString($message, $this->client->getResponse()->getContent());
+            $this->assertStringContainsString($message, (string) $this->client->getResponse()->getContent());
         }
     }
 

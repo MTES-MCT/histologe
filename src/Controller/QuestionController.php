@@ -17,7 +17,7 @@ class QuestionController extends AbstractController
     {
         $filepath = self::JSON_BASE_PATH.'dictionary.json';
 
-        return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
+        return $this->json(json_decode((string) file_get_contents(__DIR__.$filepath), true));
     }
 
     #[Route('/questions', name: 'public_api_question_profile')]
@@ -49,7 +49,7 @@ class QuestionController extends AbstractController
                 $filepath = self::JSON_BASE_PATH.'empty.json';
         }
 
-        return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
+        return $this->json(json_decode((string) file_get_contents(__DIR__.$filepath), true));
     }
 
     #[Route('/desordres', name: 'public_api_desordres_profile')]
@@ -70,6 +70,6 @@ class QuestionController extends AbstractController
                 $filepath = self::JSON_BASE_PATH.'empty.json';
         }
 
-        return $this->json(json_decode(file_get_contents(__DIR__.$filepath), true));
+        return $this->json(json_decode((string) file_get_contents(__DIR__.$filepath), true));
     }
 }

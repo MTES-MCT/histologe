@@ -11,6 +11,7 @@ use App\Service\Gouv\ProConnect\Request\CallbackRequest;
 use App\Service\Gouv\ProConnect\Request\LogoutRequest;
 use App\Service\Gouv\ProConnect\Response\JWKSResponse;
 use App\Service\Gouv\ProConnect\Response\OAuth2TokenResponse;
+use PHPUnit\Framework\MockObject\MockObject;
 use Random\RandomException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +30,7 @@ class ProConnectAuthenticationTest extends KernelTestCase
 {
     public function testAuthenticateFromCallbackReturnsValidUser(): void
     {
+        /** @var UrlGeneratorInterface&MockObject $urlGenerator */
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $requestContext = new RequestContext();
 
@@ -40,8 +42,11 @@ class ProConnectAuthenticationTest extends KernelTestCase
             'localhost'
         );
 
+        /** @var ProConnectHttpClient&MockObject $httpClient */
         $httpClient = $this->createMock(ProConnectHttpClient::class);
+        /** @var ProConnectJwtValidator&MockObject $jwtValidator */
         $jwtValidator = $this->createMock(ProConnectJwtValidator::class);
+        /** @var ProConnectJwtParser&MockObject $jwtParser */
         $jwtParser = $this->createMock(ProConnectJwtParser::class);
 
         $httpClient
@@ -49,11 +54,11 @@ class ProConnectAuthenticationTest extends KernelTestCase
             ->method('requestToken')
             ->willReturn(new OAuth2TokenResponse(['access_token' => 'dummy', 'id_token' => 'dummy']));
 
-        $jwksFile = file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
+        $jwksFile = (string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
         $httpClient
             ->expects(self::once())
             ->method('getJWKS')
-            ->willReturn(new JWKSResponse($jwksFile));
+            ->willReturn(new JWKSResponse((string) $jwksFile));
 
         $jwtValidator
             ->expects(self::once())
@@ -99,6 +104,7 @@ class ProConnectAuthenticationTest extends KernelTestCase
      */
     public function testGetLogoutUrlReturnsExpectedUrl(): void
     {
+        /** @var UrlGeneratorInterface&MockObject $urlGenerator */
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $urlGenerator
             ->method('generate')
@@ -119,6 +125,7 @@ class ProConnectAuthenticationTest extends KernelTestCase
 
         $expectedUrl = 'https://provider/logout?id_token_hint=valid_id_token&state=valid_state&post_logout_redirect_uri=https%3A%2F%2Fmyapp.com%2Flogout';
 
+        /** @var ProConnectHttpClient&MockObject $httpClient */
         $httpClient = $this->createMock(ProConnectHttpClient::class);
         $httpClient
             ->expects(self::once())
@@ -130,11 +137,15 @@ class ProConnectAuthenticationTest extends KernelTestCase
             }))
             ->willReturn($expectedUrl);
 
+        /** @var ProConnectJwtValidator&MockObject $jwtValidator */
+        $jwtValidator = $this->createMock(ProConnectJwtValidator::class);
+        /** @var ProConnectJwtParser&MockObject $jwtParser */
+        $jwtParser = $this->createMock(ProConnectJwtParser::class);
         $proConnectAuthentication = new ProConnectAuthentication(
             $httpClient,
             $context,
-            $this->createMock(ProConnectJwtValidator::class),
-            $this->createMock(ProConnectJwtParser::class),
+            $jwtValidator,
+            $jwtParser,
             'client_id',
             'client_secret',
         );
@@ -158,11 +169,13 @@ class ProConnectAuthenticationTest extends KernelTestCase
         $expectedRedirectUri = 'https://myapp.com/proconnect/login-callback';
         $expectedAuthorizationUrl = $expectedRedirectUri.'?state='.$expectedState.'&nonce='.$expectedNonce;
 
+        /** @var ProConnectContext&MockObject $contextMock */
         $contextMock = $this->createMock(ProConnectContext::class);
         $contextMock->method('getRedirectLoginUrl')->willReturn($expectedRedirectUri);
         $contextMock->method('generateState')->willReturn($expectedState);
         $contextMock->method('generateNonce')->willReturn($expectedNonce);
 
+        /** @var ProConnectHttpClient&MockObject $httpClientMock */
         $httpClientMock = $this->createMock(ProConnectHttpClient::class);
         $httpClientMock
             ->expects($this->once())
@@ -174,11 +187,15 @@ class ProConnectAuthenticationTest extends KernelTestCase
             )
             ->willReturn($expectedAuthorizationUrl);
 
+        /** @var ProConnectJwtValidator&MockObject $jwtValidator */
+        $jwtValidator = $this->createMock(ProConnectJwtValidator::class);
+        /** @var ProConnectJwtParser&MockObject $jwtParser */
+        $jwtParser = $this->createMock(ProConnectJwtParser::class);
         $authentication = new ProConnectAuthentication(
             $httpClientMock,
             $contextMock,
-            $this->createMock(ProConnectJwtValidator::class),
-            $this->createMock(ProConnectJwtParser::class),
+            $jwtValidator,
+            $jwtParser,
             'client_id',
             'client_secret'
         );

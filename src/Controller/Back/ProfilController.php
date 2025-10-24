@@ -93,7 +93,7 @@ class ProfilController extends AbstractController
         $user = $this->getUser();
         if ($this->isCsrfTokenValid(
             'profil_edit_infos',
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             $avatarFile = $request->files->get('profil_edit_infos')['avatar'] ?? null;
             $errorMessage = [];
@@ -210,7 +210,7 @@ class ProfilController extends AbstractController
         $user = $this->getUser();
         if ($this->isCsrfTokenValid(
             'profil_edit_email',
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             $errorMessage = [];
 
@@ -310,7 +310,7 @@ class ProfilController extends AbstractController
         $payload = $request->getPayload()->all();
 
         if ($request->isMethod('POST')
-            && $this->isCsrfTokenValid('profil_edit_password', $payload['_token'])
+            && $this->isCsrfTokenValid('profil_edit_password', (string) $payload['_token'])
         ) {
             $errorMessages = [];
             $passwordCurrent = $payload['password-current'];
@@ -373,7 +373,7 @@ class ProfilController extends AbstractController
     #[Route('/dismiss-modal-duplicate-addresses', name: 'dismiss_modal_duplicate_addresses', methods: ['POST'])]
     public function dismissModalDuplicateAddresses(Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('modal_duplicate_addresses', $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('modal_duplicate_addresses', (string) $request->request->get('_token'))) {
             /** @var User $user */
             $user = $this->getUser();
             $user->setDuplicateModalDismissed();

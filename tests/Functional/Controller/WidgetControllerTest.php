@@ -31,7 +31,7 @@ class WidgetControllerTest extends WebTestCase
             ])
         );
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
 
         $this->assertEquals('data-kpi', $response['type']);
         $this->assertArrayHasKey('cardNouveauxSignalements', $response['data']['widgetCards']);
@@ -60,7 +60,7 @@ class WidgetControllerTest extends WebTestCase
                     'territory' => $territory->getId(),
                 ])
             );
-            $response = json_decode($client->getResponse()->getContent(), true);
+            $response = json_decode((string) $client->getResponse()->getContent(), true);
             $this->assertEquals('data-kpi', $response['type']);
             $this->assertCount(1, $response['territories']);
 
@@ -130,7 +130,7 @@ class WidgetControllerTest extends WebTestCase
                 'widgetType' => WidgetType::WIDGET_TYPE_DATA_KPI,
             ])
         );
-        $responseAll = json_decode($client->getResponse()->getContent(), true);
+        $responseAll = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertEquals('data-kpi', $responseAll['type']);
         $this->assertCount(2, $responseAll['territories']);
 
@@ -179,7 +179,7 @@ class WidgetControllerTest extends WebTestCase
                 'widgetType' => WidgetType::WIDGET_TYPE_ESABORA_EVENTS,
             ])
         );
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
 
         $this->assertEquals('esabora-evenements', $response['type']);
 
@@ -212,7 +212,7 @@ class WidgetControllerTest extends WebTestCase
             )
         );
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertEquals('affectations-partenaires', $response['type']);
         $this->assertEquals('13', $response['territories'][$firstTerritory->getId()]['zip']);
         $this->assertEquals('Bouches-du-Rhône', $response['territories'][$firstTerritory->getId()]['name']);
@@ -243,7 +243,7 @@ class WidgetControllerTest extends WebTestCase
             )
         );
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertEquals('signalements-territoires', $response['type']);
 
         foreach ($response['data'] as $data) {
@@ -274,7 +274,7 @@ class WidgetControllerTest extends WebTestCase
             )
         );
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertEquals('signalements-acceptes-sans-suivi', $response['type']);
         $this->assertEquals('13', $response['territories'][$firstTerritory->getId()]['zip']);
         $this->assertEquals('Bouches-du-Rhône', $response['territories'][$firstTerritory->getId()]['name']);

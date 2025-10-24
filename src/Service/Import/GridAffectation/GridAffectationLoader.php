@@ -228,6 +228,7 @@ class GridAffectationLoader
                         );
                         $isNewPartner = true;
                     }
+                    /** @var Partner $partner */
 
                     /** @var ConstraintViolationList $errors */
                     $errors = $this->validator->validate($partner);

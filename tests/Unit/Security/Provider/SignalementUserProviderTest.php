@@ -19,9 +19,9 @@ class SignalementUserProviderTest extends TestCase
 {
     use FixturesHelper;
 
-    private MockObject|SignalementRepository $signalementRepository;
-    private MockObject|UserRepository $userRepository;
-    private MockObject|LoggerInterface $logger;
+    private MockObject&SignalementRepository $signalementRepository;
+    private MockObject&UserRepository $userRepository;
+    private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
     {
@@ -49,6 +49,7 @@ class SignalementUserProviderTest extends TestCase
             ->willReturn($mockUser);
 
         $signalementRepository = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
+        /** @var SignalementUser $user */
         $user = $signalementRepository->loadUserByIdentifier('12345678:occupant');
 
         $this->assertInstanceOf(SignalementUser::class, $user);
@@ -80,6 +81,8 @@ class SignalementUserProviderTest extends TestCase
     public function testRefreshUserThrowsExceptionForInvalidClass(): void
     {
         $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
+
+        /** @var MockObject&User $invalidUser */
         $invalidUser = $this->createMock(UserInterface::class);
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Instances de');
@@ -94,6 +97,7 @@ class SignalementUserProviderTest extends TestCase
     {
         $signalement = $this->getSignalementLocataire();
 
+        /** @var MockObject&User $mockUserEntity */
         $mockUserEntity = $this->createMock(User::class);
 
         $this->signalementRepository

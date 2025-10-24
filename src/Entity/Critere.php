@@ -34,6 +34,9 @@ class Critere
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $modifiedAt = null;
 
+    /**
+     * @var Collection<int, Criticite>
+     */
     #[ORM\OneToMany(mappedBy: 'critere', targetEntity: Criticite::class, orphanRemoval: true)]
     private Collection $criticites;
 

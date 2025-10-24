@@ -48,6 +48,8 @@ class SignalementDraftRequestNormalizerTest extends TestCase
         $signalementDraft = (new SignalementDraft())->setPayload($payload);
         $result = $serializer->normalize($signalementDraft);
 
+        $this->assertIsArray($result, 'Le résultat doit être un tableau');
+        $this->assertArrayHasKey('payload', $result);
         $this->assertEquals('0611121314', $result['payload']['vos_coordonnees_occupant_tel']);
         $this->assertEquals('FR:33', $result['payload']['vos_coordonnees_occupant_tel_countrycode']);
     }

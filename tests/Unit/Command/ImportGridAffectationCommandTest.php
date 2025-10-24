@@ -21,14 +21,14 @@ class ImportGridAffectationCommandTest extends KernelTestCase
 {
     use FixturesHelper;
 
-    private MockObject|FilesystemOperator $fileStorage;
-    private MockObject|ParameterBagInterface $parameterBag;
-    private MockObject|TerritoryManager $territoryManager;
-    private MockObject|CsvParser $csvParser;
-    private MockObject|GridAffectationLoader $gridAffectationLoader;
-    private MockObject|UploadHandlerService $uploadHandlerServiceMock;
-    private MockObject|NotificationMailerRegistry $notificationMailerRegistryMock;
-    private MockObject|UrlGeneratorInterface $urlGeneratorMock;
+    private MockObject&FilesystemOperator $fileStorage;
+    private ParameterBagInterface $parameterBag;
+    private MockObject&TerritoryManager $territoryManager;
+    private MockObject&CsvParser $csvParser;
+    private MockObject&GridAffectationLoader $gridAffectationLoader;
+    private MockObject&UploadHandlerService $uploadHandlerServiceMock;
+    private MockObject&NotificationMailerRegistry $notificationMailerRegistryMock;
+    private MockObject&UrlGeneratorInterface $urlGeneratorMock;
 
     protected function setUp(): void
     {

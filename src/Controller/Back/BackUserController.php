@@ -95,6 +95,7 @@ class BackUserController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
+        /** @var array<int, User> $users */
         $users = $userRepository->findUsersPendingToArchive($user);
 
         if ('POST' === $request->getMethod()) {
@@ -114,7 +115,7 @@ class BackUserController extends AbstractController
         }
 
         return $this->render('back/user/export-inactive-accounts.html.twig', [
-            'nbResults' => \count($users),
+            'nbResults' => is_array($users) ? \count($users) : 0,
             'columns' => UserExportLoader::getColumnForUser($user),
         ]);
     }

@@ -15,6 +15,7 @@ use App\Repository\UserRepository;
 use App\Service\Interconnection\Esabora\DateParser;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -25,7 +26,13 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
     }
 
     public function testEventSubscription(): void
@@ -39,7 +46,9 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
     public function testBuildVisiteDescription(): void
     {
         $eventDispatcher = new EventDispatcher();
+        /** @var VisiteNotifier $visiteNotifier */
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        /** @var SuiviManager $suiviManager */
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         /** @var InterventionRepository $interventionRepository */
@@ -68,13 +77,20 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
 
         $nbSuiviInterventionPlanned = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::INTERVENTION_IS_CREATED, 'signalement' => $intervention->getSignalement()]);
         $this->assertEquals(1, $nbSuiviInterventionPlanned);
-        $this->assertStringContainsString('Visite programmée :', $intervention->getSignalement()->getSuivis()->last()->getDescription());
+
+        $suivi = $intervention->getSignalement()->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the intervention');
+        }
+        $this->assertStringContainsString('Visite programmée :', $suivi->getDescription());
     }
 
     public function testBuildVisiteDescriptionTimezone(): void
     {
         $eventDispatcher = new EventDispatcher();
+        /** @var VisiteNotifier $visiteNotifier */
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        /** @var SuiviManager $suiviManager */
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         /** @var InterventionRepository $interventionRepository */
@@ -107,7 +123,11 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
             InterventionCreatedEvent::NAME
         );
 
-        $this->assertStringContainsString($dateDay, $intervention->getSignalement()->getSuivis()->last()->getDescription());
+        $suivi = $intervention->getSignalement()->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the intervention');
+        }
+        $this->assertStringContainsString($dateDay, $suivi->getDescription());
     }
 
     public function testInterventionVisitInPast(): void
@@ -137,7 +157,9 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
     private function testNbMailSent(\DateTimeImmutable $date, InterventionType $type, string $status = Intervention::STATUS_PLANNED): void
     {
         $eventDispatcher = new EventDispatcher();
+        /** @var VisiteNotifier $visiteNotifier */
         $visiteNotifier = static::getContainer()->get(VisiteNotifier::class);
+        /** @var SuiviManager $suiviManager */
         $suiviManager = static::getContainer()->get(SuiviManager::class);
 
         /** @var InterventionRepository $interventionRepository */

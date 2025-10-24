@@ -14,6 +14,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Signalement>
+ */
 class SignalementVoter extends Voter
 {
     public const string VALIDATE = 'SIGN_VALIDATE';

@@ -64,13 +64,18 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
-        $expectedData = [
-            'criteres' => $this->critereRepository->findAllList(),
-            'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList() : $user->getPartnersTerritories(),
-            'partners' => $this->partnerRepository->findAllList(null, $user),
-            'tags' => $this->tagsRepository->findAllActive(null, $user),
-            'cities' => $this->signalementRepository->findCities($user),
-        ];
+        /** @var array<int, mixed> $criteres */
+        $criteres = (array) $this->critereRepository->findAllList();
+        /** @var array<int, mixed> $territories */
+        $territories = (array) ($user->isSuperAdmin() ? $this->territoryRepository->findAllList() : $user->getPartnersTerritories());
+        /** @var array<int, mixed> $partners */
+        $partners = (array) $this->partnerRepository->findAllList(null, $user);
+        /** @var array<int, mixed> $tags */
+        $tags = (array) $this->tagsRepository->findAllActive(null, $user);
+        /** @var array<int, mixed> $cities */
+        $cities = (array) $this->signalementRepository->findCities($user);
+
+        $expectedData = compact('criteres', 'territories', 'partners', 'tags', 'cities');
 
         $actualData = $this->searchFilterOptionDataProvider->getData($user);
         $this->assertSameSize($expectedData['criteres'], $actualData['criteres']);
