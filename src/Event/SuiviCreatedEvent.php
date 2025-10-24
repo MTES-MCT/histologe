@@ -9,7 +9,7 @@ class SuiviCreatedEvent extends Event
 {
     public const string NAME = 'suivi.created';
 
-    public function __construct(private Suivi $suivi)
+    public function __construct(private readonly Suivi $suivi)
     {
     }
 

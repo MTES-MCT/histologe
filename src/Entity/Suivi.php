@@ -117,6 +117,8 @@ class Suivi implements EntityHistoryInterface
     #[ORM\Column]
     private ?bool $waitingNotification = null;
 
+    private ?string $source = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -419,6 +421,18 @@ class Suivi implements EntityHistoryInterface
     public function setWaitingNotification(?bool $waitingNotification): static
     {
         $this->waitingNotification = $waitingNotification;
+
+        return $this;
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
+    }
+
+    public function setSource(?string $source): static
+    {
+        $this->source = $source;
 
         return $this;
     }
