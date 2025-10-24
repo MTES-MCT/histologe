@@ -72,6 +72,7 @@
             {% endif %}
             <th scope="col">Réference</th>
             <th scope="col">Date</th>
+            <th scope="col">Réponse bailleur</th>
             <th scope="col">Adresse du logement</th>
             <th scope="col">Nom de l'occupant</th>
             <th scope="col">Nom du bailleur</th>
@@ -86,8 +87,11 @@
                     {% if is_granted('ROLE_ADMIN') %}
                         <td>{{ signalement.territory ? signalement.territory.zip ~ ' - ' ~ signalement.territory.name : 'aucun' }}</td>
                     {% endif %}
-                    <td>{{ signalement.reference }}</td>
+                    <td>
+                        <a href="{{ path('back_signalement_view', { uuid: signalement.uuid }) }}">{{ signalement.reference }}</a>
+                    </td>
                     <td>{{ signalement.createdAt.format('d/m/Y') }}</td>
+                    <td>{{ signalement.reponseBailleur }}</td>
                     <td>{{ signalement.getAddressCompleteOccupant() }}</td>
                     <td>{{ signalement.prenomOccupant ~ ' ' ~ signalement.nomOccupant }}</td>
                     <td>{{ signalement.getDisplayedNomProprio() }}</td>
