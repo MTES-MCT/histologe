@@ -174,7 +174,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    public function testCreateSignalementWithSuccessOnMinmimalPayloadWithoutAutoAffectation(): void
+    public function testCreateSignalementWithSuccessOnMinimalPayloadWithoutAutoAffectation(): void
     {
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-02@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];

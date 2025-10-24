@@ -66,7 +66,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             );
         }
 
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,

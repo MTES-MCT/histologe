@@ -185,8 +185,17 @@ symfony: ## Execute symfony command: make symfony cmd="make:entity Signalement"
 upload: ## Push objects to S3 Bucket
 	./scripts/upload-s3.sh $(action) $(zip) $(debug)
 
-sync-sish: ## Synchronize sish status and intervention
+sync-sish: ## Synchronize SISH status and intervention (use make sync-sish tiers=1 to update profile_declarant)
+	@if [ "$(tiers)" = "1" ]; then \
+		echo "\033[33mUpdating profile_declarant to 'TIERS_PRO' for reference 2023-12 and 2023-10...\033[0m"; \
+		$(DOCKER_COMP) exec -T signal_logement_phpfpm \
+			php bin/console doctrine:query:sql \
+			"UPDATE signalement SET profile_declarant = 'TIERS_PRO' WHERE reference IN ('2023-12','2023-10');"; \
+		echo "\033[32m✅ Update completed successfully.\033[0m"; \
+	fi
+	@echo "\033[33mSynchronizing SISH...\033[0m"
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh ./scripts/sync-esabora-sish.sh
+	@echo "\033[32m✅ SISH synchronization completed.\033[0m"
 
 ## Quality
 test: ## Run all tests
@@ -261,3 +270,10 @@ run-concurrency-request: ## Run concurrency request based postman collection ex:
 
 .sleep:
 	@sleep 30
+
+update-profile-declarant: ## Update profile_declarant for specific signalements
+	@echo "\033[33mUpdating profile_declarant to 'TIERS_PRO' for reference 2023-12 and 2023-10...\033[0m"
+	@$(DOCKER_COMP) exec -T signal_logement_phpfpm \
+		php bin/console doctrine:query:sql \
+		"UPDATE signalement SET profile_declarant = 'TIERS_PRO' WHERE reference IN ('2023-12','2023-10');"
+	@echo "\033[32m✅ Update completed successfully.\033[0m"
