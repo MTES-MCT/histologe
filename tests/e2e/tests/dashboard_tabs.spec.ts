@@ -1,8 +1,8 @@
 import { test } from '@playwright/test';
 
-test('dashboard tabs for admin', async ({page}) => {
-  // Nettoyer le contexte pour avoir une session propre
-  await page.context().clearCookies();
+test('dashboard tabs for admin', async ({page, context}) => {
+  await context.clearCookies();
+  await context.clearPermissions();
 
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
@@ -30,9 +30,9 @@ test('dashboard tabs for admin', async ({page}) => {
   await page.getByRole('link', { name: 'Se déconnecter' }).click();
 });
 
-test('dashboard tabs for RT', async ({page}) => {
-  // Nettoyer le contexte pour avoir une session propre
-  await page.context().clearCookies();
+test('dashboard tabs for RT', async ({page, context}) => {
+  await context.clearCookies();
+  await context.clearPermissions();
 
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
@@ -57,9 +57,9 @@ test('dashboard tabs for RT', async ({page}) => {
 });
 
 
-test('dashboard tabs for Agent', async ({page}) => {
-  // Nettoyer le contexte pour avoir une session propre
-  await page.context().clearCookies();
+test('dashboard tabs for Agent', async ({page, context}) => {
+  await context.clearCookies();
+  await context.clearPermissions();
 
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
