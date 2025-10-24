@@ -127,7 +127,7 @@ class TagController extends AbstractController
 
         if (
             $tag
-            && $this->isCsrfTokenValid('tag_delete', $request->request->get('_token'))
+            && $this->isCsrfTokenValid('tag_delete', (string) $request->request->get('_token'))
         ) {
             $tag->setIsArchive(true);
             $entityManager->flush();

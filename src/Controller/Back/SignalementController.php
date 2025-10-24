@@ -400,7 +400,7 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
         if ($this->isCsrfTokenValid(
             'signalement_delete_'.$signalement->getId(),
-            $request->getPayload()->get('_token')
+            (string) $request->getPayload()->get('_token')
         )
         ) {
             $signalement->setStatut(SignalementStatus::ARCHIVED);
@@ -432,10 +432,10 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
 
         if (
-            $this->isCsrfTokenValid('signalement_save_tags', $request->request->get('_token'))
+            $this->isCsrfTokenValid('signalement_save_tags', (string) $request->request->get('_token'))
         ) {
             $tagIds = $request->request->get('tag-ids');
-            $tagList = explode(',', $tagIds);
+            $tagList = explode(',', (string) $tagIds);
             foreach ($signalement->getTags() as $existingTag) {
                 if (!\in_array($existingTag->getId(), $tagList)) {
                     $signalement->removeTag($existingTag);

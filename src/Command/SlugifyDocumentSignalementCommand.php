@@ -268,7 +268,8 @@ class SlugifyDocumentSignalementCommand extends Command
 
         $directoryPath = $this->projectDir.'/data/images/import_'.$zip.'/';
         if ($this->filesystem->exists($directoryPath)) {
-            $countFile = \count(scandir($directoryPath)) - 2; // ignore single dot (.) and double dots (..)
+            $files = scandir($directoryPath);
+            $countFile = (is_array($files) ? \count($files) : 0) - 2; // ignore single dot (.) and double dots (..)
             $question = new ConfirmationQuestion(
                 \sprintf('Do you want to slugify %s files from your directory %s?', $countFile, $directoryPath),
                 false
