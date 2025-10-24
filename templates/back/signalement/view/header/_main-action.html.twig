@@ -71,3 +71,18 @@
         </a>
     </div>
 {% endif %}
+{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+    <div class="fr-notice fr-notice--info fr-my-4v fr-text--left">
+        <div class="fr-pl-3v">
+            <div class="fr-notice__body">
+                <p>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <span class="fr-notice__title">Ce signalement est en injonction bailleur.</span>
+                    {% else %}
+                        <span class="fr-notice__title">Ce signalement est en injonction bailleur il est accessible en lecture seule.</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}

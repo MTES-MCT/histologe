@@ -27,11 +27,7 @@
 						Votre réponse
 						<br>
 						<span class="info">
-							{% if suiviReponse %}
-								{{ suiviReponse.category.labelReponseBailleur() }}
-							{% else %}
-								Aucune
-							{% endif %}
+							{{signalement.reponseBailleur}}
 						</span>
 					</div>
 					<div class="fr-col-12 fr-col-md-6">
