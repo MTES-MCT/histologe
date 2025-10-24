@@ -1024,7 +1024,6 @@ signalements:
     desordre_precision:
       - "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
       - "desordres_logement_electricite_installation_dangereuse"
-
   -     
     territory: "Hérault"
     uuid: "00000000-0000-0000-2025-000000000013"
