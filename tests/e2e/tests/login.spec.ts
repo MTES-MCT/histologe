@@ -31,11 +31,19 @@ test('login for bailleur', async ({page, context}) => {
   await context.clearPermissions();
 
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/login-bailleur`);
+
+  // Attendre que la page soit complètement chargée
+  await page.waitForLoadState('networkidle');
+
   await page.getByRole('textbox', { name: 'Référence du dossier' }).click();
   await page.getByRole('textbox', { name: 'Référence du dossier' }).fill('2025-12');
   await page.getByRole('textbox', { name: 'Code de connexion' }).click();
   await page.getByRole('textbox', { name: 'Code de connexion' }).fill('salutsalut');
   await page.getByRole('button', { name: 'Envoyer' }).click();
+
+  // Attendre explicitement la navigation après le submit
+  await page.waitForURL('**/bailleur/**', { timeout: 10000 });
+
   await page.getByRole('heading', { name: 'Détails du dossier' }).click();
   await page.getByText('Monsieur Mulder Fox').click();
   await page.getByText('Oui avec aide').click();
@@ -47,6 +55,8 @@ test('login for admin', async ({page, context}) => {
   await context.clearPermissions();
 
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
+  await page.waitForLoadState('networkidle');
+
   await page.getByRole('button', { name: 'Connexion' }).click();
   await page.getByText('Connexion impossible').click();
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
@@ -61,6 +71,10 @@ test('login for admin', async ({page, context}) => {
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('admin-01@signal-logement.fr');
   await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('signallogement');
   await page.getByRole('button', { name: 'Connexion' }).click();
+
+  // Attendre la navigation après connexion réussie
+  await page.waitForURL('**/tableau-de-bord', { timeout: 10000 });
+
   await page.getByRole('link', { name: 'Tableau de bord' }).click();
   await page.getByRole('link', { name: 'Se déconnecter' }).click();
 });
