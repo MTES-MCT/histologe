@@ -21,7 +21,7 @@ Un tiers non autorisé a profité de l’absence temporaire de l’administrateu
 
 3. **Vérification de la zone**
     - [ ] Auditer la zone DNS <https://www.zonemaster.net>, analyser l'onglet erreur et critique
-    - [ ] [ovh] Vérifier les serveurs DNS dérrière le domaine sont bien ceux d'OVH
+    - [ ] [ovh] Vérifier que les serveurs DNS dérrière le domaine sont bien ceux d'OVH
     - [ ] [scalingo] Arrêter temporairement le container de production.
     - [ ] [scalingo] Vérifier que le domaine est toujours attaché au container de production  
     - [ ] [scalingo] Vérifier que le certificat TLS est à jour
