@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 class CountSignalement
 {
-    /** @var array<string, int> */
+    /** @var array<string, float|int> */
     #[Groups(['widget:read'])]
     private ?array $percentage = null;
     #[Groups(['widget:read'])]
@@ -68,7 +68,7 @@ class CountSignalement
     }
 
     /**
-     * @return array<string, int>|null
+     * @return array<string, float|int>|null
      */
     public function getPercentage(): ?array
     {

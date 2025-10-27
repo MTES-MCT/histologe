@@ -159,6 +159,7 @@ class SignalementFileUploadController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
+        /** @var ?string $partenaireUuid */
         $partenaireUuid = $request->request->get('partenaireUuid');
         $data['files'] = $request->files->all();
         $partner = $this->partnerAuthorizedResolver->resolvePartner($user, $partenaireUuid);

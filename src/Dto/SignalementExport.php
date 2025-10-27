@@ -37,7 +37,7 @@ class SignalementExport
         public ?string $infoProcedureBailDate = null,
         public ?string $infoProcedureBailMoyen = null,
         public ?string $nbPersonnes = null,
-        public ?string $nbEnfants = null,
+        public string|int|null $nbEnfants = null,
         public ?string $enfantsM6 = null,
         public ?string $isAllocataire = null,
         public ?string $numAllocataire = null,

@@ -28,9 +28,10 @@ class StatusStatisticProvider
      */
     public function getData(?Territory $territory, ?int $year): array
     {
+        /** @var array<int, Territory> $territories */
         $territories = [];
         if ($territory) {
-            $territories[$territory->getId()] = $territory;
+            $territories[(int) $territory->getId()] = $territory;
         }
         $countPerStatuses = $this->signalementRepository->countByStatus(
             territories: $territories,

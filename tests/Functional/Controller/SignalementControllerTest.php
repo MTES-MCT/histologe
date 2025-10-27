@@ -9,6 +9,8 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Repository\FileRepository;
+use App\Repository\SignalementDraftRepository;
 use App\Repository\SuiviRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
@@ -263,6 +265,7 @@ class SignalementControllerTest extends WebTestCase
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
+        /** @var FileRepository $fileRepository */
         $fileRepository = $entityManager->getRepository(File::class);
         $files = $fileRepository->findBy([], [], 2);
         foreach ($files as $file) {
@@ -311,6 +314,7 @@ class SignalementControllerTest extends WebTestCase
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
+        /** @var FileRepository $fileRepository */
         $fileRepository = $entityManager->getRepository(File::class);
         $files = $fileRepository->findBy([], [], 2);
 
@@ -342,12 +346,12 @@ class SignalementControllerTest extends WebTestCase
         $router = $client->getContainer()->get(RouterInterface::class);
         $urlPutSignalement = $router->generate('envoi_formulaire_signalement_draft');
 
-        $payloadLocataireSignalement = file_get_contents(__DIR__.'../../../files/post_signalement_draft_payload.json');
+        $payloadLocataireSignalement = (string) file_get_contents(__DIR__.'../../../files/post_signalement_draft_payload.json');
 
         $client->request('POST', $urlPutSignalement, [], [], [], $payloadLocataireSignalement);
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertNotEmpty($response['uuid']);
     }
 
@@ -367,7 +371,7 @@ class SignalementControllerTest extends WebTestCase
             'uuid' => $uuidSignalement,
         ]);
 
-        $payloadLocataireSignalement = file_get_contents(
+        $payloadLocataireSignalement = (string) file_get_contents(
             __DIR__.'../../../../src/DataFixtures/Files/signalement_draft_payload/'.$path
         );
 
@@ -375,7 +379,7 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $arrayResponse = json_decode($client->getResponse()->getContent(), true);
+        $arrayResponse = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('uuid', $arrayResponse);
         $this->assertArrayHasKey('signalementReference', $arrayResponse);
         $this->assertArrayHasKey('lienSuivi', $arrayResponse);
@@ -384,6 +388,7 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertEmailCount($countEmailSent);
 
+        /** @var SignalementDraftRepository $signalementDraftRepository */
         $signalementDraftRepository = $entityManager->getRepository(SignalementDraft::class);
         $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => $uuidSignalement]);
 
@@ -401,7 +406,7 @@ class SignalementControllerTest extends WebTestCase
             'uuid' => '00000000-0000-0000-2024-locataire003',
         ]);
 
-        $payloadLocataireSignalement = file_get_contents(
+        $payloadLocataireSignalement = (string) file_get_contents(
             __DIR__.'../../../files/post_signalement_draft_payload.json'
         );
 
@@ -423,7 +428,7 @@ class SignalementControllerTest extends WebTestCase
         $client->request('GET', $urlSignalementDraft);
 
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertEquals($step, $response['signalement']['payload']['currentStep']);
     }
 

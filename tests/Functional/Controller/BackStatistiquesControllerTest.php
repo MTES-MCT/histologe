@@ -43,7 +43,7 @@ class BackStatistiquesControllerTest extends WebTestCase
             )
         );
 
-        json_decode($client->getResponse()->getContent(), true);
+        json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
     }
 
@@ -119,7 +119,7 @@ class BackStatistiquesControllerTest extends WebTestCase
             )
         );
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
 
         foreach ($expectedResponses as $expectedResponse) {

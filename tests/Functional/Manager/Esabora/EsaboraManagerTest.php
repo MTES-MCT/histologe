@@ -26,6 +26,7 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -56,7 +57,13 @@ class EsaboraManagerTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
         $this->interventionRepository = self::getContainer()->get(InterventionRepository::class);
@@ -95,10 +102,10 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertNotEquals($expectedAffectationStatus, $affectation->getStatut());
 
         $basePath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
-        $responseEsabora = file_get_contents($basePath.$filename);
+        $responseEsabora = (string) file_get_contents($basePath.$filename);
         $dossierResponse = str_contains($filename, 'sish')
-                ? new DossierStateSISHResponse(json_decode($responseEsabora, true), 200)
-                : new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
+                ? new DossierStateSISHResponse(json_decode((string) $responseEsabora, true), 200)
+                : new DossierStateSCHSResponse(json_decode((string) $responseEsabora, true), 200);
 
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
@@ -214,10 +221,10 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertNotEquals($expectedAffectationStatus, $affectation->getStatut());
 
         $basePath = __DIR__.'/../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/';
-        $responseEsabora = file_get_contents($basePath.$filename);
+        $responseEsabora = (string) file_get_contents($basePath.$filename);
         $dossierResponse = str_contains($filename, 'sish')
-                ? new DossierStateSISHResponse(json_decode($responseEsabora, true), 200)
-                : new DossierStateSCHSResponse(json_decode($responseEsabora, true), 200);
+                ? new DossierStateSISHResponse(json_decode((string) $responseEsabora, true), 200)
+                : new DossierStateSCHSResponse(json_decode((string) $responseEsabora, true), 200);
 
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
@@ -293,12 +300,20 @@ class EsaboraManagerTest extends KernelTestCase
 
         $dossierVisite = $this->getDossierVisiteSISHCollectionResponse()->getCollection()[0];
         $affectation = $signalement->getAffectations()->first();
-
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
         $esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
         $this->entityManager->flush();
         $this->entityManager->refresh($signalement);
         $suivi = $signalement->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the signalement');
+        }
         $intervention = $signalement->getInterventions()->first();
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
 
         $this->assertStringContainsString('Visite de contrôle réalisée', $suivi->getDescription());
         $this->assertEquals(Intervention::STATUS_DONE, $intervention->getStatus(), 'Le statut doit être DONE après application du workflow confirm');

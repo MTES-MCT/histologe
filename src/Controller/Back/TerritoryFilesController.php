@@ -35,6 +35,7 @@ class TerritoryFilesController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territories = $user->getPartnersTerritories();
         }
+        /** @var array $paginatedFiles */
         $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination, $user);
 
         return $this->render('back/territory-files/index.html.twig', [

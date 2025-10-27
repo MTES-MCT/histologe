@@ -10,6 +10,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
+ * @extends Voter<string, Widget>
+ *
  * @deprecated This class will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed.
  * Please refer to the App\Security\TabPanelVoter namespace for the new dashboard.
  */
@@ -52,6 +54,6 @@ class WidgetVoter extends Voter
         $role = $user->getRoles();
         $widgetParams = $this->parameterBag->get($widget->getType());
 
-        return \in_array(array_shift($role), $widgetParams['roles']);
+        return \in_array(array_shift($role), $widgetParams['roles']); // @phpstan-ignore-line
     }
 }

@@ -38,6 +38,7 @@ class UserSignalementSubscriptionManager extends AbstractManager
         if (!$this->featureNewDashboard) {
             return null;
         }
+        /** @var ?UserSignalementSubscription $subscription */
         $subscription = $this->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]);
         if (null === $subscription) {
             $subscription = (new UserSignalementSubscription())

@@ -19,29 +19,42 @@ class UserAvatar implements RuntimeExtensionInterface
     {
         $zipCode = ($user->getFirstTerritory()) ? substr($user->getFirstTerritory()->getZip(), 0, 2) : 'SA';
 
-        if ($user->getAvatarFilename() && $this->fileStorage->fileExists($user->getAvatarFilename())) {
-            $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$user->getAvatarFilename();
+        $filename = $user->getAvatarFilename();
 
-            $type = pathinfo($bucketFilepath, \PATHINFO_EXTENSION);
-
-            $data = file_get_contents($bucketFilepath);
-            $data64 = base64_encode($data);
-
-            $src = "data:image/$type;base64,$data64";
-
-            $arriaHiddenAttribute = $ariaHidden ? 'alt="" aria-hidden="true"' : 'alt="Avatar de l\'utilisateur"';
-
-            return sprintf(
-                '<img src="%s" '.$arriaHiddenAttribute.' class="avatar-histologe avatar-%s">',
-                $src,
-                $size
-            );
+        if (null === $filename || !$this->fileStorage->fileExists($filename)) {
+            return $this->renderPlaceholder($zipCode, $size, $ariaHidden);
         }
 
-        $arriaHiddenAttribute = $ariaHidden ? 'aria-hidden="true"' : '';
+        $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
+        $data = @file_get_contents($bucketFilepath);
+
+        if (false === $data) {
+            return $this->renderPlaceholder($zipCode, $size, $ariaHidden);
+        }
+
+        $type = pathinfo($bucketFilepath, \PATHINFO_EXTENSION);
+        $data64 = base64_encode($data);
+        $src = "data:image/$type;base64,$data64";
+
+        $ariaHiddenAttribute = $ariaHidden
+            ? 'alt="" aria-hidden="true"'
+            : 'alt="Avatar de l\'utilisateur"';
 
         return sprintf(
-            '<span '.$arriaHiddenAttribute.' class="avatar-histologe avatar-placeholder avatar-%s">%s</span>',
+            '<img src="%s" %s class="avatar-histologe avatar-%s">',
+            $src,
+            $ariaHiddenAttribute,
+            $size
+        );
+    }
+
+    private function renderPlaceholder(string $zipCode, int $size, bool $ariaHidden): string
+    {
+        $ariaHiddenAttribute = $ariaHidden ? 'aria-hidden="true"' : '';
+
+        return sprintf(
+            '<span %s class="avatar-histologe avatar-placeholder avatar-%s">%s</span>',
+            $ariaHiddenAttribute,
             $size,
             $zipCode
         );

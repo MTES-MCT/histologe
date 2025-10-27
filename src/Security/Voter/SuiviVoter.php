@@ -10,6 +10,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Suivi>
+ */
 class SuiviVoter extends Voter
 {
     public const string DELETE_SUIVI = 'DELETE_SUIVI';

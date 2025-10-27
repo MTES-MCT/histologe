@@ -62,7 +62,12 @@ class SignalementFileUploadControllerTest extends WebTestCase
         self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
         $uuid = '00000000-0000-0000-2022-000000000006';
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
-        $partnerUuid = $signalement->getAffectations()->first()->getPartner()->getUuid();
+
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $partnerUuid = $affectation->getPartner()->getUuid();
         $this->postRequest($uuid, $partnerUuid, [$imageFile, $documentFile]);
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);

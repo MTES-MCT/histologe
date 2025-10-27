@@ -16,11 +16,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadHandlerServiceTest extends KernelTestCase
 {
-    private MockObject|FilesystemOperator $filesystemOperator;
-    private MockObject|ParameterBagInterface $parameterBag;
-    private MockObject|LoggerInterface $logger;
-    private MockObject|FilenameGenerator $filenameGenerator;
-    private MockObject|FileRepository $fileRepository;
+    private MockObject&FilesystemOperator $filesystemOperator;
+    private ParameterBagInterface $parameterBag;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&FilenameGenerator $filenameGenerator;
+    private MockObject&FileRepository $fileRepository;
 
     private string $projectDir = '';
     private string $fixturesPath = '/src/DataFixtures/Images/';
@@ -32,6 +32,7 @@ class UploadHandlerServiceTest extends KernelTestCase
     {
         self::bootKernel();
         $this->projectDir = static::getContainer()->getParameter('kernel.project_dir');
+        /** @var Filesystem $filesystem */
         $filesystem = static::getContainer()->get(Filesystem::class);
 
         $filesystem->copy(
@@ -87,15 +88,21 @@ class UploadHandlerServiceTest extends KernelTestCase
     {
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-
+        /** @var MockObject&FilesystemOperator $fileSystem */
+        $fileSystem = $this->createMock(FilesystemOperator::class);
+        /** @var MockObject&FilenameGenerator $fileName */
+        $fileName = $this->createMock(FilenameGenerator::class);
+        /** @var MockObject&LoggerInterface $logger */
+        $logger = $this->createMock(LoggerInterface::class);
         $uploadHandlerService = new UploadHandlerService(
-            $this->createMock(FilesystemOperator::class),
+            $fileSystem,
             $parameterBag,
-            $this->createMock(LoggerInterface::class),
-            $this->createMock(FilenameGenerator::class),
+            $logger,
+            $fileName,
             $this->fileRepository
         );
 
+        /** @var MockObject&UploadedFile $uploadedFileMock */
         $uploadedFileMock = $this->createMock(UploadedFile::class);
         $uploadedFileMock
             ->expects($this->exactly(2))
@@ -111,15 +118,21 @@ class UploadHandlerServiceTest extends KernelTestCase
     {
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-
+        /** @var MockObject&FilesystemOperator $fileSystem */
+        $fileSystem = $this->createMock(FilesystemOperator::class);
+        /** @var MockObject&FilenameGenerator $fileName */
+        $fileName = $this->createMock(FilenameGenerator::class);
+        /** @var MockObject&LoggerInterface $logger */
+        $logger = $this->createMock(LoggerInterface::class);
         $uploadHandlerService = new UploadHandlerService(
-            $this->createMock(FilesystemOperator::class),
+            $fileSystem,
             $parameterBag,
-            $this->createMock(LoggerInterface::class),
-            $this->createMock(FilenameGenerator::class),
+            $logger,
+            $fileName,
             $this->fileRepository
         );
 
+        /** @var MockObject&UploadedFile $uploadedFileMock */
         $uploadedFileMock = $this->createMock(UploadedFile::class);
         $uploadedFileMock
             ->expects($this->atLeast(1))

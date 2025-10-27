@@ -38,7 +38,7 @@ class ApiLogger
             'query' => $request->query->all(),
             'request' => $this->sanitizeSensitiveData(json_decode($request->getContent(), true)),
             'files' => $this->extractUploadedFiles($request),
-            'response' => $this->sanitizeSensitiveData(json_decode($response->getContent(), true)),
+            'response' => $this->sanitizeSensitiveData(json_decode((string) $response->getContent(), true)),
             'response_status' => $response->getStatusCode(),
         ];
 

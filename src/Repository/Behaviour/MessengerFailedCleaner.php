@@ -26,7 +26,7 @@ class MessengerFailedCleaner implements EntityCleanerRepositoryInterface
                 WHERE queue_name LIKE :queue
                   AND (delivered_at = :delivered_at OR created_at < :created_at)';
 
-        return $this->connection->executeStatement($sql, [
+        return (int) $this->connection->executeStatement($sql, [
             'queue' => 'failed%',
             'delivered_at' => '9999-12-31 23:59:59',
             'created_at' => (new \DateTimeImmutable($period))->format('Y-m-d H:i:s'),

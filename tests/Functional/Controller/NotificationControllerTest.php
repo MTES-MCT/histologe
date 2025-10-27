@@ -43,6 +43,7 @@ class NotificationControllerTest extends WebTestCase
 
     public function provideAllNotificationOptions(): \Generator
     {
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
@@ -85,6 +86,7 @@ class NotificationControllerTest extends WebTestCase
 
     public function provideSelectedNotificationOptions(): \Generator
     {
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 

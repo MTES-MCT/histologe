@@ -187,7 +187,7 @@ class MergePartnersCommand extends Command
     /**
      * Preview affectation status changes that will occur during merge.
      *
-     * @return array<int, array<string>>
+     * @return array<int, array<int, int|string>>
      */
     private function previewAffectationStatusChanges(Partner $sourcePartner, Partner $destinationPartner): array
     {

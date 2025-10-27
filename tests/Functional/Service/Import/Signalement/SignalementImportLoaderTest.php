@@ -17,6 +17,7 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -38,7 +39,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     private CriticiteCalculator $criticiteCalculator;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileManager $fileManager;
-    private MockObject|FilesystemOperator $filesystemOperator;
+    private MockObject&FilesystemOperator $filesystemOperator;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
 
@@ -56,7 +57,13 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
         $this->fileManager = self::getContainer()->get(FileManager::class);
         $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
         $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
     }
@@ -85,7 +92,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);
-        $headers = array_keys($this->getData()[0]);
+        $headers = array_map('strval', array_keys($this->getData()[0]));
         $signalementImportLoader->load($territory, $this->getData(), $headers);
 
         $this->assertArrayHasKey('count_signalement', $signalementImportLoader->getMetadata());

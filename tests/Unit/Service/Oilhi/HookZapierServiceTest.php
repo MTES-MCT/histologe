@@ -18,7 +18,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class HookZapierServiceTest extends TestCase
 {
-    private MockObject|LoggerInterface $logger;
+    private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
     {

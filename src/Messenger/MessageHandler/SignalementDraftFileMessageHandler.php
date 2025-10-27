@@ -3,6 +3,7 @@
 namespace App\Messenger\MessageHandler;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Manager\UserManager;
 use App\Messenger\Message\SignalementDraftFileMessage;
@@ -50,6 +51,7 @@ class SignalementDraftFileMessageHandler
         );
 
         $signalement = $this->signalementRepository->find($signalementDraftFileMessage->getSignalementId());
+        /** @var User|null $uploadUser */
         $uploadUser = $this->userManager->findOneBy(['email' => $signalement->getMailDeclarant()]);
         if ($files = $signalementDraftRequest->getFiles()) {
             foreach ($files as $key => $fileList) {

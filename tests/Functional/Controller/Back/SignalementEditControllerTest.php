@@ -49,7 +49,7 @@ class SignalementEditControllerTest extends WebTestCase
         );
 
         $payload = $this->getPayloadCoordonneesBailleur('13 habitat', $signalement->getId());
-        $this->client->request('POST', $route, [], [], [], json_encode($payload));
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
         $this->assertResponseIsSuccessful();
 
@@ -66,7 +66,7 @@ class SignalementEditControllerTest extends WebTestCase
         );
 
         $payload = $this->getPayloadCoordonneesBailleur('Habitat Social Solidaire', $signalement->getId());
-        $this->client->request('POST', $route, [], [], [], json_encode($payload));
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
         $this->assertResponseIsSuccessful();
         $this->assertNull($signalement->getBailleur());
@@ -80,7 +80,7 @@ class SignalementEditControllerTest extends WebTestCase
      */
     public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
     {
-        $addressResult = json_decode(file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
+        $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
         $addressMock = $this->createMock(AddressService::class);
         $addressMock->method('getAddress')->willReturn(new Address($addressResult));
         $this->client->getContainer()->set(AddressService::class, $addressMock);
@@ -91,7 +91,7 @@ class SignalementEditControllerTest extends WebTestCase
 
         $payload['_token'] = $this->getCsrfToken($token, $this->signalement->getId());
 
-        $this->client->request('POST', $route, [], [], [], json_encode($payload));
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
         $this->assertResponseIsSuccessful();
     }
@@ -109,7 +109,7 @@ class SignalementEditControllerTest extends WebTestCase
         );
 
         $payload['_token'] = '1234';
-        $this->client->request('POST', $route, [], [], [], json_encode($payload));
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
         $this->assertResponseStatusCodeSame(401, (string) $this->client->getResponse()->getStatusCode());
     }
@@ -128,7 +128,7 @@ class SignalementEditControllerTest extends WebTestCase
 
         $payload['_token'] = $this->getCsrfToken($token, $this->signalement->getId());
         $payload[key($payload)] = str_repeat('x', 5000);
-        $this->client->request('POST', $route, [], [], [], json_encode($payload));
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
         $this->assertResponseStatusCodeSame(400, (string) $this->client->getResponse()->getStatusCode());
     }
 

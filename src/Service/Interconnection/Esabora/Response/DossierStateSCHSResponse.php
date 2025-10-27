@@ -32,7 +32,7 @@ class DossierStateSCHSResponse implements DossierResponseInterface
                 $this->etat = $data[6] ?? null;
                 $this->dateCloture = $data[7] ?? null;
             } else {
-                $this->errorReason = json_encode($response);
+                $this->errorReason = (string) json_encode($response);
             }
         }
         $this->statusCode = $statusCode;

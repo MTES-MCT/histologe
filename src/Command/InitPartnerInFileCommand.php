@@ -33,9 +33,11 @@ class InitPartnerInFileCommand
     {
         $territories = $this->territoryRepository->findAllList();
 
+        /** @var int $total */
         $total = $this->fileRepository->findAllWithoutPartner(true);
+        /** @var array<int, array<string, int>> $list */
         $list = $this->fileRepository->findAllWithoutPartner();
-        $progressBar = $io->createProgressBar(count($list));
+        $progressBar = $io->createProgressBar(is_array($list) ? count($list) : 0);
         $progressBar->start();
         $i = 0;
         foreach ($list as $item) {

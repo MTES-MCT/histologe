@@ -11,7 +11,7 @@ class DossierStateSCHSResponseTest extends TestCase
     public function testDossierResponseSuccessfullyCreated(): void
     {
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/etat_importe.json';
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
         $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
         $this->assertEquals('00000000-0000-0000-2022-000000000001', $dossierResponse->getSasReference());

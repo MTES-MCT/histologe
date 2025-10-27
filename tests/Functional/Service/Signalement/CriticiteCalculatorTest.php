@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\Signalement;
+use App\Repository\SignalementRepository;
 use App\Service\Signalement\CriticiteCalculator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,12 +17,19 @@ class CriticiteCalculatorTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
     }
 
     public function testCalculateScoreOnOldSignalement(): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $signalement = $signalementRepository->find(1);
 
@@ -33,6 +41,7 @@ class CriticiteCalculatorTest extends KernelTestCase
 
     public function testCalculateFromNewFormulaire(): void
     {
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-27']);

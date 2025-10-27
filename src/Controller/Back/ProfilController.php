@@ -88,12 +88,13 @@ class ProfilController extends AbstractController
         ImageManipulationHandler $imageManipulationHandler,
         FileScanner $fileScanner,
     ): Response {
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         /** @var User $user */
         $user = $this->getUser();
         if ($this->isCsrfTokenValid(
             'profil_edit_infos',
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             $avatarFile = $request->files->get('profil_edit_infos')['avatar'] ?? null;
             $errorMessage = [];
@@ -173,7 +174,7 @@ class ProfilController extends AbstractController
             ];
         }
 
-        return $this->json($response, $response['code']);
+        return $this->json($response, (int) $response['code']);
     }
 
     #[Route('/delete-avatar', name: 'back_profil_delete_avatar', methods: ['GET', 'POST'])]
@@ -205,12 +206,13 @@ class ProfilController extends AbstractController
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
     ): Response {
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         /** @var User $user */
         $user = $this->getUser();
         if ($this->isCsrfTokenValid(
             'profil_edit_email',
-            $payload['_token']
+            (string) $payload['_token']
         )) {
             $errorMessage = [];
 
@@ -294,7 +296,7 @@ class ProfilController extends AbstractController
             ];
         }
 
-        return $this->json($response, $response['code']);
+        return $this->json($response, (int) $response['code']);
     }
 
     #[Route('/edit-password', name: 'back_profil_edit_password', methods: ['POST'])]
@@ -307,14 +309,18 @@ class ProfilController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
 
         if ($request->isMethod('POST')
-            && $this->isCsrfTokenValid('profil_edit_password', $payload['_token'])
+            && $this->isCsrfTokenValid('profil_edit_password', (string) $payload['_token'])
         ) {
             $errorMessages = [];
+            /** @var string $passwordCurrent */
             $passwordCurrent = $payload['password-current'];
+            /** @var string $password */
             $password = $payload['password'];
+            /** @var string $passwordRepeat */
             $passwordRepeat = $payload['password-repeat'];
 
             if (!$passwordHasherFactory->getPasswordHasher($user)->verify($user->getPassword(), $passwordCurrent)) {
@@ -373,7 +379,7 @@ class ProfilController extends AbstractController
     #[Route('/dismiss-modal-duplicate-addresses', name: 'dismiss_modal_duplicate_addresses', methods: ['POST'])]
     public function dismissModalDuplicateAddresses(Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('modal_duplicate_addresses', $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('modal_duplicate_addresses', (string) $request->request->get('_token'))) {
             /** @var User $user */
             $user = $this->getUser();
             $user->setDuplicateModalDismissed();

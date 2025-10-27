@@ -42,7 +42,7 @@ class SignalementFileController extends AbstractController
         }
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
-        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
+        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
         $fileList = $signalementFileProcessor->process($files);
@@ -72,7 +72,7 @@ class SignalementFileController extends AbstractController
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
-        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), (string) $request->get('_token'))) {
             return $this->json(['response' => 'Token CSRF invalide, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
         $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
@@ -146,7 +146,7 @@ class SignalementFileController extends AbstractController
 
         if (null === $file) {
             $this->addFlash('error', 'Ce fichier n\'existe plus');
-        } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), $request->get('_token'))) {
+        } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->get('_token'))) {
             $filename = $file->getFilename();
             if ($uploadHandlerService->deleteFile($file)) {
                 $description = $file->isTypeDocument() ? 'Document supprimé ' : 'Photo supprimée ';

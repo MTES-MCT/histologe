@@ -60,7 +60,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         );
 
         $this->assertResponseStatusCodeSame($expectedStatusCode);
-        $this->assertEquals($expectedContent, $client->getResponse()->getContent());
+        $this->assertEquals($expectedContent, (string) $client->getResponse()->getContent());
     }
 
     public function provideWebhookTestData(): \Generator
@@ -141,14 +141,14 @@ class BrevoWebhookControllerTest extends WebTestCase
                 'REMOTE_ADDR' => '127.0.0.1',
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([
+            (string) json_encode([
                 'event' => $event,
                 'email' => $email,
             ])
         );
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertEquals('OK', $client->getResponse()->getContent());
+        $this->assertEquals('OK', (string) $client->getResponse()->getContent());
 
         $emailDeliveryIssue = $container->get(EmailDeliveryIssueRepository::class)->findOneBy(['email' => $email]);
 
@@ -156,7 +156,7 @@ class BrevoWebhookControllerTest extends WebTestCase
             $this->assertNotNull($emailDeliveryIssue);
             $this->assertEquals($email, $emailDeliveryIssue->getEmail());
             $this->assertEquals($event, $emailDeliveryIssue->getEvent()->value);
-            $this->assertEquals(json_encode($expectedPayload), json_encode($emailDeliveryIssue->getPayload()));
+            $this->assertEquals(json_encode($expectedPayload), (string) json_encode($emailDeliveryIssue->getPayload()));
         } else {
             $this->assertNull($emailDeliveryIssue);
         }

@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\DesordrePrecision;
 use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\OccupantLink;
@@ -104,8 +105,8 @@ class SignalementBuilder
 
     public function withTypeCompositionLogement(): self
     {
-        $nbOccupantsLogement = $this->convertStringToNumber($this->signalementDraftRequest->getCompositionLogementNombrePersonnes());
-        $nbPiecesLogement = $this->convertStringToNumber($this->signalementDraftRequest->getCompositionLogementNbPieces());
+        $nbOccupantsLogement = (int) $this->convertStringToNumber($this->signalementDraftRequest->getCompositionLogementNombrePersonnes());
+        $nbPiecesLogement = (int) $this->convertStringToNumber($this->signalementDraftRequest->getCompositionLogementNbPieces());
         $this->signalement
             ->setTypeCompositionLogement(
                 $this->typeCompositionLogementFactory->createFromSignalementDraftPayload($this->payload)
@@ -245,7 +246,10 @@ class SignalementBuilder
                     if (1 === \count($precisions)) {
                         if (1 === $value) {
                             // il n'y en a qu'une, on la lie
-                            $this->signalement->addDesordrePrecision($precisions->first());
+                            $first = $precisions->first();
+                            assert($first instanceof DesordrePrecision);
+
+                            $this->signalement->addDesordrePrecision($first);
                         }
                     } else {
                         // passe par un service spécifique pour évaluer les précisions à ajouter sur ce critère
@@ -294,7 +298,7 @@ class SignalementBuilder
     public function withProcedure(): self
     {
         $loyer = $this->convertStringToNumber($this->signalementDraftRequest->getInformationsComplementairesLogementMontantLoyer(), false);
-        $nbEtages = $this->convertStringToNumber($this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages());
+        $nbEtages = (int) $this->convertStringToNumber($this->signalementDraftRequest->getInformationsComplementairesLogementNombreEtages());
         $this->signalement
             ->setInformationProcedure(
                 $this->informationProcedureFactory->createFromSignalementDraftPayload($this->payload)

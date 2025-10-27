@@ -3,12 +3,14 @@
 namespace App\Tests\Unit\Factory\Esabora;
 
 use App\Entity\Enum\PartnerType;
+use App\Entity\File;
 use App\Factory\Interconnection\Esabora\DossierMessageSISHFactory;
 use App\Repository\SuiviRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\NonUniqueResultException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -26,17 +28,20 @@ class DossierMessageSISHFactoryTest extends TestCase
         $affectation = $this->getSignalementAffectation(PartnerType::ARS);
         $signalement = $affectation->getSignalement();
 
+        /** @var SuiviRepository&MockObject $suiviRepositoryMock */
         $suiviRepositoryMock = $this->createMock(SuiviRepository::class);
         $suiviRepositoryMock
             ->expects($this->once())
             ->method('findAllSuiviBy')
             ->willReturn($this->getSuiviPartnerList($affectation->getPartner()));
 
+        /** @var UploadHandlerService&MockObject $uploadHandlerServiceMock */
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
             ->expects($this->exactly(2))
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
+        /** @var ParameterBagInterface&MockObject $parameterBagMock */
         $parameterBagMock = $this->createMock(ParameterBagInterface::class);
         $parameterBagMock
             ->expects($this->once())
@@ -44,6 +49,7 @@ class DossierMessageSISHFactoryTest extends TestCase
             ->with('host_url')
             ->willReturn('https://localhost');
 
+        /** @var UrlGeneratorInterface&MockObject $urlGeneratorMock */
         $urlGeneratorMock = $this->createMock(UrlGeneratorInterface::class);
         $urlGeneratorMock
             ->expects($this->once())
@@ -59,7 +65,10 @@ class DossierMessageSISHFactoryTest extends TestCase
         );
 
         $signalement->setNumAppartOccupant('à gauche de l\'entrée principale, appart 11');
-        $signalement->getFiles()->first()->setTitle('un titre de fichier très long pour tester le tronquage à 100 caractères ce qui devrait donc être là le reste n\'apparait pas');
+        $file = $signalement->getFiles()->first();
+        if ($file instanceof File) {
+            $file->setTitle('un titre de fichier très long pour tester le tronquage à 100 caractères ce qui devrait donc donc le reste n\'apparait pas');
+        }
         $signalement->setInseeOccupant(null);
 
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);

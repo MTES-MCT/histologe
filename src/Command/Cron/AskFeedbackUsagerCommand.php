@@ -70,8 +70,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
             return Command::FAILURE;
         }
-
-        $period = $input->getOption('period');
+        $period = null !== $input->getOption('period') ? (int) $input->getOption('period') : null;
         $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input, $period);
         $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input, $period);
         $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input, $period);
@@ -92,7 +91,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 message: \sprintf(
                     '%s signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager répartis comme suit :
                     %s dont les deux derniers suivis sont des suivis techniques demande de feedback et le dernier a plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours,
@@ -189,7 +188,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         return $nbSignalements;
     }
 
-    /** @param array<int> $signalementsIds */
+    /** @param array<int, int|string> $signalementsIds */
     protected function sendMailToUsagers(
         InputInterface $input,
         array $signalementsIds,

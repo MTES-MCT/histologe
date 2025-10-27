@@ -51,7 +51,7 @@ class AutoAffectationRuleController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response {
         $ruleId = $request->request->get('autoaffectationrule_id');
-        if (!$this->isCsrfTokenValid('autoaffectationrule_delete', $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('autoaffectationrule_delete', (string) $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_auto_affectation_rule_index', [], Response::HTTP_SEE_OTHER);

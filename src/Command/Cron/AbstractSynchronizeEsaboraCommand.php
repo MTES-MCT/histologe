@@ -103,7 +103,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
     }
 
     /**
-     * @return array{criterionName: string, criterionValueList: string[]}
+     * @return array{criterionName: string, criterionValueList: array<string|null>}
      */
     protected function getMessage(Affectation $affectation, string $criterionName): array
     {
@@ -179,7 +179,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 cronLabel: '['.$partnerTypeLabel.'] Synchronisation des signalements depuis Esabora',
                 params: [
                     'count_success' => $countSyncSuccess,

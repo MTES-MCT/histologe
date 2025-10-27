@@ -15,11 +15,14 @@ class ActivationTokenGeneratorTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $em */
+        $em = self::getContainer()->get('doctrine.orm.entity_manager');
+        $this->entityManager = $em;
     }
 
     public function testValidateTokenActivation(): void
     {
+        /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'user-13-03@signal-logement.fr']);
 
@@ -34,6 +37,7 @@ class ActivationTokenGeneratorTest extends KernelTestCase
 
     public function testValidateTokenUpdatePassword(): void
     {
+        /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
 

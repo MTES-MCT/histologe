@@ -60,7 +60,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
 
                 $transformedData[SignalementDraftRequest::FILE_UPLOAD_KEY][$keyUpdated] = $data[$key];
             } elseif (preg_match(SignalementDraftRequest::PATTERN_NOMBRE, $key, $matches) && is_numeric($value)) {
-                $transformedData[$key] = ceil($value);
+                $transformedData[$key] = ceil((float) $value);
             } else {
                 if ('isProprioAverti' === $key) {
                     $transformedData[$key] = $value;
@@ -77,7 +77,7 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
      * @param SignalementDraft     $object
      * @param array<string, mixed> $context
      *
-     * @return array<string, mixed>|string|int|float|bool|\ArrayObject|null
+     * @return array<string, mixed>|string|int|float|bool|\ArrayObject<string,mixed>|null
      *
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */

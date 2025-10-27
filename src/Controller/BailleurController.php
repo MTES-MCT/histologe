@@ -46,7 +46,7 @@ class BailleurController extends AbstractController
             ->filter(function ($bailleurItem) use ($name) {
                 if (str_starts_with($bailleurItem->getName(), Bailleur::BAILLEUR_RADIE)) {
                     $name = strtolower($name);
-                    $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
+                    $name = (string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
 
                     return str_contains(strtolower($this->sanitizeName($bailleurItem->getName())), $name) || str_contains(strtolower($bailleurItem->getRaisonSociale()), $name);
                 }

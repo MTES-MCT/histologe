@@ -41,7 +41,7 @@ class LoadSignalementDraft extends Fixture implements OrderedFixtureInterface
      */
     private function loadSignalementsDraft(ObjectManager $manager, array $row): void
     {
-        $payload = json_decode(file_get_contents(__DIR__.'/../Files/signalement_draft_payload/'.$row['payload']), true);
+        $payload = json_decode((string) file_get_contents(__DIR__.'/../Files/signalement_draft_payload/'.$row['payload']), true);
         $signalementDraft = (new SignalementDraft())
             ->setUuid($row['uuid'])
             ->setPayload($payload)

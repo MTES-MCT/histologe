@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 class CountUser
 {
-    /** @var array<string, int> */
+    /** @var array<string, float|int> */
     #[Groups(['widget:read'])]
     private ?array $percentage = [];
 
@@ -36,7 +36,7 @@ class CountUser
     }
 
     /**
-     * @return array<string, int>|null
+     * @return array<string, float|int>|null
      */
     public function getPercentage(): ?array
     {
