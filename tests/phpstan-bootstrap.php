@@ -12,6 +12,14 @@ if (file_exists(__DIR__.'/../config/bootstrap.php')) {
     (new Dotenv())->bootEnv(__DIR__.'/../.env');
 }
 
+// Détecte si on est sur GitHub Actions
+$isGithub = getenv('GITHUB_ACTIONS') === 'true';
+
+if ($isGithub) {
+    // Override DATABASE_URL pour utiliser SQLite en mémoire
+    $_ENV['DATABASE_URL'] = 'sqlite:///:memory:';
+}
+
 // Crée et boot le kernel
 $kernel = new Kernel('test', true);
 $kernel->boot();
