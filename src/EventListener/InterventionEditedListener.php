@@ -22,8 +22,17 @@ class InterventionEditedListener
         $changes = [];
         if ($event->hasChangedField('details')) {
             if (!empty($event->getOldValue('details'))) {
-                $before = HtmlCleaner::clean($event->getOldValue('details'));
-                $after = HtmlCleaner::clean($event->getNewValue('details'));
+                $before = preg_replace(
+                    '/\s+/',
+                    ' ',
+                    HtmlCleaner::clean($event->getOldValue('details'))
+                );
+                $after = preg_replace(
+                    '/\s+/',
+                    ' ',
+                    HtmlCleaner::clean($event->getNewValue('details'))
+                );
+
                 if ($before !== $after && !empty($after)) {
                     $changes['details'] = [
                         'old' => $before,
