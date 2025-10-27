@@ -47,7 +47,7 @@ class InterventionEditedListenerTest extends TestCase
             ->setType(InterventionType::VISITE);
 
         $old = "Ligne 1\nLigne 2";
-        $new = "Ligne 1\r\nLigne 2";
+        $new = "Ligne 1\r\nLigne 2\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n";
 
         $changeSet = [
             'details' => [$old, $new],
