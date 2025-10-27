@@ -112,6 +112,7 @@ jobs:
         run: | 
           composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
           composer install --working-dir=tools/php-cs-fixer --no-progress --no-suggest --prefer-dist --optimize-autoloader
+          composer install --working-dir=tools/wiremock --no-progress --no-suggest --prefer-dist --optimize-autoloader
 
       # https://github.com/symfonycorp/security-checker-action
       - name: Security check installed dependencies
@@ -126,7 +127,7 @@ jobs:
 
       # https://github.com/phpstan/phpstan
       - name: Analyse PHP Code (PHPStan)
-        run: vendor/bin/phpstan analyse
+        run: vendor/bin/phpstan analyse -v
 
       # https://github.com/FriendsOfPHP/PHP-CS-Fixer
       - name: Check PHP coding standard (PHP-CS-Fixer)
