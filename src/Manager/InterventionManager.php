@@ -151,7 +151,7 @@ class InterventionManager extends AbstractManager
 
     public function confirmVisiteFromRequest(
         VisiteRequest $visiteRequest,
-        Partner $createdByPartner,
+        ?Partner $createdByPartner = null,
         ?Intervention $intervention = null,
     ): ?Intervention {
         if (!$visiteRequest->getDetails()) {
