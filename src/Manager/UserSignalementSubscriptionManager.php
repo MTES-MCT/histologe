@@ -33,6 +33,7 @@ class UserSignalementSubscriptionManager extends AbstractManager
         ?Affectation $affectation = null,
         bool &$subscriptionCreated = false,
     ): ?UserSignalementSubscription {
+        /** @var ?UserSignalementSubscription $subscription */
         $subscription = $this->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]);
         if (null === $subscription) {
             $subscription = (new UserSignalementSubscription())

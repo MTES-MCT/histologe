@@ -88,11 +88,11 @@ readonly class SignalementResponseFactory
         $signalementResponse->precisionNatureLogement = $signalement->getTypeCompositionLogement()?->getTypeLogementNatureAutrePrecision();
         $signalementResponse->logementSocial = $signalement->getIsLogementSocial();
         $signalementResponse->superficie = $signalement->getSuperficie();
-        $signalementResponse->pieceUnique = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementPieceUnique());
-        $signalementResponse->nbPieces = $signalement->getTypeCompositionLogement()?->getCompositionLogementNbPieces() ?? $signalement->getNbPiecesLogement();
+        $signalementResponse->pieceUnique = $this->stringToBoolStrict($signalement->getTypeCompositionLogement()?->getCompositionLogementPieceUnique());
+        $signalementResponse->nbPieces = $signalement->getTypeCompositionLogement()?->getCompositionLogementNbPieces() ?? (string) $signalement->getNbPiecesLogement();
         $signalementResponse->anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction() ?? $signalement->getAnneeConstruction();
         $signalementResponse->constructionAvant1949 = $signalement->getIsConstructionAvant1949();
-        $signalementResponse->nbNiveaux = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages() ?? $signalement->getNbNiveauxLogement();
+        $signalementResponse->nbNiveaux = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages() ?? (string) $signalement->getNbNiveauxLogement();
         if (!empty($signalement->getTypeCompositionLogement()?->getTypeLogementAppartementEtage())) {
             $signalementResponse->etage = EtageType::tryFrom($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage());
         }
@@ -110,8 +110,8 @@ readonly class SignalementResponseFactory
         $signalementResponse->dateEntreeLogement = $signalement->getDateEntree()?->format('Y-m-d');
         $signalementResponse->nbOccupantsLogement = $signalement->getNbOccupantsLogement();
         $signalementResponse->nbEnfantsDansLogement = $this->stringToInt($signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants());
-        $signalementResponse->enfantsDansLogementMoinsSixAns = $this->stringToBool($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
-        $signalementResponse->assuranceContactee = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureAssuranceContactee());
+        $signalementResponse->enfantsDansLogementMoinsSixAns = $this->stringToBoolStrict($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
+        $signalementResponse->assuranceContactee = $this->stringToBoolStrict($signalement->getInformationProcedure()?->getInfoProcedureAssuranceContactee());
         $signalementResponse->reponseAssurance = $signalement->getInformationProcedure()?->getInfoProcedureReponseAssurance();
         $signalementResponse->souhaiteQuitterLogement = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialQuitteLogement());
         $signalementResponse->souhaiteQuitterLogementApresTravaux = $this->stringToBool($signalement->getInformationProcedure()?->getInfoProcedureDepartApresTravaux());
@@ -130,7 +130,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->etatDesLieuxExistant = $this->stringToBool($signalement->getTypeCompositionLogement()?->getBailDpeEtatDesLieux());
         $signalementResponse->preavisDepartTransmis = $signalement->getisPreavisDepart();
         $signalementResponse->demandeRelogementEffectuee = $signalement->getIsRelogement();
-        $signalementResponse->loyersPayes = $this->stringToBool($signalement->getInformationComplementaire()?->getinformationsComplementairesSituationOccupantsLoyersPayes());
+        $signalementResponse->loyersPayes = $this->stringToBoolStrict($signalement->getInformationComplementaire()?->getinformationsComplementairesSituationOccupantsLoyersPayes());
         $signalementResponse->dateEffetBail = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateEffetBail() ?? $signalementResponse->dateEntreeLogement;
 
         $signalementResponse->score = $signalement->getScore();
@@ -205,6 +205,15 @@ readonly class SignalementResponseFactory
         return null;
     }
 
+    private function stringToBoolStrict(?string $value): ?bool
+    {
+        return match ($value) {
+            'oui', 'piece_unique' => true,
+            'non', 'plusieurs_pieces' => false,
+            default => null,
+        };
+    }
+
     private function stringToInt(?string $value): ?int
     {
         if (!empty($value)) {
@@ -227,12 +236,12 @@ readonly class SignalementResponseFactory
                 telephoneSecondaire: $signalement->getTelOccupantBis(),
                 dateNaissance: $signalement->getDateNaissanceOccupant()?->format('Y-m-d') ?? $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsDateNaissance(),
                 revenuFiscal: $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsRevenuFiscal(),
-                beneficiaireRsa: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsBeneficiaireRsa()),
-                beneficiaireFsl: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()),
+                beneficiaireRsa: $this->stringToBoolStrict($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsBeneficiaireRsa()),
+                beneficiaireFsl: $this->stringToBoolStrict($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()),
                 allocataire: in_array($signalement->getIsAllocataire(), [null, '']) ? null : (bool) $signalement->getIsAllocataire(), // valeurs possibles : null, '', 0, 1, 'CAF', 'MSA',
                 typeAllocataire: in_array($signalement->getIsAllocataire(), ['MSA', 'CAF']) ? $signalement->getIsAllocataire() : null,
                 numAllocataire: $signalement->getNumAllocataire(),
-                montantAllocation: $signalement->getSituationFoyer()?->getLogementSocialMontantAllocation() ?? $signalement->getMontantAllocation(),
+                montantAllocation: $signalement->getSituationFoyer()?->getLogementSocialMontantAllocation() ?? (string) $signalement->getMontantAllocation(),
             );
         }
 
@@ -242,7 +251,7 @@ readonly class SignalementResponseFactory
                 structure: $signalement->getStructureDeclarant(),
                 lienOccupant: $signalement->getLienDeclarantOccupant(),
                 precisionTypeSiBailleur: $signalement->getTypeProprio(),
-                estTravailleurSocialPourOccupant: $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementDeclarant()),
+                estTravailleurSocialPourOccupant: $this->stringToBoolStrict($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementDeclarant()),
                 nom: $signalement->getNomDeclarant(),
                 prenom: $signalement->getPrenomDeclarant(),
                 email: $signalement->getMailDeclarant(),
@@ -269,8 +278,8 @@ readonly class SignalementResponseFactory
                 telephoneSecondaire: $signalement->getTelProprioSecondaire(),
                 dateNaissance: $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateNaissance(),
                 revenuFiscal: $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurRevenuFiscal(),
-                beneficiaireRsa: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireRsa()),
-                beneficiaireFsl: $this->stringToBool($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireFsl()),
+                beneficiaireRsa: $this->stringToBoolStrict($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireRsa()),
+                beneficiaireFsl: $this->stringToBoolStrict($signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurBeneficiaireFsl()),
                 adresse: $adresse
             );
         }

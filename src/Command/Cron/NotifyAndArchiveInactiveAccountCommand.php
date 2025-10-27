@@ -119,7 +119,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         $this->io->newLine(2);
 
         foreach ($pendingUsersByTerritories as $territoryId => $pendingUsers) {
-            $adminsToNotify = $this->userRepository->findActiveTerritoryAdmins($territoryId);
+            $adminsToNotify = $this->userRepository->findActiveTerritoryAdmins((int) $territoryId);
             $this->sendRtNotification($adminsToNotify, $pendingUsers);
         }
 

@@ -171,8 +171,7 @@ class AffectationRepository extends ServiceEntityRepository
         if (\count($territories)) {
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
         }
-
-        $qb->groupBy('t.zip', 'p.nom');
+        $qb->groupBy('t.zip, p.nom');
 
         return $qb->getQuery()->getResult();
     }

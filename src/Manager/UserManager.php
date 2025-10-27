@@ -153,7 +153,12 @@ class UserManager extends AbstractManager
 
     public function getSystemUser(): ?User
     {
-        return $this->getRepository()->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
+        /** @var User|null $user */
+        $user = $this->getRepository()->findOneBy([
+            'email' => $this->parameterBag->get('user_system_email'),
+        ]);
+
+        return $user;
     }
 
     public function sendAccountActivationNotification(User $user): void

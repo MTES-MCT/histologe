@@ -120,6 +120,7 @@ class TagController extends AbstractController
         EntityManagerInterface $entityManager,
         TagAwareCacheInterface $cache,
     ): Response {
+        /** @var string|int $tagId */
         $tagId = $request->request->get('tag_id');
         /** @var Tag $tag */
         $tag = $tagManager->find($tagId);

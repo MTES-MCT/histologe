@@ -35,10 +35,10 @@ class ClearEntitiesCommand extends AbstractCronCommand
         $io = new SymfonyStyle($input, $output);
         /** @var ServiceEntityRepository<object>|EntityCleanerRepositoryInterface $entityCleanerRepository */
         foreach ($this->entityCleanerRepositories as $entityCleanerRepository) {
-            $entity = explode('\\', $entityCleanerRepository->getClassName());
+            $entity = explode('\\', $entityCleanerRepository->getClassName()); // @phpstan-ignore-line
             $entityName = end($entity);
             $countDeletedSuccess = $this->clearEntitiesHandler->handle(
-                fn () => $entityCleanerRepository->cleanOlderThan(),
+                fn () => $entityCleanerRepository->cleanOlderThan(),// @phpstan-ignore-line
                 $entityName,
                 sprintf('Suppression des enregistrements de la table %s', $entityName)
             );

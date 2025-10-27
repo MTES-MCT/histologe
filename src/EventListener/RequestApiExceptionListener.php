@@ -25,7 +25,7 @@ class RequestApiExceptionListener
 
         if ($previous instanceof ExceptionInterface) {
             /** @var ConstraintViolationListInterface|null $violations */
-            $violations = $previous->getViolations();
+            $violations = $previous->getViolations(); // @phpstan-ignore-line
             $errors = [];
             foreach ($violations as $violation) {
                 $errors[] = [

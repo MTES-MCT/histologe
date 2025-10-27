@@ -50,6 +50,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $zip = $input->getOption('zip');
+        /** @var ?int $split */
         $split = $input->getOption('split');
         $uuid = $input->getOption('uuid');
         $fromCreatedAt = $input->getOption('from_created_at');

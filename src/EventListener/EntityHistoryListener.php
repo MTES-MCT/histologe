@@ -124,6 +124,9 @@ class EntityHistoryListener
         $this->saveEntityHistory($event, $entity, $changes);
     }
 
+    /**
+     * @param PersistentCollection<int, object> $collection
+     */
     public function processCollection(PersistentCollection $collection, HistoryEntryEvent $event): void
     {
         $changes = [];

@@ -77,6 +77,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param ArrayCollection<int, Partner>|null $partners
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -923,7 +925,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, int> $ids
+     * @param array<int, int|string> $ids
      *
      * @return array<int, Signalement>
      */
@@ -1159,7 +1161,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, Signalement>
+     * @return array<int, array{id: int}>
      */
     public function findNullBanId(): array
     {
@@ -1189,7 +1191,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return array<int, Signalement>
      */
-    public function findSignalementsSplittedCreatedBefore(int $split, Territory $territory): array
+    public function findSignalementsSplittedCreatedBefore(?int $split, Territory $territory): array
     {
         $qb = $this->createQueryBuilder('s')
             ->where('s.territory = :territory')
@@ -2279,24 +2281,24 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->buildBaseQbForNonDeliverable($user, $params);
 
         $qb->select(
-            's.uuid AS uuid',
-            's.nomOccupant AS nomOccupant',
-            's.prenomOccupant AS prenomOccupant',
-            's.reference AS reference',
-            "CONCAT_WS(', ', s.adresseOccupant, CONCAT(s.cpOccupant, ' ', s.villeOccupant)) AS adresse",
-            's.createdAt AS createdAt',
-            's.lastSuiviAt AS dernierSuiviAt',
-            's.lastSuiviBy AS derniereActionPartenaireNom',
-            "CASE
+            's.uuid AS uuid,
+            s.nomOccupant AS nomOccupant,
+            s.prenomOccupant AS prenomOccupant,
+            s.reference AS reference,
+            CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)) AS adresse,
+            s.createdAt AS createdAt,
+            s.lastSuiviAt AS dernierSuiviAt,
+            s.lastSuiviBy AS derniereActionPartenaireNom,
+            CASE
                 WHEN (FIND_IN_SET(s.mailOccupant, GROUP_CONCAT(DISTINCT edi.email)) > 0
                     AND FIND_IN_SET(s.mailDeclarant, GROUP_CONCAT(DISTINCT edi.email)) > 0)
-                    THEN 'Occupant et Tiers'
+                    THEN \'Occupant et Tiers\'
                 WHEN FIND_IN_SET(s.mailOccupant, GROUP_CONCAT(DISTINCT edi.email)) > 0
-                    THEN 'Occupant'
+                    THEN \'Occupant\'
                 WHEN FIND_IN_SET(s.mailDeclarant, GROUP_CONCAT(DISTINCT edi.email)) > 0
-                    THEN 'Tiers'
-                ELSE ''
-            END AS profilNonDeliverable"
+                    THEN \'Tiers\'
+                ELSE \'\'
+            END AS profilNonDeliverable'
         );
 
         if ($params && in_array($params->sortBy, ['createdAt', 'nomOccupant'], true)

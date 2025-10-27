@@ -55,6 +55,7 @@ class UserController extends AbstractController
         $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handlning the form
         [, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);
         if ('POST' === $originalMethod) {
+            /** @var string $format */
             $format = $request->request->get('file-format');
             if (!in_array($format, ['csv', 'xlsx'])) {
                 $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');
@@ -104,6 +105,7 @@ class UserController extends AbstractController
         $users = $userRepository->findUsersPendingToArchive($user);
 
         if ('POST' === $request->getMethod()) {
+            /** @var string $format */
             $format = $request->request->get('file-format');
             if (!in_array($format, ['csv', 'xlsx'])) {
                 $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');

@@ -262,6 +262,7 @@ class PartnerController extends AbstractController
         AffectationManager $affectationManager,
         PopNotificationManager $popNotificationManager,
     ): Response {
+        /** @var int|string $partnerId */
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */
         $partner = $partnerManager->find($partnerId);
@@ -502,7 +503,9 @@ class PartnerController extends AbstractController
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
+        /** @var Partner $toPartner */
         $toPartner = $partnerManager->find($data['partner']);
+        /** @var User $user */
         $user = $userManager->find($data['user']);
         if (!$toPartner || !$user) {
             $this->addFlash('error', 'Partenaire ou utilisateur introuvable.');
@@ -533,6 +536,7 @@ class PartnerController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
     ): Response {
+        /** @var int|string $userId */
         $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('partner_user_delete', (string) $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');

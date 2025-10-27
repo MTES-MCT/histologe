@@ -118,9 +118,12 @@ class SignalementController extends AbstractController
         $isAffectationRefused = $isAffectationAccepted = false;
         $isClosedForMe = null;
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
-        if ($affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
-            return $affectation->getPartner() === $partner;
-        })->first()) {
+        $affectation = $signalement->getAffectations()
+            ->filter(function (Affectation $affectation) use ($partner) {
+                return $affectation->getPartner() === $partner;
+            })
+            ->first();
+        if ($affectation) {
             switch ($affectation->getStatut()) {
                 case AffectationStatus::ACCEPTED:
                     $isAffectationAccepted = true;
@@ -162,14 +165,14 @@ class SignalementController extends AbstractController
         $addSuiviForm = $this->createForm(AddSuiviType::class, $newSuiviToAdd, ['action' => $addSuiviRoute]);
 
         $refusAffectationForm = null;
-        if ($canAnswerAffectation) {
+        if ($canAnswerAffectation && $affectation) {
             $refusAffectation = (new RefusAffectation())->setSignalement($signalement);
             $refusAffectationFormRoute = $this->generateUrl('back_signalement_affectation_deny', ['affectation' => $affectation->getId()]);
             $refusAffectationForm = $this->createForm(RefusAffectationType::class, $refusAffectation, ['action' => $refusAffectationFormRoute]);
         }
 
         $acceptAffectationForm = null;
-        if ($canAnswerAffectation || $canCancelRefusedAffectation) {
+        if (($canAnswerAffectation || $canCancelRefusedAffectation) && $affectation) {
             $acceptAffectation = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $acceptAffectationForm = $this->createForm(

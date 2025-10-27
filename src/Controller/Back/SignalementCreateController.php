@@ -73,6 +73,7 @@ class SignalementCreateController extends AbstractController
         SignalementManager $signalementManager,
         EntityManagerInterface $entityManager,
     ): Response {
+        /** @var int|string $draftId */
         $draftId = $request->request->get('draft_id');
         /** @var Signalement $signalement */
         $signalement = $signalementManager->find($draftId);

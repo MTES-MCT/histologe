@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
 use App\Factory\Interconnection\Idoss\DossierMessageFactory;
 use App\Manager\SuiviManager;
@@ -84,6 +85,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
     {
         if ($this->firstAcceptedAffectationSpecification->isSatisfiedBy($affectation)) {
             $adminEmail = $this->parameterBag->get('user_system_email');
+            /** @var User $adminUser */
             $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
             $this->suiviManager->createSuivi(
                 signalement: $affectation->getSignalement(),

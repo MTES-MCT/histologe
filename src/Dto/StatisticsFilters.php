@@ -15,7 +15,7 @@ class StatisticsFilters
     /** @var array<Epci> */
     private ?array $epcis;
     private ?string $statut;
-    /** @var array<Tag> */
+    /** @var array<Tag|int> */
     private array $etiquettes;
     private ?string $type;
     private ?\DateTime $dateStart;
