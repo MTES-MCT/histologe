@@ -25,7 +25,7 @@ Un tiers non autorisé a profité de l’absence temporaire de l’administrateu
     - [ ] [scalingo] Arrêter temporairement le container de production.
     - [ ] [scalingo] Vérifier que le domaine est toujours attaché au container de production  
     - [ ] [scalingo] Vérifier que le certificat TLS est à jour
-            -   *(Container de production → Paramètres → Domaines)*
+            - *(Container de production → Paramètres → Domaines)*
 
 ---
 
