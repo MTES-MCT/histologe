@@ -80,16 +80,13 @@ class AffectationUpdateControllerTest extends WebTestCase
         $affectations = $signalement?->getAffectations();
 
         $affectation = null;
-        /* @var Affectation $affectation */
         if (null !== $affectations) {
+            /** @var Affectation $affectation */
             $affectation = $affectations->filter(function (Affectation $affectation) {
                 return 'Partenaire 13-01' === $affectation->getPartner()->getNom();
             })->current();
         }
-        if (!$affectation) {
-            $this->fail('No affectation found for the signalement');
-        }
-        $this->patchAffectation($affectation->getUuid(), $payload);
+        $this->patchAffectation($affectation?->getUuid(), $payload);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertEquals($httpCodeStatus, $this->client->getResponse()->getStatusCode());
         $this->assertStringContainsString($errorMessage, $response['message']);

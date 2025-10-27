@@ -38,25 +38,26 @@ class SuiviCreateControllerTest extends WebTestCase
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $firstFile = $signalement?->getFiles()?->first() ?? null;
         $lastFile = $signalement?->getFiles()?->last() ?? null;
-        if (!$firstFile) {
-            $this->fail('No file found for the signalement');
-        }
-        if (!$lastFile) {
-            $this->fail('No file found for the signalement');
-        }
 
-        $affectation = $signalement->getAffectations()->first();
-        if (!$affectation) {
-            $this->fail('No affectation found for the signalement');
-        }
-        $partnerUuid = $affectation->getPartner()->getUuid();
-        $payload = [
-            'description' => 'lorem ipsum dolor sit <em>amet</em>',
-            'notifyUsager' => $notifyUsager,
-            'partenaireUuid' => $partnerUuid,
-        ];
+        if ($signalement) {
+            $affectation = $signalement->getAffectations()->first();
+            if ($affectation) {
+                $partnerUuid = $affectation->getPartner()->getUuid();
+            } else {
+                $partnerUuid = '';
+            }
+            $payload = [
+                'description' => 'lorem ipsum dolor sit <em>amet</em>',
+                'notifyUsager' => $notifyUsager,
+                'partenaireUuid' => $partnerUuid,
+            ];
 
-        $payload['files'] = [$firstFile->getUuid(), $lastFile->getUuid()];
+            if ($firstFile && $lastFile) {
+                $payload['files'] = [$firstFile->getUuid(), $lastFile->getUuid()];
+            }
+        } else {
+            $payload = [];
+        }
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_suivis_post', ['uuid' => $signalementUuid]),

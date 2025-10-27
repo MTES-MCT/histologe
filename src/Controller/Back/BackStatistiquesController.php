@@ -66,17 +66,18 @@ class BackStatistiquesController extends AbstractController
         $territoryKey = !empty($territory) ? $territory->getZip() : '';
         $partnersIds = implode('-', $partners->map(fn ($partner) => $partner->getId())->toArray());
         $cacheKey = 'backGlobalStatistics-zip-'.$territoryKey.'-partners-'.$partnersIds;
-        $backGlobalStatistics = $this->cache->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($territory, $partners) {
-                $item->expiresAfter(3600); // 1 hour for global back stats
-                if (!empty($territory)) {
-                    $item->tag([SearchFilterOptionDataProvider::CACHE_TAG.$territory->getZip()]);
-                }
+        // $backGlobalStatistics = $this->cache->get(
+        //     $cacheKey,
+        //     function (ItemInterface $item) use ($territory, $partners) {
+        //         $item->expiresAfter(3600); // 1 hour for global back stats
+        //         if (!empty($territory)) {
+        //             $item->tag([SearchFilterOptionDataProvider::CACHE_TAG.$territory->getZip()]);
+        //         }
 
-                return $this->globalBackAnalyticsProvider->getData($territory, $partners);
-            }
-        );
+        //         return $this->globalBackAnalyticsProvider->getData($territory, $partners);
+        //     }
+        // );
+        $backGlobalStatistics = $this->globalBackAnalyticsProvider->getData($territory, $partners);
 
         $this->result['count_signalement'] = $backGlobalStatistics['count_signalement'];
         $this->result['average_criticite'] = $backGlobalStatistics['average_criticite'];

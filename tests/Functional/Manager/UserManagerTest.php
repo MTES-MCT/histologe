@@ -102,11 +102,11 @@ class UserManagerTest extends KernelTestCase
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => $userEmail]);
 
-        $partner = $user->getPartners()->first() ?: null;
-        if (!$partner) {
+        $firstPartner = $user->getPartners()->first() ?: null;
+        if (!$firstPartner) {
             $this->fail('No partner found for the user');
         }
-        $this->userManager->transferUserToPartner($user, $partner, $partner);
+        $this->userManager->transferUserToPartner($user, $firstPartner, $partner);
 
         return $userRepository->findOneBy(['email' => $userEmail]);
     }

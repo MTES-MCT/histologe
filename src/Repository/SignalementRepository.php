@@ -550,7 +550,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $partners);
         }
 
-        return (int) $qb->getQuery()->getSingleScalarResult();
+        return (float) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

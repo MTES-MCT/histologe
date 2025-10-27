@@ -70,8 +70,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
             return Command::FAILURE;
         }
-
-        $period = (int) $input->getOption('period');
+        $period = null !== $input->getOption('period') ? (int) $input->getOption('period') : null;
         $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input, $period);
         $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input, $period);
         $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input, $period);
