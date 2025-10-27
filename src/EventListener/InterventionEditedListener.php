@@ -45,7 +45,8 @@ class InterventionEditedListener
                 $after = is_array($after)
                     ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $after)
                     : [];
-
+                sort($before);
+                sort($after);
                 if ($before !== $after && !empty($after)) {
                     $changes['concludeProcedure'] = [
                         'old' => implode(', ', $before),
@@ -75,7 +76,7 @@ class InterventionEditedListener
 
         return u(HtmlCleaner::clean($text))
             ->replaceMatches('/\R/u', "\n")          // normalise tous les retours à la ligne
-            ->replaceMatches('/\x{00A0}/u', ' ')     // remplace les espaces insécables
+            ->replaceMatches('/\x{00A0}/u', "\n")     // remplace les espaces insécables
             ->replaceMatches('/[ \t\n]+/u', ' ')     // réduit tous les espaces multiples
             ->normalize()                            // normalise Unicode (accents, etc.)
             ->trim()

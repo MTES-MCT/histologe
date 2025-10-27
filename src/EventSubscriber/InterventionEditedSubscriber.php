@@ -38,14 +38,23 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 $description .= $intervention->getDetails();
             } else {
                 $description = sprintf(
-                    'Les informations sur la visite du logement effectuée le %s par %s ont été modifiées.<br><br> %s du logement %s : <br>%s.<br><br>Commentaire opérateur : %s',
+                    'Les informations sur la visite du logement effectuée le %s par %s ont été modifiées.',
                     $intervention->getScheduledAtFormated(),
-                    $partnerName,
-                    count($intervention->getConcludeProcedure()) > 1 ? 'Les nouvelles situations observées' : 'La nouvelle situation observé',
-                    count($intervention->getConcludeProcedure()) > 1 ? 'sont' : 'est',
-                    $intervention->getConcludeProcedureString(),
-                    $intervention->getDetails()
+                    $partnerName
                 );
+                /** @var array<string, array{old?: string, new?: string}> $changes */
+                $changes = $intervention->getChangesForMail();
+                if (isset($changes['concludeProcedure']['new'])) {
+                    $description .= count($intervention->getConcludeProcedure()) > 1
+                        ? '<br><br>Les nouvelles situations observées du logement sont : <br>' :
+                        '<br><br>La nouvelle situation observeé du logement est : <br>';
+
+                    $description .= $intervention->getConcludeProcedureString().'.';
+                }
+
+                if (isset($changes['details']['new'])) {
+                    $description .= sprintf('<br><br>Commentaire opérateur : %s', $intervention->getDetails());
+                }
             }
 
             $suivi = $this->suiviManager->createSuivi(

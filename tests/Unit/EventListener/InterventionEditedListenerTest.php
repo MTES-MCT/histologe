@@ -81,6 +81,26 @@ class InterventionEditedListenerTest extends TestCase
         $this->assertEmpty($intervention->getChangesForMail());
     }
 
+    public function testNoDiffWhenProcedureIsSameNotSorted(): void
+    {
+        $intervention = (new Intervention())
+            ->setStatus(Intervention::STATUS_DONE)
+            ->setType(InterventionType::VISITE);
+
+        $old = [ProcedureType::INSALUBRITE->value, ProcedureType::RSD->value];
+        $new = [ProcedureType::RSD->value, ProcedureType::INSALUBRITE->value];
+
+        $args = $this->createPreUpdateArgs($intervention, [
+            'concludeProcedure' => [$old, $new],
+        ]);
+
+        $listener = new InterventionEditedListener();
+        $listener->preUpdate($intervention, $args);
+
+        $this->assertNull($intervention->getConclusionVisiteEditedAt());
+        $this->assertEmpty($intervention->getChangesForMail());
+    }
+
     public function testDiffWhenDetailsUpdated(): void
     {
         $intervention = (new Intervention())
@@ -128,7 +148,7 @@ class InterventionEditedListenerTest extends TestCase
         $this->assertNotEmpty($intervention->getChangesForMail());
 
         $expectedOld = 'Insalubrité';
-        $expectedNew = 'Insalubrité, Infraction RSD';
+        $expectedNew = 'Infraction RSD, Insalubrité';
         $changes = $intervention->getChangesForMail();
         $this->assertSame($expectedOld, $changes['concludeProcedure']['old']);
         $this->assertSame($expectedNew, $changes['concludeProcedure']['new']);
