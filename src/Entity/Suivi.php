@@ -117,8 +117,6 @@ class Suivi implements EntityHistoryInterface
     #[ORM\Column]
     private ?bool $waitingNotification = null;
 
-    private ?string $source = null;
-
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
