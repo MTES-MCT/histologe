@@ -74,12 +74,14 @@ class InterventionEditedListener
             return '';
         }
 
+        $text = preg_replace('/<br\s*\/?>/i', "\n", $text);
+
         return u(HtmlCleaner::clean($text))
-            ->replaceMatches('/\R/u', "\n")          // normalise tous les retours à la ligne
-            ->replaceMatches('/\x{00A0}/u', ' ')     // remplace les espaces insécables
-            ->replaceMatches('/[ \t\n]+/u', ' ')     // réduit tous les espaces multiples
-            ->normalize()                            // normalise Unicode (accents, etc.)
-            ->trim()
-            ->toString();
+            ->replaceMatches('/\R/u', "\n")          // Normalize all types of line breaks to "\n"
+            ->replaceMatches('/\x{00A0}/u', ' ')     // Replace non-breaking spaces with regular spaces
+            ->replaceMatches('/[ \t\n]+/u', ' ')     // Collapse multiple spaces, tabs, or newlines into a single space
+            ->normalize()                            // Normalize Unicode characters (accents, etc.)
+            ->trim()                                 // Remove leading and trailing whitespace
+            ->toString();                            // Convert back to a regular string
     }
 }
