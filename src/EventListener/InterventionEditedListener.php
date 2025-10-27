@@ -9,6 +9,7 @@ use App\Service\HtmlCleaner;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use function Symfony\Component\String\u;
 
 #[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Intervention::class)]
 class InterventionEditedListener
@@ -22,16 +23,8 @@ class InterventionEditedListener
         $changes = [];
         if ($event->hasChangedField('details')) {
             if (!empty($event->getOldValue('details'))) {
-                $before = preg_replace(
-                    '/\s+/',
-                    ' ',
-                    HtmlCleaner::clean($event->getOldValue('details'))
-                );
-                $after = preg_replace(
-                    '/\s+/',
-                    ' ',
-                    HtmlCleaner::clean($event->getNewValue('details'))
-                );
+                $before = self::normalizeText($event->getOldValue('details'));
+                $after = self::normalizeText($event->getNewValue('details'));
 
                 if ($before !== $after && !empty($after)) {
                     $changes['details'] = [
@@ -72,5 +65,20 @@ class InterventionEditedListener
     {
         return Intervention::STATUS_DONE === $intervention->getStatus()
             && InterventionType::VISITE === $intervention->getType();
+    }
+
+    private function normalizeText(?string $text): string
+    {
+        if (null === $text) {
+            return '';
+        }
+
+        return u(HtmlCleaner::clean($text))
+            ->replaceMatches('/\R/u', "\n")          // normalise tous les retours à la ligne
+            ->replaceMatches('/\x{00A0}/u', ' ')     // remplace les espaces insécables
+            ->replaceMatches('/[ \t\n]+/u', ' ')     // réduit tous les espaces multiples
+            ->normalize()                            // normalise Unicode (accents, etc.)
+            ->trim()
+            ->toString();
     }
 }
