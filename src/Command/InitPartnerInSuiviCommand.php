@@ -33,7 +33,9 @@ class InitPartnerInSuiviCommand
     {
         $territories = $this->territoryRepository->findAllList();
 
+        /** @var int $total */
         $total = $this->suiviRepository->findAllWithoutPartner(true);
+        /** @var array<int, array<string, int>> $list */
         $list = $this->suiviRepository->findAllWithoutPartner();
         $progressBar = $io->createProgressBar(is_array($list) ? count($list) : 0);
         $progressBar->start();

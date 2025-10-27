@@ -71,7 +71,7 @@ class CacheInvalidationListener
             if (!$user instanceof User) {
                 return;
             }
-            $territory = ($entity instanceof Notification) ? $entity->getSignalement()->getTerritory() : $entity->getTerritory();
+            $territory = ($entity instanceof Notification) ? $entity->getSignalement()->getTerritory() : $entity->getTerritory(); // @phpstan-ignore-line
             try {
                 if ($entity instanceof Signalement) {
                     $this->dashboardCache->invalidateTags(['data-kpi-'.$territory?->getZip()]);

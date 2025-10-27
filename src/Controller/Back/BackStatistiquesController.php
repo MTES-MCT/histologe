@@ -155,7 +155,10 @@ class BackStatistiquesController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         if (1 === $user->getPartners()->count() && !$this->isGranted('ROLE_ADMIN')) {
-            return $user->getPartners()->first()->getTerritory();
+            /** @var Partner $partner */
+            $partner = $user->getPartners()->first();
+
+            return $partner->getTerritory();
         }
         $authorizedTerritories = $user->getPartnersTerritories();
         $territoryId = $request->get('territoire');

@@ -233,6 +233,7 @@ class InterventionManager extends AbstractManager
     public function createArreteFromRequest(ArreteRequest $arreteRequest, Affectation $affectation, bool &$isNew): ?Intervention
     {
         $description = InterventionDescriptionGenerator::buildDescriptionArreteCreatedFromRequest($arreteRequest);
+        /** @var Intervention|null $intervention */
         $intervention = $this->getRepository()->findOneBy([
             'signalement' => $affectation->getSignalement(),
             'type' => InterventionType::ARRETE_PREFECTORAL,

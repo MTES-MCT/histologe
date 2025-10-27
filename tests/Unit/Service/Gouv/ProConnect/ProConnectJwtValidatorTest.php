@@ -11,6 +11,7 @@ class ProConnectJwtValidatorTest extends TestCase
 {
     public function testValidJwtReturnsTrue(): void
     {
+        /** @var non-empty-string $jwt */
         $jwt = trim((string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/userinfo.txt'));
         $jwksJson = (string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
         $jwks = new JWKSResponse((string) $jwksJson);
@@ -35,6 +36,7 @@ class ProConnectJwtValidatorTest extends TestCase
 
     public function testInvalidNonceReturnsFalse(): void
     {
+        /** @var non-empty-string $jwt */
         $jwt = trim((string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/userinfo.txt'));
         $jwksJson = (string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
         $jwks = new JWKSResponse((string) $jwksJson);

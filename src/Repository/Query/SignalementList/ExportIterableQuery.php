@@ -97,6 +97,6 @@ class ExportIterableQuery
             ->leftJoin('c.epci', 'e')
         ;
 
-        return $qb->getQuery()->toIterable();
+        return $qb->getQuery()->toIterable(); // @phpstan-ignore-line
     }
 }

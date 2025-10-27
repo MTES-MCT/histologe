@@ -463,7 +463,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $qb->select('COUNT(u)');
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

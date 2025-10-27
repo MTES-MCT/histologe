@@ -2,6 +2,7 @@
 
 namespace App\Command\Cron;
 
+use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
@@ -63,6 +64,7 @@ class RemindInactiveUserCommand extends AbstractCronCommand
         }
 
         foreach ($userList as $userItem) {
+            /** @var User $user */
             $user = $this->userManager->findOneBy(['email' => $userItem['email']]);
 
             if ($user->isActivateAccountNotificationEnabled()) {

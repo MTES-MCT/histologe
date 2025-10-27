@@ -21,10 +21,10 @@ class EntityComparator
         if (is_object($value)) {
             $reflection = new \ReflectionClass($value);
             if ($reflection->hasMethod('getId')) {
-                return $value->getId();
+                return $value->getId(); // @phpstan-ignore-line
             }
             if ($reflection->hasMethod('toArray')) {
-                return $value->toArray();
+                return $value->toArray(); // @phpstan-ignore-line
             }
             if ($value instanceof \DateTimeInterface) {
                 return $value->format('Y-m-d H:i:s');

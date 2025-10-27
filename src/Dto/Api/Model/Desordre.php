@@ -61,19 +61,20 @@ class Desordre
             } else {
                 foreach ($detail as $desordrePrecision) {
                     if ($desordrePrecision instanceof DesordrePrecision) {
+                        $desordrePrecisionSlug = (string) $desordrePrecision->getDesordrePrecisionSlug();
                         $this->libelle = $desordrePrecision->getDesordreCritere()->getLabelCritere();
                         if ($desordrePrecision->getDesordreCritere()->getDesordrePrecisions()->count() > 1) {
                             $this->identifiant = $desordrePrecision->getDesordreCritere()->getSlugCritere();
                             $labelCleaned = strip_tags(str_replace('<br>', ' - ', $desordrePrecision->getLabel()));
-                            $this->precisions[$desordrePrecision->getDesordrePrecisionSlug()] = $labelCleaned;
-                            if (!empty($precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()])) {
+                            $this->precisions[$desordrePrecisionSlug] = $labelCleaned;
+                            if (!empty($precisionsLibres[$desordrePrecisionSlug])) {
                                 $this->precisionsLibres[] = [
-                                    'identifiant' => $desordrePrecision->getDesordrePrecisionSlug(),
-                                    'description' => $precisionsLibres[$desordrePrecision->getDesordrePrecisionSlug()],
+                                    'identifiant' => $desordrePrecisionSlug,
+                                    'description' => $precisionsLibres[$desordrePrecisionSlug],
                                 ];
                             }
                         } else {
-                            $this->identifiant = $desordrePrecision->getDesordrePrecisionSlug();
+                            $this->identifiant = $desordrePrecisionSlug;
                             if (!empty($precisionsLibres[$this->identifiant])) {
                                 $this->precisionsLibres[] = [
                                     'identifiant' => $this->identifiant,

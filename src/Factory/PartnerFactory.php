@@ -44,6 +44,7 @@ class PartnerFactory
      */
     public function buildCompetences(PartnerType $type): ?array
     {
+        /** @var array<string, list<Qualification>> $types */
         $types = $this->parameterBag->get('competence_per_type');
         $competences = [];
         if (\array_key_exists($type->name, $types)) {

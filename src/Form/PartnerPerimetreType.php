@@ -13,6 +13,7 @@ use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -105,7 +106,9 @@ class PartnerPerimetreType extends AbstractType
      */
     public function validateInseeInTerritory(array $codesInsee, ExecutionContextInterface $context): void
     {
-        $partner = $context->getObject()->getParent()->getData();
+        /** @var FormInterface $form */
+        $form = $context->getObject();
+        $partner = $form->getParent()->getData();
         $territory = $partner->getTerritory();
         if (empty($codesInsee)) {
             return;

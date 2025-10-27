@@ -103,7 +103,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
     }
 
     /**
-     * @return array{criterionName: string, criterionValueList: string[]}
+     * @return array{criterionName: string, criterionValueList: array<string|null>}
      */
     protected function getMessage(Affectation $affectation, string $criterionName): array
     {

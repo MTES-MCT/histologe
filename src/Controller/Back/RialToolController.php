@@ -33,7 +33,8 @@ class RialToolController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $banIdsRaw = $form->get('banIds')->getData();
-            $banIds = array_filter(array_map('trim', preg_split('/[\s,]+/', $banIdsRaw)));
+            $parts = preg_split('/[\s,]+/', $banIdsRaw);
+            $banIds = array_filter(array_map('trim', $parts ?: []));
             foreach ($banIds as $banId) {
                 try {
                     $identifiantsFiscaux = $rialService->searchLocauxByBanId($banId) ?? [];

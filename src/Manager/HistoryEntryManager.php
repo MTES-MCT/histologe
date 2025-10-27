@@ -24,7 +24,6 @@ use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\TimezoneProvider;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\ManagerRegistry;
@@ -53,14 +52,13 @@ class HistoryEntryManager extends AbstractManager
     }
 
     /**
-     * @param EntityHistoryInterface|Collection<int, EntityHistoryInterface> $entityHistory
-     * @param array<string, mixed>                                           $changes
+     * @param array<string, mixed> $changes
      *
      * @throws ExceptionInterface
      */
     public function create(
         HistoryEntryEvent $historyEntryEvent,
-        EntityHistoryInterface|Collection $entityHistory,
+        EntityHistoryInterface $entityHistory,
         array $changes = [],
     ): ?HistoryEntry {
         $historyEntry = $this->historyEntryFactory->createInstanceFrom(

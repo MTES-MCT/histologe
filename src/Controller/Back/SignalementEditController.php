@@ -38,6 +38,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $token)) {
@@ -82,6 +83,7 @@ class SignalementEditController extends AbstractController
         if ($signalement->isV2() && !$signalement->getIsNotOccupant()) {
             throw $this->createAccessDeniedException();
         }
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
@@ -127,6 +129,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
@@ -176,6 +179,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
@@ -228,6 +232,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
@@ -280,6 +285,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
@@ -331,6 +337,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
@@ -385,6 +392,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(
@@ -433,6 +441,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
     ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
         if ($this->isCsrfTokenValid(

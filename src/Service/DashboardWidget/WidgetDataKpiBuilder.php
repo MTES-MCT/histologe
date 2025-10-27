@@ -167,7 +167,9 @@ class WidgetDataKpiBuilder
     public function withCountUser(): self
     {
         $this->countUser = $this->userRepository->countUserByStatus($this->territories, $this->user);
-        $this->countUser->setArchivingScheduled($this->userRepository->findUsersPendingToArchive($this->user, $this->territories, true));
+        /** @var int $nbUsersPendingToArchive */
+        $nbUsersPendingToArchive = $this->userRepository->findUsersPendingToArchive($this->user, $this->territories, true);
+        $this->countUser->setArchivingScheduled($nbUsersPendingToArchive);
 
         return $this;
     }

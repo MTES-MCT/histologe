@@ -71,6 +71,7 @@ abstract class AbstractManager implements ManagerInterface
         return $this->getRepository()->findAll();
     }
 
+    // @phpstan-ignore-next-line
     public function getRepository(): ObjectRepository
     {
         return $this->managerRegistry->getRepository($this->entityName); // @phpstan-ignore-line

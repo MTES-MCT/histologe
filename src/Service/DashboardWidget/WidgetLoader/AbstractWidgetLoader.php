@@ -26,7 +26,9 @@ abstract class AbstractWidgetLoader implements WidgetLoaderInterface
 
     public function load(Widget $widget): void
     {
-        $this->widgetParameter = $this->parameterBag->get($widget->getType());
+        /** @var array<string, mixed> $widgetParameter */
+        $widgetParameter = $this->parameterBag->get($widget->getType());
+        $this->widgetParameter = $widgetParameter;
     }
 
     public function supports(string $type): bool

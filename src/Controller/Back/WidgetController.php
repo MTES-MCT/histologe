@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Manager\TerritoryManager;
 use App\Service\DashboardWidget\Widget;
@@ -27,10 +28,12 @@ class WidgetController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
+        /** @var array<int, Territory> $territories */
         $territories = [];
         $authorizedTerritories = $user->getPartnersTerritories();
         $territoryId = $request->get('territory');
         if ($territoryId && ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoryId]))) {
+            /** @var Territory $territory */
             $territory = $territoryManager->find((int) $territoryId);
             if ($territory) {
                 $territories[$territory->getId()] = $territory;

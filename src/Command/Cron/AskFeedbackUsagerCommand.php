@@ -71,7 +71,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             return Command::FAILURE;
         }
 
-        $period = $input->getOption('period');
+        $period = (int) $input->getOption('period');
         $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input, $period);
         $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input, $period);
         $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input, $period);
@@ -189,7 +189,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         return $nbSignalements;
     }
 
-    /** @param array<int> $signalementsIds */
+    /** @param array<int, int|string> $signalementsIds */
     protected function sendMailToUsagers(
         InputInterface $input,
         array $signalementsIds,
