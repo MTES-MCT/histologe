@@ -83,6 +83,9 @@ mock-start: ## Start Mock server
 mock-stop: ## Stop Mock server
 	@${DOCKER_COMP} stop signal_logement_wiremock
 
+mock-restart: mock-stop mock-start ## Restart Mock server
+	@echo "\033[32m✅ Wiremock restarted successfully.\033[0m"
+
 logs: ## Show container logs
 	@$(DOCKER_COMP) logs --follow
 
@@ -185,7 +188,7 @@ symfony: ## Execute symfony command: make symfony cmd="make:entity Signalement"
 upload: ## Push objects to S3 Bucket
 	./scripts/upload-s3.sh $(action) $(zip) $(debug)
 
-sync-sish: ## Synchronize SISH status and intervention (use make sync-sish tiers=1 to update profile_declarant)
+sync-sish: mock-restart ## Synchronize SISH status and intervention (use make sync-sish tiers=1 to update profile_declarant)
 	@if [ "$(tiers)" = "1" ]; then \
 		echo "\033[33mUpdating profile_declarant to 'TIERS_PRO' for reference 2023-12 and 2023-10...\033[0m"; \
 		$(DOCKER_COMP) exec -T signal_logement_phpfpm \
@@ -270,10 +273,3 @@ run-concurrency-request: ## Run concurrency request based postman collection ex:
 
 .sleep:
 	@sleep 30
-
-update-profile-declarant: ## Update profile_declarant for specific signalements
-	@echo "\033[33mUpdating profile_declarant to 'TIERS_PRO' for reference 2023-12 and 2023-10...\033[0m"
-	@$(DOCKER_COMP) exec -T signal_logement_phpfpm \
-		php bin/console doctrine:query:sql \
-		"UPDATE signalement SET profile_declarant = 'TIERS_PRO' WHERE reference IN ('2023-12','2023-10');"
-	@echo "\033[32m✅ Update completed successfully.\033[0m"

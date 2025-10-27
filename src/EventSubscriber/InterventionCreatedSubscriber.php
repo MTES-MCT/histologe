@@ -50,11 +50,6 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             isPublic: $isPublic,
             context: Suivi::CONTEXT_INTERVENTION,
         );
-
-        if (EsaboraSISHService::NAME_SI === $event->getSource()) {
-            $suivi->setSource(EsaboraSISHService::NAME_SI);
-        }
-
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()
             && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')

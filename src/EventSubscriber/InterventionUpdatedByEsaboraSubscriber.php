@@ -7,7 +7,6 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Manager\SuiviManager;
-use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
@@ -46,7 +45,6 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             isPublic: !$signalement->isTiersDeclarant(),
             context: Suivi::CONTEXT_INTERVENTION,
         );
-        $suivi->setSource(EsaboraSISHService::NAME_SI);
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()
             && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')

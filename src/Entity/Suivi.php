@@ -424,16 +424,4 @@ class Suivi implements EntityHistoryInterface
 
         return $this;
     }
-
-    public function getSource(): ?string
-    {
-        return $this->source;
-    }
-
-    public function setSource(?string $source): static
-    {
-        $this->source = $source;
-
-        return $this;
-    }
 }
