@@ -120,6 +120,10 @@ jobs:
       - name: Lint twig templates
         run: php bin/console lint:twig templates/
 
+      # 🧱 Warmup du cache test pour PHPStan
+      - name: Warm up Symfony test cache
+        run: php bin/console cache:warmup --env=test
+
       # https://github.com/phpstan/phpstan
       - name: Analyse PHP Code (PHPStan)
         run: vendor/bin/phpstan analyse
