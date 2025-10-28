@@ -136,7 +136,7 @@
 							{% elseif suivi.createdBy is not null %}
 								{{ suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.territory) ? suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.territory).nom : '' }}
 							{% else %}
-								{{(suivi.createdAt|date('Y') >= 2024) ? 'Occupant ou déclarant' : 'Vous' }}
+								{{ suivi.getCreatedByLabel() }}
 							{% endif %}
 							-
 							{{ suivi.createdAt|date('d/m/Y') }}

@@ -18,6 +18,7 @@ enum DocumentType: string
     case PROCEDURE_ARRETE_PREFECTORAL = 'PROCEDURE_ARRETE_PREFECTORAL';
     case PROCEDURE_SAISINE = 'PROCEDURE_SAISINE';
     case BAILLEUR_DEVIS_POUR_TRAVAUX = 'BAILLEUR_DEVIS_POUR_TRAVAUX';
+    case FACTURE = 'FACTURE';
     case BAILLEUR_REPONSE_BAILLEUR = 'BAILLEUR_REPONSE_BAILLEUR';
     case AUTRE_PROCEDURE = 'AUTRE_PROCEDURE';
     case PHOTO_SITUATION = 'PHOTO_SITUATION';
@@ -45,6 +46,7 @@ enum DocumentType: string
             self::PROCEDURE_ARRETE_PREFECTORAL->name => 'Arrêté préfectoral',
             self::PROCEDURE_SAISINE->name => 'Saisine',
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => 'Devis pour travaux',
+            self::FACTURE->name => 'Facture',
             self::BAILLEUR_REPONSE_BAILLEUR->name => 'Réponse bailleur',
             self::AUTRE_PROCEDURE->name => 'Autre procédure',
             self::PHOTO_SITUATION->name => 'Photo de désordre',
@@ -92,6 +94,7 @@ enum DocumentType: string
             self::PROCEDURE_ARRETE_PREFECTORAL->name => self::PROCEDURE_ARRETE_PREFECTORAL->label(),
             self::PROCEDURE_SAISINE->name => self::PROCEDURE_SAISINE->label(),
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => self::BAILLEUR_DEVIS_POUR_TRAVAUX->label(),
+            self::FACTURE->name => self::FACTURE->label(),
             self::BAILLEUR_REPONSE_BAILLEUR->name => self::BAILLEUR_REPONSE_BAILLEUR->label(),
             self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
             self::AUTRE_PROCEDURE->name => self::AUTRE_PROCEDURE->label(),
