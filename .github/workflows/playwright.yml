@@ -59,11 +59,11 @@ env:
   PROCONNECT_CLIENT_SECRET: test_client_secret
   FEATURE_EMAIL_RECAP: 1
   TRUSTED_PROXIES: 0.0.0.0/0
-  S3_ENDPOINT: https://s3.example.com
+  S3_ENDPOINT: http://localhost:9000
   S3_KEY: test_key
   S3_SECRET: test_secret
   S3_BUCKET: test_bucket
-  S3_URL_BUCKET: https://test-bucket.s3.example.com
+  S3_URL_BUCKET: http://localhost:8080/storage
   SENTRY_DSN: https://test@sentry.example.com/123
   SENTRY_DSN_FRONT: https://test@sentry.example.com/456
   SENTRY_ENVIRONMENT: test
@@ -137,6 +137,9 @@ jobs:
         run: |
           docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=dev --no-warmup
           docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=dev
+          docker compose exec -T signal_logement_phpfpm mkdir -p var/storage
+          docker compose exec -T signal_logement_phpfpm chmod 777 var/storage
+          docker compose exec -T signal_logement_phpfpm ln -sf ../var/storage public/storage || true
 
       - name: Init database
         run: |
