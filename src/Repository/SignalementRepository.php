@@ -152,7 +152,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->addSelect('s.statut');
         if ($keepArchivedSignalements) {
             $qb->andWhere('s.statut NOT IN (:statutList)')
-               ->setParameter('statutList', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::INJONCTION_BAILLEUR]);
+               ->setParameter('statutList', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::INJONCTION_CLOSED]);
         } else {
             $qb->andWhere('s.statut NOT IN (:statutList)')
                ->setParameter('statutList', SignalementStatus::excludedStatuses());
@@ -804,7 +804,7 @@ class SignalementRepository extends ServiceEntityRepository
             }
             // Pour l'instant on exclue de base les brouillons et injonction bailleur
             $qb->andWhere('s.statut NOT IN (:statutDraft)')
-                ->setParameter('statutDraft', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::INJONCTION_BAILLEUR]);
+                ->setParameter('statutDraft', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED, SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::INJONCTION_CLOSED]);
         }
 
         // Filter on creation date
