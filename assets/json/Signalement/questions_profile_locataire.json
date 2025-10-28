@@ -423,7 +423,7 @@
   {
     "type": "SignalementFormScreen",
     "label": "Votre signalement ne peut pas être déposé",
-    "description": "<p>Avant de déposer un signalement sur Signal Logement vous devez prévenir votre bailleur et lui laisser un délai de 2 mois pour vous répondre.</p><p><strong>Le service Signal Logement ne peut pour le moment donner suite à votre démarche.</strong></p><p>Si vous voyez cette page c'est que vous avez indiqué</p><ul><li>soit que vous n'avez pas averti votre bailleur des désordres rencontrés</li><li>soit que vous avez averti votre bailleur mais il y a moins de 2 mois</li></ul><p><strong>Si vous n'avez pas contacté votre bailleur,</strong> prenez contact avec lui directement via les canaux de communications mis à votre disposition dans le cadre de sa gestion locative (ou en téléchargeant le modèle de courrier ci-dessous). Il est fort probable que celui-ci intervienne pour résoudre les problèmes dans les meilleurs délais.</p><p><strong>Si vous avez bien contacté votre bailleur,</strong> il dispose d'un délai de 2 mois pour vous répondre. Nous vous enverrons un e-mail automatiquement à l'issue du délai des 2 mois pour vous permettre de poursuivre si nécessaire votre signalement. N'hésitez pas à relancer votre bailleur entre temps !</p>",
+    "description": "",
     "slug": "prevenir_bailleur_info",
     "screenCategory": "Adresse et coordonnées",
     "components": {
@@ -432,6 +432,43 @@
           "type": "SignalementFormWarning",
           "label": "Si le problème représente un danger pour votre sécurité, contactez les services de secours (pompiers, police, gendarmerie) !",
           "slug": "prevenir_bailleur_info_warning"
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "Avant de déposer un signalement sur Signal Logement vous devez prévenir votre bailleur et lui laisser un délai de 2 mois pour vous répondre.</p><p><strong>Le service Signal Logement ne peut pour le moment donner suite à votre démarche.</strong>",
+          "slug": "prevenir_bailleur_intro"
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Vous devez d'abord prévenir votre bailleur. Il a ensuite 2 mois pour vous répondre. Si vous n'avez pas de réponse de sa part au bout de 2 mois : vous pouvez signaler votre problème sur Signal Logement.",
+          "slug": "prevenir_bailleur_info_warning_pas_contacte",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "Prenez contact avec lui directement via les canaux de communications mis à votre disposition dans le cadre de sa gestion locative (ou en téléchargeant le modèle de courrier ci-dessous). Il est fort probable que celui-ci intervienne pour résoudre les problèmes dans les meilleurs délais.",
+          "slug": "prevenir_bailleur_info_paragraph_bailleur_pas_contacte",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormInfo",
+          "label": "Vous avez prévenu votre bailleur il y a moins de 2 mois. Votre bailleur dispose de 2 mois pour vous répondre <strong>à partir du moment où vous le prévenez</strong>. Une fois le délai passé, nous vous enverrons automatiquement un e-mail pour terminer votre signalement.",
+          "slug": "prevenir_bailleur_info_warning_contacte",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'oui'"
+          }
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "Si votre bailleur ne vous répond pas, n'hésitez pas à lui envoyer un courrier recommandé. Vous pouvez télécharger un modèle de courrier à remplir en cliquant sur le bouton ci-dessous.",
+          "slug": "prevenir_bailleur_info_paragraph_bailleur_contacte",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'oui'"
+          }
         },
         {
           "type": "SignalementFormLink",

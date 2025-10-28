@@ -50,6 +50,7 @@ import SignalementFormDate from './SignalementFormDate.vue'
 import SignalementFormYear from './SignalementFormYear.vue'
 import SignalementFormTime from './SignalementFormTime.vue'
 import SignalementFormCounter from './SignalementFormCounter.vue'
+import SignalementFormParagraph from './SignalementFormParagraph.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
 import SignalementFormInfo from './SignalementFormInfo.vue'
 import SignalementFormCheckbox from './SignalementFormCheckbox.vue'
@@ -83,6 +84,7 @@ export default defineComponent({
     SignalementFormYear,
     SignalementFormTime,
     SignalementFormCounter,
+    SignalementFormParagraph,
     SignalementFormWarning,
     SignalementFormInfo,
     SignalementFormCheckbox,
