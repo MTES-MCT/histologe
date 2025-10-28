@@ -57,7 +57,8 @@ class UserVoter extends Voter
 
             return false;
         }
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        // TODO : retirer la 2è partie une fois le feature flipping FEATURE_INJONCTION_BAILLEUR activé et supprimé
+        if ($this->security->isGranted('ROLE_ADMIN') && self::SEE_INJONCTION_BAILLEUR !== $attribute) {
             return true;
         }
         if ($subject->isSuperAdmin()) {
