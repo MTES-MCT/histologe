@@ -61,7 +61,8 @@ class UserVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN') && self::SEE_INJONCTION_BAILLEUR !== $attribute) {
             return true;
         }
-        if ($subject->isSuperAdmin()) {
+        
+        if (!$this->security->isGranted('ROLE_ADMIN') && $subject->isSuperAdmin()) {
             $vote?->addReason('Action non autorisée sur un super administrateur.');
 
             return false;
