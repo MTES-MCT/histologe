@@ -47,6 +47,17 @@ test('login for bailleur', async ({page, context}) => {
   await page.getByRole('textbox', { name: 'Code de connexion' }).fill('salutsalut');
 
   console.log(`[TEST] Form filled, clicking submit button`);
+
+  // Capturer les réponses réseau pour voir si le formulaire est bloqué
+  page.on('response', response => {
+    if (response.url().includes('login-bailleur')) {
+      console.log(`[TEST] Response from login-bailleur: ${response.status()}`);
+    }
+  });
+
+  // Capturer les erreurs console
+  page.on('console', msg => console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`));
+
   await page.getByRole('button', { name: 'Envoyer' }).click();
 
   // Attendre explicitement la navigation après le submit
@@ -56,6 +67,11 @@ test('login for bailleur', async ({page, context}) => {
     console.log(`[TEST] Navigation successful, current URL: ${page.url()}`);
   } catch (e) {
     console.error(`[TEST] Navigation failed! Current URL: ${page.url()}`);
+
+    // Capturer le contenu HTML pour voir les erreurs
+    const bodyText = await page.locator('body').textContent();
+    console.error(`[TEST] Page content: ${bodyText?.substring(0, 500)}`);
+
     await page.screenshot({ path: '/tmp/bailleur-after-submit-error.png', fullPage: true });
     throw e;
   }

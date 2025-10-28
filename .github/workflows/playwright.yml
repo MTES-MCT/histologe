@@ -155,6 +155,14 @@ jobs:
           done
           echo "Application is ready!"
 
+      - name: Verify rate limiter configuration
+        run: |
+          echo "=== Checking .env file for rate limiter config ==="
+          grep "FORMS_SUBMIT_LIMITER" .env || echo "FORMS_SUBMIT_LIMITER not found in .env"
+          echo ""
+          echo "=== Checking environment variables in PHP container ==="
+          docker compose exec -T signal_logement_phpfpm env | grep "FORMS_SUBMIT_LIMITER" || echo "FORMS_SUBMIT_LIMITER not found in container env"
+
       - name: Install Node.js for Playwright
         uses: actions/setup-node@v4
         with:
@@ -191,14 +199,21 @@ jobs:
       - name: Check server logs
         if: ${{ always() }}
         run: |
-          echo "=== PHP-FPM logs ==="
+          echo "=== PHP-FPM logs (errors only) ==="
+          docker compose logs signal_logement_phpfpm 2>&1 | grep -i "error\|warning\|rate\|limit\|denied" || echo "No errors found"
+          echo ""
+          echo "=== PHP-FPM logs (all, last 200 lines) ==="
           docker compose logs signal_logement_phpfpm --tail=200
-          echo "=== MySQL logs ==="
-          docker compose logs signal_logement_mysql --tail=50
+          echo ""
           echo "=== Redis logs ==="
-          docker compose logs signal_logement_redis --tail=50
+          docker compose logs signal_logement_redis --tail=100
+          echo ""
           echo "=== Nginx logs ==="
           docker compose logs signal_logement_nginx --tail=100
+          echo ""
+          echo "=== Check Redis rate limiter keys ==="
+          docker compose exec -T signal_logement_redis redis-cli KEYS "*limiter*" || echo "Could not check Redis"
+          docker compose exec -T signal_logement_redis redis-cli KEYS "*login*" || echo "Could not check Redis"
 
       - name: Check build output inside container
         if: ${{ always() }}
