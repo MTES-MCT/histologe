@@ -105,7 +105,12 @@ class VisiteNotifier
             if ($user === $currentUser) {
                 continue;
             }
-            $this->notifyAgent(user: $user, suivi: $suivi, notificationMailerType: $notificationMailerType, intervention: $intervention);
+            $this->notifyAgent(
+                user: $user,
+                suivi: $suivi,
+                intervention: $intervention,
+                notificationMailerType: $notificationMailerType
+            );
         }
     }
 
@@ -129,7 +134,11 @@ class VisiteNotifier
     ): void {
         $subs = $this->userSignalementSubscriptionRepository->findForIntervention($intervention);
         foreach ($subs as $subscription) {
-            $this->notifyAgent(user: $subscription->getUser(), notificationMailerType: $notificationMailerType, intervention: $intervention);
+            $this->notifyAgent(
+                user: $subscription->getUser(),
+                intervention: $intervention,
+                notificationMailerType: $notificationMailerType
+            );
         }
     }
 
@@ -140,7 +149,12 @@ class VisiteNotifier
     ): void {
         $subs = $this->userSignalementSubscriptionRepository->findForAffectation($affectation);
         foreach ($subs as $subscription) {
-            $this->notifyAgent(user: $subscription->getUser(), suivi: $suivi, notificationMailerType: $notificationMailerType, affectation: $affectation);
+            $this->notifyAgent(
+                user: $subscription->getUser(),
+                suivi: $suivi,
+                notificationMailerType: $notificationMailerType,
+                affectation: $affectation
+            );
         }
     }
 
@@ -165,7 +179,11 @@ class VisiteNotifier
             }
         }
         if ($suivi) {
-            $notification = $this->notificationFactory->createInstanceFrom(user: $user, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+            $notification = $this->notificationFactory->createInstanceFrom(
+                user: $user,
+                type: NotificationType::NOUVEAU_SUIVI,
+                suivi: $suivi
+            );
             $this->entityManager->persist($notification);
             $this->entityManager->flush();
         }
@@ -174,7 +192,9 @@ class VisiteNotifier
     public function notifyVisiteToConclude(Intervention $intervention): int
     {
         $signalement = $intervention->getSignalement();
-        $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId(), $signalement->getInseeOccupant());
+        $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins(
+            $signalement->getTerritory()->getId(), $signalement->getInseeOccupant()
+        );
 
         foreach ($listUsersToNotify as $user) {
             if ($user->getIsMailingActive()) {

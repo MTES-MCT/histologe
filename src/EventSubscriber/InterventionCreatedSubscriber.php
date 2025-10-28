@@ -7,6 +7,7 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
 use App\Manager\SuiviManager;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
@@ -33,7 +34,12 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     public function onInterventionCreated(InterventionCreatedEvent $event): void
     {
         $intervention = $event->getIntervention();
+        $signalement = $intervention->getSignalement();
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
+        $isPublic = true;
+        if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
+            $isPublic = false;
+        }
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
             description: $description,
@@ -41,7 +47,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             category : SuiviCategory::INTERVENTION_IS_CREATED,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            isPublic: true,
+            isPublic: $isPublic,
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
@@ -55,7 +61,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             );
         }
 
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,

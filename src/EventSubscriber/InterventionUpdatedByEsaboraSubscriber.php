@@ -33,6 +33,7 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
     public function onInterventionEdited(InterventionUpdatedByEsaboraEvent $event): void
     {
         $intervention = $event->getIntervention();
+        $signalement = $intervention->getSignalement();
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionUpdatedByEsaboraEvent::NAME);
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
@@ -41,12 +42,13 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            isPublic: true,
+            isPublic: !$signalement->isTiersDeclarant(),
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()
             && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
+            && $suivi->getIsPublic()
         ) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
@@ -56,7 +58,7 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             );
         }
 
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
