@@ -16,36 +16,37 @@ nelmio_api_doc:
                 | Affectation non encore acceptée      | `Vous n'avez pas l'autorisation d’accéder à cette ressource.` | `L'affectation doit être au statut EN_COURS.    ` |
                 | Partenaire sans compétence `VISITES` | `Vous n'avez pas l'autorisation d’accéder à cette ressource.` | `Le partenaire n'a pas la compétence visite.`     |
     
-                #### BREAKING 
-                - La structure des désordres a été entièrement revue.<br>Les anciens champs categorie, zone et details ont été supprimés.
-                Nouvelle structure des désordres :
-
-                  identifiant : identifiant metier unique du désordre.
-                  libelle : libellé principal du désordre.
-                  precisions : objet clé/valeur regroupant les précisions normalisées.
-                  
-                  precisionsLibres : tableau de saisies libres complémentaires.
-                  <i>Avant</i><br>
+                #### BREAKING CHANGES
+                - La structure des désordres a été entièrement revue.<br>Les anciens champs `categorie`, `zone` et `details` ont été supprimés.<br>
+                - Nouvelle structure des désordres :
+                  - identifiant : identifiant metier unique du désordre.
+                  - libelle : libellé principal du désordre.
+                  - precisions : objet clé/valeur regroupant les précisions.
+                  - precisionsLibres : tableau de saisies libres complémentaires.
+                - La liste des désordres disponibles est disponible à l'adresse <a href="https://bo.signal-logement.beta.gouv.fr/doc-api/desordres" target="__blank">(voir la liste des désordres)</a>.<br><br>
+                   <i>Avant</i><br>
                   ```json
                   {
-                      "categorie": "l'état et propreté du logement",
-                      "zone": null,
+                      "categorie": "Sécurité, risque de chute",
+                      "zone": "BATIMENT",
                       "details": [
-                        "Les sols sont humides.\n - le sol ou la base des murs est très humide."
+                        "Mur porteur fissuré : oui"
                       ]
                   }
-                 ```
-                 ```json
-                 {
-                     "identifiant": "desordres_batiment_securite_balcons",
-                     "libelle": "Les balcons et rembardes des fenêtres risquent de tomber.",
-                     "precisions": {
-                         "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui": "Mur porteur fissuré : oui"
-                     },
-                     "precisionsLibres": []
-                  }
                   ```
-
+                  <br>
+                  <i>Aprés</i><br>
+              
+                   ```json
+                   {
+                       "identifiant": "desordres_batiment_securite_balcons",
+                       "libelle": "Les balcons et rembardes des fenêtres risquent de tomber.",
+                       "precisions": {
+                           "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui": "Mur porteur fissuré : oui"
+                       },
+                       "precisionsLibres": []
+                   }
+                   ```
                ## CHANGELOG 1.1.0 - 2025-09
                 Cette version introduit la **gestion des permissions API** et facilite l'intégration avec les partenaires en permettant l'utilisation d'un seul compte pour des interventions impliquant plusieurs partenaires. 
                 
