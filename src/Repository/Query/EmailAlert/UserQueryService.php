@@ -42,7 +42,7 @@ class UserQueryService
             return false;
         }
 
-        return 1 === $this->countUserWithEmailIssue($typeUsager, $email);
+        return $this->countUserWithEmailIssue($typeUsager, $email) > 0;
     }
 
     /**
