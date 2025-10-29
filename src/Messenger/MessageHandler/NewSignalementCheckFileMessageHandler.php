@@ -3,6 +3,7 @@
 namespace App\Messenger\MessageHandler;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
@@ -101,6 +102,10 @@ class NewSignalementCheckFileMessageHandler
 
     public function hasCoordonneesBailleur(Signalement $signalement): bool
     {
+        if (ProfileDeclarant::BAILLEUR === $signalement->getProfileDeclarant()
+            || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
+            return true;
+        }
         return !empty($signalement->getMailProprio()) || !empty($signalement->getTelProprio());
     }
 
