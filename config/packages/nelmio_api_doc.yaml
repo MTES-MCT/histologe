@@ -192,7 +192,7 @@ nelmio_api_doc:
                 | 404  | Not Found             | La ressource est introuvable                                                         |
                 | 500  | Internal Server Error | Une erreur serveur s'est produite (l'équipe technique est notifiée automatiquement)  |
 
-            version: 1.1.0
+            version: 1.2.0
         components:
             securitySchemes:
                 Bearer:
