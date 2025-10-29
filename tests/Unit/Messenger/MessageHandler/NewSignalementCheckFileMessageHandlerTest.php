@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Messenger\MessageHandler;
 
 use App\Entity\DesordreCritere;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -182,6 +183,29 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
             'coordonnées de votre propriétaire',
             $handler->description,
             'Le message ne doit pas demander les coordonnées du bailleur si elles sont déjà renseignées.'
+        );
+    }
+
+    public function testProcessSignalementWithoutBailleurCoordonneesButProfilBailleur(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
+        $signalement->setMailProprio(null);
+        $signalement->setTelProprio(null);
+        $signalement->setProfileDeclarant(ProfileDeclarant::BAILLEUR);
+
+        $newSignalementCheckFileMessage = new NewSignalementCheckFileMessage($signalement->getId());
+
+        $handler = $this->getHandler();
+        $handler->__invoke($newSignalementCheckFileMessage);
+
+        $this->assertInstanceOf(Suivi::class, $handler->suivi);
+        $this->assertStringNotContainsString(
+            'coordonnées de votre propriétaire',
+            $handler->description,
+            'Le message ne doit pas demander les coordonnées du bailleur si c\'est un profil Bailleur.'
         );
     }
 }
