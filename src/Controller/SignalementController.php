@@ -8,6 +8,7 @@ use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
+use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
@@ -833,5 +834,44 @@ class SignalementController extends AbstractController
             'signalement' => $signalement,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/bailleur-prevenu', name: 'front_suivi_signalement_bailleur_prevenu', methods: ['GET', 'POST'])]
+    public function signalementBailleurPrevenu(
+        string $code,
+        SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
+        SuiviManager $suiviManager,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+        $user = $signalementUser->getUser();
+
+        $description = $user->getNomComplet().' a indiqué avoir prévenu son bailleur.';
+
+        $suiviManager->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_USAGER,
+            category: SuiviCategory::MESSAGE_USAGER,
+            user: $user,
+            isPublic: true,
+        );
+
+        $informationProcedure = new InformationProcedure();
+        if (!empty($signalement->getInformationProcedure())) {
+            $informationProcedure = clone $signalement->getInformationProcedure();
+        }
+        $informationProcedure->setInfoProcedureBailleurPrevenu('oui');
+        $signalement->setInformationProcedure($informationProcedure);
+        $signalement->setIsProprioAverti(true);
+        $signalementManager->save($signalement);
+
+        $this->addFlash('success', 'Votre modification a bien été prise en compte.');
+
+        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 }
