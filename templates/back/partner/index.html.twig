@@ -92,6 +92,7 @@
             <th scope="col">Codes INSEE</th>
             <th scope="col">Zones</th>
             <th scope="col">Notifiable</th>
+            <th scope="col">Nb utilisateurs actifs</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
@@ -143,6 +144,9 @@
                         {% else %}
                             <div class="fr-badge fr-badge--error fr-badge--no-icon fr-mb-1v">non</div>
                         {% endif %}
+                    </td>
+                    <td>
+                        {{ partner.users|filter(user => user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE )|length }}
                     </td>
                     <td class="fr-text--right fr-ws-nowrap">
                         <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
