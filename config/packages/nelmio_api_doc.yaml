@@ -2,8 +2,51 @@ nelmio_api_doc:
     documentation:
         info:
             title: '%platform_name%'
-            description:  |              
-             ## CHANGELOG 1.1.0 - 2025-09
+            description:  |
+             ## CHANGELOG 1.2.0 - 2025-10
+              Cette version introduit **une nouvelle structure pour les désordres** des signalements et **améliore la lisibilité des messages d’erreur** lors des actions non autorisées.
+              Ces évolutions renforcent la cohérence des données et la compréhension des retours côté API.
+              
+                #### MODIFICATIONS
+                - Mise à jour des messages d’erreur lors des actions non autorisées (création de suivi, de visite ou d’arrêté).
+                | Cas métier                           | Ancien message                                                | Nouveau message                                   |
+                | ------------------------------------ | ------------------------------------------------------------- | ------------------------------------------------- |
+                | Signalement fermé                    | `Vous n'avez pas l'autorisation d’accéder à cette ressource.` | `Le signalement n'est pas actif.`                 |
+                | Partenaire non affecté               | `Vous n'avez pas l'autorisation d’accéder à cette ressource.` | `Le partenaire n'est pas affecté au signalement.` |
+                | Affectation non encore acceptée      | `Vous n'avez pas l'autorisation d’accéder à cette ressource.` | `L'affectation doit être au statut EN_COURS.    ` |
+                | Partenaire sans compétence `VISITES` | `Vous n'avez pas l'autorisation d’accéder à cette ressource.` | `Le partenaire n'a pas la compétence visite.`     |
+    
+                #### BREAKING 
+                - La structure des désordres a été entièrement revue.<br>Les anciens champs categorie, zone et details ont été supprimés.
+                Nouvelle structure des désordres :
+
+                  identifiant : identifiant metier unique du désordre.
+                  libelle : libellé principal du désordre.
+                  precisions : objet clé/valeur regroupant les précisions normalisées.
+                  
+                  precisionsLibres : tableau de saisies libres complémentaires.
+                  <i>Avant</i><br>
+                  ```json
+                  {
+                      "categorie": "l'état et propreté du logement",
+                      "zone": null,
+                      "details": [
+                        "Les sols sont humides.\n - le sol ou la base des murs est très humide."
+                      ]
+                  }
+                 ```
+                 ```json
+                 {
+                     "identifiant": "desordres_batiment_securite_balcons",
+                     "libelle": "Les balcons et rembardes des fenêtres risquent de tomber.",
+                     "precisions": {
+                         "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui": "Mur porteur fissuré : oui"
+                     },
+                     "precisionsLibres": []
+                  }
+                  ```
+
+               ## CHANGELOG 1.1.0 - 2025-09
                 Cette version introduit la **gestion des permissions API** et facilite l'intégration avec les partenaires en permettant l'utilisation d'un seul compte pour des interventions impliquant plusieurs partenaires. 
                 
                 À l'exception du breaking change (voir plus bas), ces évolutions sont rétrocompatibles pour un utilisateur ayant une permission sur un seul partenaire.
