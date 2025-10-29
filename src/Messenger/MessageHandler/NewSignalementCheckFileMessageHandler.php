@@ -86,15 +86,22 @@ class NewSignalementCheckFileMessageHandler
 
         $desordres = $this->getMissingDesordresPhotosString($signalement);
 
+        $hasCoordonneesBailleur = $this->hasCoordonneesBailleur($signalement);
+
         $this->suivi = null;
-        if (!empty($documents) || !empty($desordres)) {
-            $this->suivi = $this->createSuivi($signalement, $documents, $desordres);
+        if (!empty($documents) || !empty($desordres) || !$hasCoordonneesBailleur) {
+            $this->suivi = $this->createSuivi($signalement, $documents, $desordres, $hasCoordonneesBailleur);
         }
 
         $this->logger->info('NewSignalementCheckFileMessage handled successfully', [
             'signalementId' => $newSignalementCheckFileMessage->getSignalementId(),
             'suiviId' => $this->suivi?->getId(),
         ]);
+    }
+
+    public function hasCoordonneesBailleur(Signalement $signalement): bool
+    {
+        return !empty($signalement->getMailProprio()) || !empty($signalement->getTelProprio());
     }
 
     public function getMissingDocumentsString(Signalement $signalement): string
@@ -192,7 +199,7 @@ class NewSignalementCheckFileMessageHandler
         return false;
     }
 
-    private function createSuivi(Signalement $signalement, string $documents, string $desordres): Suivi
+    private function createSuivi(Signalement $signalement, string $documents, string $desordres, bool $hasCoordonneesBailleur): Suivi
     {
         $this->description = self::SUIVI_ASK_DOCUMENTS_INTRO;
         if (!empty($documents)) {
@@ -200,6 +207,9 @@ class NewSignalementCheckFileMessageHandler
         }
         if (!empty($desordres)) {
             $this->description .= '- des photos pour les désordres suivants : '.$desordres.'<br>';
+        }
+        if (!$hasCoordonneesBailleur) {
+            $this->description .= '- les coordonnées de votre propriétaire / bailleur (numéro de téléphone et / ou e-mail)<br>';
         }
         $this->description .= '<br>';
         $this->description .= 'Envoyez-nous un message en y ajoutant vos documents !<br>';

@@ -140,4 +140,48 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
 
         return $handler;
     }
+
+    public function testProcessSignalementWithoutBailleurCoordonnees(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
+        $signalement->setMailProprio(null);
+        $signalement->setTelProprio(null);
+
+        $newSignalementCheckFileMessage = new NewSignalementCheckFileMessage($signalement->getId());
+
+        $handler = $this->getHandler();
+        $handler->__invoke($newSignalementCheckFileMessage);
+
+        $this->assertInstanceOf(Suivi::class, $handler->suivi);
+        $this->assertStringContainsString(
+            'coordonnées de votre propriétaire',
+            $handler->description,
+            'Le message doit demander les coordonnées du bailleur.'
+        );
+    }
+
+    public function testProcessSignalementWithBailleurCoordonnees(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
+        $signalement->setMailProprio('bailleur@example.com');
+        $signalement->setTelProprio(null);
+
+        $newSignalementCheckFileMessage = new NewSignalementCheckFileMessage($signalement->getId());
+
+        $handler = $this->getHandler();
+        $handler->__invoke($newSignalementCheckFileMessage);
+
+        $this->assertInstanceOf(Suivi::class, $handler->suivi);
+        $this->assertStringNotContainsString(
+            'coordonnées de votre propriétaire',
+            $handler->description,
+            'Le message ne doit pas demander les coordonnées du bailleur si elles sont déjà renseignées.'
+        );
+    }
 }
