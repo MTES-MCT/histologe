@@ -106,6 +106,7 @@ class NewSignalementCheckFileMessageHandler
             || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
             return true;
         }
+
         return !empty($signalement->getMailProprio()) || !empty($signalement->getTelProprio());
     }
 
