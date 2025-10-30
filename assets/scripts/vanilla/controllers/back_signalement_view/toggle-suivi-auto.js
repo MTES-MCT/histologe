@@ -15,38 +15,28 @@ if (toggleWrapper) {
 }
 function applyFilter() {
   const hideAuto = toggle?.checked === true;
+  let shown = 0;
 
-  if (expanded) {
-    items.forEach(({ el, isAuto }) => {
-      if (hideAuto) {
-        if (isAuto) el.classList.add('fr-hidden'); else el.classList.remove('fr-hidden');
-      } else {
-        el.classList.remove('fr-hidden');
-      }
-    });
-  } else {
-    if (hideAuto) {
-      let shown = 0;
-      items.forEach(({ el, isAuto }) => {
-        if (!isAuto && shown < 3) {
-          el.classList.remove('fr-hidden');
-          shown++;
-        } else {
-          el.classList.add('fr-hidden');
-        }
-      });
+  items.forEach(({ el, isAuto }) => {
+    let shouldShow = true;
+
+    if (expanded) {
+      if (hideAuto && isAuto) shouldShow = false;
     } else {
-      let shown = 0;
-      items.forEach(({ el }) => {
-        if (shown < 3) {
-          el.classList.remove('fr-hidden');
-          shown++;
-        } else {
-          el.classList.add('fr-hidden');
-        }
-      });
+      if (hideAuto && isAuto) {
+        shouldShow = false;
+      } else if (shown >= 3) {
+        shouldShow = false;
+      }
     }
-  }
+
+    if (shouldShow) {
+      el.classList.remove('fr-hidden');
+      if (!expanded) shown++;
+    } else {
+      el.classList.add('fr-hidden');
+    }
+  });
 
   if (!btnDisplayAll) return;
   const anyHidden = items.some(({ el }) => el.classList.contains('fr-hidden'));
@@ -56,6 +46,7 @@ function applyFilter() {
     btnDisplayAll.classList.add('fr-hidden');
   }
 }
+
 
 applyFilter();
 
