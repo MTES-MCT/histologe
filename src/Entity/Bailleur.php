@@ -17,11 +17,11 @@ class Bailleur
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'bailleur', targetEntity: Signalement::class)]

@@ -41,7 +41,9 @@ if (modalLocalisation) {
             modalPickLocalisationMessage.innerText =
               "Adresse introuvable, merci de préciser l'adresse grâce au formulaire.";
             modalPickLocalisationMessage.classList.remove('fr-hidden');
-            const modalPickLocalisationMap = document.getElementById('fr-modal-pick-localisation-map');
+            const modalPickLocalisationMap = document.getElementById(
+              'fr-modal-pick-localisation-map'
+            );
             modalPickLocalisationMap.classList.add('fr-hidden');
             return;
           }

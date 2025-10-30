@@ -26,7 +26,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use function Symfony\Component\String\u;
 
 class SearchFilter
@@ -41,8 +40,6 @@ class SearchFilter
         private SignalementQualificationRepository $signalementQualificationRepository,
         private EpciRepository $epciRepository,
         private BailleurRepository $bailleurRepository,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        private bool $featureNewDashboard,
     ) {
     }
 
@@ -444,7 +441,7 @@ class SearchFilter
                 ->setParameter('motif_cloture', $filters['motifCloture']);
         }
 
-        if (!empty($filters['showMySignalementsOnly']) && $this->featureNewDashboard) {
+        if (!empty($filters['showMySignalementsOnly'])) {
             $qb->leftJoin('s.userSignalementSubscriptions', 'ust');
             $qb->andWhere('ust.user = :currentUser')
                 ->setParameter('currentUser', $user);
@@ -458,25 +455,25 @@ class SearchFilter
             }
         }
 
-        if (!empty($filters['isNouveauMessage']) && $this->featureNewDashboard) {
+        if (!empty($filters['isNouveauMessage'])) {
             $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagersWithoutAskFeedbackBefore($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
-        if (!empty($filters['isMessagePostCloture']) && $this->featureNewDashboard) {
+        if (!empty($filters['isMessagePostCloture'])) {
             $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisPostCloture($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
-        if (!empty($filters['isMessageWithoutResponse']) && $this->featureNewDashboard) {
+        if (!empty($filters['isMessageWithoutResponse'])) {
             $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
-        if (!empty($filters['isActiviteRecente']) && $this->featureNewDashboard) {
+        if (!empty($filters['isActiviteRecente'])) {
             $signalementIds = $this->suiviRepository->findIdsLastSignalementsWithOtherUserSuivi($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);

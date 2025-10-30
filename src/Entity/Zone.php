@@ -30,7 +30,7 @@ class Zone implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -43,7 +43,7 @@ class Zone implements EntityHistoryInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?string $name = null;
 
     #[ORM\Column(

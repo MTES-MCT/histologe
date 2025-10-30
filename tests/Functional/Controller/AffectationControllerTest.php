@@ -94,125 +94,75 @@ class AffectationControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
         $this->client->loginUser($user);
 
-        $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
-
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
         $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getTerritory())]);
 
         $routeAffectationResponse = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-        if ($isNewDashboard) {
-            $agents = $affectation->getPartner()->getUsers();
-            $agentIds = [];
-            foreach ($agents as $agent) {
-                $agentIds[] = $agent->getId();
-            }
-            $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
-
-            $tokenId = 'agents_selection';
-
-            $this->client->request('POST', $routeAffectationResponse, [
-                'agents_selection' => [
-                    'agents' => $agentIds,
-                    '_token' => $this->generateCsrfToken($this->client, $tokenId),
-                ],
-            ]);
-
-            $this->assertResponseIsSuccessful();
-            $this->assertEquals(AffectationStatus::ACCEPTED, $affectation->getStatut());
-            $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
-            $this->assertEmailCount(1);
-
-            $subscriptions = $this->userSignalementSubscriptionRepository->findBy([
-                'user' => $user,
-                'signalement' => $signalement,
-            ]);
-            $this->assertCount(1, $subscriptions);
-        } else {
-            $tokenId = 'signalement_affectation_response_'.$signalement->getId();
-            $this->client->request(
-                'POST',
-                $routeAffectationResponse,
-                [
-                    'signalement-affectation-response' => [
-                        'accept' => 1,
-                        'suivi' => '',
-                    ],
-                    '_token' => $this->generateCsrfToken($this->client, $tokenId),
-                ]
-            );
-
-            $suivi = $this->suiviRepository->findSuiviByDescription(
-                $signalement,
-                '<p>Suite à votre signalement, le ou les partenaires compétents'
-            );
-            $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
-            $this->assertCount(1, $suivi);
-            $this->assertEmailCount(1);
-            $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $agents = $affectation->getPartner()->getUsers();
+        $agentIds = [];
+        foreach ($agents as $agent) {
+            $agentIds[] = $agent->getId();
         }
+        $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
+
+        $tokenId = 'agents_selection';
+
+        $this->client->request('POST', $routeAffectationResponse, [
+            'agents_selection' => [
+                'agents' => $agentIds,
+                '_token' => $this->generateCsrfToken($this->client, $tokenId),
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals(AffectationStatus::ACCEPTED, $affectation->getStatut());
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+        $this->assertEmailCount(1);
+
+        $subscriptions = $this->userSignalementSubscriptionRepository->findBy([
+            'user' => $user,
+            'signalement' => $signalement,
+        ]);
+        $this->assertCount(1, $subscriptions);
     }
 
     public function testSecondAffectationAffectationSignalement(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
         $this->client->loginUser($user);
-        $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
 
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-12']);
         $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getTerritory())]);
 
         $routeAffectationResponse = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-        if ($isNewDashboard) {
-            $agents = $affectation->getPartner()->getUsers();
-            $agentIds = [];
-            foreach ($agents as $agent) {
-                $agentIds[] = $agent->getId();
-            }
-            $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
-
-            $tokenId = 'agents_selection';
-
-            $this->client->request('POST', $routeAffectationResponse, [
-                'agents_selection' => [
-                    'agents' => $agentIds,
-                    '_token' => $this->generateCsrfToken($this->client, $tokenId),
-                ],
-            ]);
-
-            $this->assertResponseIsSuccessful();
-            $this->assertEquals(AffectationStatus::ACCEPTED, $affectation->getStatut());
-            $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
-            $this->assertEmailCount(0);
-
-            $subscriptions = $this->userSignalementSubscriptionRepository->findBy([
-                'user' => $user,
-                'signalement' => $signalement,
-            ]);
-            $this->assertCount(1, $subscriptions);
-        } else {
-            $tokenId = 'signalement_affectation_response_'.$signalement->getId();
-            $this->client->request(
-                'POST',
-                $routeAffectationResponse,
-                [
-                    'signalement-affectation-response' => [
-                        'accept' => 1,
-                        'suivi' => '',
-                    ],
-                    '_token' => $this->generateCsrfToken($this->client, $tokenId),
-                ]
-            );
-            $suivi = $this->suiviRepository->findSuiviByDescription(
-                $signalement,
-                '<p>Suite à votre signalement, le ou les partenaires compétents'
-            );
-            $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
-            $this->assertCount(0, $suivi);
-            $this->assertEmailCount(0);
-            $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $agents = $affectation->getPartner()->getUsers();
+        $agentIds = [];
+        foreach ($agents as $agent) {
+            $agentIds[] = $agent->getId();
         }
+        $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
+
+        $tokenId = 'agents_selection';
+
+        $this->client->request('POST', $routeAffectationResponse, [
+            'agents_selection' => [
+                'agents' => $agentIds,
+                '_token' => $this->generateCsrfToken($this->client, $tokenId),
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals(AffectationStatus::ACCEPTED, $affectation->getStatut());
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+        $this->assertEmailCount(0);
+
+        $subscriptions = $this->userSignalementSubscriptionRepository->findBy([
+            'user' => $user,
+            'signalement' => $signalement,
+        ]);
+        $this->assertCount(1, $subscriptions);
     }
 
     public function testAcceptationWhenUserIsAloneInPartnerCreatesOwnSubscription(): void
@@ -220,14 +170,8 @@ class AffectationControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $this->client->loginUser($user);
 
-        $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
-        if (!$isNewDashboard) {
-            $this->markTestSkipped('Cas spécifique au nouveau dashboard');
-        }
-
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-19']);
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
-        $territory = $signalement->getTerritory();
 
         $affectation = (new Affectation())->setPartner($partner)
             ->setSignalement($signalement)
@@ -263,12 +207,6 @@ class AffectationControllerTest extends WebTestCase
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
         $this->client->loginUser($user);
-
-        $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
-        if (!$isNewDashboard) {
-            $this->markTestSkipped('Cas spécifique au nouveau dashboard');
-        }
-
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
         $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement]);
 
@@ -283,31 +221,6 @@ class AffectationControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('errors', $response);
-    }
-
-    public function testAffectationAcceptWithInvalidCsrf(): void
-    {
-        $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
-        $this->client->loginUser($user);
-
-        $isNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
-        if ($isNewDashboard) {
-            $this->markTestSkipped('Cas spécifique à l’ancien dashboard');
-        }
-
-        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
-        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement]);
-
-        $route = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-
-        $this->client->request('POST', $route, [
-            'signalement-affectation-response' => ['accept' => 1],
-            '_token' => 'invalid-token',
-        ]);
-
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error', 'Une erreur est survenue');
     }
 
     public function testCheckingNoDuplicatedMailSentWhenPartnerAffectationIsMultiple(): void

@@ -3,7 +3,6 @@ import './base-import.ts';
 import './vue/index';
 import './vue/signalement-list.ts';
 import './vue/signalement-carto.ts';
-import './vue/dashboard.ts';
 
 import './vanilla/services/deprecated/data_delete.js'
 import './vanilla/services/bo_modales.js';

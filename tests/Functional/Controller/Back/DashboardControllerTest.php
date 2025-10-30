@@ -7,10 +7,10 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DashboardControllerTest extends WebTestCase
 {
-    private const USER_ADMIN = 'admin-01@signal-logement.fr';
-    private const USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
+    private const string USER_ADMIN = 'admin-01@signal-logement.fr';
+    private const string USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
 
-    public function testIndexWithFeatureNewDashboard(): void
+    public function testIndexWithDashboard(): void
     {
         $client = static::createClient();
         $router = self::getContainer()->get('router');

@@ -23,7 +23,7 @@ class Tag implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?int $id = null;
 
     /** @var Collection<int, Signalement> */
@@ -31,7 +31,7 @@ class Tag implements EntityHistoryInterface
     private Collection $signalements;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     #[Assert\NotBlank(message: 'Merci de saisir un nom pour l\'étiquette.')]
     private ?string $label = null;
 

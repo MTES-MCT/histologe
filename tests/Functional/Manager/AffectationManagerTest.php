@@ -49,7 +49,6 @@ class AffectationManagerTest extends WebTestCase
             $this->eventDispatcher,
             $this->interconnectionBus,
             $this->userSignalementSubscriptionRepository,
-            true,
             Affectation::class,
         );
     }
