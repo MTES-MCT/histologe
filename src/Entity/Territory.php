@@ -40,7 +40,7 @@ class Territory implements EntityHistoryInterface
     private Collection $signalements;
 
     #[ORM\Column(type: 'boolean')]
-    private bool $isActive;
+    private bool $isActive = false;
 
     /** @var Collection<int, Affectation> $affectations */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Affectation::class)]
@@ -101,7 +101,7 @@ class Territory implements EntityHistoryInterface
         return $this->zip;
     }
 
-    public function setZip(string $zip): self
+    public function setZip(?string $zip): static
     {
         $this->zip = $zip;
 
@@ -113,7 +113,7 @@ class Territory implements EntityHistoryInterface
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): static
     {
         $this->name = $name;
 
@@ -128,7 +128,7 @@ class Territory implements EntityHistoryInterface
         return $this->partners;
     }
 
-    public function addPartner(Partner $partner): self
+    public function addPartner(Partner $partner): static
     {
         if (!$this->partners->contains($partner)) {
             $this->partners[] = $partner;
@@ -138,7 +138,7 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
-    public function removePartner(Partner $partner): self
+    public function removePartner(Partner $partner): static
     {
         if ($this->partners->removeElement($partner)) {
             // set the owning side to null (unless already changed)
@@ -166,7 +166,7 @@ class Territory implements EntityHistoryInterface
         return $this->signalements;
     }
 
-    public function addSignalement(Signalement $signalement): self
+    public function addSignalement(Signalement $signalement): static
     {
         if (!$this->signalements->contains($signalement)) {
             $this->signalements[] = $signalement;
@@ -176,7 +176,7 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
-    public function removeSignalement(Signalement $signalement): self
+    public function removeSignalement(Signalement $signalement): static
     {
         if ($this->signalements->removeElement($signalement)) {
             // set the owning side to null (unless already changed)
@@ -193,7 +193,7 @@ class Territory implements EntityHistoryInterface
         return $this->isActive;
     }
 
-    public function setIsActive(bool $isActive): self
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
 
@@ -208,7 +208,7 @@ class Territory implements EntityHistoryInterface
         return $this->affectations;
     }
 
-    public function addAffectation(Affectation $affectation): self
+    public function addAffectation(Affectation $affectation): static
     {
         if (!$this->affectations->contains($affectation)) {
             $this->affectations[] = $affectation;
@@ -218,7 +218,7 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
-    public function removeAffectation(Affectation $affectation): self
+    public function removeAffectation(Affectation $affectation): static
     {
         if ($this->affectations->removeElement($affectation)) {
             // set the owning side to null (unless already changed)
@@ -237,7 +237,7 @@ class Territory implements EntityHistoryInterface
     }
 
     /** @param array<mixed> $bbox */
-    public function setBbox(array $bbox): self
+    public function setBbox(array $bbox): static
     {
         $this->bbox = $bbox;
 
@@ -252,7 +252,7 @@ class Territory implements EntityHistoryInterface
         return $this->tags;
     }
 
-    public function addTag(Tag $tag): self
+    public function addTag(Tag $tag): static
     {
         if (!$this->tags->contains($tag)) {
             $this->tags[] = $tag;
@@ -262,7 +262,7 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
-    public function removeTag(Tag $tag): self
+    public function removeTag(Tag $tag): static
     {
         if ($this->tags->removeElement($tag)) {
             // set the owning side to null (unless already changed)
@@ -286,7 +286,7 @@ class Territory implements EntityHistoryInterface
     }
 
     /** @param array<string|int, mixed> $authorizedCodesInsee */
-    public function setAuthorizedCodesInsee(?array $authorizedCodesInsee): self
+    public function setAuthorizedCodesInsee(?array $authorizedCodesInsee): static
     {
         $this->authorizedCodesInsee = $authorizedCodesInsee;
 
@@ -301,7 +301,7 @@ class Territory implements EntityHistoryInterface
         return $this->bailleurTerritories;
     }
 
-    public function addBailleurTerritory(BailleurTerritory $bailleurTerritory): self
+    public function addBailleurTerritory(BailleurTerritory $bailleurTerritory): static
     {
         if (!$this->bailleurTerritories->contains($bailleurTerritory)) {
             $this->bailleurTerritories->add($bailleurTerritory);
@@ -311,7 +311,7 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
-    public function removeBailleurTerritory(BailleurTerritory $bailleurTerritory): self
+    public function removeBailleurTerritory(BailleurTerritory $bailleurTerritory): static
     {
         if ($this->bailleurTerritories->removeElement($bailleurTerritory)) {
             // set the owning side to null (unless already changed)
@@ -331,7 +331,7 @@ class Territory implements EntityHistoryInterface
         return $this->autoAffectationRules;
     }
 
-    public function addAutoAffectationRule(AutoAffectationRule $autoAffectationRule): self
+    public function addAutoAffectationRule(AutoAffectationRule $autoAffectationRule): static
     {
         if (!$this->autoAffectationRules->contains($autoAffectationRule)) {
             $this->autoAffectationRules->add($autoAffectationRule);
@@ -341,7 +341,7 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
-    public function removeAutoAffectationRule(AutoAffectationRule $autoAffectationRule): self
+    public function removeAutoAffectationRule(AutoAffectationRule $autoAffectationRule): static
     {
         if ($this->autoAffectationRules->removeElement($autoAffectationRule)) {
             // set the owning side to null (unless already changed)

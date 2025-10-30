@@ -434,16 +434,21 @@ trait FixturesHelper
         return $user;
     }
 
-    public function getPartner(): Partner
+    public function getPartner(bool $isOperatorExterne = false): Partner
     {
         $faker = Factory::create();
 
-        return (new Partner())
+        $partner = (new Partner())
             ->setId(1)
             ->setNom('ARS')
             ->setType(PartnerType::ARS)
-            ->setEmail($faker->email())
-            ->setTerritory($this->getTerritory());
+            ->setEmail($faker->email());
+
+        if (!$isOperatorExterne) {
+            $partner->setTerritory($this->getTerritory());
+        }
+
+        return $partner;
     }
 
     public function getTerritory(
