@@ -9,7 +9,9 @@ use App\Entity\User;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\PartnerRepository;
+use App\Repository\UserRepository;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Affectation\CodeInseeSpecification;
 use App\Specification\Affectation\ParcSpecification;
@@ -34,6 +36,8 @@ class AutoAssigner
         private readonly AffectationManager $affectationManager,
         private readonly UserManager $userManager,
         private readonly PartnerRepository $partnerRepository,
+        private readonly UserRepository $userRepository,
+        private readonly UserSignalementSubscriptionManager $subscriptionManager,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -93,6 +97,7 @@ class AutoAssigner
         if (!$simulation && !empty($assignablePartners)) {
             $this->signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $adminUser);
             $this->assignPartners($signalement, $adminUser, $assignablePartners);
+            $this->subscribeTerritoryAdmins($signalement, $adminUser);
         }
 
         return $assignablePartners;
@@ -116,6 +121,23 @@ class AutoAssigner
             $this->affectedPartnersNames[] = $partner->getNom();
         }
         $this->affectationManager->flush();
+    }
+
+    private function subscribeTerritoryAdmins(Signalement $signalement, ?User $adminUser): void
+    {
+        $territoryAdmins = $this->userRepository->findActiveTerritoryAdmins(
+            territoryId: $signalement->getTerritory()->getId(),
+        );
+
+        foreach ($territoryAdmins as $territoryAdmin) {
+            $this->subscriptionManager->createOrGet(
+                userToSubscribe: $territoryAdmin,
+                signalement: $signalement,
+                createdBy: $adminUser
+            );
+        }
+
+        $this->subscriptionManager->flush();
     }
 
     public function getCountAffectations(): int
