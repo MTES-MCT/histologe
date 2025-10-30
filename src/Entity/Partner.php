@@ -41,7 +41,7 @@ class Partner implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -50,7 +50,7 @@ class Partner implements EntityHistoryInterface
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
     #[Assert\Length(max: 255)]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(type: 'boolean')]

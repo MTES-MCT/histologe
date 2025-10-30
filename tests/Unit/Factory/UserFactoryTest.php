@@ -4,7 +4,6 @@ namespace App\Tests\Unit\Factory;
 
 use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
-use App\Entity\User;
 use App\Entity\UserPartner;
 use App\Factory\UserFactory;
 use App\Manager\PartnerManager;
@@ -30,7 +29,7 @@ class UserFactoryTest extends KernelTestCase
     {
         $partner = new Partner();
 
-        $user = (new UserFactory(true))->createInstanceFrom(
+        $user = (new UserFactory())->createInstanceFrom(
             roleLabel: 'Agent',
             firstname: 'John',
             lastname: 'Doe',
@@ -41,15 +40,13 @@ class UserFactoryTest extends KernelTestCase
         $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 
-        $this->assertInstanceOf(User::class, $user);
-
-        $this->assertEquals($user->getIsMailingActive(), true);
-        $this->assertEquals($user->getStatut(), UserStatus::INACTIVE);
+        $this->assertTrue($user->getIsMailingActive());
+        $this->assertEquals(UserStatus::INACTIVE, $user->getStatut());
     }
 
     public function testCreateUserAdminInstanceWithoutPartnerAndTerritory(): void
     {
-        $user = (new UserFactory(true))->createInstanceFrom(
+        $user = (new UserFactory())->createInstanceFrom(
             roleLabel: 'Super Admin',
             firstname: 'John',
             lastname: 'Doe',
@@ -60,12 +57,10 @@ class UserFactoryTest extends KernelTestCase
         $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 
-        $this->assertInstanceOf(User::class, $user);
-
-        $this->assertEquals($user->getIsMailingActive(), true);
-        $this->assertEquals($user->getStatut(), UserStatus::INACTIVE);
-        $this->assertEquals($user->getFirstTerritory(), null);
-        $this->assertEquals($user->getPartners()->count(), 0);
+        $this->assertTrue($user->getIsMailingActive());
+        $this->assertEquals(UserStatus::INACTIVE, $user->getStatut());
+        $this->assertNull($user->getFirstTerritory());
+        $this->assertEquals(0, $user->getPartners()->count());
     }
 
     public function testCreateUserFromArray(): void
@@ -80,7 +75,7 @@ class UserFactoryTest extends KernelTestCase
             'isMailingActive' => true,
         ];
 
-        $user = (new UserFactory(true))->createInstanceFromArray($data);
+        $user = (new UserFactory())->createInstanceFromArray($data);
         $userPartner = (new UserPartner())->setPartner($partner)->setUser($user);
         $user->addUserPartner($userPartner);
 
@@ -88,10 +83,8 @@ class UserFactoryTest extends KernelTestCase
         $errors = $this->validator->validate($user);
         $this->assertEmpty($errors, (string) $errors);
 
-        $this->assertInstanceOf(User::class, $user);
-
-        $this->assertEquals($user->getIsMailingActive(), true);
-        $this->assertEquals($user->getStatut(), UserStatus::INACTIVE);
+        $this->assertTrue($user->getIsMailingActive());
+        $this->assertEquals(UserStatus::INACTIVE, $user->getStatut());
         $this->assertEquals($user->getFirstTerritory(), $partner->getTerritory());
         $this->assertEquals($user->getPartners()->first(), $partner);
     }

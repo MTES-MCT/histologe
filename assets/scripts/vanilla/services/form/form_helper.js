@@ -23,7 +23,7 @@ autoSubmitElements.forEach((autoSubmitElements) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    initTinyMCE('textarea.editor');
+  initTinyMCE('textarea.editor');
 });
 
 export function initTinyMCE(selector) {

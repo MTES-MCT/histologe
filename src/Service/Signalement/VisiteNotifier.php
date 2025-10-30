@@ -3,13 +3,11 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\NotificationType;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
-use App\Manager\SignalementManager;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMail;
@@ -22,7 +20,6 @@ class VisiteNotifier
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly SignalementManager $signalementManager,
         private readonly NotificationFactory $notificationFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly UserRepository $userRepository,
@@ -50,47 +47,6 @@ class VisiteNotifier
                     previousVisiteDate: $previousDate,
                 )
             );
-        }
-    }
-
-    /**
-     * @deprecated this method will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed
-     */
-    public function notifyAgents(
-        ?Intervention $intervention,
-        Suivi $suivi,
-        ?User $currentUser,
-        ?NotificationMailerType $notificationMailerType,
-        bool $notifyAdminTerritory = true,
-        ?Affectation $affectation = null,
-        bool $notifyOtherAffectedPartners = false,
-    ): void {
-        if ($intervention) {
-            $userPartner = $currentUser?->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory());
-            $listUsersToNotify = [];
-            $listUsersPartner = $intervention->getPartner() && $intervention->getPartner() != $userPartner && !$notifyOtherAffectedPartners ?
-                $intervention->getPartner()->getUsers()->toArray() : [];
-            if ($notifyAdminTerritory) {
-                $listUsersTerritoryAdmin = $this->userRepository->findActiveTerritoryAdmins($intervention->getSignalement()->getTerritory()->getId(), $intervention->getSignalement()->getInseeOccupant());
-                $listUsersToNotify = array_unique(array_merge($listUsersTerritoryAdmin, $listUsersPartner), \SORT_REGULAR);
-            } else {
-                $listUsersToNotify = $listUsersPartner;
-            }
-            if ($notifyOtherAffectedPartners) {
-                $listAffected = $this->signalementManager->findUsersAffectedToSignalement(
-                    $intervention->getSignalement(),
-                    AffectationStatus::ACCEPTED,
-                    $intervention->getPartner()
-                );
-                $listUsersToNotify = array_unique(array_merge($listUsersToNotify, $listAffected), \SORT_REGULAR);
-            }
-        } else {
-            $listUsersToNotify = $affectation->getPartner()->getUsers();
-        }
-        foreach ($listUsersToNotify as $user) {
-            if ($user != $currentUser) {
-                $this->notifyAgent(user: $user, suivi: $suivi, intervention: $intervention, notificationMailerType: $notificationMailerType, affectation: $affectation);
-            }
         }
     }
 

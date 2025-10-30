@@ -13,7 +13,6 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use App\Factory\NotificationFactory;
-use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -21,7 +20,6 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class NotificationAndMailSender
 {
@@ -32,12 +30,9 @@ class NotificationAndMailSender
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
-        private readonly PartnerRepository $partnerRepository,
         private readonly NotificationFactory $notificationFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly Security $security,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        private readonly bool $featureNewDashboard,
     ) {
         $this->suivi = null;
     }
@@ -107,11 +102,8 @@ class NotificationAndMailSender
         $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNER;
         $this->affectation = $affectation;
         $this->signalement = $affectation->getSignalement();
-        if ($this->featureNewDashboard) {
-            $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
-        } else {
-            $userList = $this->userRepository->findUsersAffectedToSignalement($this->signalement, $affectation->getPartner());
-        }
+        $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
+
         $recipients = new ArrayCollection($userList);
         $this->sendMail($recipients, $mailerType);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::CLOTURE_PARTENAIRE, affectation: $affectation);
@@ -122,18 +114,10 @@ class NotificationAndMailSender
         $mailerType = $sendEmail ? NotificationMailerType::TYPE_NEW_COMMENT_BACK : null;
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
-        $territory = $this->signalement->getTerritory();
-
-        if ($this->featureNewDashboard) {
-            $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
-            $adminList = $this->userRepository->findActiveAdmins();
-            $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
-            $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
-        } else {
-            $partnerRecipients = $this->getRecipientsPartners(isFilteredAffectationStatus: true);
-            $adminRecipients = $this->getRecipientsAdmin($territory);
-            $recipients = new ArrayCollection(array_merge($partnerRecipients->toArray(), $adminRecipients->toArray()));
-        }
+        $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
+        $adminList = $this->userRepository->findActiveAdmins();
+        $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
+        $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
 
         $this->sendMail($recipients, $mailerType, $suivi);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
@@ -143,15 +127,10 @@ class NotificationAndMailSender
     {
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
-        $territory = $this->signalement->getTerritory();
 
-        if ($this->featureNewDashboard) {
-            $listRT = $this->userRepository->findUsersSubscribedToSignalement(signalement: $this->signalement, onlyRT: true);
-            $listAdmins = $this->userRepository->findActiveAdmins();
-            $recipients = new ArrayCollection(array_merge($listRT, $listAdmins));
-        } else {
-            $recipients = $this->getRecipientsAdmin($territory);
-        }
+        $listRT = $this->userRepository->findUsersSubscribedToSignalement(signalement: $this->signalement, onlyRT: true);
+        $listAdmins = $this->userRepository->findActiveAdmins();
+        $recipients = new ArrayCollection(array_merge($listRT, $listAdmins));
 
         $this->sendMail($recipients, NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_ADMIN);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
@@ -233,16 +212,11 @@ class NotificationAndMailSender
     {
         $this->suivi = $suivi;
         $this->signalement = $this->suivi->getSignalement();
-        if ($this->featureNewDashboard) {
-            $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
-            $adminList = $this->userRepository->findActiveAdmins();
-            $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: false);
-            $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
-        } else {
-            $partnerRecipients = $this->getRecipientsPartners(isFilteredAffectationStatus: false);
-            $adminRecipients = $this->getRecipientsAdmin(null);
-            $recipients = new ArrayCollection(array_merge($partnerRecipients->toArray(), $adminRecipients->toArray()));
-        }
+        $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
+        $adminList = $this->userRepository->findActiveAdmins();
+        $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: false);
+        $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
+
         $this->sendMail($recipients, NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_PARTNERS);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::CLOTURE_SIGNALEMENT, suivi: $suivi);
     }
@@ -367,29 +341,6 @@ class NotificationAndMailSender
         }
 
         return $recipients;
-    }
-
-    /**
-     * @deprecated this method will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed
-     *
-     * @return ArrayCollection<int, mixed>
-     */
-    private function getRecipientsPartners(bool $isFilteredAffectationStatus): ArrayCollection
-    {
-        $partnerRecipientsMail = new ArrayCollection();
-        foreach ($this->signalement->getAffectations() as $affectation) {
-            if (!$isFilteredAffectationStatus
-                    || AffectationStatus::WAIT === $affectation->getStatut()
-                    || AffectationStatus::ACCEPTED === $affectation->getStatut()) {
-                $partner = $this->partnerRepository->getWithUserPartners($affectation->getPartner());
-                $partnerRecipientsMailItem = $this->getRecipientsPartner($partner);
-                $partnerRecipientsMail = new ArrayCollection(
-                    array_merge($partnerRecipientsMail->toArray(), $partnerRecipientsMailItem->toArray())
-                );
-            }
-        }
-
-        return $partnerRecipientsMail;
     }
 
     /**

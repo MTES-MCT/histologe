@@ -5,7 +5,6 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 
 imports:
-    - { resource: 'app/widgets.yaml' }
     - { resource: 'app/competences.yaml'}
     - { resource: 'app/suivi_messages.yaml'}
     - { resource: 'app/cron_scheduler.yaml'}
@@ -47,7 +46,6 @@ parameters:
     send_error_email_token: '%env(SEND_ERROR_EMAIL_TOKEN)%'
     proconnect_scheme_protocol: '%env(resolve:PROCONNECT_SCHEME_PROTOCOL)%'
     proconnect_domain: '%env(resolve:PROCONNECT_DOMAIN)%'
-    feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
     feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
     feature_api_creation_signalement: '%env(bool:FEATURE_API_CREATION_SIGNALEMENT)%'
     feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
@@ -126,12 +124,6 @@ services:
 
     App\Service\Token\TokenGeneratorInterface:
         alias: App\Service\Token\TokenGenerator
-
-    App\Service\DashboardWidget\WidgetDataManagerInterface:
-        alias: App\Service\DashboardWidget\WidgetDataManager
-
-    App\Service\DashboardWidget\WidgetDataManagerCache:
-        decorates: App\Service\DashboardWidget\WidgetDataManager
 
     App\Service\Interconnection\Esabora\EsaboraSCHSService:
         arguments:

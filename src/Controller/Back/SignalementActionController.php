@@ -364,12 +364,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         UserSignalementSubscriptionManager $signalementSubscriptionManager,
         Request $request,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        bool $featureNewDashboard,
     ): Response {
-        if (!$featureNewDashboard) {
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-        }
         $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('subscribe', $token)) {
@@ -398,12 +393,7 @@ class SignalementActionController extends AbstractController
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         AffectationRepository $affectationRepository,
         Request $request,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        bool $featureNewDashboard,
     ): Response {
-        if (!$featureNewDashboard) {
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-        }
         $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
         $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents en charge du dossier et vous ne recevrez plus les mises à jour du dossier.';
 

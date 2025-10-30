@@ -87,8 +87,6 @@ class SignalementController extends AbstractController
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
         UrlGeneratorInterface $urlGenerator,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        bool $featureNewDashboard,
         #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
         bool $featureNewDocumentSpace,
     ): Response {
@@ -142,7 +140,7 @@ class SignalementController extends AbstractController
         $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
 
         $isUserSubscribed = false;
-        if ($featureNewDashboard && $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]) && $affectation) {
+        if ($signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]) && $affectation) {
             $isUserSubscribed = true;
         }
 
@@ -166,7 +164,7 @@ class SignalementController extends AbstractController
         }
 
         $acceptAffectationForm = null;
-        if ($featureNewDashboard && ($canAnswerAffectation || $canCancelRefusedAffectation)) {
+        if ($canAnswerAffectation || $canCancelRefusedAffectation) {
             $acceptAffectation = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $acceptAffectationForm = $this->createForm(
@@ -177,7 +175,7 @@ class SignalementController extends AbstractController
         }
 
         $transferSubscriptionForm = null;
-        if ($featureNewDashboard && $isUserSubscribed) {
+        if ($isUserSubscribed) {
             $transferSubscription = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
             $transferSubscriptionForm = $this->createForm(
@@ -268,7 +266,7 @@ class SignalementController extends AbstractController
         );
         $canSeePartnerAffectation = $this->isGranted(AffectationVoter::SEE, $signalement);
         $subscriptionsInMyPartner = [];
-        if ($featureNewDashboard && ($canSeePartnerAffectation || (!$isClosedForMe && $isAffectationAccepted))) {
+        if ($canSeePartnerAffectation || (!$isClosedForMe && $isAffectationAccepted)) {
             $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
         }
         $twigParams = [

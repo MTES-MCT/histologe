@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Factory\NotificationFactory;
-use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
@@ -23,7 +22,6 @@ class VisiteNotifierTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
         $entityManager = $kernel->getContainer()->get('doctrine')->getManager();
-        $signalementManager = static::getContainer()->get(SignalementManager::class);
         $notificationFactory = static::getContainer()->get(NotificationFactory::class);
         $notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -32,7 +30,6 @@ class VisiteNotifierTest extends KernelTestCase
 
         $this->visiteNotifier = new VisiteNotifier(
             $entityManager,
-            $signalementManager,
             $notificationFactory,
             $notificationMailerRegistry,
             $userRepository,
@@ -50,7 +47,7 @@ class VisiteNotifierTest extends KernelTestCase
         $intervention = $signalement->getInterventions()[0];
 
         $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($intervention);
-        $this->assertEquals($nbNotified, 3);
+        $this->assertEquals(3, $nbNotified);
     }
 
     public function testNotifyVisiteToConclude69(): void
@@ -60,6 +57,6 @@ class VisiteNotifierTest extends KernelTestCase
         $intervention = $signalement->getInterventions()[0];
 
         $nbNotified = $this->visiteNotifier->notifyVisiteToConclude($intervention);
-        $this->assertEquals($nbNotified, 1);
+        $this->assertEquals(1, $nbNotified);
     }
 }

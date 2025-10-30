@@ -456,18 +456,21 @@ document.querySelectorAll('.btn-edit-suivi').forEach((swbtn) => {
   swbtn.addEventListener('click', (event) => {
     const url = event.target.dataset.url;
     document.querySelector('#fr-modal-edit-suivi button[type="submit"]').disabled = true;
-    document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = 'Chargement en cours...';
+    document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML =
+      'Chargement en cours...';
     fetch(url).then((response) => {
       if (response.ok) {
         response.json().then((response) => {
-          document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = response.content;
+          document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML =
+            response.content;
           tinymce.remove('#add_suivi_description');
           initTinyMCE('#add_suivi_description');
           window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
           document.querySelector('#fr-modal-edit-suivi button[type="submit"]').disabled = false;
         });
       } else {
-        const content = '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur s\'est produite. Veuillez actualiser la page.</p></div>';
+        const content =
+          '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur s\'est produite. Veuillez actualiser la page.</p></div>';
         document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = content;
       }
     });

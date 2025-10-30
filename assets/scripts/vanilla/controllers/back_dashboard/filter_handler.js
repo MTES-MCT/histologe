@@ -16,7 +16,9 @@ export default function initFilterHandler() {
     window.location.href = url.toString();
   });
 
-  const mySignalementsMessagesUsagersButton = document.getElementById('mySignalementsMessagesUsagersButton');
+  const mySignalementsMessagesUsagersButton = document.getElementById(
+    'mySignalementsMessagesUsagersButton'
+  );
   mySignalementsMessagesUsagersButton?.addEventListener('click', (e) => {
     e.preventDefault();
     const url = new URL(window.location.href);
@@ -44,7 +46,9 @@ export default function initFilterHandler() {
     }
   });
 
-  const mySignalementsActiviteRecenteButton = document.getElementById('mySignalementsActiviteRecenteButton');
+  const mySignalementsActiviteRecenteButton = document.getElementById(
+    'mySignalementsActiviteRecenteButton'
+  );
   mySignalementsActiviteRecenteButton?.addEventListener('click', (e) => {
     e.preventDefault();
     const url = new URL(window.location.href);

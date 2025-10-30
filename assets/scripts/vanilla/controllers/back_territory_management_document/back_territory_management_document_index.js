@@ -97,7 +97,6 @@ if (fileElement && previewElement) {
   });
 }
 
-
 const fileReplacementContainer = document.getElementById('file-replacement-container');
 if (fileReplacementToggle && fileReplacementContainer) {
   fileReplacementToggle.addEventListener('change', () => {
