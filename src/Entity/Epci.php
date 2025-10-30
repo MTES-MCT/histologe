@@ -19,11 +19,11 @@ class Epci
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?string $code = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['widget-settings:read'])]
+    #[Groups(['settings:read'])]
     private ?string $nom = null;
 
     /** @var Collection<int, Commune> $communes */

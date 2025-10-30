@@ -31,8 +31,6 @@ class SuiviManager extends Manager
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        private readonly bool $featureNewDashboard,
         #[Autowire(env: 'FEATURE_EDITION_SUIVI')]
         private readonly bool $featureEditionSuivi,
         string $entityName = Suivi::class,
@@ -102,9 +100,6 @@ class SuiviManager extends Manager
         ?User $user,
         Suivi $suivi,
     ): bool {
-        if (!$this->featureNewDashboard) {
-            return false;
-        }
         if (!$user) {
             return false;
         }

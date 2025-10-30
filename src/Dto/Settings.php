@@ -1,71 +1,66 @@
 <?php
 
-namespace App\Service\DashboardWidget;
+namespace App\Dto;
 
 use App\Entity\User;
 use Symfony\Component\Serializer\Attribute\Groups;
 
-/**
- * @todo Rename class to Settings once the FEATURE_NEW_DASHBOARD feature flag is removed.
- */
-class WidgetSettings
+class Settings
 {
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private ?string $firstname = null;
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private ?string $lastname = null;
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private ?string $avatarOrPlaceHolder = null;
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private ?string $roleLabel = null;
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private ?string $canSeeNDE = null;
     /**
      * @var array<int, int> $partnerIds
      */
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private array $partnerIds = [];
     /**
      * @var array<int, mixed> $territories
      */
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private array $territories = [];
     /**
      * @var array<int, mixed>
      */
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private array $partners = [];
     /**
      * @var array<int, mixed>
      */
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private array $communes = [];
     /**
      * @var array<int, mixed>
      */
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private array $epcis = [];
     /**
      * @var array<int, mixed>
      */
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private array $tags = [];
     /**
      * @var array<int, mixed>
      */
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private array $zones = [];
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private ?bool $hasSignalementImported = false;
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private ?bool $isMultiTerritoire = false;
     /**
      * @var array<int, mixed>
      */
-    #[Groups('widget-settings:read')]
+    #[Groups('settings:read')]
     private array $bailleursSociaux = [];
-    #[Groups('widget-settings:read')]
-    private ?bool $isFeatureNewDashboard = false; // remove when FEATURE_NEW_DASHBOARD active
 
     /**
      * @param array<int, mixed> $territories
@@ -88,7 +83,6 @@ class WidgetSettings
         bool $hasSignalementImported = false,
         array $bailleursSociaux = [],
         string $avatarOrPlaceHolder = '',
-        ?bool $isFeatureNewDashboard = false,
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -105,7 +99,6 @@ class WidgetSettings
         $this->hasSignalementImported = $hasSignalementImported;
         $this->isMultiTerritoire = count($user->getPartnersTerritories()) > 1 ? true : false;
         $this->bailleursSociaux = $bailleursSociaux;
-        $this->isFeatureNewDashboard = $isFeatureNewDashboard;
     }
 
     public function getFirstname(): ?string
@@ -205,10 +198,5 @@ class WidgetSettings
     public function getBailleursSociaux(): array
     {
         return $this->bailleursSociaux;
-    }
-
-    public function getIsFeatureNewDashboard(): ?bool
-    {
-        return $this->isFeatureNewDashboard;
     }
 }

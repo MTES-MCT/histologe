@@ -614,7 +614,7 @@ function initBoFormSignalementAdresse() {
       '#signalement_draft_coordonnees_mailDeclarant',
       '#signalement_draft_coordonnees_telDeclarant_select',
       '#signalement_draft_coordonnees_telDeclarant_input',
-      '#telDeclarantContainer'
+      '#telDeclarantContainer',
     ],
     ['TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', 'BAILLEUR'],
     [],

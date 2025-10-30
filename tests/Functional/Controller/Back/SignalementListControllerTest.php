@@ -174,9 +174,9 @@ class SignalementListControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideLinkFilterDashboard
+     * @dataProvider provideLinkFilter
      */
-    public function testWidgetLinkFilterDashboard(string $emailUser, string $filter): void
+    public function testLinkFilter(string $emailUser, string $filter): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -192,7 +192,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function provideLinkFilterDashboard(): \Generator
+    public function provideLinkFilter(): \Generator
     {
         $adminUser = 'admin-01@signal-logement.fr';
         yield 'SUPER_ADMIN - Nouveaux signalements' => [$adminUser, '?statut='.SignalementStatus::NEED_VALIDATION->value];

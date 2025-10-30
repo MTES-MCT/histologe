@@ -23,7 +23,9 @@ function handleSubmitForm(containerElement) {
   containerElement.addEventListener('submit', (event) => {
     event.preventDefault();
     const formElement = event.target;
-    const submitElement = document.querySelector('.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]');
+    const submitElement = document.querySelector(
+      '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
+    );
     submitElement.disabled = true;
     submitElement.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
     clearErrors();
@@ -72,10 +74,14 @@ async function submitPayload(formElement) {
     } else if (response.status === 400) {
       const responseData = await response.json();
       const errors = responseData.errors;
-      const submitElement = document.querySelector('.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]');
+      const submitElement = document.querySelector(
+        '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
+      );
       let firstErrorElement = true;
       for (const property in errors) {
-        const inputElements = document.querySelectorAll(`.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"]`);
+        const inputElements = document.querySelectorAll(
+          `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"]`
+        );
         let inputElement;
         let parentElement;
         if (inputElements.length > 1) {
@@ -83,8 +89,12 @@ async function submitPayload(formElement) {
           parentElement = inputElement.closest('.fr-fieldset');
         } else {
           inputElement =
-            document.querySelector(`.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"] `) ||
-            document.querySelector('.fr-modal--opened .no-field-errors, .single-ajax-form-container .no-field-errors') ||
+            document.querySelector(
+              `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"] `
+            ) ||
+            document.querySelector(
+              '.fr-modal--opened .no-field-errors, .single-ajax-form-container .no-field-errors'
+            ) ||
             document.querySelector('.fr-modal--opened input, .single-ajax-form-container input');
           parentElement = inputElement.parentElement;
         }
@@ -115,7 +125,6 @@ async function submitPayload(formElement) {
       if (!submitElement.classList.contains('fr-icon-check-line')) {
         submitElement.classList.remove('fr-btn--icon-left');
       }
-        
     } else {
       const responseData = await response.json();
       alert(responseData.message);
@@ -126,5 +135,7 @@ async function submitPayload(formElement) {
   }
 }
 
-const containerElements = document.querySelectorAll('[data-ajax-form] dialog, [data-ajax-form] .single-ajax-form-container');
+const containerElements = document.querySelectorAll(
+  '[data-ajax-form] dialog, [data-ajax-form] .single-ajax-form-container'
+);
 containerElements.forEach((containerElement) => handleSubmitForm(containerElement));

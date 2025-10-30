@@ -18,7 +18,6 @@ twig:
         display_staging_notice: '%env(DISPLAY_STAGING_NOTICE)%'
         mise_en_berne: '%env(MISE_EN_BERNE_ENABLE)%'
         sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
-        feature_new_dashboard: '%env(bool:FEATURE_NEW_DASHBOARD)%'
         feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
         feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
         feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'

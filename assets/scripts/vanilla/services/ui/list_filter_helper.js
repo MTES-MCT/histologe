@@ -40,7 +40,7 @@ export const updateLocalStorageOnEvent = (eventType, idItem, localStorageName) =
   item?.addEventListener(eventType, () => updateLocalStorageWithFormParams(localStorageName));
 };
 
-const elementPage = document.getElementById('page')
+const elementPage = document.getElementById('page');
 const filterForms = document.getElementsByClassName('bo-filter-form');
 if (filterForms.length > 0) {
   for (const filterForm of filterForms) {

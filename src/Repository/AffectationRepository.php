@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Dto\CountSignalement;
 use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
@@ -15,7 +14,6 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Service\ListFilters\SearchAffectationWithoutSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -193,42 +191,6 @@ class AffectationRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
-     * @param array<int, int> $territories
-     *
-     * @throws NonUniqueResultException
-     */
-    public function countSignalementForUser(User $user, array $territories): CountSignalement
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->select(
-            \sprintf(
-                'NEW %s(COUNT(a.id),
-                    SUM(CASE WHEN a.statut = :statut_wait THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN a.statut = :statut_accepted THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN a.statut = :statut_closed THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN a.statut = :statut_refused THEN 1 ELSE 0 END))',
-                CountSignalement::class
-            )
-        )
-            ->setParameter('statut_wait', AffectationStatus::WAIT)
-            ->setParameter('statut_accepted', AffectationStatus::ACCEPTED)
-            ->setParameter('statut_closed', AffectationStatus::CLOSED)
-            ->setParameter('statut_refused', AffectationStatus::REFUSED)
-            ->innerJoin('a.partner', 'p')
-            ->innerJoin('a.signalement', 's')
-            ->where('s.statut NOT IN (:statut_list)')
-            ->andWhere('a.partner IN (:partners)')
-            ->setParameter('statut_list', SignalementStatus::excludedStatuses())
-            ->setParameter('partners', $user->getPartners());
-
-        if (\count($territories)) {
-            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
-        }
-
-        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

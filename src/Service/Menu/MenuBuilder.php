@@ -11,8 +11,6 @@ readonly class MenuBuilder
 {
     public function __construct(
         private readonly Security $currentRoute,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        private readonly bool $featureNewDashboard,
         #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
         private readonly bool $featureNewDocumentSpace,
     ) {
@@ -25,7 +23,7 @@ readonly class MenuBuilder
         $listRouteParameters = [];
         if ($this->currentRoute->isGranted(User::ROLE_ADMIN)) {
             $listRouteParameters = ['status' => 'nouveau', 'isImported' => 'oui'];
-        } elseif ($this->featureNewDashboard && $user->isUserPartner()) {
+        } elseif ($user->isUserPartner()) {
             $listRouteParameters = ['showMySignalementsOnly' => 'oui'];
         }
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
@@ -86,10 +84,8 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Connexions SI externes', route: 'back_interconnexion_index', roleGranted: User::ROLE_ADMIN));
-        if ($this->featureNewDashboard) {
-            $superAdminToolsSubItem
-                ->addChild(new MenuItem(label: 'Affectations sans prise en charge', route: 'back_affectation_without_subscription_index', roleGranted: User::ROLE_ADMIN));
-        }
+        $superAdminToolsSubItem
+            ->addChild(new MenuItem(label: 'Affectations sans prise en charge', route: 'back_affectation_without_subscription_index', roleGranted: User::ROLE_ADMIN));
         $superAdminToolsSubItem
             ->addChild(new MenuItem(route: 'back_archived_users_reactiver'))
             ->addChild(new MenuItem(route: 'back_territories_edit'))

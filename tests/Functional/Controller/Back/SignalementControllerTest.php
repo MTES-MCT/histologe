@@ -95,7 +95,6 @@ class SignalementControllerTest extends WebTestCase
 
     public function provideRoleSignalementRoutes(): \Generator
     {
-        $featureNewDashboard = self::getContainer()->getParameter('feature_new_dashboard');
         yield 'SA - Nouveau' => [
             'admin-01@signal-logement.fr',
             '00000000-0000-0000-2025-000000000001',
@@ -124,9 +123,7 @@ class SignalementControllerTest extends WebTestCase
         yield '13 - RT - En cours' => [
             'admin-territoire-13-01@signal-logement.fr',
             '00000000-0000-0000-2022-000000000001',
-            $featureNewDashboard
-                ? '#open-accept-affectation-modal'
-                : '#signalement-affectation-response-form .fr-icon-checkbox-circle-fill',
+            '#open-accept-affectation-modal',
             'Accepter',
         ];
 

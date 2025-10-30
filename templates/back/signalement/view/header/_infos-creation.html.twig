@@ -1,5 +1,5 @@
 
-<div class="fr-mb-4v {% if not feature_new_dashboard %}fr-text--right{% endif %}">
+<div class="fr-mb-4v">
     Dossier déposé le : {{ signalement.createdAt|date('d/m/Y') }}
     {% if signalement.createdBy is not null %}
         depuis le formulaire pro

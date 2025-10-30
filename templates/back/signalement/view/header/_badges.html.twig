@@ -1,21 +1,19 @@
 <div class="fr-mb-4v">  
-    {% if feature_new_dashboard %}
-        <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
-            {% if signalement.profileDeclarant %}
-                {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
-                    tiers bailleur
-                {% else %}
-                    {{ signalement.profileDeclarant.label }}
-                {% endif %}
+    <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
+        {% if signalement.profileDeclarant %}
+            {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                tiers bailleur
             {% else %}
-                {% if signalement.isNotOccupant %}
-                    tiers déclarant
-                {% else %}
-                    occupant
-                {% endif %}
+                {{ signalement.profileDeclarant.label }}
             {% endif %}
-        </span>
-    {% endif %}
+        {% else %}
+            {% if signalement.isNotOccupant %}
+                tiers déclarant
+            {% else %}
+                occupant
+            {% endif %}
+        {% endif %}
+    </span>
 
     <span class="fr-badge fr-badge--blue-ecume fr-badge--no-icon fr-m-1v">
         {% if signalement.isLogementSocial is null %}

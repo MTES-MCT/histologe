@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SuiviManagerTest extends KernelTestCase
 {
-    private const REF_SIGNALEMENT = '2022-8';
+    private const string REF_SIGNALEMENT = '2022-8';
     private ManagerRegistry $managerRegistry;
     private SignalementUpdatedListener $signalementUpdatedListener;
     private EventDispatcherInterface $eventDispatcherInterface;
@@ -50,7 +50,6 @@ class SuiviManagerTest extends KernelTestCase
             $this->security,
             $this->htmlSanitizerInterface,
             $this->userSignalementSubscriptionManager,
-            true,
             true,
             Suivi::class,
         );

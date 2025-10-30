@@ -6,9 +6,9 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
-class WidgetSettingsControllerTest extends WebTestCase
+class SettingsControllerTest extends WebTestCase
 {
-    public function testWidgetSettings(): void
+    public function testSettings(): void
     {
         $client = static::createClient();
 
@@ -18,7 +18,7 @@ class WidgetSettingsControllerTest extends WebTestCase
         $client->loginUser($user);
 
         $router = self::getContainer()->get(RouterInterface::class);
-        $client->request('GET', $router->generate('back_widget_settings'));
+        $client->request('GET', $router->generate('back_settings'));
 
         $this->assertEquals('200', $client->getResponse()->getStatusCode());
         $responseContent = json_decode($client->getResponse()->getContent(), true);
@@ -28,7 +28,7 @@ class WidgetSettingsControllerTest extends WebTestCase
         $this->assertArrayHasKey('territories', $responseContent);
     }
 
-    public function testWidgetSettingsWithTerritory(): void
+    public function testSettingsWithTerritory(): void
     {
         $client = static::createClient();
 
@@ -39,7 +39,7 @@ class WidgetSettingsControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $client->request('GET', $router->generate('back_widget_settings', ['territoryId' => 13]));
+        $client->request('GET', $router->generate('back_settings', ['territoryId' => 13]));
 
         $this->assertEquals('200', $client->getResponse()->getStatusCode());
         $responseContent = json_decode($client->getResponse()->getContent(), true);

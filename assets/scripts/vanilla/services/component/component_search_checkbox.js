@@ -81,7 +81,7 @@ function initSearchCheckboxWidgets() {
         });
       });
     } catch (e) {
-      console.error('Erreur dans l\'init du widget', idx, e);
+      console.error("Erreur dans l'init du widget", idx, e);
     }
   });
 }
