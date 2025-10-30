@@ -986,20 +986,6 @@ ul + p {
     height: auto;
 }
 
-.full-width-buttons {
-    display: flex;
-    gap: 1rem; /* facultatif, pour un petit espace entre boutons */
-}
-
-.full-width-buttons li {
-    flex: 1;
-}
-
-.full-width-buttons li a {
-    width: 100%;
-    text-align: center;
-}
-
 #dashboard {
     .fr-card__content {
         padding: 0 2rem 0 2rem;
