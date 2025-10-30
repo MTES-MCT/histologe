@@ -101,7 +101,7 @@ class Territory implements EntityHistoryInterface
         return $this->zip;
     }
 
-    public function setZip(?string $zip): self
+    public function setZip(?string $zip): static
     {
         $this->zip = $zip;
 
@@ -113,7 +113,7 @@ class Territory implements EntityHistoryInterface
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(?string $name): static
     {
         $this->name = $name;
 

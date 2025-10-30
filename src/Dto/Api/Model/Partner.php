@@ -22,7 +22,7 @@ class Partner
     public string $uuid;
 
     #[OA\Property(
-        description: 'Le code département du partenaire. Sera à null pour l\'opérateur de visite externe.',
+        description: 'Le code département du partenaire. Est à null si l\'opérateur de visite est externe.',
         example: '13',
         nullable: true
     )]
