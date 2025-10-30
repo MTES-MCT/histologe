@@ -655,7 +655,7 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertNotNull($suivi, 'Un suivi de type usager doit avoir été créé.');
         $this->assertStringContainsString(
-            $signalementUser->getUser()->getNomComplet(),
+            $signalementUser->getUser()->getNomComplet(true),
             $suivi->getDescription(),
             'Le suivi doit contenir le nom complet de l’usager.'
         );
