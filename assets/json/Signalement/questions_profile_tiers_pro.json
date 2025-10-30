@@ -504,12 +504,12 @@
         },
         {
           "type": "SignalementFormParagraph",
-          "label": "Avant de déposer un signalement sur Signal Logement le locataire doit prévenir son bailleur et lui laisser un délai de 2 mois pour lui répondre.</p><p><strong>Le service Signal Logement ne peut pour le moment donner suite à votre démarche.</strong>",
+          "label": "Avant de déposer un signalement sur {{formStore.props.platformName}} le locataire doit prévenir son bailleur et lui laisser un délai de 2 mois pour lui répondre.</p><p><strong>Le service {{formStore.props.platformName}} ne peut pour le moment donner suite à votre démarche.</strong>",
           "slug": "prevenir_bailleur_intro"
         },
         {
           "type": "SignalementFormInfo",
-          "label": "Vous devez d'abord prévenir le bailleur. Il a ensuite 2 mois pour répondre. Si vous n'avez pas de réponse de sa part au bout de 2 mois : vous pouvez signaler votre problème sur Signal Logement.",
+          "label": "Vous devez d'abord prévenir le bailleur. Il a ensuite 2 mois pour répondre. Si vous n'avez pas de réponse de sa part au bout de 2 mois : vous pouvez signaler votre problème sur {{formStore.props.platformName}}.",
           "slug": "prevenir_bailleur_info_warning_pas_contacte",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"

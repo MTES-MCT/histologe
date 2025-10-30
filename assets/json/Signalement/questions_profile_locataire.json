@@ -435,12 +435,12 @@
         },
         {
           "type": "SignalementFormParagraph",
-          "label": "Avant de déposer un signalement sur Signal Logement vous devez prévenir votre bailleur et lui laisser un délai de 2 mois pour vous répondre.</p><p><strong>Le service Signal Logement ne peut pour le moment donner suite à votre démarche.</strong>",
+          "label": "Avant de déposer un signalement sur {{formStore.props.platformName}} vous devez prévenir votre bailleur et lui laisser un délai de 2 mois pour vous répondre.</p><p><strong>Le service {{formStore.props.platformName}} ne peut pour le moment donner suite à votre démarche.</strong>",
           "slug": "prevenir_bailleur_intro"
         },
         {
           "type": "SignalementFormInfo",
-          "label": "Vous devez d'abord prévenir votre bailleur. Il a ensuite 2 mois pour vous répondre. Si vous n'avez pas de réponse de sa part au bout de 2 mois : vous pouvez signaler votre problème sur Signal Logement.",
+          "label": "Vous devez d'abord prévenir votre bailleur. Il a ensuite 2 mois pour vous répondre. Si vous n'avez pas de réponse de sa part au bout de 2 mois : vous pouvez signaler votre problème sur {{formStore.props.platformName}}.",
           "slug": "prevenir_bailleur_info_warning_pas_contacte",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
@@ -508,12 +508,12 @@
       "body": [
         {
           "type": "SignalementFormInfo",
-          "label": "Signal Logement peut vous aider à accélérer la résolution de votre dossier en contactant directement votre bailleur pour l'encourager à engager des travaux dans votre logement. Si celui-ci ne répond pas, nous transmettrons automatiquement votre dossier aux services compétents.",
+          "label": "{{formStore.props.platformName}} peut vous aider à accélérer la résolution de votre dossier en contactant directement votre bailleur pour l'encourager à engager des travaux dans votre logement. Si celui-ci ne répond pas, nous transmettrons automatiquement votre dossier aux services compétents.",
           "slug": "injonction_bailleur_info"
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Souhaitez-vous que Signal Logement contacte votre bailleur afin d'accélérer la résolution ?",
+          "label": "Souhaitez-vous que {{formStore.props.platformName}} contacte votre bailleur afin d'accélérer la résolution ?",
           "slug": "injonction_bailleur_choice",
           "values": [
             {
