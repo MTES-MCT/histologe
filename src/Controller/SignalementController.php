@@ -850,7 +850,7 @@ class SignalementController extends AbstractController
         $signalementUser = $this->getUser();
         $user = $signalementUser->getUser();
 
-        $description = $user->getNomComplet().' a indiqué avoir prévenu son bailleur.';
+        $description = $user->getNomComplet(true).' a indiqué que le bailleur a été prévenu.';
 
         $suiviManager->createSuivi(
             signalement: $signalement,
