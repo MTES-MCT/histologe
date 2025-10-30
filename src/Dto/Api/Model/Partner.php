@@ -23,10 +23,11 @@ class Partner
 
     #[OA\Property(
         description: 'Le code département du partenaire.',
-        example: '13'
+        example: '13',
+        nullable: true
     )]
     #[Groups(['user:me'])]
-    public string $codeDepartement;
+    public ?string $codeDepartement = null;
 
     #[OA\Property(
         description: 'Le nom du partenaire.',
@@ -80,7 +81,7 @@ class Partner
     ) {
         $this->uuid = $partner->getUuid();
         $this->nom = $partner->getNom();
-        $this->codeDepartement = $partner->getTerritory()->getZip();
+        $this->codeDepartement = $partner->getTerritory()?->getZip();
         $this->type = $partner->getType();
         $this->competences = $partner->getCompetence() ?? [];
     }
