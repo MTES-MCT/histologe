@@ -47,6 +47,6 @@ class PartnerQueryService
             return false;
         }
 
-        return $partner->hasEmailIssue();
+        return $partner->hasEmailIssue() || null === $partner->getEmail();
     }
 }
