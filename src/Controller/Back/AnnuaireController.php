@@ -24,10 +24,10 @@ class AnnuaireController extends AbstractController
     public function __construct(
         private readonly PartnerRepository $partnerRepository,
         TerritoryRepository $territoryRepository,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        bool $featureNewDashboard,
+        #[Autowire(env: 'FEATURE_ANNUAIRE')]
+        bool $featureAnnuaire,
     ) {
-        if (!$featureNewDashboard) {
+        if (!$featureAnnuaire) {
             throw $this->createNotFoundException();
         }
         $this->territoriesList = $territoryRepository->findAllList();
@@ -63,9 +63,8 @@ class AnnuaireController extends AbstractController
             if ($partner->getUsers()->isEmpty()) {
                 continue;
             }
-            $activeWorksheet->setCellValue('A'.$row, $partner->getNom());
-            ++$row;
             foreach ($partner->getUsers() as $user) {
+                $activeWorksheet->setCellValue('A'.$row, $partner->getNom());
                 $activeWorksheet->setCellValue('B'.$row, $user->getNomComplet());
                 $activeWorksheet->setCellValue('C'.$row, $user->getEmail());
                 ++$row;

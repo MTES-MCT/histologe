@@ -19,6 +19,10 @@
                     <div class="fr-col-4 fr-text--right">
                         <a href="{{ path('back_annuaire_export') }}?territory={{ territories[0].id }}" class="fr-btn" title="Exporter l'annuaire">Exporter l'annuaire</a>
                     </div>
+                {% elseif is_granted('ROLE_ADMIN') %}
+                    <div class="fr-col-8">
+                        <h1 class="fr-mb-0">Sélectionnez un territoire</h1>
+                    </div>
                 {% else %}
                     <div class="fr-col-8">
                         <h1 class="fr-mb-0">Annuaire des agents</h1>
