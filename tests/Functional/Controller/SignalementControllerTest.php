@@ -605,4 +605,59 @@ class SignalementControllerTest extends WebTestCase
             'zone_concernee',
         ];
     }
+
+    public function testSignalementBailleurPrevenu(): void
+    {
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2025-10',
+        ]);
+        $this->assertNotNull($signalement, 'Le signalement 2025-10 doit exister en base de test.');
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_bailleur_prevenu', [
+            'code' => $signalement->getCodeSuivi(),
+        ]);
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+        $client->request('POST', $url);
+
+        $this->assertResponseRedirects(
+            $router->generate('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()])
+        );
+
+        $client->followRedirect();
+
+        $this->assertSelectorExists('.fr-alert--success');
+        $this->assertSelectorTextContains('.fr-alert--success', 'Votre modification a bien été prise en compte.');
+
+        $signalementUpdated = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        $this->assertTrue($signalementUpdated->getIsProprioAverti(), 'Le bailleur devrait être marqué comme averti.');
+        $this->assertEquals(
+            'oui',
+            $signalementUpdated->getInformationProcedure()?->getInfoProcedureBailleurPrevenu(),
+            'L’information procédure doit indiquer que le bailleur a été prévenu.'
+        );
+
+        /** @var SuiviRepository $suiviRepository */
+        $suiviRepository = $entityManager->getRepository(Suivi::class);
+        $suivi = $suiviRepository->findOneBy([
+            'signalement' => $signalementUpdated,
+            'type' => Suivi::TYPE_USAGER,
+            'category' => SuiviCategory::MESSAGE_USAGER,
+        ]);
+
+        $this->assertNotNull($suivi, 'Un suivi de type usager doit avoir été créé.');
+        $this->assertStringContainsString(
+            $signalementUser->getUser()->getNomComplet(true),
+            $suivi->getDescription(),
+            'Le suivi doit contenir le nom complet de l’usager.'
+        );
+    }
 }
