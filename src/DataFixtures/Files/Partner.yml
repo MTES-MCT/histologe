@@ -642,3 +642,27 @@ partners:
     esabora_url: "http://signal_logement_wiremock:8080/ws/rest"
     is_esabora_active: 1
     type: "EPCI"
+  - 
+    nom: "Aideur de bailleurs 44"
+    email: "aide-bailleur-44@signal-logement.fr"
+    is_archive: 0
+    territory: "Loire-Atlantique"
+    type: "DISPOSITIF_RENOVATION_HABITAT"
+    competence:
+      - 'AIDE_BAILLEURS'
+  - 
+    nom: "Aideur de bailleurs 13"
+    email: "aide-bailleur-13@signal-logement.fr"
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+    type: "AUTRE"
+    competence:
+      - 'AIDE_BAILLEURS'
+  - 
+    nom: "Aideur de bailleurs 34"
+    email: "aide-bailleur-34@signal-logement.fr"
+    is_archive: 0
+    territory: "Hérault"
+    type: "ASSOCIATION"
+    competence:
+      - 'AIDE_BAILLEURS'

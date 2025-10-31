@@ -506,6 +506,24 @@ users:
     statut: "ACTIVE"
     is_mailing_active: 1
   -
+    email: user-44-05@signal-logement.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Aideur de bailleurs 44"
+    statut: "ACTIVE"
+    is_mailing_active: 1
+  -
+    email: user-13-16@signal-logement.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Aideur de bailleurs 13"
+    statut: "ACTIVE"
+    is_mailing_active: 1
+  -
+    email: user-34-01@signal-logement.fr
+    roles: "[\"ROLE_USER_PARTNER\"]"
+    partner: "Aideur de bailleurs 34"
+    statut: "ACTIVE"
+    is_mailing_active: 1
+  -
     email: proconnect@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
     partner: "Partenaire 13-01"

@@ -4,11 +4,14 @@ namespace App\Service;
 
 use App\Dto\ReponseInjonctionBailleur;
 use App\Dto\StopProcedure;
+use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -21,6 +24,8 @@ class InjonctionBailleurService
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly AutoAssigner $autoAssigner,
         private readonly EntityManagerInterface $entityManager,
+        private readonly AffectationManager $affectationManager,
+        private readonly UserManager $userManager,
     ) {
     }
 
@@ -40,6 +45,7 @@ class InjonctionBailleurService
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE;
                 $this->suiviManager->createSuivi(signalement: $signalement, description: $contenu, type: Suivi::TYPE_AUTO, category: $category, isPublic: true);
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
+                $this->assignHelpingPartners($signalement);
                 break;
             case ReponseInjonctionBailleur::REPONSE_NON:
                 $contenu = 'Le bailleur refuse de résoudre les désordres signalés, le signalement va être pris en charge par les partenaires compétents.';
@@ -62,6 +68,25 @@ class InjonctionBailleurService
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
         );
+    }
+
+    private function assignHelpingPartners(Signalement $signalement): void
+    {
+        $helpingPartnersFromTerritory = $signalement->getTerritory()->getPartners()->filter(function ($partner) {
+            return in_array(Qualification::AIDE_BAILLEURS, $partner->getCompetence());
+        });
+
+        $adminUser = $this->userManager->getSystemUser();
+
+        foreach ($helpingPartnersFromTerritory as $partner) {
+            $affectation = $this->affectationManager->createAffectationFrom(
+                $signalement,
+                $partner,
+                $adminUser
+            );
+            $signalement->addAffectation($affectation);
+        }
+        $this->affectationManager->flush();
     }
 
     public function handleStopProcedure(StopProcedure $stopProcedure): void
