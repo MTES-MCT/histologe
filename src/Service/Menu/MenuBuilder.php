@@ -25,8 +25,6 @@ readonly class MenuBuilder
         $listRouteParameters = [];
         if ($this->currentRoute->isGranted(User::ROLE_ADMIN)) {
             $listRouteParameters = ['status' => 'nouveau', 'isImported' => 'oui'];
-        } elseif ($this->featureNewDashboard && $user->isUserPartner()) {
-            $listRouteParameters = ['showMySignalementsOnly' => 'oui'];
         }
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', routeParameters: $listRouteParameters, roleGranted: User::ROLE_USER));
