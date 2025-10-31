@@ -22,6 +22,7 @@ twig:
         feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
         feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
         feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'
+        feature_annuaire: '%env(bool:FEATURE_ANNUAIRE)%'
         MAX_ITEMS_LIST: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST
     paths:
         # point this wherever your images live
