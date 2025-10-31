@@ -66,7 +66,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 0, []);
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(0, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(1, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentLunel(): void
@@ -151,7 +151,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 0, []);
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(0, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(1, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentOneZoneIncludedOneCodeInsee(): void
