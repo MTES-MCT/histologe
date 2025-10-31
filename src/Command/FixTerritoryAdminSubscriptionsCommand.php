@@ -6,6 +6,7 @@ use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ class FixTerritoryAdminSubscriptionsCommand extends Command
         private readonly UserRepository $userRepository,
         private readonly UserManager $userManager,
         private readonly UserSignalementSubscriptionManager $subscriptionManager,
+        private readonly UserSignalementSubscriptionRepository $subscriptionRepository,
     ) {
         parent::__construct();
     }
@@ -33,9 +35,22 @@ class FixTerritoryAdminSubscriptionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->title('Fixing territory admin subscriptions for signalements validated from 28/10/2025');
-
         $adminUser = $this->userManager->getSystemUser();
+
+        $io->title('Removing obsolete subscriptions to signalements done by admin');
+
+        $subscriptions = $this->subscriptionRepository->findBy(['user' => $adminUser]);
+        foreach ($subscriptions as $subscription) {
+            $this->subscriptionManager->remove($subscription);
+        }
+        $this->subscriptionManager->flush();
+
+        $io->success(sprintf(
+            '%d subscriptions removed',
+            \count($subscriptions)
+        ));
+
+        $io->title('Fixing territory admin subscriptions for signalements validated from 28/10/2025');
 
         // Find all signalements validated from 28/10/2025
         $startDate = new \DateTimeImmutable(self::START_DATE);

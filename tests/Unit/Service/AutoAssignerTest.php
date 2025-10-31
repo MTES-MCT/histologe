@@ -54,7 +54,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 1, ['Mairie de Saint-Denis']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(1, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(0, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentGexWithoutAutoAffectationRule(): void
@@ -78,7 +78,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 4, ['Ville de Lunel', 'CAF 34', 'CD 34', 'CA Lunel Agglomération']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(3, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentLunelIsLogementSocial(): void
@@ -103,7 +103,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 3, ['Ville de Lunel', 'CD 34', 'CA Lunel Agglomération']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(3, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentLunelProfilBailleur(): void
@@ -115,7 +115,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 3, ['Ville de Lunel', 'CAF 34', 'CD 34']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(3, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentWithCodeInseeExcluded(): void
@@ -127,7 +127,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 3, ['Commune de Campagne', 'CAF 34', 'CD 34']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(3, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentMontpellier(): void
@@ -139,7 +139,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 2, ['Ville de Montpellier', 'CAF 34']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(3, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentRuleArchived(): void
@@ -163,7 +163,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 2, ['Mairie de Saint-Mars du Désert', 'Tiers-Lieu']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(1, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentZoneIncluded(): void
@@ -175,7 +175,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'Cocoland', 'Tiers-Lieu']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(1, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentWithoutZoneWithoutInsee(): void
@@ -203,7 +203,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 4, ['Mairie de Saint-Mars du Désert', 'SDIS 44', 'Cocoland', 'Tiers-Lieu']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(1, $signalement->getUserSignalementSubscriptions());
     }
 
     public function testAutoAssignmentBailleurSocial(): void
@@ -216,7 +216,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'Partner Habitat 44', 'Tiers-Lieu']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
-        $this->assertcount(2, $signalement->getUserSignalementSubscriptions());
+        $this->assertcount(1, $signalement->getUserSignalementSubscriptions());
     }
 
     /**
