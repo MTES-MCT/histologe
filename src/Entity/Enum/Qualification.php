@@ -11,6 +11,7 @@ enum Qualification: string
     case ACCOMPAGNEMENT_JURIDIQUE = 'ACCOMPAGNEMENT_JURIDIQUE';
     case ACCOMPAGNEMENT_SOCIAL = 'ACCOMPAGNEMENT_SOCIAL';
     case ACCOMPAGNEMENT_TRAVAUX = 'ACCOMPAGNEMENT_TRAVAUX';
+    case AIDE_BAILLEURS = 'AIDE_BAILLEURS';
     case ARRETES = 'ARRETES';
     case ASSURANTIEL = 'ASSURANTIEL';
     case CONCILIATION = 'CONCILIATION';
@@ -36,6 +37,7 @@ enum Qualification: string
             'ACCOMPAGNEMENT_JURIDIQUE' => 'Accompagnement juridique',
             'ACCOMPAGNEMENT_SOCIAL' => 'Accompagnement social',
             'ACCOMPAGNEMENT_TRAVAUX' => 'Accompagnement travaux',
+            'AIDE_BAILLEURS' => 'Aide aux bailleurs',
             'ARRETES' => 'Arrêtés',
             'ASSURANTIEL' => 'Assurantiel',
             'CONCILIATION' => 'Conciliation',
