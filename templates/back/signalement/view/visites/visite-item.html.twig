@@ -78,7 +78,12 @@
         </div>
     {% else %}
         <div class="fr-col-12">
-            <strong>Commentaire du partenaire :</strong>
+            <strong>
+                Commentaire du partenaire :
+                {% if intervention.conclusionVisiteEditedAt is defined and intervention.conclusionVisiteEditedAt is not null %}
+                    <i>(édité le {{ intervention.conclusionVisiteEditedAt|date('d/m/Y') }})</i>
+                {% endif %}
+            </strong>
             <div class="fr-highlight fr-background--white fr-py-3v fr-my-3v fr-ml-0">
                 {% if signalement.interventions is empty or intervention.details is empty %}
                     <p>Non renseigné</p>
