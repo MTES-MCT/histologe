@@ -43,7 +43,7 @@
                 {% if not partnerAffectation.partner.receiveEmailNotifications %}
                     <span class="fr-badge fr-badge--warning fr-badge--sm">Notif. e-mail désactivées</span>
                 {% endif %}
-                {% if partnerAffectation.partner.emailDeliveryIssue.event.value|default(false) %}
+                {% if partnerEmailAlerts[partnerAffectation.partner.id] %}
                     <span class="fr-badge fr-badge--warning fr-badge--sm">Problème d'e-mail non remis</span>
                 {% endif %}
             </div>

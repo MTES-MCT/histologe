@@ -5,7 +5,6 @@ namespace App\DataFixtures\Loader;
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\BrevoEvent;
 use App\Repository\PartnerRepository;
-use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -13,10 +12,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadEmailDeliveryIssue extends Fixture implements OrderedFixtureInterface
 {
-    public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly PartnerRepository $partnerRepository,
-    ) {
+    public function __construct(private readonly PartnerRepository $partnerRepository)
+    {
     }
 
     public function load(ObjectManager $manager): void
@@ -33,10 +30,7 @@ class LoadEmailDeliveryIssue extends Fixture implements OrderedFixtureInterface
      */
     public function loadEmailDeliveryIssue(ObjectManager $manager, array $row): void
     {
-        $user = $this->userRepository->findOneBy(['email' => $row['email']]);
-        if (!$user) {
-            $partner = $this->partnerRepository->findOneBy(['email' => $row['email']]);
-        }
+        $partner = $this->partnerRepository->findOneBy(['email' => $row['email']]);
 
         $emailDeliveryIssue = (new EmailDeliveryIssue())
             ->setEmail($row['email'])
@@ -44,11 +38,8 @@ class LoadEmailDeliveryIssue extends Fixture implements OrderedFixtureInterface
             ->setReason($row['reason'])
             ->setPayload($row['payload']);
 
-        if ($user) {
-            $user->setEmailDeliveryIssue($emailDeliveryIssue);
-        } else {
-            $partner->setEmailDeliveryIssue($emailDeliveryIssue);
-        }
+        $partner?->setEmailDeliveryIssue($emailDeliveryIssue);
+
         $manager->persist($emailDeliveryIssue);
     }
 

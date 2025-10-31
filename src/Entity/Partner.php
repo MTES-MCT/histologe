@@ -573,6 +573,11 @@ class Partner implements EntityHistoryInterface
         return $this->emailDeliveryIssue;
     }
 
+    public function hasEmailIssue(): bool
+    {
+        return null !== $this->emailDeliveryIssue;
+    }
+
     public function setEmailDeliveryIssue(?EmailDeliveryIssue $emailDeliveryIssue): static
     {
         $this->emailDeliveryIssue = $emailDeliveryIssue;

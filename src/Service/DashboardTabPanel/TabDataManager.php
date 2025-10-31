@@ -84,6 +84,7 @@ class TabDataManager
                 ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
                 : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
+                uuid: $signalement['uuid'],
                 nomDeclarant: $signalement['nomOccupant'],
                 prenomDeclarant: $signalement['prenomOccupant'],
                 reference: '#'.$signalement['reference'],
@@ -92,7 +93,6 @@ class TabDataManager
                 derniereAction: $derniereAction,
                 derniereActionAt: $signalement['suiviCreatedAt'],
                 actionDepuis: $signalement['hasNewerSuivi'] ? 'OUI' : 'NON',
-                uuid: $signalement['uuid'],
             );
         }
 
@@ -347,6 +347,7 @@ class TabDataManager
     /**
      * @throws NonUniqueResultException
      * @throws NoResultException
+     * @throws \DateMalformedStringException
      */
     public function getMessagesUsagersNouveauxMessages(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
@@ -359,6 +360,7 @@ class TabDataManager
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
             $tabDossiers[] = new TabDossier(
+                uuid: $suivi['uuid'],
                 nomDeclarant: $suivi['nomOccupant'],
                 prenomDeclarant: $suivi['prenomOccupant'],
                 reference: '#'.$suivi['reference'],
@@ -367,7 +369,6 @@ class TabDataManager
                 messageSuiviByNom: $suivi['messageSuiviByNom'],
                 messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
                 messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
-                uuid: $suivi['uuid'],
             );
         }
 
@@ -377,8 +378,7 @@ class TabDataManager
     }
 
     /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
+     * @throws \DateMalformedStringException
      */
     public function getMessagesUsagersMessageApresFermeture(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
@@ -391,6 +391,7 @@ class TabDataManager
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
             $tabDossiers[] = new TabDossier(
+                uuid: $suivi['uuid'],
                 nomDeclarant: $suivi['nomOccupant'],
                 prenomDeclarant: $suivi['prenomOccupant'],
                 reference: '#'.$suivi['reference'],
@@ -400,7 +401,6 @@ class TabDataManager
                 messageSuiviByNom: $suivi['messageSuiviByNom'],
                 messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
                 messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
-                uuid: $suivi['uuid'],
             );
         }
 
@@ -410,8 +410,7 @@ class TabDataManager
     }
 
     /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
+     * @throws \DateMalformedStringException
      */
     public function getMessagesUsagersMessagesSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
@@ -424,16 +423,16 @@ class TabDataManager
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
             $tabDossiers[] = new TabDossier(
+                uuid: $suivi['uuid'],
                 nomDeclarant: $suivi['nomOccupant'],
                 prenomDeclarant: $suivi['prenomOccupant'],
                 reference: '#'.$suivi['reference'],
                 adresse: $suivi['adresse'],
                 messageAt: new \DateTimeImmutable($suivi['messageAt']),
+                messageDaysAgo: $suivi['messageDaysAgo'],
                 messageSuiviByNom: $suivi['messageSuiviByNom'],
                 messageSuiviByPrenom: $suivi['messageSuiviByPrenom'],
                 messageByProfileDeclarant: $suivi['messageByProfileDeclarant'],
-                messageDaysAgo: $suivi['messageDaysAgo'],
-                uuid: $suivi['uuid'],
             );
         }
 
@@ -443,8 +442,7 @@ class TabDataManager
     }
 
     /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
+     * @throws \DateMalformedStringException
      */
     public function getDossiersAVerifierSansActivitePartenaires(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
@@ -455,17 +453,17 @@ class TabDataManager
         for ($i = 0; $i < \count($signalements); ++$i) {
             $signalement = $signalements[$i];
             $tabDossiers[] = new TabDossier(
+                uuid: $signalement['uuid'],
                 nomDeclarant: $signalement['nomOccupant'],
                 prenomDeclarant: $signalement['prenomOccupant'],
                 reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresse'],
                 derniereActionAt: new \DateTimeImmutable($signalement['dernierSuiviAt']),
-                derniereActionPartenaireDaysAgo: $signalement['nbJoursDepuisDernierSuivi'],
                 derniereActionTypeSuivi: SuiviCategory::from($signalement['suiviCategory'])->label(),
+                derniereActionPartenaireDaysAgo: $signalement['nbJoursDepuisDernierSuivi'],
                 derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
                 derniereActionPartenaireNomAgent: $signalement['derniereActionPartenaireNomAgent'] ?? 'N/A',
                 derniereActionPartenairePrenomAgent: $signalement['derniereActionPartenairePrenomAgent'] ?? 'N/A',
-                uuid: $signalement['uuid'],
             );
         }
 
@@ -474,10 +472,6 @@ class TabDataManager
         return new TabDossierResult($tabDossiers, $count);
     }
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
     public function getDossiersAVerifierAdresseEmailAverifier(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
         /** @var User $user */
@@ -487,15 +481,15 @@ class TabDataManager
         for ($i = 0; $i < \count($signalements); ++$i) {
             $signalement = $signalements[$i];
             $tabDossiers[] = new TabDossier(
-                profilNonDeliverable: $signalement['profilNonDeliverable'],
-                reference: '#'.$signalement['reference'],
+                uuid: $signalement['uuid'],
                 nomDeclarant: $signalement['nomOccupant'],
                 prenomDeclarant: $signalement['prenomOccupant'],
+                reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresse'],
                 depotAt: $signalement['createdAt'],
                 derniereActionAt: $signalement['dernierSuiviAt'],
                 derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
-                uuid: $signalement['uuid'],
+                profilNonDeliverable: $signalement['profilNonDeliverable'],
             );
         }
 
@@ -552,17 +546,17 @@ class TabDataManager
                 ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
                 : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
-                statut: $signalement['statut']->label(),
-                reference: '#'.$signalement['reference'],
+                uuid: $signalement['uuid'],
                 nomDeclarant: $signalement['nomOccupant'],
                 prenomDeclarant: $signalement['prenomOccupant'],
-                derniereActionAt: $signalement['suiviCreatedAt'],
+                reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresseOccupant'],
+                statut: $signalement['statut']->label(),
                 derniereAction: $derniereAction,
-                derniereActionPartenairePrenomAgent: $signalement['derniereActionPartenairePrenomAgent'] ?? 'N/A',
-                derniereActionPartenaireNomAgent: $signalement['derniereActionPartenaireNomAgent'] ?? 'N/A',
+                derniereActionAt: $signalement['suiviCreatedAt'],
                 derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
-                uuid: $signalement['uuid'],
+                derniereActionPartenaireNomAgent: $signalement['derniereActionPartenaireNomAgent'] ?? 'N/A',
+                derniereActionPartenairePrenomAgent: $signalement['derniereActionPartenairePrenomAgent'] ?? 'N/A',
             );
         }
 

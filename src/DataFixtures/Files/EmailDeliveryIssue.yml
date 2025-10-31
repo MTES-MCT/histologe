@@ -15,4 +15,20 @@ email_delivery_issue:
       event: "hard_bounce"
       email: "partenaire-13-01@signal-logement.fr"
       reason: "Recipient address rejected: Access denied."
+  -
+    email: "partenaire-13-10@signal-logement.fr"
+    event: "hard_bounce"
+    reason: "Recipient address rejected: Access denied."
+    payload:
+      event: "hard_bounce"
+      email: "partenaire-13-10@signal-logement.fr"
+      reason: "Recipient address rejected: Access denied."
+  -
+    email: "user-13-15@signal-logement.fr"
+    event: "hard_bounce"
+    reason: "Recipient address rejected: Access denied."
+    payload:
+      event: "hard_bounce"
+      email: "user-13-15@signal-logement.fr"
+      reason: "Recipient address rejected: Access denied."
 

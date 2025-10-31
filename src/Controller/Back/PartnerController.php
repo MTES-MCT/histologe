@@ -26,6 +26,7 @@ use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Service\EmailAlertChecker;
 use App\Service\ListFilters\SearchPartner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -109,6 +110,7 @@ class PartnerController extends AbstractController
         PartnerRepository $partnerRepository,
         JobEventRepository $jobEventRepository,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
+        EmailAlertChecker $emailAlertChecker,
     ): Response {
         $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
         if ($partner->getIsArchive()) {
@@ -128,11 +130,14 @@ class PartnerController extends AbstractController
             $partnerAutoAffectationRules = $autoAffectationRuleRepository->findForPartner($partner);
         }
 
+        $emailsWithAlert = $emailAlertChecker->buildUserEmailAlert($partner->getUsers());
+
         return $this->render('back/partner/view.html.twig', [
             'partner' => $partner,
             'partners' => $partnerRepository->findAllList($partner->getTerritory()),
             'last_job_date' => $lastJobEventDate,
             'partnerAutoAffectationRules' => $partnerAutoAffectationRules,
+            'emailsWithAlert' => $emailsWithAlert,
         ]);
     }
 

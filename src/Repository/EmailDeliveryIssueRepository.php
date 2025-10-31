@@ -15,4 +15,13 @@ class EmailDeliveryIssueRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, EmailDeliveryIssue::class);
     }
+
+    public function getExistsByEmailDql(string $emailField): string
+    {
+        $qb = $this->createQueryBuilder('edi');
+        $expr = $qb->expr()->eq('edi.email', $emailField);
+        $qb->select('1')->where($expr);
+
+        return $qb->getDQL();
+    }
 }
