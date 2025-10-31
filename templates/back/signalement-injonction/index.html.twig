@@ -83,12 +83,15 @@
 
         {% set tableBody %}
             {% for signalement in signalements %}
-                {% if signalement.reponseBailleur == 'Oui avec aide' %}
-                    {% set classe = 'fr-badge--info' %}
-                {% elseif signalement.reponseBailleur == 'Aucune'  %}
-                    {% set classe = 'fr-badge--error' %}
-                {% else %}
-                    {% set classe = 'fr-badge--success' %}
+                {% set classeBadgeReponseBailleur = 'fr-badge--error' %}
+                {% set labelReponseBailleur = 'Aucune' %}
+                {% if signalement.suiviReponseBailleur %}
+                    {% set labelReponseBailleur = signalement.suiviReponseBailleur.category.labelReponseBailleur %}
+                    {% if signalement.suiviReponseBailleur.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE %}
+                        {% set classeBadgeReponseBailleur = 'fr-badge--info' %}
+                    {% elseif signalement.suiviReponseBailleur.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_OUI %}
+                        {% set classeBadgeReponseBailleur = 'fr-badge--success' %}
+                    {% endif %}
                 {% endif %}
                 <tr>
                     {% if is_granted('ROLE_ADMIN') %}
@@ -99,7 +102,7 @@
                     <td>{{ signalement.getAddressCompleteOccupant() }}</td>
                     <td>{{ signalement.prenomOccupant ~ ' ' ~ signalement.nomOccupant }}</td>
                     <td>{{ signalement.getDisplayedNomProprio() }}</td>
-                    <td><span class="fr-badge {{ classe }} fr-badge--no-icon fr-ws-nowrap ">{{ signalement.reponseBailleur }}</span></td>
+                    <td><span class="fr-badge {{ classeBadgeReponseBailleur }} fr-badge--no-icon fr-ws-nowrap ">{{ labelReponseBailleur }}</span></td>
                     {% if is_granted('ROLE_ADMIN') %}
                         <td>
                             <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>

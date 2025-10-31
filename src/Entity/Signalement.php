@@ -2791,14 +2791,14 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getReponseBailleur(): ?string
+    public function getSuiviReponseBailleur(): ?Suivi
     {
         foreach ($this->getSuivis() as $suivi) {
             if (in_array($suivi->getCategory(), SuiviCategory::injonctionBailleurReponseCategories())) {
-                return $suivi->getCategory()->labelReponseBailleur();
+                return $suivi;
             }
         }
 
-        return 'Aucune';
+        return null;
     }
 }

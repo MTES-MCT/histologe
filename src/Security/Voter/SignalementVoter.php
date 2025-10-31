@@ -24,7 +24,7 @@ class SignalementVoter extends Voter
     public const string EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
     public const string DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
     public const string VIEW = 'SIGN_VIEW';
-    public const string SIGN_SUBSCRIBE = 'SIGN_SUBSCRIBE';
+    public const string SUBSCRIBE = 'SIGN_SUBSCRIBE';
     public const string ADD_VISITE = 'SIGN_ADD_VISITE';
     public const string EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SEE_NDE = 'SIGN_SEE_NDE';
@@ -42,7 +42,7 @@ class SignalementVoter extends Voter
                 self::EDIT,
                 self::EDIT_DRAFT,
                 self::VIEW,
-                self::SIGN_SUBSCRIBE,
+                self::SUBSCRIBE,
                 self::DELETE,
                 self::VALIDATE,
                 self::CLOSE,
@@ -86,7 +86,7 @@ class SignalementVoter extends Voter
             self::DELETE => $this->canDelete($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
             self::VIEW => $this->canView($subject, $user),
-            self::SIGN_SUBSCRIBE => $this->canSignSubscribe($subject, $user),
+            self::SUBSCRIBE => $this->canSubscribe($subject, $user),
             self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
             self::CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
             default => false,
@@ -184,7 +184,7 @@ class SignalementVoter extends Voter
         })->count() > 0;
     }
 
-    private function canSignSubscribe(Signalement $signalement, User $user): bool
+    private function canSubscribe(Signalement $signalement, User $user): bool
     {
         // en attendant les précisions sur les afectations d'injonction bailleur
         if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
