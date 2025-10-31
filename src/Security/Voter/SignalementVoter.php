@@ -190,6 +190,9 @@ class SignalementVoter extends Voter
         if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
             return false;
         }
+        if (SignalementStatus::CLOSED === $signalement->getStatut()) {
+            return false;
+        }
 
         return $this->canView($signalement, $user);
     }

@@ -85,7 +85,6 @@
                         </button>
                     </li>
                 {% endif %}
-                {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
                 {% if is_granted('SIGN_SUBSCRIBE', signalement) %}
                     {% if isUserSubscribed %}
                             <li>
@@ -118,7 +117,6 @@
                                 </a>
                             </li>
                     {% endif %}
-                {% endif %}
                 {% endif %}
             </ul>
         </div>
