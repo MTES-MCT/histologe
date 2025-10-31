@@ -85,37 +85,37 @@
                         </button>
                     </li>
                 {% endif %}
-                {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
+                {% if is_granted('SIGN_SUBSCRIBE', signalement) %}
                     {% if isUserSubscribed %}
-                        <li>
-                            {% if isAloneInCurrentPartner %}
-                                <button 
-                                    class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line disabled"
-                                    aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire.">
-                                    Se retirer du dossier
-                                </button>
-                            {% elseif subscriptionsInMyPartner|length > 1 %}
-                                <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
-                                    class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
-                                    Se retirer du dossier
+                            <li>
+                                {% if isAloneInCurrentPartner %}
+                                    <button 
+                                        class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line disabled"
+                                        aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire.">
+                                        Se retirer du dossier
+                                    </button>
+                                {% elseif subscriptionsInMyPartner|length > 1 %}
+                                    <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
+                                        class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
+                                        Se retirer du dossier
+                                    </a>
+                                {% else %}
+                                    <button
+                                        class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
+                                        aria-controls="transfer-subscription-modal" 
+                                        data-fr-opened="false"
+                                        >
+                                        Se retirer du dossier
+                                    </button>
+                                {% endif %}
+                            </li>
+                        {% elseif not canCancelRefusedAffectation %}
+                            <li>
+                                <a href="{{ path('back_signalement_subscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('subscribe') }}"
+                                    class="fr-nav__link fr-btn--icon-left fr-icon-eye-line">
+                                    Rejoindre le dossier
                                 </a>
-                            {% else %}
-                                <button
-                                    class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
-                                    aria-controls="transfer-subscription-modal" 
-                                    data-fr-opened="false"
-                                    >
-                                    Se retirer du dossier
-                                </button>
-                            {% endif %}
-                        </li>
-                    {% elseif not canCancelRefusedAffectation %}
-                        <li>
-                            <a href="{{ path('back_signalement_subscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('subscribe') }}"
-                                class="fr-nav__link fr-btn--icon-left fr-icon-eye-line">
-                                Rejoindre le dossier
-                            </a>
-                        </li>
+                            </li>
                     {% endif %}
                 {% endif %}
             </ul>
