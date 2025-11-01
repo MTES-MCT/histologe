@@ -38,6 +38,7 @@ import './vanilla/controllers/back_signalement_view/input_autocomplete_bailleur.
 import './vanilla/controllers/back_signalement_view/form_cloture_modal.js';
 import './vanilla/controllers/back_signalement_view/form_acceptation_refus.js';
 import './vanilla/controllers/back_signalement_view/pick-localisation.js';
+import './vanilla/controllers/back_signalement_view/toggle-suivi-auto.js';
 import './vanilla/controllers/back_signalement_edit_file/back_signalement_edit_file.js';
 import './vanilla/controllers/back_signalement_list_export/back_signalement_list_export.js';
 import './vanilla/controllers/back_profil_edit_email/back_profil_edit_email.js';

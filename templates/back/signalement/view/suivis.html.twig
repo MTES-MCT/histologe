@@ -3,6 +3,10 @@
 <div id="suivis" class="fr-grid-row">
     <div class="fr-col-9 fr-col-md-6">
         <h3 class="fr-h5">Suivis</h3>
+        <div class="fr-toggle fr-mb-3v">
+            <input type="checkbox" id="toggle-hide-technical" name="toggle-hide-technical">
+            <label class="fr-toggle__label" for="toggle-hide-technical">Cacher les suivis automatiques</label>
+        </div>
     </div>
     {% if 
         is_granted('CREATE_SUIVI', signalement)
@@ -21,7 +25,10 @@
 </div>
 
 {% for suivi in signalement.suivis|reverse %}
-    <div class="fr-grid-row fr-grid-row--middle fr-background-alt--blue-france fr-p-3v fr-mb-3v suivi-item {% if loop.index > 3 %}fr-hidden{% endif %}">
+    <div class="fr-grid-row fr-grid-row--middle fr-background-alt--blue-france fr-p-3v fr-mb-3v suivi-item 
+        {% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}suivi-auto{% endif %}
+        {% if loop.index > 3 %}fr-hidden{% endif %}
+        ">
         <div class="fr-col-3">   
             <strong>{{ suivi.createdAt|date('d/m/Y') }}</strong>
             <br>
@@ -54,7 +61,7 @@
                 <span class="fr-badge fr-badge--no-icon" title="Suivi interne">Suivi interne</span>
             {% endif %}
             <br>
-            {% if suivi.isPublic and suivi.type is not same as (2) %}
+            {% if suivi.isPublic and suivi.type is not same as constant('App\\Entity\\Suivi::TYPE_USAGER') %}
                 <span class="fr-badge fr-badge--{{ suivi.isSeenByUsager ? 'success fr-background--notif-info' : 'error fr-background--notif-error' }} fr-mt-1v">{{ suivi.isSeenByUsager ? 'Lu' : 'Non lu' }}</span>
             {% endif %}
         </div>
