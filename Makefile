@@ -219,8 +219,11 @@ test-e2e: ## Run E2E tests
 test-e2e-ui: ## Run E2E tests
 	@cd tests/e2e/ ; $(NPX) playwright test --ui
 
-open-test-e2e: ## Open Playwright
-	@$(NPX) playwright open
+create-test-e2e: ## Open Playwright
+	@cd tests/e2e/ ; $(NPX) playwright codegen
+
+playwright-install: ## Open Playwright
+	@cd tests/e2e/ ; $(NPX) playwright install
 
 stan: ## Run PHPStan
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer stan $(FILE) 

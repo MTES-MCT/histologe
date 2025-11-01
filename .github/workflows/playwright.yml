@@ -35,10 +35,10 @@ env:
   MAINTENANCE_BANNER_MESSAGE: 'Une opération de maintenance est en cours'
   AXIOS_TIMEOUT: 30000
   LIMIT_DAILY_RELANCES_BY_REQUEST: 275
-  FORMS_SUBMIT_LIMITER_LIMIT: 10
-  FORMS_SUBMIT_LIMITER_INTERVAL: '20 minutes'
-  API_LIMITER_LIMIT: 60
-  API_LIMITER_INTERVAL: '1 minute'
+  FORMS_SUBMIT_LIMITER_LIMIT: 1000
+  FORMS_SUBMIT_LIMITER_INTERVAL: '1 hour'
+  API_LIMITER_LIMIT: 1000
+  API_LIMITER_INTERVAL: '1 hour'
   FEATURE_2FA_EMAIL_ENABLED: 1
   MISE_EN_BERNE_ENABLE: 0
   CLAMAV_SCAN_ENABLE: 0
@@ -64,11 +64,11 @@ env:
   PROCONNECT_CLIENT_SECRET: test_client_secret
   FEATURE_EMAIL_RECAP: 1
   TRUSTED_PROXIES: 0.0.0.0/0
-  S3_ENDPOINT: https://s3.example.com
+  S3_ENDPOINT: http://localhost:9000
   S3_KEY: test_key
   S3_SECRET: test_secret
   S3_BUCKET: test_bucket
-  S3_URL_BUCKET: https://test-bucket.s3.example.com
+  S3_URL_BUCKET: http://localhost:8080/storage
   SENTRY_DSN: https://test@sentry.example.com/123
   SENTRY_DSN_FRONT: https://test@sentry.example.com/456
   SENTRY_ENVIRONMENT: test
@@ -142,6 +142,9 @@ jobs:
         run: |
           docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=dev --no-warmup
           docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=dev
+          docker compose exec -T signal_logement_phpfpm mkdir -p var/storage
+          docker compose exec -T signal_logement_phpfpm chmod 777 var/storage
+          docker compose exec -T signal_logement_phpfpm ln -sf ../var/storage public/storage || true
 
       - name: Init database
         run: |
@@ -160,6 +163,14 @@ jobs:
           done
           echo "Application is ready!"
 
+      - name: Verify rate limiter configuration
+        run: |
+          echo "=== Checking .env file for rate limiter config ==="
+          grep "FORMS_SUBMIT_LIMITER" .env || echo "FORMS_SUBMIT_LIMITER not found in .env"
+          echo ""
+          echo "=== Checking environment variables in PHP container ==="
+          docker compose exec -T signal_logement_phpfpm env | grep "FORMS_SUBMIT_LIMITER" || echo "FORMS_SUBMIT_LIMITER not found in container env"
+
       - name: Install Node.js for Playwright
         uses: actions/setup-node@v4
         with:
@@ -175,9 +186,42 @@ jobs:
         working-directory: tests/e2e
         run: npx playwright test
 
+      - name: Upload test screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots
+          path: /tmp/*.png
+          if-no-files-found: ignore
+
+      - name: Upload Playwright artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            tests/e2e/test-results/
+            tests/e2e/playwright-report/
+          if-no-files-found: ignore
+
       - name: Check server logs
         if: ${{ always() }}
-        run: docker compose logs signal_logement_phpfpm
+        run: |
+          echo "=== PHP-FPM logs (errors only) ==="
+          docker compose logs signal_logement_phpfpm 2>&1 | grep -i "error\|warning\|rate\|limit\|denied" || echo "No errors found"
+          echo ""
+          echo "=== PHP-FPM logs (all, last 200 lines) ==="
+          docker compose logs signal_logement_phpfpm --tail=200
+          echo ""
+          echo "=== Redis logs ==="
+          docker compose logs signal_logement_redis --tail=100
+          echo ""
+          echo "=== Nginx logs ==="
+          docker compose logs signal_logement_nginx --tail=100
+          echo ""
+          echo "=== Check Redis rate limiter keys ==="
+          docker compose exec -T signal_logement_redis redis-cli KEYS "*limiter*" || echo "Could not check Redis"
+          docker compose exec -T signal_logement_redis redis-cli KEYS "*login*" || echo "Could not check Redis"
 
       - name: Check build output inside container
         if: ${{ always() }}
