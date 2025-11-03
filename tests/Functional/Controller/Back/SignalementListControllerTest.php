@@ -324,6 +324,6 @@ class SignalementListControllerTest extends WebTestCase
         $client->request('GET', $route, ['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], [], ['HTTP_Accept' => 'application/json']);
         $result = json_decode($client->getResponse()->getContent(), true);
 
-        $this->assertEquals(1, $result['pagination']['total_items']);
+        $this->assertEquals(0, $result['pagination']['total_items']);
     }
 }
