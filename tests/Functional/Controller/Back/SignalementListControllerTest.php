@@ -89,7 +89,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Demande fermeture usager territoire 13' => [['territoire' => '13', 'usagerAbandonProcedure' => '1'], 1];
         yield 'Search by Demande fermeture usager all' => [['usagerAbandonProcedure' => '1'], 2];
         yield 'Search by created from ' => [['createdFrom' => 'formulaire-pro'], 10];
-        yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 1];
+        yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 0];
         yield 'Search by relanceUsagerSansReponse' => [['relanceUsagerSansReponse' => 'oui', 'isImported' => 'oui'], 0];
         yield 'Search by Messages usagers après fermeture' => [['isMessagePostCloture' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Nouveaux messages usagers' => [['isNouveauMessage' => 'oui', 'isImported' => 'oui'], 1];
