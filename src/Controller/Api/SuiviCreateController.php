@@ -27,9 +27,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class SuiviCreateController extends AbstractController
 {
     public function __construct(
-        readonly private SuiviManager $suiviManager,
-        readonly private ValidatorInterface $validator,
-        readonly private PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        private readonly SuiviManager $suiviManager,
+        private readonly ValidatorInterface $validator,
+        private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
     ) {
     }
 

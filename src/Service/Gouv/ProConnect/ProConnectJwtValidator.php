@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 
 class ProConnectJwtValidator
 {
-    public function __construct(readonly private LoggerInterface $logger)
+    public function __construct(private readonly LoggerInterface $logger)
     {
     }
 
