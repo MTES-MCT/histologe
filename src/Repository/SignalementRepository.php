@@ -2464,6 +2464,8 @@ class SignalementRepository extends ServiceEntityRepository
         int $maxResult,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s')
+            ->select('s, su')
+            ->leftJoin('s.suivis', 'su')
             ->where('s.statut = :statut')
             ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
 
