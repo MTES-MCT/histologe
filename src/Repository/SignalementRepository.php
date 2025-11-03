@@ -33,6 +33,7 @@ use App\Service\Statistics\CriticitePercentStatisticProvider;
 use App\Utils\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\LockMode;
@@ -124,8 +125,8 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($user && !$user->isSuperAdmin()) {
-            $qb->innerJoin('s.affectations', 'affectations')
-                ->innerJoin('affectations.partner', 'partner')
+            $qb->innerJoin('s.affectations', 'a')
+                ->innerJoin('a.partner', 'partner')
                 ->andWhere('partner IN (:partners)')
                 ->setParameter('partners', $user->getPartners());
         }
@@ -2394,6 +2395,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function findInjonctionFilteredPaginated(
         SearchSignalementInjonction $searchSignalementInjonction,
         int $maxResult,
+        Collection|false $userPartners,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s, su')
@@ -2405,6 +2407,13 @@ class SignalementRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('s.territory = :territory')
                 ->setParameter('territory', $searchSignalementInjonction->getTerritoire());
+        }
+
+        if ($userPartners) {
+            $queryBuilder
+                ->innerJoin('s.affectations', 'a')
+                ->andWhere('a.partner IN (:partners)')
+                ->setParameter('partners', $userPartners->toArray());
         }
 
         if (!empty($searchSignalementInjonction->getInjonctionAvecAide())) {
