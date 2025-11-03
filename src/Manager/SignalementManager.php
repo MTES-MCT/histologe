@@ -214,14 +214,18 @@ class SignalementManager extends AbstractManager
      *
      * @throws Exception
      */
-    public function findAllPartners(Signalement $signalement): array
+    public function findAffectablePartners(Signalement $signalement, bool $filterInjonctionBailleur = false): array
     {
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
-        $partners['affected'] = $partnerRepository->findByLocalization(signalement: $signalement);
+        $partners['affected'] = $partnerRepository->findByLocalization(
+            signalement: $signalement,
+            filterInjonctionBailleur: $filterInjonctionBailleur,
+        );
         $partners['not_affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: false
+            affected: false,
+            filterInjonctionBailleur: $filterInjonctionBailleur,
         );
 
         return $partners;

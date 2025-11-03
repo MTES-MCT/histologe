@@ -7,7 +7,9 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Service\InjonctionBailleurService;
 use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
@@ -21,6 +23,8 @@ class InjonctionBailleurServiceTest extends TestCase
     private MockObject&NotificationAndMailSender $notificationAndMailSender;
     private MockObject&AutoAssigner $autoAssigner;
     private MockObject&EntityManagerInterface $entityManager;
+    private MockObject&AffectationManager $affectationManager;
+    private MockObject&UserManager $userManager;
     private InjonctionBailleurService $service;
 
     protected function setUp(): void
@@ -29,12 +33,16 @@ class InjonctionBailleurServiceTest extends TestCase
         $this->notificationAndMailSender = $this->createMock(NotificationAndMailSender::class);
         $this->autoAssigner = $this->createMock(AutoAssigner::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->affectationManager = $this->createMock(AffectationManager::class);
+        $this->userManager = $this->createMock(UserManager::class);
 
         $this->service = new InjonctionBailleurService(
             $this->suiviManager,
             $this->notificationAndMailSender,
             $this->autoAssigner,
-            $this->entityManager
+            $this->entityManager,
+            $this->affectationManager,
+            $this->userManager,
         );
     }
 

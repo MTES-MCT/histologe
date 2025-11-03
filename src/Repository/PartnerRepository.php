@@ -264,9 +264,9 @@ class PartnerRepository extends ServiceEntityRepository
      *
      * @throws Exception
      */
-    public function findByLocalization(Signalement $signalement, bool $affected = true): array
+    public function findByLocalization(Signalement $signalement, bool $affected = true, bool $filterInjonctionBailleur = false): array
     {
-        $queryData = $this->buildLocalizationQuery($signalement, $affected);
+        $queryData = $this->buildLocalizationQuery($signalement, $affected, $filterInjonctionBailleur);
 
         $resultSet = $this->getEntityManager()->getConnection()->executeQuery(
             $queryData['sql'],
@@ -309,7 +309,7 @@ class PartnerRepository extends ServiceEntityRepository
      *
      * @throws Exception
      */
-    private function buildLocalizationQuery(Signalement $signalement, bool $affected): array
+    private function buildLocalizationQuery(Signalement $signalement, bool $affected, bool $filterInjonctionBailleur = false): array
     {
         $operator = $affected ? 'IN' : 'NOT IN';
 
@@ -341,6 +341,11 @@ class PartnerRepository extends ServiceEntityRepository
             }
         }
 
+        $whereCompetenceInjonctionBailleur = '';
+        if ($filterInjonctionBailleur) {
+            $whereCompetenceInjonctionBailleur = 'AND p.competence LIKE "%'.Qualification::AIDE_BAILLEURS->name.'%" ';
+        }
+
         $sql = '
                 SELECT DISTINCT p.id, p.nom as name
                 FROM partner p
@@ -368,6 +373,7 @@ class PartnerRepository extends ServiceEntityRepository
                 )
                 AND (ez.id IS NULL OR NOT ST_Contains(ST_GeomFromText(ez.area), Point(:lng, :lat)))
                 '.$clauseSubquery.'
+                '.$whereCompetenceInjonctionBailleur.'
                 ORDER BY p.nom ASC';
 
         return [

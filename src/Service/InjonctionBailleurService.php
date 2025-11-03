@@ -73,6 +73,8 @@ class InjonctionBailleurService
     private function assignHelpingPartners(Signalement $signalement): void
     {
         $helpingPartnersFromTerritory = $signalement->getTerritory()->getPartners()->filter(function ($partner) {
+            // Pour l'instant, on ne filtre que les partenaires ayant la compétence AIDE_BAILLEURS
+            // Peut-être qu'il faudra être plus proche de l'auto-affectation ? (insee occupant, procédures suspectées, etc.)
             return in_array(Qualification::AIDE_BAILLEURS, $partner->getCompetence());
         });
 
