@@ -108,7 +108,7 @@ class SuiviManager extends Manager
         if (!$user) {
             return false;
         }
-        if ($user->isUsager() || $user->isApiUser()) {
+        if ($user->isUsager() || $user->isApiUser() || $user->isSuperAdmin()) {
             return false;
         }
         if (in_array($suivi->getCategory(), [
