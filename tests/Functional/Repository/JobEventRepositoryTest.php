@@ -8,7 +8,6 @@ use App\Entity\Enum\InterfacageType;
 use App\Entity\Signalement;
 use App\Repository\JobEventRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
-use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -79,7 +78,7 @@ class JobEventRepositoryTest extends KernelTestCase
         $jobEventRepository = $container->get(JobEventRepository::class);
 
         $searchInterconnexion = new SearchInterconnexion();
-        $searchInterconnexion->setAction(EsaboraSCHSService::ACTION_PUSH_DOSSIER);
+        $searchInterconnexion->setAction(AbstractEsaboraService::ACTION_PUSH_DOSSIER);
 
         $jobEvents = $jobEventRepository->findLastJobEventByTerritory(
             365,
