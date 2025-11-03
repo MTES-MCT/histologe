@@ -130,7 +130,7 @@ class SignalementManagerTest extends WebTestCase
         $this->assertArrayHasKey('not_affected', $partners);
 
         $this->assertCount(1, $partners['affected'], 'One partner should be affected');
-        $this->assertCount(8, $partners['not_affected'], 'Eight partners should not be affected');
+        $this->assertCount(9, $partners['not_affected'], 'Nine partners should not be affected');
     }
 
     public function testCloseSignalementForAllPartners(): void

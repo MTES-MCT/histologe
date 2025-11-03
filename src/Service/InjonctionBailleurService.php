@@ -4,14 +4,15 @@ namespace App\Service;
 
 use App\Dto\ReponseInjonctionBailleur;
 use App\Dto\StopProcedure;
-use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\AffectationManager;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
+use App\Repository\PartnerRepository;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -26,6 +27,8 @@ class InjonctionBailleurService
         private readonly EntityManagerInterface $entityManager,
         private readonly AffectationManager $affectationManager,
         private readonly UserManager $userManager,
+        private readonly SignalementManager $signalementManager,
+        private readonly PartnerRepository $partnerRepository,
     ) {
     }
 
@@ -70,17 +73,17 @@ class InjonctionBailleurService
         );
     }
 
-    private function assignHelpingPartners(Signalement $signalement): void
+    public function assignHelpingPartners(Signalement $signalement): void
     {
-        $helpingPartnersFromTerritory = $signalement->getTerritory()->getPartners()->filter(function ($partner) {
-            // Pour l'instant, on ne filtre que les partenaires ayant la compétence AIDE_BAILLEURS
-            // Peut-être qu'il faudra être plus proche de l'auto-affectation ? (insee occupant, procédures suspectées, etc.)
-            return in_array(Qualification::AIDE_BAILLEURS, $partner->getCompetence());
-        });
+        $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, filterInjonctionBailleur: true);
+        // Pour l'instant, on ne filtre que les partenaires ayant la compétence AIDE_BAILLEURS
+        // Peut-être qu'il faudra être plus proche de l'auto-affectation ? (insee occupant, procédures suspectées, etc.)
+        $helpingPartnersFromTerritory = $affectablePartners['not_affected'];
 
         $adminUser = $this->userManager->getSystemUser();
 
-        foreach ($helpingPartnersFromTerritory as $partner) {
+        foreach ($helpingPartnersFromTerritory as $partnerItem) {
+            $partner = $this->partnerRepository->find($partnerItem['id']);
             $affectation = $this->affectationManager->createAffectationFrom(
                 $signalement,
                 $partner,
