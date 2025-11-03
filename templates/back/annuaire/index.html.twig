@@ -12,52 +12,79 @@
 
         <header>
             <div class="fr-grid-row">
-                {% if is_granted('ROLE_ADMIN') and territories|length > 0 %}
-                    <div class="fr-col-8">
-                        <h1 class="fr-mb-0">Annuaire des agents du {{ territories[0].name }}</h1>
-                    </div>
-                    <div class="fr-col-4 fr-text--right">
-                        <a href="{{ path('back_annuaire_export') }}?territory={{ territories[0].id }}" class="fr-btn" title="Exporter l'annuaire">Exporter l'annuaire</a>
-                    </div>
-                {% elseif is_granted('ROLE_ADMIN') %}
-                    <div class="fr-col-8">
-                        <h1 class="fr-mb-0">Sélectionnez un territoire</h1>
-                    </div>
-                {% else %}
-                    <div class="fr-col-8">
-                        <h1 class="fr-mb-0">Annuaire des agents</h1>
-                    </div>
-                    <div class="fr-col-4 fr-text--right">
-                        <a href="{{ path('back_annuaire_export') }}" class="fr-btn" title="Exporter l'annuaire">Exporter l'annuaire</a>
-                    </div>
-                {% endif %}
+                <div class="fr-col-12 fr-text--left">
+                    <h1>Annuaire des agents</h1>
+                </div>
             </div>
         </header>
 
     </section>
+    {% set isMultiTerritory = (app.user.isSuperAdmin() or app.user.partnersTerritories|length > 1) %}
 
-    <section class="fr-container--fluid">
-        <div class="fr-grid-row">
-            <div class="fr-col-12 fr-col-md-6">
-                {% if is_granted('ROLE_ADMIN') and territories|length == 0 %}
-                    {% for territory in territoriesList %}
-                        <ul>
-                            <li><a href="{{ path('back_annuaire_index') }}?territory={{ territory.id }}">{{ territory.zip }} {{ territory.name }}</a></li>
-                        </ul>
-                    {% endfor %}
-                {% endif %}
-
-                {% for partner in partners %}
-                    {% if partner.users|length %}
-                        <h2>{{ partner.nom }}</h2>
-                        <ul>
-                            {% for user in partner.users %}
-                                <li>{{ user.nomComplet }} - {{ user.email }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                {% endfor %}
+    {{ form_start(form) }}
+    <section class="fr-container--fluid overflow-visible">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.queryUser) }}
             </div>
+            <div class="fr-col-12 fr-col-lg-3 {% if not isMultiTerritory %}fr-hidden{% endif %}">
+                {{ form_row(form.territory) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.partners) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                <a href="{{ path('back_annuaire_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-py-5v">
+        <div class="fr-col-12 fr-col-md-6">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(userPartners|length, 'Agent trouvé', 'Agents trouvés') }}</h2>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-text--right">
+            <a 
+                href="{% if userPartners|length > 0 %}{{path('back_annuaire_export', search.urlParams)}}{% else %}#{% endif %}" 
+                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if userPartners|length == 0 %}fr-label--disabled{% endif %}"
+            > Exporter les résultats </a>
+        </div>
+    </section>
+    {{ form_end(form) }}
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">Partenaire</th>
+            <th scope="col">Nom complet</th>
+            <th scope="col">E-mail</th>
+            {% if isMultiTerritory %}
+                <th scope="col">Territoire</th>
+            {% endif %}
+        {% endset %}
+
+        {% set tableBody %}
+            {% for userPartner in userPartners %}
+                <tr class="signalement-row">
+                    <td>{{ userPartner.partner.nom }}</td>
+                    <td>{{ userPartner.user.nomComplet }}</td>
+                    <td>{{ userPartner.user.email }}</td>
+                    {% if isMultiTerritory %}
+                        <td>
+                            {% if userPartner.partner.territory %}
+                                {{ userPartner.partner.territory.zip }} - {{ userPartner.partner.territory.name }}
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Annuaire des agents', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+        
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, search.page, 'back_annuaire_index', search.urlParams) }}
         </div>
     </section>
 

@@ -2,11 +2,10 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Partner;
-use App\Entity\Territory;
 use App\Entity\User;
-use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
+use App\Form\SearchAnnuaireAgentType;
+use App\Repository\UserPartnerRepository;
+use App\Service\ListFilters\SearchAnnuaireAgent;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,38 +17,41 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/annuaire')]
 class AnnuaireController extends AbstractController
 {
-    /** @var array<int, Territory> */
-    private array $territoriesList;
-
     public function __construct(
-        private readonly PartnerRepository $partnerRepository,
-        TerritoryRepository $territoryRepository,
+        private readonly UserPartnerRepository $userPartnerRepository,
+        #[Autowire(param: 'standard_max_list_pagination')]
+        private readonly int $maxListPagination,
         #[Autowire(env: 'FEATURE_ANNUAIRE')]
         bool $featureAnnuaire,
     ) {
         if (!$featureAnnuaire) {
             throw $this->createNotFoundException();
         }
-        $this->territoriesList = $territoryRepository->findAllList();
     }
 
     #[Route('/', name: 'back_annuaire_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $territories = [];
-        $partners = $this->getPartnersFromRequest($request, $territories);
+        [$form, $search, $userPartners] = $this->handleSearch($request);
 
         return $this->render('back/annuaire/index.html.twig', [
-            'partners' => $partners,
-            'territoriesList' => $this->territoriesList,
-            'territories' => $territories,
+            'form' => $form,
+            'search' => $search,
+            'userPartners' => $userPartners,
+            'pages' => (int) ceil($userPartners->count() / $this->maxListPagination),
         ]);
     }
 
     #[Route('/export', name: 'back_annuaire_export', methods: ['GET'])]
     public function export(Request $request): Response
     {
-        $partners = $this->getPartnersFromRequest($request);
+        [$form, $search, $userPartners] = $this->handleSearch($request, false);
+        /** @var User $user */
+        $user = $this->getUser();
+        $isMultiTerritory = false;
+        if ($user->isSuperAdmin() || count($user->getPartnersTerritories()) > 1) {
+            $isMultiTerritory = true;
+        }
 
         $spreadsheet = new Spreadsheet();
         $activeWorksheet = $spreadsheet->getActiveSheet();
@@ -57,18 +59,23 @@ class AnnuaireController extends AbstractController
         $activeWorksheet->setCellValue('A1', 'Nom du partenaire');
         $activeWorksheet->setCellValue('B1', 'Nom complet de l\'agent');
         $activeWorksheet->setCellValue('C1', 'Email de l\'agent');
+        if ($isMultiTerritory) {
+            $activeWorksheet->setCellValue('D1', 'Territoire');
+        }
 
         $row = 2;
-        foreach ($partners as $partner) {
-            if ($partner->getUsers()->isEmpty()) {
-                continue;
+        foreach ($userPartners as $userPartner) {
+            $partner = $userPartner->getPartner();
+            $user = $userPartner->getUser();
+            $activeWorksheet->setCellValue('A'.$row, $partner->getNom());
+            $activeWorksheet->setCellValue('B'.$row, $user->getNomComplet());
+            $activeWorksheet->setCellValue('C'.$row, $user->getEmail());
+            if ($isMultiTerritory) {
+                $territory = $partner->getTerritory();
+                $territoryName = $territory ? $territory->getZip().' - '.$territory->getName() : '';
+                $activeWorksheet->setCellValue('D'.$row, $territoryName);
             }
-            foreach ($partner->getUsers() as $user) {
-                $activeWorksheet->setCellValue('A'.$row, $partner->getNom());
-                $activeWorksheet->setCellValue('B'.$row, $user->getNomComplet());
-                $activeWorksheet->setCellValue('C'.$row, $user->getEmail());
-                ++$row;
-            }
+            ++$row;
         }
 
         $writer = new Csv($spreadsheet);
@@ -87,25 +94,24 @@ class AnnuaireController extends AbstractController
     }
 
     /**
-     * @param array<Territory> $territories
-     *
-     * @return array<Partner>
+     * @return array<mixed>
      */
-    private function getPartnersFromRequest(Request $request, array &$territories = []): array
+    private function handleSearch(Request $request, bool $paginated = true): array
     {
         /** @var User $user */
         $user = $this->getUser();
-        $territories = [];
-        if ($this->isGranted('ROLE_ADMIN')) {
-            if ($request->query->has('territory') && isset($this->territoriesList[$request->query->get('territory')])) {
-                $territories = [$this->territoriesList[$request->query->get('territory')]];
-            }
+        $search = new SearchAnnuaireAgent($user);
+        $form = $this->createForm(SearchAnnuaireAgentType::class, $search);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $search = new SearchAnnuaireAgent($user);
+        }
+        if ($paginated) {
+            $userPartners = $this->userPartnerRepository->findAnnuaireAgentPaginated($search, $this->maxListPagination);
         } else {
-            foreach ($user->getPartners() as $partner) {
-                $territories[] = $partner->getTerritory();
-            }
+            $userPartners = $this->userPartnerRepository->findAnnuaireAgent($search);
         }
 
-        return $this->partnerRepository->findAllByTerritoriesWithAgents($territories);
+        return [$form, $search, $userPartners];
     }
 }

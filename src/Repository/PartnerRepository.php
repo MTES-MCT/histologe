@@ -408,26 +408,4 @@ class PartnerRepository extends ServiceEntityRepository
         ->getQuery()
         ->getOneOrNullResult();
     }
-
-    /**
-     * @param array<int, Territory> $territories
-     *
-     * @return array<int, Partner>
-     */
-    public function findAllByTerritoriesWithAgents(array $territories): array
-    {
-        $qb = $this->createQueryBuilder('p')
-            ->select('p', 'up', 'u')
-            ->leftJoin('p.userPartners', 'up')
-            ->leftJoin('up.user', 'u')
-            ->where('p.isArchive != 1')
-            ->andWhere('p.territory IN (:territories)')
-            ->andWhere('u.statut = :statut')
-            ->setParameter('territories', $territories)
-            ->setParameter('statut', UserStatus::ACTIVE)
-            ->orderBy('p.nom', 'ASC')
-            ->addOrderBy('u.nom', 'ASC');
-
-        return $qb->getQuery()->getResult();
-    }
 }
