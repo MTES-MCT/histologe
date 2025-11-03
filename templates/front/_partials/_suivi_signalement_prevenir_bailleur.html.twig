@@ -1,10 +1,7 @@
 {% if signalement.isProprioAverti is not same as true 
     and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
     and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR
-    and (
-        signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION 
-        or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE
-    )
+    and is_granted('SIGN_USAGER_EDIT', signalement)
 %}
     <div class="fr-callout {{ cssDiv }}">
         <h4 class="fr-callout__title">Prévenez le propriétaire (bailleur)</h4>
