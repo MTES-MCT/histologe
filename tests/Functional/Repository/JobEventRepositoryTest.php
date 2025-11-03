@@ -31,7 +31,7 @@ class JobEventRepositoryTest extends KernelTestCase
                 AbstractEsaboraService::ACTION_SYNC_DOSSIER);
 
         $this->assertEquals(4, $successCount);
-        $this->assertEquals(3, $failedCount);
+        $this->assertEquals(4, $failedCount);
     }
 
     public function testFindLastJobEventByInterfacageType(): void
@@ -68,7 +68,7 @@ class JobEventRepositoryTest extends KernelTestCase
             0
         );
 
-        $this->assertCount(4, $jobEvents);
+        $this->assertCount(5, $jobEvents);
         $this->assertEquals($signalement->getReference(), $jobEvents[0]['reference']);
     }
 
@@ -88,8 +88,8 @@ class JobEventRepositoryTest extends KernelTestCase
             0
         );
 
-        $this->assertCount(3, $jobEvents);
-        $this->assertEquals(EsaboraSCHSService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
+        $this->assertCount(4, $jobEvents);
+        $this->assertEquals(AbstractEsaboraService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
     }
 
     public function testFindFailedJobEvents(): void
