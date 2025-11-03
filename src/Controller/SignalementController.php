@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Dto\DemandeLienSignalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -846,6 +847,14 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
+        if ($signalement->getIsProprioAverti()
+            || ProfileDeclarant::BAILLEUR === $signalement->getProfileDeclarant()
+            || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()
+        ) {
+            $this->addFlash('error', 'Le bailleur est déjà prévenu.');
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
         $user = $signalementUser->getUser();

@@ -141,13 +141,10 @@
 
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
-
-			{% if 
-				signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION 
-				or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE
-			%}
-				{% include 'front/_partials/_suivi_signalement_prevenir_bailleur.html.twig' with {'cssDiv': 'fr-icon-information-line'} %}
-			{% elseif signalement.motifRefus and signalement.motifRefus is same as enum('App\\Entity\\Enum\\MotifRefus').DOUBLON %}
+			{% include 'front/_partials/_suivi_signalement_prevenir_bailleur.html.twig' with {'cssDiv': 'fr-icon-information-line'} %}
+			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED
+				and signalement.motifRefus 
+				and signalement.motifRefus is same as enum('App\\Entity\\Enum\\MotifRefus').DOUBLON %}
 				<div class="fr-mb-1w">
 					{% include '_partials/_demande-lien-signalement-intro.html.twig' with {motifRefusDoublon: true} %}
 					{% include '_partials/_demande-lien-signalement-container.html.twig' with {formatVertical: true} %}
