@@ -72,8 +72,9 @@ class UpdateLastLoginAtCommand extends Command
         }
 
         $updated = 0;
+        $userRepository = $this->entityManager->getRepository(User::class);
         foreach ($rows as $row) {
-            $user = $this->entityManager->getRepository(User::class)->find($row['id']);
+            $user = $userRepository->find($row['id']);
             if ($user) {
                 $user->setLastLoginAt(new \DateTimeImmutable($row['last_login_event']));
                 ++$updated;
