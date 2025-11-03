@@ -19,7 +19,7 @@
       "command": "0 22 * * * php bin/console app:sync-idoss"
     },
     {
-      "command": "0 20 * * * php bin/console app:retry-failed-push-esabora-sish"
+      "command": "0 20 * * * sh /app/scripts/retry-failed-interconnection.sh"
     },
     {
       "command": "30 * * * * php bin/console app:retry-failed-emails"
