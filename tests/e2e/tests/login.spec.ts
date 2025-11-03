@@ -49,9 +49,14 @@ test('login for bailleur', async ({page, context}) => {
   console.log(`[TEST] Form filled, clicking submit button`);
 
   // Capturer les réponses réseau pour voir si le formulaire est bloqué
-  page.on('response', response => {
-    if (response.url().includes('login-bailleur')) {
-      console.log(`[TEST] Response from login-bailleur: ${response.status()}`);
+  page.on('response', async (response) => {
+    const url = response.url();
+    const status = response.status();
+    console.log(`[TEST] Response: ${status} ${url}`);
+
+    if (status === 500) {
+      const text = await response.text().catch(() => 'Could not read response body');
+      console.error(`[TEST] 500 Error body (first 1000 chars): ${text.substring(0, 1000)}`);
     }
   });
 

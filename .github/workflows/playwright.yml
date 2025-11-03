@@ -115,7 +115,9 @@ jobs:
             done > .env
 
       - name: Start Docker containers
-        run: docker compose up -d
+        run: |
+          docker compose down -v || true
+          docker compose up -d --force-recreate
 
       - name: Wait for PHP container to be ready
         run: |
@@ -135,8 +137,8 @@ jobs:
 
       - name: Cache clear & warmup
         run: |
-          docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=dev --no-warmup
-          docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=dev
+          docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=test --no-warmup
+          docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=test
           docker compose exec -T signal_logement_phpfpm mkdir -p var/storage
           docker compose exec -T signal_logement_phpfpm chmod 777 var/storage
           docker compose exec -T signal_logement_phpfpm ln -sf ../var/storage public/storage || true
@@ -158,13 +160,20 @@ jobs:
           done
           echo "Application is ready!"
 
-      - name: Verify rate limiter configuration
+      - name: Verify configuration
         run: |
-          echo "=== Checking .env file for rate limiter config ==="
+          echo "=== Checking .env file ==="
+          echo "Rate limiter config:"
           grep "FORMS_SUBMIT_LIMITER" .env || echo "FORMS_SUBMIT_LIMITER not found in .env"
           echo ""
-          echo "=== Checking environment variables in PHP container ==="
-          docker compose exec -T signal_logement_phpfpm env | grep "FORMS_SUBMIT_LIMITER" || echo "FORMS_SUBMIT_LIMITER not found in container env"
+          echo "S3 config:"
+          grep "S3_" .env || echo "S3 vars not found in .env"
+          echo ""
+          echo "=== Display full .env (without secrets) ==="
+          cat .env | grep -v "SECRET\|PASSWORD\|KEY" | head -50
+          echo ""
+          echo "=== Check Symfony environment ==="
+          docker compose exec -T signal_logement_phpfpm php bin/console about || echo "Could not get Symfony info"
 
       - name: Install Node.js for Playwright
         uses: actions/setup-node@v4
@@ -202,21 +211,21 @@ jobs:
       - name: Check server logs
         if: ${{ always() }}
         run: |
+          echo "=== Symfony error logs ==="
+          docker compose exec -T signal_logement_phpfpm cat var/log/test.log 2>/dev/null | tail -100 || echo "No test.log found"
+          docker compose exec -T signal_logement_phpfpm cat var/log/dev.log 2>/dev/null | tail -100 || echo "No dev.log found"
+          echo ""
           echo "=== PHP-FPM logs (errors only) ==="
-          docker compose logs signal_logement_phpfpm 2>&1 | grep -i "error\|warning\|rate\|limit\|denied" || echo "No errors found"
+          docker compose logs signal_logement_phpfpm 2>&1 | grep -i "error\|warning\|exception\|fatal" || echo "No errors found"
           echo ""
-          echo "=== PHP-FPM logs (all, last 200 lines) ==="
-          docker compose logs signal_logement_phpfpm --tail=200
+          echo "=== PHP-FPM logs (all, last 300 lines) ==="
+          docker compose logs signal_logement_phpfpm --tail=300
           echo ""
-          echo "=== Redis logs ==="
-          docker compose logs signal_logement_redis --tail=100
+          echo "=== Nginx error logs ==="
+          docker compose exec -T signal_logement_nginx cat /var/log/nginx/error.log 2>/dev/null | tail -50 || echo "No nginx error log"
           echo ""
-          echo "=== Nginx logs ==="
-          docker compose logs signal_logement_nginx --tail=100
-          echo ""
-          echo "=== Check Redis rate limiter keys ==="
-          docker compose exec -T signal_logement_redis redis-cli KEYS "*limiter*" || echo "Could not check Redis"
-          docker compose exec -T signal_logement_redis redis-cli KEYS "*login*" || echo "Could not check Redis"
+          echo "=== Nginx access logs (last 50) ==="
+          docker compose exec -T signal_logement_nginx cat /var/log/nginx/access.log 2>/dev/null | tail -50 || echo "No nginx access log"
 
       - name: Check build output inside container
         if: ${{ always() }}
