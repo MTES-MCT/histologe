@@ -58,7 +58,7 @@ class InjonctionBailleurService
     {
         $this->suiviManager->createSuivi(
             signalement: $signalement,
-            description: $description,
+            description: HtmlCleaner::cleanFrontEndEntry($description),
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
         );
