@@ -36,14 +36,14 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserList(): \Generator
     {
-        yield 'Search without params' => [[], 67];
+        yield 'Search without params' => [[], 70];
         yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 22];
-        yield 'Search with territory 13' => [['territory' => 13], 17];
+        yield 'Search with territory 13' => [['territory' => 13], 18];
         yield 'Search with territory 13 and partner 6 and 7' => [['territory' => 13, 'partners' => [6, 7]], 2];
         yield 'Search with status INACTIVE' => [['statut' => 'INACTIVE'], 11];
         yield 'Search with role ROLE_ADMIN' => [['role' => 'ROLE_ADMIN'], 3];
         yield 'Search with role ROLE_ADMIN and territory 13' => [['role' => 'ROLE_ADMIN', 'territory' => 13], 0];
-        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 14];
+        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 15];
         yield 'Search with territory 13 and partnerType Ars' => [['territory' => 13, 'partnerType' => 'ARS'], 1];
     }
 
@@ -71,13 +71,13 @@ class BackUserControllerTest extends WebTestCase
 
     public function provideParamsUserExport(): \Generator
     {
-        yield 'Search without params' => [[], 17];
-        yield 'Search with queryUser user' => [['queryUser' => 'user'], 12];
+        yield 'Search without params' => [[], 18];
+        yield 'Search with queryUser user' => [['queryUser' => 'user'], 13];
         yield 'Search with partner 2' => [['partners' => [2]], 6];
-        yield 'Search with status ACTIVE' => [['statut' => 'ACTIVE'], 12];
-        yield 'Search with role ROLE_USER_PARTNER' => [['role' => 'ROLE_USER_PARTNER'], 12];
-        yield 'Search with role ROLE_USER_PARTNER and status ACTIVE' => [['role' => 'ROLE_USER_PARTNER', 'statut' => 'ACTIVE'], 7];
-        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 17];
+        yield 'Search with status ACTIVE' => [['statut' => 'ACTIVE'], 13];
+        yield 'Search with role ROLE_USER_PARTNER' => [['role' => 'ROLE_USER_PARTNER'], 13];
+        yield 'Search with role ROLE_USER_PARTNER and status ACTIVE' => [['role' => 'ROLE_USER_PARTNER', 'statut' => 'ACTIVE'], 8];
+        yield 'Search with territory 13 and partnerType Autre' => [['territory' => 13, 'partnerType' => 'AUTRE'], 18];
         yield 'Search with partnerType Ars' => [['partnerType' => 'ARS'], 1];
     }
 
@@ -95,7 +95,7 @@ class BackUserControllerTest extends WebTestCase
         $route = $router->generate('back_user_export');
         $client->request('GET', $route, ['territory' => 13]);
 
-        $this->assertSelectorTextContains('h1', 'Exporter la liste des 17 utilisateurs');
+        $this->assertSelectorTextContains('h1', 'Exporter la liste des 18 utilisateurs');
 
         $client->request('GET', $route, ['role' => 'ROLE_ADMIN_PARTNER']);
 

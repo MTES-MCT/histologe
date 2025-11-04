@@ -58,9 +58,10 @@ class AffectationController extends AbstractController
                 /** @var User $user */
                 $user = $this->getUser();
                 $postedPartner = $data['partners'];
-                $alreadyAffectedPartner = $this->signalementManager->findPartners($signalement);
-                $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartner);
-                $partnersIdToRemove = array_diff($alreadyAffectedPartner, $postedPartner);
+                $alreadyAffectedPartner = $this->signalementManager->findAffectablePartners($signalement)['affected'];
+                $alreadyAffectedPartnersIds = array_map(fn (array $partner) => $partner['id'], $alreadyAffectedPartner);
+                $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
+                $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
                     $partner = $this->partnerRepository->findOneBy(['id' => $partnerIdToAdd, 'territory' => $signalement->getTerritory(), 'isArchive' => false]);

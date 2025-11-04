@@ -14,7 +14,6 @@ use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
-use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
@@ -214,31 +213,21 @@ class SignalementManager extends AbstractManager
      *
      * @throws Exception
      */
-    public function findAllPartners(Signalement $signalement): array
+    public function findAffectablePartners(Signalement $signalement, bool $filterInjonctionBailleur = false): array
     {
         /** @var PartnerRepository $partnerRepository */
         $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
-        $partners['affected'] = $partnerRepository->findByLocalization(signalement: $signalement);
+        $partners['affected'] = $partnerRepository->findByLocalization(
+            signalement: $signalement,
+            filterInjonctionBailleur: $filterInjonctionBailleur,
+        );
         $partners['not_affected'] = $partnerRepository->findByLocalization(
             signalement: $signalement,
-            affected: false
+            affected: false,
+            filterInjonctionBailleur: $filterInjonctionBailleur,
         );
 
         return $partners;
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    public function findPartners(Signalement $signalement): array
-    {
-        $affectation = $signalement->getAffectations()->map(
-            function (Affectation $affectation) {
-                return $affectation->getPartner()->getId();
-            }
-        );
-
-        return $affectation->toArray();
     }
 
     public function closeSignalementForAllPartners(SignalementAffectationClose $signalementAffectationClose, Partner $partner): Signalement

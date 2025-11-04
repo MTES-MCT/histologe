@@ -215,7 +215,10 @@ class SignalementController extends AbstractController
                 : null;
         }
 
-        $partners = $signalementManager->findAllPartners($signalement);
+        $partners = $signalementManager->findAffectablePartners(
+            signalement: $signalement,
+            filterInjonctionBailleur: SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()
+        );
 
         $canEditNDE = $this->isGranted('SIGN_EDIT_NDE', $signalement);
         $listQualificationStatusesLabelsCheck = [];

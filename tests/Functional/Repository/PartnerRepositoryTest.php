@@ -49,7 +49,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(8, $partners);
+        $this->assertCount(9, $partners);
     }
 
     public function testFindPossiblePartnersForCOR69(): void
@@ -95,7 +95,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2024-09']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(6, $partners);
+        $this->assertCount(7, $partners);
 
         // partenaires définis par zone
         $partnerZone = array_filter($partners, function ($partner) {
@@ -130,7 +130,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2024-08']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(4, $partners);
+        $this->assertCount(5, $partners);
 
         $partnerZone = array_filter($partners, function ($partner) {
             return 'Partenaire Zone Agde' === $partner['name'];
@@ -147,12 +147,24 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2024-06']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(5, $partners);
+        $this->assertCount(6, $partners);
 
         $partnerZone = array_filter($partners, function ($partner) {
             return 'Partenaire Zone Agde' === $partner['name'];
         });
         $this->assertCount(0, $partnerZone);
+    }
+
+    public function testFindPartnersInjonctionBailleur(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['reference' => '2025-12']);
+
+        $partners = $this->partnerRepository->findByLocalization($signalement, false, true);
+        $this->assertCount(1, $partners);
     }
 
     public function testGetPartnerPaginator(): void
@@ -209,7 +221,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
         $searchPartner->setTerritoire($territory);
         $partnerPaginator = $this->partnerRepository->getPartners(50, $searchPartner);
-        $this->assertEquals(6, $partnerPaginator->count());
+        $this->assertEquals(7, $partnerPaginator->count());
     }
 
     public function testGetPartnerQueryBuilder(): void
