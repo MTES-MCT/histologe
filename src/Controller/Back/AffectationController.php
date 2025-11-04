@@ -64,14 +64,14 @@ class AffectationController extends AbstractController
                 $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
-                    $isListedInAffectablePartners = false;
+                    $canAffectPartner = false;
                     foreach ($affectablePartners['not_affected'] as $affectablePartner) {
-                        if ($affectablePartner['id'] === $partnerIdToAdd) {
-                            $isListedInAffectablePartners = true;
+                        if ($affectablePartner['id'] == $partnerIdToAdd) {
+                            $canAffectPartner = true;
                             break;
                         }
                     }
-                    if (!$isListedInAffectablePartners) {
+                    if (!$canAffectPartner) {
                         continue;
                     }
                     $partner = $this->partnerRepository->find($partnerIdToAdd);
