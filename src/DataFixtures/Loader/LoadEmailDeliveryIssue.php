@@ -30,15 +30,11 @@ class LoadEmailDeliveryIssue extends Fixture implements OrderedFixtureInterface
      */
     public function loadEmailDeliveryIssue(ObjectManager $manager, array $row): void
     {
-        $partner = $this->partnerRepository->findOneBy(['email' => $row['email']]);
-
         $emailDeliveryIssue = (new EmailDeliveryIssue())
             ->setEmail($row['email'])
             ->setEvent(BrevoEvent::from($row['event']))
             ->setReason($row['reason'])
             ->setPayload($row['payload']);
-
-        $partner?->setEmailDeliveryIssue($emailDeliveryIssue);
 
         $manager->persist($emailDeliveryIssue);
     }
