@@ -48,11 +48,20 @@ test('login for bailleur', async ({page, context}) => {
 
   console.log(`[TEST] Form filled, clicking submit button`);
 
+  // Capturer les requêtes qui échouent
+  page.on('requestfailed', request => {
+    console.error(`[TEST] Request FAILED: ${request.url()} - ${request.failure()?.errorText}`);
+  });
+
   // Capturer les réponses réseau pour voir si le formulaire est bloqué
   page.on('response', async (response) => {
     const url = response.url();
     const status = response.status();
-    console.log(`[TEST] Response: ${status} ${url}`);
+
+    // Log only important responses
+    if (status >= 300 || url.includes('login-bailleur') || url.includes('bailleur')) {
+      console.log(`[TEST] Response: ${status} ${url}`);
+    }
 
     if (status === 500) {
       const text = await response.text().catch(() => 'Could not read response body');
@@ -61,7 +70,11 @@ test('login for bailleur', async ({page, context}) => {
   });
 
   // Capturer les erreurs console
-  page.on('console', msg => console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`));
+  page.on('console', msg => {
+    if (msg.type() === 'error' || msg.type() === 'warning') {
+      console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`);
+    }
+  });
 
   await page.getByRole('button', { name: 'Envoyer' }).click();
 
