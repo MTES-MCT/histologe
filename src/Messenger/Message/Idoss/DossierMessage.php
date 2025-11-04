@@ -4,7 +4,6 @@ namespace App\Messenger\Message\Idoss;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
-use App\Entity\Enum\ProfileDeclarant;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Utils\AddressParser;
 
@@ -57,7 +56,7 @@ final class DossierMessage implements DossierMessageInterface
         $this->partnerId = $affectation->getPartner()->getId();
         $this->dateDepotSignalement = $signalement->getCreatedAt()->format('m-d-Y');
 
-        if (ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()) {
+        if (!$signalement->isTiersDeclarant()) {
             $this->declarant = [
                 'nomDeclarant' => $signalement->getNomOccupant() ?? 'Non renseigné',
                 'prenomDeclarant' => $signalement->getPrenomOccupant() ?? 'Non renseigné',
