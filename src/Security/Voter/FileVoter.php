@@ -70,7 +70,7 @@ class FileVoter extends Voter
         if (SignalementStatus::NEED_VALIDATION === $file->getSignalement()->getStatut() && $user->isSuperAdmin()) {
             return true;
         }
-        if (SignalementStatus::ACTIVE !== $file->getSignalement()->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $file->getSignalement()->getStatut() && SignalementStatus::INJONCTION_BAILLEUR !== $file->getSignalement()->getStatut()) {
             return false;
         }
         if ($this->isAdminOrRTonHisTerritory($file, $user)) {

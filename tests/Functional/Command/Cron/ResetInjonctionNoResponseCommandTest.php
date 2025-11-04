@@ -21,7 +21,7 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('2 signalements', $output);
-        $this->assertEmailCount(4);
+        $this->assertEmailCount(6);
         $expectedTags = [
             'Usager Nouveau Suivi Signalement',
             'Usager Nouveau Suivi Signalement',
@@ -29,7 +29,7 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
             'Pro Nouvelle affectation',
         ];
 
-        for ($i = 0; $i < 4; ++$i) {
+        for ($i = 0; $i < 6; ++$i) {
             /** @var NotificationEmail $email */
             $email = $this->getMailerMessage($i);
             $xTag = $email->getHeaders()->get('X-Tag')->getBody();

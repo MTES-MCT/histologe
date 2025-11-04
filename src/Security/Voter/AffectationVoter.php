@@ -93,13 +93,16 @@ class AffectationVoter extends Voter
             || $user->isTerritoryAdmin()
             || $user->hasPermissionAffectation()
         )
-            && SignalementStatus::ACTIVE === $signalement->getStatut();
+            && (SignalementStatus::ACTIVE === $signalement->getStatut() || SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());
     }
 
     private function canAnswer(Affectation $affectation, User $user): bool
     {
         $canAnswer = $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory())
-            && SignalementStatus::ACTIVE === $affectation->getSignalement()->getStatut();
+            && (
+                SignalementStatus::ACTIVE === $affectation->getSignalement()->getStatut()
+                || SignalementStatus::INJONCTION_BAILLEUR === $affectation->getSignalement()->getStatut()
+            );
 
         if (!$affectation->isSynchronizeWithEsabora()) {
             return $canAnswer;
@@ -123,7 +126,7 @@ class AffectationVoter extends Voter
         if (!in_array($affectation->getStatut(), [AffectationStatus::CLOSED, AffectationStatus::REFUSED])) {
             return false;
         }
-        if (SignalementStatus::ACTIVE !== $affectation->getSignalement()->getStatut()) {
+        if (SignalementStatus::ACTIVE !== $affectation->getSignalement()->getStatut() && SignalementStatus::INJONCTION_BAILLEUR !== $affectation->getSignalement()->getStatut()) {
             return false;
         }
         if ($this->security->isGranted('ROLE_ADMIN')) {
