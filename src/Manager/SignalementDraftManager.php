@@ -7,7 +7,6 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
-use App\Event\SignalementCreatedEvent;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Factory\SignalementDraftFactory;
 use App\Repository\SignalementDraftRepository;
@@ -31,6 +30,7 @@ class SignalementDraftManager extends AbstractManager
         protected SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
         protected SignalementDraftRepository $signalementDraftRepository,
         protected SignalementRepository $signalementRepository,
+        protected UserManager $userManager,
         protected string $entityName = SignalementDraft::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -108,7 +108,7 @@ class SignalementDraftManager extends AbstractManager
 
         $signalement = $signalementDraftCompletedEvent->getSignalementDraft()->getSignalements()->first();
         if ($signalement) {
-            $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
+            $this->userManager->createUsagersFromSignalement($signalement);
 
             return $signalement;
         }

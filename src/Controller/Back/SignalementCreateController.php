@@ -5,7 +5,6 @@ namespace App\Controller\Back;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Event\SignalementCreatedEvent;
 use App\Form\SearchDraftType;
 use App\Form\SignalementDraftAddressType;
 use App\Form\SignalementDraftCoordonneesType;
@@ -20,6 +19,7 @@ use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\ListFilters\SearchDraft;
+use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
@@ -28,7 +28,6 @@ use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -418,10 +417,10 @@ class SignalementCreateController extends AbstractController
         PartnerRepository $partnerRepository,
         AutoAssigner $autoAssigner,
         AffectationManager $affectationManager,
-        EventDispatcherInterface $eventDispatcher,
         UserManager $userManager,
         FileRepository $fileRepository,
         ReferenceGenerator $referenceGenerator,
+        NotificationAndMailSender $notificationAndMailSender,
         EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
@@ -543,7 +542,7 @@ class SignalementCreateController extends AbstractController
                 }
             } else {
                 $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
-                $eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
+                $notificationAndMailSender->sendNewSignalement($signalement);
 
                 $this->addFlash('success', 'Le signalement a bien été créé. Il doit être validé par les responsables de territoire. Si ce signalement est affecté à votre partenaire, il sera visible dans la liste des signalements.');
                 $route = 'back_signalement_drafts';
@@ -551,8 +550,7 @@ class SignalementCreateController extends AbstractController
             }
             $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
             $signalement->setCreatedAt(new \DateTimeImmutable());
-            $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);
-            $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $userManager->createUsagersFromSignalement($signalement);
             $fileRepository->updateIsWaitingSuiviForSignalement($signalement);
             $signalementManager->flush();
             $entityManager->commit();

@@ -12,6 +12,7 @@ use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Service\NotificationAndMailSender;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Affectation\CodeInseeSpecification;
 use App\Specification\Affectation\ParcSpecification;
@@ -38,8 +39,19 @@ class AutoAssigner
         private readonly PartnerRepository $partnerRepository,
         private readonly UserRepository $userRepository,
         private readonly UserSignalementSubscriptionManager $subscriptionManager,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly LoggerInterface $logger,
     ) {
+    }
+
+    public function assignOrSendNewSignalementNotification(Signalement $signalement): void
+    {
+        $hasAssignablePartners = $this->assign($signalement, true);
+        if (count($hasAssignablePartners)) {
+            $this->assign($signalement);
+        } else {
+            $this->notificationAndMailSender->sendNewSignalement($signalement);
+        }
     }
 
     /**

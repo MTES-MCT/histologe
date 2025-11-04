@@ -35,7 +35,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -48,7 +47,6 @@ class SignalementManagerTest extends WebTestCase
     private Security $security;
     private ManagerRegistry $managerRegistry;
     private SignalementFactory $signalementFactory;
-    private EventDispatcherInterface $eventDispatcher;
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
     private SignalementExportFactory $signalementExportFactory;
@@ -74,7 +72,6 @@ class SignalementManagerTest extends WebTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
-        $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
         /* @var QualificationStatusService $qualificationStatusService */
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
@@ -99,7 +96,6 @@ class SignalementManagerTest extends WebTestCase
             $this->managerRegistry,
             $this->security,
             $this->signalementFactory,
-            $this->eventDispatcher,
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
             $this->signalementExportFactory,
@@ -169,10 +165,9 @@ class SignalementManagerTest extends WebTestCase
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
-        $signalement = $this->signalementManager->createOrUpdate(
+        $signalement = $this->signalementManager->createOrUpdateFromArrayForImport(
             $territory,
-            $this->getSignalementData('2023-2'),
-            true
+            $this->getSignalementData('2023-2')
         );
 
         $this->assertInstanceOf(Signalement::class, $signalement);
@@ -183,10 +178,9 @@ class SignalementManagerTest extends WebTestCase
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         /** @var Territory $territory */
         $territory = $territoryRepository->findOneBy(['zip' => '01']);
-        $signalement = $this->signalementManager->createOrUpdate(
+        $signalement = $this->signalementManager->createOrUpdateFromArrayForImport(
             $territory,
-            $this->getSignalementData('2023-1'),
-            true
+            $this->getSignalementData('2023-1')
         );
 
         $this->assertInstanceOf(Signalement::class, $signalement);

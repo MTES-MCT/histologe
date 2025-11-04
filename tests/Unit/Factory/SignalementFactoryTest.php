@@ -93,7 +93,7 @@ class SignalementFactoryTest extends KernelTestCase
             ->setZip('01')
             ->setIsActive(true);
 
-        $signalement = (new SignalementFactory())->createInstanceFrom($territory, $data, true);
+        $signalement = (new SignalementFactory())->createInstanceFromArrayForImport($territory, $data);
 
         $this->assertEquals($data['reference'], $signalement->getReference());
         $this->assertEquals($data['nomDeclarant'], $signalement->getNomDeclarant());

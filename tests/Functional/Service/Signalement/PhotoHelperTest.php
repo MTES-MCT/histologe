@@ -24,7 +24,6 @@ use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class PhotoHelperTest extends KernelTestCase
@@ -32,7 +31,6 @@ class PhotoHelperTest extends KernelTestCase
     private Security $security;
     private ManagerRegistry $managerRegistry;
     private SignalementFactory $signalementFactory;
-    private EventDispatcherInterface $eventDispatcher;
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
     private SignalementExportFactory $signalementExportFactory;
@@ -57,7 +55,6 @@ class PhotoHelperTest extends KernelTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
-        $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
         /* @var QualificationStatusService $qualificationStatusService */
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
@@ -82,7 +79,6 @@ class PhotoHelperTest extends KernelTestCase
             $this->managerRegistry,
             $this->security,
             $this->signalementFactory,
-            $this->eventDispatcher,
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
             $this->signalementExportFactory,

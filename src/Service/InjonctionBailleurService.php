@@ -22,7 +22,6 @@ class InjonctionBailleurService
 
     public function __construct(
         private readonly SuiviManager $suiviManager,
-        private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly AutoAssigner $autoAssigner,
         private readonly EntityManagerInterface $entityManager,
         private readonly AffectationManager $affectationManager,
@@ -57,8 +56,7 @@ class InjonctionBailleurService
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
                 $this->entityManager->flush();
-                $this->notificationAndMailSender->sendNewSignalement($signalement);
-                $this->autoAssigner->assign($signalement);
+                $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
                 break;
         }
     }
@@ -118,7 +116,6 @@ class InjonctionBailleurService
 
         $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
         $this->entityManager->flush();
-        $this->notificationAndMailSender->sendNewSignalement($signalement);
-        $this->autoAssigner->assign($signalement);
+        $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
     }
 }
