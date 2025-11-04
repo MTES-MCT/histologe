@@ -81,7 +81,6 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
         $user = $token->getUser();
         $apiUserToken = new ApiUserToken();
         $user->addApiUserToken($apiUserToken);
-        $user->setLastLoginAt(new \DateTimeImmutable());
         $this->userRepository->save($user, true);
 
         return new JsonResponse([
