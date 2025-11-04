@@ -178,7 +178,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         );
 
         $form = $crawler->filter('form[name="stop_procedure"]')->form();
-        $form['stop_procedure[description]'] = 'Je préfère passer en procédure classique.';
+        $form['stop_procedure[description]'] = 'Je préfère passer en procédure classique. <strong>Merci</strong>';
         $client->submit($form);
 
         $this->assertResponseRedirects($urlDossierBailleur);
@@ -201,7 +201,7 @@ class SuiviBailleurControllerTest extends WebTestCase
             'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
         ]);
         $this->assertCount(1, $suivis, 'Un suivi de bascule vers procédure classique doit être créé.');
-        $this->assertEquals('Je préfère passer en procédure classique.', $suivis[0]->getDescription());
+        $this->assertEquals('Je préfère passer en procédure classique. &lt;strong&gt;Merci&lt;/strong&gt;', $suivis[0]->getDescription());
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
