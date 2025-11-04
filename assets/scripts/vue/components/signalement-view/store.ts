@@ -62,7 +62,6 @@ export const store = {
       canSeeBailleurSocial: false,
       canSeeScore: false,
       canSeeFilterPartner: false,
-      canSeeMySignalementsButton: false, // TODO: FEATURE_NEW_DASHBOARD feature flipping, remove when not needed
       partnerIds: new Array<string>()
     },
     showOptions: false,

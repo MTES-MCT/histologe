@@ -1,15 +1,6 @@
 <template>
   <div :class="[defineCssBloc1(), 'fr-p-1w']">
     <ul class="fr-col-12 fr-tags-group fr-mt-2w">
-      <li v-if="sharedState.user.canSeeMySignalementsButton">
-        <button class="fr-tag"
-                ref="mySignalementsButton"
-                :aria-pressed="ariaPressed.showMySignalementsOnly.toString()"
-                @click="toggleCurrentUserSignalements">
-          Afficher uniquement mes dossiers
-        </button>
-      </li>
-      <!-- TODO: Remove button when FEATURE_NEW_DASHBOARD is removed -->
       <li v-else-if="sharedState.user.isResponsableTerritoire">
         <button class="fr-tag"
                 ref="myAffectationButton"
