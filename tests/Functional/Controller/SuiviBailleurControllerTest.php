@@ -82,7 +82,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         $form = $crawler->filter('form[name="reponse_injonction_bailleur"]')->form();
         $form['reponse_injonction_bailleur[reponse]'] = ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE;
-        $form['reponse_injonction_bailleur[description]'] = 'Bon allez, dites moi ce que je dois faire.';
+        $form['reponse_injonction_bailleur[description]'] = 'Bon allez, dites moi ce que je dois faire. <ul><li>1</li><li>2</li></ul>';
         $client->submit($form);
 
         $this->assertEmailCount(1);
@@ -96,11 +96,12 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(2)->text());
         $this->assertStringContainsString('Coordonnées manquantes', $crawler->filter('h2')->eq(3)->text());
 
-        $signalement = $entityManager->getRepository(Suivi::class)->findBy([
+        $suivi = $entityManager->getRepository(Suivi::class)->findBy([
             'signalement' => $signalement->getId(),
             'category' => SuiviCategory::injonctionBailleurCategories()]
         );
-        $this->assertEquals(2, count($signalement));
+        $this->assertEquals(2, count($suivi));
+        $this->assertStringContainsString('Bon allez, dites moi ce que je dois faire. &lt;ul&gt;&lt;li&gt;1&lt;/li&gt;&lt;li&gt;2&lt;/li&gt;&lt;/ul&gt;', $suivi[1]->getDescription());
     }
 
     public function testDossierBailleurSubmitNon(): void
@@ -124,7 +125,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         $form = $crawler->filter('form[name="reponse_injonction_bailleur"]')->form();
         $form['reponse_injonction_bailleur[reponse]'] = ReponseInjonctionBailleur::REPONSE_NON;
-        $form['reponse_injonction_bailleur[description]'] = 'Même pas peur.';
+        $form['reponse_injonction_bailleur[description]'] = 'Même pas peur. <i>test</i>';
         $client->submit($form);
 
         $this->assertEmailCount(1);
@@ -136,11 +137,12 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertStringContainsString('Votre réponse a été enregistrée avec succès.', $crawler->filter('.fr-alert.fr-alert--success')->text());
         $this->assertStringContainsString('Non', $crawler->filter('.signalement-card .info')->eq(2)->text());
 
-        $signalement = $entityManager->getRepository(Suivi::class)->findBy([
+        $suivi = $entityManager->getRepository(Suivi::class)->findBy([
             'signalement' => $signalement->getId(),
             'category' => SuiviCategory::injonctionBailleurCategories()]
         );
-        $this->assertEquals(2, count($signalement));
+        $this->assertEquals(2, count($suivi));
+        $this->assertStringContainsString('Même pas peur. &lt;i&gt;test&lt;/i&gt;', $suivi[1]->getDescription());
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
     }
@@ -176,7 +178,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         );
 
         $form = $crawler->filter('form[name="stop_procedure"]')->form();
-        $form['stop_procedure[description]'] = 'Je préfère passer en procédure classique.';
+        $form['stop_procedure[description]'] = 'Je préfère passer en procédure classique. <strong>Merci</strong>';
         $client->submit($form);
 
         $this->assertResponseRedirects($urlDossierBailleur);
@@ -199,7 +201,7 @@ class SuiviBailleurControllerTest extends WebTestCase
             'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
         ]);
         $this->assertCount(1, $suivis, 'Un suivi de bascule vers procédure classique doit être créé.');
-        $this->assertEquals('Je préfère passer en procédure classique.', $suivis[0]->getDescription());
+        $this->assertEquals('Je préfère passer en procédure classique. &lt;strong&gt;Merci&lt;/strong&gt;', $suivis[0]->getDescription());
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);

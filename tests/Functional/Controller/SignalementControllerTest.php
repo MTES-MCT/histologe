@@ -156,7 +156,7 @@ class SignalementControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'code_suivi');
 
         $reason = 'Changement de logement';
-        $details = 'on a trouvé un meilleur appartement';
+        $details = 'on a trouvé un meilleur appartement <b>test</b>';
         $client->request('POST', $urlSuiviSignalementUserResponse, [
             'usager_cancel_procedure' => [
                 'reason' => $reason,
@@ -172,7 +172,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertStringContainsString($signalementUser->getUser()->getNomComplet(), $lastSuivi->getDescription());
         $this->assertStringContainsString('souhaite fermer son dossier', $lastSuivi->getDescription());
         $this->assertStringContainsString('pour le motif suivant : '.$reason, $lastSuivi->getDescription());
-        $this->assertStringContainsString('arrêt de procédure : '.$details, $lastSuivi->getDescription());
+        $this->assertStringContainsString('arrêt de procédure : on a trouvé un meilleur appartement &lt;b&gt;test&lt;/b&gt;', $lastSuivi->getDescription());
     }
 
     public function testSuiviSignalementProcedureAbandonOnInjonctionBailleur(): void
@@ -225,7 +225,7 @@ class SignalementControllerTest extends WebTestCase
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
-        $details = 'on veut vraiment vivre mieux';
+        $details = 'on veut vraiment vivre mieux <b>test</b>';
         $client->request('POST', $urlSuiviSignalementUserResponse, [
             'usager_poursuivre_procedure' => [
                 'details' => $details,
@@ -239,7 +239,7 @@ class SignalementControllerTest extends WebTestCase
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertStringContainsString($signalementUser->getUser()->getNomComplet(), $lastSuivi->getDescription());
         $this->assertStringContainsString('vouloir poursuivre la procédure', $lastSuivi->getDescription());
-        $this->assertStringContainsString('Commentaire : '.$details, $lastSuivi->getDescription());
+        $this->assertStringContainsString('Commentaire : on veut vraiment vivre mieux &lt;b&gt;test&lt;/b&gt;', $lastSuivi->getDescription());
     }
 
     public function testSuiviSignalementProcedureBascule(): void
@@ -256,7 +256,7 @@ class SignalementControllerTest extends WebTestCase
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
-        $details = 'C\'est trop lent, rien ne se passe !';
+        $details = 'C\'est trop lent, rien ne se passe ! <b>test</b>';
         $client->request('POST', $urlSuiviSignalementUserResponse, [
             'usager_bascule_procedure' => [
                 'details' => $details,
@@ -270,6 +270,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertEquals($lastSuivi->getCategory(), SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER);
+        $this->assertStringContainsString('C&#039;est trop lent, rien ne se passe ! &lt;b&gt;test&lt;/b&gt;', $lastSuivi->getDescription());
     }
 
     public function testSuiviSignalementProcedureBasculeOnActiveSignalement(): void
@@ -311,14 +312,15 @@ class SignalementControllerTest extends WebTestCase
 
         $crawler = $client->request('POST', $urlSuiviSignalementUserResponse, [
             'message_usager' => [
-                'description' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+                'description' => 'Lorem Ipsum is simply dummy text of the printing and typesetting <b>industry</b>',
                 '_token' => $this->generateCsrfToken($client, 'message_usager'),
             ],
         ]);
         if (SignalementStatus::ACTIVE->value === $status) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'/messages');
-            $nbSuiviMessageUsager = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::MESSAGE_USAGER, 'signalement' => $signalement]);
-            $this->assertEquals(1, $nbSuiviMessageUsager);
+            $suivisUsager = self::getContainer()->get(SuiviRepository::class)->findBy(['category' => SuiviCategory::MESSAGE_USAGER, 'signalement' => $signalement]);
+            $this->assertEquals(1, count($suivisUsager));
+            $this->assertEquals('Lorem Ipsum is simply dummy text of the printing and typesetting &lt;b&gt;industry&lt;/b&gt;', $suivisUsager[0]->getDescription());
         } elseif (SignalementStatus::REFUSED->value === $status) {
             $this->assertEquals('Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.', $crawler->filter('.fr-alert p')->text());
         } elseif (SignalementStatus::ARCHIVED->value === $status) {

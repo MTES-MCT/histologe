@@ -29,6 +29,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Security\User\SignalementUser;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\HtmlCleaner;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -529,7 +530,7 @@ class SignalementController extends AbstractController
         $formMessage = $this->createForm(MessageUsagerType::class);
         $formMessage->handleRequest($request);
         if ($this->isGranted('SIGN_USAGER_ADD_SUIVI', $signalement) && $formMessage->isSubmitted() && $formMessage->isValid()) {
-            $description = nl2br(htmlspecialchars($formMessage->get('description')->getData(), \ENT_QUOTES, 'UTF-8'));
+            $description = HtmlCleaner::cleanFrontEndEntry($formMessage->get('description')->getData());
 
             $docs = $fileRepository->findTempForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
             $filesToAttach = [];
@@ -701,19 +702,19 @@ class SignalementController extends AbstractController
                 $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
                 $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
                 $description = $user->getNomComplet().' a clôturé son dossier en injonction bailleur pour le motif suivant :
-                    '.$form->get('reason')->getData().'<br>'
+                    '.$form->get('reason')->getData().\PHP_EOL
                     .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
             } else {
                 $category = SuiviCategory::DEMANDE_ABANDON_PROCEDURE;
                 $description = $user->getNomComplet().' souhaite fermer son dossier sur '
                     .$this->getParameter('platform_name')
-                    .' pour le motif suivant : '.$form->get('reason')->getData().'<br>'
+                    .' pour le motif suivant : '.$form->get('reason')->getData().\PHP_EOL
                     .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
             }
 
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $description,
+                description: HtmlCleaner::cleanFrontEndEntry($description),
                 type: Suivi::TYPE_USAGER,
                 category: $category,
                 user: $user,
@@ -764,12 +765,12 @@ class SignalementController extends AbstractController
             $signalement->setIsUsagerAbandonProcedure(false);
 
             $description = $user->getNomComplet().' a indiqué vouloir poursuivre la procédure sur '
-                .$this->getParameter('platform_name').'<br>'
+                .$this->getParameter('platform_name').\PHP_EOL
                 .'Commentaire : '.$form->get('details')->getData();
 
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $description,
+                description: HtmlCleaner::cleanFrontEndEntry($description),
                 type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
                 user: $user,
@@ -809,12 +810,12 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $description = $user->getNomComplet().' a indiqué vouloir basculer de la procédure d\'injonction bailleur vers la procédure administrative <br>
-            Commentaire : '.$form->get('details')->getData();
+            $description = $user->getNomComplet().' a indiqué vouloir basculer de la procédure d\'injonction bailleur vers la procédure administrative';
+            $description .= \PHP_EOL.'Commentaire : '.$form->get('details')->getData();
 
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $description,
+                description: HtmlCleaner::cleanFrontEndEntry($description),
                 type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
                 user: $user,
