@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\AttachmentsUtils;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
 use App\Utils\EtageParser;
@@ -38,6 +39,13 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ? substr($signalement->getPrenomOccupant(), 0, 25)
             : null;
 
+        $piecesJointes = $this->buildPiecesJointes($signalement);
+        $attachmentsCount = $attachmentsSize = 0;
+        if (!empty($piecesJointes)) {
+            $attachmentsCount = count($piecesJointes);
+            $attachmentsSize = AttachmentsUtils::computeTotalSize($piecesJointes);
+        }
+
         return (new DossierMessageSCHS())
             ->setAction(AbstractEsaboraService::ACTION_PUSH_DOSSIER)
             ->setUrl($partner->getEsaboraUrl())
@@ -61,7 +69,9 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setDateOuverture($signalement->getCreatedAt()->format('d/m/Y'))
             ->setDossierCommentaire($this->buildCommentaire($signalement))
             ->setPiecesJointesObservation($this->buildPiecesJointesObservation($signalement))
-            ->setPiecesJointes($this->buildPiecesJointes($signalement));
+            ->setPiecesJointes($piecesJointes)
+            ->setAttachmentsCount($attachmentsCount)
+            ->setAttachmentsSize($attachmentsSize);
     }
 
     private function buildCommentaire(Signalement $signalement): string

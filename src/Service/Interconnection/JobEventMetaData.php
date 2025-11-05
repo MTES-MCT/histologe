@@ -16,6 +16,8 @@ readonly class JobEventMetaData
         private ?int $signalementId = null,
         private ?int $partnerId = null,
         private ?PartnerType $partnerType = null,
+        private ?int $attachmentsCount = null,
+        private ?int $attachmentsSize = null,
     ) {
     }
 
@@ -50,5 +52,15 @@ readonly class JobEventMetaData
     public function getPartnerType(): ?PartnerType
     {
         return $this->partnerType;
+    }
+
+    public function getAttachmentsCount(): ?int
+    {
+        return $this->attachmentsCount;
+    }
+
+    public function getAttachmentsSize(): ?int
+    {
+        return $this->attachmentsSize;
     }
 }

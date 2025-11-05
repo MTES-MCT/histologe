@@ -45,6 +45,8 @@ class EsaboraSCHSService extends AbstractEsaboraService
             signalementId: $dossierMessage->getSignalementId(),
             partnerId: $dossierMessage->getPartnerId(),
             partnerType: $dossierMessage->getPartnerType(),
+            attachmentsCount: $dossierMessage->getAttachmentsCount(),
+            attachmentsSize: $dossierMessage->getAttachmentsSize(),
         );
 
         return $this->request($url, $token, $payload, $options);

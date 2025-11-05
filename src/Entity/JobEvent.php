@@ -50,6 +50,12 @@ class JobEvent
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $response = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $attachmentsCount = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $attachmentsSize = null;
+
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
@@ -66,7 +72,7 @@ class JobEvent
         return $this->action;
     }
 
-    public function setAction(?string $action): self
+    public function setAction(?string $action): static
     {
         $this->action = $action;
 
@@ -78,7 +84,7 @@ class JobEvent
         return $this->status;
     }
 
-    public function setStatus(?string $status): self
+    public function setStatus(?string $status): static
     {
         $this->status = $status;
 
@@ -90,7 +96,7 @@ class JobEvent
         return $this->message;
     }
 
-    public function setMessage(?string $message): self
+    public function setMessage(?string $message): static
     {
         $this->message = $message;
 
@@ -102,7 +108,7 @@ class JobEvent
         return $this->response;
     }
 
-    public function setResponse(?string $response): self
+    public function setResponse(?string $response): static
     {
         $this->response = $response;
 
@@ -114,7 +120,7 @@ class JobEvent
         return $this->signalementId;
     }
 
-    public function setSignalementId(?int $signalementId): self
+    public function setSignalementId(?int $signalementId): static
     {
         $this->signalementId = $signalementId;
 
@@ -126,7 +132,7 @@ class JobEvent
         return $this->service;
     }
 
-    public function setService(?string $service): self
+    public function setService(?string $service): static
     {
         $this->service = $service;
 
@@ -138,7 +144,7 @@ class JobEvent
         return $this->partnerId;
     }
 
-    public function setPartnerId(?int $partnerId): self
+    public function setPartnerId(?int $partnerId): static
     {
         $this->partnerId = $partnerId;
 
@@ -150,7 +156,7 @@ class JobEvent
         return $this->partnerType;
     }
 
-    public function setPartnerType(?PartnerType $partnerType): self
+    public function setPartnerType(?PartnerType $partnerType): static
     {
         $this->partnerType = $partnerType;
 
@@ -162,9 +168,33 @@ class JobEvent
         return $this->codeStatus;
     }
 
-    public function setCodeStatus(?int $codeStatus): self
+    public function setCodeStatus(?int $codeStatus): static
     {
         $this->codeStatus = $codeStatus;
+
+        return $this;
+    }
+
+    public function getAttachmentsSize(): ?int
+    {
+        return $this->attachmentsSize;
+    }
+
+    public function getAttachmentsCount(): ?int
+    {
+        return $this->attachmentsCount;
+    }
+
+    public function setAttachmentsCount(?int $attachmentsCount): self
+    {
+        $this->attachmentsCount = $attachmentsCount;
+
+        return $this;
+    }
+
+    public function setAttachmentsSize(?int $attachmentsSize): self
+    {
+        $this->attachmentsSize = $attachmentsSize;
 
         return $this;
     }

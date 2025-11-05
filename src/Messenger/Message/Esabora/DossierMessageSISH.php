@@ -74,6 +74,9 @@ final class DossierMessageSISH implements DossierMessageInterface
      * @var array<int, mixed>
      */
     private array $piecesJointesDocuments = [];
+    private ?int $attachmentsCount = null;
+    private ?int $attachmentsSize = null;
+
     private ?int $sasDossierId = null;
     /**
      * @var array<int, DossierMessageSISHPersonne>|null
@@ -855,6 +858,30 @@ final class DossierMessageSISH implements DossierMessageInterface
         if (\in_array($type, PersonneType::toArray()) && !isset($this->personnes[$type])) {
             $this->personnes[] = $dossierMessageSISHPersonne;
         }
+
+        return $this;
+    }
+
+    public function getAttachmentsCount(): ?int
+    {
+        return $this->attachmentsCount;
+    }
+
+    public function getAttachmentsSize(): ?int
+    {
+        return $this->attachmentsSize;
+    }
+
+    public function setAttachmentsCount(?int $attachmentsCount): self
+    {
+        $this->attachmentsCount = $attachmentsCount;
+
+        return $this;
+    }
+
+    public function setAttachmentsSize(?int $attachmentsSize): self
+    {
+        $this->attachmentsSize = $attachmentsSize;
 
         return $this;
     }

@@ -133,7 +133,21 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         int $offset,
     ): array {
         $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion);
-        $qb->select('j.createdAt, p.id, p.nom, s.reference, s.uuid, j.status, j.service, j.action, j.codeStatus,j.message, j.response');
+        $qb->select(
+            'j.createdAt',
+            'p.id',
+            'p.nom',
+            's.reference',
+            's.uuid',
+            'j.status',
+            'j.service',
+            'j.action',
+            'j.codeStatus',
+            'j.message',
+            'j.response',
+            'j.attachmentsCount',
+            'j.attachmentsSize'
+        );
 
         if (!empty($searchInterconnexion->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInterconnexion->getOrderType());

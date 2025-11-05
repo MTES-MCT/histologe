@@ -18,7 +18,10 @@ class DossierAdresseServiceHandler extends AbstractDossierSISHHandler
 
     public function handle(DossierMessageSISH $dossierMessageSISH): void
     {
-        $dossierMessageSISH->setAction($this->action);
+        $dossierMessageSISH
+            ->setAction($this->action)
+            ->setAttachmentsSize(null)
+            ->setAttachmentsCount(null);
         $this->response = $this->esaboraSISHService->pushAdresse($dossierMessageSISH);
         $dossierMessageSISH->setSasAdresse($this->response->getSasId());
         parent::handle($dossierMessageSISH);
