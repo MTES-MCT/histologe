@@ -2,9 +2,9 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\File;
 use App\Entity\User;
 use App\Form\UserNotificationEmailType;
+use App\Form\UserProfilInfoType;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
@@ -27,7 +27,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/bo/profil')]
@@ -48,10 +47,12 @@ class ProfilController extends AbstractController
             $territoryAdmins = $userRepository->findActiveTerritoryAdmins($territoryId);
             $activeTerritoryAdminsByTerritory[$territoryId] = $territoryAdmins;
         }
+        $formProfilInfo = $this->createForm(UserProfilInfoType::class, $user, ['action' => $this->generateUrl('back_profil_edit_infos')]);
         $notificationEmailForm = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
 
         return $this->render('back/profil/index.html.twig', [
             'activeTerritoryAdminsByTerritory' => $activeTerritoryAdminsByTerritory,
+            'formProfilInfo' => $formProfilInfo,
             'notificationEmailForm' => $notificationEmailForm,
         ]);
     }
@@ -81,96 +82,61 @@ class ProfilController extends AbstractController
     #[Route('/edit-infos', name: 'back_profil_edit_infos', methods: ['POST'])]
     public function editInfos(
         Request $request,
-        ManagerRegistry $doctrine,
-        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
         LoggerInterface $logger,
         ImageManipulationHandler $imageManipulationHandler,
         FileScanner $fileScanner,
     ): Response {
-        $payload = $request->getPayload()->all();
         /** @var User $user */
         $user = $this->getUser();
-        if ($this->isCsrfTokenValid(
-            'profil_edit_infos',
-            $payload['_token']
-        )) {
-            $avatarFile = $request->files->get('profil_edit_infos')['avatar'] ?? null;
-            $errorMessage = [];
-            if (empty($payload['profil_edit_infos']['prenom'])) {
-                $errorMessage['errors']['profil_edit_infos[prenom]']['errors'][] = 'Le prénom ne peut pas être vide';
-            } elseif (mb_strlen($payload['profil_edit_infos']['prenom']) > 255) {
-                $errorMessage['errors']['profil_edit_infos[prenom]']['errors'][] = 'Le prénom ne doit pas dépasser 255 caractères';
-            }
-            if (empty($payload['profil_edit_infos']['nom'])) {
-                $errorMessage['errors']['profil_edit_infos[nom]']['errors'][] = 'Le nom ne peut pas être vide';
-            } elseif (mb_strlen($payload['profil_edit_infos']['nom']) > 255) {
-                $errorMessage['errors']['profil_edit_infos[nom]']['errors'][] = 'Le nom ne doit pas dépasser 255 caractères';
-            }
-            if (!empty($payload['profil_edit_infos']['fonction']) && mb_strlen($payload['profil_edit_infos']['fonction']) > 50) {
-                $errorMessage['errors']['profil_edit_infos[fonction]']['errors'][] = 'La fonction ne doit pas dépasser 50 caractères';
-            }
-            // Validation du fichier avatar
-            if (empty($errorMessage) && $avatarFile instanceof UploadedFile) {
-                $errors = $validator->validate(
-                    $avatarFile,
-                    [
-                        new Assert\Image([
-                            'maxSize' => '5M',
-                            'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
-                            'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG ou GIF)',
-                            'maxSizeMessage' => 'La taille du fichier ne doit pas dépasser 5 Mo.',
-                        ]),
-                    ]
-                );
-                if (count($errors) > 0) {
-                    foreach ($errors as $error) {
-                        $errorMessage['errors']['profil_edit_infos[avatar]']['errors'][] = $error->getMessage();
+        $form = $this->createForm(UserProfilInfoType::class, $user, ['action' => $this->generateUrl('back_profil_edit_infos')]);
+
+        $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        if (!$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+
+        $errorMessage = [];
+        $avatarFile = $form->get('avatar')->getData();
+        if ($avatarFile instanceof UploadedFile) {
+            if (!$fileScanner->isClean($avatarFile->getPathname())) {
+                $errorMessage['errors']['user_profil_info[avatar]']['errors'][] = 'Le fichier est infecté';
+            } else {
+                try {
+                    $res = $uploadHandlerService->toTempFolder($avatarFile);
+
+                    if (isset($res['error'])) {
+                        throw new \Exception($res['error']);
                     }
-                } elseif (!$fileScanner->isClean($avatarFile->getPathname())) {
-                    $errorMessage['errors']['profil_edit_infos[avatar]']['errors'][] = 'Le fichier est infecté';
-                } else {
-                    try {
-                        $res = $uploadHandlerService->toTempFolder($avatarFile);
 
-                        if (isset($res['error'])) {
-                            throw new \Exception($res['error']);
-                        }
+                    $imageManipulationHandler->avatar($res['filePath']);
+                    $uploadHandlerService->moveFilePath($res['filePath']);
 
-                        if (\in_array($avatarFile->getMimeType(), File::RESIZABLE_MIME_TYPES)) {
-                            $imageManipulationHandler->avatar($res['filePath']);
-                            $uploadHandlerService->moveFilePath($res['filePath']);
-                        }
-
-                        if ($user->getAvatarFilename()) {
-                            $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
-                        }
-
-                        $user->setAvatarFilename($res['file']);
-                    } catch (FileException $e) {
-                        $logger->error($e->getMessage());
-                        $errorMessage['errors']['profil_edit_infos[avatar]']['errors'][] = 'Échec du téléchargement de l\'avatar.';
+                    if ($user->getAvatarFilename()) {
+                        $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
                     }
+
+                    $user->setAvatarFilename($res['file']);
+                } catch (FileException $e) {
+                    $logger->error($e->getMessage());
+                    $errorMessage['errors']['user_profil_info[avatar]']['errors'][] = 'Échec du téléchargement de l\'avatar.';
                 }
             }
+        }
 
-            if (empty($errorMessage)) {
-                $response = ['code' => Response::HTTP_OK];
-                $user->setPrenom($payload['profil_edit_infos']['prenom']);
-                $user->setNom($payload['profil_edit_infos']['nom']);
-                $user->setFonction($payload['profil_edit_infos']['fonction']);
-                $doctrine->getManager()->persist($user);
-                $doctrine->getManager()->flush();
-                $this->addFlash('success', 'Les informations de votre profil ont bien été modifiées.');
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
+        if (empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_OK];
+            $entityManager->flush();
+            $this->addFlash('success', 'Les informations de votre profil ont bien été modifiées.');
         } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
         }
 
         return $this->json($response, $response['code']);

@@ -42,6 +42,10 @@
                         <hr class="fr-pb-1v">
                         <span class="fr-ws-nowrap">{{ suivi.createdBy.fonction }}</span>
                     {% endif %}
+                    {% if suivi.createdBy.phone %}
+                        <hr class="fr-pb-1v">
+                        <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded }}</span>
+                    {% endif %}
                 </div>
                 <div class="part-infos-hover" data-template="tippy_suivi_{{ suivi.id }}" >
             {% endif %}

@@ -8,6 +8,7 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\UserStatus;
 use App\Repository\UserRepository;
+use App\Utils\Phone;
 use App\Validator as AppAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -209,6 +210,10 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserApiPermission::class, orphanRemoval: true)]
     private Collection $userApiPermissions;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    #[AppAssert\TelephoneFormat(groups: ['user_partner', 'Default'])]
+    private ?string $phone = null;
 
     public function __construct()
     {
@@ -1057,5 +1062,22 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         }
 
         return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getPhoneDecoded(): ?string
+    {
+        return Phone::format($this->phone);
     }
 }
