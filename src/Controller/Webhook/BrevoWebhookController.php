@@ -85,12 +85,6 @@ class BrevoWebhookController extends AbstractController
                 ->setReason($payload['reason'] ?? null)
                 ->setPayload($payload);
 
-            if ($user) {
-                $user->setEmailDeliveryIssue($emailDeliveryIssue);
-            } else {
-                $partner->setEmailDeliveryIssue($emailDeliveryIssue);
-            }
-
             $this->entityManager->persist($emailDeliveryIssue);
             $this->entityManager->flush();
         } elseif (BrevoEvent::isSuccessEvent($event)) {

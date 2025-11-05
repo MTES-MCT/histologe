@@ -134,10 +134,6 @@ class Partner implements EntityHistoryInterface
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: UserPartner::class, orphanRemoval: true)]
     private Collection $userPartners;
 
-    #[ORM\ManyToOne(targetEntity: EmailDeliveryIssue::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?EmailDeliveryIssue $emailDeliveryIssue = null;
-
     public function __construct()
     {
         $this->uuid = Uuid::v4();
@@ -564,18 +560,6 @@ class Partner implements EntityHistoryInterface
     public function setUuid(?string $uuid): static
     {
         $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function getEmailDeliveryIssue(): ?EmailDeliveryIssue
-    {
-        return $this->emailDeliveryIssue;
-    }
-
-    public function setEmailDeliveryIssue(?EmailDeliveryIssue $emailDeliveryIssue): static
-    {
-        $this->emailDeliveryIssue = $emailDeliveryIssue;
 
         return $this;
     }

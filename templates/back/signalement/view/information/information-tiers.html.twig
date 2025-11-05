@@ -48,7 +48,7 @@
             {% if show_email_alert(signalement.mailDeclarant) %}
                 <p class="fr-badge fr-badge--error">Format non valide</p>
             {% endif %}
-            {% if signalement.signalementUsager.declarant.emailDeliveryIssue.event.value|default(false) %}
+            {% if show_email_usager_alert_brevo('declarant', signalement.mailDeclarant) %}
                 <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
             {% endif %}
         {% endif %}

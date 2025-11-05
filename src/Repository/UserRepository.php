@@ -33,6 +33,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ManagerRegistry $registry,
         private readonly TerritoryRepository $territoryRepository,
         private readonly PartnerRepository $partnerRepository,
+        private readonly EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
         private readonly ClockInterface $clock,
     ) {
         parent::__construct($registry, User::class);
@@ -438,12 +439,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * @param array<int, Territory> $territories
      */
-    public function countAgentsPbEmail(User $user, array $territories = [], bool $count = false): int
+    public function countAgentsPbEmail(User $user, array $territories = []): int
     {
         $qb = $this->createQueryBuilder('u')
             ->leftJoin('u.userPartners', 'up')
             ->leftJoin('up.partner', 'p')
-            ->where('u.emailDeliveryIssue IS NOT NULL')
             ->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')
             ->setParameter('roleUsager', '"ROLE_USAGER"');
 
@@ -453,9 +453,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         }
 
-        $qb->select('COUNT(u)');
+        $existsByEmailDql = $this->emailDeliveryIssueRepository->getExistsByEmailDql('u.email');
 
-        return $qb->getQuery()->getSingleScalarResult();
+        $qb->andWhere($qb->expr()->exists($existsByEmailDql));
+        $qb->select('COUNT(u.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     public function findFilteredPaginated(SearchUser $searchUser, int $maxResult): Paginator
@@ -526,10 +529,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('roleAdmin', '"ROLE_ADMIN"')
                 ->setParameter('roleAdminTerritory', '"ROLE_ADMIN_TERRITORY"');
         }
-        if ('Oui' == $searchUser->getEmailDeliveryIssue()) {
-            $qb->andWhere('u.emailDeliveryIssue IS NOT NULL');
-        } elseif ('Non' == $searchUser->getEmailDeliveryIssue()) {
-            $qb->andWhere('u.emailDeliveryIssue IS NULL');
+        if (null !== $searchUser->getEmailDeliveryIssue()) {
+            $existsByEmailDql = $this->emailDeliveryIssueRepository->getExistsByEmailDql('u.email');
+            if ('Oui' === $searchUser->getEmailDeliveryIssue()) {
+                $qb->andWhere($qb->expr()->exists($existsByEmailDql));
+            } else {
+                $qb->andWhere($qb->expr()->not($qb->expr()->exists($existsByEmailDql)));
+            }
         }
         if ($execute) {
             return $qb->getQuery()->execute();
