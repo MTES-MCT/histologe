@@ -53,6 +53,7 @@ parameters:
     feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
     feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'
     tab_data_kpi_cache_expired_after: '%env(int:TAB_DATA_KPI_CACHE_EXPIRED_AFTER)%'
+    feature_annuaire: '%env(bool:FEATURE_ANNUAIRE)%'
 
 services:
     # default configuration for services in *this* file
