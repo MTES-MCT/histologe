@@ -4,10 +4,11 @@ namespace App\Factory\Interconnection\Idoss;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\Interconnection\Idoss\IdossService;
 
-class DossierMessageFactory
+class DossierMessageFactory implements DossierMessageFactoryInterface
 {
     public function supports(Affectation $affectation): bool
     {

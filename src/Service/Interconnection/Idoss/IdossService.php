@@ -3,6 +3,7 @@
 namespace App\Service\Interconnection\Idoss;
 
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\InterfacageType;
 use App\Entity\File;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
@@ -17,13 +18,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class IdossService
 {
-    public const string TYPE_SERVICE = 'idoss';
+    public const string TYPE_SERVICE = InterfacageType::IDOSS->value;
 
     public const string STATUS_ACCEPTED = 'accepte';
     public const string STATUS_IN_PROGRESS = 'en_cours';
@@ -41,6 +43,7 @@ class IdossService
     private const string UPLOAD_FILES_ENDPOINT = '/api/EtatCivil/uploadFileRepoHistologe';
     private const string LIST_STATUTS_ENDPOINT = '/api/EtatCivil/listStatutsHistologe';
     private const int NB_MAX_FILES = 20;
+    private const int CUSTOM_CODE_HTTP_BAD_REQUEST = 209;
 
     public function __construct(
         private readonly HttpClientInterface $client,
@@ -53,6 +56,9 @@ class IdossService
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     public function pushDossier(DossierMessage $dossierMessage): JobEvent
     {
         $partner = $this->entityManager->getRepository(Partner::class)->find($dossierMessage->getPartnerId());
@@ -106,7 +112,16 @@ class IdossService
         $jobMessage = json_encode($payload, \JSON_HEX_TAG);
         $signalementId = $signalement->getId();
 
-        $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload, 'POST', 'multipart/form-data');
+        $jobEvent = $this->processRequestAndSaveJobEvent(
+            $partner,
+            $url,
+            $jobAction,
+            $jobMessage,
+            $signalementId,
+            $payload,
+            'POST',
+            'multipart/form-data'
+        );
 
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
             foreach ($files as $file) {
@@ -146,10 +161,12 @@ class IdossService
         try {
             $token = $this->getToken($partner);
             $response = $this->request($url, $payload, $token, $requestMethod, $contentType);
-            $statusCode = $response->getStatusCode();
+            $statusCode = self::CUSTOM_CODE_HTTP_BAD_REQUEST === $response->getStatusCode()
+                ? Response::HTTP_BAD_REQUEST
+                : $response->getStatusCode();
             $status = Response::HTTP_OK === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED;
             $responseContent = $response->getContent(throw: false);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $responseContent = $e->getMessage();
             $this->logger->error('Idoss HTTP error occurred, cause : '.$e->getMessage());
             $status = JobEvent::STATUS_FAILED;

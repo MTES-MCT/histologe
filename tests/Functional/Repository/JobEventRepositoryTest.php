@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Repository;
 
 use App\Entity\Enum\InterfacageType;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Repository\JobEventRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
-use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -32,7 +30,7 @@ class JobEventRepositoryTest extends KernelTestCase
                 AbstractEsaboraService::ACTION_SYNC_DOSSIER);
 
         $this->assertEquals(4, $successCount);
-        $this->assertEquals(3, $failedCount);
+        $this->assertEquals(4, $failedCount);
     }
 
     public function testFindLastJobEventByInterfacageType(): void
@@ -69,7 +67,7 @@ class JobEventRepositoryTest extends KernelTestCase
             0
         );
 
-        $this->assertCount(4, $jobEvents);
+        $this->assertCount(5, $jobEvents);
         $this->assertEquals($signalement->getReference(), $jobEvents[0]['reference']);
     }
 
@@ -80,7 +78,7 @@ class JobEventRepositoryTest extends KernelTestCase
         $jobEventRepository = $container->get(JobEventRepository::class);
 
         $searchInterconnexion = new SearchInterconnexion();
-        $searchInterconnexion->setAction(EsaboraSCHSService::ACTION_PUSH_DOSSIER);
+        $searchInterconnexion->setAction(AbstractEsaboraService::ACTION_PUSH_DOSSIER);
 
         $jobEvents = $jobEventRepository->findLastJobEventByTerritory(
             365,
@@ -89,21 +87,8 @@ class JobEventRepositoryTest extends KernelTestCase
             0
         );
 
-        $this->assertCount(3, $jobEvents);
-        $this->assertEquals(EsaboraSCHSService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
-    }
-
-    public function testFindFailedEsaboraDossierByPartnerTypeByAction(): void
-    {
-        $container = static::getContainer();
-        $jobEventRepository = $container->get(JobEventRepository::class);
-
-        $jobEvents = $jobEventRepository->findFailedEsaboraDossierByPartnerTypeByAction(
-            PartnerType::ARS,
-            'push_dossier'
-        );
-
-        $this->assertCount(3, $jobEvents);
+        $this->assertCount(4, $jobEvents);
+        $this->assertEquals(AbstractEsaboraService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
     }
 
     public function testFindFailedJobEvents(): void

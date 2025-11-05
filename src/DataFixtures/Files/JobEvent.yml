@@ -63,3 +63,11 @@ job_event:
     status: failed
     code_status: 500
     partner_type: "ARS"
+  -
+    partner: "partenaire-13-05@signal-logement.fr"
+    signalement: "2023-9"
+    service: "idoss"
+    action: "push_dossier"
+    status: failed
+    code_status: 400
+    partner_type: "COMMUNE_SCHS"

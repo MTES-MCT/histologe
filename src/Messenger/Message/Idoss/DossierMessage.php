@@ -49,71 +49,82 @@ final class DossierMessage implements DossierMessageInterface
 
     public function __construct(Affectation $affectation)
     {
-        $this->signalementId = $affectation->getSignalement()->getId();
-        $this->signalementUuid = $affectation->getSignalement()->getUuid();
-        $this->reference = $affectation->getSignalement()->getReference();
+        $signalement = $affectation->getSignalement();
+        $this->signalementId = $signalement->getId();
+        $this->signalementUuid = $signalement->getUuid();
+        $this->reference = $signalement->getReference();
         $this->partnerId = $affectation->getPartner()->getId();
-        $this->dateDepotSignalement = $affectation->getSignalement()->getCreatedAt()->format('m-d-Y');
+        $this->dateDepotSignalement = $signalement->getCreatedAt()->format('m-d-Y');
 
-        $this->declarant = [
-            'nomDeclarant' => $affectation->getSignalement()->getNomDeclarant(),
-            'prenomDeclarant' => $affectation->getSignalement()->getPrenomDeclarant(),
-            'telephoneDeclarant' => $affectation->getSignalement()->getTelDeclarantDecoded(),
-            'mailDeclarant' => $affectation->getSignalement()->getMailDeclarant(),
-        ];
-        $addressParsed = AddressParser::parse($affectation->getSignalement()->getAdresseOccupant());
+        if (!$signalement->isTiersDeclarant()) {
+            $this->declarant = [
+                'nomDeclarant' => $signalement->getNomOccupant() ?? 'Non renseigné',
+                'prenomDeclarant' => $signalement->getPrenomOccupant() ?? 'Non renseigné',
+                'telephoneDeclarant' => $signalement->getTelOccupantDecoded(),
+                'mailDeclarant' => $signalement->getMailOccupant(),
+            ];
+        } else {
+            $this->declarant = [
+                'nomDeclarant' => $signalement->getNomDeclarant() ?? 'Non renseigné',
+                'prenomDeclarant' => $signalement->getPrenomDeclarant() ?? 'Non renseigné',
+                'telephoneDeclarant' => $signalement->getTelDeclarantDecoded(),
+                'mailDeclarant' => $signalement->getMailDeclarant(),
+            ];
+        }
+
+        $addressParsed = AddressParser::parse($signalement->getAdresseOccupant());
         $this->occupant = [
-            'nomOccupant' => $affectation->getSignalement()->getNomOccupant(),
-            'prenomOccupant' => $affectation->getSignalement()->getPrenomOccupant(),
-            'telephoneOccupant' => $affectation->getSignalement()->getTelOccupantDecoded(),
-            'mailOccupant' => $affectation->getSignalement()->getMailOccupant(),
+            'nomOccupant' => $signalement->getNomOccupant() ?? 'Non renseigné',
+            'prenomOccupant' => $signalement->getPrenomOccupant() ?? 'Non renseigné',
+            'telephoneOccupant' => $signalement->getTelOccupantDecoded(),
+            'mailOccupant' => $signalement->getMailOccupant(),
             'adresseLogement' => [
-                'adresse' => $affectation->getSignalement()->getAddressCompleteOccupant(),
+                'adresse' => $signalement->getAddressCompleteOccupant(),
                 'novoie' => $addressParsed['number'],
                 'nomvoie' => $addressParsed['street'],
-                'CP' => $affectation->getSignalement()->getCpOccupant(),
-                'nomCommune' => $affectation->getSignalement()->getVilleOccupant(),
-                'codeInseeCommune' => $affectation->getSignalement()->getInseeOccupant(),
+                'CP' => $signalement->getCpOccupant(),
+                'nomCommune' => $signalement->getVilleOccupant(),
+                'codeInseeCommune' => $signalement->getInseeOccupant(),
             ],
         ];
         // seul code insee accepté par IDOSS pour le service Habitat de Marseille, on force la valeur tant qu'on est dans le 13
-        if (str_starts_with($affectation->getSignalement()->getInseeOccupant(), self::DEPT_BOUCHES_DU_RHONE)) {
+        if (str_starts_with($signalement->getInseeOccupant(), self::DEPT_BOUCHES_DU_RHONE)) {
             $this->occupant['adresseLogement']['codeInseeCommune'] = self::CODE_INSEE_BASSIN_VIE_MARSEILLE;
         }
 
-        $this->adresse1 = $affectation->getSignalement()->getComplementAdresseOccupant(false);
-        $this->adresse2 = $affectation->getSignalement()->getAdresseAutreOccupant();
+        $this->adresse1 = $signalement->getComplementAdresseOccupant(false);
+        $this->adresse2 = $signalement->getAdresseAutreOccupant();
         $this->proprietaire = [
-            'nomProprietaire' => $affectation->getSignalement()->getNomProprio(),
-            'prenomProprietaire' => $affectation->getSignalement()->getPrenomProprio(),
-            'adresseProprietaire' => $affectation->getSignalement()->getAdresseProprio(),
-            'telephoneProprietaire' => $affectation->getSignalement()->getTelProprioDecoded(),
-            'mailProprietaire' => $affectation->getSignalement()->getMailProprio(),
+            'nomProprietaire' => $signalement->getNomProprio(),
+            'prenomProprietaire' => $signalement->getPrenomProprio(),
+            'adresseProprietaire' => $signalement->getAdresseProprio(),
+            'telephoneProprietaire' => $signalement->getTelProprioDecoded(),
+            'mailProprietaire' => $signalement->getMailProprio(),
         ];
-        $this->descriptionProblemes = !empty($affectation->getSignalement()->getDetails()) ? mb_strimwidth($affectation->getSignalement()->getDetails(), 0, self::DESCRIPTION_MAX_LENGTH) : '';
-        $this->numAllocataire = $affectation->getSignalement()->getNumAllocataire();
-        $this->montantAllocation = $affectation->getSignalement()->getMontantAllocation();
-        if (true === $affectation->getSignalement()->getIsBailEnCours()) {
+        $this->descriptionProblemes = !empty($signalement->getDetails()) ? mb_strimwidth($signalement->getDetails(), 0, self::DESCRIPTION_MAX_LENGTH) : '';
+        $this->numAllocataire = $signalement->getNumAllocataire();
+        $this->montantAllocation = $signalement->getMontantAllocation();
+        if (true === $signalement->getIsBailEnCours()) {
             $this->bailEnCour = 'oui';
-        } elseif (false === $affectation->getSignalement()->getIsBailEnCours()) {
+        } elseif (false === $signalement->getIsBailEnCours()) {
             $this->bailEnCour = 'non';
         }
-        if ($affectation->getSignalement()->getDateEntree()) {
-            $this->dateEntreeLogement = $affectation->getSignalement()->getDateEntree()->format('m-d-Y');
+        if ($signalement->getDateEntree()) {
+            $this->dateEntreeLogement = $signalement->getDateEntree()->format('m-d-Y');
         }
-        $this->montantLoyer = $affectation->getSignalement()->getLoyer();
-        if (true === $affectation->getSignalement()->getIsConstructionAvant1949()) {
+        $this->montantLoyer = $signalement->getLoyer();
+        if (true === $signalement->getIsConstructionAvant1949()) {
             $this->construitAv1949 = 'oui';
-        } elseif (false === $affectation->getSignalement()->getIsConstructionAvant1949()) {
+        } elseif (false === $signalement->getIsConstructionAvant1949()) {
             $this->construitAv1949 = 'non';
         }
-        $this->nbrPieceLogement = $affectation->getSignalement()->getNbPiecesLogement();
-        $this->nbrEtages = (int) $affectation->getSignalement()->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages();
+        $this->nbrPieceLogement = $signalement->getNbPiecesLogement();
+        $this->nbrEtages = (int) $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages();
         $this->etapes = [
-            'nbrPersonne' => $affectation->getSignalement()->getTypeCompositionLogement()?->getCompositionLogementNombrePersonnes(),
-            'typeLogement' => $affectation->getSignalement()->getNatureLogement(),
-            'superficie' => $affectation->getSignalement()->getSuperficie(),
-            'dateConstruction' => $affectation->getSignalement()->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction(),
+            'nbrPersonne' => $signalement->getTypeCompositionLogement()?->getCompositionLogementNombrePersonnes(),
+            'typeLogement' => $signalement->getNatureLogement(),
+            'superficie' => $signalement->getSuperficie(),
+            'dateConstruction' => $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction(),
         ];
     }
 
