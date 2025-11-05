@@ -1,7 +1,7 @@
 <template>
   <div :class="[defineCssBloc1(), 'fr-p-1w']">
     <ul class="fr-col-12 fr-tags-group fr-mt-2w">
-      <li v-else-if="sharedState.user.isResponsableTerritoire">
+      <li v-if="sharedState.user.isResponsableTerritoire">
         <button class="fr-tag"
                 ref="myAffectationButton"
                 :aria-pressed="ariaPressed.showMyAffectationOnly.toString()"
