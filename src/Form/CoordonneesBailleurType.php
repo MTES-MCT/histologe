@@ -89,17 +89,21 @@ class CoordonneesBailleurType extends AbstractType
                             'message' => 'Le numéro de téléphone n\'est pas valide.',
                         ]),
                     ],
+                ])
+                ->add('mailProprio', TextType::class, [
+                    'label' => 'Adresse e-mail',
+                    'required' => false,
+                    'help' => 'Format attendu : nom@domaine.fr',
+                ]);
+        } else {
+            $builder
+                ->add('mailProprio', TextType::class, [
+                    'label' => 'Afin de fluidifier les échanges, merci de renseigner votre adresse e-mail.',
+                    'constraints' => [
+                        new Assert\NotBlank(),
+                    ],
                 ]);
         }
-
-        $builder
-            ->add('mailProprio', TextType::class, [
-                'label' => $options['extended'] ? 'Adresse e-mail' : 'Afin de fluidifier les échanges, merci de renseigner votre adresse e-mail.',
-                'constraints' => [
-                    new Assert\NotBlank(),
-                ],
-                'help' => 'Format attendu : nom@domaine.fr',
-            ]);
 
         $builder->add('save', SubmitType::class, [
             'label' => 'Envoyer',
