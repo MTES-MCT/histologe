@@ -14,6 +14,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Event\SuiviViewedEvent;
+use App\Form\CoordonneesBailleurType;
 use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
 use App\Form\UsagerBasculeProcedureType;
@@ -583,6 +584,50 @@ class SignalementController extends AbstractController
             'formMessage' => $formMessage,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
             'infoDesordres' => $infoDesordres,
+        ]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/complete', name: 'front_suivi_signalement_complete', methods: ['GET', 'POST'])]
+    public function suiviSignalementComplete(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+        SuiviManager $suiviManager,
+        SignalementManager $signalementManager,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_COMPLETE', $signalement);
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+        $formCoordonneesBailleur = $this->createForm(
+            CoordonneesBailleurType::class,
+            $signalement,
+            ['extended' => true]
+        );
+        $formCoordonneesBailleur->handleRequest($request);
+        if (
+            $formCoordonneesBailleur->isSubmitted()
+            && $formCoordonneesBailleur->isValid()
+        ) {
+            $signalementManager->save($signalement);
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: 'L\'usager a mis à jour les coordonnées de son bailleur.',
+                type: Suivi::TYPE_USAGER,
+                category: SuiviCategory::MESSAGE_USAGER,
+                user: $signalementUser->getUser(),
+                isPublic: true,
+            );
+
+            $messageRetour = 'Votre dossier a bien été complété, vous recevrez un email lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
+            $this->addFlash('success', $messageRetour);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/suivi_signalement_complete.html.twig', [
+            'signalement' => $signalement,
+            'formCoordonneesBailleur' => $formCoordonneesBailleur,
         ]);
     }
 

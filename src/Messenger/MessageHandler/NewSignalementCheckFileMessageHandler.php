@@ -215,7 +215,7 @@ class NewSignalementCheckFileMessageHandler
             $this->description .= '- des photos pour les désordres suivants : '.$desordres.'<br>';
         }
         if (!$hasCoordonneesBailleur) {
-            $this->description .= '- les coordonnées de votre propriétaire / bailleur (numéro de téléphone et / ou e-mail)<br>';
+            $this->description .= '- les coordonnées du propriétaire / bailleur (numéro de téléphone et / ou e-mail). Pour cela, retournez sur l\'accueil de votre dossier et cliquez sur "Voir et compléter le dossier".<br>';
         }
         $this->description .= '<br>';
         $this->description .= 'Envoyez-nous un message en y ajoutant vos documents !<br>';

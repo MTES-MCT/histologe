@@ -2,10 +2,13 @@
 
 namespace App\Form;
 
+use App\Entity\Signalement;
+use App\Validator\TelephoneFormat;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CoordonneesBailleurType extends AbstractType
@@ -15,18 +18,102 @@ class CoordonneesBailleurType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var Signalement $signalement */
+        $signalement = $builder->getData();
+        $adresseCompleteProprio = mb_trim($signalement->getAdresseProprio().' '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio());
+
+        if ($options['extended']) {
+            $builder
+                ->add('nomProprio', TextType::class, [
+                    'label' => 'Nom',
+                    'constraints' => [new Assert\NotBlank()],
+                    'disabled' => true,
+                ])
+                ->add('prenomProprio', TextType::class, [
+                    'label' => 'Prénom',
+                    'constraints' => [new Assert\NotBlank()],
+                    'disabled' => true,
+                ])
+                ->add('adresseCompleteProprio', null, [
+                    'label' => false,
+                    'help' => 'Format attendu : Tapez l\'adresse puis sélectionnez-la dans la liste. Si elle n\'apparaît pas, cliquez sur saisir une adresse manuellement.',
+                    'mapped' => false,
+                    'data' => $adresseCompleteProprio,
+                    'attr' => [
+                        'autocomplete' => 'off',
+                        'data-fr-adresse-autocomplete' => 'true',
+                        'data-autocomplete-query-selector' => '#form-usager-complete-dossier .fr-address-proprio-group',
+                        'data-suffix' => 'proprio',
+                    ],
+                ])
+                ->add('adresseProprio', null, [
+                    'label' => 'Numéro et voie ',
+                    'attr' => [
+                        'class' => 'manual-address manual-address-input',
+                        'data-autocomplete-addresse-proprio' => 'true',
+                    ],
+                    'empty_data' => '',
+                ])
+                ->add('codePostalProprio', null, [
+                    'label' => 'Code postal',
+                    'required' => false,
+                    'attr' => [
+                        'class' => 'manual-address',
+                        'data-autocomplete-codepostal-proprio' => 'true',
+                    ],
+                    'empty_data' => '',
+                ])
+                ->add('villeProprio', null, [
+                    'label' => 'Ville',
+                    'required' => false,
+                    'attr' => [
+                        'class' => 'manual-address',
+                        'data-autocomplete-ville-proprio' => 'true',
+                    ],
+                    'empty_data' => '',
+                ])
+                ->add('telProprio', TextType::class, [
+                    'label' => 'Téléphone principal',
+                    'required' => false,
+                    'constraints' => [
+                        new TelephoneFormat([
+                            'message' => 'Le numéro de téléphone n\'est pas valide.',
+                        ]),
+                    ],
+                ])
+                ->add('telProprioSecondaire', TextType::class, [
+                    'label' => 'Téléphone secondaire',
+                    'required' => false,
+                    'constraints' => [
+                        new TelephoneFormat([
+                            'message' => 'Le numéro de téléphone n\'est pas valide.',
+                        ]),
+                    ],
+                ]);
+        }
+
         $builder
             ->add('mailProprio', TextType::class, [
-                'label' => 'Afin de fluidifier les échanges, merci de renseigner votre adresse e-mail.',
+                'label' => $options['extended'] ? 'Adresse e-mail' : 'Afin de fluidifier les échanges, merci de renseigner votre adresse e-mail.',
                 'constraints' => [
                     new Assert\NotBlank(),
                 ],
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Envoyer',
-                'attr' => [
-                    'class' => 'fr-btn--primary',
-                ],
+                'help' => 'Format attendu : nom@domaine.fr',
             ]);
+
+        $builder->add('save', SubmitType::class, [
+            'label' => 'Envoyer',
+            'attr' => [
+                'class' => 'fr-btn--primary',
+            ],
+        ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Signalement::class,
+            'extended' => false,
+        ]);
     }
 }

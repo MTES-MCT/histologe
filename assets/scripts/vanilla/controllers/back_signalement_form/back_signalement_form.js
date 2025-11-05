@@ -494,6 +494,8 @@ function initBoFormSignalementDesordres() {
   updateSelectedCriteres(document.getElementById('fr-modal-desordres-logement-add'));
 }
 
+// TODO utiliser import { initComponentAdress } from '../../services/component/component_search_address';
+// nécessite de renommer certaines classes dans les templates et formType et de vérifier q'il n'y a pas des confusions
 function initComponentAdress(id) {
   const addressInput = document.querySelector(id);
   const addressInputParent = addressInput.parentElement.parentElement.parentElement;
