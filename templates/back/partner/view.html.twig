@@ -71,7 +71,7 @@
                 <div class="fr-col-6">
                     <div>
                         <b>E-mail de contact :</b> {{ partner.email }}
-                        {% if partner.emailDeliveryIssue.event.value|default(false) %}
+                        {% if show_email_partner_alert_brevo(partner.email)|default(false) %}
                             <span class="fr-badge fr-badge--warning fr-badge--sm">Problème d'e-mail non remis</span>
                         {% endif %}
                     </div>

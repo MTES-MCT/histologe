@@ -45,6 +45,15 @@ class EmailAlertChecker implements RuntimeExtensionInterface
         return false;
     }
 
+    public function hasPartnerEmailAlert(?string $email = null): bool
+    {
+        if (null !== $email) {
+            return $this->partnerQueryService->shouldDisplayAlertEmailIssueByEmail($email);
+        }
+
+        return false;
+    }
+
     /**
      * @param iterable<User> $users
      *

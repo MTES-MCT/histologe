@@ -88,4 +88,13 @@ class PartnerQueryService
 
         return $countPartnerWithEmailIssue > 0 || null === $partner->getEmail();
     }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function shouldDisplayAlertEmailIssueByEmail(string $email): bool
+    {
+        return $this->countPartnerWithEmailIssue($email) > 0;
+    }
 }

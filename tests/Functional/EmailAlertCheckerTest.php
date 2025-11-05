@@ -26,6 +26,12 @@ class EmailAlertCheckerTest extends KernelTestCase
         $this->assertTrue($hasUsagerEmailAlert);
     }
 
+    public function testHasPartnerEmailAlert(): void
+    {
+        $hasPartnerEmailAlert = $this->emailAlertChecker->hasPartnerEmailAlert('partenaire-13-01@signal-logement.fr');
+        $this->assertTrue($hasPartnerEmailAlert);
+    }
+
     public function testBuildPartnerEmailAlert(): void
     {
         /** @var SignalementRepository $signalementRepository */
