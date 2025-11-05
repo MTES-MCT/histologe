@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Enum\Qualification;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -16,7 +15,6 @@ class UserVoter extends Voter
     public const string EDIT = 'USER_EDIT';
     public const string TRANSFER = 'USER_TRANSFER';
     public const string DELETE = 'USER_DELETE';
-    public const string SEE_NDE = 'USER_SEE_NDE';
     public const string SEE_INJONCTION_BAILLEUR = 'SEE_INJONCTION_BAILLEUR';
 
     public function __construct(
@@ -31,7 +29,7 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::TRANSFER, self::DELETE, self::SEE_NDE, self::SEE_INJONCTION_BAILLEUR])
+        return \in_array($attribute, [self::EDIT, self::TRANSFER, self::DELETE, self::SEE_INJONCTION_BAILLEUR])
             && $subject instanceof User;
     }
 
@@ -72,7 +70,6 @@ class UserVoter extends Voter
             self::EDIT => $this->canEdit($subject, $user),
             self::TRANSFER => $this->canTransfer($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
-            self::SEE_NDE => $this->canSeeNde($user),
             self::SEE_INJONCTION_BAILLEUR => $this->canSeeInjonctionBailleur($user),
             default => false,
         };
@@ -112,21 +109,6 @@ class UserVoter extends Voter
     private function canTransfer(User $subject, User $user): bool
     {
         return $this->canFullManage($subject, $user);
-    }
-
-    public function canSeeNde(User $user): bool
-    {
-        // check if remove when FEATURE_NEW_DASHBOARD active
-        if ($user->isTerritoryAdmin()) {
-            return true;
-        }
-        foreach ($user->getPartners() as $partner) {
-            if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE, $partner->getCompetence())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private function canSeeInjonctionBailleur(User $user): bool

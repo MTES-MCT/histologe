@@ -15,8 +15,6 @@ class Settings
     private ?string $avatarOrPlaceHolder = null;
     #[Groups('settings:read')]
     private ?string $roleLabel = null;
-    #[Groups('settings:read')]
-    private ?string $canSeeNDE = null;
     /**
      * @var array<int, int> $partnerIds
      */
@@ -74,7 +72,6 @@ class Settings
     public function __construct(
         User $user,
         array $territories,
-        bool $canSeeNDE,
         array $partners = [],
         array $communes = [],
         array $epcis = [],
@@ -88,7 +85,6 @@ class Settings
         $this->lastname = $user->getNom();
         $this->avatarOrPlaceHolder = $avatarOrPlaceHolder;
         $this->roleLabel = $user->getRoleLabel();
-        $this->canSeeNDE = (string) $canSeeNDE;
         $this->partnerIds = $user->getUserPartners()->map(fn ($userPartner) => $userPartner->getPartner()->getId())->toArray();
         $this->territories = $territories;
         $this->partners = $partners;
@@ -114,11 +110,6 @@ class Settings
     public function getAvatarOrPlaceHolder(): string
     {
         return $this->avatarOrPlaceHolder;
-    }
-
-    public function getCanSeeNDE(): ?string
-    {
-        return $this->canSeeNDE;
     }
 
     /**

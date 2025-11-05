@@ -5,17 +5,14 @@ namespace App\Factory;
 use App\Dto\Settings;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Security\Voter\UserVoter;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Service\UserAvatar;
 use Psr\Cache\InvalidArgumentException;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class SettingsFactory
 {
     public function __construct(
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
-        private readonly Security $security,
         private readonly UserAvatar $userAvatar,
     ) {
     }
@@ -30,7 +27,6 @@ class SettingsFactory
         return new Settings(
             user: $user,
             territories: $filterOptionData['territories'],
-            canSeeNDE: $this->security->isGranted(UserVoter::SEE_NDE, $user),
             partners: $filterOptionData['partners'],
             communes: $this->getCommunesAndZipCodes($filterOptionData),
             epcis: $filterOptionData['epcis'],
