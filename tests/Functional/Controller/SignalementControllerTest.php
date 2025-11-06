@@ -798,7 +798,7 @@ class SignalementControllerTest extends WebTestCase
         $suiviRepository = $entityManager->getRepository(Suivi::class);
         $suivi = $suiviRepository->findOneBy([
             'signalement' => $signalement,
-            'category' => SuiviCategory::MESSAGE_USAGER,
+            'category' => SuiviCategory::SIGNALEMENT_EDITED_FO,
         ]);
         $this->assertEquals('nouvel.email@example.org', $signalement->getMailProprio());
         $this->assertNotNull($suivi);

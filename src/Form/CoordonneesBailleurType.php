@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Signalement;
-use App\Validator\TelephoneFormat;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -73,20 +72,10 @@ class CoordonneesBailleurType extends AbstractType
                 ->add('telProprio', TextType::class, [
                     'label' => 'Téléphone principal',
                     'required' => false,
-                    // 'constraints' => [
-                    //     new TelephoneFormat([
-                    //         'message' => 'Le numéro de téléphone n\'est pas valide.',
-                    //     ]),
-                    // ],
                 ])
                 ->add('telProprioSecondaire', TextType::class, [
                     'label' => 'Téléphone secondaire',
                     'required' => false,
-                    // 'constraints' => [
-                    //     new TelephoneFormat([
-                    //         'message' => 'Le numéro de téléphone n\'est pas valide.',
-                    //     ]),
-                    // ],
                 ])
                 ->add('mailProprio', TextType::class, [
                     'label' => 'Adresse e-mail',
