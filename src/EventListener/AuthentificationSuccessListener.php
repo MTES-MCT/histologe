@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\User;
 use App\Manager\HistoryEntryManager;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
@@ -13,12 +14,13 @@ use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-class AuthentificationHistoryListener
+class AuthentificationSuccessListener
 {
     private const string CHECK_2FA_PATH = '/2fa_check';
 
     public function __construct(
         private readonly HistoryEntryManager $historyEntryManager,
+        private readonly UserManager $userManager,
         private readonly LoggerInterface $logger,
         private readonly SignalementRepository $signalementRepository,
         #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
@@ -31,16 +33,39 @@ class AuthentificationHistoryListener
         if (self::CHECK_2FA_PATH === $event->getRequest()->getPathInfo()) {
             return;
         }
-        /** @var User $user */
-        $user = $event->getAuthenticationToken()->getUser();
-        $this->createAuthentificationHistory(HistoryEntryEvent::LOGIN, $user);
+        if ($event->getAuthenticationToken()->getUser() instanceof User) {
+            $user = $event->getAuthenticationToken()->getUser();
+        } elseif ($event->getAuthenticationToken()->getUser() instanceof SignalementUser) {
+            $user = $event->getAuthenticationToken()->getUser()->getUser();
+        }
+        if (!isset($user)) {
+            return;
+        }
+        $this->handleSuccessfulLogin(
+            $user,
+            HistoryEntryEvent::LOGIN
+        );
     }
 
     public function onSchebTwoFactorAuthenticationSuccess(TwoFactorAuthenticationEvent $event): void
     {
         /** @var User $user */
         $user = $event->getToken()->getUser();
-        $this->createAuthentificationHistory(HistoryEntryEvent::LOGIN_2FA, $user);
+        $this->handleSuccessfulLogin(
+            $user,
+            HistoryEntryEvent::LOGIN_2FA
+        );
+    }
+
+    private function handleSuccessfulLogin(?User $user, HistoryEntryEvent $eventType): void
+    {
+        if (!$user) {
+            return;
+        }
+
+        $user->setLastLoginAt(new \DateTimeImmutable());
+        $this->userManager->save($user, true);
+        $this->createAuthentificationHistory($eventType, $user);
     }
 
     private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, SignalementBailleur|SignalementUser|User $user): void
