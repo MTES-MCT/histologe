@@ -17,6 +17,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -35,6 +36,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         private readonly PartnerRepository $partnerRepository,
         private readonly EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
         private readonly ClockInterface $clock,
+        #[Autowire(env: 'USER_SYSTEM_EMAIL')]
+        private readonly string $userSystemEmail,
     ) {
         parent::__construct($registry, User::class);
     }
@@ -373,6 +376,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $qb->andWhere('u.statut != :statut')->setParameter('statut', UserStatus::ARCHIVE);
         $qb->andWhere('u.anonymizedAt IS NULL');
         $qb->andWhere('u.archivingScheduledAt IS NULL');
+        $qb->andWhere('u.email != :userSystemEmail')->setParameter('userSystemEmail', $this->userSystemEmail);
 
         return $qb->getQuery()->execute();
     }
