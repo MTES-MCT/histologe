@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Enum\UserStatus;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
