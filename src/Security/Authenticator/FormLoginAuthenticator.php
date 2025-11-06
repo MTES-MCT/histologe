@@ -71,8 +71,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
     {
         /** @var User $user */
         $user = $token->getUser();
-        $user->setLastLoginAt(new \DateTimeImmutable());
-        $this->userRepository->save(entity: $user, flush: true);
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }

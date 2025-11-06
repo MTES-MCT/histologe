@@ -9,7 +9,6 @@ use App\Security\Authenticator\CodeSuiviLoginAuthenticator;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
 use App\Tests\FixturesHelper;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,13 +22,11 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
     private MockObject|SignalementRepository $signalementRepository;
     private MockObject|SignalementUserProvider $signalementUserProvider;
     private MockObject|UrlGeneratorInterface $urlGenerator;
-    private MockObject|EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
         $this->signalementUserProvider = $this->createMock(SignalementUserProvider::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
     }
 
@@ -53,7 +50,6 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             $this->urlGenerator,
             $this->signalementRepository,
             $this->signalementUserProvider,
-            $this->entityManager,
         );
 
         $passport = $authenticator->authenticate($request);
@@ -192,7 +188,6 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             $this->urlGenerator,
             $this->signalementRepository,
             $this->signalementUserProvider,
-            $this->entityManager
         );
         $authenticator->authenticate($request);
     }
@@ -218,7 +213,6 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             $this->urlGenerator,
             $this->signalementRepository,
             $this->signalementUserProvider,
-            $this->entityManager,
         );
         $authenticator->authenticate($request);
     }
@@ -243,7 +237,6 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             $this->urlGenerator,
             $this->signalementRepository,
             $this->signalementUserProvider,
-            $this->entityManager
         );
         $authenticator->authenticate($request);
     }

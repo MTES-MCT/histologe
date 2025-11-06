@@ -2,8 +2,9 @@
 
 namespace App\Tests\Functional\EventListener;
 
-use App\EventListener\AuthentificationHistoryListener;
+use App\EventListener\AuthentificationSuccessListener;
 use App\Manager\HistoryEntryManager;
+use App\Manager\UserManager;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class AuthentificationHistoryListenerTest extends WebTestCase
+class AuthentificationSuccessListenerTest extends WebTestCase
 {
     public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
     private ?KernelBrowser $client = null;
@@ -36,6 +37,9 @@ class AuthentificationHistoryListenerTest extends WebTestCase
 
     public function testInteractiveLogin(): void
     {
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
+        $this->assertNull($user->getLastLoginAt(), 'lastLoginAt doit être null avant connexion');
         $this->client->request('GET', '/connexion');
 
         $this->client->submitForm('Connexion', [
@@ -43,6 +47,12 @@ class AuthentificationHistoryListenerTest extends WebTestCase
             'password' => 'signallogement',
         ]);
 
+        $userAfterLogin = $userRepository->find($user->getId());
+        $this->assertNotNull($userAfterLogin->getLastLoginAt(), 'lastLoginAt doit être mis à jour après connexion');
+
+        $now = new \DateTimeImmutable();
+        $diffSeconds = abs($now->getTimestamp() - $userAfterLogin->getLastLoginAt()->getTimestamp());
+        $this->assertLessThan(5, $diffSeconds, 'lastLoginAt doit être très récent (moins de 5 secondes)');
         $historyEntries = $this->historyEntryRepository->findAll();
         $this->assertNotEmpty($historyEntries);
     }
@@ -50,9 +60,11 @@ class AuthentificationHistoryListenerTest extends WebTestCase
     public function testOnSchebTwoFactorAuthenticationSuccess(): void
     {
         $historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
+        $userManager = self::getContainer()->get(UserManager::class);
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $authentificationHistoryListener = new AuthentificationHistoryListener(
+        $authentificationSuccessListener = new AuthentificationSuccessListener(
             $historyEntryManager,
+            $userManager,
             $this->logger,
             $signalementRepository,
             '1'
@@ -61,6 +73,7 @@ class AuthentificationHistoryListenerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
+        $this->assertNull($user->getLastLoginAt(), 'lastLoginAt doit être null avant 2FA');
         $this->token
             ->expects($this->once())
             ->method('getUser')
@@ -77,7 +90,15 @@ class AuthentificationHistoryListenerTest extends WebTestCase
             $this->token
         );
 
-        $authentificationHistoryListener->onSchebTwoFactorAuthenticationSuccess($event);
+        $authentificationSuccessListener->onSchebTwoFactorAuthenticationSuccess($event);
+
+        $userAfterLogin = $userRepository->find($user->getId());
+
+        $now = new \DateTimeImmutable();
+        $diffSeconds = abs($now->getTimestamp() - $userAfterLogin->getLastLoginAt()->getTimestamp());
+        $this->assertLessThan(5, $diffSeconds, 'lastLoginAt doit être très récent (moins de 5 secondes)');
+
+        $this->assertNotNull($userAfterLogin->getLastLoginAt(), 'lastLoginAt doit être mis à jour après succès 2FA');
         $historyEntries = $this->historyEntryRepository->findAll();
         $this->assertNotEmpty($historyEntries);
     }
