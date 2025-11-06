@@ -17,7 +17,9 @@ class UpdateLastLoginAtCommandTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->entityManager = $entityManager;
 
         $application = new Application($kernel);
         $command = $application->find('app:user-update-last-login-at');

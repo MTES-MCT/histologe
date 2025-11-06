@@ -128,10 +128,6 @@ jobs:
       - name: Warm up Symfony test cache
         run: php bin/console cache:warmup --env=test
 
-      # https://github.com/phpstan/phpstan
-      - name: Analyse PHP Code (PHPStan)
-        run: vendor/bin/phpstan analyse -v
-
       # https://github.com/FriendsOfPHP/PHP-CS-Fixer
       - name: Check PHP coding standard (PHP-CS-Fixer)
         run: composer cs-check
@@ -151,6 +147,10 @@ jobs:
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           MAIL_ENABLE: 1
+
+      # https://github.com/phpstan/phpstan
+      - name: Analyse PHP Code (PHPStan)
+        run: vendor/bin/phpstan analyse
 
       - name: Run tests
         run: |
