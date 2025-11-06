@@ -150,6 +150,7 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
         $signalement->setMailProprio(null);
         $signalement->setTelProprio(null);
+        // $this->entityManager->flush();
 
         $newSignalementCheckFileMessage = new NewSignalementCheckFileMessage($signalement->getId());
 
@@ -158,7 +159,7 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
 
         $this->assertInstanceOf(Suivi::class, $handler->suivi);
         $this->assertStringContainsString(
-            'coordonnées de votre propriétaire',
+            'coordonnées du propriétaire',
             $handler->description,
             'Le message doit demander les coordonnées du bailleur.'
         );
