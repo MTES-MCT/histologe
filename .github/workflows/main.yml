@@ -112,10 +112,6 @@ jobs:
         run: | 
           composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
           composer install --working-dir=tools/php-cs-fixer --no-progress --no-suggest --prefer-dist --optimize-autoloader
-          composer install --working-dir=tools/wiremock --no-progress --no-suggest --prefer-dist --optimize-autoloader
-
-      - name: Check wiremock vendor
-        run: ls -l tools/wiremock/vendor
 
       # https://github.com/symfonycorp/security-checker-action
       - name: Security check installed dependencies
@@ -123,10 +119,6 @@ jobs:
 
       - name: Lint twig templates
         run: php bin/console lint:twig templates/
-
-      # 🧱 Warmup du cache test pour PHPStan
-      - name: Warm up Symfony test cache
-        run: php bin/console cache:warmup --env=test
 
       # https://github.com/FriendsOfPHP/PHP-CS-Fixer
       - name: Check PHP coding standard (PHP-CS-Fixer)
