@@ -69,7 +69,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private ?string $proConnectUserId = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration'])]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration', 'Default'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
     private ?string $email = null;

@@ -12,4 +12,6 @@ class GridAffectationHeader
     public const USER_FIRSTNAME = 'Prénom';
     public const USER_LASTNAME = 'Nom';
     public const USER_EMAIL = 'E-mail';
+    public const USER_PHONE = 'Téléphone';
+    public const USER_FONCTION = 'Fonction';
 }
