@@ -151,6 +151,9 @@ jobs:
       # https://github.com/phpstan/phpstan
       - name: Analyse PHP Code (PHPStan)
         run: vendor/bin/phpstan analyse
+        env:
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
 
       - name: Run tests
         run: |
