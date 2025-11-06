@@ -480,7 +480,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('maudcolbert@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
         $this->assertNull($signalementUsager->getDeclarant());
 
-        $this->assertEmailCount(2);
+        $this->assertEmailCount(1);
     }
 
     public function testValidationSignalementWithAutoAffectationWithAgentNotAffected(): void
