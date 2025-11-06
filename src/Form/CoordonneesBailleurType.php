@@ -26,12 +26,10 @@ class CoordonneesBailleurType extends AbstractType
             $builder
                 ->add('nomProprio', TextType::class, [
                     'label' => 'Nom',
-                    'constraints' => [new Assert\NotBlank()],
                     'disabled' => true,
                 ])
                 ->add('prenomProprio', TextType::class, [
                     'label' => 'Prénom',
-                    'constraints' => [new Assert\NotBlank()],
                     'disabled' => true,
                 ])
                 ->add('adresseCompleteProprio', null, [
@@ -75,20 +73,20 @@ class CoordonneesBailleurType extends AbstractType
                 ->add('telProprio', TextType::class, [
                     'label' => 'Téléphone principal',
                     'required' => false,
-                    'constraints' => [
-                        new TelephoneFormat([
-                            'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        ]),
-                    ],
+                    // 'constraints' => [
+                    //     new TelephoneFormat([
+                    //         'message' => 'Le numéro de téléphone n\'est pas valide.',
+                    //     ]),
+                    // ],
                 ])
                 ->add('telProprioSecondaire', TextType::class, [
                     'label' => 'Téléphone secondaire',
                     'required' => false,
-                    'constraints' => [
-                        new TelephoneFormat([
-                            'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        ]),
-                    ],
+                    // 'constraints' => [
+                    //     new TelephoneFormat([
+                    //         'message' => 'Le numéro de téléphone n\'est pas valide.',
+                    //     ]),
+                    // ],
                 ])
                 ->add('mailProprio', TextType::class, [
                     'label' => 'Adresse e-mail',

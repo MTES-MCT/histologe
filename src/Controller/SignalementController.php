@@ -13,6 +13,7 @@ use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Event\SuiviViewedEvent;
 use App\Form\CoordonneesBailleurType;
 use App\Form\DemandeLienSignalementType;
@@ -597,8 +598,6 @@ class SignalementController extends AbstractController
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_COMPLETE', $signalement);
-        /** @var SignalementUser $signalementUser */
-        $signalementUser = $this->getUser();
         $formCoordonneesBailleur = $this->createForm(
             CoordonneesBailleurType::class,
             $signalement,
@@ -609,13 +608,31 @@ class SignalementController extends AbstractController
             $formCoordonneesBailleur->isSubmitted()
             && $formCoordonneesBailleur->isValid()
         ) {
+            /** @var SignalementUser $signalementUser */
+            $signalementUser = $this->getUser();
+            /** @var User $user */
+            $user = $signalementUser->getUser();
             $signalementManager->save($signalement);
+            $usager = ($user === $signalement->getSignalementUsager()?->getOccupant()) ?
+                ' ('.UserManager::OCCUPANT.')' :
+                ' ('.UserManager::DECLARANT.')';
+            $description = $user->getNomComplet(true).$usager.' a mis à jour les coordonnées du bailleur.';
+            $description .= '<br>Voici les nouvelles coordonnées :';
+            $description .= '<ul>';
+            $description .= $signalement->getMailProprio() ? '<li>E-mail : '.$signalement->getMailProprio().'</li>' : '';
+            $description .= $signalement->getTelProprio() ? '<li>Téléphone : '.$signalement->getTelProprio().'</li>' : '';
+            $description .= $signalement->getTelProprioSecondaire() ? '<li>Téléphone secondaire : '.$signalement->getTelProprioSecondaire().'</li>' : '';
+            $description .= $signalement->getAdresseProprio() ? '<li>Adresse : '.$signalement->getAdresseProprio().'</li>' : '';
+            $description .= $signalement->getCodePostalProprio() ? '<li>Code postal : '.$signalement->getCodePostalProprio().'</li>' : '';
+            $description .= $signalement->getVilleProprio() ? '<li>Ville : '.$signalement->getVilleProprio().'</li>' : '';
+            $description .= '</ul>';
+
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: 'L\'usager a mis à jour les coordonnées de son bailleur.',
+                description: $description,
                 type: Suivi::TYPE_USAGER,
-                category: SuiviCategory::MESSAGE_USAGER,
-                user: $signalementUser->getUser(),
+                category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+                user: $user,
                 isPublic: true,
             );
 
