@@ -399,19 +399,4 @@ class PartnerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-    /**
-     * @deprecated this method will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed
-     */
-    public function getWithUserPartners(Partner $partner): Partner
-    {
-        return $this->createQueryBuilder('p')
-        ->select('p', 'up', 'u')
-        ->leftJoin('p.userPartners', 'up')
-        ->leftJoin('up.user', 'u')
-        ->where('p.id = :partner')
-        ->setParameter('partner', $partner)
-        ->getQuery()
-        ->getOneOrNullResult();
-    }
 }

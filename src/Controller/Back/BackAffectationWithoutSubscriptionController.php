@@ -21,12 +21,7 @@ class BackAffectationWithoutSubscriptionController extends AbstractController
         Request $request,
         AffectationRepository $affectationRepository,
         #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        bool $featureNewDashboard,
     ): Response {
-        if (!$featureNewDashboard) {
-            throw $this->createNotFoundException();
-        }
         $searchAffectationWithoutSubscription = new SearchAffectationWithoutSubscription();
         $form = $this->createForm(SearchAffectationWithoutSubscriptionType::class, $searchAffectationWithoutSubscription);
         $form->handleRequest($request);

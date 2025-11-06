@@ -3,8 +3,9 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
-use App\Factory\WidgetSettingsFactory;
+use App\Factory\SettingsFactory;
 use App\Repository\TerritoryRepository;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,11 +14,14 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/bo')]
-class WidgetSettingsController extends AbstractController
+class SettingsController extends AbstractController
 {
-    #[Route('/widget-settings', name: 'back_widget_settings')]
+    /**
+     * @throws InvalidArgumentException
+     */
+    #[Route('/settings', name: 'back_settings')]
     public function index(
-        WidgetSettingsFactory $widgetSettingsFactory,
+        SettingsFactory $settingsFactory,
         TerritoryRepository $territoryRepository,
         Security $security,
         #[MapQueryParameter] ?int $territoryId = null,
@@ -32,10 +36,10 @@ class WidgetSettingsController extends AbstractController
         }
 
         return $this->json(
-            $widgetSettingsFactory->createInstanceFrom($user, $territory),
+            $settingsFactory->createInstanceFrom($user, $territory),
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
-            ['groups' => ['widget-settings:read']]
+            ['groups' => ['settings:read']]
         );
     }
 }

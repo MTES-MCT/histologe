@@ -4,14 +4,11 @@ namespace App\Command\Cron;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Intervention;
 use App\Entity\Suivi;
-use App\Entity\User;
 use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
-use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -30,14 +27,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class NotifyVisitsCommand extends AbstractCronCommand
 {
     public function __construct(
-        private InterventionRepository $interventionRepository,
-        private InterventionManager $interventionManager,
-        private AffectationRepository $affectationRepository,
-        private SuiviManager $suiviManager,
-        private SuiviRepository $suiviRepository,
-        private VisiteNotifier $visiteNotifier,
-        private NotificationMailerRegistry $notificationMailerRegistry,
-        private ParameterBagInterface $parameterBag,
+        private readonly InterventionRepository $interventionRepository,
+        private readonly InterventionManager $interventionManager,
+        private readonly AffectationRepository $affectationRepository,
+        private readonly SuiviManager $suiviManager,
+        private readonly VisiteNotifier $visiteNotifier,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -85,21 +81,11 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 suivi: $suivi
             );
 
-            if ($this->parameterBag->get('feature_new_dashboard')) {
-                $this->visiteNotifier->notifySubscribers(
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
-                    intervention: $intervention,
-                    suivi: $suivi,
-                );
-            } else {
-                $this->visiteNotifier->notifyAgents(
-                    intervention: $intervention,
-                    suivi: $suivi,
-                    currentUser: null,
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
-                    notifyAdminTerritory: false,
-                );
-            }
+            $this->visiteNotifier->notifySubscribers(
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,
+                intervention: $intervention,
+                suivi: $suivi,
+            );
 
             $intervention->setReminderBeforeSentAt(new \DateTimeImmutable());
             $this->interventionManager->save($intervention);
@@ -114,25 +100,10 @@ class NotifyVisitsCommand extends AbstractCronCommand
             if (!$signalement || SignalementStatus::ACTIVE !== $signalement->getStatut()) {
                 continue;
             }
-            if ($this->parameterBag->get('feature_new_dashboard')) {
-                $this->visiteNotifier->notifyInterventionSubscribers(
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
-                    intervention: $intervention,
-                );
-            } else {
-                $pastVisiteReminderUsers = $this->getPastVisiteReminderUsers($intervention);
-                foreach ($pastVisiteReminderUsers as $user) {
-                    $this->notificationMailerRegistry->send(
-                        new NotificationMail(
-                            type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
-                            to: $user->getEmail(),
-                            territory: $signalement->getTerritory(),
-                            signalement: $signalement,
-                            intervention: $intervention,
-                        )
-                    );
-                }
-            }
+            $this->visiteNotifier->notifyInterventionSubscribers(
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
+                intervention: $intervention,
+            );
 
             $intervention->setReminderConclusionSentAt(new \DateTimeImmutable());
             $this->interventionManager->save($intervention);
@@ -154,22 +125,11 @@ class NotifyVisitsCommand extends AbstractCronCommand
                     context: Suivi::CONTEXT_INTERVENTION,
                 );
 
-                if ($this->parameterBag->get('feature_new_dashboard')) {
-                    $this->visiteNotifier->notifyAffectationSubscribers(
-                        notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
-                        affectation: $affectation,
-                        suivi: $suivi
-                    );
-                } else {
-                    $this->visiteNotifier->notifyAgents(
-                        intervention: null,
-                        suivi: $suivi,
-                        currentUser: null,
-                        notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
-                        notifyAdminTerritory: false,
-                        affectation: $affectation,
-                    );
-                }
+                $this->visiteNotifier->notifyAffectationSubscribers(
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_NEEDED,
+                    affectation: $affectation,
+                    suivi: $suivi
+                );
                 ++$countVisitsToPlan;
             }
         }
@@ -190,42 +150,5 @@ class NotifyVisitsCommand extends AbstractCronCommand
         );
 
         return Command::SUCCESS;
-    }
-
-    /** @return array<User> */
-    private function getPastVisiteReminderUsers(Intervention $intervention): array
-    {
-        $usersToNotify = [];
-
-        $partnerUsers = $intervention->getPartner()->getUsers();
-        foreach ($partnerUsers as $user) {
-            if (\in_array('ROLE_ADMIN_PARTNER', $user->getRoles())) {
-                $usersToNotify[] = $user;
-            }
-        }
-
-        $agentToNotify = null;
-        $suivisLinkedToSignalement = $this->suiviRepository->findSuivisByContext(
-            $intervention->getSignalement(),
-            Suivi::CONTEXT_INTERVENTION
-        );
-        foreach ($suivisLinkedToSignalement as $suivi) {
-            if ($suivi->getCreatedBy()?->hasPartner($intervention->getPartner())) {
-                $agentToNotify = $suivi->getCreatedBy();
-                $usersToNotify[] = $agentToNotify;
-                break;
-            }
-        }
-
-        if (!$agentToNotify) {
-            foreach ($suivisLinkedToSignalement as $suivi) {
-                if ($suivi->getCreatedBy() && \in_array('ROLE_ADMIN_TERRITORY', $suivi->getCreatedBy()->getRoles())) {
-                    $usersToNotify[] = $suivi->getCreatedBy();
-                    break;
-                }
-            }
-        }
-
-        return $usersToNotify;
     }
 }

@@ -401,8 +401,6 @@ class PartnerController extends AbstractController
         Request $request,
         Partner $partner,
         UserManager $userManager,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        bool $featureNewDashboard,
     ): JsonResponse|RedirectResponse {
         $this->denyAccessUnlessGranted('USER_CREATE', $partner);
         $user = new User();
@@ -436,7 +434,7 @@ class PartnerController extends AbstractController
                 $user = $userExist;
                 $userManager->sendAccountActivationNotification($user);
             }
-            if (!$userExist && $featureNewDashboard) {
+            if (!$userExist) {
                 $user->setHasDoneSubscriptionsChoice(true);
             }
             $userManager->persist($userPartner);

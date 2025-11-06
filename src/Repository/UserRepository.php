@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Dto\CountUser;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -293,40 +292,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * @param array<int, Territory> $territories
-     *
-     * @throws NonUniqueResultException
-     */
-    public function countUserByStatus(array $territories, ?User $user = null): CountUser
-    {
-        $qb = $this->createQueryBuilder('u');
-        $qb->select(\sprintf(
-            'NEW %s(
-            SUM(CASE WHEN u.statut = :active THEN 1 ELSE 0 END),
-            SUM(CASE WHEN u.statut = :inactive THEN 1 ELSE 0 END))',
-            CountUser::class
-        ))
-            ->setParameter('active', UserStatus::ACTIVE)
-            ->setParameter('inactive', UserStatus::INACTIVE)
-            ->where('u.statut != :statut')
-            ->andWhere('u.roles not like :role')
-            ->setParameter('statut', UserStatus::ARCHIVE)
-            ->setParameter('role', '%'.User::ROLE_USAGER.'%')
-            ->leftJoin('u.userPartners', 'up')
-            ->leftJoin('up.partner', 'p');
-
-        if (\count($territories)) {
-            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $territories);
-        }
-
-        if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
-            $qb->andWhere('up.partner IN (:partners)')->setParameter('partners', $user->getPartners());
-        }
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
      * @return array<int, User>
      */
     public function findExpiredUsagers(string $limitConservation = '5 years'): array
@@ -602,31 +567,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $queryBuilder->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @deprecated this method will be removed once the FEATURE_NEW_DASHBOARD feature flag is removed
-     *
-     * @return array<int, User>
-     */
-    public function findUsersAffectedToSignalement(Signalement $signalement, ?Partner $partnerToExclude = null): array
-    {
-        $queryBuilder = $this->createQueryBuilder('u')
-            ->innerJoin('u.userPartners', 'up')
-            ->innerJoin('up.partner', 'p')
-            ->innerJoin('p.affectations', 'a')
-            ->where('a.signalement = :signalement')
-            ->setParameter('signalement', $signalement)
-            ->andWhere('u.statut = :userStatus')
-            ->setParameter('userStatus', UserStatus::ACTIVE);
-
-        if (null !== $partnerToExclude) {
-            $queryBuilder
-                ->andWhere('a.partner != :partner')
-                ->setParameter('partner', $partnerToExclude);
-        }
-
-        return $queryBuilder->getQuery()->getResult();
     }
 
     /**

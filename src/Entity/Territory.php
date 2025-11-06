@@ -16,15 +16,15 @@ class Territory implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['widget-settings:read', 'widget:read'])]
+    #[Groups(['settings:read'])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 3)]
-    #[Groups(['widget-settings:read', 'widget:read'])]
+    #[Groups(['settings:read'])]
     private ?string $zip = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['widget-settings:read', 'widget:read'])]
+    #[Groups(['settings:read'])]
     private ?string $name = null;
 
     /** @var Collection<int, Partner> $partners */

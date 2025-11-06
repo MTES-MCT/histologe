@@ -57,4 +57,3 @@ document.querySelectorAll('[data-select-all-agents]').forEach((link) => {
     link.textContent = allChecked ? 'Tout sélectionner' : 'Tout désélectionner';
   });
 });
-

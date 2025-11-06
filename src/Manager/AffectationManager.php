@@ -18,7 +18,6 @@ use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
@@ -32,8 +31,6 @@ class AffectationManager extends Manager
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterconnectionBus $interconnectionBus,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        private readonly bool $featureNewDashboard,
         string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -236,9 +233,6 @@ class AffectationManager extends Manager
 
     public function removeSubscriptionsOfAffectation(Affectation $affectation): void
     {
-        if (!$this->featureNewDashboard) {
-            return;
-        }
         $subscriptions = $this->userSignalementSubscriptionRepository->findForAffectation(affectation: $affectation, excludeRT: true);
         foreach ($subscriptions as $subscription) {
             $this->remove($subscription);

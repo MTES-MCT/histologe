@@ -10,7 +10,6 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\NotificationFactory;
 use App\Repository\NotificationRepository;
-use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -29,7 +28,6 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private NotificationMailerRegistry $notificationMailerRegistry;
     private UserRepository $userRepository;
     private NotificationRepository $notificationRepository;
-    private PartnerRepository $partnerRepository;
     private NotificationFactory $notificationFactory;
     private Security $security;
     private NotificationAndMailSender $notificationAndMailSender;
@@ -42,18 +40,15 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
         $this->userRepository = self::getContainer()->get(UserRepository::class);
         $this->notificationRepository = self::getContainer()->get(NotificationRepository::class);
-        $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
         $this->notificationFactory = self::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
-            $this->partnerRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            true,
         );
     }
 
@@ -185,11 +180,9 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
-            $this->partnerRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            true,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
@@ -233,11 +226,9 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
-            $this->partnerRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            true,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
@@ -274,11 +265,9 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
-            $this->partnerRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            true,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -318,11 +307,9 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
-            $this->partnerRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
-            true,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);

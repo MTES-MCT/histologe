@@ -1,31 +1,27 @@
-{% if feature_new_dashboard %}
-    <header>
-        {% include 'back/breadcrumb_bo.html.twig' with {
-            'canFix': true,
-            'level2Title': 'Liste des signalements',
-            'level2Link': path('back_signalements_index'),
-            'level2Label': 'Retour à la liste des signalements',
-            'level3Title': 'Signalement #'~signalement.reference,
-            'level3Link': '',
-        } %}
+<header>
+    {% include 'back/breadcrumb_bo.html.twig' with {
+        'canFix': true,
+        'level2Title': 'Liste des signalements',
+        'level2Link': path('back_signalements_index'),
+        'level2Label': 'Retour à la liste des signalements',
+        'level3Title': 'Signalement #'~signalement.reference,
+        'level3Link': '',
+    } %}
 
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12">
-                {% include 'back/signalement/view/header/_main-action.html.twig' %}
-            </div>
-            <div class="fr-col-12 fr-col-md-7">
-                {% include 'back/signalement/view/header/_menu.html.twig' %}
-                {% include 'back/signalement/view/header/_title.html.twig' %}
-                {% include 'back/signalement/view/header/_address.html.twig' %}
-                {% include 'back/signalement/view/header/_infos-creation.html.twig' %}
-            </div>
-            <div class="fr-col-12 fr-col-md-5">
-                {% include 'back/signalement/view/header/_esabora_alert.html.twig' %}
-                {% include 'back/signalement/view/header/_badges.html.twig' %}
-                {% include 'back/signalement/view/header/_tags.html.twig' %}
-            </div>
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12">
+            {% include 'back/signalement/view/header/_main-action.html.twig' %}
         </div>
-    </header>
-{% else %}
-    {% include 'back/signalement/view/header-old.html.twig' %}
-{% endif %}
+        <div class="fr-col-12 fr-col-md-7">
+            {% include 'back/signalement/view/header/_menu.html.twig' %}
+            {% include 'back/signalement/view/header/_title.html.twig' %}
+            {% include 'back/signalement/view/header/_address.html.twig' %}
+            {% include 'back/signalement/view/header/_infos-creation.html.twig' %}
+        </div>
+        <div class="fr-col-12 fr-col-md-5">
+            {% include 'back/signalement/view/header/_esabora_alert.html.twig' %}
+            {% include 'back/signalement/view/header/_badges.html.twig' %}
+            {% include 'back/signalement/view/header/_tags.html.twig' %}
+        </div>
+    </div>
+</header>

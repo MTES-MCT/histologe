@@ -336,7 +336,7 @@ if (modalUploadFiles) {
         input.remove();
       });
       const filesToAdd = modalUploadFiles.querySelectorAll('.select-container select');
-      if(filesToAdd.length > 0) {
+      if (filesToAdd.length > 0) {
         filesToAdd.forEach((select) => {
           const inputFileId = document.createElement('input');
           inputFileId.type = 'hidden';
@@ -347,7 +347,7 @@ if (modalUploadFiles) {
         uploadedFilesForm.submit();
       }
     }
-    
+
     modalUploadFiles.dataset.validated = true;
   });
 }

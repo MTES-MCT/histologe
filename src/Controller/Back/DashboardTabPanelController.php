@@ -11,7 +11,6 @@ use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoaderCollection;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,12 +27,7 @@ class DashboardTabPanelController extends AbstractController
         string $tabBodyType,
         TabBodyLoaderCollection $tabBodyLoaderCollection,
         #[MapQueryString] TabQueryParameters $tabQueryParameter,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')] ?int $featureNewDashboard = null,
     ): Response {
-        if (!$featureNewDashboard) {
-            throw $this->createNotFoundException('Cette fonctionnalité n\'est pas activée.');
-        }
-
         /** @var ?User $user */
         $user = $this->getUser();
         $territoires = $this->resolveTerritoires($tabQueryParameter, $user);

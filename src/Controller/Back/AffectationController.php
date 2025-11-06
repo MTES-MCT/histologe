@@ -20,7 +20,6 @@ use App\Service\FormHelper;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -147,14 +146,12 @@ class AffectationController extends AbstractController
         Affectation $affectation,
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
-        #[Autowire(env: 'FEATURE_NEW_DASHBOARD')]
-        bool $featureNewDashboard,
     ): Response {
         $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
         $signalement = $affectation->getSignalement();
         /** @var User $user */
         $user = $this->getUser();
-        if ($featureNewDashboard && !$user->isAloneInPartner($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()))) {
+        if (!$user->isAloneInPartner($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()))) {
             $agentsSelection = (new AgentSelection())->setAffectation($affectation);
             $agentsSelectionFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $form = $this->createForm(
@@ -195,10 +192,9 @@ class AffectationController extends AbstractController
                 status : AffectationStatus::ACCEPTED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             );
-            if ($featureNewDashboard) {
-                $userSignalementSubscriptionManager->createOrGet($user, $signalement, $user, $affectation);
-                $userSignalementSubscriptionManager->flush();
-            }
+            $userSignalementSubscriptionManager->createOrGet($user, $signalement, $user, $affectation);
+            $userSignalementSubscriptionManager->flush();
+
             $this->addFlash('success', 'Affectation acceptée avec succès !');
         } else {
             $this->addFlash('error', "Une erreur est survenue lors de l'affectation");
