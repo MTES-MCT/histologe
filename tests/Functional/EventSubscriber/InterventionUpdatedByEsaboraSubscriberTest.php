@@ -57,6 +57,9 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         $interventionUpdatedByEsaboraSubscriber = new InterventionUpdatedByEsaboraSubscriber($visiteNotifier, $suiviManager);
         $eventDispatcher->addSubscriber($interventionUpdatedByEsaboraSubscriber);
 
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
         $intervention->setPreviousScheduledAt($intervention->getScheduledAt());
         $eventDispatcher->dispatch(
             new InterventionUpdatedByEsaboraEvent(

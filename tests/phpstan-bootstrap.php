@@ -13,7 +13,7 @@ if (file_exists(__DIR__.'/../config/bootstrap.php')) {
 }
 
 // Détecte si on est sur GitHub Actions
-$isGithub = getenv('GITHUB_ACTIONS') === 'true';
+$isGithub = 'true' === getenv('GITHUB_ACTIONS');
 
 if ($isGithub) {
     // Override DATABASE_URL pour utiliser SQLite en mémoire

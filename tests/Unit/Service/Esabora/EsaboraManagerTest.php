@@ -46,7 +46,7 @@ class EsaboraManagerTest extends KernelTestCase
     private MockObject&EntityManager $entityManager;
     private MockObject&ZipHelper $zipHelper;
     private MockObject&FileScanner $fileScanner;
-    private MockObject&UploadHandlerService $uploadHander;
+    private MockObject&UploadHandlerService $uploadHandler;
     private MockObject&ImageManipulationHandler $imageManipulationHandler;
     private MockObject&FileFactory $fileFactory;
     private MockObject&SignalementQualificationUpdater $signalementQualificationUpdater;

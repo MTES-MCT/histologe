@@ -27,7 +27,7 @@ class EmailAlertChecker implements RuntimeExtensionInterface
             $partner = $affectation->getPartner();
             $partnerId = $partner->getId();
 
-            $partnerEmailAlerts[$partnerId] = $this->partnerQueryService->shouldDisplayAlertEmailIssue(
+            $partnerEmailAlerts[(int) $partnerId] = $this->partnerQueryService->shouldDisplayAlertEmailIssue(
                 $signalement,
                 $partner
             );

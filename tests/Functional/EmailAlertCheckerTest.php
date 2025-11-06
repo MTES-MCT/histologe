@@ -14,7 +14,9 @@ class EmailAlertCheckerTest extends KernelTestCase
     {
         parent::setUp();
         self::bootKernel();
-        $this->emailAlertChecker = static::getContainer()->get(EmailAlertChecker::class);
+        /** @var EmailAlertChecker $emailAlertChecker */
+        $emailAlertChecker = static::getContainer()->get(EmailAlertChecker::class);
+        $this->emailAlertChecker = $emailAlertChecker;
     }
 
     public function testHasUsagerEmailAlert(): void
