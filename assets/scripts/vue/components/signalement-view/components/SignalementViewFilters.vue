@@ -1,12 +1,12 @@
 <template>
   <div :class="[defineCssBloc1(), 'fr-p-1w']">
     <ul class="fr-col-12 fr-tags-group fr-mt-2w">
-      <li v-if="sharedState.user.isResponsableTerritoire">
+      <li>
         <button class="fr-tag"
-                ref="myAffectationButton"
-                :aria-pressed="ariaPressed.showMyAffectationOnly.toString()"
-                @click="toggleCurrentPartnerAffectation">
-          Afficher mes affectations uniquement
+                ref="mySignalementsButton"
+                :aria-pressed="ariaPressed.showMySignalementsOnly.toString()"
+                @click="toggleCurrentUserSignalements">
+          Afficher uniquement mes dossiers
         </button>
       </li>
       <li v-if="sharedState.user.canSeeFilterPartner">
