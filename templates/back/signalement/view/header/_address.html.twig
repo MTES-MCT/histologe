@@ -41,7 +41,7 @@
                     Voir sur la carte
                 </button>
             </li>
-        {% elseif is_granted('SIGN_EDIT', signalement) %}
+        {% elseif is_granted('SIGN_EDIT_NEED_VALIDATION', signalement) %}
             <li>
                 <button 
                     class="fr-btn fr-icon-map-pin-2-line" 

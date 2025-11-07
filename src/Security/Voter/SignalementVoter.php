@@ -22,6 +22,7 @@ class SignalementVoter extends Voter
     public const string DELETE = 'SIGN_DELETE';
     public const string EDIT = 'SIGN_EDIT';
     public const string EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
+    public const string EDIT_NEED_VALIDATION = 'SIGN_EDIT_NEED_VALIDATION';
     public const string DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
     public const string VIEW = 'SIGN_VIEW';
     public const string SUBSCRIBE = 'SIGN_SUBSCRIBE';
@@ -41,6 +42,7 @@ class SignalementVoter extends Voter
             [
                 self::EDIT,
                 self::EDIT_DRAFT,
+                self::EDIT_NEED_VALIDATION,
                 self::VIEW,
                 self::SUBSCRIBE,
                 self::DELETE,
@@ -85,6 +87,7 @@ class SignalementVoter extends Voter
             self::REOPEN => $this->canReopen($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
+            self::EDIT_NEED_VALIDATION => $this->canEditNeedValidation($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             self::SUBSCRIBE => $this->canSubscribe($subject, $user),
             self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
@@ -150,6 +153,19 @@ class SignalementVoter extends Voter
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner?->getId() && AffectationStatus::ACCEPTED === $affectation->getStatut();
         })->count() > 0;
+    }
+
+    private function canEditNeedValidation(Signalement $signalement, User $user): bool
+    {
+        if ($this->canEdit($signalement, $user)) {
+            return true;
+        }
+
+        if (SignalementStatus::NEED_VALIDATION === $signalement->getStatut() && $this->isAdminOrTerritoryAdmin($signalement, $user)) {
+            return true;
+        }
+
+        return false;
     }
 
     private function canView(Signalement $signalement, User $user): bool
