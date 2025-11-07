@@ -34,6 +34,7 @@ class NotificationAndMailSender
         private readonly NotificationFactory $notificationFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly Security $security,
+        private readonly CourrierBailleurGenerator $courrierBailleurGenerator,
     ) {
         $this->suivi = null;
         $user = $this->security->getUser();
@@ -59,12 +60,15 @@ class NotificationAndMailSender
         $mailProprio = $signalement->getMailProprio();
 
         if ($mailProprio) {
+            $pdfContent = $this->courrierBailleurGenerator->generate($signalement);
+
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: $mailerType,
                     to: $mailProprio,
                     territory: $this->signalement->getTerritory(),
                     signalement: $this->signalement,
+                    attachment: $pdfContent,
                 )
             );
         }
