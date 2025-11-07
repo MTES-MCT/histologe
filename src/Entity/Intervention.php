@@ -69,6 +69,9 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     private array $concludeProcedure = [];
 
     #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $conclusionVisiteEditedAt = null;
+
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $reminderBeforeSentAt = null;
 
     #[ORM\Column(nullable: true)]
@@ -100,6 +103,22 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $externalOperator = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $notifyUsager = null;
+
+    /** @var array<string, array<string, string>>
+     *
+     *  Ce tableau contient les modifications des champs sous forme structurée,
+     *  chaque entrée représentant un champ modifié avec ses anciennes et nouvelles valeurs.
+     *
+     *  Exemple :
+     *  [
+     *      'details' ⇒ ['old' ⇒ 'Ancien commentaire', 'new' ⇒ 'Nouveau commentaire'],
+     *      'concludeProcedure' ⇒ ['old' ⇒ 'Autre', 'new' ⇒ 'Insalubrité'],
+     *  ]
+     */
+    private ?array $changesForMail = [];
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
@@ -121,7 +140,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->scheduledAt;
     }
 
-    public function setScheduledAt(?\DateTimeImmutable $scheduledAt): self
+    public function setScheduledAt(?\DateTimeImmutable $scheduledAt): static
     {
         $this->scheduledAt = $scheduledAt;
 
@@ -146,7 +165,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->registeredAt;
     }
 
-    public function setRegisteredAt(?\DateTimeImmutable $registeredAt): self
+    public function setRegisteredAt(?\DateTimeImmutable $registeredAt): static
     {
         $this->registeredAt = $registeredAt;
 
@@ -163,7 +182,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): self
+    public function setSignalement(?Signalement $signalement): static
     {
         $this->signalement = $signalement;
 
@@ -183,7 +202,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->partner;
     }
 
-    public function setPartner(?Partner $partner): self
+    public function setPartner(?Partner $partner): static
     {
         $this->partner = $partner;
 
@@ -195,7 +214,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->type;
     }
 
-    public function setType(InterventionType $type): self
+    public function setType(InterventionType $type): static
     {
         $this->type = $type;
 
@@ -207,7 +226,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(string $status): static
     {
         $this->status = $status;
 
@@ -219,7 +238,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->commentBeforeVisite;
     }
 
-    public function setCommentBeforeVisite(?string $commentBeforeVisite): self
+    public function setCommentBeforeVisite(?string $commentBeforeVisite): static
     {
         $this->commentBeforeVisite = $commentBeforeVisite;
 
@@ -231,7 +250,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->details;
     }
 
-    public function setDetails(?string $details): self
+    public function setDetails(?string $details): static
     {
         $this->details = $details;
 
@@ -244,8 +263,38 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->concludeProcedure;
     }
 
+    public function getConcludeProcedureString(string $separator = ', '): string
+    {
+        if (empty($this->concludeProcedure)) {
+            return '';
+        }
+
+        return implode(
+            $separator,
+            array_map(fn (ProcedureType $procedure) => $procedure->label(), $this->concludeProcedure)
+        );
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function getChangesForMail(): ?array
+    {
+        return $this->changesForMail;
+    }
+
+    /**
+     * @param array<string, array<string, string>> $changesForMail
+     */
+    public function setChangesForMail(array $changesForMail): static
+    {
+        $this->changesForMail = $changesForMail;
+
+        return $this;
+    }
+
     /** @param array<ProcedureType> $concludeProcedure */
-    public function setConcludeProcedure(?array $concludeProcedure): self
+    public function setConcludeProcedure(?array $concludeProcedure): static
     {
         $this->concludeProcedure = $concludeProcedure;
 
@@ -257,9 +306,21 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->reminderBeforeSentAt;
     }
 
-    public function setReminderBeforeSentAt(?\DateTimeImmutable $reminderBeforeSentAt): self
+    public function setReminderBeforeSentAt(?\DateTimeImmutable $reminderBeforeSentAt): static
     {
         $this->reminderBeforeSentAt = $reminderBeforeSentAt;
+
+        return $this;
+    }
+
+    public function getConclusionVisiteEditedAt(): ?\DateTimeImmutable
+    {
+        return $this->conclusionVisiteEditedAt;
+    }
+
+    public function setConclusionVisiteEditedAt(?\DateTimeImmutable $conclusionVisiteEditedAt): self
+    {
+        $this->conclusionVisiteEditedAt = $conclusionVisiteEditedAt;
 
         return $this;
     }
@@ -269,7 +330,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->reminderConclusionSentAt;
     }
 
-    public function setReminderConclusionSentAt(?\DateTimeImmutable $reminderConclusionSentAt): self
+    public function setReminderConclusionSentAt(?\DateTimeImmutable $reminderConclusionSentAt): static
     {
         $this->reminderConclusionSentAt = $reminderConclusionSentAt;
 
@@ -281,7 +342,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->occupantPresent;
     }
 
-    public function setOccupantPresent(?bool $occupantPresent): self
+    public function setOccupantPresent(?bool $occupantPresent): static
     {
         $this->occupantPresent = $occupantPresent;
 
@@ -293,7 +354,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->proprietairePresent;
     }
 
-    public function setProprietairePresent(?bool $proprietairePresent): self
+    public function setProprietairePresent(?bool $proprietairePresent): static
     {
         $this->proprietairePresent = $proprietairePresent;
 
@@ -305,7 +366,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->doneBy;
     }
 
-    public function setDoneBy(?string $doneBy): self
+    public function setDoneBy(?string $doneBy): static
     {
         $this->doneBy = $doneBy;
 
@@ -317,7 +378,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->providerName;
     }
 
-    public function setProviderName(?string $providerName): self
+    public function setProviderName(?string $providerName): static
     {
         $this->providerName = $providerName;
 
@@ -329,7 +390,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->providerId;
     }
 
-    public function setProviderId(?int $providerId): self
+    public function setProviderId(?int $providerId): static
     {
         $this->providerId = $providerId;
 
@@ -343,7 +404,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     }
 
     /** @param array<mixed> $additionalInformation */
-    public function setAdditionalInformation(?array $additionalInformation): self
+    public function setAdditionalInformation(?array $additionalInformation): static
     {
         $this->additionalInformation = $additionalInformation;
 
@@ -358,7 +419,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->files;
     }
 
-    public function addFile(File $file): self
+    public function addFile(File $file): static
     {
         if (!$this->files->contains($file)) {
             $this->files->add($file);
@@ -368,7 +429,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
-    public function removeFile(File $file): self
+    public function removeFile(File $file): static
     {
         if ($this->files->removeElement($file)) {
             // set the owning side to null (unless already changed)
@@ -429,9 +490,21 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->previousScheduledAt;
     }
 
-    public function setPreviousScheduledAt(?\DateTimeImmutable $previousScheduledAt): self
+    public function setPreviousScheduledAt(?\DateTimeImmutable $previousScheduledAt): static
     {
         $this->previousScheduledAt = $previousScheduledAt;
+
+        return $this;
+    }
+
+    public function getNotifyUsager(): ?bool
+    {
+        return $this->notifyUsager;
+    }
+
+    public function setNotifyUsager(?bool $notifyUsager): static
+    {
+        $this->notifyUsager = $notifyUsager;
 
         return $this;
     }

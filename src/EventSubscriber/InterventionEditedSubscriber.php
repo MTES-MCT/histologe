@@ -32,9 +32,30 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
         if (InterventionType::VISITE === $intervention->getType()) {
             $currentUser = $event->getUser();
             $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
-            $description = 'Edition de la conclusion de la visite par '.$partnerName.'.<br>';
-            $description .= 'Commentaire opérateur :<br>';
-            $description .= $intervention->getDetails();
+            if (empty($intervention->getChangesForMail())) {
+                $description = 'Edition de la conclusion de la visite par '.$partnerName.'.<br>';
+                $description .= 'Commentaire opérateur :<br>';
+                $description .= $intervention->getDetails();
+            } else {
+                $description = sprintf(
+                    'Les informations sur la visite du logement effectuée le %s par %s ont été modifiées.',
+                    $intervention->getScheduledAtFormated(),
+                    $partnerName
+                );
+                /** @var array<string, array{old?: string, new?: string}> $changes */
+                $changes = $intervention->getChangesForMail();
+                if (isset($changes['concludeProcedure']['new'])) {
+                    $description .= count($intervention->getConcludeProcedure()) > 1
+                        ? '<br><br>Les nouvelles situations observées du logement sont : <br>' :
+                        '<br><br>La nouvelle situation observeé du logement est : <br>';
+
+                    $description .= $intervention->getConcludeProcedureString().'.';
+                }
+
+                if (isset($changes['details']['new'])) {
+                    $description .= sprintf('<br><br>Commentaire opérateur : %s', $intervention->getDetails());
+                }
+            }
 
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),

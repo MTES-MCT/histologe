@@ -29,9 +29,15 @@ class VisiteRequest
         private readonly ?bool $isVisiteDone = null,
         private readonly ?bool $isOccupantPresent = null,
         private readonly ?bool $isProprietairePresent = null,
-        private readonly ?bool $isUsagerNotified = null,
+        private ?bool $isUsagerNotified = null,
         private readonly ?string $document = null,
     ) {
+        if ($this->date) {
+            $scheduleAt = new \DateTimeImmutable($this->date);
+            if ($scheduleAt > new \DateTimeImmutable('now')) {
+                $this->isUsagerNotified = true;
+            }
+        }
     }
 
     #[Assert\Callback]

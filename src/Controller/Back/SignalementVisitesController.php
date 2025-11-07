@@ -28,8 +28,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/bo/signalements')]
 class SignalementVisitesController extends AbstractController
 {
-    private const SUCCESS_MSG_ADD = 'La date de visite a bien été définie.';
-    private const SUCCESS_MSG_CONFIRM = 'Les informations de la visite ont bien été renseignées.';
+    private const string SUCCESS_MSG_ADD = 'La date de visite a bien été définie.';
+    private const string SUCCESS_MSG_CONFIRM = 'Les informations de la visite ont bien été renseignées.';
 
     private function getSecurityRedirect(Signalement $signalement, Request $request, string $tokenName): ?Response
     {
@@ -356,12 +356,16 @@ class SignalementVisitesController extends AbstractController
         }
 
         $fileName = $this->getUploadedFile($request, 'visite-edit', $uploadHandler, $filenameGenerator);
-        $isUsagerNotified = !empty($requestData['notifyUsager']);
 
+        if (!isset($requestData['notifyUsager'])) {
+            $requestData['notifyUsager'] = $intervention->getNotifyUsager();
+        }
+        $requestData['notifyUsager'] = $requestData['notifyUsager'] ?? false;
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestData['intervention'],
             details: $requestData['details'],
-            isUsagerNotified: $isUsagerNotified,
+            concludeProcedure: $requestData['concludeProcedure'] ?? [],
+            isUsagerNotified: $requestData['notifyUsager'] ?? false,
             document: $fileName,
         );
         /** @var User $user */
@@ -374,7 +378,7 @@ class SignalementVisitesController extends AbstractController
             $eventDispatcher->dispatch(new InterventionEditedEvent(
                 $intervention,
                 $user,
-                $isUsagerNotified,
+                $visiteRequest->isUsagerNotified(),
                 $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             ), InterventionEditedEvent::NAME);
         } else {
