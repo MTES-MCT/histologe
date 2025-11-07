@@ -44,7 +44,7 @@ class CoordonneesBailleurType extends AbstractType
                     ],
                 ])
                 ->add('adresseProprio', null, [
-                    'label' => 'Numéro et voie ',
+                    'label' => 'Numéro et voie',
                     'attr' => [
                         'class' => 'manual-address manual-address-input',
                         'data-autocomplete-addresse-proprio' => 'true',

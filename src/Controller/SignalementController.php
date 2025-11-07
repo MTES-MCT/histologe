@@ -562,7 +562,7 @@ class SignalementController extends AbstractController
 
             $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
             'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
-            'Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
+            'Votre message a bien été envoyé, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
             $this->addFlash('success', $messageRetour);
 
             return $this->redirectToRoute('front_suivi_signalement_messages', ['code' => $signalement->getCodeSuivi()]);
@@ -588,7 +588,7 @@ class SignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/suivre-mon-signalement/{code}/complete', name: 'front_suivi_signalement_complete', methods: ['GET', 'POST'])]
+    #[Route('/suivre-mon-signalement/{code}/completer', name: 'front_suivi_signalement_complete', methods: ['GET', 'POST'])]
     public function suiviSignalementComplete(
         string $code,
         SignalementRepository $signalementRepository,
@@ -636,7 +636,7 @@ class SignalementController extends AbstractController
                 isPublic: true,
             );
 
-            $messageRetour = 'Votre dossier a bien été complété, vous recevrez un email lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
+            $messageRetour = 'Votre dossier a bien été complété, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
             $this->addFlash('success', $messageRetour);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
