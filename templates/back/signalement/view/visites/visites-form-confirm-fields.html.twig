@@ -103,9 +103,26 @@
 </div>
 {% endif %}
 {% if formType is same as 'edit' %}
-    <div class="fr-alert fr-alert--info fr-mb-4v">
-        <p>L'usager sera notifié des modifications</p>
-    </div>
+    {% if intervention.notifyUsager %}
+        <div class="fr-alert fr-alert--info fr-mb-4v">
+            <p>L'usager sera notifié des modifications</p>
+        </div>
+    {% else %}
+        <div class="fr-fieldset fr-mb-5v">
+            <div class="fr-form-group">
+                <div class="fr-toggle">
+                    <input type="checkbox" class="fr-toggle__input"
+                           id="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-notify-usager"
+                           name="visite-{{ formType }}[notifyUsager]"
+                           value="1">
+                    <label class="fr-toggle__label"
+                           for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-notify-usager">
+                        En cochant cette case, l'usager sera notifié des informations de cette visite
+                    </label>
+                </div>
+            </div>
+        </div>
+    {% endif %}
     <fieldset id="fieldset-conclude-procedure" class="fr-fieldset fr-fieldset--inline fr-mb-5v fr-w-100-left">
         <legend class="fr-fieldset__legend fr-text--regular required">
             Quelle est la conclusion de la visite ?

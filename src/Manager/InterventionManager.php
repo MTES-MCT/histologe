@@ -73,6 +73,7 @@ class InterventionManager extends AbstractManager
             ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()))
             ->setType(InterventionType::VISITE)
             ->setCommentBeforeVisite($visiteRequest->getCommentBeforeVisite())
+            ->setNotifyUsager($visiteRequest->isUsagerNotified())
             ->setStatus(Intervention::STATUS_PLANNED);
 
         $this->save($intervention);
@@ -84,7 +85,7 @@ class InterventionManager extends AbstractManager
         return $intervention;
     }
 
-    public function cancelVisiteFromRequest(VisiteRequest $visiteRequest, Partner $createdByPartner): ?Intervention
+    public function cancelVisiteFromRequest(VisiteRequest $visiteRequest, ?Partner $createdByPartner = null): ?Intervention
     {
         if (!$visiteRequest->getIntervention() || !$visiteRequest->getDetails()) {
             return null;
@@ -112,7 +113,7 @@ class InterventionManager extends AbstractManager
     /**
      * @throws \Exception
      */
-    public function rescheduleVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest, Partner $createdByPartner): ?Intervention
+    public function rescheduleVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest, ?Partner $createdByPartner = null): ?Intervention
     {
         if (!$visiteRequest->getIntervention() || !$visiteRequest->getDate()) {
             return null;

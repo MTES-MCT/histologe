@@ -103,6 +103,9 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $externalOperator = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $notifyUsager = null;
+
     /** @var array<string, array<string, string>>
      *
      *  Ce tableau contient les modifications des champs sous forme structurée,
@@ -490,6 +493,18 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     public function setPreviousScheduledAt(?\DateTimeImmutable $previousScheduledAt): static
     {
         $this->previousScheduledAt = $previousScheduledAt;
+
+        return $this;
+    }
+
+    public function getNotifyUsager(): ?bool
+    {
+        return $this->notifyUsager;
+    }
+
+    public function setNotifyUsager(?bool $notifyUsager): static
+    {
+        $this->notifyUsager = $notifyUsager;
 
         return $this;
     }

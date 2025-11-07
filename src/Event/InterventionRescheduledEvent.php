@@ -12,10 +12,10 @@ class InterventionRescheduledEvent extends Event
     public const string NAME = 'intervention.rescheduled';
 
     public function __construct(
-        private Intervention $intervention,
-        private User $user,
-        private \DateTimeImmutable $previousDate,
-        private Partner $partner,
+        private readonly Intervention $intervention,
+        private readonly User $user,
+        private readonly \DateTimeImmutable $previousDate,
+        private readonly ?Partner $partner = null,
     ) {
     }
 

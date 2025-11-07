@@ -236,6 +236,7 @@ class SignalementVisitesControllerTest extends WebTestCase
                         'RSD',
                         'INSALUBRITE',
                     ],
+                    'notifyUsager' => '1',
                     'details' => 'Hello world',
                     'intervention' => $interventionId,
                 ],
