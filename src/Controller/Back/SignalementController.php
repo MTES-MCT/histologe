@@ -145,7 +145,7 @@ class SignalementController extends AbstractController
         $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
 
         $isUserSubscribed = false;
-        if ($signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
+        if ($signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]) && $affectation) {
             $isUserSubscribed = true;
         }
 
@@ -180,7 +180,7 @@ class SignalementController extends AbstractController
         }
 
         $transferSubscriptionForm = null;
-        if ($isUserSubscribed && $affectation) {
+        if ($isUserSubscribed) {
             $transferSubscription = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
             $transferSubscriptionForm = $this->createForm(
