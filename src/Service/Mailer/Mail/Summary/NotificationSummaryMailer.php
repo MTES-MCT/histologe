@@ -15,6 +15,7 @@ class NotificationSummaryMailer extends AbstractNotificationMailer
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_NOTIFICATIONS_SUMMARY;
     protected ?string $mailerSubject = 'Récapitulatif d\'activité sur %s';
     protected ?string $mailerTemplate = 'notification_summary_email';
+    protected ?string $tagHeader = 'Pro Récap';
 
     public function __construct(
         protected MailerInterface $mailer,
