@@ -30,69 +30,17 @@ test('login for bailleur', async ({page, context}) => {
   await context.clearCookies();
   await context.clearPermissions();
 
-  const baseUrl = process.env.BASE_URL ?? 'http://localhost:8080';
-  console.log(`[TEST] Starting bailleur login test - Base URL: ${baseUrl}`);
-
-  await page.goto(`${baseUrl}/login-bailleur`);
-  console.log(`[TEST] Navigated to login-bailleur, current URL: ${page.url()}`);
-
-  // Attendre que la page soit complètement chargée
+  await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/login-bailleur`);
   await page.waitForLoadState('networkidle');
-  console.log(`[TEST] Page loaded, taking screenshot before form fill`);
-  await page.screenshot({ path: '/tmp/bailleur-before-login.png', fullPage: true });
 
   await page.getByRole('textbox', { name: 'Référence du dossier' }).click();
   await page.getByRole('textbox', { name: 'Référence du dossier' }).fill('2025-12');
   await page.getByRole('textbox', { name: 'Code de connexion' }).click();
   await page.getByRole('textbox', { name: 'Code de connexion' }).fill('salutsalut');
-
-  console.log(`[TEST] Form filled, clicking submit button`);
-
-  // Capturer les requêtes qui échouent
-  page.on('requestfailed', request => {
-    console.error(`[TEST] Request FAILED: ${request.url()} - ${request.failure()?.errorText}`);
-  });
-
-  // Capturer les réponses réseau pour voir si le formulaire est bloqué
-  page.on('response', async (response) => {
-    const url = response.url();
-    const status = response.status();
-
-    // Log only important responses
-    if (status >= 300 || url.includes('login-bailleur') || url.includes('bailleur')) {
-      console.log(`[TEST] Response: ${status} ${url}`);
-    }
-
-    if (status === 500) {
-      const text = await response.text().catch(() => 'Could not read response body');
-      console.error(`[TEST] 500 Error body (first 1000 chars): ${text.substring(0, 1000)}`);
-    }
-  });
-
-  // Capturer les erreurs console
-  page.on('console', msg => {
-    if (msg.type() === 'error' || msg.type() === 'warning') {
-      console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`);
-    }
-  });
-
   await page.getByRole('button', { name: 'Envoyer' }).click();
 
-  // Attendre explicitement la navigation après le submit
-  console.log(`[TEST] Waiting for navigation to bailleur page`);
-  try {
-    await page.waitForURL('**/bailleur/**', { timeout: 10000 });
-    console.log(`[TEST] Navigation successful, current URL: ${page.url()}`);
-  } catch (e) {
-    console.error(`[TEST] Navigation failed! Current URL: ${page.url()}`);
-
-    // Capturer le contenu HTML pour voir les erreurs
-    const bodyText = await page.locator('body').textContent();
-    console.error(`[TEST] Page content: ${bodyText?.substring(0, 500)}`);
-
-    await page.screenshot({ path: '/tmp/bailleur-after-submit-error.png', fullPage: true });
-    throw e;
-  }
+  // Attendre la navigation vers la page bailleur
+  await page.waitForURL('**/dossier-bailleur/**', { timeout: 10000 });
 
   await page.getByRole('heading', { name: 'Détails du dossier' }).click();
   await page.getByText('Monsieur Mulder Fox').click();
