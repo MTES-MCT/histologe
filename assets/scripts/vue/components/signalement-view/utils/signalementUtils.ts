@@ -73,7 +73,7 @@ export function handleSettings (context: any, requestResponse: any): any {
   context.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
   context.sharedState.user.partnerIds = requestResponse.partnerIds
   context.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
-  context.sharedState.input.filters.isImported = 'oui'
+  context.sharedState.input.filters.isImported = null
 
   context.sharedState.territories = []
   for (const id in requestResponse.territories) {
