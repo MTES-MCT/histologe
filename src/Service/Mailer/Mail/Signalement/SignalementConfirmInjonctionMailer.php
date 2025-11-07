@@ -16,7 +16,7 @@ class SignalementConfirmInjonctionMailer extends AbstractNotificationMailer
     protected ?string $mailerSubject = 'Votre signalement a bien été reçu ! -- TODO Injonction';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'accuse_injonction_email';
-    protected ?string $tagHeader = 'Usager Accusé Reception Signalement';
+    protected ?string $tagHeader = 'Usager Accusé Reception Signalement Injonction';
 
     public function __construct(
         protected MailerInterface $mailer,

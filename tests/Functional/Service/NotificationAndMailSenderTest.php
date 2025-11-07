@@ -12,6 +12,7 @@ use App\Factory\NotificationFactory;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\CourrierBailleurGenerator;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\NotificationAndMailSender;
 use App\Tests\FixturesHelper;
@@ -33,6 +34,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private Security $security;
     private NotificationAndMailSender $notificationAndMailSender;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private CourrierBailleurGenerator $courrierBailleurGenerator;
 
     protected function setUp(): void
     {
@@ -50,12 +52,14 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->notificationFactory = self::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->courrierBailleurGenerator = self::getContainer()->get(CourrierBailleurGenerator::class);
         $this->notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
     }
 
@@ -190,6 +194,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
@@ -236,6 +241,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
@@ -275,6 +281,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -317,6 +324,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);

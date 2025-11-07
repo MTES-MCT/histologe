@@ -15,8 +15,8 @@ class SignalementConfirmInjonctionBailleurMailer extends AbstractNotificationMai
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_CONFIRM_INJONCTION_TO_BAILLEUR;
     protected ?string $mailerSubject = 'Un signalement a été fait sur un de vos logements ! -- TODO Injonction';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
-    protected ?string $mailerTemplate = 'accuse_injonction_bailleur_email';
-    protected ?string $tagHeader = 'Usager Accusé Reception Signalement';
+    protected ?string $brevoTemplateId = '253';
+    protected ?string $tagHeader = 'Bailleur Accusé Reception Signalement';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -36,20 +36,19 @@ class SignalementConfirmInjonctionBailleurMailer extends AbstractNotificationMai
         $attachment = $notificationMail->getAttachment();
 
         return [
-            'signalement_declarantPrenom' => $signalement->getPrenomOccupant(),
-            'signalement_declarantNom' => $signalement->getNomOccupant(),
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
-            'signalement_isProprioAverti' => $signalement->getIsProprioAverti(),
-            'attach' => $attachment,
-            'lien_suivi' => $this->generateLink(
+            'ADRESSE_OCCUPANT' => $signalement->getAddressCompleteOccupant(),
+            'NOM_COMPLET_DECLARANT' => $signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(),
+            'LINK_DOSSIER_BAILLEUR' => $this->generateLink(
                 'app_login_bailleur',
                 [
                     'bailleur_reference' => $signalement->getReference(),
                     'bailleur_code' => $signalement->getLoginBailleur(),
                 ]
             ),
+            'attachContent' => $attachment ? [
+                'content' => $attachment,
+                'filename' => 'courrier-bailleur-'.$signalement->getReference().'.pdf',
+            ] : null,
         ];
     }
 }
