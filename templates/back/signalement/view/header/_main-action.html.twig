@@ -5,7 +5,7 @@
         {% include '_partials/_modal_accept_affectation.html.twig' %}
     </div>
 {% endif %}
-{% if isUserSubscribed and subscriptionsInMyPartner|length < 2 %}
+{% if isUserSubscribed and subscriptionsInMyPartner|length < 2 and affectation %}
     <div data-ajax-form class="fr-display-inline">
         {% include '_partials/_modal_transfer_subscription.html.twig' %}
     </div>
