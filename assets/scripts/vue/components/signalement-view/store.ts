@@ -33,7 +33,7 @@ export const store = {
         situation: null,
         dateDepot: null,
         dateDernierSuivi: null,
-        isImported: 'oui' as 'oui' | null,
+        isImported: null as 'oui' | null,
         isZonesDisplayed: null as 'oui' | null,
         showMyAffectationOnly: null as 'oui' | null,
         showMySignalementsOnly: null as 'oui' | null,
