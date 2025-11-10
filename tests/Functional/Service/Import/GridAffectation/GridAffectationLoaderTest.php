@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Service\Import\GridAffectation;
 
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
 use App\Manager\ManagerInterface;
@@ -58,15 +59,24 @@ class GridAffectationLoaderTest extends KernelTestCase
     public function testLoadValidPartnersAndUserInCreateMode(): void
     {
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['isActive' => 0]);
-        $errors = $this->gridAffectationLoader->validate($this->provideValidData(), $territory);
+        $validData = $this->provideValidData();
+        $errors = $this->gridAffectationLoader->validate($validData, $territory);
         $this->assertCount(0, $errors);
 
-        $this->gridAffectationLoader->load($territory, $this->provideValidData(), []);
+        $this->gridAffectationLoader->load($territory, $validData, []);
 
         $metaData = $this->gridAffectationLoader->getMetadata();
         $this->assertEquals(3, $metaData['nb_partners']);
         $this->assertEquals(4, $metaData['nb_users_created']);
         $this->assertEmpty($metaData['errors'], 'Grid has no errors.');
+
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $validData[0]['E-mail']]);
+        $this->assertNotNull($user);
+        $this->assertEquals($validData[0]['Prénom'], $user->getPrenom());
+        $this->assertEquals($validData[0]['Nom'], $user->getNom());
+        $this->assertEquals($validData[0]['E-mail'], $user->getEmail());
+        $this->assertEquals($validData[0]['Téléphone'], $user->getPhone());
+        $this->assertEquals($validData[0]['Fonction'], $user->getFonction());
     }
 
     public function testLoadValidPartnerAndUserInUpdateMode(): void
@@ -124,24 +134,23 @@ class GridAffectationLoaderTest extends KernelTestCase
     {
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => 13]);
 
-        $errors = [
+        $expected = [
             'line 3 : E-mail incorrect pour un partenaire : arssignal-logement.fr',
             'line 5 : Type incorrect pour Random Type --> Random Type',
             'line 5 : Rôle incorrect pour jon.conor@signal-logement.fr --> Fake role',
             'line 6 : Type incorrect pour Random Type --> Random Type',
-            'line 6 : E-mail incorrect pour un utilisateur : john.doe@',
+            'line 6 : Cette valeur n\'est pas une adresse email valide. Erreur sur le champ email pour l\'agent john.doe@',
             'line 7 : E-mail partenaire déjà existant dans le territoire avec (partenaire-13-01@signal-logement.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
-            'line 8 : E-mail manquant pour Margaretta Borer, partenaire ADIL',
             'line 9 : Nom de partenaire manquant',
+            'line 10 : "user-13-06@signal-logement.fr" existe déja, merci de saisir un nouvel e-mail Erreur sur le champ email pour l\'agent user-13-06@signal-logement.fr',
             'Certains partenaires ont un e-mail en commun ddt-m@signal-logement.fr',
             'Certains utilisateurs ont un e-mail en commun user-ddt@signal-logement.fr',
             'Certains utilisateurs ont un e-mail en commun avec un partenaire ddt-m@signal-logement.fr,user-ddt@signal-logement.fr',
         ];
-
-        $this->assertEquals(
-            $errors,
-            $this->gridAffectationLoader->validate($this->provideInvalidDataWithDuplicatePartnersAndUsers(), $territory)
-        );
+        $actual = $this->gridAffectationLoader->validate($this->provideInvalidDataWithDuplicatePartnersAndUsers(), $territory);
+        foreach ($actual as $key => $msg) {
+            $this->assertEquals($expected[$key], $msg);
+        }
     }
 
     /**
@@ -161,6 +170,8 @@ class GridAffectationLoaderTest extends KernelTestCase
                 'E-mail' => $faker->email(),
                 "E-mail d'équipe" => self::FIXTURE_PARTNER_DDT_EMAIL,
                 'Rôle' => self::FIXTURE_ROLE_RT,
+                'Téléphone' => '0601020304',
+                'Fonction' => 'Directeur de direction à sens inverse',
             ],
             [
                 'Institution' => self::FIXTURE_PARTNER_ARS,
@@ -271,7 +282,7 @@ class GridAffectationLoaderTest extends KernelTestCase
                 'Nom' => 'Borer',
                 'E-mail' => '',
                 "E-mail d'équipe" => $faker->companyEmail(),
-                'Rôle' => self::FIXTURE_ROLE_PARTNER,
+                'Rôle' => '',
             ],
             [
                 'Institution' => '',

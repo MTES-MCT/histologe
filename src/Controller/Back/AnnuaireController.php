@@ -59,8 +59,9 @@ class AnnuaireController extends AbstractController
         $activeWorksheet->setCellValue('A1', 'Nom du partenaire');
         $activeWorksheet->setCellValue('B1', 'Nom complet de l\'agent');
         $activeWorksheet->setCellValue('C1', 'Email de l\'agent');
+        $activeWorksheet->setCellValue('D1', 'Téléphone de l\'agent');
         if ($isMultiTerritory) {
-            $activeWorksheet->setCellValue('D1', 'Territoire');
+            $activeWorksheet->setCellValue('E1', 'Territoire');
         }
 
         $row = 2;
@@ -70,10 +71,11 @@ class AnnuaireController extends AbstractController
             $activeWorksheet->setCellValue('A'.$row, $partner->getNom());
             $activeWorksheet->setCellValue('B'.$row, $user->getNomComplet());
             $activeWorksheet->setCellValue('C'.$row, $user->getEmail());
+            $activeWorksheet->setCellValue('D'.$row, $user->getPhoneDecoded());
             if ($isMultiTerritory) {
                 $territory = $partner->getTerritory();
                 $territoryName = $territory ? $territory->getZip().' - '.$territory->getName() : '';
-                $activeWorksheet->setCellValue('D'.$row, $territoryName);
+                $activeWorksheet->setCellValue('E'.$row, $territoryName);
             }
             ++$row;
         }

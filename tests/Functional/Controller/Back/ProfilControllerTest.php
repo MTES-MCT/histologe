@@ -56,15 +56,16 @@ class ProfilControllerTest extends WebTestCase
 
     public function testEditInfosSuccess(): void
     {
-        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_infos');
+        $csrfToken = $this->generateCsrfToken($this->client, 'user_profil_info');
 
         $route = $this->router->generate('back_profil_edit_infos');
         $this->client->request('POST', $route, [
-            '_token' => $csrfToken,
-            'profil_edit_infos' => [
+            'user_profil_info' => [
                 'prenom' => 'John',
                 'nom' => 'Doe',
                 'fonction' => 'Directeur',
+                'phone' => '0123456789',
+                '_token' => $csrfToken,
             ],
         ]);
 
@@ -73,11 +74,12 @@ class ProfilControllerTest extends WebTestCase
         $this->assertEquals('Doe', $this->user->getNom());
         $this->assertEquals('John', $this->user->getPrenom());
         $this->assertEquals('Directeur', $this->user->getFonction());
+        $this->assertEquals('0123456789', $this->user->getPhone());
     }
 
     public function testEditInfosWithAvatarSuccess(): void
     {
-        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_infos');
+        $csrfToken = $this->generateCsrfToken($this->client, 'user_profil_info');
 
         $imageFile = new UploadedFile(
             __DIR__.'/../../../files/sample.jpg',
@@ -101,13 +103,14 @@ class ProfilControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_profil_edit_infos');
         $this->client->request('POST', $route, [
-            '_token' => $csrfToken,
-            'profil_edit_infos' => [
+            'user_profil_info' => [
                 'prenom' => 'John',
                 'nom' => 'Doe',
                 'fonction' => 'Directeur',
+                'phone' => '',
+                '_token' => $csrfToken,
             ],
-        ], ['profil_edit_infos' => [
+        ], ['user_profil_info' => [
             'avatar' => $imageFile,
         ],
         ]);
@@ -122,7 +125,7 @@ class ProfilControllerTest extends WebTestCase
 
     public function testEditInfosWithAvatarNotClean(): void
     {
-        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_infos');
+        $csrfToken = $this->generateCsrfToken($this->client, 'user_profil_info');
 
         $imageFile = new UploadedFile(
             __DIR__.'/../../../files/sample.jpg',
@@ -139,12 +142,14 @@ class ProfilControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_profil_edit_infos');
         $this->client->request('POST', $route, [
-            '_token' => $csrfToken,
-            'profil_edit_infos' => [
+            'user_profil_info' => [
                 'prenom' => 'John',
                 'nom' => 'Doe',
+                'fonction' => '',
+                'phone' => '',
+                '_token' => $csrfToken,
             ],
-        ], ['profil_edit_infos' => [
+        ], ['user_profil_info' => [
             'avatar' => $imageFile,
         ],
         ]);
@@ -153,7 +158,7 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertJson(json_encode([
             'errors' => [
-                'profil_edit_infos[avatar]' => [
+                'user_profil_info[avatar]' => [
                     'errors' => ['Le fichier est infecté'],
                 ],
             ],
@@ -162,7 +167,7 @@ class ProfilControllerTest extends WebTestCase
 
     public function testEditInfosWithAvatarBadFormat(): void
     {
-        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_infos');
+        $csrfToken = $this->generateCsrfToken($this->client, 'user_profil_info');
 
         $imageFile = new UploadedFile(
             __DIR__.'/../../../files/sample.pdf',
@@ -174,12 +179,14 @@ class ProfilControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_profil_edit_infos');
         $this->client->request('POST', $route, [
-            '_token' => $csrfToken,
-            'profil_edit_infos' => [
+            'user_profil_info' => [
                 'prenom' => 'John',
                 'nom' => 'Doe',
+                'fonction' => '',
+                'phone' => '',
+                '_token' => $csrfToken,
             ],
-        ], ['profil_edit_infos' => [
+        ], ['user_profil_info' => [
             'avatar' => $imageFile,
         ],
         ]);
@@ -188,7 +195,7 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertJson(json_encode([
             'errors' => [
-                'profil_edit_infos[avatar]' => [
+                'user_profil_info[avatar]' => [
                     'errors' => ['Veuillez télécharger une image valide (JPEG, PNG ou GIF)'],
                 ],
             ],
@@ -200,27 +207,31 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_infos');
 
         $this->client->request('POST', $route, [
-            '_token' => 'invalid_csrf_token',
-            'profil_edit_infos' => [
+            'user_profil_info' => [
                 'prenom' => 'John',
                 'nom' => 'Doe',
+                'fonction' => '',
+                'phone' => '',
+                '_token' => 'invalid_csrf_token',
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     public function testEditInfosInvalidData(): void
     {
-        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_infos');
+        $csrfToken = $this->generateCsrfToken($this->client, 'user_profil_info');
 
         $route = $this->router->generate('back_profil_edit_infos');
 
         $this->client->request('POST', $route, [
-            '_token' => $csrfToken,
-            'profil_edit_infos' => [
+            'user_profil_info' => [
                 'prenom' => '',
                 'nom' => '',
+                'fonction' => '',
+                'phone' => '',
+                '_token' => $csrfToken,
             ],
         ]);
 

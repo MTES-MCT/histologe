@@ -44,17 +44,6 @@ class GridAffectationLoader
         'errors' => [],
     ];
 
-    /**
-     * @var array<string, string>
-     */
-    public const array OLD_ROLES = [
-        'Usager' => 'ROLE_USAGER',
-        'Utilisateur' => 'ROLE_USER_PARTNER',
-        'Administrateur' => 'ROLE_ADMIN_PARTNER',
-        'Responsable Territoire' => 'ROLE_ADMIN_TERRITORY',
-        'Super Admin' => 'ROLE_ADMIN',
-    ];
-
     public function __construct(
         private readonly PartnerFactory $partnerFactory,
         private readonly PartnerManager $partnerManager,
@@ -134,35 +123,49 @@ class GridAffectationLoader
                 }
 
                 $emailUser = TrimHelper::safeTrim($item[GridAffectationHeader::USER_EMAIL]);
-                if (empty($emailUser) && !empty($item[GridAffectationHeader::USER_ROLE])) {
-                    $errors[] = \sprintf(
-                        'line %d : E-mail manquant pour %s %s, partenaire %s',
-                        $numLine,
-                        $item[GridAffectationHeader::USER_FIRSTNAME],
-                        $item[GridAffectationHeader::USER_LASTNAME],
-                        $item[GridAffectationHeader::PARTNER_NAME_INSTITUTION]
-                    );
-                } else {
-                    // email must be valid and not used by another user of another partner
-                    $violations = $this->validator->validate($emailUser, $emailConstraint);
-                    if (\count($violations) > 0) {
-                        $errors[] = \sprintf('line %d : E-mail incorrect pour un utilisateur : %s', $numLine, $emailUser);
-                    }
+                if ($emailUser) {
                     // store user mail to check duplicates
-                    if (!empty($item[GridAffectationHeader::USER_EMAIL])) {
-                        $mailUsers[] = $item[GridAffectationHeader::USER_EMAIL];
+                    $mailUsers[] = $emailUser;
+                    $roleLabel = $this->getRoleLabelFromItem($item);
+                    if (!$roleLabel) {
+                        $errors[] = \sprintf(
+                            'line %d : Rôle incorrect pour %s --> %s',
+                            $numLine,
+                            $item[GridAffectationHeader::USER_EMAIL],
+                            $item[GridAffectationHeader::USER_ROLE]
+                        );
                     }
-                }
-                if (!empty($item[GridAffectationHeader::USER_ROLE])
-                    && !\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(User::ROLES))
-                    && !\in_array($item[GridAffectationHeader::USER_ROLE], array_keys(self::OLD_ROLES))
-                ) {
-                    $errors[] = \sprintf(
-                        'line %d : Rôle incorrect pour %s --> %s',
-                        $numLine,
-                        $item[GridAffectationHeader::USER_EMAIL],
-                        $item[GridAffectationHeader::USER_ROLE]
-                    );
+                    if ($isModeUpdate) {
+                        /** @var UserRepository $userRepository */
+                        $userRepository = $this->entityManager->getRepository(User::class);
+                        $user = $userRepository->findOneBy(['email' => $emailUser]);
+                        if ($user) {
+                            continue;
+                        }
+                    }
+                    if ($roleLabel) {
+                        $phone = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_PHONE]) ? $item[GridAffectationHeader::USER_PHONE] : null);
+                        $fonction = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_FONCTION]) ? $item[GridAffectationHeader::USER_FONCTION] : null);
+                        $user = $this->userFactory->createInstanceFrom(
+                            roleLabel: $roleLabel,
+                            firstname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_FIRSTNAME]),
+                            lastname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_LASTNAME]),
+                            email: $emailUser,
+                            phone: $phone ? $phone : null,
+                            fonction: $fonction ? $fonction : null,
+                        );
+                        /** @var ConstraintViolationList $violations */
+                        $violations = $this->validator->validate($user);
+                        foreach ($violations as $violation) {
+                            $errors[] = \sprintf(
+                                'line %d : %s Erreur sur le champ %s pour l\'agent %s',
+                                $numLine,
+                                $violation->getMessage(),
+                                $violation->getPropertyPath(),
+                                $emailUser
+                            );
+                        }
+                    }
                 }
             }
         }
@@ -241,16 +244,10 @@ class GridAffectationLoader
                     }
                 }
 
-                $roleLabel = $item[GridAffectationHeader::USER_ROLE];
-                if ('Utilisateur' === $roleLabel) {
-                    $roleLabel = 'Agent';
-                } elseif ('Administrateur' === $roleLabel) {
-                    $roleLabel = 'Admin. partenaire';
-                } elseif ('Responsable Territoire' === $roleLabel) {
-                    $roleLabel = 'Resp. Territoire';
-                }
-
+                $roleLabel = $this->getRoleLabelFromItem($item);
                 $email = TrimHelper::safeTrim($item[GridAffectationHeader::USER_EMAIL]);
+                $phone = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_PHONE]) ? $item[GridAffectationHeader::USER_PHONE] : null);
+                $fonction = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_FONCTION]) ? $item[GridAffectationHeader::USER_FONCTION] : null);
                 if (!empty($roleLabel) && !empty($email)) {
                     $user = $userRepository->findOneBy(['email' => $email]);
                     if (null === $user) {
@@ -260,7 +257,9 @@ class GridAffectationLoader
                             firstname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_FIRSTNAME]),
                             lastname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_LASTNAME]),
                             email: $email,
-                            isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes)
+                            isActivateAccountNotificationEnabled: !\in_array($partnerType->name, $ignoreNotifPartnerTypes),
+                            phone: $phone,
+                            fonction: $fonction
                         );
                         $canAddUserPartner = true;
                     } elseif (!$currentPartner = $user->getPartnerInTerritory($territory)) {
@@ -355,5 +354,25 @@ class GridAffectationLoader
         return array_filter($occurrencesEmails, function ($value) {
             return $value > 1;
         });
+    }
+
+    /**
+     * @param array <string, mixed> $item
+     */
+    private function getRoleLabelFromItem(array $item): ?string
+    {
+        $roleLabel = $item[GridAffectationHeader::USER_ROLE];
+        if ('Utilisateur' === $roleLabel) {
+            $roleLabel = 'Agent';
+        } elseif ('Administrateur' === $roleLabel) {
+            $roleLabel = 'Admin. partenaire';
+        } elseif ('Responsable Territoire' === $roleLabel) {
+            $roleLabel = 'Resp. Territoire';
+        }
+        if (in_array($roleLabel, ['Agent', 'Admin. partenaire', 'Resp. Territoire'])) {
+            return $roleLabel;
+        }
+
+        return null;
     }
 }

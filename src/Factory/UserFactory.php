@@ -15,6 +15,8 @@ class UserFactory
         ?bool $isMailActive = true,
         ?bool $isActivateAccountNotificationEnabled = true,
         ?bool $hasPermissionAffectation = false,
+        ?string $phone = null,
+        ?string $fonction = null,
     ): User {
         $user = (new User())
             ->setRoles(\in_array($roleLabel, User::ROLES) ? [$roleLabel] : [User::ROLES[$roleLabel]])
@@ -24,7 +26,9 @@ class UserFactory
             ->setStatut(UserStatus::INACTIVE)
             ->setIsMailingActive($isMailActive)
             ->setIsActivateAccountNotificationEnabled($isActivateAccountNotificationEnabled)
-            ->setHasPermissionAffectation($hasPermissionAffectation);
+            ->setHasPermissionAffectation($hasPermissionAffectation)
+            ->setPhone($phone)
+            ->setFonction($fonction);
         $user->setHasDoneSubscriptionsChoice(true);
 
         return $user;
