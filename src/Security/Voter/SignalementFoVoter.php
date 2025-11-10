@@ -65,7 +65,7 @@ class SignalementFoVoter extends Voter
         if (!$this->canUsagerView($signalement, $user)) {
             return false;
         }
-        if (in_array($signalement->getStatut(), [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE, SignalementStatus::CLOSED])) {
+        if (in_array($signalement->getStatut(), [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE, SignalementStatus::CLOSED])) {
             if (SignalementStatus::CLOSED !== $signalement->getStatut()) {
                 return true;
             }

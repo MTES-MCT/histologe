@@ -6,6 +6,7 @@ use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\AgentSelectionType;
@@ -57,7 +58,8 @@ class AffectationController extends AbstractController
                 /** @var User $user */
                 $user = $this->getUser();
                 $postedPartner = $data['partners'];
-                $affectablePartners = $this->signalementManager->findAffectablePartners($signalement);
+                $filterInjonctionBailleur = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());
+                $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, $filterInjonctionBailleur);
                 $alreadyAffectedPartner = $affectablePartners['affected'];
                 $alreadyAffectedPartnersIds = array_map(fn (array $partner) => $partner['id'], $alreadyAffectedPartner);
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
