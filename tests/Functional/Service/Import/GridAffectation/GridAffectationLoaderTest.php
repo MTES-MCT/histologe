@@ -117,7 +117,7 @@ class GridAffectationLoaderTest extends KernelTestCase
         ];
 
         $errors = $this->gridAffectationLoader->validate($data, $territory, true);
-        $this->assertCount(1, $errors);
+        $this->assertCount(0, $errors);
         $this->gridAffectationLoader->load($territory, $data, []);
         $metaData = $this->gridAffectationLoader->getMetadata();
 
@@ -141,7 +141,6 @@ class GridAffectationLoaderTest extends KernelTestCase
             'line 6 : Type incorrect pour Random Type --> Random Type',
             'line 6 : Cette valeur n\'est pas une adresse email valide. Erreur sur le champ email pour l\'agent john.doe@',
             'line 7 : E-mail partenaire déjà existant dans le territoire avec (partenaire-13-01@signal-logement.fr) dans Bouches-du-Rhône, nom : Partenaire 13-01',
-            'line 8 : Merci de saisir une adresse e-mail. Erreur sur le champ email pour l\'agent ',
             'line 9 : Nom de partenaire manquant',
             'line 10 : "user-13-06@signal-logement.fr" existe déja, merci de saisir un nouvel e-mail Erreur sur le champ email pour l\'agent user-13-06@signal-logement.fr',
             'Certains partenaires ont un e-mail en commun ddt-m@signal-logement.fr',
@@ -283,7 +282,7 @@ class GridAffectationLoaderTest extends KernelTestCase
                 'Nom' => 'Borer',
                 'E-mail' => '',
                 "E-mail d'équipe" => $faker->companyEmail(),
-                'Rôle' => self::FIXTURE_ROLE_PARTNER,
+                'Rôle' => '',
             ],
             [
                 'Institution' => '',

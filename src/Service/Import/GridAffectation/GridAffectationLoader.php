@@ -123,40 +123,48 @@ class GridAffectationLoader
                 }
 
                 $emailUser = TrimHelper::safeTrim($item[GridAffectationHeader::USER_EMAIL]);
-                // store user mail to check duplicates
                 if ($emailUser) {
+                    // store user mail to check duplicates
                     $mailUsers[] = $emailUser;
-                }
-                $roleLabel = $this->getRoleLabelFromItem($item);
-                if (!$roleLabel) {
-                    $errors[] = \sprintf(
-                        'line %d : Rôle incorrect pour %s --> %s',
-                        $numLine,
-                        $item[GridAffectationHeader::USER_EMAIL],
-                        $item[GridAffectationHeader::USER_ROLE]
-                    );
-                }
-                if ($roleLabel) {
-                    $phone = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_PHONE]) ? $item[GridAffectationHeader::USER_PHONE] : null);
-                    $fonction = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_FONCTION]) ? $item[GridAffectationHeader::USER_FONCTION] : null);
-                    $user = $this->userFactory->createInstanceFrom(
-                        roleLabel: $roleLabel,
-                        firstname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_FIRSTNAME]),
-                        lastname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_LASTNAME]),
-                        email: $emailUser,
-                        phone: $phone ? $phone : null,
-                        fonction: $fonction ? $fonction : null,
-                    );
-                    /** @var ConstraintViolationList $violations */
-                    $violations = $this->validator->validate($user);
-                    foreach ($violations as $violation) {
+                    $roleLabel = $this->getRoleLabelFromItem($item);
+                    if (!$roleLabel) {
                         $errors[] = \sprintf(
-                            'line %d : %s Erreur sur le champ %s pour l\'agent %s',
+                            'line %d : Rôle incorrect pour %s --> %s',
                             $numLine,
-                            $violation->getMessage(),
-                            $violation->getPropertyPath(),
-                            $emailUser
+                            $item[GridAffectationHeader::USER_EMAIL],
+                            $item[GridAffectationHeader::USER_ROLE]
                         );
+                    }
+                    if ($isModeUpdate) {
+                        /** @var UserRepository $userRepository */
+                        $userRepository = $this->entityManager->getRepository(User::class);
+                        $user = $userRepository->findOneBy(['email' => $emailUser]);
+                        if ($user) {
+                            continue;
+                        }
+                    }
+                    if ($roleLabel) {
+                        $phone = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_PHONE]) ? $item[GridAffectationHeader::USER_PHONE] : null);
+                        $fonction = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_FONCTION]) ? $item[GridAffectationHeader::USER_FONCTION] : null);
+                        $user = $this->userFactory->createInstanceFrom(
+                            roleLabel: $roleLabel,
+                            firstname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_FIRSTNAME]),
+                            lastname: TrimHelper::safeTrim($item[GridAffectationHeader::USER_LASTNAME]),
+                            email: $emailUser,
+                            phone: $phone ? $phone : null,
+                            fonction: $fonction ? $fonction : null,
+                        );
+                        /** @var ConstraintViolationList $violations */
+                        $violations = $this->validator->validate($user);
+                        foreach ($violations as $violation) {
+                            $errors[] = \sprintf(
+                                'line %d : %s Erreur sur le champ %s pour l\'agent %s',
+                                $numLine,
+                                $violation->getMessage(),
+                                $violation->getPropertyPath(),
+                                $emailUser
+                            );
+                        }
                     }
                 }
             }
