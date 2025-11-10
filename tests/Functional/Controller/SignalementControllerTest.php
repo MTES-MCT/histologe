@@ -329,7 +329,7 @@ class SignalementControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'message_usager'),
             ],
         ]);
-        if (SignalementStatus::ACTIVE->value === $status) {
+        if (in_array($status, [SignalementStatus::ACTIVE->value, SignalementStatus::INJONCTION_BAILLEUR->value])) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'/messages');
             $suivisUsager = self::getContainer()->get(SuiviRepository::class)->findBy(['category' => SuiviCategory::MESSAGE_USAGER, 'signalement' => $signalement]);
             $this->assertEquals(1, count($suivisUsager));
