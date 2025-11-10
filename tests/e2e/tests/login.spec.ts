@@ -79,9 +79,17 @@ test('login for admin', async ({page, context}) => {
   await page.getByRole('button', { name: 'Connexion' }).click();
 
   // Attendre la navigation après connexion réussie
-  console.log('[TEST ADMIN] Waiting for navigation to dashboard');
-  await page.waitForURL('**/tableau-de-bord', { timeout: 10000 });
-  console.log('[TEST ADMIN] Successfully navigated to:', page.url());
+  console.log('[TEST ADMIN] Waiting for navigation to dashboard, current URL:', page.url());
+
+  try {
+    await page.waitForURL('**/bo/**', { timeout: 10000 });
+    console.log('[TEST ADMIN] Successfully navigated to:', page.url());
+  } catch (e) {
+    console.error('[TEST ADMIN] Navigation failed! Current URL:', page.url());
+    const bodyText = await page.locator('body').textContent();
+    console.error('[TEST ADMIN] Page content (first 500 chars):', bodyText?.substring(0, 500));
+    throw e;
+  }
 
   await page.getByRole('link', { name: 'Tableau de bord' }).click();
   await page.getByRole('link', { name: 'Se déconnecter' }).click();

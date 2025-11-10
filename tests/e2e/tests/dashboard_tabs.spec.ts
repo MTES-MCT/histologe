@@ -14,7 +14,7 @@ test('dashboard tabs for admin', async ({page, context}) => {
   await page.getByRole('button', { name: 'Connexion' }).click();
 
   // Attendre la navigation après connexion
-  await page.waitForURL('**/tableau-de-bord', { timeout: 10000 });
+  await page.waitForURL('**/bo', { timeout: 10000 });
   await page.getByRole('tab', { name: 'Accueil' }).click();
   await page.getByRole('heading', { name: 'Vos dernières actions' }).click();
   await page.getByRole('tab', { name: 'Nouveaux dossiers' }).click();
@@ -49,7 +49,7 @@ test('dashboard tabs for RT', async ({page, context}) => {
   await page.getByRole('button', { name: 'Connexion' }).click();
 
   // Attendre la navigation après connexion
-  await page.waitForURL('**/tableau-de-bord', { timeout: 10000 });
+  await page.waitForURL('**/bo', { timeout: 10000 });
   await page.getByRole('tab', { name: 'Accueil' }).click();
   await page.getByRole('heading', { name: 'Vos dernières actions' }).click();
   await page.getByRole('tab', { name: 'Nouveaux dossiers' }).click();
@@ -81,7 +81,7 @@ test('dashboard tabs for Agent', async ({page, context}) => {
   await page.getByRole('button', { name: 'Connexion' }).click();
 
   // Attendre la navigation après connexion
-  await page.waitForURL('**/tableau-de-bord', { timeout: 10000 });
+  await page.waitForURL('**/bo', { timeout: 10000 });
   await page.getByRole('tab', { name: 'Accueil' }).click();
   await page.getByRole('heading', { name: 'Vos dernières actions' }).click();
   await page.getByRole('tab', { name: 'Nouveaux dossiers' }).click();
