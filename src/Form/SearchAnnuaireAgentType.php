@@ -8,6 +8,7 @@ use App\Form\Type\SearchCheckboxType;
 use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,8 +26,8 @@ class SearchAnnuaireAgentType extends AbstractType
     {
         $builder->add('queryUser', SearchType::class, [
             'required' => false,
-            'label' => 'Utilisateur',
-            'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un utilisateur'],
+            'label' => 'Agent',
+            'attr' => ['placeholder' => 'Taper le nom ou l\'e-mail d\'un agent'],
         ]);
         $builder->add('page', HiddenType::class);
         $builder->add('territory', TerritoryChoiceType::class);
@@ -36,6 +37,18 @@ class SearchAnnuaireAgentType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $this->addPartnersField($event->getForm(), isset($event->getData()['territory']) ? $event->getData()['territory'] : null);
         });
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Ordre alphabétique (A -> Z)' => 'u.nom-ASC',
+                'Ordre alphabétique inversé (Z -> A)' => 'u.nom-DESC',
+                'Partenaire (A -> Z)' => 'p.nom-ASC',
+                'Partenaire inversé (Z -> A)' => 'p.nom-DESC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 'u.nom-ASC',
+        ]);
     }
 
     private function addPartnersField(FormInterface $builder, string|Territory|null $territory): void

@@ -56,8 +56,8 @@ class AnnuaireController extends AbstractController
         $spreadsheet = new Spreadsheet();
         $activeWorksheet = $spreadsheet->getActiveSheet();
 
-        $activeWorksheet->setCellValue('A1', 'Nom du partenaire');
-        $activeWorksheet->setCellValue('B1', 'Nom complet de l\'agent');
+        $activeWorksheet->setCellValue('A1', 'Nom complet de l\'agent');
+        $activeWorksheet->setCellValue('B1', 'Nom du partenaire');
         $activeWorksheet->setCellValue('C1', 'Email de l\'agent');
         $activeWorksheet->setCellValue('D1', 'Téléphone de l\'agent');
         if ($isMultiTerritory) {
@@ -68,8 +68,8 @@ class AnnuaireController extends AbstractController
         foreach ($userPartners as $userPartner) {
             $partner = $userPartner->getPartner();
             $user = $userPartner->getUser();
-            $activeWorksheet->setCellValue('A'.$row, $partner->getNom());
-            $activeWorksheet->setCellValue('B'.$row, $user->getNomComplet());
+            $activeWorksheet->setCellValue('A'.$row, $user->getNomComplet());
+            $activeWorksheet->setCellValue('B'.$row, $partner->getNom());
             $activeWorksheet->setCellValue('C'.$row, $user->getEmail());
             $activeWorksheet->setCellValue('D'.$row, $user->getPhoneDecoded());
             if ($isMultiTerritory) {

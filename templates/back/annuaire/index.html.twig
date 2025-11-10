@@ -51,12 +51,17 @@
             > Exporter les résultats </a>
         </div>
     </section>
+    
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
     {{ form_end(form) }}
 
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
         {% set tableHead %}
-            <th scope="col">Partenaire</th>
             <th scope="col">Nom complet</th>
+            <th scope="col">Partenaire</th>
             <th scope="col">E-mail</th>
             <th scope="col">Téléphone</th>
             {% if isMultiTerritory %}
@@ -67,8 +72,8 @@
         {% set tableBody %}
             {% for userPartner in userPartners %}
                 <tr class="signalement-row">
-                    <td>{{ userPartner.partner.nom }}</td>
                     <td>{{ userPartner.user.nomComplet }}</td>
+                    <td>{{ userPartner.partner.nom }}</td>
                     <td>{{ userPartner.user.email }}</td>
                     <td>{{ userPartner.user.phoneDecoded }}</td>
                     {% if isMultiTerritory %}

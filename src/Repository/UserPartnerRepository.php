@@ -67,6 +67,12 @@ class UserPartnerRepository extends ServiceEntityRepository
         if ($search->getPartners()->count() > 0) {
             $qb->andWhere('up.partner IN (:partners)')->setParameter('partners', $search->getPartners());
         }
+        if (!empty($search->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $search->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('u.nom', 'ASC');
+        }
 
         return $qb;
     }
