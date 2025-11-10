@@ -145,7 +145,7 @@ class SignalementVoter extends Voter
         if (SignalementStatus::CLOSED === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
             return true;
         }
-        if (SignalementStatus::ACTIVE !== $signalement->getStatut() && SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+        if (!in_array($signalement->getStatut(), [SignalementStatus::ACTIVE, SignalementStatus::INJONCTION_BAILLEUR])) {
             return false;
         }
         if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
@@ -288,7 +288,7 @@ class SignalementVoter extends Voter
 
             return false;
         }
-        if (SignalementStatus::ACTIVE !== $signalement->getStatut() && SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+        if (!in_array($signalement->getStatut(), [SignalementStatus::ACTIVE, SignalementStatus::INJONCTION_BAILLEUR])) {
             return false;
         }
         if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
