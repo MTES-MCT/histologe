@@ -6,8 +6,9 @@ use App\Entity\User;
 use App\Form\SearchAnnuaireAgentType;
 use App\Repository\UserPartnerRepository;
 use App\Service\ListFilters\SearchAnnuaireAgent;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,7 +72,7 @@ class AnnuaireController extends AbstractController
             $activeWorksheet->setCellValue('A'.$row, $user->getNomComplet());
             $activeWorksheet->setCellValue('B'.$row, $partner->getNom());
             $activeWorksheet->setCellValue('C'.$row, $user->getEmail());
-            $activeWorksheet->setCellValue('D'.$row, $user->getPhoneDecoded());
+            $activeWorksheet->setCellValueExplicit('D'.$row, $user->getPhoneDecoded(), DataType::TYPE_STRING);
             if ($isMultiTerritory) {
                 $territory = $partner->getTerritory();
                 $territoryName = $territory ? $territory->getZip().' - '.$territory->getName() : '';
@@ -80,15 +81,15 @@ class AnnuaireController extends AbstractController
             ++$row;
         }
 
-        $writer = new Csv($spreadsheet);
-        $filename = 'annuaire_'.date('Y-m-d_H-i-s').'.csv';
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'annuaire_'.date('Y-m-d_H-i-s').'.xlsx';
 
         ob_start();
         $writer->save('php://output');
         $content = ob_get_clean();
 
         $response = new Response($content);
-        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');
         $response->headers->set('Content-Length', (string) strlen($content));
 
