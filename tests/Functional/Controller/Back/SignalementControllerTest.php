@@ -342,7 +342,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
 
         $client->enableProfiler();
-        $this->assertEmailCount(1);
+        $this->assertEmailCount(0);
     }
 
     public function testAdminPartnerSubmitClotureSignalementWithEmailSentToRT(): void

@@ -26,6 +26,7 @@ class NotificationAndMailSender
     private ?Signalement $signalement = null;
     private ?Suivi $suivi = null;
     private ?Affectation $affectation = null;
+    private ?User $user = null;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -35,6 +36,10 @@ class NotificationAndMailSender
         private readonly Security $security,
     ) {
         $this->suivi = null;
+        $user = $this->security->getUser();
+        if ($user instanceof User) {
+            $this->user = $user;
+        }
     }
 
     public function sendNewSignalement(Signalement $signalement): void
@@ -353,7 +358,10 @@ class NotificationAndMailSender
             if (!$isFilteredAffectationStatus || AffectationStatus::WAIT === $affectation->getStatut() || AffectationStatus::ACCEPTED === $affectation->getStatut()) {
                 $partner = $affectation->getPartner();
                 if ($partner->getEmail() && $partner->isEmailNotifiable()) {
-                    $partners[] = $partner;
+                    // on ne notifie pas l'email générique du partenaire si l'utilisateur courant en fait partie
+                    if (!$this->user || !$this->user->hasPartner($partner)) {
+                        $partners[] = $partner;
+                    }
                 }
             }
         }
@@ -368,7 +376,10 @@ class NotificationAndMailSender
     {
         $recipients = new ArrayCollection();
         if ($partner->getEmail() && $partner->isEmailNotifiable()) {
-            $recipients->add($partner);
+            // on ne notifie pas l'email générique du partenaire si l'utilisateur courant en fait partie
+            if (!$this->user || !$this->user->hasPartner($partner)) {
+                $recipients->add($partner);
+            }
         }
 
         foreach ($partner->getUsers() as $user) {
@@ -388,10 +399,8 @@ class NotificationAndMailSender
     private function getRecipientsFilteredEmail(ArrayCollection $recipients, ?Suivi $suivi = null): array
     {
         $copyRecipients = clone $recipients;
-        /** @var ?User $user */
-        $user = $this->security->getUser();
-        if ($user) {
-            $copyRecipients->removeElement($user);
+        if ($this->user) {
+            $copyRecipients->removeElement($this->user);
         } elseif ($suivi && $suivi->getCreatedBy()) {
             $copyRecipients->removeElement($suivi->getCreatedBy());
         }

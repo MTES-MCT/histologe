@@ -59,9 +59,11 @@ class PartnerRepository extends ServiceEntityRepository
         SearchPartner $searchPartner,
     ): Paginator {
         $queryBuilder = $this->getPartnersQueryBuilder($searchPartner->getTerritoire());
-        $queryBuilder->select('p', 'z', 'ez')
+        $queryBuilder->select('p', 'z', 'ez', 'up', 'u')
             ->leftJoin('p.zones', 'z')
-            ->leftJoin('p.excludedZones', 'ez');
+            ->leftJoin('p.excludedZones', 'ez')
+            ->leftJoin('p.userPartners', 'up')
+            ->leftJoin('up.user', 'u');
 
         $queryBuilder->addSelect(
             '(CASE
