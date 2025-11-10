@@ -229,7 +229,11 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000010']);
-        $interventionId = $signalement->getInterventions()->first()->getId();
+        $intervention = $signalement->getInterventions()->first();
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
+        $interventionId = $intervention->getId();
 
         $route = $this->router->generate('back_signalement_visite_edit', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
@@ -266,7 +270,11 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000010']);
-        $interventionId = $signalement->getInterventions()->first()->getId();
+        $intervention = $signalement->getInterventions()->first();
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
+        $interventionId = $intervention->getId();
 
         $route = $this->router->generate('back_signalement_visite_edit', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
