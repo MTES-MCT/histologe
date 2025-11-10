@@ -42,7 +42,7 @@
 
     <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-py-5v">
         <div class="fr-col-12 fr-col-md-6">
-            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(userPartners|length, 'Agent trouvé', 'Agents trouvés') }}</h2>
+            <h2 class="fr-mb-0">{{ singular_or_plural(userPartners|length, 'Agent trouvé', 'Agents trouvés') }}</h2>
         </div>
         <div class="fr-col-12 fr-col-md-6 fr-text--right">
             <a 
@@ -58,36 +58,34 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
-        {% set tableHead %}
-            <th scope="col">Nom complet</th>
-            <th scope="col">Partenaire</th>
-            <th scope="col">E-mail</th>
-            <th scope="col">Téléphone</th>
-            {% if isMultiTerritory %}
-                <th scope="col">Territoire</th>
-            {% endif %}
-        {% endset %}
+    <section class="fr-container--fluid">
 
-        {% set tableBody %}
+        <div class="fr-grid-row fr-grid-row--gutters">
             {% for userPartner in userPartners %}
-                <tr class="signalement-row">
-                    <td>{{ userPartner.user.nomComplet }}</td>
-                    <td>{{ userPartner.partner.nom }}</td>
-                    <td>{{ userPartner.user.email }}</td>
-                    <td>{{ userPartner.user.phoneDecoded }}</td>
-                    {% if isMultiTerritory %}
-                        <td>
-                            {% if userPartner.partner.territory %}
-                                {{ userPartner.partner.territory.zip }} - {{ userPartner.partner.territory.name }}
-                            {% endif %}
-                        </td>
-                    {% endif %}
-                </tr>
+                <div class="fr-col-12 fr-col-lg-6">
+                    <div class="fr-container--fluid item-annuaire-agent fr-p-4v">
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-2 fr-col-sm-1">
+                                {{ user_avatar_or_placeholder(userPartner.user, 45) }}
+                            </div>
+                            <div class="fr-col-10 fr-col-sm-11">
+                                <h3 class="fr-h4 fr-mb-1v">{{ userPartner.user.nomComplet }}</h3>
+                                <strong>{{ userPartner.partner.nom }}</strong>
+                                {% if isMultiTerritory and userPartner.partner.territory %}
+                                    ({{ userPartner.partner.territory.zip }} - {{ userPartner.partner.territory.name }})
+                                {% endif %}
+                                <br>
+                                Fonction : {{ userPartner.user.fonction ? userPartner.user.fonction : '/' }}
+                                <br>
+                                {{ userPartner.user.email }}
+                                <br>
+                                {{ userPartner.user.phoneDecoded ? userPartner.user.phoneDecoded : '&nbsp;' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        {% endset %}
-
-        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Annuaire des agents', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+        </div>
         
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
