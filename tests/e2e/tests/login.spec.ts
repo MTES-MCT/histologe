@@ -55,24 +55,35 @@ test('login for admin', async ({page, context}) => {
   await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion`);
   await page.waitForLoadState('networkidle');
 
+  // Test validation errors
+  console.log('[TEST ADMIN] Testing empty form submission');
   await page.getByRole('button', { name: 'Connexion' }).click();
   await page.getByText('Connexion impossible').click();
+
+  console.log('[TEST ADMIN] Testing email-only submission');
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).click();
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('bla');
   await page.getByRole('button', { name: 'Connexion' }).click();
   await page.getByText('Veuillez saisir votre mot de').click();
+
+  console.log('[TEST ADMIN] Testing invalid credentials');
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('bla');
   await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('bla');
   await page.getByRole('button', { name: 'Connexion' }).click();
   await page.getByText('Identifiants invalides.').click();
   await page.getByText('Adresse utilisée lors de la').click();
+
+  console.log('[TEST ADMIN] Testing valid login');
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('admin-01@signal-logement.fr');
   await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('signallogement');
   await page.getByRole('button', { name: 'Connexion' }).click();
 
   // Attendre la navigation après connexion réussie
+  console.log('[TEST ADMIN] Waiting for navigation to dashboard');
   await page.waitForURL('**/tableau-de-bord', { timeout: 10000 });
+  console.log('[TEST ADMIN] Successfully navigated to:', page.url());
 
   await page.getByRole('link', { name: 'Tableau de bord' }).click();
   await page.getByRole('link', { name: 'Se déconnecter' }).click();
+  console.log('[TEST ADMIN] Test completed successfully');
 });
