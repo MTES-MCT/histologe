@@ -23,8 +23,8 @@ class ClearEntitiesCommand extends AbstractCronCommand
      * @param iterable<EntityCleanerRepositoryInterface> $entityCleanerRepositories
      */
     public function __construct(
-        readonly private ParameterBagInterface $parameterBag,
-        readonly private ClearEntitiesHandler $clearEntitiesHandler,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly ClearEntitiesHandler $clearEntitiesHandler,
         #[AutowireIterator('app.entity_cleaner')] private readonly iterable $entityCleanerRepositories,
     ) {
         parent::__construct($this->parameterBag);

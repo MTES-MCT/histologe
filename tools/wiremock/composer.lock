@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a784edf040bc73ebaa553401abca8b2",
+    "content-hash": "e40f4819f46fd859c5fff2bdc3a39459",
     "packages": [],
     "packages-dev": [
         {
             "name": "wiremock-php/wiremock-php",
-            "version": "2.35.1",
+            "version": "2.35.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rowanhill/wiremock-php.git",
-                "reference": "3c50603b96579231ab29332030db68ecf2714577"
+                "reference": "f3dcb2415a25f3c64762cf64a3b4f6cd5378e3ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rowanhill/wiremock-php/zipball/3c50603b96579231ab29332030db68ecf2714577",
-                "reference": "3c50603b96579231ab29332030db68ecf2714577",
+                "url": "https://api.github.com/repos/rowanhill/wiremock-php/zipball/f3dcb2415a25f3c64762cf64a3b4f6cd5378e3ba",
+                "reference": "f3dcb2415a25f3c64762cf64a3b4f6cd5378e3ba",
                 "shasum": ""
             },
             "require": {
@@ -28,7 +28,7 @@
             },
             "require-dev": {
                 "hamcrest/hamcrest-php": "^2.0",
-                "phake/phake": "^4.2",
+                "phake/phake": "^4.5",
                 "phpdocumentor/reflection-docblock": "^5.3",
                 "phpdocumentor/type-resolver": "^1.6",
                 "phpunit/phpunit": "^8.5"
@@ -55,17 +55,17 @@
             "homepage": "http://github.com/rowanhill/wiremock-php",
             "support": {
                 "issues": "https://github.com/rowanhill/wiremock-php/issues",
-                "source": "https://github.com/rowanhill/wiremock-php/tree/2.35.1"
+                "source": "https://github.com/rowanhill/wiremock-php/tree/2.35.3"
             },
-            "time": "2023-01-15T15:52:50+00:00"
+            "time": "2025-03-14T14:53:41+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
