@@ -20,16 +20,19 @@ class CoordonneesBailleurType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
         $adresseCompleteProprio = mb_trim($signalement->getAdresseProprio().' '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio());
-
         if ($options['extended']) {
             $builder
                 ->add('nomProprio', TextType::class, [
                     'label' => 'Nom',
-                    'disabled' => true,
+                    'disabled' => $signalement->getIsLogementSocial() ? true : false,
+                    'constraints' => $signalement->getIsLogementSocial() ? [] : [
+                        new Assert\NotBlank(),
+                    ],
+                    'required' => false,
                 ])
                 ->add('prenomProprio', TextType::class, [
                     'label' => 'Prénom',
-                    'disabled' => true,
+                    'required' => false,
                 ])
                 ->add('adresseCompleteProprio', null, [
                     'label' => false,
