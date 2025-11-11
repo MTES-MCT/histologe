@@ -5,6 +5,7 @@ namespace App\Messenger\MessageHandler;
 use App\Entity\Enum\SignalementStatus;
 use App\Messenger\Message\SignalementAddressUpdateAndAutoAssignMessage;
 use App\Repository\SignalementRepository;
+use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\SignalementAddressUpdater;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +20,7 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly AutoAssigner $autoAssigner,
         private readonly EntityManagerInterface $entityManager,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -29,8 +31,10 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
             $signalement = $this->signalementRepository->find($signalementAddressUpdateAndAutoAssignMessage->getSignalementId());
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
             $this->entityManager->flush();
-            if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
-                $this->autoAssigner->assign($signalement);
+            if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+                $this->notificationAndMailSender->sendNewSignalementInjonction($signalement);
+            } else {
+                $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
             }
         } catch (\Throwable $exception) {
             $this->logger->error(

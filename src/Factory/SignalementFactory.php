@@ -12,7 +12,7 @@ class SignalementFactory
     /**
      * @param array<string, mixed> $data
      */
-    public function createInstanceFrom(Territory $territory, array $data, bool $isImported = false): Signalement
+    public function createInstanceFromArrayForImport(Territory $territory, array $data): Signalement
     {
         if (empty($data['statut'])) {
             $data['statut'] = SignalementStatus::ACTIVE;
@@ -22,7 +22,7 @@ class SignalementFactory
         }
 
         return (new Signalement())
-            ->setIsImported($isImported)
+            ->setIsImported(true)
             ->setTerritory($territory)
             ->setDetails($data['details'])
             ->setIsProprioAverti((bool) $data['isProprioAverti'])

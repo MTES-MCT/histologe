@@ -207,8 +207,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($signalement);
-        $this->userManager->createUsagerFromSignalement($signalement);
-        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
+        $this->userManager->createUsagersFromSignalement($signalement);
 
         if (isset($row['qualifications'])) {
             foreach ($row['qualifications'] as $qualificationLabel) {
@@ -480,8 +479,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $signalement->setCreatedBy($this->admin);
         }
         $manager->persist($signalement);
-        $this->userManager->createUsagerFromSignalement($signalement);
-        $this->userManager->createUsagerFromSignalement($signalement, $this->userManager::DECLARANT);
+        $this->userManager->createUsagersFromSignalement($signalement);
     }
 
     /**

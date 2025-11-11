@@ -31,7 +31,6 @@ use App\Entity\SignalementQualification;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Event\SignalementCreatedEvent;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementFactory;
@@ -53,7 +52,6 @@ use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class SignalementManager extends AbstractManager
@@ -62,7 +60,6 @@ class SignalementManager extends AbstractManager
         protected ManagerRegistry $managerRegistry,
         private readonly Security $security,
         private readonly SignalementFactory $signalementFactory,
-        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
         private readonly SignalementExportFactory $signalementExportFactory,
@@ -88,7 +85,7 @@ class SignalementManager extends AbstractManager
     /**
      * @param array<string, mixed> $data
      */
-    public function createOrUpdate(Territory $territory, array $data, bool $isImported = false): ?Signalement
+    public function createOrUpdateFromArrayForImport(Territory $territory, array $data): ?Signalement
     {
         /** @var Signalement|null $signalement */
         $signalement = $this->getRepository()->findOneBy([
@@ -100,10 +97,7 @@ class SignalementManager extends AbstractManager
             return $this->update($signalement, $data);
         }
 
-        $signalement = $this->signalementFactory->createInstanceFrom($territory, $data, $isImported);
-        if (!$isImported) {
-            $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME);
-        }
+        $signalement = $this->signalementFactory->createInstanceFromArrayForImport($territory, $data);
 
         return $signalement;
     }

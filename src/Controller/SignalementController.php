@@ -34,7 +34,6 @@ use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\NotificationAndMailSender;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\PostalCodeHomeChecker;
@@ -797,7 +796,6 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
         AutoAssigner $autoAssigner,
-        NotificationAndMailSender $notificationAndMailSender,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_BASCULE_PROCEDURE', $signalement);
@@ -824,8 +822,7 @@ class SignalementController extends AbstractController
 
             $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
             $signalementManager->save($signalement);
-            $autoAssigner->assign($signalement);
-            $notificationAndMailSender->sendNewSignalement($signalement);
+            $autoAssigner->assignOrSendNewSignalementNotification($signalement);
 
             $this->addFlash('success', 'Votre demande a bien été prise en compte. Votre signalement a été transmis à l\'administration.');
 

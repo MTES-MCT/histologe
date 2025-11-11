@@ -165,8 +165,8 @@ class SignalementCreateControllerTest extends WebTestCase
         // auto affectation
         $this->assertEquals($signalement->getStatut(), SignalementStatus::ACTIVE);
         $this->assertCount(2, $signalement->getAffectations());
-        // occupant, declarant + deux affectations + nouveau signalement RT sans mail récap = 5 mails
-        $this->assertEmailCount(5);
+        // occupant, declarant + deux affectations = 4 mails
+        $this->assertEmailCount(4);
         $this->assertEquals($signalement->getCreatedBy()->getId(), $user->getId());
         $this->assertEquals($signalement->getSignalementUsager()->getOccupant()->getEmail(), $payload['mailOccupant']);
         $this->assertEquals($signalement->getSignalementUsager()->getDeclarant()->getEmail(), $payload['mailDeclarant']);

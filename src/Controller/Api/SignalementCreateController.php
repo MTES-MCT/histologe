@@ -7,9 +7,9 @@ use App\Dto\Api\Response\SignalementResponse;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Event\SignalementCreatedEvent;
 use App\Factory\Api\SignalementResponseFactory;
 use App\Manager\SignalementManager;
+use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\AutoAssigner;
@@ -19,7 +19,6 @@ use App\Service\Signalement\SignalementApiFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -44,8 +43,8 @@ class SignalementCreateController extends AbstractController
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly EntityManagerInterface $entityManager,
-        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly AutoAssigner $autoAssigner,
+        private readonly UserManager $userManager,
         #[Autowire(env: 'FEATURE_API_CREATION_SIGNALEMENT')]
         private readonly string $featureApiCreationSignalement,
     ) {
@@ -255,8 +254,8 @@ class SignalementCreateController extends AbstractController
         $signalement->setReference($this->referenceGenerator->generate($signalement->getTerritory()));
         $this->signalementRepository->save($signalement, true);
         $this->entityManager->commit();
-        $this->eventDispatcher->dispatch(new SignalementCreatedEvent($signalement), SignalementCreatedEvent::NAME); // @phpstan-ignore-line
-        $this->autoAssigner->assign($signalement);
+        $this->userManager->createUsagersFromSignalement($signalement);
+        $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
 
         $resource = $this->signalementResponseFactory->createFromSignalement($signalement);
 

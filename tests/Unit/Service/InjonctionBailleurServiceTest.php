@@ -13,7 +13,6 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Service\InjonctionBailleurService;
-use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -22,7 +21,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class InjonctionBailleurServiceTest extends KernelTestCase
 {
     private MockObject&SuiviManager $suiviManager;
-    private MockObject&NotificationAndMailSender $notificationAndMailSender;
     private MockObject&AutoAssigner $autoAssigner;
     private EntityManagerInterface $entityManager;
     private AffectationManager $affectationManager;
@@ -35,7 +33,6 @@ class InjonctionBailleurServiceTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
         $this->suiviManager = $this->createMock(SuiviManager::class);
-        $this->notificationAndMailSender = $this->createMock(NotificationAndMailSender::class);
         $this->autoAssigner = $this->createMock(AutoAssigner::class);
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
@@ -45,7 +42,6 @@ class InjonctionBailleurServiceTest extends KernelTestCase
 
         $this->service = new InjonctionBailleurService(
             $this->suiviManager,
-            $this->notificationAndMailSender,
             $this->autoAssigner,
             $this->entityManager,
             $this->affectationManager,
@@ -82,8 +78,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
                 ]
             );
 
-        $this->notificationAndMailSender->expects($this->once())->method('sendNewSignalement')->with($signalement);
-        $this->autoAssigner->expects($this->once())->method('assign')->with($signalement);
+        $this->autoAssigner->expects($this->once())->method('assignOrSendNewSignalementNotification')->with($signalement);
 
         $this->service->handleStopProcedure($stopProcedure);
 

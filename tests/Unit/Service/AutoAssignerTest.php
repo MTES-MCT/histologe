@@ -16,6 +16,7 @@ use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -31,6 +32,7 @@ class AutoAssignerTest extends KernelTestCase
     private SignalementRepository $signalementRepository;
     private PartnerRepository $partnerRepository;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
+    private NotificationAndMailSender $notificationAndMailSender;
 
     protected function setUp(): void
     {
@@ -43,6 +45,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $this->partnerRepository = $this->entityManager->getRepository(Partner::class);
+        $this->notificationAndMailSender = self::getContainer()->get(NotificationAndMailSender::class);
     }
 
     public function testAutoAssignmentSeineStDenis(): void
@@ -237,6 +240,7 @@ class AutoAssignerTest extends KernelTestCase
             $this->partnerRepository,
             $this->userRepository,
             $this->userSignalementSubscriptionManager,
+            $this->notificationAndMailSender,
             $logger,
         );
 

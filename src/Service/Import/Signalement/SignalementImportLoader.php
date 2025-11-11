@@ -112,7 +112,7 @@ class SignalementImportLoader
                 if ($output) {
                     $progressBar->advance();
                 }
-                $signalement = $this->signalementManager->createOrUpdate($territory, $dataMapped, true);
+                $signalement = $this->signalementManager->createOrUpdateFromArrayForImport($territory, $dataMapped);
                 $this->signalementManager->persist($signalement);
 
                 $signalement = $this->loadTags($signalement, $territory, $dataMapped);

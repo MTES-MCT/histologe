@@ -7,6 +7,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\User;
 use App\Factory\SignalementDraftFactory;
 use App\Manager\SignalementDraftManager;
+use App\Manager\UserManager;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
@@ -29,6 +30,7 @@ class SignalementDraftManagerTest extends WebTestCase
     private SignalementDraftRequestSerializer $signalementDraftRequestSerializer;
     private SignalementDraftRepository $signalementDraftRepository;
     private SignalementRepository $signalementRepository;
+    private UserManager $userManager;
 
     protected function setUp(): void
     {
@@ -41,6 +43,7 @@ class SignalementDraftManagerTest extends WebTestCase
         $this->signalementDraftRequestSerializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
         $this->signalementDraftRepository = static::getContainer()->get(SignalementDraftRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->userManager = static::getContainer()->get(UserManager::class);
 
         $this->signalementDraftManager = new SignalementDraftManager(
             $this->signalementDraftFactory,
@@ -50,6 +53,7 @@ class SignalementDraftManagerTest extends WebTestCase
             $this->signalementDraftRequestSerializer,
             $this->signalementDraftRepository,
             $this->signalementRepository,
+            $this->userManager,
         );
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);

@@ -8,7 +8,6 @@ use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
-use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -30,7 +29,6 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
         private readonly SuiviManager $suiviManager,
         private readonly AutoAssigner $autoAssigner,
         private readonly UserManager $userManager,
-        private readonly NotificationAndMailSender $notificationAndMailSender,
         #[Autowire(env: 'INJONCTION_PERIOD_THRESHOLD')]
         private readonly string $periodThreshold,
     ) {
@@ -57,12 +55,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
                 isPublic: true
             );
 
-            $hasAssignablePartners = $this->autoAssigner->assign($signalement, true);
-            if (count($hasAssignablePartners)) {
-                $this->autoAssigner->assign($signalement);
-            } else {
-                $this->notificationAndMailSender->sendNewSignalement($signalement);
-            }
+            $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
 
             $output->writeln(sprintf('#%s updated', $signalement->getUuid()));
         }

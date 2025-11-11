@@ -102,6 +102,12 @@ class UserManager extends AbstractManager
         return $user;
     }
 
+    public function createUsagersFromSignalement(Signalement $signalement): void
+    {
+        $this->createUsagerFromSignalement($signalement);
+        $this->createUsagerFromSignalement($signalement, self::DECLARANT);
+    }
+
     public function createUsagerFromSignalement(Signalement $signalement, string $type = self::OCCUPANT): ?User
     {
         $user = null;
