@@ -12,7 +12,7 @@ use App\Form\StopProcedureType;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Security\User\SignalementBailleur;
-use App\Service\InjonctionBailleurService;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

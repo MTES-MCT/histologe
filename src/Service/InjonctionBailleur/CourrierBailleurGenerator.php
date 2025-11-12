@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\InjonctionBailleur;
 
 use App\Entity\Signalement;
 use Dompdf\Dompdf;

@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Form\SearchSignalementInjonctionType;
 use App\Repository\SignalementRepository;
 use App\Security\Voter\UserVoter;
-use App\Service\CourrierBailleurGenerator;
+use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
