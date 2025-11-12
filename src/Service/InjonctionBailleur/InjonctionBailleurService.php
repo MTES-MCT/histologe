@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\InjonctionBailleur;
 
 use App\Dto\ReponseInjonctionBailleur;
 use App\Dto\StopProcedure;
@@ -14,6 +14,8 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
+use App\Service\HtmlCleaner;
+use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 

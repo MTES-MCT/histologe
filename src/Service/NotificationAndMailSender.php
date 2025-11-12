@@ -14,6 +14,7 @@ use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use App\Factory\NotificationFactory;
 use App\Repository\UserRepository;
+use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
