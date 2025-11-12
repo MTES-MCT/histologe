@@ -42,15 +42,15 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         if ($suivi->isWaitingNotification()) {
             return;
         }
-        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalementStatus) {
-            $this->sendToAdminAndPartners($suivi);
-        }
+        $this->sendToAdminAndPartners($suivi);
         $this->sendToUsagers($suivi);
     }
 
     private function sendToAdminAndPartners(Suivi $suivi): void
     {
-        if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY === $suivi->getContext()) {
+        if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY === $suivi->getContext()
+            // Excludes automatic suivis related to injonction bailleur, without blocking other types of suivis if signalement in status INJONCTION_BAILLEUR
+            || str_starts_with($suivi->getCategory()->value, 'INJONCTION_BAILLEUR_')) {
             return;
         }
         if (Suivi::CONTEXT_SIGNALEMENT_CLOSED === $suivi->getContext()) {

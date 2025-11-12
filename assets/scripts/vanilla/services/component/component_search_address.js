@@ -203,6 +203,9 @@ function setManualEdit(input, needResetInsee) {
 
 export function initComponentAdress(id) {
   const addressInput = document.querySelector(id);
+  if (!addressInput) {
+    return;
+  }
   const addressInputParent = addressInput.parentElement.parentElement.parentElement;
   const manualAddressSwitcher = addressInputParent?.querySelector(
     '.manual-address-switcher'
