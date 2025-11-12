@@ -86,6 +86,7 @@ class SearchInterconnexionType extends AbstractType
             'placeholder' => 'Tous les statuts',
             'choices' => [
                 'Success' => 'success',
+                'Warning' => 'warning',
                 'Fail' => 'failed',
             ],
         ]);

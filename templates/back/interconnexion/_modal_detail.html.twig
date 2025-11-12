@@ -1,0 +1,53 @@
+<dialog id="{{ modalId }}" class="fr-modal" aria-labelledby="{{ modalId }}-title" aria-modal="true">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button aria-controls="{{ modalId }}" title="Fermer" type="button" class="fr-btn--close fr-btn">
+                            Fermer
+                        </button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <div>
+                            <h2 id="{{ modalId }}-title" class="fr-modal__title">
+                                <span class="fr-icon-arrow-right-line fr-icon--lg" aria-hidden="true"></span>
+                                Détails #{{ connection.reference }}
+                            </h2>
+                            <p>Synchronisation du {{ syncAt }} pour {{ connection.nom }}<br>
+                                {% if connection.status == 'failed' %}
+                                    <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
+                                {% elseif connection.status == 'success' and isResponseValid %}
+                                    <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--no-icon fr-badge--new">Warning</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div>
+                            <h3>Requête</h3>
+                            <pre>
+                                <code>{{ connection.message }}</code>
+                            </pre>
+                        </div>
+                        {% if connection.attachmentsCount > 0 %}
+                            <div>
+                                <h4>Fichiers</h4>
+                                <p>
+                                    <strong>Nombre de fichiers :</strong> {{ connection.attachmentsCount }}<br>
+                                    <strong>Poids total des fichiers :</strong> {{ (connection.attachmentsSize / 1048576)|round(2) }} Mo
+                                </p>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h3>Réponse</h3>
+                            <pre>
+                                <code>{{ connection.response }}</code>
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

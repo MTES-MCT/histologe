@@ -195,7 +195,8 @@ class EsaboraSISHService extends AbstractEsaboraService
     }
 
     /**
-     * @param array<mixed> $payload
+     * @param array<mixed>       $payload
+     * @param DossierMessageSISH $dossierMessage
      */
     private function getDossierPushResponse(
         string $url,
@@ -212,6 +213,8 @@ class EsaboraSISHService extends AbstractEsaboraService
                 signalementId: $dossierMessage->getSignalementId(),
                 partnerId: $dossierMessage->getPartnerId(),
                 partnerType: $dossierMessage->getPartnerType(),
+                attachmentsCount: $dossierMessage->getAttachmentsCount(),
+                attachmentsSize: $dossierMessage->getAttachmentsSize(),
             );
 
             $response = $this->request($url, $token, $payload, $options);

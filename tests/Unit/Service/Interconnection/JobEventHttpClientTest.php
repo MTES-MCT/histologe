@@ -41,7 +41,9 @@ class JobEventHttpClientTest extends TestCase
             'job_event_metadata' => new JobEventMetaData(
                 service: 'esabora',
                 action: 'push_dossier',
-                payload: $payload
+                payload: $payload,
+                attachmentsCount: 2,
+                attachmentsSize: 10
             ),
         ];
 

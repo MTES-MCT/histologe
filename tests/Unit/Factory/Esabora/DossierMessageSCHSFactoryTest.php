@@ -13,7 +13,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
 {
     use FixturesHelper;
 
-    private const FILE = __DIR__.'/../../../../src/DataFixtures/Images/sample.png';
+    private const string FILE = __DIR__.'/../../../../src/DataFixtures/Images/sample.png';
 
     public function testDossierMessageFactoryIsFullyCreated(): void
     {

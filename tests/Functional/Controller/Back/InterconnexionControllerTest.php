@@ -30,13 +30,14 @@ class InterconnexionControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('h2#desc-table');
-        $this->assertSelectorTextContains('h2#desc-table', 'connexions');
+        $this->assertSelectorTextContains('h2#desc-table', 'connexion'); // include singular and plural
     }
 
     public function provideParamsInterconnexionList(): \Generator
     {
         yield 'Search without params' => [[]];
-        yield 'Search with status success' => [['status' => 'success']];
+        yield 'Search with status warning' => [['status' => 'warning']];
+        yield 'Search with status success empty data' => [['status' => 'success']];
         yield 'Search with status failed' => [['status' => 'failed']];
         yield 'Search with action push_dossier' => [['action' => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER]];
         yield 'Search with territory 13' => [['territory' => 13]];

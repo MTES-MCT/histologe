@@ -60,10 +60,12 @@ class JobEventHttpClient implements HttpClientInterface
                             - '@http_client.default'
                 ERROR);
         }
+        /* @var JobEventMetaData $jobEventMetaData */
         $this->logger->info('Starting HTTP request', [
             'method' => $method,
             'url' => $url,
             'options' => $options,
+            'payload' => $jobEventMetaData->getPayload(),
         ]);
         $response = null;
         try {
@@ -88,7 +90,6 @@ class JobEventHttpClient implements HttpClientInterface
             ]);
         }
 
-        /** @var JobEventMetaData $jobEventMetaData */
         $payload = [];
         if (null !== $jobEventMetaData->getPayload()) {
             $payload = $this->filterPayload($jobEventMetaData->getPayload());
@@ -104,6 +105,8 @@ class JobEventHttpClient implements HttpClientInterface
             signalementId: $jobEventMetaData->getSignalementId(),
             partnerId: $jobEventMetaData->getPartnerId(),
             partnerType: $jobEventMetaData->getPartnerType(),
+            attachmentsCount: $jobEventMetaData->getAttachmentsCount(),
+            attachmentsSize: $jobEventMetaData->getAttachmentsSize(),
             flush: 'esabora' === $jobEventMetaData->getService() && str_contains($jobEventMetaData->getAction(), 'sync') ? false : true,
         );
 

@@ -18,7 +18,10 @@ class DossierPersonneServiceHandler extends AbstractDossierSISHHandler
 
     public function handle(DossierMessageSISH $dossierMessageSISH): void
     {
-        $dossierMessageSISH->setAction($this->action);
+        $dossierMessageSISH
+            ->setAction($this->action)
+            ->setAttachmentsSize(null)
+            ->setAttachmentsCount(null);
         /** @var DossierMessageSISHPersonne $dossierPersonne */
         foreach ($dossierMessageSISH->getPersonnes() as $dossierPersonne) {
             $this->response = $this->esaboraSISHService->pushPersonne($dossierMessageSISH, $dossierPersonne);

@@ -72,6 +72,9 @@
         {% set tableBody %}
             {% for connection in connections %}
                 {% set syncAt = connection.createdAt|date('d/m/Y H:i:s') %}
+                {% set isResponseValid = connection.status == 'success'
+                    and connection.response|length > 0
+                    and connection.response != '[]' and connection.response != '{}' %}
                 <tr>
                     <td>
                         {% if connection.uuid is not null %}
@@ -85,9 +88,13 @@
                     <td>{{ connection.service }}</td>
                     <td>{{ connection.action }}</td>
                     <td>
-                        <span class="fr-badge fr-badge--no-icon {{ connection.status == 'success' ? 'fr-badge--success' : 'fr-badge--error' }}">
-                            {{ connection.status == 'success' ? 'Success' : 'Fail' }}
-                        </span>
+                        {% if connection.status == 'failed' %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
+                        {% elseif connection.status == 'success' and isResponseValid %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
+                        {% else %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--new">Warning</span>
+                        {% endif %}
                     </td>
                    <td>
                        {% set modalId = 'modal-' ~ loop.index %}
@@ -97,44 +104,7 @@
                                title="Afficher les détails de synchronisation pour {{ connection.reference }} le {{ syncAt  }}"
                                class="fr-btn fr-fi-eye-fill">
                        </button>
-                       <dialog id="{{ modalId }}" class="fr-modal" aria-labelledby="{{ modalId }}-title" aria-modal="true">
-                           <div class="fr-container fr-container--fluid fr-container-md">
-                               <div class="fr-grid-row fr-grid-row--center">
-                                   <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                                       <div class="fr-modal__body">
-                                           <div class="fr-modal__header">
-                                               <button aria-controls="{{ modalId  }}" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
-                                           </div>
-                                           <div class="fr-modal__content">
-                                               <div>
-                                                   <h2 id="{{ modalId }}-title" class="fr-modal__title">
-                                                       <span class="fr-icon-arrow-right-line fr-icon--lg" aria-hidden="true"></span>
-                                                       Détails  #{{ connection.reference }}
-                                                   </h2>
-                                                   <p>Synchronisation du  {{ syncAt }} pour {{ connection.nom }}<br>
-                                                       <span class="fr-badge fr-badge--no-icon {{ connection.status == 'success' ? 'fr-badge--success' : 'fr-badge--error' }}">
-                                                        {{ connection.status == 'success' ? 'Success' : 'Fail' }}
-                                                       </span>
-                                                   </p>
-                                               </div>
-                                               <div>
-                                                   <h3>Requête</h3>
-                                                   <pre>
-                                                       <code>{{ connection.message }}</code>
-                                                   </pre>
-                                               </div>
-                                               <div>
-                                                   <h3>Réponse</h3>
-                                                   <pre>
-                                                   <code>{{ connection.response }}</code>
-                                               </pre>
-                                               </div>
-                                           </div>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                       </dialog>
+                       {% include 'back/interconnexion/_modal_detail.html.twig' %}
                    </td>
                 </tr>
             {% endfor %}

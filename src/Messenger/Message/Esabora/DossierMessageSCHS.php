@@ -61,6 +61,10 @@ final class DossierMessageSCHS implements DossierMessageInterface
      */
     private array $piecesJointes = [];
 
+    private ?int $attachmentsCount = null;
+
+    private ?int $attachmentsSize = null;
+
     public function getPartnerId(): ?int
     {
         return $this->partnerId;
@@ -339,6 +343,30 @@ final class DossierMessageSCHS implements DossierMessageInterface
     public function setSignalementId(?int $signalementId): self
     {
         $this->signalementId = $signalementId;
+
+        return $this;
+    }
+
+    public function getAttachmentsCount(): ?int
+    {
+        return $this->attachmentsCount;
+    }
+
+    public function getAttachmentsSize(): ?int
+    {
+        return $this->attachmentsSize;
+    }
+
+    public function setAttachmentsCount(?int $attachmentsCount): self
+    {
+        $this->attachmentsCount = $attachmentsCount;
+
+        return $this;
+    }
+
+    public function setAttachmentsSize(?int $attachmentsSize): self
+    {
+        $this->attachmentsSize = $attachmentsSize;
 
         return $this;
     }
