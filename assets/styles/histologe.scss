@@ -67,8 +67,6 @@ pre {
 }
 
 @media (max-width: 48em) {
-    .button-group-responsive-inverted .signalement-form-button,
-    .button-group-responsive-inverted .signalement-form-link,
     .button-group-footer .signalement-form-button {
         display: flex;
         width: 100%;
@@ -99,18 +97,6 @@ pre {
 
 @media (min-width: 48em) {
     
-    .button-group-responsive-inverted {
-        > div {
-            display: flex;
-            justify-content: right;
-            flex-direction: row-reverse;
-
-            .signalement-form-button, .signalement-form-link {
-                display: inline-flex;
-                margin-left: 0.25rem;
-            }
-        }
-    }
     .button-group-footer {
         width: 100%;
         > div {

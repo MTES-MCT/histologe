@@ -333,7 +333,7 @@ class SignalementActionController extends AbstractController
         RnbService $rnbService,
         SignalementManager $signalementManager,
     ): RedirectResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        $this->denyAccessUnlessGranted('SIGN_EDIT_NEED_VALIDATION', $signalement);
         $rnbId = $request->get('rnbId');
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {

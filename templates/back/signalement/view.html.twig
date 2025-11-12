@@ -49,7 +49,7 @@
     {% endif %}
     {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
         {% include '_partials/_modal_localisation.html.twig' %}
-    {% elseif is_granted('SIGN_EDIT', signalement) %}
+    {% elseif is_granted('SIGN_EDIT_NEED_VALIDATION', signalement) %}
         {% include '_partials/_modal_pick_localisation.html.twig' %}
     {% endif %}
     {% if is_granted('ROLE_ADMIN') %}
