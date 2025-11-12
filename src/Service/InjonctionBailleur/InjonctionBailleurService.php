@@ -15,7 +15,6 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Service\HtmlCleaner;
-use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 
