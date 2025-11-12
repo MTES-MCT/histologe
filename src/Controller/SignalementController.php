@@ -619,6 +619,8 @@ class SignalementController extends AbstractController
             $description = $user->getNomComplet(true).$usager.' a mis à jour les coordonnées du bailleur.';
             $description .= '<br>Voici les nouvelles coordonnées :';
             $description .= '<ul>';
+            $description .= $signalement->getNomProprio() ? '<li>Nom : '.$signalement->getNomProprio().'</li>' : '';
+            $description .= $signalement->getPrenomProprio() ? '<li>Prénom : '.$signalement->getPrenomProprio().'</li>' : '';
             $description .= $signalement->getMailProprio() ? '<li>E-mail : '.$signalement->getMailProprio().'</li>' : '';
             $description .= $signalement->getTelProprio() ? '<li>Téléphone : '.$signalement->getTelProprio().'</li>' : '';
             $description .= $signalement->getTelProprioSecondaire() ? '<li>Téléphone secondaire : '.$signalement->getTelProprioSecondaire().'</li>' : '';
