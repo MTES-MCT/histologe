@@ -400,58 +400,66 @@ class SignalementActionController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
-        $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
-        if (\count($subscriptionsInMyPartner) < 2 && !$user->isAloneInPartner($partner)) {
-            if (null === $request->get('agents_selection')) {
-                $this->addFlash('error', 'Vous êtes le seul agent de votre partenaire sur ce dossier. Si vous souhaitez quitter le dossier, vous devez d\'abord transférer le dossier à un autre agent de votre partenaire.');
 
-                return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-            }
+        // If no partner in territory, no point in blocking unsubscription
+        if ($partner) {
             $affectation = $affectationRepository->findOneBy(['partner' => $partner, 'signalement' => $signalement]);
-            $agentsSelection = (new AgentSelection())->setAffectation($affectation);
-            $agentsSelectionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
-            $form = $this->createForm(
-                AgentSelectionType::class,
-                $agentsSelection,
-                [
-                    'action' => $agentsSelectionFormRoute,
-                    'exclude_user' => $this->getUser(),
-                    'label' => 'Sélectionnez le(s) agent(s) à qui transmettre le dossier',
-                ]
-            );
-            $form->handleRequest($request);
 
-            if (!$form->isSubmitted()) {
-                return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+            // If no affectation for user partner, no point in blocking unsubscription
+            if ($affectation) {
+                // If partner and affectation exist, check if user is alone in partner for this signalement to avoid unsubscription
+                $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
+                if (\count($subscriptionsInMyPartner) < 2 && !$user->isAloneInPartner($partner)) {
+                    if (null === $request->get('agents_selection')) {
+                        $this->addFlash('error', 'Vous êtes le seul agent de votre partenaire sur ce dossier. Si vous souhaitez quitter le dossier, vous devez d\'abord transférer le dossier à un autre agent de votre partenaire.');
+
+                        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+                    }
+                    $agentsSelection = (new AgentSelection())->setAffectation($affectation);
+                    $agentsSelectionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
+                    $form = $this->createForm(
+                        AgentSelectionType::class,
+                        $agentsSelection,
+                        [
+                            'action' => $agentsSelectionFormRoute,
+                            'exclude_user' => $this->getUser(),
+                            'label' => 'Sélectionnez le(s) agent(s) à qui transmettre le dossier',
+                        ]
+                    );
+                    $form->handleRequest($request);
+
+                    if (!$form->isSubmitted()) {
+                        return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+                    }
+                    if (!$form->isValid()) {
+                        $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+                        return $this->json($response, $response['code']);
+                    }
+
+                    $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
+                    foreach ($agentsSelection->getAgents() as $agent) {
+                        $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
+                        $signalementSubscriptionManager->flush();
+                    }
+                    $this->addFlash('success', $successMsg);
+
+                    $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                    return $this->json(['redirect' => true, 'url' => $url]);
+                }
+
+                if ($user->isAloneInPartner($partner)) {
+                    $this->addFlash('error', 'Vous ne pouvez pas quitter un dossier étant seul agent de votre partenaire.');
+
+                    return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+                }
             }
-            if (!$form->isValid()) {
-                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
-
-                return $this->json($response, $response['code']);
-            }
-
-            $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
-            foreach ($agentsSelection->getAgents() as $agent) {
-                $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
-                $signalementSubscriptionManager->flush();
-            }
-            $this->addFlash('success', $successMsg);
-
-            $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
-
-            return $this->json(['redirect' => true, 'url' => $url]);
         }
 
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
             $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
-
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-        }
-        /** @var User $user */
-        $user = $this->getUser();
-        if ($user->isAloneInPartner($user->getPartnerInTerritory($signalement->getTerritory()))) {
-            $this->addFlash('error', 'Vous ne pouvez pas quitter un dossier étant seul agent de votre partenaire.');
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }

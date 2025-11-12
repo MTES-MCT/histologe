@@ -88,13 +88,13 @@
                 {% if is_granted('SIGN_SUBSCRIBE', signalement) %}
                     {% if isUserSubscribed %}
                             <li>
-                                {% if isAloneInCurrentPartner %}
+                                {% if isAloneInCurrentPartner and affectation %}
                                     <button 
                                         class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line disabled"
                                         aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire.">
                                         Se retirer du dossier
                                     </button>
-                                {% elseif subscriptionsInMyPartner|length > 1 %}
+                                {% elseif subscriptionsInMyPartner|length > 1 or not affectation %}
                                     <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
                                         class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
                                         Se retirer du dossier
