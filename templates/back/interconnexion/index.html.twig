@@ -74,7 +74,7 @@
                 {% set syncAt = connection.createdAt|date('d/m/Y H:i:s') %}
                 {% set isResponseValid = connection.status == 'success'
                     and connection.response|length > 0
-                    and connection.response != '[]' %}
+                    and connection.response != '[]' and connection.response != '{}' %}
                 <tr>
                     <td>
                         {% if connection.uuid is not null %}
@@ -88,9 +88,13 @@
                     <td>{{ connection.service }}</td>
                     <td>{{ connection.action }}</td>
                     <td>
-                        <span class="fr-badge fr-badge--no-icon {{ isResponseValid ? 'fr-badge--success' : 'fr-badge--error' }}">
-                            {{ isResponseValid ? 'Success' : 'Fail' }}
-                        </span>
+                        {% if connection.status == 'failed' %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
+                        {% elseif connection.status == 'success' and isResponseValid %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
+                        {% else %}
+                            <span class="fr-badge fr-badge--no-icon fr-badge--new">Warning</span>
+                        {% endif %}
                     </td>
                    <td>
                        {% set modalId = 'modal-' ~ loop.index %}

@@ -185,14 +185,14 @@ class JobEvent
         return $this->attachmentsCount;
     }
 
-    public function setAttachmentsCount(?int $attachmentsCount): self
+    public function setAttachmentsCount(?int $attachmentsCount): static
     {
         $this->attachmentsCount = $attachmentsCount;
 
         return $this;
     }
 
-    public function setAttachmentsSize(?int $attachmentsSize): self
+    public function setAttachmentsSize(?int $attachmentsSize): static
     {
         $this->attachmentsSize = $attachmentsSize;
 

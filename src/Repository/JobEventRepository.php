@@ -105,7 +105,27 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             $qb->andWhere('p.id = :partnerId')->setParameter('partnerId', $searchInterconnexion->getPartner()->getId());
         }
         if ($searchInterconnexion->getStatus()) {
-            $qb->andWhere('j.status = :status')->setParameter('status', $searchInterconnexion->getStatus());
+            if ('failed' === $searchInterconnexion->getStatus()) {
+                $qb->andWhere('j.status = :status')->setParameter('status', JobEvent::STATUS_FAILED);
+            } elseif ('warning' === $searchInterconnexion->getStatus()) {
+                $qb
+                    ->andWhere('j.status = :status')
+                    ->andWhere('(
+                        j.response IS NULL
+                        OR j.response = \'{}\'
+                        OR j.response = \'[]\'
+                        OR LENGTH(TRIM(j.response)) = 0
+                    )')
+                    ->setParameter('status', JobEvent::STATUS_SUCCESS);
+            } else {
+                $qb->andWhere('j.status = :status')
+                    ->andWhere('j.response IS NOT NULL')
+                    ->andWhere('LENGTH(TRIM(j.response)) > 0')
+                    ->andWhere('j.response != \'[]\'')
+                    ->andWhere('j.response != \'{}\'')
+                    ->setParameter('status', $searchInterconnexion->getStatus())
+                ;
+            }
         }
         if ($searchInterconnexion->getAction()) {
             $qb->andWhere('j.action = :action')->setParameter('action', $searchInterconnexion->getAction());
