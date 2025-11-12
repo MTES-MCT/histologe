@@ -164,28 +164,6 @@ jobs:
           done
           echo "Application is ready!"
 
-      - name: Verify configuration
-        run: |
-          echo "=== Checking .env file ==="
-          echo "Rate limiter config:"
-          grep "FORMS_SUBMIT_LIMITER" .env || echo "FORMS_SUBMIT_LIMITER not found in .env"
-          echo ""
-          echo "S3 config:"
-          grep "S3_" .env || echo "S3 vars not found in .env"
-          echo ""
-          echo "=== Display full .env (without secrets) ==="
-          cat .env | grep -v "SECRET\|PASSWORD\|KEY" | head -50
-          echo ""
-          echo "=== Check Symfony environment ==="
-          docker compose exec -T signal_logement_phpfpm php bin/console about || echo "Could not get Symfony info"
-          echo ""
-          echo "=== Test direct access to problematic routes ==="
-          echo "Testing /login-bailleur:"
-          curl -v http://localhost:8080/login-bailleur 2>&1 | head -30
-          echo ""
-          echo "Testing /dossier-bailleur/ (should fail without auth):"
-          curl -v http://localhost:8080/dossier-bailleur/ 2>&1 | head -50
-
       - name: Install Node.js for Playwright
         uses: actions/setup-node@v4
         with:
@@ -201,14 +179,6 @@ jobs:
         working-directory: tests/e2e
         run: npx playwright test
 
-      - name: Upload test screenshots
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-screenshots
-          path: /tmp/*.png
-          if-no-files-found: ignore
-
       - name: Upload Playwright artifacts
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
@@ -222,21 +192,8 @@ jobs:
       - name: Check server logs
         if: ${{ always() }}
         run: |
-          echo "=== Symfony error logs ==="
-          docker compose exec -T signal_logement_phpfpm cat var/log/test.log 2>/dev/null | tail -100 || echo "No test.log found"
-          docker compose exec -T signal_logement_phpfpm cat var/log/dev.log 2>/dev/null | tail -100 || echo "No dev.log found"
-          echo ""
-          echo "=== PHP-FPM logs (errors only) ==="
-          docker compose logs signal_logement_phpfpm 2>&1 | grep -i "error\|warning\|exception\|fatal" || echo "No errors found"
-          echo ""
-          echo "=== PHP-FPM logs (all, last 300 lines) ==="
-          docker compose logs signal_logement_phpfpm --tail=300
-          echo ""
-          echo "=== Nginx error logs ==="
-          docker compose exec -T signal_logement_nginx cat /var/log/nginx/error.log 2>/dev/null | tail -50 || echo "No nginx error log"
-          echo ""
-          echo "=== Nginx access logs (last 50) ==="
-          docker compose exec -T signal_logement_nginx cat /var/log/nginx/access.log 2>/dev/null | tail -50 || echo "No nginx access log"
+          echo "=== PHP-FPM logs (last 100 lines) ==="
+          docker compose logs signal_logement_phpfpm --tail=100
 
       - name: Check build output inside container
         if: ${{ always() }}
