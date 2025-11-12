@@ -411,8 +411,13 @@ class SignalementController extends AbstractController
             $this->addFlash('success', sprintf('Signalement #%s fermé avec succès !', $reference));
         }
         $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
-        $url = $this->generateUrl('back_signalements_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $url .= $signalementSearchQuery?->getQueryStringForUrl();
+
+        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            $url = $this->generateUrl('back_injonction_signalement_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        } else {
+            $url = $this->generateUrl('back_signalements_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $url .= $signalementSearchQuery?->getQueryStringForUrl();
+        }
 
         return $this->json(['redirect' => true, 'url' => $url]);
     }
