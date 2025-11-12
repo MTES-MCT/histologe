@@ -44,7 +44,9 @@ class SignalementActionControllerTest extends WebTestCase
 
     public function testValidationResponseAcceptSignalementSuccess(): void
     {
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000009']);
         $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',
@@ -65,17 +67,17 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertEquals(1, $nbSuiviActive);
     }
 
-    public function testValidationResponseRefusSignalementSuccess(): void
+    public function testValidationResponseAcceptSignalementErrorChoiceRT(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
+        $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
         $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',
             $route,
             [
                 'signalement-validation-response' => [
-                    'motifRefus' => 'DOUBLON',
-                    'suivi' => 'le signalement existe déja sous la référence 123-126',
+                    'accept' => '1',
                 ],
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_validation_response_'.$signalement->getId()),
             ]
@@ -83,7 +85,41 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
+        $this->assertSelectorTextContains('.fr-alert--error p', 'Vous devez indiquer les responsables de territoire en charge du dossier.');
+    }
+
+    public function testValidationResponseAcceptSignalementSuccessWithChoiceRT(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
+        $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
+
+        $agents = $this->userRepository->findActiveTerritoryAdminsInPartner($user->getPartnerInTerritory($signalement->getTerritory()));
+        $agentIds = [];
+        foreach ($agents as $agent) {
+            $agentIds[] = $agent->getId();
+        }
+        $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
+
+        $tokenId = 'accept_signalement';
+
+        $this->client->request('POST', $route, [
+            'accept_signalement' => [
+                'agents' => $agentIds,
+                '_token' => $this->generateCsrfToken($this->client, $tokenId),
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->client->followRedirect();
         $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
+
+        $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
+        $this->assertEquals(1, $nbSuiviActive);
+
+        $nbSubscriptions = $this->userSignalementSubscriptionRepository->count(['signalement' => $signalement]);
+        $this->assertEquals(count($agentIds), $nbSubscriptions);
     }
 
     public function testValidationResponseSignalementError(): void

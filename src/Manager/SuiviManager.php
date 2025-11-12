@@ -54,6 +54,7 @@ class SuiviManager extends Manager
         bool $sendMail = true,
         iterable $files = [],
         bool $flush = true,
+        bool $createSubscription = true,
         bool &$subscriptionCreated = false,
     ): Suivi {
         $suivi = (new Suivi())
@@ -78,7 +79,7 @@ class SuiviManager extends Manager
             $suivi->addSuiviFile($suiviFile);
         }
         // abonnement au signalement si le suivi est crée par un agent non abonné
-        if ($this->doesUserNeedSubscription($user, $suivi)) {
+        if ($createSubscription && $this->doesUserNeedSubscription($user, $suivi)) {
             $this->userSignalementSubscriptionManager->createOrGet(
                 userToSubscribe: $user,
                 signalement: $signalement,

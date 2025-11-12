@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\AcceptSignalement;
 use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
@@ -18,6 +19,7 @@ use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
+use App\Form\AcceptSignalementType;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
 use App\Form\ClotureType;
@@ -38,6 +40,7 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
+use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
@@ -88,6 +91,7 @@ class SignalementController extends AbstractController
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
         FileRepository $fileRepository,
+        UserRepository $userRepository,
         SuiviSeenMarker $suiviSeenMarker,
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
@@ -152,9 +156,28 @@ class SignalementController extends AbstractController
             $isUserSubscribed = true;
         }
 
-        $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
-        $refusSignalementRoute = $this->generateUrl('back_signalement_deny', ['uuid' => $signalement->getUuid()]);
-        $refusSignalementForm = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
+        $acceptSignalementForm = null;
+        $refusSignalementForm = null;
+        $isAloneRtInCurrentPartner = false;
+        if ($canValidateOrRefuseSignalement) {
+            if ($user->isTerritoryAdmin()) {
+                if (1 === count($userRepository->findActiveTerritoryAdminsInPartner($partner))) {
+                    $isAloneRtInCurrentPartner = true;
+                }
+            }
+            if (!$isAloneRtInCurrentPartner) {
+                $acceptSignalement = (new AcceptSignalement())->setSignalement($signalement)->setAgents([$user]);
+                $acceptSignalementFormRoute = $this->generateUrl('back_signalement_accept_post', ['uuid' => $signalement->getUuid()]);
+                $acceptSignalementForm = $this->createForm(
+                    AcceptSignalementType::class,
+                    $acceptSignalement,
+                    ['action' => $acceptSignalementFormRoute]
+                );
+            }
+            $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
+            $refusSignalementRoute = $this->generateUrl('back_signalement_deny', ['uuid' => $signalement->getUuid()]);
+            $refusSignalementForm = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
+        }
 
         $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
         $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
@@ -299,9 +322,10 @@ class SignalementController extends AbstractController
             'partners' => $partners,
             'clotureForm' => $clotureForm,
             'addSuiviForm' => $addSuiviForm,
-            'refusAffectationForm' => $refusAffectationForm,
+            'acceptSignalementForm' => $acceptSignalementForm,
             'refusSignalementForm' => $refusSignalementForm,
             'acceptAffectationForm' => $acceptAffectationForm,
+            'refusAffectationForm' => $refusAffectationForm,
             'transferSubscriptionForm' => $transferSubscriptionForm,
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
@@ -321,6 +345,7 @@ class SignalementController extends AbstractController
             'isUserSubscribed' => $isUserSubscribed,
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
             'partnerEmailAlerts' => $this->emailAlertBuilder->buildPartnerEmailAlert($signalement),
+            'isAloneRtInCurrentPartner' => $isAloneRtInCurrentPartner,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);

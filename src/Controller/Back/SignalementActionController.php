@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\AcceptSignalement;
 use App\Dto\AgentSelection;
 use App\Dto\RefusSignalement;
 use App\Entity\Enum\AffectationStatus;
@@ -12,6 +13,7 @@ use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Form\AcceptSignalementType;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
 use App\Form\RefusSignalementType;
@@ -20,6 +22,7 @@ use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
+use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\FormHelper;
 use App\Service\Gouv\Rnb\RnbService;
@@ -46,17 +49,68 @@ class SignalementActionController extends AbstractController
     ) {
     }
 
+    #[Route('/{uuid:signalement}/accept', name: 'back_signalement_accept_post', methods: 'POST')]
+    public function validationResponseSignalementPost(
+        Signalement $signalement,
+        Request $request,
+        UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        SuiviManager $suiviManager,
+    ): Response {
+        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+
+        $acceptSignalement = (new AcceptSignalement())->setSignalement($signalement);
+        $form = $this->createForm(AcceptSignalementType::class, $acceptSignalement);
+        $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        if (!$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+        foreach ($acceptSignalement->getAgents() as $agent) {
+            $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
+        }
+        $signalement->setValidatedAt(new \DateTimeImmutable());
+        $signalement->setStatut(SignalementStatus::ACTIVE);
+        $suiviManager->createSuivi(
+            signalement: $signalement,
+            description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
+            type : Suivi::TYPE_AUTO,
+            category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
+            partner: $partner,
+            user : $user,
+            isPublic: true,
+            context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
+            createSubscription: false
+        );
+        $this->addFlash('success', 'Signalement accepté avec succès !');
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
     #[Route('/{uuid:signalement}/accept', name: 'back_signalement_accept', methods: 'GET')]
     public function validationResponseSignalement(
         Signalement $signalement,
         Request $request,
         SuiviManager $suiviManager,
+        UserRepository $userRepository,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        if ($this->isGranted('ROLE_ADMIN') || (count($userRepository->findActiveTerritoryAdminsInPartner($partner)) > 1)) {
+            $this->addFlash('error', 'Vous devez indiquer les responsables de territoire en charge du dossier.');
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
         if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), (string) $request->get('_token'))) {
             $signalement->setValidatedAt(new \DateTimeImmutable());
-            /** @var User $user */
-            $user = $this->getUser();
             $signalement->setStatut(SignalementStatus::ACTIVE);
             $subscriptionCreated = false;
             $suiviManager->createSuivi(
@@ -64,7 +118,7 @@ class SignalementActionController extends AbstractController
                 description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
                 type : Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                partner: $partner,
                 user : $user,
                 isPublic: true,
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
