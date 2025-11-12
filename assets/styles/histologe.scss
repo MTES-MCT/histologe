@@ -824,6 +824,12 @@ ul + p {
     font-size: 37px;
 }
 
+.avatar-45 {
+    width: 45px;
+    height: 45px;
+    font-size: 23px;
+}
+
 .avatar-26 {
     width: 26px;
     height: 26px;
@@ -1085,4 +1091,8 @@ dl dd {
 }
 dl dd:last-child {
     border-bottom: none;
+}
+
+.item-annuaire-agent{
+    border: 1px solid var(--blue-france-main-525);
 }

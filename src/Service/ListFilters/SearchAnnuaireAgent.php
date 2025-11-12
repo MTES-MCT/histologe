@@ -17,6 +17,7 @@ class SearchAnnuaireAgent
     private ?Territory $territory = null;
     /** @var Collection<int, Partner> */
     private Collection $partners;
+    private ?string $orderType = null;
 
     public function __construct(User $user)
     {
@@ -66,5 +67,15 @@ class SearchAnnuaireAgent
     public function setPartners(Collection $partners): void
     {
         $this->partners = $partners;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): void
+    {
+        $this->orderType = $orderType;
     }
 }

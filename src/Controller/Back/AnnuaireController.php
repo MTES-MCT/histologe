@@ -6,8 +6,9 @@ use App\Entity\User;
 use App\Form\SearchAnnuaireAgentType;
 use App\Repository\UserPartnerRepository;
 use App\Service\ListFilters\SearchAnnuaireAgent;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,39 +57,41 @@ class AnnuaireController extends AbstractController
         $spreadsheet = new Spreadsheet();
         $activeWorksheet = $spreadsheet->getActiveSheet();
 
-        $activeWorksheet->setCellValue('A1', 'Nom du partenaire');
-        $activeWorksheet->setCellValue('B1', 'Nom complet de l\'agent');
+        $activeWorksheet->setCellValue('A1', 'Nom complet de l\'agent');
+        $activeWorksheet->setCellValue('B1', 'Nom du partenaire');
         $activeWorksheet->setCellValue('C1', 'Email de l\'agent');
         $activeWorksheet->setCellValue('D1', 'Téléphone de l\'agent');
+        $activeWorksheet->setCellValue('E1', 'Fonction de l\'agent');
         if ($isMultiTerritory) {
-            $activeWorksheet->setCellValue('E1', 'Territoire');
+            $activeWorksheet->setCellValue('F1', 'Territoire');
         }
 
         $row = 2;
         foreach ($userPartners as $userPartner) {
             $partner = $userPartner->getPartner();
             $user = $userPartner->getUser();
-            $activeWorksheet->setCellValue('A'.$row, $partner->getNom());
-            $activeWorksheet->setCellValue('B'.$row, $user->getNomComplet());
+            $activeWorksheet->setCellValue('A'.$row, $user->getNomComplet());
+            $activeWorksheet->setCellValue('B'.$row, $partner->getNom());
             $activeWorksheet->setCellValue('C'.$row, $user->getEmail());
-            $activeWorksheet->setCellValue('D'.$row, $user->getPhoneDecoded());
+            $activeWorksheet->setCellValueExplicit('D'.$row, $user->getPhoneDecoded(), DataType::TYPE_STRING);
+            $activeWorksheet->setCellValue('E'.$row, $user->getFonction());
             if ($isMultiTerritory) {
                 $territory = $partner->getTerritory();
                 $territoryName = $territory ? $territory->getZip().' - '.$territory->getName() : '';
-                $activeWorksheet->setCellValue('E'.$row, $territoryName);
+                $activeWorksheet->setCellValue('F'.$row, $territoryName);
             }
             ++$row;
         }
 
-        $writer = new Csv($spreadsheet);
-        $filename = 'annuaire_'.date('Y-m-d_H-i-s').'.csv';
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'annuaire_'.date('Y-m-d_H-i-s').'.xlsx';
 
         ob_start();
         $writer->save('php://output');
         $content = ob_get_clean();
 
         $response = new Response($content);
-        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');
         $response->headers->set('Content-Length', (string) strlen($content));
 
