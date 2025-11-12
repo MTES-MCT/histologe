@@ -115,6 +115,7 @@ class SuiviManager extends Manager
             SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
             SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
             SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
+            SuiviCategory::SIGNALEMENT_EDITED_FO,
         ])) {
             return false;
         }

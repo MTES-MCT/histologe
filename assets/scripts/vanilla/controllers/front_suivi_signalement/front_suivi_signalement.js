@@ -3,6 +3,11 @@ import {
   enableHeaderAndFooterButtonOfModal,
 } from '../../services/ui/modales_helper';
 
+import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
+import { initComponentAdress } from '../../services/component/component_search_address';
+attacheAutocompleteAddressEvents();
+initComponentAdress('#coordonnees_bailleur_adresseCompleteProprio');
+
 const fieldsetVisitorType = document?.querySelector('#fieldset-visitor-type');
 if (fieldsetVisitorType) {
   document

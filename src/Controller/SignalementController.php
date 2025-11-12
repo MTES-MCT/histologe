@@ -13,7 +13,9 @@ use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Entity\User;
 use App\Event\SuiviViewedEvent;
+use App\Form\CoordonneesBailleurType;
 use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
 use App\Form\UsagerBasculeProcedureType;
@@ -559,7 +561,7 @@ class SignalementController extends AbstractController
 
             $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
             'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
-            'Votre message a bien été envoyé, vous recevrez un email lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
+            'Votre message a bien été envoyé, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
             $this->addFlash('success', $messageRetour);
 
             return $this->redirectToRoute('front_suivi_signalement_messages', ['code' => $signalement->getCodeSuivi()]);
@@ -582,6 +584,68 @@ class SignalementController extends AbstractController
             'formMessage' => $formMessage,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
             'infoDesordres' => $infoDesordres,
+        ]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/completer', name: 'front_suivi_signalement_complete', methods: ['GET', 'POST'])]
+    public function suiviSignalementComplete(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+        SuiviManager $suiviManager,
+        SignalementManager $signalementManager,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_COMPLETE', $signalement);
+        $formCoordonneesBailleur = $this->createForm(
+            CoordonneesBailleurType::class,
+            $signalement,
+            ['extended' => true]
+        );
+        $formCoordonneesBailleur->handleRequest($request);
+        if (
+            $formCoordonneesBailleur->isSubmitted()
+            && $formCoordonneesBailleur->isValid()
+        ) {
+            /** @var SignalementUser $signalementUser */
+            $signalementUser = $this->getUser();
+            /** @var User $user */
+            $user = $signalementUser->getUser();
+            $signalementManager->save($signalement);
+            $usager = ($user === $signalement->getSignalementUsager()?->getOccupant()) ?
+                ' ('.UserManager::OCCUPANT.')' :
+                ' ('.UserManager::DECLARANT.')';
+            $description = $user->getNomComplet(true).$usager.' a mis à jour les coordonnées du bailleur.';
+            $description .= '<br>Voici les nouvelles coordonnées :';
+            $description .= '<ul>';
+            $description .= $signalement->getNomProprio() ? '<li>Nom : '.$signalement->getNomProprio().'</li>' : '';
+            $description .= $signalement->getPrenomProprio() ? '<li>Prénom : '.$signalement->getPrenomProprio().'</li>' : '';
+            $description .= $signalement->getMailProprio() ? '<li>E-mail : '.$signalement->getMailProprio().'</li>' : '';
+            $description .= $signalement->getTelProprio() ? '<li>Téléphone : '.$signalement->getTelProprio().'</li>' : '';
+            $description .= $signalement->getTelProprioSecondaire() ? '<li>Téléphone secondaire : '.$signalement->getTelProprioSecondaire().'</li>' : '';
+            $description .= $signalement->getAdresseProprio() ? '<li>Adresse : '.$signalement->getAdresseProprio().'</li>' : '';
+            $description .= $signalement->getCodePostalProprio() ? '<li>Code postal : '.$signalement->getCodePostalProprio().'</li>' : '';
+            $description .= $signalement->getVilleProprio() ? '<li>Ville : '.$signalement->getVilleProprio().'</li>' : '';
+            $description .= '</ul>';
+
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                type: Suivi::TYPE_USAGER,
+                category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+                user: $user,
+                isPublic: true,
+            );
+
+            $messageRetour = 'Votre dossier a bien été complété, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
+            $this->addFlash('success', $messageRetour);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/suivi_signalement_complete.html.twig', [
+            'signalement' => $signalement,
+            'formCoordonneesBailleur' => $formCoordonneesBailleur,
         ]);
     }
 

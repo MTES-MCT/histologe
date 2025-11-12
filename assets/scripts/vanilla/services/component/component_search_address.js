@@ -200,3 +200,44 @@ function setManualEdit(input, needResetInsee) {
     document.querySelector('#' + idForm + ' [data-autocomplete-need-reset-insee]').value = 1;
   }
 }
+
+export function initComponentAdress(id) {
+  const addressInput = document.querySelector(id);
+  const addressInputParent = addressInput.parentElement.parentElement.parentElement;
+  const manualAddressSwitcher = addressInputParent?.querySelector(
+    '.manual-address-switcher'
+  );
+  const manualAddressContainer = addressInputParent?.querySelector(
+    '.manual-address-container'
+  );
+  const manualAddressAddress = addressInputParent?.querySelector(
+    '.manual-address-input'
+  );
+  const manualAddressInputs = addressInputParent?.querySelectorAll(
+    '.manual-address'
+  );
+  const hasManualAddressValues = Array.from(manualAddressInputs).some(
+    (input) => input.value !== ''
+  );
+
+  manualAddressSwitcher?.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (manualAddressContainer.classList.contains('fr-hidden')) {
+      manualAddressContainer.classList.remove('fr-hidden');
+      manualAddressSwitcher.textContent = 'Rechercher une adresse';
+      addressInput.value = '';
+      addressInput.disabled = true;
+      manualAddressAddress.focus();
+    } else {
+      manualAddressContainer.classList.add('fr-hidden');
+      manualAddressSwitcher.textContent = 'Saisir une adresse manuellement';
+      manualAddressInputs.forEach((input) => (input.value = ''));
+      addressInput.disabled = false;
+      addressInput.focus();
+    }
+  });
+
+  if (addressInput.value == '' && hasManualAddressValues) {
+    manualAddressSwitcher.click();
+  }
+}

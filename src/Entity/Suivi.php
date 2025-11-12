@@ -179,6 +179,7 @@ class Suivi implements EntityHistoryInterface
                 SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
                 SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
                 SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
+                SuiviCategory::SIGNALEMENT_EDITED_FO,
             ])) {
                 if ($this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant()) {
                     return 'OCCUPANT'.$separator.$this->getCreatedBy()->getNomComplet(true);

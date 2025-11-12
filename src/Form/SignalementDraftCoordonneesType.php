@@ -136,7 +136,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 ],
             ])
             ->add('adresseProprio', null, [
-                'label' => 'Numéro et voie ',
+                'label' => 'Numéro et voie',
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
                     'data-autocomplete-addresse-proprio' => 'true',
@@ -248,7 +248,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 ],
             ])
             ->add('adresseAgence', null, [
-                'label' => 'Numéro et voie ',
+                'label' => 'Numéro et voie',
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
                     'data-autocomplete-addresse-agence' => 'true',

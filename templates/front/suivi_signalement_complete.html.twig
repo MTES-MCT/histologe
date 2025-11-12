@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compléter le dossier #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+<main class="fr-container fr-pb-5w" id="content">
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter le dossier</a></li>
+			</ol>
+		</div>
+	</nav>
+	<div class="fr-grid-row fr-grid-row--gutters fr-mt-3w fr-mx-1v">
+		<h1 class="title-blue-france">Compléter le dossier</h1>
+		<div class="fr-mb-3w">
+			Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
+			<br>
+			NB : cette page va évoluer. Pour le moment, vous pouvez ajouter les coordonnées de votre bailleur. D'autres informations seront ajoutées par la suite. 
+		</div>
+		{{ form_start(formCoordonneesBailleur, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
+		{{ form_errors(formCoordonneesBailleur) }}				
+		<fieldset class="fr-fieldset">
+			<legend class="fr-fieldset__legend">
+				<h3 class="fr-h5">Coordonnées du bailleur</h3>
+			</legend>
+			<div class="fr-fieldset__element">
+				{{ form_row(formCoordonneesBailleur.nomProprio) }}
+			</div>
+			<div class="fr-fieldset__element">
+				{{ form_row(formCoordonneesBailleur.prenomProprio) }}
+			</div>
+			<div class="fr-fieldset__element">
+				{{ form_row(formCoordonneesBailleur.mailProprio) }}
+			</div>
+			<div class="fr-fieldset__element">
+				{{ form_row(formCoordonneesBailleur.telProprio) }}
+			</div>
+			<div class="fr-fieldset__element">
+				{{ form_row(formCoordonneesBailleur.telProprioSecondaire) }}
+			</div>
+		</fieldset>
+		<fieldset class="fr-fieldset">
+			<legend class="fr-fieldset__legend">
+				<h4 class="fr-h6">Adresse postale</h4>
+			</legend>
+			<div class="fr-fieldset__element">
+				{{ form_row(formCoordonneesBailleur.adresseCompleteProprio) }}
+				<div class="fr-address-group-container">
+					<div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-proprio-group">
+					</div>
+				</div>
+				<div class="fr-mt-n2w">
+					<a href="#" class="fr-link fr-icon-edit-line fr-link--icon-left manual-address-switcher">Saisir une adresse manuellement</a>
+				</div>
+			</div>
+			<div class="fr-hidden fr-w-100 manual-address-container">
+				<div class="fr-fieldset__element">
+					{{ form_row(formCoordonneesBailleur.adresseProprio) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(formCoordonneesBailleur.codePostalProprio) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(formCoordonneesBailleur.villeProprio) }}
+				</div>
+			</div>
+		</fieldset>
+		{{ form_end(formCoordonneesBailleur) }}
+	</div>
+</main>
+{% endblock %}

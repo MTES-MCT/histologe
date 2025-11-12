@@ -28,6 +28,7 @@ enum SuiviCategory: string
     case DOCUMENT_DELETED_BY_PARTNER = 'DOCUMENT_DELETED_BY_PARTNER';
     case MESSAGE_USAGER = 'MESSAGE_USAGER';
     case MESSAGE_USAGER_POST_CLOTURE = 'MESSAGE_USAGER_POST_CLOTURE';
+    case SIGNALEMENT_EDITED_FO = 'SIGNALEMENT_EDITED_FO';
     case DEMANDE_ABANDON_PROCEDURE = 'DEMANDE_ABANDON_PROCEDURE';
     case DEMANDE_POURSUITE_PROCEDURE = 'DEMANDE_POURSUITE_PROCEDURE';
     case MESSAGE_ESABORA_SCHS = 'MESSAGE_ESABORA_SCHS';
@@ -88,6 +89,7 @@ enum SuiviCategory: string
             'DOCUMENT_DELETED_BY_PARTNER' => 'Document supprimé par le partenaire',
             'MESSAGE_USAGER' => 'Message de l\'usager',
             'MESSAGE_USAGER_POST_CLOTURE' => 'Message de l\'usager après clôture',
+            'SIGNALEMENT_EDITED_FO' => 'Édition du dossier par l\'usager',
             'DEMANDE_ABANDON_PROCEDURE' => 'Demande d\'abandon de procédure par l\'usager',
             'DEMANDE_POURSUITE_PROCEDURE' => 'Demande de poursuite de procédure par l\'usager',
             'MESSAGE_ESABORA_SCHS' => 'Message Esabora SCHS',

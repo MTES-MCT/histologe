@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -16,6 +17,7 @@ class SignalementFoVoter extends Voter
     public const string SIGN_USAGER_ADD_SUIVI = 'SIGN_USAGER_ADD_SUIVI';
     public const string SIGN_USAGER_EDIT = 'SIGN_USAGER_EDIT';
     public const string SIGN_USAGER_BASCULE_PROCEDURE = 'SIGN_USAGER_BASCULE_PROCEDURE';
+    public const string SIGN_USAGER_COMPLETE = 'SIGN_USAGER_COMPLETE';
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -24,6 +26,7 @@ class SignalementFoVoter extends Voter
             self::SIGN_USAGER_VIEW,
             self::SIGN_USAGER_EDIT,
             self::SIGN_USAGER_BASCULE_PROCEDURE,
+            self::SIGN_USAGER_COMPLETE,
         ])
             && ($subject instanceof Signalement);
     }
@@ -44,6 +47,7 @@ class SignalementFoVoter extends Voter
             self::SIGN_USAGER_ADD_SUIVI => $this->canUsagerAddSuivi($subject, $user),
             self::SIGN_USAGER_EDIT => $this->canUsagerEdit($subject),
             self::SIGN_USAGER_BASCULE_PROCEDURE => $this->canUsagerBasculeProcedure($subject, $user),
+            self::SIGN_USAGER_COMPLETE => $this->canUsagerCompleteDossier($subject),
             default => false,
         };
     }
@@ -91,6 +95,20 @@ class SignalementFoVoter extends Voter
     private function canUsagerBasculeProcedure(Signalement $signalement, SignalementUser $user): bool
     {
         if ($this->canUsagerView($signalement, $user) && SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function canUsagerCompleteDossier(Signalement $signalement): bool
+    {
+        // Pour l'instant, on ne peut compléter que les infos du bailleur, donc on filtre sur le profil
+        if (
+            $this->canUsagerEdit($signalement)
+            && ProfileDeclarant::BAILLEUR !== $signalement->getProfileDeclarant()
+            && ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant()
+        ) {
             return true;
         }
 

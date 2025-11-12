@@ -515,7 +515,7 @@ class SuiviRepository extends ServiceEntityRepository
             ->andWhere('s.deletedBy IS NULL')
             ->setParameter('signalement', $signalement)
             ->andWhere('s.category NOT IN (:excludedCategories)')// ignore suivi usager
-            ->setParameter('excludedCategories', [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DOCUMENT_DELETED_BY_USAGER]);
+            ->setParameter('excludedCategories', [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DOCUMENT_DELETED_BY_USAGER, SuiviCategory::SIGNALEMENT_EDITED_FO]);
 
         $qb->orderBy('s.createdAt', 'DESC')->setMaxResults(1);
 
@@ -919,6 +919,7 @@ class SuiviRepository extends ServiceEntityRepository
                 SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
                 SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
                 SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
+                SuiviCategory::SIGNALEMENT_EDITED_FO,
             ])
             ->andWhere('s.type != :type')
             ->setParameter('type', Suivi::TYPE_TECHNICAL);
