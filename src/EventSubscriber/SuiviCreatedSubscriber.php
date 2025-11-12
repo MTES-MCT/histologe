@@ -50,7 +50,8 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
     {
         if (Suivi::CONTEXT_NOTIFY_USAGER_ONLY === $suivi->getContext()
             // Excludes automatic suivis related to injonction bailleur, without blocking other types of suivis if signalement in status INJONCTION_BAILLEUR
-            || str_starts_with($suivi->getCategory()->value, 'INJONCTION_BAILLEUR_')) {
+            // -> Avoids too much notifications for now
+            || !in_array($suivi->getCategory(), SuiviCategory::injonctionBailleurCategories())) {
             return;
         }
         if (Suivi::CONTEXT_SIGNALEMENT_CLOSED === $suivi->getContext()) {
