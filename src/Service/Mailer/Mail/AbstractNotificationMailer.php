@@ -67,7 +67,16 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
         if (!empty($this->brevoTemplateId)) {
             $brevoParams = $params;
-            unset($brevoParams['attachContent']);
+            // Remove non-template parameters
+            unset(
+                $brevoParams['attachContent'],
+                $brevoParams['template'],
+                $brevoParams['template_id'],
+                $brevoParams['subject'],
+                $brevoParams['btntext'],
+                $brevoParams['url'],
+                $brevoParams['tagHeader']
+            );
             $message->getHeaders()
                 ->addTextHeader('templateId', $this->brevoTemplateId)
                 ->addParameterizedHeader('params', 'params', $brevoParams);
