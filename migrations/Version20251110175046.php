@@ -16,14 +16,13 @@ final class Version20251110175046 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-
         $this->addSql(<<<'SQL'
                 INSERT INTO user_signalement_subscription (user_id, signalement_id, created_by_id, created_at, is_legacy)
                 SELECT
-                    t.user_id,
-                    t.signalement_id,
-                    t.user_id AS created_by_id,
-                    t.created_at AS created_at,
+                    users_to_subscribe_from_affectation.user_id,
+                    users_to_subscribe_from_affectation.signalement_id,
+                    users_to_subscribe_from_affectation.user_id AS created_by_id,
+                    users_to_subscribe_from_affectation.created_at AS created_at,
                     1 AS is_legacy
                 FROM (
                     SELECT
@@ -36,20 +35,18 @@ final class Version20251110175046 extends AbstractMigration
                     WHERE a.statut = 'EN_COURS'
                       AND a.answered_at <= '2025-10-28 12:00:00'
                       AND u.has_done_subscriptions_choice = 1
-                      AND NOT JSON_CONTAINS(u.roles, '"ROLE_USAGER"')
                     GROUP BY u.id, a.signalement_id
-                ) AS t
+                ) AS users_to_subscribe_from_affectation
                 WHERE NOT EXISTS (
                     SELECT 1
                     FROM user_signalement_subscription uss
-                    WHERE uss.user_id = t.user_id
-                      AND uss.signalement_id = t.signalement_id
+                    WHERE uss.user_id = users_to_subscribe_from_affectation.user_id
+                      AND uss.signalement_id = users_to_subscribe_from_affectation.signalement_id
                 );
                 SQL);
     }
 
     public function down(Schema $schema): void
     {
-        return;
     }
 }
