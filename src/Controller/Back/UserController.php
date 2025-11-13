@@ -122,7 +122,7 @@ class UserController extends AbstractController
         }
 
         return $this->render('back/user/export-inactive-accounts.html.twig', [
-            'nbResults' => is_array($users) ? \count($users) : 0,
+            'nbResults' => \count($users),
             'columns' => UserExportLoader::getColumnForUser($user),
         ]);
     }

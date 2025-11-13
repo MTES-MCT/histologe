@@ -134,9 +134,10 @@ readonly class PartnerAuthorizedResolver
     {
         if (1 === $user->getUserApiPermissions()->count()) {
             $first = $user->getUserApiPermissions()->first();
-            assert($first instanceof UserApiPermission);
 
-            return $first->getPartner();
+            if ($first instanceof UserApiPermission) {
+                return $first->getPartner();
+            }
         }
 
         return null;

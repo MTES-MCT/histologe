@@ -32,8 +32,11 @@ class AttributeParser
         ProfileDeclarant $profileDeclarant,
         bool $isNewForm = true,
     ): string {
-        assert(class_exists($class));
-        assert('' !== $field);
+        /** @phpstan-assert class-string $class */
+        /** @phpstan-assert non-empty-string $field */
+        if (!class_exists($class) || '' === $field) {
+            throw new \InvalidArgumentException(sprintf('Paramètres invalides : %s / %s', $class, $field));
+        }
         $attributes = self::parse($class, $field, NotBlank::class);
         $groups = [];
         if (!empty($attributes)) {

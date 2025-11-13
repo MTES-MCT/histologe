@@ -267,6 +267,9 @@ class EsaboraManager
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function createSuiviFromDossierEvent(DossierEventSCHS $event, Affectation $affectation): Suivi
     {
         $description = 'Message provenant d\'esabora SCHS :'.\PHP_EOL;
@@ -289,8 +292,10 @@ class EsaboraManager
             context: Suivi::CONTEXT_SCHS,
             flush: false,
         );
-        $createdAt = \DateTimeImmutable::createFromFormat('d/m/Y', $event->getDate());
-        assert($createdAt instanceof \DateTimeImmutable);
+        $createdAt = \DateTimeImmutable::createFromFormat(AbstractEsaboraService::FORMAT_DATE, $event->getDate());
+        if (false === $createdAt) {
+            throw new \InvalidArgumentException(sprintf('Date invalide "%s" pour le format %s', $event->getDate(), AbstractEsaboraService::FORMAT_DATE));
+        }
 
         $suivi->setCreatedAt($createdAt);
         $suivi->setOriginalData($event->getOriginalData());

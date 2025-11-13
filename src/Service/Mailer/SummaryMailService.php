@@ -79,7 +79,7 @@ class SummaryMailService
                             'nb' => 0,
                         ];
                     }
-                    assert(isset($events[$notificationType][$signalementId]['nb']));
+                    $events[$notificationType][$signalementId]['nb'] ??= 0;
                     ++$events[$notificationType][$signalementId]['nb'];
                     break;
                 case NotificationType::CLOTURE_PARTENAIRE:

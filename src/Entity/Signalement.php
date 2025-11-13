@@ -686,8 +686,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      */
     public function getNbEnfantsDeprecated(): string
     {
-        $nbEnfantsM6 = str_replace('+', '', (string) ($this->getNbEnfantsM6() ?? ''));
-        $nbEnfantsP6 = str_replace('+', '', (string) ($this->getNbEnfantsP6() ?? ''));
+        $nbEnfantsM6 = str_replace('+', '', (string) ($this->getNbEnfantsM6() ?? '0'));
+        $nbEnfantsP6 = str_replace('+', '', (string) ($this->getNbEnfantsP6() ?? '0'));
 
         $nbEnfants = (int) $nbEnfantsM6 + (int) $nbEnfantsP6;
 

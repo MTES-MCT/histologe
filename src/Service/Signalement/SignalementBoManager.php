@@ -269,8 +269,9 @@ class SignalementBoManager
                 foreach ($fieldData as $desordreCritere) {
                     if ($desordreCritere->getDesordrePrecisions()->count() < 2) {
                         $first = $desordreCritere->getDesordrePrecisions()->first();
-                        assert($first instanceof DesordrePrecision);
-                        $signalement->addDesordrePrecision($first);
+                        if ($first instanceof DesordrePrecision) {
+                            $signalement->addDesordrePrecision($first);
+                        }
                     }
                 }
             }

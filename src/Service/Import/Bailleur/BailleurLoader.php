@@ -67,10 +67,12 @@ class BailleurLoader
                     continue;
                 }
                 $isNew = false;
-                $baileurNomSanitized = (string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurNom));
-                $bailleurRaisonSocialeSanitized = (string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurRaisonSociale));
-                if (isset($this->bailleurs[$baileurNomSanitized])) {
-                    $bailleur = $this->bailleurs[$baileurNomSanitized];
+                $bailleurNomSanitized = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurNom));
+                $bailleurNomSanitized = false !== $bailleurNomSanitized ? $bailleurNomSanitized : mb_strtoupper($bailleurNom);
+                $bailleurRaisonSocialeSanitized = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', mb_strtoupper($bailleurRaisonSociale));
+                $bailleurRaisonSocialeSanitized = false !== $bailleurRaisonSocialeSanitized ? $bailleurRaisonSocialeSanitized : mb_strtoupper($bailleurRaisonSociale);
+                if (isset($this->bailleurs[$bailleurNomSanitized])) {
+                    $bailleur = $this->bailleurs[$bailleurNomSanitized];
                 } elseif ($bailleurRaisonSocialeSanitized && isset($this->bailleurs[$bailleurRaisonSocialeSanitized])) {
                     $bailleur = $this->bailleurs[$bailleurRaisonSocialeSanitized];
                 } else {
@@ -82,7 +84,7 @@ class BailleurLoader
                     $bailleursCreatedOrUpdated[$bailleurRaisonSociale] = true;
                     if ($isNew) {
                         ++$this->metadata['new_bailleurs'];
-                        $this->bailleurs[$baileurNomSanitized] = $bailleur;
+                        $this->bailleurs[$bailleurNomSanitized] = $bailleur;
                     } else {
                         ++$this->metadata['updated_bailleurs'];
                     }

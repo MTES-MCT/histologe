@@ -247,9 +247,9 @@ class SignalementBuilder
                         if (1 === $value) {
                             // il n'y en a qu'une, on la lie
                             $first = $precisions->first();
-                            assert($first instanceof DesordrePrecision);
-
-                            $this->signalement->addDesordrePrecision($first);
+                            if ($first instanceof DesordrePrecision) {
+                                $this->signalement->addDesordrePrecision($first);
+                            }
                         }
                     } else {
                         // passe par un service spécifique pour évaluer les précisions à ajouter sur ce critère

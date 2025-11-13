@@ -280,7 +280,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->beginTransaction();
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
         $payload['signalement_concerne_logement_social_autre_tiers'] = 'non';
@@ -314,7 +314,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->beginTransaction();
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
         $payload['signalement_concerne_logement_social_autre_tiers'] = 'non';

@@ -37,7 +37,7 @@ class InitPartnerInSuiviCommand
         $total = $this->suiviRepository->findAllWithoutPartner(true);
         /** @var array<int, array<string, int>> $list */
         $list = $this->suiviRepository->findAllWithoutPartner();
-        $progressBar = $io->createProgressBar(is_array($list) ? count($list) : 0);
+        $progressBar = $io->createProgressBar(count($list));
         $progressBar->start();
         $i = 0;
         foreach ($list as $item) {

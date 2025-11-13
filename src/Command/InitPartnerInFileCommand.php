@@ -37,7 +37,7 @@ class InitPartnerInFileCommand
         $total = $this->fileRepository->findAllWithoutPartner(true);
         /** @var array<int, array<string, int>> $list */
         $list = $this->fileRepository->findAllWithoutPartner();
-        $progressBar = $io->createProgressBar(is_array($list) ? count($list) : 0);
+        $progressBar = $io->createProgressBar(count($list));
         $progressBar->start();
         $i = 0;
         foreach ($list as $item) {
