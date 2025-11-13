@@ -61,7 +61,7 @@ export const store = {
       canSeeStatusAffectation: false,
       canSeeBailleurSocial: false,
       canSeeScore: false,
-      canSeeFilterPartner: false,
+      canSeeWithoutAffectation: false,
       partnerIds: new Array<string>()
     },
     showOptions: false,

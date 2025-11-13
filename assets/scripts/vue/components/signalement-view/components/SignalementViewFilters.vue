@@ -9,7 +9,7 @@
           Afficher uniquement mes dossiers
         </button>
       </li>
-      <li v-if="sharedState.user.canSeeFilterPartner">
+      <li v-if="sharedState.user.canSeeWithoutAffectation">
         <button class="fr-tag"
                 ref="withoutAffectationButton"
                 :aria-pressed="ariaPressed.showWithoutAffectationOnly.toString()"
@@ -185,7 +185,7 @@
         </HistoSelect>
       </div>
       <div :class="defineCssBlocAgent(3, 3)"
-            v-if="sharedState.user.canSeeFilterPartner && sharedState.partenaires.length > 0">
+            v-if="sharedState.partenaires.length > 0">
         <HistoMultiSelect
           id="filter-partenaires"
           v-model="sharedState.input.filters.partenaires"

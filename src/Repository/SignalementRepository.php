@@ -881,7 +881,6 @@ class SignalementRepository extends ServiceEntityRepository
                 );
             $qb->andWhere('s.id IN ('.$subQuery->getDQL().')')->setParameter('epcis', $filters->getEpcis());
         }
-
         if ($filters->getPartners() && $filters->getPartners()->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
@@ -1436,7 +1435,6 @@ class SignalementRepository extends ServiceEntityRepository
                     : 's.createdBy IS NOT NULL'
             );
         }
-
         if (!empty($tabQueryParameters->partenairesId)) {
             if (\in_array('AUCUN', $tabQueryParameters->partenairesId)) {
                 $qb->leftJoin('s.affectations', 'a')->andWhere('a.partner IS NULL');

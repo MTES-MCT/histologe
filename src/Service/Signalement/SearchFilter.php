@@ -120,16 +120,80 @@ class SearchFilter
                 ->setParameter('affectations', $filters['affectations']);
         }
         if (!empty($filters['partners'])) {
-            $qb->leftJoin('s.affectations', 'afilt');
-            if (\in_array('AUCUN', $filters['partners'])) {
-                $qb->andWhere('afilt.partner IS NULL');
+            // Cas où l’utilisateur est un agent ou admin partenaire
+            if ($user->isUserPartner() || $user->isPartnerAdmin()) {
+                // Si le filtre contient "AUCUN", on le traite à part
+                $hasAucun = \in_array('AUCUN', $filters['partners'], true);
+                $filterPartnerIds = array_filter($filters['partners'], fn ($v) => 'AUCUN' !== $v);
+
+                // Sous-requête : signalements ayant AU MOINS UNE affectation
+                // avec un des partenaires filtrés (B, C, etc.)
+                if (!empty($filterPartnerIds)) {
+                    $existsFilter = $this->entityManager->createQueryBuilder();
+                    $existsFilter
+                        ->select('1')
+                        ->from(Affectation::class, 'af2')
+                        ->where('af2.signalement = s')
+                        ->andWhere('af2.partner IN (:filterPartners)');
+
+                    // condition "ET" : le signalement doit aussi avoir une affectation
+                    // avec le partenaire de l’utilisateur connecté (A)
+                    $existsUser = $this->entityManager->createQueryBuilder();
+                    $existsUser
+                        ->select('1')
+                        ->from(Affectation::class, 'afUser')
+                        ->where('afUser.signalement = s')
+                        ->andWhere('afUser.partner IN (:userPartners)');
+
+                    // combine les deux EXISTS
+                    $qb->andWhere(
+                        $qb->expr()->andX(
+                            $qb->expr()->exists($existsUser->getDQL()),
+                            $qb->expr()->exists($existsFilter->getDQL())
+                        )
+                    )
+                    ->setParameter('userPartners', $user->getPartners())
+                    ->setParameter('filterPartners', $filterPartnerIds);
+                }
+
+                // Si le filtre contient "AUCUN", on ajoute en plus le cas des signalements
+                // sans aucune affectation partenaire
+                if ($hasAucun) {
+                    $existsNull = $this->entityManager->createQueryBuilder();
+                    $existsNull
+                        ->select('1')
+                        ->from(Affectation::class, 'afNull')
+                        ->where('afNull.signalement = s')
+                        ->andWhere('afNull.partner IS NULL');
+
+                    $qb->andWhere(
+                        $qb->expr()->orX(
+                            $qb->expr()->exists($existsNull->getDQL()),
+                            $qb->expr()->andX(
+                                $qb->expr()->exists(
+                                    '(SELECT 1 FROM '.Affectation::class.' aUser WHERE aUser.signalement = s AND aUser.partner IN (:userPartners))'
+                                ),
+                                $qb->expr()->exists(
+                                    '(SELECT 1 FROM '.Affectation::class.' aFilt WHERE aFilt.signalement = s AND aFilt.partner IN (:filterPartners))'
+                                )
+                            )
+                        )
+                    );
+                }
             } else {
-                $qb->andWhere('afilt.partner IN (:partners)');
+                // Cas classique (super admin, resp territoire, etc.)
+                $qb->leftJoin('s.affectations', 'afilt');
+                if (\in_array('AUCUN', $filters['partners'], true)) {
+                    $qb->andWhere('afilt.partner IS NULL');
+                } else {
+                    $qb->andWhere('afilt.partner IN (:partners)')
+                    ->setParameter('partners', $filters['partners']);
+                }
+
                 if (!empty($filters['affectations'])) {
                     $qb->andWhere('afilt.statut IN (:affectations)')
                     ->setParameter('affectations', $filters['affectations']);
                 }
-                $qb->setParameter('partners', $filters['partners']);
             }
         }
         if (!empty($filters['closed_affectation'])) {
