@@ -134,6 +134,7 @@ class SearchInterconnexionType extends AbstractType
         }
         $partners = $this->partnerRepository->getPartners(1000, $searchPartner);
 
+        /** @var array{0: Partner, isNotifiable: int} $partner */
         foreach ($partners as $partner) {
             $choicesPartners[] = $partner[0];
         }

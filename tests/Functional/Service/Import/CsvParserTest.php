@@ -94,6 +94,10 @@ class CsvParserTest extends KernelTestCase
         }
 
         $fileresource = fopen($filepath, 'w');
+
+        if (false === $fileresource) {
+            throw new \RuntimeException("Impossible d'ouvrir le fichier $filepath en écriture.");
+        }
         foreach ($list as $row) {
             fputcsv($fileresource, $row);
         }

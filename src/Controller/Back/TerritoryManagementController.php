@@ -7,6 +7,7 @@ use App\Repository\FileRepository;
 use App\Repository\TagRepository;
 use App\Repository\ZoneRepository;
 use App\Service\ListFilters\SearchTerritoryFiles;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,7 @@ class TerritoryManagementController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territories = $user->getPartnersTerritories();
         }
+        /** @var Paginator $paginatedFiles */
         $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination);
 
         return $this->render('back/territory-management/index.html.twig', [

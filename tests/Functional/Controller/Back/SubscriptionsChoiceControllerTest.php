@@ -45,7 +45,7 @@ class SubscriptionsChoiceControllerTest extends WebTestCase
             '_token' => $this->generateCsrfToken($this->client, 'subscriptions_choice'),
         ]);
         $route = $this->router->generate('subscriptions_choice');
-        $this->client->request('POST', $route, [], [], [], $payload);
+        $this->client->request('POST', $route, [], [], [], (string) $payload);
 
         $subs = $this->userSignalementSubscriptionRepository->findBy(['user' => $this->user]);
         $this->assertCount(4, $subs);
@@ -67,7 +67,7 @@ class SubscriptionsChoiceControllerTest extends WebTestCase
             '_token' => $this->generateCsrfToken($this->client, 'subscriptions_choice'),
         ]);
         $route = $this->router->generate('subscriptions_choice');
-        $this->client->request('POST', $route, [], [], [], $payload);
+        $this->client->request('POST', $route, [], [], [], (string) $payload);
 
         $subs = $this->userSignalementSubscriptionRepository->findBy(['user' => $this->user]);
         $this->assertCount(2, $subs);

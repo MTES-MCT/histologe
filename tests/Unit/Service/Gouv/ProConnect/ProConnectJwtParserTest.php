@@ -14,7 +14,7 @@ class ProConnectJwtParserTest extends TestCase
 
         $this->assertFileExists($jwtFile, 'Le fichier userinfo.txt est introuvable.');
 
-        $jwt = file_get_contents($jwtFile);
+        $jwt = (string) file_get_contents($jwtFile);
 
         $parser = new ProConnectJwtParser();
         $claims = $parser->parse($jwt);

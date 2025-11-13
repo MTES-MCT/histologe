@@ -73,6 +73,7 @@ class SignalementCreateController extends AbstractController
         SignalementManager $signalementManager,
         EntityManagerInterface $entityManager,
     ): Response {
+        /** @var int|string $draftId */
         $draftId = $request->request->get('draft_id');
         /** @var Signalement $signalement */
         $signalement = $signalementManager->find($draftId);
@@ -81,7 +82,7 @@ class SignalementCreateController extends AbstractController
 
         if (
             $signalement
-            && $this->isCsrfTokenValid('draft_delete', $request->request->get('_token'))
+            && $this->isCsrfTokenValid('draft_delete', (string) $request->request->get('_token'))
         ) {
             $signalement->setStatut(SignalementStatus::DRAFT_ARCHIVED);
             $entityManager->flush();
@@ -468,7 +469,7 @@ class SignalementCreateController extends AbstractController
         if (Request::METHOD_POST === $request->getMethod()) {
             $hasConsentError = $this->hasConsentError($request);
         }
-        if (!$hasConsentError && !count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', $token)) {
+        if (!$hasConsentError && !count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', (string) $token)) {
             $entityManager->beginTransaction();
 
             /** @var User $user */
@@ -514,7 +515,7 @@ class SignalementCreateController extends AbstractController
                     $params = [];
                 }
             } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY') && !empty($partnerIds)) {
-                $partnersList = explode(',', $partnerIds);
+                $partnersList = explode(',', (string) $partnerIds);
                 foreach ($partnersList as $partnerId) {
                     if (isset($partners[$partnerId])) {
                         $affectation = $affectationManager->createAffectation($signalement, $partners[$partnerId], $user);

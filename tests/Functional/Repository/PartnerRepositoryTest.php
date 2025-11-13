@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchPartner;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerRepositoryTest extends KernelTestCase
@@ -24,7 +25,13 @@ class PartnerRepositoryTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
 
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->partnerRepository = $this->entityManager->getRepository(Partner::class);
     }
 
@@ -189,6 +196,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
         $searchPartner->setTerritoire($territory);
         $partnerPaginator = $this->partnerRepository->getPartners(50, $searchPartner);
+        /** @var array{0: Partner} $partner */
         foreach ($partnerPaginator as $partner) {
             $this->assertFalse($partner[0]->receiveEmailNotifications());
         }

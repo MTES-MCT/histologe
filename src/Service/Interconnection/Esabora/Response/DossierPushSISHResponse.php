@@ -20,7 +20,7 @@ class DossierPushSISHResponse implements DossierResponseInterface
             if (null !== $data) {
                 $this->sasId = $data;
             } else {
-                $this->errorReason = json_encode($response);
+                $this->errorReason = (string) json_encode($response);
             }
         }
         $this->statusCode = $statusCode;

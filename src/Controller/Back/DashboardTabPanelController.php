@@ -54,7 +54,7 @@ class DashboardTabPanelController extends AbstractController
             if ($this->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoireId])) {
                 $territory = $this->territoryRepository->find($territoireId);
                 if ($territory) {
-                    $territoires[$territory->getId()] = $territory;
+                    $territoires[(int) $territory->getId()] = $territory;
 
                     return $territoires;
                 }
@@ -66,7 +66,7 @@ class DashboardTabPanelController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territoires = $authorizedTerritories;
             $firstTerritory = current($territoires);
-            if (1 === count($territoires)) {
+            if (1 === count($territoires) && $firstTerritory instanceof Territory) {
                 $tabQueryParameter->territoireId = $firstTerritory->getId();
             } else {
                 $tabQueryParameter->territoireId = null;

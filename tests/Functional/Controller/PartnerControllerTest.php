@@ -189,7 +189,7 @@ class PartnerControllerTest extends WebTestCase
         );
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         if ('redirect' === $expected) {
             $this->assertArrayHasKey('redirect', $response);
             $this->assertArrayHasKey('url', $response);
@@ -237,7 +237,7 @@ class PartnerControllerTest extends WebTestCase
         );
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         if ('redirect' === $expected) {
             $this->assertArrayHasKey('redirect', $response);
             $this->assertArrayHasKey('url', $response);
@@ -269,6 +269,9 @@ class PartnerControllerTest extends WebTestCase
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $partner = $partnerUser->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the partnerUser');
+        }
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
         $this->client->request(
@@ -298,6 +301,9 @@ class PartnerControllerTest extends WebTestCase
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $partner = $partnerUser->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the partnerUser');
+        }
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
         $this->client->request(
@@ -317,7 +323,7 @@ class PartnerControllerTest extends WebTestCase
         );
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         if ('redirect' === $expected) {
             $this->assertArrayHasKey('redirect', $response);
             $this->assertArrayHasKey('url', $response);
@@ -345,6 +351,9 @@ class PartnerControllerTest extends WebTestCase
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findAnonymizedUsers()[0];
         $partner = $partnerUser->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the partnerUser');
+        }
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
         $this->client->request(
@@ -413,7 +422,7 @@ class PartnerControllerTest extends WebTestCase
         );
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/json');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('redirect', $response);
         $this->assertArrayHasKey('url', $response);
         $this->assertStringEndsWith('/bo/partenaires/'.$partner->getId().'/voir#agents', $response['url']);
@@ -426,40 +435,64 @@ class PartnerControllerTest extends WebTestCase
 
         $user = $this->userRepository->findOneBy(['email' => 'user-13-02@signal-logement.fr']);
         $userId = $user->getId();
-        $userOldPartner = $user->getPartners()->first()->getId();
+        $userOldPartner = $user->getPartners()->first();
+        if (!$userOldPartner) {
+            $this->fail('No partner found for the partnerUser');
+        }
+        $userOldPartner = $userOldPartner->getId();
 
         $newPartnerId = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02'])->getId();
 
+        $partner = $user->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
         $this->client->request(
             'POST',
-            $this->router->generate('back_partner_user_transfer', ['id' => $user->getPartners()->first()->getId()]),
+            $this->router->generate('back_partner_user_transfer', ['id' => $partner->getId()]),
             [
                 'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
                 '_token' => $this->generateCsrfToken($this->client, 'partner_user_transfer'),
             ]
         );
 
-        $this->assertEquals($userOldPartner, $user->getPartners()->first()->getId());
+        $partner = $user->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
+        $this->assertEquals($userOldPartner, $partner->getId());
     }
 
     public function testTransferUserAccountWithCsrfUnvalid(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-13-02@signal-logement.fr']);
         $userId = $user->getId();
-        $userOldPartner = $user->getPartners()->first()->getId();
+        $userOldPartner = $user->getPartners()->first();
+        if (!$userOldPartner) {
+            $this->fail('No partner found for the partnerUser');
+        }
+        $userOldPartner = $userOldPartner->getId();
 
         $newPartnerId = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02'])->getId();
 
+        $partner = $user->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
         $this->client->request(
             'POST',
-            $this->router->generate('back_partner_user_transfer', ['id' => $user->getPartners()->first()->getId()]),
+            $this->router->generate('back_partner_user_transfer', ['id' => $partner->getId()]),
             [
                 'user_transfer' => ['user' => $userId, 'partner' => $newPartnerId],
                 '_token' => $this->generateCsrfToken($this->client, 'bad_csrf'),
             ]
         );
 
-        $this->assertEquals($userOldPartner, $user->getPartners()->first()->getId());
+        $partner = $user->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
+        $this->assertEquals($userOldPartner, $partner->getId());
         $this->assertResponseRedirects('/bo/partenaires/');
     }
 
@@ -487,7 +520,11 @@ class PartnerControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $userId = $user->getId();
 
-        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
+        $partner = $user->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $partner->getId()]), [
             'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
@@ -502,7 +539,11 @@ class PartnerControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'admin-partenaire-multi-ter-13-01@signal-logement.fr']);
         $userId = $user->getId();
 
-        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
+        $partner = $user->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $partner->getId()]), [
             'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
@@ -516,8 +557,12 @@ class PartnerControllerTest extends WebTestCase
     {
         $user = $this->userRepository->findAnonymizedUsers()[0];
         $userId = $user->getId();
+        $partner = $user->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
 
-        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $partner->getId()]), [
             'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
@@ -529,8 +574,11 @@ class PartnerControllerTest extends WebTestCase
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-01-03@signal-logement.fr']);
         $userId = $user->getId();
-
-        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $user->getPartners()->first()->getId()]), [
+        $partner = $user->getPartners()->first();
+        if (!$partner) {
+            $this->fail('No partner found for the user');
+        }
+        $this->client->request('POST', $this->router->generate('back_partner_user_delete', ['id' => $partner->getId()]), [
             'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'bad_csrf'),
         ]);

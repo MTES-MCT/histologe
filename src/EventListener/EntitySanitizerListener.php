@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\Behaviour\EntitySanitizerInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -19,6 +20,9 @@ readonly class EntitySanitizerListener
     ) {
     }
 
+    /**
+     * @param LifecycleEventArgs<EntityManager> $eventArgs
+     */
     public function prePersist(LifecycleEventArgs $eventArgs): void
     {
         $entity = $eventArgs->getObject();
@@ -27,6 +31,9 @@ readonly class EntitySanitizerListener
         }
     }
 
+    /**
+     * @param LifecycleEventArgs<EntityManager> $eventArgs
+     */
     public function preUpdate(LifecycleEventArgs $eventArgs): void
     {
         $entity = $eventArgs->getObject();

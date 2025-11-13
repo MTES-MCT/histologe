@@ -24,38 +24,55 @@ use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBuilder;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Tests\FixturesHelper;
+use App\Tests\KernelServiceHelperTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementBuilderTest extends KernelTestCase
 {
     use FixturesHelper;
+    use KernelServiceHelperTrait;
 
     private const FR_PHONE_COUNTRY_CODE = '33';
     private ?EntityManagerInterface $entityManager = null;
 
     protected SignalementBuilder $signalementBuilder;
+
     private DesordreCritereRepository $desordreCritereRepository;
+
     private DesordrePrecisionRepository $desordrePrecisionRepository;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $this->entityManager = $this->getService(EntityManagerInterface::class);
+        $this->desordreCritereRepository = $this->getService(DesordreCritereRepository::class);
+        $this->desordrePrecisionRepository = $this->getService(DesordrePrecisionRepository::class);
+        /** @var BailleurRepository $bailleurRepository */
         $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        /** @var ReferenceGenerator $referenceGenerator */
         $referenceGenerator = static::getContainer()->get(ReferenceGenerator::class);
+        /** @var SignalementDraftRequestSerializer $signalementDraftRequestSerializer */
         $signalementDraftRequestSerializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
+        /** @var TypeCompositionLogementFactory $typeCompositionLogementFactory */
         $typeCompositionLogementFactory = static::getContainer()->get(TypeCompositionLogementFactory::class);
+        /** @var SituationFoyerFactory $situationFoyerFactory */
         $situationFoyerFactory = static::getContainer()->get(SituationFoyerFactory::class);
+        /** @var InformationProcedureFactory $informationProcedureFactory */
         $informationProcedureFactory = static::getContainer()->get(InformationProcedureFactory::class);
+        /** @var InformationComplementaireFactory $informationComplementaireFactory */
         $informationComplementaireFactory = static::getContainer()->get(InformationComplementaireFactory::class);
-        $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
-        $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
+        /** @var DesordreTraitementProcessor $desordreTraitementProcessor */
         $desordreTraitementProcessor = static::getContainer()->get(DesordreTraitementProcessor::class);
+        /** @var DesordreCritereManager $desordreCritereManager */
         $desordreCritereManager = static::getContainer()->get(DesordreCritereManager::class);
+        /** @var CriticiteCalculator $criticiteCalculator */
         $criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
+        /** @var SignalementQualificationUpdater $signalementQualificationUpdater */
         $signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
+        /** @var DesordreCompositionLogementLoader $desordreCompositionLogementLoader */
         $desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
+        /** @var ZipcodeProvider $zipcodeProvider */
         $zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
 
         $this->signalementBuilder = new SignalementBuilder(
@@ -84,7 +101,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->beginTransaction();
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
 
@@ -193,7 +210,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->beginTransaction();
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
         $payload['logement_social_allocation'] = 'non';
@@ -227,7 +244,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->beginTransaction();
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
         $payload['signalement_concerne_logement_social_autre_tiers'] = 'non';
@@ -263,7 +280,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->beginTransaction();
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
         $payload['signalement_concerne_logement_social_autre_tiers'] = 'non';
@@ -297,7 +314,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->beginTransaction();
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
         $payload['signalement_concerne_logement_social_autre_tiers'] = 'non';
@@ -334,7 +351,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->beginTransaction();
 
         $payload = json_decode(
-            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire_all_in.json'),
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire_all_in.json'),
             true
         );
 

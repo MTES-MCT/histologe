@@ -262,13 +262,14 @@ class PartnerController extends AbstractController
         AffectationManager $affectationManager,
         PopNotificationManager $popNotificationManager,
     ): Response {
+        /** @var int|string $partnerId */
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */
         $partner = $partnerManager->find($partnerId);
         $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
         if (
             $partner
-            && $this->isCsrfTokenValid('partner_delete', $request->request->get('_token'))
+            && $this->isCsrfTokenValid('partner_delete', (string) $request->request->get('_token'))
         ) {
             if (null !== $partner->getEmail()) {
                 $partner->setEmail(Sanitizer::tagArchivedEmail($partner->getEmail()));
@@ -411,7 +412,7 @@ class PartnerController extends AbstractController
         $formUserPartner->handleRequest($request);
         if ($formUserPartner->isSubmitted() && $formUserPartner->isValid()) {
             $userExist = $userManager->findOneBy(['email' => $user->getEmail()]);
-            if ($userExist && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
+            if ($userExist instanceof User && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
                 $addUserOnPartnerRoute = $this->generateUrl('back_partner_add_user_multi', ['id' => $partner->getId()]);
                 $formMultiMail = $this->createForm(UserPartnerEmailType::class, $user, ['action' => $addUserOnPartnerRoute]);
                 $content = $this->renderView('_partials/_modal_user_create_multi.html.twig', ['formMultiMail' => $formMultiMail, 'user' => $userExist, 'partner' => $partner]);
@@ -422,7 +423,7 @@ class PartnerController extends AbstractController
             if (null === $user->getIsMailingSummary()) {
                 $user->setIsMailingSummary(true);
             }
-            if ($userExist) {
+            if ($userExist instanceof User) {
                 $userExist->setNom($user->getNom());
                 $userExist->setPrenom($user->getPrenom());
                 $userExist->setIsMailingActive($user->getIsMailingActive());
@@ -497,12 +498,14 @@ class PartnerController extends AbstractController
     public function transferUser(Request $request, Partner $fromPartner, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): Response
     {
         $data = $request->get('user_transfer');
-        if (!$this->isCsrfTokenValid('partner_user_transfer', $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('partner_user_transfer', (string) $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
+        /** @var Partner $toPartner */
         $toPartner = $partnerManager->find($data['partner']);
+        /** @var User $user */
         $user = $userManager->find($data['user']);
         if (!$toPartner || !$user) {
             $this->addFlash('error', 'Partenaire ou utilisateur introuvable.');
@@ -533,8 +536,9 @@ class PartnerController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
     ): Response {
+        /** @var int|string $userId */
         $userId = $request->request->get('user_id');
-        if (!$this->isCsrfTokenValid('partner_user_delete', $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('partner_user_delete', (string) $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);

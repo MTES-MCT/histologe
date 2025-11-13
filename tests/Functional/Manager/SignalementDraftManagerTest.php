@@ -35,7 +35,9 @@ class SignalementDraftManagerTest extends WebTestCase
     protected function setUp(): void
     {
         $client = static::createClient();
-        $this->entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $this->entityManager = $em;
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->signalementDraftFactory = static::getContainer()->get(SignalementDraftFactory::class);
         $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);

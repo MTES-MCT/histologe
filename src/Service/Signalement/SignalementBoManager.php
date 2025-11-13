@@ -268,7 +268,10 @@ class SignalementBoManager
                 /** @var DesordreCritere $desordreCritere */
                 foreach ($fieldData as $desordreCritere) {
                     if ($desordreCritere->getDesordrePrecisions()->count() < 2) {
-                        $signalement->addDesordrePrecision($desordreCritere->getDesordrePrecisions()->first());
+                        $first = $desordreCritere->getDesordrePrecisions()->first();
+                        if ($first instanceof DesordrePrecision) {
+                            $signalement->addDesordrePrecision($first);
+                        }
                     }
                 }
             }

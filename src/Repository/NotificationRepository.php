@@ -21,6 +21,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
+ * @extends ServiceEntityRepository<Notification>
+ *
  * @method Notification|null find($id, $lockMode = null, $lockVersion = null)
  * @method Notification|null findOneBy(array $criteria, array $orderBy = null)
  * @method Notification[]    findAll()
@@ -33,6 +35,9 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         parent::__construct($registry, Notification::class);
     }
 
+    /**
+     * @return Paginator<Notification>
+     */
     public function findFilteredPaginated(SearchNotification $searchNotification, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('n')
@@ -123,7 +128,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
                 ->setParameter('territories', $territories);
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -191,7 +196,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             $qb->andWhere('si.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -226,7 +231,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             $qb->andWhere('si.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

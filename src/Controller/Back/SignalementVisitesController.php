@@ -33,7 +33,7 @@ class SignalementVisitesController extends AbstractController
 
     private function getSecurityRedirect(Signalement $signalement, Request $request, string $tokenName): ?Response
     {
-        if (!$this->isCsrfTokenValid($tokenName, $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid($tokenName, (string) $request->get('_token'))) {
             $this->addFlash('error', "Erreur de sécurisation de l'envoi de données.");
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -396,7 +396,7 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandlerService,
     ): Response {
         $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
-        if (!$this->isCsrfTokenValid('delete_rapport', $request->get('_token')) || !$intervention->getRapportDeVisite()) {
+        if (!$this->isCsrfTokenValid('delete_rapport', (string) $request->get('_token')) || !$intervention->getRapportDeVisite()) {
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]);
         }
         $file = $intervention->getRapportDeVisite();

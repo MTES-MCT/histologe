@@ -2,7 +2,7 @@
 
 namespace Mock;
 
-include_once __DIR__.'/../../vendor/autoload.php';
+include_once dirname(__DIR__, 2).'/vendor/autoload.php';
 
 use Mock\Brevo\BrevoMock;
 use Mock\Esabora\EsaboraSCHSMock;
@@ -14,7 +14,7 @@ use WireMock\Client\WireMock;
 
 class AppMock
 {
-    private const string RESOURCES_DIR = __DIR__.'./../Resources/';
+    private const string RESOURCES_DIR = __DIR__.'/../Resources/';
 
     public static function init(): void
     {

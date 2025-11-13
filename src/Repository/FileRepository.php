@@ -77,7 +77,7 @@ class FileRepository extends ServiceEntityRepository
 
     public function countWithOriginalAndVariants(\DateTimeInterface $limit): int
     {
-        return $this->initQueryWithOriginalAndVariants($limit)->select('count(f)')->getQuery()->getSingleScalarResult();
+        return (int) $this->initQueryWithOriginalAndVariants($limit)->select('count(f)')->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -150,7 +150,7 @@ class FileRepository extends ServiceEntityRepository
     /**
      * @param array<string, Territory> $territories
      *
-     * @return Paginator|array<string, array<File>|int>
+     * @return Paginator<File>|array<string, array<File>|int>
      */
     public function findFilteredPaginated(
         SearchTerritoryFiles $searchTerritoryFiles,
@@ -233,7 +233,7 @@ class FileRepository extends ServiceEntityRepository
             return $qb->getQuery()->getResult();
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

@@ -75,7 +75,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_CRON,
-                    to: $this->parameterBag->get('admin_email'),
+                    to: (string) $this->parameterBag->get('admin_email'),
                     message: $message,
                     cronLabel: 'Notifications de comptes inactifs',
                 )
@@ -119,7 +119,7 @@ class NotifyAndArchiveInactiveAccountCommand extends AbstractCronCommand
         $this->io->newLine(2);
 
         foreach ($pendingUsersByTerritories as $territoryId => $pendingUsers) {
-            $adminsToNotify = $this->userRepository->findActiveTerritoryAdmins($territoryId);
+            $adminsToNotify = $this->userRepository->findActiveTerritoryAdmins((int) $territoryId);
             $this->sendRtNotification($adminsToNotify, $pendingUsers);
         }
 

@@ -38,6 +38,7 @@ class HookZapierService
      */
     public function pushDossier(DossierMessage $dossierMessage): ResponseInterface|JsonResponse
     {
+        /** @var array<mixed> $payload */
         $payload = $this->normalizer->normalize($dossierMessage);
         $payload = $this->removeUselessFields($payload);
         $payload['token'] = $this->token;

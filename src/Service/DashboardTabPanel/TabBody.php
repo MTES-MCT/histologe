@@ -9,7 +9,7 @@ class TabBody
     private mixed $data = null;
     private int $count = 0;
 
-    /** @var array<string, string|int> */
+    /** @var array<string, mixed> */
     private array $filters = [];
 
     public function __construct(
@@ -52,7 +52,7 @@ class TabBody
     }
 
     /**
-     * @param array<string, string|int> $filters
+     * @param array<string, mixed> $filters
      */
     public function setFilters(array $filters): static
     {

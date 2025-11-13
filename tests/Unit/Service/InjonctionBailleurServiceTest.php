@@ -15,6 +15,7 @@ use App\Repository\PartnerRepository;
 use App\Service\InjonctionBailleurService;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -34,7 +35,11 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $kernel = self::bootKernel();
         $this->suiviManager = $this->createMock(SuiviManager::class);
         $this->autoAssigner = $this->createMock(AutoAssigner::class);
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+        $this->entityManager = $entityManager;
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->userManager = self::getContainer()->get(UserManager::class);
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);

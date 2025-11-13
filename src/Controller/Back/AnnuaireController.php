@@ -90,6 +90,9 @@ class AnnuaireController extends AbstractController
         $writer->save('php://output');
         $content = ob_get_clean();
 
+        if (!$content) {
+            throw new \RuntimeException('Erreur lors de la génération du contenu CSV.');
+        }
         $response = new Response($content);
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');

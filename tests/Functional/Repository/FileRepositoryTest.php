@@ -9,6 +9,7 @@ use App\Repository\FileRepository;
 use App\Service\ListFilters\SearchTerritoryFiles;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class FileRepositoryTest extends KernelTestCase
@@ -24,7 +25,13 @@ class FileRepositoryTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
 
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
         $this->fileRepository = $this->entityManager->getRepository(File::class);
     }
 
@@ -45,13 +52,15 @@ class FileRepositoryTest extends KernelTestCase
     }
 
     public function testFindFilteredPaginatedWithExclusiveTerritory(): void
-    {
+    {/** @var Territory $territory */
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
         $filters = new SearchTerritoryFiles($user);
         $filters->setTerritory($territory);
-        $territories = [];
-        $territories[$territory->getId()] = $territory;
+        /** @var array<string, Territory> $territories */
+        $territories = [
+            (string) $territory->getId() => $territory,
+        ];
         $paginator = $this->fileRepository->findFilteredPaginated(
             $filters,
             $territories,
@@ -82,6 +91,8 @@ class FileRepositoryTest extends KernelTestCase
         $this->assertSame(6, $results['total']);
         $this->assertSame(1, $results['page']);
         $this->assertSame(20, $results['perPage']);
+        $this->assertNotEmpty($results['items']);
+        $this->assertIsArray($results['items']);
         $this->assertInstanceOf(File::class, $results['items'][0]);
         $this->assertSame('1_Demande_de_transmission_d_une_copie_d_un_DPE.docx', $results['items'][0]->getFilename());
     }

@@ -25,9 +25,11 @@ class PopNotificationManager extends Manager
         if (UserStatus::ACTIVE !== $user->getStatut()) {
             return null;
         }
-        if ($user->getPopNotifications()->count()) {
-            $popNotification = $user->getPopNotifications()->first();
-        } else {
+
+        /** @var PopNotification|null $popNotification */
+        $popNotification = $user->getPopNotifications()->first() ?: null;
+
+        if (!$popNotification) {
             $popNotification = new PopNotification();
             $user->addPopNotification($popNotification);
             $this->persist($popNotification);

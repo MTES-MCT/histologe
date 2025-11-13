@@ -30,7 +30,7 @@ class LoadEpciCommand extends Command
     public const string API_EPCI_COMMUNE_URL = 'https://geo.api.gouv.fr/epcis/%d/communes?fields=nom,codesPostaux';
     /** @var array<Epci> */
     private array $epcis = [];
-    /** @var array<Commune> */
+    /** @var array<string, array<string, Commune>> */
     private array $communes = [];
 
     public function __construct(

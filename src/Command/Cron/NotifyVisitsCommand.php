@@ -140,7 +140,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
-                to: $this->parameterBag->get('admin_email'),
+                to: (string) $this->parameterBag->get('admin_email'),
                 cronLabel: 'Envoi de notifications de visites',
                 params: [
                     'count_success' => $countFutureVisits,

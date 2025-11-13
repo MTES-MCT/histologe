@@ -54,6 +54,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/')]
@@ -140,7 +142,15 @@ class SignalementController extends AbstractController
         );
 
         if (empty($signalementDraftRequest->getProfil())) {
-            $errors = ['Merci de sélectionner le type de déclarant'];
+            $violation = new ConstraintViolation(
+                'Merci de sélectionner le type de déclarant',
+                null,
+                [],
+                $signalementDraftRequest,
+                'profil',
+                null
+            );
+            $errors = new ConstraintViolationList([$violation]);
         } else {
             $errors = $validator->validate(
                 $signalementDraftRequest,

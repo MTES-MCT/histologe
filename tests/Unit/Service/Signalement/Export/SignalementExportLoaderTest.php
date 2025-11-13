@@ -18,7 +18,7 @@ class SignalementExportLoaderTest extends TestCase
     /** @dataProvider provideFileFormat */
     public function testLoad(string $formatExtension, string $formatCell): void
     {
-        /** @var MockObject|SignalementManager */
+        /** @var MockObject&SignalementManager */
         $signalementManager = $this->createMock(SignalementManager::class);
         $filters = [];
         $user = $this->getUserFromRole(User::ROLE_ADMIN);

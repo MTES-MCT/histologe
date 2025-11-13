@@ -20,7 +20,7 @@ class DataPropertyArrayFilterTest extends TestCase
     public function testFilterByPrefix(array $prefixes, array $filteredDataExpected): void
     {
         $data = json_decode(
-            file_get_contents(__DIR__.'/../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            (string) file_get_contents(__DIR__.'/../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
 

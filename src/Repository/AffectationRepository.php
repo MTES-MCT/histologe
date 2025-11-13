@@ -18,6 +18,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Affectation>
+ *
  * @method Affectation|null find($id, $lockMode = null, $lockVersion = null)
  * @method Affectation|null findOneBy(array $criteria, array $orderBy = null)
  * @method Affectation[]    findAll()
@@ -169,8 +171,7 @@ class AffectationRepository extends ServiceEntityRepository
         if (\count($territories)) {
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
         }
-
-        $qb->groupBy('t.zip', 'p.nom');
+        $qb->groupBy('t.zip, p.nom');
 
         return $qb->getQuery()->getResult();
     }
@@ -190,7 +191,7 @@ class AffectationRepository extends ServiceEntityRepository
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -280,9 +281,12 @@ class AffectationRepository extends ServiceEntityRepository
         $stmt->bindValue('signalement_status', SignalementStatus::ACTIVE->value);
         $stmt->bindValue('affectation_status', AffectationStatus::ACCEPTED->value);
 
-        return $stmt->executeQuery()->fetchAllAssociative();
+        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
     }
 
+    /**
+     * @return Paginator<Affectation>
+     */
     public function findWithoutSubscriptionFilteredPaginated(SearchAffectationWithoutSubscription $searchAffectation, int $maxResult): Paginator
     {
         // Sous-requête pour identifier les affectations avec abonnements

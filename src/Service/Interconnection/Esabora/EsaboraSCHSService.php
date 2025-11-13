@@ -80,13 +80,15 @@ class EsaboraSCHSService extends AbstractEsaboraService
         try {
             $response = $this->request($url, $token, $payload, $options);
             $statusCode = $response->getStatusCode();
-
-            return new DossierStateSCHSResponse(
-                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+            if ($response instanceof ResponseInterface) {
+                $data = Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
                     ? $response->toArray(throw: false)
-                    : [],
-                $statusCode
-            );
+                    : [];
+            } else {
+                $data = [];
+            }
+
+            return new DossierStateSCHSResponse($data, $statusCode);
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -126,13 +128,15 @@ class EsaboraSCHSService extends AbstractEsaboraService
             $response = $this->request($url, $token, $payload, $options);
 
             $statusCode = $response->getStatusCode();
-
-            return new DossierEventsSCHSCollectionResponse(
-                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+            if ($response instanceof ResponseInterface) {
+                $data = Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
                     ? $response->toArray(throw: false)
-                    : [],
-                $statusCode
-            );
+                    : [];
+            } else {
+                $data = [];
+            }
+
+            return new DossierEventsSCHSCollectionResponse($data, $statusCode);
         } catch (\Throwable $exception) {
             return new DossierEventsSCHSCollectionResponse(
                 ['message' => $exception->getMessage(), 'status_code' => $statusCode],
@@ -168,7 +172,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         $response = $this->request($url, $token, [], $options);
 
         if ($response instanceof JsonResponse) {
-            throw new \Exception(json_decode($response->getContent())->message);
+            throw new \Exception(json_decode((string) $response->getContent())->message);
         }
 
         return new DossierEventFilesSCHSResponse($response);
@@ -183,7 +187,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
         if ($encodeDocuments) {
             $piecesJointes = array_map(function ($pieceJointe) {
                 $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
-                $pieceJointe['documentContent'] = base64_encode(file_get_contents($filepath));
+                $pieceJointe['documentContent'] = base64_encode((string) file_get_contents($filepath));
 
                 return $pieceJointe;
             }, $dossierMessage->getPiecesJointes());

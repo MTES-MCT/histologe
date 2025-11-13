@@ -8,6 +8,7 @@ use App\Repository\DesordrePrecisionRepository;
 class DesordreLogementSecuritePlomb implements DesordreTraitementInterface
 {
     public function __construct(
+        /** @phpstan-ignore-next-line */
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly DesordreTraitementPieces $desordreTraitementPieces,
     ) {

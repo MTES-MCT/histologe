@@ -71,9 +71,14 @@ class ProConnectAuthentication
         $this->proConnectContext->setIdToken($tokenResponse->idToken);
 
         $jwks = $this->proConnectHttpClient->getJWKS();
+        $idToken = $tokenResponse->idToken;
+        if (!is_string($idToken) || '' === $idToken) {
+            throw new ProConnectException('Le token reçu est invalide.');
+        }
+
         $isValid = $this->proConnectJwtValidator->validate(
             $jwks,
-            $tokenResponse->idToken,
+            $idToken,
             $this->proConnectContext->getNonce()
         );
 

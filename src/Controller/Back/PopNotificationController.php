@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\PopNotification;
 use App\Entity\User;
 use App\Manager\PopNotificationManager;
 use App\Repository\PartnerRepository;
@@ -19,8 +20,14 @@ class PopNotificationController extends AbstractController
         /** @var ?User $user */
         $user = $this->getUser();
         $popNotification = $user->getPopNotifications()->first();
-        $addedPartnersIds = isset($popNotification->getParams()['addedPartners']) ? $popNotification->getParams()['addedPartners'] : [];
-        $removedPartnersIds = isset($popNotification->getParams()['removedPartners']) ? $popNotification->getParams()['removedPartners'] : [];
+        if (!$popNotification instanceof PopNotification) {
+            $addedPartnersIds = [];
+            $removedPartnersIds = [];
+        } else {
+            $params = $popNotification->getParams();
+            $addedPartnersIds = $params['addedPartners'] ?? [];
+            $removedPartnersIds = $params['removedPartners'] ?? [];
+        }
         $addedPartners = $partnerRepository->findBy(['id' => $addedPartnersIds]);
         $removedPartners = $partnerRepository->findBy(['id' => $removedPartnersIds]);
 

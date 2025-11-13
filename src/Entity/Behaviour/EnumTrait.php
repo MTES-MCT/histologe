@@ -28,6 +28,9 @@ trait EnumTrait
     public static function fromLabel(string $label): self
     {
         $key = self::getKeyFromLabel($label);
+        if (null === $key) {
+            throw new \ValueError("No case for label $label");
+        }
 
         return self::from($key);
     }
@@ -36,13 +39,14 @@ trait EnumTrait
     {
         $key = self::getKeyFromLabel($label);
 
-        return self::tryFrom($key);
+        return null === $key ? null : self::tryFrom($key);
     }
 
-    private static function getKeyFromLabel(string $label): string|false
+    private static function getKeyFromLabel(string $label): ?string
     {
         $label = mb_trim($label);
+        $key = array_search($label, self::getLabelList(), true);
 
-        return array_search($label, self::getLabelList());
+        return (false === $key || !is_string($key)) ? null : $key;
     }
 }

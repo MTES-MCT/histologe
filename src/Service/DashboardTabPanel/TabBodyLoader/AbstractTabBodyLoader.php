@@ -28,6 +28,7 @@ abstract class AbstractTabBodyLoader implements TabBodyLoaderInterface
     {
         $this->tabQueryParameters = $tabBody->getTabQueryParameters();
 
+        /** @var array<string, mixed> $filters */
         $filters = ['isImported' => 'oui'];
         if (null !== $this->tabQueryParameters->territoireId) {
             $filters['territoire'] = $this->tabQueryParameters->territoireId;

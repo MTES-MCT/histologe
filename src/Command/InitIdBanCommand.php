@@ -37,6 +37,7 @@ class InitIdBanCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
+        /** @var array<int, array{id: int}> $signalementIdsWithouBanId */
         $signalementIdsWithouBanId = $this->signalementRepository->findNullBanId();
         $nbSignalementWithoutBanId = \count($signalementIdsWithouBanId);
 
@@ -46,6 +47,7 @@ class InitIdBanCommand extends Command
 
         $nbBatch = ceil($nbSignalementWithoutBanId / self::BATCH_SIZE);
         for ($i = 0; $i < $nbBatch; ++$i) {
+            /** @var array<int, array{id: int}> $signalementsBatch */
             $signalementsBatch = array_splice($signalementIdsWithouBanId, 0, self::BATCH_SIZE);
             $signalementsIdsBatch = [];
             foreach ($signalementsBatch as $signalementBatch) {

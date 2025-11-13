@@ -53,7 +53,7 @@ class SignalementActionController extends AbstractController
         SuiviManager $suiviManager,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
-        if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), (string) $request->get('_token'))) {
             $signalement->setValidatedAt(new \DateTimeImmutable());
             /** @var User $user */
             $user = $this->getUser();
@@ -190,7 +190,7 @@ class SignalementActionController extends AbstractController
     ): RedirectResponse {
         $suivi = $suiviRepository->findOneBy(['id' => $request->get('suivi')]);
         $this->denyAccessUnlessGranted('DELETE_SUIVI', $suivi);
-        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->get('_token'))) {
             $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
             if ($suivi->getCreatedAt() > $limit && $this->featureEditionSuivi) {
                 $doctrine->getManager()->remove($suivi);
@@ -262,7 +262,7 @@ class SignalementActionController extends AbstractController
     ): RedirectResponse|JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), $request->get('_token')) && $response = $request->get('signalement-action')) {
+        if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), (string) $request->get('_token')) && $response = $request->get('signalement-action')) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
                 $affectationRepository->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
@@ -307,7 +307,7 @@ class SignalementActionController extends AbstractController
     public function switchValue(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): RedirectResponse|JsonResponse
     {
         $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-        if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), (string) $request->get('_token'))) {
             $value = $request->get('value');
 
             $tag = $entityManager->getRepository(Tag::class)->find((int) $value);

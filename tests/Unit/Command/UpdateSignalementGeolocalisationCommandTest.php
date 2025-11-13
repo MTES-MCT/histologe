@@ -17,10 +17,10 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 {
     use FixturesHelper;
 
-    private MockObject|TerritoryRepository $territoryRepository;
-    private MockObject|EntityManagerInterface $entityManager;
-    private MockObject|SignalementAddressUpdater $signalementAddressUpdater;
-    private MockObject|HistoryEntryManager $historyEntryManager;
+    private MockObject&TerritoryRepository $territoryRepository;
+    private MockObject&EntityManagerInterface $entityManager;
+    private MockObject&SignalementAddressUpdater $signalementAddressUpdater;
+    private MockObject&HistoryEntryManager $historyEntryManager;
 
     protected function setUp(): void
     {
@@ -122,10 +122,10 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
     }
 
     private function createMockSignalementRepository(
-        MockObject $signalementRepository,
+        MockObject&SignalementRepository $signalementRepository,
         int $countSignalements = 0,
         string $method = 'findSignalementsSplittedCreatedBefore',
-    ): MockObject|SignalementRepository {
+    ): MockObject&SignalementRepository {
         $signalementRepository
             ->expects($this->once())
             ->method($method)

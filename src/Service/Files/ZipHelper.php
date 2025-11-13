@@ -43,6 +43,9 @@ class ZipHelper
         $extractedFiles = [];
         for ($i = 0; $i < $zip->numFiles; ++$i) {
             $filename = $zip->getNameIndex($i);
+            if (!$filename) {
+                continue;
+            }
             $fileinfo = pathinfo($filename);
             if (!isset($fileinfo['extension'])) {
                 continue;

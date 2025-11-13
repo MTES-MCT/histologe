@@ -42,7 +42,7 @@ readonly class WorkerMessageEventSubscriber implements EventSubscriberInterface
                     service: InterfacageType::ESABORA->value,
                     action: $dossierMessage->getAction(),
                     message: $this->serializer->serialize($dossierMessage, 'json'),
-                    response: json_encode($error),
+                    response: (string) json_encode($error),
                     status: JobEvent::STATUS_FAILED,
                     codeStatus: Response::HTTP_SERVICE_UNAVAILABLE,
                     signalementId: $dossierMessage->getSignalementId(),

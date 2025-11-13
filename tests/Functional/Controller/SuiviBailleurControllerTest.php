@@ -30,8 +30,11 @@ class SuiviBailleurControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur');
-
-        $signalementUser = new SignalementBailleur(userIdentifier: $signalement->getUuid());
+        $uuid = $signalement->getUuid();
+        if (empty($uuid)) {
+            throw new \RuntimeException('Le signalement n’a pas d’UUID');
+        }
+        $signalementUser = new SignalementBailleur(userIdentifier: $uuid);
         $client->loginUser($signalementUser, 'login_bailleur');
         $crawler = $client->request('GET', $urlDossierBailleur);
 
@@ -73,8 +76,11 @@ class SuiviBailleurControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur');
-
-        $signalementUser = new SignalementBailleur(userIdentifier: $signalement->getUuid());
+        $uuid = $signalement->getUuid();
+        if (empty($uuid)) {
+            throw new \RuntimeException('Le signalement n’a pas d’UUID');
+        }
+        $signalementUser = new SignalementBailleur(userIdentifier: $uuid);
         $client->loginUser($signalementUser, 'login_bailleur');
         $crawler = $client->request('GET', $urlDossierBailleur);
 
@@ -116,8 +122,11 @@ class SuiviBailleurControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur');
-
-        $signalementUser = new SignalementBailleur(userIdentifier: $signalement->getUuid());
+        $uuid = $signalement->getUuid();
+        if (empty($uuid)) {
+            throw new \RuntimeException('Le signalement n’a pas d’UUID');
+        }
+        $signalementUser = new SignalementBailleur(userIdentifier: $uuid);
         $client->loginUser($signalementUser, 'login_bailleur');
         $crawler = $client->request('GET', $urlDossierBailleur);
 
@@ -167,8 +176,11 @@ class SuiviBailleurControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur');
-
-        $signalementUser = new SignalementBailleur(userIdentifier: $signalement->getUuid());
+        $uuid = $signalement->getUuid();
+        if (empty($uuid)) {
+            throw new \RuntimeException('Le signalement n’a pas d’UUID');
+        }
+        $signalementUser = new SignalementBailleur(userIdentifier: $uuid);
         $client->loginUser($signalementUser, 'login_bailleur');
         $crawler = $client->request('GET', $urlDossierBailleur);
         $this->assertGreaterThan(

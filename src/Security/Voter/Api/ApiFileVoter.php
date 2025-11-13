@@ -13,6 +13,9 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, File>
+ */
 class ApiFileVoter extends Voter
 {
     public const string API_FILE_UPDATE = 'API_FILE_UPDATE';

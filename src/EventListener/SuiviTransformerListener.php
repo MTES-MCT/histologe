@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Entity\Suivi;
 use App\Service\SuiviTransformerService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
@@ -16,6 +17,9 @@ class SuiviTransformerListener
     ) {
     }
 
+    /**
+     * @param LifecycleEventArgs<EntityManager> $args
+     */
     public function postLoad(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();

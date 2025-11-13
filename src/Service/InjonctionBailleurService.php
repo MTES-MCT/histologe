@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Dto\ReponseInjonctionBailleur;
 use App\Dto\StopProcedure;
+use App\Entity\Affectation;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
@@ -87,7 +88,9 @@ class InjonctionBailleurService
                 $partner,
                 $adminUser
             );
-            $signalement->addAffectation($affectation);
+            if ($affectation instanceof Affectation) {
+                $signalement->addAffectation($affectation);
+            }
         }
         $this->affectationManager->flush();
     }

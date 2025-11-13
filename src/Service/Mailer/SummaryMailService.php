@@ -59,30 +59,33 @@ class SummaryMailService
         ];
         foreach ($notifications as $notification) {
             $notificationType = $notification->getType()->name;
+            $signalement = $notification->getSignalement();
+            $signalementId = $signalement->getId();
             switch ($notification->getType()) {
                 case NotificationType::NOUVEL_ABONNEMENT:
                 case NotificationType::NOUVEAU_SIGNALEMENT:
                 case NotificationType::NOUVELLE_AFFECTATION:
                 case NotificationType::CLOTURE_SIGNALEMENT:
-                    $events[$notificationType][$notification->getSignalement()->getId()] = [
-                        'uuid' => $notification->getSignalement()->getUuid(),
-                        'reference' => $notification->getSignalement()->getReference(),
+                    $events[$notificationType][$signalementId] = [
+                        'uuid' => $signalement->getUuid(),
+                        'reference' => $signalement->getReference(),
                     ];
                     break;
                 case NotificationType::NOUVEAU_SUIVI:
-                    if (!isset($events[$notificationType][$notification->getSignalement()->getId()])) {
-                        $events[$notificationType][$notification->getSignalement()->getId()] = [
-                            'uuid' => $notification->getSignalement()->getUuid(),
-                            'reference' => $notification->getSignalement()->getReference(),
+                    if (!isset($events[$notificationType][$signalementId])) {
+                        $events[$notificationType][$signalementId] = [
+                            'uuid' => $signalement->getUuid(),
+                            'reference' => $signalement->getReference(),
                             'nb' => 0,
                         ];
                     }
-                    ++$events[$notificationType][$notification->getSignalement()->getId()]['nb'];
+                    $events[$notificationType][$signalementId]['nb'] ??= 0;
+                    ++$events[$notificationType][$signalementId]['nb'];
                     break;
                 case NotificationType::CLOTURE_PARTENAIRE:
-                    $events[$notificationType][$notification->getSignalement()->getId()] = [
-                        'uuid' => $notification->getSignalement()->getUuid(),
-                        'reference' => $notification->getSignalement()->getReference(),
+                    $events[$notificationType][$signalementId] = [
+                        'uuid' => $signalement->getUuid(),
+                        'reference' => $signalement->getReference(),
                         'partenaire' => $notification->getAffectation()->getPartner()->getNom(),
                     ];
                     break;

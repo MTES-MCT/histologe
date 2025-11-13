@@ -11,6 +11,7 @@ use App\Manager\AffectationManager;
 use App\Manager\HistoryEntryManager;
 use App\Manager\SuiviManager;
 use App\Messenger\InterconnectionBus;
+use App\Repository\AffectationRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -93,12 +94,17 @@ class AffectationManagerTest extends WebTestCase
 
     public function testCloseAffectation(): void
     {
+        /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->managerRegistry->getRepository(Affectation::class);
         /** @var Affectation $affectationAccepted */
         $affectationAccepted = $affectationRepository->findOneBy(['statut' => AffectationStatus::ACCEPTED]);
+        $firstUser = $affectationAccepted->getPartner()->getUsers()->first();
+        if (!$firstUser) {
+            $this->fail('No user found for the affectation');
+        }
         /** @var User $user */
         $user = $this->managerRegistry->getRepository(User::class)->findOneBy(
-            ['email' => $affectationAccepted->getPartner()->getUsers()->first()->getEmail()]
+            ['email' => $firstUser->getEmail()]
         );
         $this->client->loginUser($user);
         $partner = $user->getPartnerInTerritoryOrFirstOne($affectationAccepted->getSignalement()->getTerritory());

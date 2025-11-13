@@ -61,11 +61,15 @@ class VisiteUploadDocumentsControllerTest extends WebTestCase
             'uuid' => $uuidSignalement,
         ]);
 
-        $uuidIntervention = $signalement->getInterventions()->first()->getUuid();
+        $intervention = $signalement->getInterventions()->first();
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
+        $uuidIntervention = $intervention->getUuid();
         $response = $this->postRequest($uuidIntervention, [$documentFile], 'rapport-visite');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $data = json_decode($response, true);
+        $data = json_decode((string) $response, true);
         $files = array_filter(
             $data['files'],
             fn ($file) => DocumentType::PROCEDURE_RAPPORT_DE_VISITE->value === $file['documentType']

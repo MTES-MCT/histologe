@@ -12,7 +12,7 @@ class DossierPersonneServiceHandlerTest extends TestCase
 {
     use FixturesHelper;
 
-    protected MockObject|EsaboraSISHService $esaboraSISHService;
+    protected MockObject&EsaboraSISHService $esaboraSISHService;
 
     protected function setUp(): void
     {

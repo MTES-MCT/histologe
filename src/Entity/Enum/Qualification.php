@@ -58,12 +58,13 @@ enum Qualification: string
         ];
     }
 
-    private static function getKeyFromLabel(string $label): string|false
+    private static function getKeyFromLabel(string $label): ?string
     {
         $label = mb_trim($label);
         $label = str_contains($label, 'Péril') ? self::MISE_EN_SECURITE_PERIL->label() : $label;
+        $key = array_search($label, self::getLabelList(), true);
 
-        return array_search($label, self::getLabelList());
+        return (false === $key || !is_string($key)) ? null : $key;
     }
 
     /** @return array<Qualification> */

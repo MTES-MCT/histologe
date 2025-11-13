@@ -32,13 +32,14 @@ enum DesordreCritereZone: string
     {
         $key = self::getKeyFromLabel($label);
 
-        return self::tryFrom($key);
+        return null === $key ? null : self::tryFrom($key);
     }
 
-    private static function getKeyFromLabel(string $label): string|false
+    private static function getKeyFromLabel(string $label): ?string
     {
         $label = mb_trim($label);
+        $key = array_search($label, self::getLabelList(), true);
 
-        return array_search($label, self::getLabelList());
+        return (false === $key || !is_string($key)) ? null : $key;
     }
 }

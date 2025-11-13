@@ -13,7 +13,7 @@ class DossierPushSISHResponseTest extends TestCase
     public function testDossierResponseSuccessfullyCreated(string $filename): void
     {
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/'.$filename;
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
         $dossierResponse = new DossierPushSISHResponse($responseEsabora, 200);
         $this->assertNotNull($dossierResponse->getSasId());

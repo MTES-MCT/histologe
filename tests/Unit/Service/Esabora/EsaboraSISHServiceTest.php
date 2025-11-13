@@ -22,8 +22,8 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
     public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
 
-    private MockObject|UploadHandlerService $uploadHandlerService;
-    private MockObject|LoggerInterface $logger;
+    private MockObject&UploadHandlerService $uploadHandlerService;
+    private MockObject&LoggerInterface $logger;
     private ?string $tempFilepath;
 
     protected function setUp(): void
@@ -68,7 +68,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
     public function testGetStateDossierFromEsaboraSas(): void
     {
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_etat_dossier_sas/etat_importe.json';
-        $mockResponse = new MockResponse(file_get_contents($filepath));
+        $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
@@ -82,7 +82,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
     public function testGetVisitesDossierFromEsaboraSas(): void
     {
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_visites_dossier_sas.json';
-        $mockResponse = new MockResponse(file_get_contents($filepath));
+        $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
@@ -97,7 +97,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
     public function testGetArretesDossierFromEsaboraSas(): void
     {
         $filepath = __DIR__.self::PATH_RESOURCE_JSON.'ws_arretes_dossier_sas.json';
-        $mockResponse = new MockResponse(file_get_contents($filepath));
+        $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
         $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
@@ -111,7 +111,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
     private function getEsaboraSISHService(string $filepath): EsaboraSISHService
     {
-        $mockResponse = new MockResponse(file_get_contents($filepath));
+        $mockResponse = new MockResponse((string) file_get_contents($filepath));
         $mockHttpClient = new MockHttpClient($mockResponse);
         $this->uploadHandlerService
             ->expects($this->atLeast(str_contains('ws_dossier', $filepath) ? 1 : 0))

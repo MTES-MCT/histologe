@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Emoji\EmojiTransliterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class EsaboraSISHService extends AbstractEsaboraService
 {
@@ -105,12 +106,15 @@ class EsaboraSISHService extends AbstractEsaboraService
 
             $statusCode = $response->getStatusCode();
 
-            return new DossierStateSISHResponse(
-                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+            if ($response instanceof ResponseInterface) {
+                $data = Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
                     ? $response->toArray(throw: false)
-                    : [],
-                $statusCode
-            );
+                    : [];
+            } else {
+                $data = [];
+            }
+
+            return new DossierStateSISHResponse($data, $statusCode);
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -139,12 +143,15 @@ class EsaboraSISHService extends AbstractEsaboraService
             $response = $this->request($url, $token, $payload, $options);
             $statusCode = $response->getStatusCode();
 
-            return new DossierVisiteSISHCollectionResponse(
-                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+            if ($response instanceof ResponseInterface) {
+                $data = Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
                     ? $response->toArray(throw: false)
-                    : [],
-                $statusCode
-            );
+                    : [];
+            } else {
+                $data = [];
+            }
+
+            return new DossierVisiteSISHCollectionResponse($data, $statusCode);
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -178,12 +185,15 @@ class EsaboraSISHService extends AbstractEsaboraService
 
             $statusCode = $response->getStatusCode();
 
-            return new DossierArreteSISHCollectionResponse(
-                Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
+            if ($response instanceof ResponseInterface) {
+                $data = Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
                     ? $response->toArray(throw: false)
-                    : [],
-                $statusCode
-            );
+                    : [];
+            } else {
+                $data = [];
+            }
+
+            return new DossierArreteSISHCollectionResponse($data, $statusCode);
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -219,13 +229,15 @@ class EsaboraSISHService extends AbstractEsaboraService
 
             $response = $this->request($url, $token, $payload, $options);
             $statusCode = $response->getStatusCode();
-
-            return new DossierPushSISHResponse(
-                Response::HTTP_INTERNAL_SERVER_ERROR >= $statusCode
+            if ($response instanceof ResponseInterface) {
+                $data = Response::HTTP_INTERNAL_SERVER_ERROR !== $statusCode
                     ? $response->toArray(throw: false)
-                    : [],
-                $statusCode
-            );
+                    : [];
+            } else {
+                $data = [];
+            }
+
+            return new DossierPushSISHResponse($data, $statusCode);
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -288,7 +300,7 @@ class EsaboraSISHService extends AbstractEsaboraService
     ): array {
         $piecesJointes = array_map(function ($pieceJointe) {
             $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
-            $pieceJointe['documentContent'] = base64_encode(file_get_contents($filepath));
+            $pieceJointe['documentContent'] = base64_encode((string) file_get_contents($filepath));
 
             return $pieceJointe;
         }, $dossierMessageSISH->getPiecesJointesDocuments());

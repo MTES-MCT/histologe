@@ -30,7 +30,7 @@ class PartnerTest extends KernelTestCase
             ->setIsArchive(false)
             ->setTerritory($territory)
             ->setEsaboraUrl($faker->url())
-            ->setEsaboraToken($faker->randomKey())
+            ->setEsaboraToken((string) $faker->randomKey())
             ->setType(PartnerType::ADIL);
 
         /** @var ConstraintViolationList $errors */

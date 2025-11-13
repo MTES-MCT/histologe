@@ -41,7 +41,18 @@ class VisiteCreateControllerTest extends WebTestCase
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
         $firstFile = $signalement->getFiles()->first();
         $lastFile = $signalement->getFiles()->last();
-        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
+        if (!$firstFile) {
+            $this->fail('No file found for the signalement');
+        }
+        if (!$lastFile) {
+            $this->fail('No file found for the signalement');
+        }
+
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $payload['partenaireUuid'] = $affectation->getPartner()->getUuid();
         if ('visite_confirmed' === $type) {
             $payload['files'] = [$firstFile->getUuid(), $lastFile->getUuid()];
         }
@@ -49,20 +60,20 @@ class VisiteCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_visite_post', ['uuid' => self::UUID_SIGNALEMENT]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
         $this->assertEmailCount($nbMailSent);
 
         if ('visite_confirmed' === $type) {
-            $content = json_decode($this->client->getResponse()->getContent(), true);
+            $content = json_decode((string) $this->client->getResponse()->getContent(), true);
             $crawler = new Crawler($content['details']);
             $links = $crawler->filter('a.fr-link');
             $this->assertCount(2, $links, 'Il doit y avoir exactement 2 liens dans le contenu HTML.');
         }
         if ('visite_planned' === $type) {
-            $content = json_decode($this->client->getResponse()->getContent(), true);
+            $content = json_decode((string) $this->client->getResponse()->getContent(), true);
             $this->assertArrayHasKey('commentBeforeVisite', $content);
             $this->assertEquals('commentaire avant visite ', $content['commentBeforeVisite']);
         }
@@ -79,17 +90,26 @@ class VisiteCreateControllerTest extends WebTestCase
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
-        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
+
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $payload['partenaireUuid'] = $affectation->getPartner()->getUuid();
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_visite_post', ['uuid' => $signalementUuid]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
+        $intervention = $signalement->getInterventions()->first();
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $message = json_decode($this->client->getResponse()->getContent(), true)['message'];
-        $this->assertStringContainsString($signalement->getInterventions()->first()->getUuid(), $message);
+        $message = json_decode((string) $this->client->getResponse()->getContent(), true)['message'];
+        $this->assertStringContainsString($intervention->getUuid(), $message);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
@@ -102,17 +122,26 @@ class VisiteCreateControllerTest extends WebTestCase
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
-        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
+
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $payload['partenaireUuid'] = $affectation->getPartner()->getUuid();
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_visite_post', ['uuid' => $signalementUuid]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
+        $intervention = $signalement->getInterventions()->first();
+        if (!$intervention) {
+            $this->fail('No intervention found for the signalement');
+        }
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $message = json_decode($this->client->getResponse()->getContent(), true)['message'];
-        $this->assertStringContainsString($signalement->getInterventions()->first()->getUuid(), $message);
+        $message = json_decode((string) $this->client->getResponse()->getContent(), true)['message'];
+        $this->assertStringContainsString($intervention->getUuid(), $message);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
@@ -125,17 +154,22 @@ class VisiteCreateControllerTest extends WebTestCase
     public function testCreateVisiteWithPayloadErrors(array $payload, array $fieldsErrors, string $errorMessage): void
     {
         $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
-        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
+
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $payload['partenaireUuid'] = $affectation->getPartner()->getUuid();
 
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_visite_post', ['uuid' => self::UUID_SIGNALEMENT]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $errors = json_decode($this->client->getResponse()->getContent(), true)['errors'];
+        $errors = json_decode((string) $this->client->getResponse()->getContent(), true)['errors'];
         $this->assertStringContainsString($errorMessage, $errors[0]['message']);
         $errors = array_map(function ($error) { return $error['property']; }, $errors);
         $this->assertEquals($fieldsErrors, $errors);
@@ -158,11 +192,11 @@ class VisiteCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_visite_post', ['uuid' => $signalementUuid]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
-        $content = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(403, $this->client->getResponse()->getStatusCode(), (string) $this->client->getResponse()->getContent());
+        $content = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertStringContainsString('Access Denied', $content['message']);
         $this->assertStringContainsString($errorMessage, $content['message']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);

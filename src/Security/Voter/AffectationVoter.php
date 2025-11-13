@@ -12,6 +12,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Affectation|Signalement>
+ */
 class AffectationVoter extends Voter
 {
     public const string SEE = 'AFFECTATION_SEE';
@@ -46,12 +49,29 @@ class AffectationVoter extends Voter
         }
 
         return match ($attribute) {
-            self::SEE => $this->canSee($subject, $user),
-            self::TOGGLE => $this->canToggle($subject, $user),
-            self::ANSWER => $this->canAnswer($subject, $user),
-            self::CLOSE => $this->canClose($subject, $user),
-            self::REOPEN => $this->canReopen($subject, $user),
-            self::AFFECTATION_REINIT => $this->canReinit($subject, $user),
+            self::SEE => $subject instanceof Signalement
+                ? $this->canSee($subject, $user)
+                : false,
+
+            self::TOGGLE => $subject instanceof Signalement
+                ? $this->canToggle($subject, $user)
+                : false,
+
+            self::ANSWER => $subject instanceof Affectation
+                ? $this->canAnswer($subject, $user)
+                : false,
+
+            self::CLOSE => $subject instanceof Affectation
+                ? $this->canClose($subject, $user)
+                : false,
+
+            self::REOPEN => $subject instanceof Affectation
+                ? $this->canReopen($subject, $user)
+                : false,
+
+            self::AFFECTATION_REINIT => $subject instanceof Affectation
+                ? $this->canReinit($subject, $user)
+                : false,
             default => false,
         };
     }

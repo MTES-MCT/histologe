@@ -23,8 +23,8 @@ class AuthentificationSuccessListenerTest extends WebTestCase
     private ?KernelBrowser $client = null;
     private HistoryEntryRepository $historyEntryRepository;
     private UrlGeneratorInterface $urlGenerator;
-    private MockObject|LoggerInterface $logger;
-    private MockObject|TokenInterface $token;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&TokenInterface $token;
 
     protected function setUp(): void
     {
@@ -60,7 +60,9 @@ class AuthentificationSuccessListenerTest extends WebTestCase
     public function testOnSchebTwoFactorAuthenticationSuccess(): void
     {
         $historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
+        /** @var UserManager $userManager */
         $userManager = self::getContainer()->get(UserManager::class);
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
         $authentificationSuccessListener = new AuthentificationSuccessListener(
             $historyEntryManager,
@@ -70,6 +72,7 @@ class AuthentificationSuccessListenerTest extends WebTestCase
             '1'
         );
 
+        /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 

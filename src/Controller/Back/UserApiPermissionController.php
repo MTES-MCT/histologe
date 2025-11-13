@@ -98,7 +98,7 @@ final class UserApiPermissionController extends AbstractController
     #[Route(path: '/permission/{id}/delete', name: 'back_api_user_permission_delete', methods: ['POST'])]
     public function delete(UserApiPermission $userApiPermission, Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('user_api_permission_delete', $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('user_api_permission_delete', (string) $request->request->get('_token'))) {
             $entityManager->remove($userApiPermission);
             $entityManager->flush();
             $this->addFlash('success', 'Permission API supprimée avec succès.');

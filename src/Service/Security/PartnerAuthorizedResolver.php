@@ -4,6 +4,7 @@ namespace App\Service\Security;
 
 use App\Entity\Partner;
 use App\Entity\User;
+use App\Entity\UserApiPermission;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Repository\PartnerRepository;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -132,7 +133,11 @@ readonly class PartnerAuthorizedResolver
     public function getUniquePartner(User $user): ?Partner
     {
         if (1 === $user->getUserApiPermissions()->count()) {
-            return $user->getUserApiPermissions()->first()->getPartner();
+            $first = $user->getUserApiPermissions()->first();
+
+            if ($first instanceof UserApiPermission) {
+                return $first->getPartner();
+            }
         }
 
         return null;

@@ -47,6 +47,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 
 /**
+ * @extends ServiceEntityRepository<Signalement>
+ *
  * @method Signalement|null find($id, $lockMode = null, $lockVersion = null)
  * @method Signalement|null findOneBy(array $criteria, array $orderBy = null)
  * @method Signalement[]    findAll()
@@ -75,6 +77,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param ArrayCollection<int, Partner>|null $partners
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -100,7 +104,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $partners);
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -126,11 +130,12 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $user->getPartners());
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
      * @param array<int, Territory>                $territories
+     * @param ?ArrayCollection<int, Partner>       $partners
      * @param array<int, QualificationStatus>|null $qualificationStatuses
      *
      * @return array<int, array<string, mixed>>
@@ -206,7 +211,7 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -224,7 +229,7 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -240,7 +245,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -520,6 +525,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param ?ArrayCollection<int, Partner> $partners
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -542,10 +549,12 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $partners);
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (float) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
+     * @param ?ArrayCollection<int, Partner> $partners
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -557,6 +566,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param ?ArrayCollection<int, Partner> $partners
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -568,6 +579,8 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param ?ArrayCollection<int, Partner> $partners
+     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
@@ -592,7 +605,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $partners);
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();    // @phpstan-ignore-line
     }
 
     /**
@@ -606,7 +619,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->select('COUNT(s.id)');
         $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -641,7 +654,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb = self::addFiltersToQueryBuilder($qb, $statisticsFilters);
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (float) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -908,11 +921,11 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
-     * @param array<int, int> $ids
+     * @param array<int, int|string> $ids
      *
      * @return array<int, Signalement>
      */
@@ -1063,6 +1076,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return Paginator<array<string, mixed>>
+     */
     public function findFilteredPaginatedDrafts(
         SearchDraft $searchDraft,
         int $maxResult,
@@ -1087,6 +1103,9 @@ class SignalementRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder->getQuery(), false);
     }
 
+    /**
+     * @return Paginator<array<string, mixed>>
+     */
     public function findFilteredArchivedPaginated(
         SearchArchivedSignalement $searchArchivedSignalement,
         int $maxResult,
@@ -1100,6 +1119,9 @@ class SignalementRepository extends ServiceEntityRepository
         );
     }
 
+    /**
+     * @return Paginator<array<string, mixed>>
+     */
     public function findAllArchived(
         int $page,
         int $maxResult,
@@ -1139,7 +1161,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, Signalement>
+     * @return array<int, array{id: int}>
      */
     public function findNullBanId(): array
     {
@@ -1169,7 +1191,7 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return array<int, Signalement>
      */
-    public function findSignalementsSplittedCreatedBefore(int $split, Territory $territory): array
+    public function findSignalementsSplittedCreatedBefore(?int $split, Territory $territory): array
     {
         $qb = $this->createQueryBuilder('s')
             ->where('s.territory = :territory')
@@ -1960,7 +1982,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, string|array<string, string>>
+     * @return array<int, array<string, array<int|string|null>|int|string>|string>
      */
     private function getBaseSignalementsSansSuiviPartenaireDepuis60JSql(
         User $user,
@@ -2075,6 +2097,9 @@ class SignalementRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = 'SELECT COUNT(DISTINCT si.id) ';
+        /** @var string $sqlPrincipal */
+        /** @var array<mixed> $paramsToBind */
+        /** @var array<mixed> $types */
         [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params);
         $sql .= $sqlPrincipal;
 
@@ -2089,6 +2114,9 @@ class SignalementRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = 'SELECT DISTINCT si.id ';
+        /** @var string $sqlPrincipal */
+        /** @var array<mixed> $paramsToBind */
+        /** @var array<mixed> $types */
         [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params);
         $sql .= $sqlPrincipal;
 
@@ -2117,6 +2145,9 @@ class SignalementRepository extends ServiceEntityRepository
             MAX(u.nom) AS derniereActionPartenaireNomAgent,
             MAX(u.prenom) AS derniereActionPartenairePrenomAgent
         SQL;
+        /** @var string $sqlPrincipal */
+        /** @var array<mixed> $paramsToBind */
+        /** @var array<mixed> $types */
         [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSignalementsSansSuiviPartenaireDepuis60JSql($user, $params, true);
         $sql .= $sqlPrincipal;
         $sql .= ' GROUP BY si.id, si.uuid, si.reference, si.nom_occupant, si.prenom_occupant, si.adresse_occupant, si.cp_occupant, si.ville_occupant';
@@ -2243,31 +2274,31 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Signalement[]
+     * @return array<int, array<string, mixed>>
      */
     public function findActiveSignalementsWithInvalidEmails(User $user, ?TabQueryParameters $params): array
     {
         $qb = $this->buildBaseQbForNonDeliverable($user, $params);
 
         $qb->select(
-            's.uuid AS uuid',
-            's.nomOccupant AS nomOccupant',
-            's.prenomOccupant AS prenomOccupant',
-            's.reference AS reference',
-            "CONCAT_WS(', ', s.adresseOccupant, CONCAT(s.cpOccupant, ' ', s.villeOccupant)) AS adresse",
-            's.createdAt AS createdAt',
-            's.lastSuiviAt AS dernierSuiviAt',
-            's.lastSuiviBy AS derniereActionPartenaireNom',
-            "CASE
+            's.uuid AS uuid,
+            s.nomOccupant AS nomOccupant,
+            s.prenomOccupant AS prenomOccupant,
+            s.reference AS reference,
+            CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)) AS adresse,
+            s.createdAt AS createdAt,
+            s.lastSuiviAt AS dernierSuiviAt,
+            s.lastSuiviBy AS derniereActionPartenaireNom,
+            CASE
                 WHEN (FIND_IN_SET(s.mailOccupant, GROUP_CONCAT(DISTINCT edi.email)) > 0
                     AND FIND_IN_SET(s.mailDeclarant, GROUP_CONCAT(DISTINCT edi.email)) > 0)
-                    THEN 'Occupant et Tiers'
+                    THEN \'Occupant et Tiers\'
                 WHEN FIND_IN_SET(s.mailOccupant, GROUP_CONCAT(DISTINCT edi.email)) > 0
-                    THEN 'Occupant'
+                    THEN \'Occupant\'
                 WHEN FIND_IN_SET(s.mailDeclarant, GROUP_CONCAT(DISTINCT edi.email)) > 0
-                    THEN 'Tiers'
-                ELSE ''
-            END AS profilNonDeliverable"
+                    THEN \'Tiers\'
+                ELSE \'\'
+            END AS profilNonDeliverable'
         );
 
         if ($params && in_array($params->sortBy, ['createdAt', 'nomOccupant'], true)

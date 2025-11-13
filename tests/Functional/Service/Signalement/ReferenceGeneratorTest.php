@@ -4,10 +4,13 @@ namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\Territory;
 use App\Repository\SignalementRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\Signalement\ReferenceGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\TransactionRequiredException;
+use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ReferenceGeneratorTest extends KernelTestCase
@@ -18,7 +21,13 @@ class ReferenceGeneratorTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
 
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $doctrine->getManager();
+
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -27,10 +36,12 @@ class ReferenceGeneratorTest extends KernelTestCase
      */
     public function testGenerateReferenceFromExistingSignalement(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => 13]);
 
         $todayYear = (new \DateTime())->format('Y');
+        /** @var SignalementRepository&MockObject $signalementRepository */
         $signalementRepository = $this->createMock(SignalementRepository::class);
         $signalementRepository
             ->expects($this->once())
@@ -50,9 +61,11 @@ class ReferenceGeneratorTest extends KernelTestCase
      */
     public function testGenerateReferenceFromNoSignalement(): void
     {
+        /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => 85]);
 
+        /** @var SignalementRepository&MockObject $signalementRepository */
         $signalementRepository = $this->createMock(SignalementRepository::class);
         $signalementRepository
             ->expects($this->once())

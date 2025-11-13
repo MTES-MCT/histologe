@@ -31,8 +31,11 @@ class ScheduledTaskCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $sleepInterval = $this->parameterBag->get('clock_process')['sleep_interval'];
-        $tasks = $this->parameterBag->get('clock_process')['tasks'];
+        /** @var array{sleep_interval: int, tasks: list<array{command: string, schedule: string}>} $clockProcess */
+        $clockProcess = $this->parameterBag->get('clock_process');
+
+        $sleepInterval = $clockProcess['sleep_interval'];
+        $tasks = $clockProcess['tasks'];
 
         $table = (new Table($output))->setHeaders(['Command', 'Schedule']);
 

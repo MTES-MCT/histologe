@@ -21,6 +21,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Partner>
+ *
  * @method Partner|null find($id, $lockMode = null, $lockVersion = null)
  * @method Partner|null findOneBy(array $criteria, array $orderBy = null)
  * @method Partner[]    findAll()
@@ -46,6 +48,9 @@ class PartnerRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
+    /**
+     * @return Paginator<Partner>
+     */
     public function findFilteredPaginated(SearchPartner $searchPartner, int $maxResult): Paginator
     {
         return $this->getPartners(
@@ -54,10 +59,14 @@ class PartnerRepository extends ServiceEntityRepository
         );
     }
 
+    /**
+     * @return Paginator<Partner>
+     */
     public function getPartners(
         int $maxResult,
         SearchPartner $searchPartner,
     ): Paginator {
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->getPartnersQueryBuilder($searchPartner->getTerritoire());
         $queryBuilder->select('p', 'z', 'ez', 'up', 'u')
             ->leftJoin('p.zones', 'z')
@@ -222,6 +231,9 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Paginator<Partner>
+     */
     public function findFilteredArchivedPaginated(SearchArchivedPartner $searchArchivedPartner, int $maxResult): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('p');

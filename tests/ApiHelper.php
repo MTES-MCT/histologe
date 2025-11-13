@@ -3,6 +3,7 @@
 namespace App\Tests;
 
 use Monolog\Handler\TestHandler;
+use Monolog\LogRecord;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,10 +30,18 @@ trait ApiHelper
         $this->assertInstanceOf(TestHandler::class, $testHandler);
 
         $records = $testHandler->getRecords();
-        $apiLogs = array_filter($records, function ($record) {
-            return str_starts_with($record['message'], 'API Request');
-        });
+        $apiLogs = array_filter($records, function (LogRecord $record) {
+            $message = $record['message'];
+            if (!is_string($message)) {
+                $message = match (true) {
+                    $message instanceof \DateTimeInterface => $message->format(\DATE_ATOM),
+                    is_scalar($message) => (string) $message,
+                    default => '',
+                };
+            }
 
+            return str_starts_with($message, 'API Request');
+        });
         $this->assertCount(1, $apiLogs, 'Il devrait y avoir exactement un log API Request');
     }
 }

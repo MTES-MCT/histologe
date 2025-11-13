@@ -152,6 +152,7 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
         int $limit,
         int $offset,
     ): array {
+        /** @var QueryBuilder $qb */
         $qb = $this->createJobEventByTerritoryQueryBuilder($dayPeriod, $searchInterconnexion);
         $qb->select(
             'j.createdAt',

@@ -114,7 +114,11 @@ class BackArchivedUsersControllerTest extends WebTestCase
             'id' => $account->getId(),
         ]);
 
-        $partner = $account->getUserPartners()->first()->getPartner();
+        $user = $account->getUserPartners()->first();
+        if (!$user) {
+            $this->fail('No user found for the account');
+        }
+        $partner = $user->getPartner();
 
         $crawler = $client->request('GET', $route);
 

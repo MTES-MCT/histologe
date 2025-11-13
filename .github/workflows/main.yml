@@ -120,10 +120,6 @@ jobs:
       - name: Lint twig templates
         run: php bin/console lint:twig templates/
 
-      # https://github.com/phpstan/phpstan
-      - name: Analyse PHP Code (PHPStan)
-        run: vendor/bin/phpstan analyse
-
       # https://github.com/FriendsOfPHP/PHP-CS-Fixer
       - name: Check PHP coding standard (PHP-CS-Fixer)
         run: composer cs-check
@@ -143,6 +139,13 @@ jobs:
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
           MAIL_ENABLE: 1
+
+      # https://github.com/phpstan/phpstan
+      - name: Analyse PHP Code (PHPStan)
+        run: vendor/bin/phpstan analyse
+        env:
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
 
       - name: Run tests
         run: |

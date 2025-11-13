@@ -46,8 +46,8 @@ class HistoryEntryBuffer
         // for prevent flushing invalid entities
         $this->entityManager->clear();
         foreach ($this->pendingHistoryEntries as $entry) {
-            if (!$entry->getEntityId() && $entry->getEntity()->getId()) {
-                $entry->setEntityId($entry->getEntity()->getId());
+            if (!$entry->getEntityId() && $entry->getEntity()->getId()) {// @phpstan-ignore-line
+                $entry->setEntityId($entry->getEntity()->getId()); // @phpstan-ignore-line
             }
             if ($entry->getSignalement() && !$this->entityManager->contains($entry->getSignalement())) {
                 $signalement = $this->entityManager->getRepository(Signalement::class)->find($entry->getSignalement()->getId());

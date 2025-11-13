@@ -41,11 +41,11 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
-        $signalementUuid = json_decode($this->client->getResponse()->getContent(), true)['uuid'];
+        $signalementUuid = json_decode((string) $this->client->getResponse()->getContent(), true)['uuid'];
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $this->assertNotNull($signalement);
         $this->assertEquals($signalement->getCreatedByPartner()->getId(), $partner->getId());
@@ -186,11 +186,11 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
-        $signalementUuuid = json_decode($this->client->getResponse()->getContent(), true)['uuid'];
+        $signalementUuuid = json_decode((string) $this->client->getResponse()->getContent(), true)['uuid'];
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
         $this->assertNotNull($signalement);
         $this->assertEquals($signalement->getCreatedByPartner()->getId(), $partner->getId());
@@ -236,11 +236,11 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
         $this->assertStringStartsWith('Un signalement existe déjà à cette adresse', $response['errors'][0]['message']);
 
@@ -258,10 +258,10 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
         $this->assertStringStartsWith('Vous n\'avez pas le droit de créer un signalement sur le territoire', $response['errors'][0]['message']);
 
@@ -279,10 +279,10 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
         $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertStringStartsWith('Le partenaire n\'existe pas', $response['message']);
 
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -306,13 +306,13 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(5, $response['errors']);
-        $errors = json_encode($response['errors']);
+        $errors = (string) json_encode($response['errors']);
         $this->assertStringContainsString('Veuillez renseigner l\'adresse du logement.', $errors);
         $this->assertStringContainsString('Cette valeur doit \u00eatre l\'un des choix propos\u00e9s.', $errors);
         $this->assertStringContainsString('Le num\u00e9ro de t\u00e9l\u00e9phone \"12345\" n\'est pas au bon format.', $errors);
@@ -336,13 +336,13 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
-        $errors = json_encode($response['errors']);
+        $errors = (string) json_encode($response['errors']);
         $this->assertStringContainsString('Au moins une pr\u00e9cision doit \u00eatre fournie pour le d\u00e9sordre \"desordres_logement_humidite_salle_de_bain\"', $errors);
 
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -363,13 +363,13 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
-        $errors = json_encode($response['errors']);
+        $errors = (string) json_encode($response['errors']);
         $this->assertStringContainsString('Un d\u00e9sordre avec l\'identifiant \"desordres_logement_humidite_salle_de_bain\" est d\u00e9j\u00e0 pr\u00e9sent dans la liste.', $errors);
 
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -390,13 +390,13 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
-        $errors = json_encode($response['errors']);
+        $errors = (string) json_encode($response['errors']);
         $this->assertStringContainsString('La pr\u00e9cision \"desordres_logement_humidite_salle_de_bain_details_fuite_non\" est fournie en doublon pour le d\u00e9sordre \"desordres_logement_humidite_salle_de_bain\"', $errors);
 
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -424,13 +424,13 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(2, $response['errors']);
-        $errors = json_encode($response['errors']);
+        $errors = (string) json_encode($response['errors']);
         $this->assertStringContainsString('La pr\u00e9cision \"desordres_logement_electricite_manque_prises_details_multiprises_non\" ne doit pas \u00eatre cumul\u00e9e avec d\'autres pr\u00e9cisions pour le d\u00e9sordre \"desordres_logement_electricite_manque_prises\"', $errors);
 
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -469,13 +469,13 @@ class SignalementCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_create_post'),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(3, $response['errors']);
-        $errors = json_encode($response['errors']);
+        $errors = (string) json_encode($response['errors']);
         $this->assertStringContainsString('Le d\u00e9sordre \"desordres_logement_humidite_salle_de_bain\" n\'accepte pas de description libre.', $errors);
         $this->assertStringContainsString('Le d\u00e9sordre \"desordres_batiment_nuisibles_autres\" ne correspond pas avec la pr\u00e9cision libre \"desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre\".', $errors);
         $this->assertStringContainsString('La pr\u00e9cision libre \"desordres_logement_lumiere_plafond_trop_bas_salle_de_bain\" ne correspond pas avec les pr\u00e9cisions fournies pour le d\u00e9sordre \"desordres_logement_lumiere_plafond_trop_bas\".', $errors);

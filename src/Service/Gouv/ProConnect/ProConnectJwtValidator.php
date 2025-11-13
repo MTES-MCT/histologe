@@ -19,6 +19,7 @@ class ProConnectJwtValidator
     {
     }
 
+    /** @param non-empty-string $idToken */
     public function validate(JWKSResponse $jwks, string $idToken, string $expectedNonce): bool
     {
         try {
@@ -27,6 +28,7 @@ class ProConnectJwtValidator
                 return false;
             }
 
+            /** @var non-empty-string $publicKeyPem */
             $publicKeyPem = (new JWKConverter())->toPEM($publicKey->toArray());
 
             $token = (new Parser(new JoseEncoder()))->parse($idToken);

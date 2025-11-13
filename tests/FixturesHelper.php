@@ -382,7 +382,7 @@ trait FixturesHelper
     protected function getDossierSISHResponse(string $filename): DossierPushSISHResponse
     {
         $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/'.$filename;
-        $responseEsabora = json_decode(file_get_contents($filepath), true);
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
         return new DossierPushSISHResponse($responseEsabora, 200);
     }
@@ -392,7 +392,7 @@ trait FixturesHelper
         $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_visites_dossier_sas.json';
 
         return new DossierVisiteSISHCollectionResponse(
-            json_decode(file_get_contents($filepath), true),
+            json_decode((string) file_get_contents((string) $filepath), true),
             200
         );
     }
@@ -403,7 +403,7 @@ trait FixturesHelper
         $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_visites_dossier_sas_en_cours.json';
 
         return new DossierVisiteSISHCollectionResponse(
-            json_decode(file_get_contents($filepath), true),
+            json_decode((string) file_get_contents((string) $filepath), true),
             200
         );
     }
@@ -413,7 +413,7 @@ trait FixturesHelper
         $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';
 
         return new DossierArreteSISHCollectionResponse(
-            json_decode(file_get_contents($filepath), true),
+            json_decode((string) file_get_contents((string) $filepath), true),
             200
         );
     }

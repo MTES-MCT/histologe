@@ -138,6 +138,9 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         return $fileName;
     }
 
+    /**
+     * @param non-empty-string $tag
+     */
     public function cleanTaggedText(?string $taggedText, string $tag, string $direction): string
     {
         if (null === $taggedText) {

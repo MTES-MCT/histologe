@@ -39,18 +39,27 @@ class ArreteCreateControllerTest extends WebTestCase
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
-        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
+
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $payload['partenaireUuid'] = $affectation->getPartner()->getUuid();
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_arretes_post', [
                 'uuid' => $signalementUuid,
             ]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
-        $lastDescription = $signalement->getSuivis()->last()->getDescription();
+        $suivi = $signalement->getSuivis()->last();
+        if (!$suivi) {
+            $this->fail('No suivi found for the signalement');
+        }
+        $lastDescription = $suivi->getDescription();
 
         foreach ($payload as $key => $value) {
             if (('arrete_mainlevee' === $type && 'type' === $key) || 'partenaireUuid' === $key) {
@@ -77,14 +86,19 @@ class ArreteCreateControllerTest extends WebTestCase
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
-        $payload['partenaireUuid'] = $signalement->getAffectations()->first()->getPartner()->getUuid();
+
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+        $payload['partenaireUuid'] = $affectation->getPartner()->getUuid();
         $this->client->request(
             method: 'POST',
             uri: $this->router->generate('api_signalements_arretes_post', [
                 'uuid' => $signalementUuid,
             ]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
         $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
@@ -108,11 +122,11 @@ class ArreteCreateControllerTest extends WebTestCase
             method: 'POST',
             uri: $this->router->generate('api_signalements_arretes_post', ['uuid' => $signalementUuid]),
             server: ['CONTENT_TYPE' => 'application/json'],
-            content: json_encode($payload)
+            content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
-        $content = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(403, $this->client->getResponse()->getStatusCode(), (string) $this->client->getResponse()->getContent());
+        $content = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertStringContainsString('Access Denied', $content['message']);
         $this->assertStringContainsString($errorMessage, $content['message']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);

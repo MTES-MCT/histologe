@@ -1,18 +1,22 @@
 parameters:
-	level: 6
+	level: 7
 	paths:
 		- src
 		- tests
 	excludePaths:
 		- .php-cs-fixer.dist.php
 		- tools
+	symfony:
+		container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
+		console_application_loader: tests/phpstan-bootstrap.php
 	treatPhpDocTypesAsCertain: false
-	checkGenericClassInNonGenericObjectType: false
+	reportUnmatchedIgnoredErrors: false
+	checkMissingIterableValueType: false
 	bootstrapFiles:
 		- tools/wiremock/src/Mock/AppMock.php
 	ignoreErrors:
 		-
-			message: '#Property [a-zA-Z0-9\\_]+::\$desordrePrecisionRepository is never read, only written.#'
+			message: '#Property [a-zA-Z0-9\_]+::\$desordrePrecisionRepository is never read, only written.#'
 			path: src/Service/Signalement/DesordreTraitement/*
 		-
 			message: '#Property .+::\$id is never written, only read.#'

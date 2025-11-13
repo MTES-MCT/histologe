@@ -20,7 +20,7 @@ class StatistiquesControllerTest extends WebTestCase
             )
         );
 
-        $response = json_decode($client->getResponse()->getContent(), true);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertResponseIsSuccessful();
 
         $expectedResponses = [

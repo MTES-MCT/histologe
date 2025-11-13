@@ -7,6 +7,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\UserStatus;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -28,6 +29,8 @@ use Psr\Clock\ClockInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
+ * @extends ServiceEntityRepository<Suivi>
+ *
  * @method Suivi|null find($id, $lockMode = null, $lockVersion = null)
  * @method Suivi|null findOneBy(array $criteria, array $orderBy = null)
  * @method Suivi[]    findAll()
@@ -342,7 +345,8 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, Territory> $territories
+     * @param array<int, Territory>          $territories
+     * @param ?ArrayCollection<int, Partner> $partners
      *
      * @throws Exception
      */
@@ -379,7 +383,8 @@ class SuiviRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, Territory> $territories
+     * @param array<int, Territory>          $territories
+     * @param ?ArrayCollection<int, Partner> $partners
      */
     public function getSignalementsLastAskFeedbackSuivisQuery(
         bool $excludeUsagerAbandonProcedure = true,
@@ -605,7 +610,7 @@ class SuiviRepository extends ServiceEntityRepository
         $connection = $this->getEntityManager()->getConnection();
         $stmt = $connection->prepare($sql);
 
-        return $stmt->executeQuery()->fetchAllAssociative();
+        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
     }
 
     /**
@@ -929,7 +934,7 @@ class SuiviRepository extends ServiceEntityRepository
             return $qb->getQuery()->getResult();
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     private function buildBaseQbForOtherUserSuivi(User $user, ?TabQueryParameters $params): QueryBuilder

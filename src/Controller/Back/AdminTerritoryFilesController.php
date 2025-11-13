@@ -16,6 +16,7 @@ use App\Service\ListFilters\SearchTerritoryFiles;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -64,6 +65,7 @@ class AdminTerritoryFilesController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territories = $user->getPartnersTerritories();
         }
+        /** @var Paginator $paginatedFiles */
         $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination);
 
         return $this->render('back/admin-territory-files/index.html.twig', [
@@ -266,7 +268,7 @@ class AdminTerritoryFilesController extends AbstractController
                 $file->setUploadedBy($user);
                 if ($file->getTerritory()) {
                     $file->setPartner($user->getPartnerInTerritoryOrFirstOne($file->getTerritory()));
-                } else {
+                } elseif ($user->getPartners()->first()) {
                     $file->setPartner($user->getPartners()->first());
                 }
 

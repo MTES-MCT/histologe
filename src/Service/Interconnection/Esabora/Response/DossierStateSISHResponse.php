@@ -44,7 +44,7 @@ class DossierStateSISHResponse implements DossierResponseInterface
                 $this->dossTypeCode = $data[11] ?? null;
                 $this->dossTypeLib = $data[12] ?? null;
             } else {
-                $this->errorReason = json_encode($response);
+                $this->errorReason = (string) json_encode($response);
             }
         }
         $this->statusCode = $statusCode;

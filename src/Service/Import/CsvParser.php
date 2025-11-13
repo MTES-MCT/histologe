@@ -34,9 +34,9 @@ class CsvParser
             while (($row = fgetcsv(
                 $fileResource,
                 0,
-                $this->options['delimiter'],
-                $this->options['enclosure'],
-                $this->options['escape']
+                (string) $this->options['delimiter'],
+                (string) $this->options['enclosure'],
+                (string) $this->options['escape']
             )) !== false) {
                 if ($i >= $this->options['first_line']) {
                     $row = array_map('trim', $row);
@@ -73,16 +73,21 @@ class CsvParser
      */
     public function getHeaders(string $filepath): array
     {
-        $rows = explode("\n", file_get_contents($filepath));
+        $content = file_get_contents($filepath);
+        if (false === $content) {
+            throw new \RuntimeException("Impossible de lire le fichier $filepath");
+        }
+
+        $rows = explode("\n", $content);
 
         $headers = str_getcsv(
             array_shift($rows),
-            $this->options['delimiter'],
-            $this->options['enclosure'],
-            $this->options['escape']
+            (string) $this->options['delimiter'],
+            (string) $this->options['enclosure'],
+            (string) $this->options['escape']
         );
 
-        return array_map('trim', $headers);
+        return array_map(fn ($h) => trim((string) $h), $headers);
     }
 
     /**
@@ -90,18 +95,23 @@ class CsvParser
      */
     public function getContent(string $filepath): array
     {
-        $rows = explode("\n", file_get_contents($filepath));
+        $content = file_get_contents($filepath);
+        if (false === $content) {
+            throw new \RuntimeException("Impossible de lire le fichier $filepath");
+        }
+
+        $rows = explode("\n", $content);
 
         $headers = str_getcsv(
             array_shift($rows),
-            $this->options['delimiter'],
-            $this->options['enclosure'],
-            $this->options['escape']
+            (string) $this->options['delimiter'],
+            (string) $this->options['enclosure'],
+            (string) $this->options['escape']
         );
 
         return [
-            'headers' => array_map('trim', $headers),
-            'rows' => $rows,
+            'headers' => array_map(fn ($h) => trim((string) $h), $headers),
+            'rows' => array_map(fn ($row) => (string) $row, $rows),
         ];
     }
 
