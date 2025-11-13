@@ -22,37 +22,32 @@ class InterventionEditedListener
 
         $changes = [];
         if ($event->hasChangedField('details')) {
-            if (!empty($event->getOldValue('details'))) {
-                $before = self::normalizeText($event->getOldValue('details'));
-                $after = self::normalizeText($event->getNewValue('details'));
-
-                if ($before !== $after && !empty($after)) {
-                    $changes['details'] = [
-                        'old' => $before,
-                        'new' => $after,
-                    ];
-                }
+            $before = self::normalizeText($event->getOldValue('details'));
+            $after = self::normalizeText($event->getNewValue('details'));
+            if ($before !== $after && !empty($after)) {
+                $changes['details'] = [
+                    'old' => $before,
+                    'new' => $after,
+                ];
             }
         }
 
         if ($event->hasChangedField('concludeProcedure')) {
             $before = $event->getOldValue('concludeProcedure') ?? [];
             $after = $event->getNewValue('concludeProcedure') ?? [];
-            if (!empty($before)) {
-                $before = is_array($before)
-                    ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $before)
-                    : [];
-                $after = is_array($after)
-                    ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $after)
-                    : [];
-                sort($before);
-                sort($after);
-                if ($before !== $after && !empty($after)) {
-                    $changes['concludeProcedure'] = [
-                        'old' => implode(', ', $before),
-                        'new' => implode(', ', $after),
-                    ];
-                }
+            $before = is_array($before)
+                ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $before)
+                : [];
+            $after = is_array($after)
+                ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $after)
+                : [];
+            sort($before);
+            sort($after);
+            if ($before !== $after && !empty($after)) {
+                $changes['concludeProcedure'] = [
+                    'old' => implode(', ', $before),
+                    'new' => implode(', ', $after),
+                ];
             }
         }
 
@@ -65,7 +60,9 @@ class InterventionEditedListener
     public function supports(Intervention $intervention): bool
     {
         return Intervention::STATUS_DONE === $intervention->getStatus()
-            && InterventionType::VISITE === $intervention->getType();
+            && (InterventionType::VISITE === $intervention->getType()
+                || InterventionType::VISITE_CONTROLE === $intervention->getType()
+            );
     }
 
     private function normalizeText(?string $text): string
