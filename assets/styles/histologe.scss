@@ -1082,3 +1082,16 @@ dl dd:last-child {
 .item-annuaire-agent{
     border: 1px solid var(--blue-france-main-525);
 }
+
+ul.fr-toggle__list.fr-toggle__list--inline {
+    li {
+        display: inline-flex;
+        .fr-toggle label {
+            width: auto;
+            margin-right: 2.25rem;
+        }
+        .fr-toggle label::before {
+            margin-right: 0.5rem;
+        }
+    }
+}
