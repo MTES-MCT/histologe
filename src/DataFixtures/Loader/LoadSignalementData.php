@@ -445,6 +445,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setTypeProprio(ProprioType::tryFrom($row['type_proprio']));
         }
 
+        if (isset($row['login_bailleur'])) {
+            $signalement
+                ->setLoginBailleur($row['login_bailleur']);
+        }
+
         if (isset($row['desordre_precision'])) {
             foreach ($row['desordre_precision'] as $desordrePrecision) {
                 $signalement->addDesordrePrecision(

@@ -8,3 +8,11 @@ flysystem:
                 bucket: '%env(resolve:S3_BUCKET)%'
                 prefix: ''
                 streamReads: true
+
+when@test:
+    flysystem:
+        storages:
+            file.storage:
+                adapter: 'local'
+                options:
+                    directory: '%kernel.project_dir%/var/storage'
