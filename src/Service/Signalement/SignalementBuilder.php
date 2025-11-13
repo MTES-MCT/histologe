@@ -351,12 +351,15 @@ class SignalementBuilder
             if (Qualification::DANGER === $qualification->getQualification()) {
                 return $this;
             }
+            if (Qualification::INSALUBRITE === $qualification->getQualification()) {
+                return $this;
+            }
         }
 
         $arrayDepts = json_decode($this->featureInjonctionBailleurDepts, true);
 
         // Pour entrer dans le statut injonction bailleur il faut :
-        // - que le signalement n'ait pas de qualification danger (au-dessus)
+        // - que le signalement n'ait pas de qualification danger ni insalubrité (au-dessus)
         // - que l'usager ait dit ok : injonction_bailleur_choice = 'oui'
         // - que le signalement soit fait par un locataire
         // - que le logement ne soit pas un logement social

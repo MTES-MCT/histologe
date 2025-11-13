@@ -258,6 +258,77 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->commit();
     }
 
+    public function testBuildSignalementNoInjonctionBailleurBecauseDanger(): void
+    {
+        $this->entityManager->beginTransaction();
+
+        $payload = json_decode(
+            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            true
+        );
+        $payload['signalement_concerne_logement_social_autre_tiers'] = 'non';
+        $payload['injonction_bailleur_choice'] = 'oui';
+
+        $signalementDraft = (new SignalementDraft())
+            ->setPayload($payload)
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setStatus(SignalementDraftStatus::EN_COURS)
+            ->setCurrentStep('informations_complementaires')
+            ->setEmailDeclarant($payload['vos_coordonnees_occupant_email']);
+
+        $signalement = $this->signalementBuilder
+            ->createSignalementBuilderFrom($signalementDraft)
+            ->withAdressesCoordonnees()
+            ->withTypeCompositionLogement()
+            ->withSituationFoyer()
+            ->withProcedure()
+            ->withInformationComplementaire()
+            ->withDesordres()
+            ->withStatus()
+            ->build()
+        ;
+        $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+
+        $this->entityManager->commit();
+    }
+
+    public function testBuildSignalementNoInjonctionBailleurBecauseInsalubrite(): void
+    {
+        $this->entityManager->beginTransaction();
+
+        $payload = json_decode(
+            file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            true
+        );
+        $payload['signalement_concerne_logement_social_autre_tiers'] = 'non';
+        $payload['injonction_bailleur_choice'] = 'oui';
+        unset($payload['desordres_logement_electricite_installation_dangereuse']);
+        unset($payload['desordres_logement_electricite_manque_prises_details_multiprises']);
+        $payload['type_logement_commodites_wc_cuisine'] = 'oui';
+
+        $signalementDraft = (new SignalementDraft())
+            ->setPayload($payload)
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setStatus(SignalementDraftStatus::EN_COURS)
+            ->setCurrentStep('informations_complementaires')
+            ->setEmailDeclarant($payload['vos_coordonnees_occupant_email']);
+
+        $signalement = $this->signalementBuilder
+            ->createSignalementBuilderFrom($signalementDraft)
+            ->withAdressesCoordonnees()
+            ->withTypeCompositionLogement()
+            ->withSituationFoyer()
+            ->withProcedure()
+            ->withInformationComplementaire()
+            ->withDesordres()
+            ->withStatus()
+            ->build()
+        ;
+        $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+
+        $this->entityManager->commit();
+    }
+
     public function testBuildSignalementAllDesordres(): void
     {
         $this->entityManager->beginTransaction();
