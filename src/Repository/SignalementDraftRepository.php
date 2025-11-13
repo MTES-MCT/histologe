@@ -7,6 +7,7 @@ use App\Entity\SignalementDraft;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 /**
  * @extends ServiceEntityRepository<SignalementDraft>
@@ -18,6 +19,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SignalementDraftRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
 {
+    use ClockAwareTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SignalementDraft::class);
@@ -58,17 +61,23 @@ class SignalementDraftRepository extends ServiceEntityRepository implements Enti
 
     /**
      * @return array<int, SignalementDraft>
+     *
+     * @throws \DateMalformedStringException
      */
     public function findPendingBlockedBailLast3Months(): array
     {
+        $limitDate = $this->now()
+            ->modify('-3 months')
+            ->format('Y-m-d');
+
         $queryBuilder = $this->createQueryBuilder('s')
             ->where('s.status = :status')
             ->andWhere('s.currentStep = :current_step')
-            ->andWhere('DATE(s.updatedAt) >= :min_updated_at')
+            ->andWhere('DATE(s.updatedAt) <= :min_updated_at')
             ->andWhere('s.pendingDraftRemindedAt is NULL')
             ->setParameter('status', SignalementDraftStatus::EN_COURS)
             ->setParameter('current_step', 'info_procedure_bail')
-            ->setParameter('min_updated_at', (new \DateTimeImmutable('- 3 months'))->format('Y-m-d'));
+            ->setParameter('min_updated_at', $limitDate);
 
         return $queryBuilder->getQuery()->execute();
     }
