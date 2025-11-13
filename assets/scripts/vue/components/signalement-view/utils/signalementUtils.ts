@@ -165,9 +165,6 @@ export function handleSignalementsShared (context: any, requestResponse: any): a
     context.sharedState.signalements.pagination = requestResponse.pagination
     context.sharedState.signalements.zoneAreas = requestResponse.zoneAreas
     context.sharedState.loadingList = false
-    if (context.sharedProps.ajaxurlSignalement.includes('cartographie') === false) {
-      window.scrollTo(0, 0)
-    }
   }
 }
 
