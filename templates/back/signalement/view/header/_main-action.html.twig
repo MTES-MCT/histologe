@@ -10,7 +10,7 @@
         {% include '_partials/_modal_transfer_subscription.html.twig' %}
     </div>
 {% endif %}
-{% if canValidateOrRefuseSignalement and not isAloneRtInCurrentPartner %}
+{% if canValidateOrRefuseSignalement and not isUniqueRtInCurrentPartner %}
     <div data-ajax-form>
         {% include '_partials/_modal_accept_signalement.html.twig' %}
     </div>
@@ -64,7 +64,7 @@
         {% include '_partials/_modal_refus_signalement.html.twig' %}
     </div>
     <div class="admin-territory-validation">
-        {% if isAloneRtInCurrentPartner %}
+        {% if isUniqueRtInCurrentPartner %}
             <form id="signalement-validation-response-form" action="{{ path('back_signalement_accept',{uuid:signalement.uuid}) }}" class="inline-form">
                 <button class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" name="signalement-validation-response[accept]" value="1">
                     Valider le signalement

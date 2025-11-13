@@ -158,14 +158,14 @@ class SignalementController extends AbstractController
 
         $acceptSignalementForm = null;
         $refusSignalementForm = null;
-        $isAloneRtInCurrentPartner = false;
+        $isUniqueRtInCurrentPartner = false;
         if ($canValidateOrRefuseSignalement) {
             if ($user->isTerritoryAdmin()) {
                 if (1 === count($userRepository->findActiveTerritoryAdminsInPartner($partner))) {
-                    $isAloneRtInCurrentPartner = true;
+                    $isUniqueRtInCurrentPartner = true;
                 }
             }
-            if (!$isAloneRtInCurrentPartner) {
+            if (!$isUniqueRtInCurrentPartner) {
                 $acceptSignalement = (new AcceptSignalement())->setSignalement($signalement)->setAgents([$user]);
                 $acceptSignalementFormRoute = $this->generateUrl('back_signalement_accept_post', ['uuid' => $signalement->getUuid()]);
                 $acceptSignalementForm = $this->createForm(
@@ -345,7 +345,7 @@ class SignalementController extends AbstractController
             'isUserSubscribed' => $isUserSubscribed,
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
             'partnerEmailAlerts' => $this->emailAlertBuilder->buildPartnerEmailAlert($signalement),
-            'isAloneRtInCurrentPartner' => $isAloneRtInCurrentPartner,
+            'isUniqueRtInCurrentPartner' => $isUniqueRtInCurrentPartner,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);

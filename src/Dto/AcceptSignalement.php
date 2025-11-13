@@ -12,7 +12,7 @@ class AcceptSignalement
     private ?Signalement $signalement = null;
 
     /** @var array<User> */
-    #[Assert\Count(min: 1, minMessage: 'Veuillez sélectionner au moins un agent.')]
+    #[Assert\Count(min: 1, minMessage: 'Veuillez sélectionner au moins un responsable de territoire.')]
     private array $agents = [];
 
     public function getSignalement(): ?Signalement
