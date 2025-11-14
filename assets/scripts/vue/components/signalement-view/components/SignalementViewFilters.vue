@@ -49,6 +49,21 @@
           <label class="fr-toggle__label" for="toggle-is-zones-displayed">Afficher les zones du territoire</label>
         </div>
       </li>
+      <li>
+        <HistoSelect
+          id="filter-saver-recherche"
+          title="Mes recherches favorites"
+          :option-items=sharedState.territories
+          :placeholder="'Mes recherches favorites'"
+        >
+          <!-- <template #label>Mes recherches favorites</template> -->
+        </HistoSelect>
+      </li>
+      <li>
+        <button class="fr-btn fr-btn--secondary fr-icon-settings-5-line">
+          
+        </button>
+      </li>
     </ul>
   </div>
   <div :class="defineCssBloc1()">
@@ -126,7 +141,7 @@
         {{ sharedState.showOptions ? 'Masquer les options' : 'Plus d\'options de recherche' }}
       </button>
     </div>
-    <div :class="defineCssBlocMultiTerritoire(7,7)">
+    <div :class="defineCssBlocMultiTerritoire(5,5)">
       <ul class="fr-tags-group">
         <li v-for="(value, key) in filtersSanitized"  :key="key">
           <button
@@ -139,6 +154,14 @@
           </button>
         </li>
       </ul>
+    </div>
+    <div :class="defineCssBlocMultiTerritoire(2,2)" v-if="layout=='horizontal'">
+      <button
+          v-if="hasEnoughFilters"
+          @click="saveSearch"
+          class="fr-link fr-link--icon-left fr-icon-star-line fr-text--sm">
+        Sauvegarder ma recherche
+      </button>
     </div>
     <div :class="defineCssBlocMultiTerritoire(2,2)">
       <button
@@ -417,7 +440,7 @@ export default defineComponent({
     },
     onChange: { type: Function }
   },
-  emits: ['changeTerritory', 'clickReset'],
+  emits: ['changeTerritory', 'clickReset', 'clickSaveSearch'],
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
@@ -434,6 +457,9 @@ export default defineComponent({
       })
 
       return Object.fromEntries(filters)
+    },
+    hasEnoughFilters() {
+      return Object.keys(this.filtersSanitized).length > 1
     }
   },
   methods: {
@@ -569,6 +595,28 @@ export default defineComponent({
         this.onChange(false)
       }
       this.$emit('changeTerritory', value)
+    },
+    saveSearch () {
+      const name = this.buildSearchName(this.filtersSanitized)
+
+      this.$emit('clickSaveSearch', {
+        name,
+        params: this.filtersSanitized
+      })
+    },
+    buildSearchName(filtersSanitized: Record<string, any>): string {
+      const parts: string[] = []
+
+      for (const [key, value] of Object.entries(filtersSanitized)) {
+        if (!value || value.length === 0) continue
+
+        const badge = buildBadge(key, value)
+        if (badge) {
+          parts.push(badge)
+        }
+      }
+
+      return parts.slice(0, 8).join(' • ')
     },
     resetFilters () {
       const keepIsImported = this.sharedState.input.filters.isImported
