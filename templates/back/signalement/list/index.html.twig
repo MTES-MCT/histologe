@@ -17,6 +17,8 @@
          data-ajaxurl-settings="{{ path('back_settings') }}"
          data-ajaxurl-contact="{{ sites_faciles_url }}une-question/"
          data-ajaxurl-remove-signalement="{{ path('back_signalement_delete', {'uuid' : '<uuid>'}) }}"
+         data-ajaxurl-save-search="{{ path('back_signalements_list_save_search') }}"
+         data-csrf-save-search="{{ csrf_token('save_search') }}"
          data-platform-name="{{ platform.name }}"
     >
 

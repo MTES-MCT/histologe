@@ -56,5 +56,28 @@ export const requests = {
     }
 
     requests.doRequest(url, functionReturn)
+  },
+  saveSearch (payload: { name: string; params: any }, csrfToken: string, functionReturn: Function) {
+    const ajaxUrlSaveSearch = decodeURIComponent(store.props.ajaxurlSaveSearch)
+    axios
+      .post(ajaxUrlSaveSearch, {
+        _token: csrfToken,
+        name: payload.name,
+        params: payload.params
+      })
+      .then(response => {
+        functionReturn(response.data)
+      })
+      .catch(error => {
+        if (error.response !== undefined) {
+          functionReturn(error.response)
+        } else {
+          const customResponse = {
+            status: 500,
+            message: 'Une erreur est survenue lors de la sauvegarde de votre recherche.'
+          }
+          functionReturn(customResponse)
+        }
+      })
   }
 }
