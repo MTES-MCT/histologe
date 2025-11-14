@@ -61,7 +61,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
+        $this->assertSelectorTextContains('.fr-notice--success p', 'Signalement accepté avec succès !');
 
         $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
@@ -113,7 +113,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
+        $this->assertSelectorTextContains('.fr-notice--success p', 'Signalement accepté avec succès !');
 
         $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
