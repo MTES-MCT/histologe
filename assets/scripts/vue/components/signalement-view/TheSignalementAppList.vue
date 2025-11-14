@@ -14,6 +14,7 @@
                 @change="handleFilters"
                 @changeTerritory="handleTerritoryChange"
                 @clickReset="handleClickReset"
+                @clickSaveSearch="handleClickSaveSearch"
                 :layout="'horizontal'"
                 :viewType="'list'"
             />
@@ -89,6 +90,8 @@ export default defineComponent({
         this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
         this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
         this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
+        this.sharedProps.ajaxurlSaveSearch = initElements.dataset.ajaxurlSaveSearch
+        this.sharedProps.csrfSaveSearch = initElements.dataset.csrfSaveSearch
         this.sharedProps.platformName = initElements.dataset.platformName
         if (!reset) {
           handleQueryParameter(this)
@@ -109,6 +112,9 @@ export default defineComponent({
     },
     handleClickReset () {
       this.init(true)
+    },
+    handleClickSaveSearch (payload: { name: string; params: any }) {
+      requests.saveSearch(payload, this.sharedProps.csrfSaveSearch, this.handleSearchSaved)
     },
     handleSignalements (requestResponse: any) {
       handleSignalementsShared(this, requestResponse)
@@ -155,6 +161,13 @@ export default defineComponent({
 
       buildUrl(this, initElements.dataset.ajaxurl)
       requests.getSignalements(this.handleSignalements)
+    },
+    handleSearchSaved (requestResponse: any) {
+      this.messageDeleteConfirmation = requestResponse.data.message 
+      this.classNameDeleteConfirmation =
+          requestResponse.status === 200
+            ? 'fr-alert--success'
+            : 'fr-alert--error'
     },
     async deleteItem (item: SignalementItem|null) {
       clearScreen(this)

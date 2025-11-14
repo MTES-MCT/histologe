@@ -175,6 +175,8 @@ export const store = {
     ajaxurlExportCsv: '',
     ajaxurlSettings: '',
     ajaxurlContact: '',
+    ajaxurlSaveSearch: '',
+    csrfSaveSearch: '',
     platformName: '',
     token: ''
   }
