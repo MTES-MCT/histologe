@@ -54,7 +54,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -274,9 +273,16 @@ class SignalementController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         Signalement $signalement,
         Request $request,
-    ): JsonResponse|RedirectResponse {
+    ): JsonResponse {
         if ($request->isMethod('POST')) {
-            $profil = $request->get('profil');
+            $manageFlashMessages = false;
+            if ('application/json' === $request->headers->get('Content-Type')) {
+                $data = json_decode($request->getContent(), true);
+                $profil = $data['profil'] ?? null;
+                $manageFlashMessages = true;
+            } else {
+                $profil = $request->request->get('profil');
+            }
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI_TO_USAGER,
@@ -287,14 +293,17 @@ class SignalementController extends AbstractController
                 )
             );
 
-            if ($request->get('preferedResponse') && 'redirection' === $request->get('preferedResponse')) {
+            if ($manageFlashMessages) {
+                $flashMessages = [];
+                $closeModal = false;
                 if ($success) {
-                    $this->addFlash('success', 'Le lien de suivi a été envoyé par e-mail.');
+                    $flashMessages[] = ['type' => 'success', 'title' => 'Lien de suivi envoyé', 'message' => 'Le lien de suivi a été envoyé par e-mail.'];
+                    $closeModal = true;
                 } else {
-                    $this->addFlash('error', 'Le lien de suivi n\'a pas pu être envoyé par e-mail.');
+                    $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le lien de suivi n\'a pas pu être envoyé par e-mail.'];
                 }
 
-                return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => $closeModal]);
             }
 
             if ($success) {
@@ -626,9 +635,9 @@ class SignalementController extends AbstractController
             );
 
             $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
-            'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
+            'Votre message a bien été envoyé, nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
             'Votre message a bien été envoyé, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
-            $this->addFlash('success', $messageRetour);
+            $this->addFlash('success', ['title' => 'Message envoyé', 'message' => $messageRetour]);
 
             return $this->redirectToRoute('front_suivi_signalement_messages', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -771,7 +780,7 @@ class SignalementController extends AbstractController
                             isPublic: true,
                             files: $filesToAttach
                         );
-                        $this->addFlash('success', 'Vos documents ont bien été enregistrés.');
+                        $this->addFlash('success', ['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.']);
                     }
 
                     return $this->redirectToRoute('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);

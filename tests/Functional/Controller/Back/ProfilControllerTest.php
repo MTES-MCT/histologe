@@ -268,8 +268,8 @@ class ProfilControllerTest extends WebTestCase
         $this->assertResponseRedirects($this->router->generate('back_profil'));
         $this->client->followRedirect();
 
-        $this->assertSelectorExists('.fr-alert--success p');
-        $this->assertSelectorTextContains('.fr-alert--success p', 'L\'avatar a bien été supprimé.');
+        $this->assertSelectorExists('.fr-notice--success .fr-notice__desc');
+        $this->assertSelectorTextContains('.fr-notice--success .fr-notice__desc', 'L\'avatar a bien été supprimé.');
 
         $this->assertNull($this->user->getAvatarFilename());
     }
@@ -286,8 +286,8 @@ class ProfilControllerTest extends WebTestCase
         $this->assertResponseRedirects($this->router->generate('back_profil'));
         $this->client->followRedirect();
 
-        $this->assertSelectorExists('.fr-alert--error p');
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Une erreur est survenue lors de la suppression...');
+        $this->assertSelectorExists('.fr-notice--alert .fr-notice__desc');
+        $this->assertSelectorTextContains('.fr-notice--alert .fr-notice__desc', 'Une erreur est survenue lors de la suppression...');
     }
 
     public function testEditEmailStep1Success(): void

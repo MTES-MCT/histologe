@@ -423,7 +423,7 @@ class SignalementControllerTest extends WebTestCase
         $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
-        $this->assertEquals('Vos documents ont bien été enregistrés.', $successMessages[0]);
+        $this->assertEquals(['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.'], $successMessages[0]);
 
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-09']);
         $lastSuivi = $signalement->getLastSuivi();
@@ -685,8 +685,8 @@ class SignalementControllerTest extends WebTestCase
 
         $client->followRedirect();
 
-        $this->assertSelectorExists('.fr-alert--success');
-        $this->assertSelectorTextContains('.fr-alert--success', 'Votre modification a bien été prise en compte.');
+        $this->assertSelectorExists('.fr-notice--success');
+        $this->assertSelectorTextContains('.fr-notice--success', 'Votre modification a bien été prise en compte.');
 
         $signalementUpdated = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
         $this->assertTrue($signalementUpdated->getIsProprioAverti(), 'Le bailleur devrait être marqué comme averti.');

@@ -1,6 +1,10 @@
-document.querySelectorAll('.fr-notice .fr-btn--close').forEach((closeButtonElement) => {
-  closeButtonElement.addEventListener('click', (event) => {
-    const notice = event.target.parentNode.parentNode.parentNode;
-    notice.parentNode.removeChild(notice);
-  });
+document.addEventListener('click', (event) => {
+  const closeButton = event.target.closest('.fr-notice .fr-btn--close');
+  
+  if (closeButton) {
+    const notice = closeButton.closest('.fr-notice');
+    if (notice) {
+      notice.remove();
+    }
+  }
 });

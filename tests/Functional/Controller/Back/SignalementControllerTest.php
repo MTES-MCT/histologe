@@ -546,7 +546,7 @@ class SignalementControllerTest extends WebTestCase
         $client->followRedirect();
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains(
-            '.fr-alert--success',
+            '.fr-notice--success',
             'Les étiquettes ont bien été enregistrées.'
         );
 
