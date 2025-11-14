@@ -6,6 +6,7 @@ use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\AgentSelectionType;
@@ -57,13 +58,25 @@ class AffectationController extends AbstractController
                 /** @var User $user */
                 $user = $this->getUser();
                 $postedPartner = $data['partners'];
-                $alreadyAffectedPartner = $this->signalementManager->findAffectablePartners($signalement)['affected'];
+                $filterInjonctionBailleur = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());
+                $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, $filterInjonctionBailleur);
+                $alreadyAffectedPartner = $affectablePartners['affected'];
                 $alreadyAffectedPartnersIds = array_map(fn (array $partner) => $partner['id'], $alreadyAffectedPartner);
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
-                    $partner = $this->partnerRepository->findOneBy(['id' => $partnerIdToAdd, 'territory' => $signalement->getTerritory(), 'isArchive' => false]);
+                    $canAffectPartner = false;
+                    foreach ($affectablePartners['not_affected'] as $affectablePartner) {
+                        if ($affectablePartner['id'] == $partnerIdToAdd) {
+                            $canAffectPartner = true;
+                            break;
+                        }
+                    }
+                    if (!$canAffectPartner) {
+                        continue;
+                    }
+                    $partner = $this->partnerRepository->find($partnerIdToAdd);
                     if (!$partner) {
                         continue;
                     }

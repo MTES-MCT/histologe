@@ -24,7 +24,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SignalementInjonctionController extends AbstractController
 {
     #[Route('/', name: 'back_injonction_signalement_index', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function index(
         Request $request,
         SignalementRepository $signalementRepository,
@@ -40,7 +39,8 @@ class SignalementInjonctionController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchSignalementInjonction = new SearchSignalementInjonction($user);
         }
-        $paginatedSignalementInjonction = $signalementRepository->findInjonctionFilteredPaginated($searchSignalementInjonction, $maxListPagination);
+        $userPartners = (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) ? $user->getPartners() : false;
+        $paginatedSignalementInjonction = $signalementRepository->findInjonctionFilteredPaginated($searchSignalementInjonction, $maxListPagination, $userPartners);
 
         return $this->render('back/signalement-injonction/index.html.twig', [
             'form' => $form,

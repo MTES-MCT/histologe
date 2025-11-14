@@ -8,6 +8,7 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -27,14 +28,17 @@ class AffectationControllerTest extends WebTestCase
     public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
     public const USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
     public const USER_PARTNER_TERRITORY_34_30 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
+    public const USER_ADMIN_TERRITORY_34 = 'admin-territoire-34-01@signal-logement.fr';
     public const SIGNALEMENT_REFERENCE = '2022-1';
     public const SIGNALEMENT_ACTIVE_UUID = '00000000-0000-0000-2022-000000000001';
     public const SIGNALEMENT_NEED_VALIDATION_UUID = '00000000-0000-0000-2023-000000000016';
+    public const SIGNALEMENT_INJONCTION_BAILLEUR_UUID = '00000000-0000-0000-2025-000000000012';
 
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
     private RouterInterface $router;
     private SignalementRepository $signalementRepository;
+    private SignalementManager $signalementManager;
     private SuiviRepository $suiviRepository;
     private AffectationRepository $affectationRepository;
     private PartnerRepository $partnerRepository;
@@ -45,6 +49,7 @@ class AffectationControllerTest extends WebTestCase
         $this->client = static::createClient();
         $this->router = self::getContainer()->get(RouterInterface::class);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $this->signalementManager = self::getContainer()->get(SignalementManager::class);
         $this->suiviRepository = self::getContainer()->get(SuiviRepository::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
@@ -327,6 +332,89 @@ class AffectationControllerTest extends WebTestCase
             ],
         ]);
         $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testFailedToggleAffectationWithInjonctionBailleur(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_34]);
+        $this->client->loginUser($user);
+
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy([
+            'uuid' => self::SIGNALEMENT_INJONCTION_BAILLEUR_UUID,
+        ]);
+        $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, true);
+        $this->assertEquals(1, \count($affectablePartners['affected']));
+        $this->assertEquals(0, \count($affectablePartners['not_affected']));
+
+        $routeSignalementView = $this->router->generate('back_signalement_view', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+        $crawler = $this->client->request('GET', $routeSignalementView);
+        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+
+        // Try to affect a partner not already affectable
+        $partner = $this->partnerRepository->findOneBy(['email' => 'partenaire-34-08@signal-logement.fr']);
+        $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
+            'uuid' => self::SIGNALEMENT_INJONCTION_BAILLEUR_UUID,
+        ]);
+        $this->client->request('POST', $routeAffectationResponse, [
+            'signalement-affectation' => [
+                'partners' => [$partner->getId(), $affectablePartners['affected'][0]['id']],
+            ],
+            '_token' => $token,
+        ]);
+
+        // Test that status success but nothing changed in affectations
+        $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
+        $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, true);
+        $this->assertEquals(1, \count($affectablePartners['affected']));
+        $this->assertEquals(0, \count($affectablePartners['not_affected']));
+    }
+
+    public function testRemoveAffectationWithInjonctionBailleur(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_34]);
+        $this->client->loginUser($user);
+
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy([
+            'uuid' => self::SIGNALEMENT_INJONCTION_BAILLEUR_UUID,
+        ]);
+        $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, true);
+        $this->assertEquals(1, \count($affectablePartners['affected']));
+        $this->assertEquals(0, \count($affectablePartners['not_affected']));
+        $partnerAffectedId = $affectablePartners['affected'][0]['id'];
+
+        $routeAffectationResponse = $this->router->generate('back_signalement_remove_partner', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+        $this->client->request('POST', $routeAffectationResponse, [
+            'affectation' => $signalement->getAffectations()->first()->getId(),
+            '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
+        ]);
+        $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
+
+        $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, true);
+        $this->assertEquals(0, \count($affectablePartners['affected']));
+        $this->assertEquals(1, \count($affectablePartners['not_affected']));
+
+        $routeSignalementView = $this->router->generate('back_signalement_view', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+        $crawler = $this->client->request('GET', $routeSignalementView);
+        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+
+        $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
+            'uuid' => self::SIGNALEMENT_INJONCTION_BAILLEUR_UUID,
+        ]);
+        $this->client->request('POST', $routeAffectationResponse, [
+            'signalement-affectation' => [
+                'partners' => [$partnerAffectedId],
+            ],
+            '_token' => $token,
+        ]);
+        $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
     }
 
     public function testRemoveAffectation(): void

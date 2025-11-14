@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryCollectionInterface;
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
@@ -1475,6 +1476,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         }
 
         return $result;
+    }
+
+    public function getCountAffectationsByStatus(AffectationStatus $affectationStatus): int
+    {
+        $count = 0;
+        foreach ($this->affectations as $affectation) {
+            if ($affectation->getStatut() === $affectationStatus) {
+                ++$count;
+            }
+        }
+
+        return $count;
     }
 
     public function getEtageOccupant(): ?string
