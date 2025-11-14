@@ -37,9 +37,10 @@
       </li>
       <li>
         <HistoSelect
+          v-if="sharedState.savedSearches.length > 0"
           id="filter-saver-recherche"
           title="Mes recherches favorites"
-          :option-items=sharedState.territories
+          :option-items=sharedState.savedSearches
           :placeholder="'Mes recherches favorites'"
         >
           <!-- <template #label>Mes recherches favorites</template> -->
