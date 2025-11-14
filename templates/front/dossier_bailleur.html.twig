@@ -4,6 +4,8 @@
 
 {% block body %}
 
+{% include 'front/_partials/_modal_aides_bailleur.html.twig' %}
+
 <main class="fr-container fr-pb-5w fr-pt-5w" id="content">
 	<div class="fr-grid-row fr-grid-row--gutters">
 
@@ -83,7 +85,7 @@
 				<div class="fr-callout">
 					<h3 class="fr-callout__title">Quelles aides pour rénover mon logement ?</h3>
 					<p class="fr-callout__text">En tant que propriétaire, vous pouvez bénéficier d'aides pour rénover votre logement. Estimez vos aides grâce au simulateur France Rénov' en cliquant sur le bouton ci-dessous.</p>
-					<a href="https://mesaidesreno.beta.gouv.fr/aides" target="_blank" title="Lancer le simulateur d'aides pour mon logement - Ouvre une nouvelle fenêtre" class="fr-btn">Lancer le simulateur</a>
+					<button title="Lancer le simulateur" class="fr-btn" data-fr-opened="false" aria-controls="modal-aides-bailleur">Lancer le simulateur</button>
 				</div>
 
 				<h3 class="fr-h5 fr-mb-3v">Coordonnées</h3>
