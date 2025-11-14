@@ -71,6 +71,7 @@ export const store = {
     bailleursSociaux: new Array<HistoInterfaceSelectOption>(),
     communes: new Array<string>(),
     epcis: new Array<string>(),
+    savedSearches: new Array<HistoInterfaceSelectOption>(),
     currentTerritoryId: '',
     currentCommunes: '',
     currentPartenaires: '',

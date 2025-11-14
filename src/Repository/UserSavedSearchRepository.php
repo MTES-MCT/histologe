@@ -39,4 +39,23 @@ class UserSavedSearchRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findAllForUserArray(User $user): array
+    {
+        $qb = $this->createQueryBuilder('uss')
+            ->select('uss.id, uss.name, uss.params, uss.createdAt, uss.updatedAt')
+            ->where('uss.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('uss.createdAt', 'DESC');
+
+        $results = $qb->getQuery()->getArrayResult();
+
+        foreach ($results as &$result) {
+            if (is_string($result['params'])) {
+                $result['params'] = json_decode($result['params'], true);
+            }
+        }
+
+        return $results;
+    }
 }
