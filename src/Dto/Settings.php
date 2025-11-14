@@ -59,6 +59,11 @@ class Settings
      */
     #[Groups('settings:read')]
     private array $bailleursSociaux = [];
+    /**
+     * @var array<int, mixed>
+     */
+    #[Groups('settings:read')]
+    private array $savedSearches = [];
 
     /**
      * @param array<int, mixed> $territories
@@ -80,6 +85,7 @@ class Settings
         bool $hasSignalementImported = false,
         array $bailleursSociaux = [],
         string $avatarOrPlaceHolder = '',
+        array $savedSearches = [],
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -95,6 +101,7 @@ class Settings
         $this->hasSignalementImported = $hasSignalementImported;
         $this->isMultiTerritoire = $user->isMultiTerritoire();
         $this->bailleursSociaux = $bailleursSociaux;
+        $this->savedSearches = $savedSearches;
     }
 
     public function getFirstname(): ?string
@@ -189,5 +196,13 @@ class Settings
     public function getBailleursSociaux(): array
     {
         return $this->bailleursSociaux;
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    public function getSavedSearches(): array
+    {
+        return $this->savedSearches;
     }
 }

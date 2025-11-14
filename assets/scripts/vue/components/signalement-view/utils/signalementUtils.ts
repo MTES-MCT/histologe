@@ -143,6 +143,20 @@ export function handleSettings (context: any, requestResponse: any): any {
       context.sharedState.epcis.push((epci.nom as string) + ' ' + (epci.code as string))
     }
   }
+
+  context.sharedState.savedSearches = []
+  for (const id in requestResponse.savedSearches) {
+    const optionItem = new HistoInterfaceSelectOption()
+    optionItem.Id = requestResponse.savedSearches[id].id.toString()
+    if (variableTester.isNotEmpty(requestResponse.savedSearches[id])) {
+      const savedSearch = requestResponse.savedSearches[id]
+      optionItem.Text = (savedSearch.name as string)
+    } else {
+      optionItem.Text = 'Recherche inconnue'
+    }
+    context.sharedState.savedSearches.push(optionItem)
+  }
+  
   localStorage.setItem('epci', JSON.stringify(context.sharedState.epcis))
 }
 
