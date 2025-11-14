@@ -67,16 +67,42 @@ async function submitPayload(formElement) {
       response.json().then((response) => {
         if (response.redirect) {
           window.location.href = response.url;
+        } else if(response.stayOnPage){
+          if(response.flashMessages){
+            const flashMessagesContainer = document.getElementById('flash-messages-live-container');
+            response.flashMessages.forEach((flashMessage) => {
+              const divElement = document.createElement('div');
+              divElement.classList.add('fr-notice', `fr-notice--${flashMessage.type}`);
+              divElement.setAttribute('role', 'alert');
+              divElement.innerHTML = `
+                <div class="fr-container">
+                    <div class="fr-notice__body">
+                        <p>
+                          <span class="fr-notice__title">${flashMessage.title}</span>
+                          <span class="fr-notice__text">${flashMessage.message}</span>
+                        </p>
+                        <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
+                    </div>
+                </div>
+              `;
+              flashMessagesContainer.appendChild(divElement);
+            });
+          }
+          resetSubmitButton();
+          if(response.closeModal){
+            const openModalElement = document.querySelector('.fr-modal--opened');
+            if(openModalElement){
+              dsfr(openModalElement).modal.conceal();
+            }
+          }
+        } else {
+          location.reload();
+          window.scrollTo(0, 0);
         }
       });
-      location.reload();
-      window.scrollTo(0, 0);
     } else if (response.status === 400) {
       const responseData = await response.json();
       const errors = responseData.errors;
-      const submitElement = document.querySelector(
-        '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
-      );
       let firstErrorElement = true;
       for (const property in errors) {
         const inputElements = document.querySelectorAll(
@@ -120,11 +146,7 @@ async function submitPayload(formElement) {
           firstErrorElement = false;
         }
       }
-      submitElement.disabled = false;
-      submitElement.classList.remove('fr-btn--loading', 'fr-icon-refresh-line');
-      if (!submitElement.classList.contains('fr-icon-check-line')) {
-        submitElement.classList.remove('fr-btn--icon-left');
-      }
+      resetSubmitButton();
     } else {
       const responseData = await response.json();
       alert(responseData.message);
@@ -139,3 +161,16 @@ const containerElements = document.querySelectorAll(
   '[data-ajax-form] dialog, [data-ajax-form] .single-ajax-form-container'
 );
 containerElements.forEach((containerElement) => handleSubmitForm(containerElement));
+
+function resetSubmitButton() {
+  const submitElement = document.querySelector(
+    '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
+  );
+  if (submitElement) {
+    submitElement.disabled = false;
+    submitElement.classList.remove('fr-btn--loading', 'fr-icon-refresh-line');
+    if (!submitElement.classList.contains('fr-icon-check-line')) {
+      submitElement.classList.remove('fr-btn--icon-left');
+    }
+  }
+}
