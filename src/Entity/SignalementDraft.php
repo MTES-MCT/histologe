@@ -46,6 +46,9 @@ class SignalementDraft
     #[ORM\Column(type: 'string', nullable: true, enumType: SignalementDraftStatus::class)]
     private ?SignalementDraftStatus $status = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $bailleurPrevenuAt = null;
+
     /** @var Collection<int, Signalement> $signalements */
     #[ORM\OneToMany(mappedBy: 'createdFrom', targetEntity: Signalement::class)]
     private Collection $signalements;
@@ -229,5 +232,17 @@ class SignalementDraft
         $dataToHash = $this->emailDeclarant.$this->addressComplete;
 
         return hash('sha256', $dataToHash);
+    }
+
+    public function getBailleurPrevenuAt(): ?\DateTimeImmutable
+    {
+        return $this->bailleurPrevenuAt;
+    }
+
+    public function setBailleurPrevenuAt(?\DateTimeImmutable $bailleurPrevenuAt): self
+    {
+        $this->bailleurPrevenuAt = $bailleurPrevenuAt;
+
+        return $this;
     }
 }

@@ -66,6 +66,17 @@ class SignalementDraftManager extends AbstractManager
             ->setEmailDeclarant(SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest))
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
 
+        if (null !== $signalementDraftRequest->getInfoProcedureBailDate()
+            && 'oui' === $signalementDraftRequest->getInfoProcedureBailleurPrevenu()
+        ) {
+            $infoProcedureBailDate = SignalementDraftHelper::computePrevenuBailleurAt(
+                $signalementDraftRequest->getInfoProcedureBailDate()
+            );
+            $signalementDraft->setBailleurPrevenuAt($infoProcedureBailDate);
+        } else {
+            $signalementDraft->setBailleurPrevenuAt(null);
+        }
+
         if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {
             if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus()) {
                 $signalement = $signalementDraft->getSignalements()->first();

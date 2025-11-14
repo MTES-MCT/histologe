@@ -91,4 +91,15 @@ class SignalementDraftHelper
 
         return false;
     }
+
+    public static function computePrevenuBailleurAt(string $infoProcedureBailDate): ?\DateTimeImmutable
+    {
+        // le ! force l’heure/date à 00:00:00 et le jour au premier jour du mois
+        $dateBailleurPrevenu = \DateTimeImmutable::createFromFormat('!m/Y', $infoProcedureBailDate);
+        if ($dateBailleurPrevenu instanceof \DateTimeImmutable) {
+            return $dateBailleurPrevenu;
+        }
+
+        return null;
+    }
 }

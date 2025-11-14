@@ -21,6 +21,8 @@ class SignalementDraftRepository extends ServiceEntityRepository implements Enti
 {
     use ClockAwareTrait;
 
+    private const string LOCK_SCREEN_FEATURE_START_AT = '2025-06-13 12:00';
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SignalementDraft::class);
@@ -73,11 +75,13 @@ class SignalementDraftRepository extends ServiceEntityRepository implements Enti
         $queryBuilder = $this->createQueryBuilder('s')
             ->where('s.status = :status')
             ->andWhere('s.currentStep = :current_step')
-            ->andWhere('DATE(s.updatedAt) <= :min_updated_at')
+            ->andWhere('s.updatedAt >= :lock_screen_feature_start_at')
+            ->andWhere('DATE(s.bailleurPrevenuAt) <= :bailleur_prevenu_at')
             ->andWhere('s.pendingDraftRemindedAt is NULL')
             ->setParameter('status', SignalementDraftStatus::EN_COURS)
             ->setParameter('current_step', 'info_procedure_bail')
-            ->setParameter('min_updated_at', $limitDate);
+            ->setParameter('lock_screen_feature_start_at', self::LOCK_SCREEN_FEATURE_START_AT)
+            ->setParameter('bailleur_prevenu_at', $limitDate);
 
         return $queryBuilder->getQuery()->execute();
     }

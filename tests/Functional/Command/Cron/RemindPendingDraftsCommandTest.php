@@ -25,11 +25,22 @@ class RemindPendingDraftsCommandTest extends KernelTestCase
         $connection = $entityManager->getConnection();
         $dateTest = (new \DateTimeImmutable())->modify('first day of this month')->setTime(0, 0, 0);
 
-        $sql = 'UPDATE signalement_draft SET created_at = :created_at, updated_at = :updated_at, payload = JSON_SET(payload, "$.info_procedure_bail_date", :bail_date) WHERE uuid LIKE :uuid';
+        $sql = '
+            UPDATE signalement_draft 
+            SET created_at = :created_at,
+                updated_at = :updated_at,
+                payload    = JSON_SET(payload, "$.info_procedure_bail_date", :bail_date),
+                bailleur_prevenu_at = STR_TO_DATE(
+                    CONCAT("01/", :bail_date),
+                    "%d/%m/%Y"
+                )
+            WHERE uuid LIKE :uuid
+        ';
+
         $connection->prepare($sql)->executeQuery([
             'created_at' => $dateTest->format('Y-m-d H:i:s'),
             'updated_at' => $dateTest->format('Y-m-d H:i:s'),
-            'bail_date' => $dateTest->format('m/Y'),
+            'bail_date' => $dateTest->format('m/Y'), // "11/2024"
             'uuid' => '00000000-0000-0000-2023-tierspart002',
         ]);
 

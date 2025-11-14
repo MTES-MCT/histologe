@@ -60,4 +60,27 @@ class SignalementDraftHelperTest extends KernelTestCase
         yield 'Bailleur occupant' => ['00000000-0000-0000-2023-bailleuroc01', false];
         yield 'Tiers particulier' => ['00000000-0000-0000-2023-tierspart001', false];
     }
+
+    public function testComputePrevenuBailleurAtWithValidMonthYear(): void
+    {
+        $result = SignalementDraftHelper::computePrevenuBailleurAt('11/2024');
+
+        $this->assertInstanceOf(\DateTimeImmutable::class, $result);
+        $this->assertSame('2024-11-01', $result->format('Y-m-d'));
+        $this->assertSame('00:00:00', $result->format('H:i:s'));
+    }
+
+    public function testComputePrevenuBailleurAtWithInvalidFormat(): void
+    {
+        $result = SignalementDraftHelper::computePrevenuBailleurAt('2024-11');
+
+        $this->assertNull($result);
+    }
+
+    public function testComputePrevenuBailleurAtWithNonDateString(): void
+    {
+        $result = SignalementDraftHelper::computePrevenuBailleurAt('');
+
+        $this->assertNull($result);
+    }
 }
