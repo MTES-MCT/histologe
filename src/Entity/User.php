@@ -215,6 +215,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[AppAssert\TelephoneFormat(groups: ['user_partner', 'Default'])]
     private ?string $phone = null;
 
+    /**
+     * @var Collection<int, UserSavedSearch>
+     */
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: UserSavedSearch::class, orphanRemoval: true)]
+    private Collection $userSavedSearches;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -231,6 +237,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->hasDoneSubscriptionsChoice = false;
         $this->userApiPermissions = new ArrayCollection();
+        $this->userSavedSearches = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1100,5 +1107,35 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function isMultiTerritoire(): bool
     {
         return count($this->getPartnersTerritories()) > 1;
+    }
+    
+    /**
+     * @return Collection<int, UserSavedSearch>
+     */
+    public function getUserSavedSearches(): Collection
+    {
+        return $this->userSavedSearches;
+    }
+
+    public function addUserSavedSearch(UserSavedSearch $userSavedSearch): static
+    {
+        if (!$this->userSavedSearches->contains($userSavedSearch)) {
+            $this->userSavedSearches->add($userSavedSearch);
+            $userSavedSearch->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSavedSearch(UserSavedSearch $userSavedSearch): static
+    {
+        if ($this->userSavedSearches->removeElement($userSavedSearch)) {
+            // set the owning side to null (unless already changed)
+            if ($userSavedSearch->getUser() === $this) {
+                $userSavedSearch->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
