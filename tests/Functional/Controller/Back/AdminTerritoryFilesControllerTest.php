@@ -111,7 +111,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects();
         $client->followRedirect();
-        $this->assertSelectorExists('.fr-alert--success');
+        $this->assertSelectorExists('.fr-notice--success');
     }
 
     /**
@@ -135,6 +135,6 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
 
         $this->assertResponseRedirects();
         $client->followRedirect();
-        $this->assertSelectorExists('.fr-alert--error');
+        $this->assertSelectorExists('.fr-notice--alert');
     }
 }

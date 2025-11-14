@@ -112,20 +112,7 @@
 {% include 'maintenance/banner.html.twig' %}
 {% if 'back_' not in app.request.get('_route') %}
     {% include "header.html.twig" %}
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div role="alert" class="fr-alert fr-alert--{{ label }} fr-alert--sm">
-                {% if label is same as('error') or label is same as('error error-raw')  %}
-                    <strong>Erreur...</strong>
-                {% endif %}
-                {% if label is same as('error error-raw')  %}
-                    <p>{{ message|raw }}</p>
-                {% else %}
-                    <p>{{ message }}</p>
-                {% endif %}
-            </div>
-        {% endfor %}
-    {% endfor %}
+    {% include "flash-messages.html.twig" %}
 {% else %}
     {% include "consent_banner/banner.html.twig" %}
 {% endif %}
