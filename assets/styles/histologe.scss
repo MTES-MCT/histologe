@@ -257,6 +257,10 @@ small {
     background-color: var(--background-alt-blue-france);
 }
 
+.fr-border-background-action-high-blue-france {
+    border: 1px solid var(--background-action-high-blue-france);
+}
+
 .fr-background-contrast--orange-terre-battue, .fr-table--bordered tbody tr.fr-background-contrast--orange-terre-battue {
     background-color: var(--background-contrast-orange-terre-battue);
 }
@@ -1081,4 +1085,17 @@ dl dd:last-child {
 
 .item-annuaire-agent{
     border: 1px solid var(--blue-france-main-525);
+}
+
+ul.fr-toggle__list.fr-toggle__list--inline {
+    li {
+        display: inline-flex;
+        .fr-toggle label {
+            width: auto;
+            margin-right: 2.25rem;
+        }
+        .fr-toggle label::before {
+            margin-right: 0.5rem;
+        }
+    }
 }
