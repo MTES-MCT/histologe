@@ -173,4 +173,23 @@ class InterventionEditedListenerTest extends TestCase
         $this->assertArrayHasKey('details', $intervention->getChangesForMail());
         $this->assertArrayHasKey('concludeProcedure', $intervention->getChangesForMail());
     }
+
+    public function testDiffNoOldValue(): void
+    {
+        $intervention = (new Intervention())
+            ->setStatus(Intervention::STATUS_DONE)
+            ->setType(InterventionType::VISITE_CONTROLE);
+
+        $args = $this->createPreUpdateArgs($intervention, [
+            'concludeProcedure' => [null, [ProcedureType::RSD->value, ProcedureType::INSALUBRITE->value]],
+            'details' => [null, 'Bonjour, foo bar éés.'],
+        ]);
+
+        $listener = new InterventionEditedListener();
+        $listener->preUpdate($intervention, $args);
+
+        $this->assertNotNull($intervention->getConclusionVisiteEditedAt());
+        $this->assertNotEmpty($intervention->getChangesForMail()['details']['new']);
+        $this->assertNotEmpty($intervention->getChangesForMail()['concludeProcedure']['new']);
+    }
 }
