@@ -51,7 +51,7 @@ class SignalementDraftHelperTest extends KernelTestCase
         /** @var SignalementDraft $signalementDraft */
         $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => $draftUuid]);
 
-        $this->assertEquals($signalementDraftHelper->isPublicAndBailleurPrevenuPeriodPassed($signalementDraft), $returnValue);
+        $this->assertEquals($signalementDraftHelper->isPublicAndBailleurPrevenu($signalementDraft), $returnValue);
     }
 
     public function provideIsPublicData(): \Generator
@@ -82,5 +82,47 @@ class SignalementDraftHelperTest extends KernelTestCase
         $result = SignalementDraftHelper::computePrevenuBailleurAt('');
 
         $this->assertNull($result);
+    }
+
+    /**
+     * @dataProvider provideComputeCases
+     */
+    public function testComputeBailleurPrevenuAtFromRequest(
+        ?string $bailleurPrevenu,
+        ?string $bailDate,
+        ?string $expectedType,
+    ): void {
+        $request = new SignalementDraftRequest();
+        $request->setInfoProcedureBailleurPrevenu($bailleurPrevenu);
+        $request->setInfoProcedureBailDate($bailDate);
+
+        $result = SignalementDraftHelper::computeBailleurPrevenuAtFromRequest($request);
+
+        if (null === $expectedType) {
+            $this->assertNull($result);
+        } elseif ('datetime' === $expectedType) {
+            $this->assertInstanceOf(\DateTimeImmutable::class, $result);
+        }
+    }
+
+    public function provideComputeCases(): \Generator
+    {
+        yield 'bailleur prevenu pas de date => null' => [
+            'bailleurPrevenu' => 'oui',
+            'bailDate' => null,
+            'expectedType' => null,
+        ];
+
+        yield 'bailleur pas prevenu => null' => [
+            'bailleurPrevenu' => 'non',
+            'bailDate' => '01/2025',
+            'expectedType' => null,
+        ];
+
+        yield 'bailleur prevenu avec date => DateTimeImmutable' => [
+            'bailleurPrevenu' => 'oui',
+            'bailDate' => '01/2025',
+            'expectedType' => 'datetime',
+        ];
     }
 }

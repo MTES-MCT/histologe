@@ -822,7 +822,6 @@ class SignalementManager extends AbstractManager
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
             ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
-
         $signalement->setInformationProcedure($informationProcedure);
 
         $informationComplementaire = new InformationComplementaire();

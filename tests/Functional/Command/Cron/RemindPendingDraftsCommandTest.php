@@ -26,7 +26,7 @@ class RemindPendingDraftsCommandTest extends KernelTestCase
         $dateTest = (new \DateTimeImmutable())->modify('first day of this month')->setTime(0, 0, 0);
 
         $sql = '
-            UPDATE signalement_draft 
+            UPDATE signalement_draft
             SET created_at = :created_at,
                 updated_at = :updated_at,
                 payload    = JSON_SET(payload, "$.info_procedure_bail_date", :bail_date),
