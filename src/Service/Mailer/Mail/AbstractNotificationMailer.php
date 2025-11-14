@@ -75,7 +75,8 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
                 $brevoParams['subject'],
                 $brevoParams['btntext'],
                 $brevoParams['url'],
-                $brevoParams['tagHeader']
+                $brevoParams['tagHeader'],
+                $brevoParams['attach'],
             );
             $message->getHeaders()
                 ->addTextHeader('templateId', $this->brevoTemplateId)
