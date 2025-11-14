@@ -78,7 +78,7 @@ class SignalementDraft
         return $this->uuid;
     }
 
-    public function setUuid(string $uuid): self
+    public function setUuid(string $uuid): static
     {
         $this->uuid = $uuid;
 
@@ -90,7 +90,7 @@ class SignalementDraft
         return $this->profileDeclarant;
     }
 
-    public function setProfileDeclarant(ProfileDeclarant $profileDeclarant): self
+    public function setProfileDeclarant(ProfileDeclarant $profileDeclarant): static
     {
         $this->profileDeclarant = $profileDeclarant;
 
@@ -102,7 +102,7 @@ class SignalementDraft
         return $this->emailDeclarant;
     }
 
-    public function setEmailDeclarant(string $emailDeclarant): self
+    public function setEmailDeclarant(string $emailDeclarant): static
     {
         $this->emailDeclarant = $emailDeclarant;
         $this->setChecksum();
@@ -115,7 +115,7 @@ class SignalementDraft
         return $this->addressComplete;
     }
 
-    public function setAddressComplete(?string $addressComplete): self
+    public function setAddressComplete(?string $addressComplete): static
     {
         $this->addressComplete = $addressComplete;
         $this->setChecksum();
@@ -130,7 +130,7 @@ class SignalementDraft
     }
 
     /** @param array<mixed> $payload */
-    public function setPayload(array $payload): self
+    public function setPayload(array $payload): static
     {
         $this->payload = $payload;
 
@@ -142,7 +142,7 @@ class SignalementDraft
         return $this->currentStep;
     }
 
-    public function setCurrentStep(string $currentStep): self
+    public function setCurrentStep(string $currentStep): static
     {
         $this->currentStep = $currentStep;
 
@@ -154,7 +154,7 @@ class SignalementDraft
         return $this->status;
     }
 
-    public function setStatus(SignalementDraftStatus $status): self
+    public function setStatus(SignalementDraftStatus $status): static
     {
         $this->status = $status;
 
@@ -166,7 +166,7 @@ class SignalementDraft
         return $this->signalementDraftRequest;
     }
 
-    public function setSignalementDraftRequest(?SignalementDraftRequest $signalementDraftRequest): self
+    public function setSignalementDraftRequest(?SignalementDraftRequest $signalementDraftRequest): static
     {
         $this->signalementDraftRequest = $signalementDraftRequest;
 
@@ -181,7 +181,7 @@ class SignalementDraft
         return $this->signalements;
     }
 
-    public function addSignalement(Signalement $signalement): self
+    public function addSignalement(Signalement $signalement): static
     {
         if (!$this->signalements->contains($signalement)) {
             $this->signalements->add($signalement);
@@ -191,7 +191,7 @@ class SignalementDraft
         return $this;
     }
 
-    public function removeSignalement(Signalement $signalement): self
+    public function removeSignalement(Signalement $signalement): static
     {
         if ($this->signalements->removeElement($signalement)) {
             // set the owning side to null (unless already changed)
@@ -208,7 +208,7 @@ class SignalementDraft
         return $this->checksum;
     }
 
-    public function setChecksum(): self
+    public function setChecksum(): static
     {
         $this->checksum = $this->calculateChecksum();
 
@@ -220,7 +220,7 @@ class SignalementDraft
         return $this->pendingDraftRemindedAt;
     }
 
-    public function setPendingDraftRemindedAtValue(): self
+    public function setPendingDraftRemindedAtValue(): static
     {
         $this->pendingDraftRemindedAt = new \DateTimeImmutable();
 
@@ -239,7 +239,7 @@ class SignalementDraft
         return $this->bailleurPrevenuAt;
     }
 
-    public function setBailleurPrevenuAt(?\DateTimeImmutable $bailleurPrevenuAt): self
+    public function setBailleurPrevenuAt(?\DateTimeImmutable $bailleurPrevenuAt): static
     {
         $this->bailleurPrevenuAt = $bailleurPrevenuAt;
 
