@@ -16,7 +16,18 @@ class SignalementDraftFactory
         SignalementDraftRequest $signalementDraftRequest,
         array $payload,
     ): SignalementDraft {
-        return (new SignalementDraft())
+        $signalementDraft = new SignalementDraft();
+
+        if (null !== $signalementDraftRequest->getInfoProcedureBailDate()
+            && 'oui' === $signalementDraftRequest->getInfoProcedureBailleurPrevenu()
+        ) {
+            $infoProcedureBailDate = SignalementDraftHelper::computePrevenuBailleurAt(
+                $signalementDraftRequest->getInfoProcedureBailDate()
+            );
+            $signalementDraft->setBailleurPrevenuAt($infoProcedureBailDate);
+        }
+
+        return $signalementDraft
             ->setPayload($payload)
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
             ->setEmailDeclarant(SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest))
