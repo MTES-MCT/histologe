@@ -12,6 +12,7 @@ use App\Factory\NotificationFactory;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\NotificationAndMailSender;
 use App\Tests\FixturesHelper;
@@ -33,6 +34,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private Security $security;
     private NotificationAndMailSender $notificationAndMailSender;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private CourrierBailleurGenerator $courrierBailleurGenerator;
 
     protected function setUp(): void
     {
@@ -50,12 +52,14 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->notificationFactory = self::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->courrierBailleurGenerator = self::getContainer()->get(CourrierBailleurGenerator::class);
         $this->notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
     }
 
@@ -77,6 +81,21 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertCount(0, $notificationsSummary);
         $notificationNoSummary = $this->notificationRepository->findBy(['signalement' => $signalement, 'type' => NotificationType::NOUVEAU_SIGNALEMENT, 'waitMailingSummary' => false]);
         $this->assertCount(6, $notificationNoSummary);
+    }
+
+    public function testSendNewSignalementInjonction(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-12']);
+        $this->notificationAndMailSender->sendNewSignalementInjonction($signalement);
+
+        $this->assertEmailCount(1);
+        /** @var NotificationEmail $mail */
+        $mail = $this->getMailerMessages()[0];
+        $this->assertEmailSubjectContains($mail, 'Un signalement a été fait sur un de vos logements !');
+        $this->assertEmailAddressContains($mail, 'to', $signalement->getMailProprio());
+        $this->assertEmailAttachmentCount($mail, 1);
+        $this->assertEmailHasHeader($mail, 'templateId', '253');
     }
 
     public function testSendNewAffectation(): void
@@ -190,6 +209,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
@@ -236,6 +256,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
@@ -275,6 +296,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -317,6 +339,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationFactory,
             $this->notificationMailerRegistry,
             $this->security,
+            $this->courrierBailleurGenerator,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
