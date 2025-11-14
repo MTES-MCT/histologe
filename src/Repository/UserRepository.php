@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Enum\UserStatus;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -186,6 +187,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             )
             ->setParameter('insee', '%'.$inseeOccupant.'%');
         }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @return array<int, User>
+     */
+    public function findActiveTerritoryAdminsInPartner(Partner $partner): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p')
+            ->andWhere('p = :partner')
+            ->setParameter('partner', $partner)
+            ->andWhere('JSON_CONTAINS(u.roles, :role) = 1 ')
+            ->setParameter('role', '"ROLE_ADMIN_TERRITORY"')
+            ->andWhere('u.statut = :active')
+            ->setParameter('active', UserStatus::ACTIVE);
 
         return $queryBuilder->getQuery()->getResult();
     }
