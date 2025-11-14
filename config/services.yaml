@@ -70,6 +70,7 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
             - '../src/Service/Mailer/Mail/AbstractNotificationMailer.php'
+            - '../src/Service/Mailer/Header/'
 
 
     App\EventListener\ContentSecurityPolicyListener:
