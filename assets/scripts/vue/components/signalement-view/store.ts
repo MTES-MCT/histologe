@@ -59,7 +59,6 @@ export const store = {
       isAgent: false,
       isMultiTerritoire: false,
       canSeeStatusAffectation: false,
-      canSeeBailleurSocial: false,
       canSeeScore: false,
       canSeeWithoutAffectation: false,
       partnerIds: new Array<string>()

@@ -288,7 +288,7 @@
           <template #label>Nature du parc</template>
         </HistoSelect>
       </div>
-      <div v-if="sharedState.user.canSeeBailleurSocial && sharedState.bailleursSociaux.length > 0"
+      <div v-if="sharedState.bailleursSociaux.length > 0"
         :class="defineCssBlocAgent(3, 3)">
         <HistoSelect
           id="filter-bailleur-social"

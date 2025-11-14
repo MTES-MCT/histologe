@@ -68,7 +68,6 @@ export function handleSettings (context: any, requestResponse: any): any {
   context.sharedState.user.isMultiTerritoire = requestResponse.isMultiTerritoire === true
   const isAdminOrAdminTerritoire = context.sharedState.user.isAdmin === true || context.sharedState.user.isResponsableTerritoire === true
   context.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
-  context.sharedState.user.canSeeBailleurSocial = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeWithoutAffectation = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
   context.sharedState.user.partnerIds = requestResponse.partnerIds
