@@ -49,7 +49,7 @@ class SignalementDraftHelperTest extends KernelTestCase
         /** @var SignalementDraft $signalementDraft */
         $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => $draftUuid]);
 
-        $this->assertEquals($signalementDraftHelper->isPublicAndBailleurPrevenuPeriodPassed($signalementDraft), $returnValue);
+        $this->assertEquals($signalementDraftHelper->isPublic($signalementDraft), $returnValue);
     }
 
     public function provideIsPublicData(): \Generator

@@ -66,7 +66,7 @@ class SignalementDraftRepository extends ServiceEntityRepository implements Enti
      *
      * @throws \DateMalformedStringException
      */
-    public function findPendingBlockedBailLast3Months(): array
+    public function findPendingBlockedBailleurPrevenuPeriodPassed(): array
     {
         $limitDate = $this->now()
             ->modify('-3 months')

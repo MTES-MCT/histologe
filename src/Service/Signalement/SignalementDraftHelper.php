@@ -6,15 +6,11 @@ use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\SignalementDraft;
 use App\Serializer\SignalementDraftRequestSerializer;
-use Symfony\Component\Clock\ClockInterface;
 
 class SignalementDraftHelper
 {
-    private const NB_DAYS_DURATION_BAILLEUR_PREVENU = 90;
-
     public function __construct(
         private readonly SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
-        private readonly ClockInterface $clock,
     ) {
     }
 
@@ -56,7 +52,7 @@ class SignalementDraftHelper
         }
     }
 
-    public function isPublicAndBailleurPrevenuPeriodPassed(SignalementDraft $signalementDraft): bool
+    public function isPublic(SignalementDraft $signalementDraft): bool
     {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $this->signalementDraftRequestSerializer->denormalize(
@@ -78,14 +74,8 @@ class SignalementDraftHelper
 
         if ($isTiersAndLogementSocial
             && 'oui' === $signalementDraftRequest->getInfoProcedureBailleurPrevenu()
-            && !empty($signalementDraftRequest->getInfoProcedureBailDate())
         ) {
-            $dateBailleurPrevenu = \DateTimeImmutable::createFromFormat('d/m/Y', '01/'.$signalementDraftRequest->getInfoProcedureBailDate());
-            $dateToday = $this->clock->now();
-            $durationSincePrevenu = $dateToday->diff($dateBailleurPrevenu);
-            if ($durationSincePrevenu->days > self::NB_DAYS_DURATION_BAILLEUR_PREVENU) {
-                return true;
-            }
+            return true;
         }
 
         return false;

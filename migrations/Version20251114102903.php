@@ -18,17 +18,18 @@ final class Version20251114102903 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE signalement_draft ADD bailleur_prevenu_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql("
-            UPDATE signalement_draft
-            SET bailleur_prevenu_at = STR_TO_DATE(
-                CONCAT(
-                    '01/',
-                    JSON_UNQUOTE(JSON_EXTRACT(payload, '$.info_procedure_bail_date'))
-                ),
-                '%d/%m/%Y'
-            )
-            WHERE JSON_EXTRACT(payload, '$.info_procedure_bail_date') IS NOT NULL
-              AND JSON_UNQUOTE(JSON_EXTRACT(payload, '$.info_procedure_bail_date')) <> ''
-        ");
+        UPDATE signalement_draft
+        SET bailleur_prevenu_at = STR_TO_DATE(
+            CONCAT(
+                '01/',
+                JSON_UNQUOTE(JSON_EXTRACT(payload, '$.info_procedure_bail_date'))
+            ),
+            '%d/%m/%Y'
+        )
+        WHERE JSON_TYPE(JSON_EXTRACT(payload, '$.info_procedure_bail_date')) = 'STRING'
+          AND JSON_UNQUOTE(JSON_EXTRACT(payload, '$.info_procedure_bail_date')) <> ''
+          AND JSON_UNQUOTE(JSON_EXTRACT(payload, '$.info_procedure_bail_date')) REGEXP '^[0-9]{1,2}/[0-9]{4}$';
+    ");
     }
 
     public function down(Schema $schema): void
