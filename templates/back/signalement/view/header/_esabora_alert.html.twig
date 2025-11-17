@@ -1,10 +1,9 @@
-{% set partnerLabel = affectation and affectation.partner.type.value =='ARS'
-    ? constant('App\\Service\\Interconnection\\Esabora\\EsaboraSISHService::NAME_SI')
-    : 'Esabora'
-%}
-{% if affectation %}
-    {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT
-        and affectation.isSynchronizeWithEsabora %}
+{% if affectation and affectation.isSynchronizeWithEsabora %}
+    {% set partnerLabel = affectation.partner.type and affectation.partner.type.value =='ARS'
+        ? constant('App\\Service\\Interconnection\\Esabora\\EsaboraSISHService::NAME_SI')
+        : 'Esabora'
+    %}
+    {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
         <div class="fr-notice fr-notice--warning fr-my-4v fr-text--left">
             <div class="fr-container">
                 <div class="fr-notice__body">
@@ -14,10 +13,7 @@
                 </div>
             </div>
         </div>
-    {% endif %}
-
-    {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED
-        and affectation.isSynchronizeWithEsabora %}
+    {% elseif affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
         <div class="fr-notice fr-notice--warning fr-my-4v fr-text--left">
             <div class="fr-container">
                 <div class="fr-notice__body">
