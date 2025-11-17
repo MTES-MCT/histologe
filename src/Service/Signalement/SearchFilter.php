@@ -120,16 +120,44 @@ class SearchFilter
                 ->setParameter('affectations', $filters['affectations']);
         }
         if (!empty($filters['partners'])) {
-            $qb->leftJoin('s.affectations', 'afilt');
-            if (\in_array('AUCUN', $filters['partners'])) {
-                $qb->andWhere('afilt.partner IS NULL');
-            } else {
-                $qb->andWhere('afilt.partner IN (:partners)');
-                if (!empty($filters['affectations'])) {
-                    $qb->andWhere('afilt.statut IN (:affectations)')
-                    ->setParameter('affectations', $filters['affectations']);
+            if ($user->isUserPartner() || $user->isPartnerAdmin()) {
+                $filterPartnerIds = array_filter($filters['partners'], fn ($v) => 'AUCUN' !== $v);
+                if (!empty($filterPartnerIds)) {
+                    $subqueryOtherPartner = $this->entityManager->createQueryBuilder();
+                    $subqueryOtherPartner
+                        ->select('1')
+                        ->from(Affectation::class, 'af2')
+                        ->where('af2.signalement = s')
+                        ->andWhere('af2.partner IN (:filterPartners)');
+
+                    $subqueryCurrentPartner = $this->entityManager->createQueryBuilder();
+                    $subqueryCurrentPartner
+                        ->select('1')
+                        ->from(Affectation::class, 'afUser')
+                        ->where('afUser.signalement = s')
+                        ->andWhere('afUser.partner IN (:userPartners)');
+
+                    $qb->andWhere(
+                        $qb->expr()->andX(
+                            $qb->expr()->exists($subqueryCurrentPartner->getDQL()),
+                            $qb->expr()->exists($subqueryOtherPartner->getDQL())
+                        )
+                    )
+                    ->setParameter('userPartners', $user->getPartners())
+                    ->setParameter('filterPartners', $filterPartnerIds);
                 }
-                $qb->setParameter('partners', $filters['partners']);
+            } else {
+                $qb->leftJoin('s.affectations', 'afilt');
+                if (\in_array('AUCUN', $filters['partners'])) {
+                    $qb->andWhere('afilt.partner IS NULL');
+                } else {
+                    $qb->andWhere('afilt.partner IN (:partners)');
+                    if (!empty($filters['affectations'])) {
+                        $qb->andWhere('afilt.statut IN (:affectations)')
+                        ->setParameter('affectations', $filters['affectations']);
+                    }
+                    $qb->setParameter('partners', $filters['partners']);
+                }
             }
         }
         if (!empty($filters['closed_affectation'])) {
