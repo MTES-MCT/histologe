@@ -508,8 +508,8 @@ export default defineComponent({
       this.sharedState.input.filters.showMySignalementsOnly = this.toggleStates.showMySignalementsOnly ? 'oui' : null
 
       if (this.toggleStates.showMySignalementsOnly) {
+        this.deactiveWithoutAffectationsOnly()
         this.deactiveMyAffectationsOnly()
-        this.deactiveMySignalementsOnly()
       }
 
       if (typeof this.onChange === 'function') {
