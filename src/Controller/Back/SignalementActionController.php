@@ -42,8 +42,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementActionController extends AbstractController
 {
     public function __construct(
-        #[Autowire(env: 'FEATURE_EDITION_SUIVI')]
-        private readonly bool $featureEditionSuivi,
+        #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
+        private readonly bool $editionSuiviEnable,
         #[Autowire(env: 'DELAY_SUIVI_EDITABLE_IN_MINUTES')]
         private readonly int $delaySuiviEditableInMinutes,
     ) {
@@ -246,7 +246,7 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted('DELETE_SUIVI', $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->get('_token'))) {
             $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
-            if ($suivi->getCreatedAt() > $limit && $this->featureEditionSuivi) {
+            if ($suivi->getCreatedAt() > $limit && $this->editionSuiviEnable) {
                 $doctrine->getManager()->remove($suivi);
             } else {
                 /** @var User $user */

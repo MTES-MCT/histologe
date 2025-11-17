@@ -31,8 +31,8 @@ class SuiviManager extends Manager
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
-        #[Autowire(env: 'FEATURE_EDITION_SUIVI')]
-        private readonly bool $featureEditionSuivi,
+        #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
+        private readonly bool $editionSuiviEnable,
         string $entityName = Suivi::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -70,7 +70,7 @@ class SuiviManager extends Manager
         if (!empty($createdAt)) {
             $suivi->setCreatedAt($createdAt);
         }
-        if (SuiviCategory::MESSAGE_PARTNER === $suivi->getCategory() && $this->featureEditionSuivi) {
+        if (SuiviCategory::MESSAGE_PARTNER === $suivi->getCategory() && $this->editionSuiviEnable) {
             $suivi->setWaitingNotification(true);
         }
         foreach ($files as $file) {
