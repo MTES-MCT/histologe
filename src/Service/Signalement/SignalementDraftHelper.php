@@ -52,7 +52,7 @@ class SignalementDraftHelper
         }
     }
 
-    public function isPublic(SignalementDraft $signalementDraft): bool
+    public function isPublicAndBailleurPrevenu(SignalementDraft $signalementDraft): bool
     {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $this->signalementDraftRequestSerializer->denormalize(
@@ -79,6 +79,20 @@ class SignalementDraftHelper
         }
 
         return false;
+    }
+
+    public static function computeBailleurPrevenuAtFromRequest(
+        SignalementDraftRequest $request,
+    ): ?\DateTimeImmutable {
+        if (null === $request->getInfoProcedureBailDate()) {
+            return null;
+        }
+
+        if ('oui' !== $request->getInfoProcedureBailleurPrevenu()) {
+            return null;
+        }
+
+        return self::computePrevenuBailleurAt($request->getInfoProcedureBailDate());
     }
 
     public static function computePrevenuBailleurAt(string $infoProcedureBailDate): ?\DateTimeImmutable

@@ -17,15 +17,10 @@ class SignalementDraftFactory
         array $payload,
     ): SignalementDraft {
         $signalementDraft = new SignalementDraft();
-
-        if (null !== $signalementDraftRequest->getInfoProcedureBailDate()
-            && 'oui' === $signalementDraftRequest->getInfoProcedureBailleurPrevenu()
-        ) {
-            $infoProcedureBailDate = SignalementDraftHelper::computePrevenuBailleurAt(
-                $signalementDraftRequest->getInfoProcedureBailDate()
-            );
-            $signalementDraft->setBailleurPrevenuAt($infoProcedureBailDate);
-        }
+        $bailleurPrevenuAt = SignalementDraftHelper::computeBailleurPrevenuAtFromRequest(
+            $signalementDraftRequest
+        );
+        $signalementDraft->setBailleurPrevenuAt($bailleurPrevenuAt);
 
         return $signalementDraft
             ->setPayload($payload)

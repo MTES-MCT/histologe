@@ -50,7 +50,7 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
         $count = 0;
         /** @var SignalementDraft $signalementDraft */
         foreach ($signalementDrafts as $signalementDraft) {
-            if ($this->signalementDraftHelper->isPublic($signalementDraft)) {
+            if ($this->signalementDraftHelper->isPublicAndBailleurPrevenu($signalementDraft)) {
                 ++$count;
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(

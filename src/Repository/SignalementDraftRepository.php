@@ -69,7 +69,7 @@ class SignalementDraftRepository extends ServiceEntityRepository implements Enti
     public function findPendingBlockedBailleurPrevenuPeriodPassed(): array
     {
         $limitDate = $this->now()
-            ->modify('-3 months')
+            ->modify('-2 months')
             ->format('Y-m-d');
 
         $queryBuilder = $this->createQueryBuilder('s')
