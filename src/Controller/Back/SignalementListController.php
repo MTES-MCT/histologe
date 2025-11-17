@@ -66,11 +66,9 @@ class SignalementListController extends AbstractController
 
     #[Route('/list/signalements/search/save', name: 'back_signalements_list_save_search')]
     public function saveSearch(
-        // SearchFilter $searchFilter,
         Request $request,
         UserSavedSearchRepository $savedSearchRepository,
         EntityManagerInterface $entityManager,
-        // #[MapQueryString] ?SignalementSearchQuery $signalementSearchQuery = null,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -103,38 +101,8 @@ class SignalementListController extends AbstractController
 
         $search = new UserSavedSearch();
         $search->setUser($user);
-        $search->setName($name); // on prend le nom envoyé par Vue
+        $search->setName($name);
         $search->setParams($params);
-
-        // dump($signalementSearchQuery);
-        // $filters = null !== $signalementSearchQuery
-        //     ? $searchFilter->setRequest($signalementSearchQuery)->buildFilters($user)
-        //     : [];
-        // dump($filters);
-
-        // if (empty($filters)) {
-        //     return $this->json([
-        //         'status' => Response::HTTP_BAD_REQUEST,
-        //         'message' => 'Aucun filtre actif, impossible d’enregistrer la recherche.',
-        //     ], Response::HTTP_BAD_REQUEST);
-        // }
-
-        // $count = $savedSearchRepository->countForUser($user);
-
-        // if ($count >= 5) {
-        //     return $this->json([
-        //         'status' => Response::HTTP_BAD_REQUEST,
-        //         'message' => 'Vous avez atteint la limite de 5 recherches enregistrées.',
-        //     ], Response::HTTP_BAD_REQUEST);
-        // }
-
-        // $generatedName = $this->generateReadableName($filters);
-        // dump($generatedName);
-
-        // $search = new UserSavedSearch();
-        // $search->setUser($user);
-        // $search->setName($generatedName);
-        // $search->setParams($filters);
 
         $entityManager->persist($search);
         $entityManager->flush();
@@ -142,6 +110,49 @@ class SignalementListController extends AbstractController
         return $this->json([
             'status' => Response::HTTP_OK,
             'message' => 'Votre recherche a bien été sauvegardée',
+            'data' => [
+                'savedSearch' => [
+                    'id' => $search->getId(),
+                    'name' => $search->getName(),
+                    'params' => $search->getParams(),
+                ],
+            ],
         ], Response::HTTP_OK);
+    }
+
+    #[Route('/list/signalements/search/delete/{id}', name: 'back_signalements_list_delete_search', methods: ['POST'])]
+    public function deleteSavedSearch(
+        int $id,
+        Request $request,
+        UserSavedSearchRepository $savedSearchRepository,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $data = json_decode($request->getContent(), true);
+        $csrfToken = $data['_token'] ?? null;
+        if (!$this->isCsrfTokenValid('delete_search', $csrfToken)) {
+            return $this->json([
+                'status' => Response::HTTP_FORBIDDEN,
+                'message' => 'Token CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $savedSearch = $savedSearchRepository->findOneBy(['id' => $id, 'user' => $user]);
+        if (!$savedSearch) {
+            return $this->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Recherche introuvable',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $entityManager->remove($savedSearch);
+        $entityManager->flush();
+
+        return $this->json([
+            'status' => Response::HTTP_OK,
+            'message' => 'Recherche supprimée',
+        ]);
     }
 }
