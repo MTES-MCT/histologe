@@ -39,7 +39,7 @@ class SignalementInjonctionController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchSignalementInjonction = new SearchSignalementInjonction($user);
         }
-        $userPartners = (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) ? $user->getPartners() : false;
+        $userPartners = (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) ? $user->getPartners() : null;
         $paginatedSignalementInjonction = $signalementRepository->findInjonctionFilteredPaginated($searchSignalementInjonction, $maxListPagination, $userPartners);
 
         return $this->render('back/signalement-injonction/index.html.twig', [

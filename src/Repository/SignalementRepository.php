@@ -2392,10 +2392,13 @@ class SignalementRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @param Collection<int, Partner>|null $userPartners
+     */
     public function findInjonctionFilteredPaginated(
         SearchSignalementInjonction $searchSignalementInjonction,
         int $maxResult,
-        Collection|false $userPartners,
+        ?Collection $userPartners,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s, su')

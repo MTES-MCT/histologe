@@ -389,8 +389,12 @@ class AffectationControllerTest extends WebTestCase
         $routeAffectationResponse = $this->router->generate('back_signalement_remove_partner', [
             'uuid' => $signalement->getUuid(),
         ]);
+        $affectation = $signalement->getAffectations()->first();
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
         $this->client->request('POST', $routeAffectationResponse, [
-            'affectation' => $signalement->getAffectations()->first()->getId(),
+            'affectation' => $affectation->getId(),
             '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
         ]);
         $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
