@@ -119,6 +119,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
+    /**
+     * @return array<array{id: int, partner_id: int}>
+     */
+    public function findAllUnarchivedRT(): ?array
+    {
+        $sql = "
+            SELECT u.id, up.partner_id
+            FROM user u
+            INNER JOIN user_partner up ON u.id = up.user_id
+            WHERE u.statut != '".UserStatus::ARCHIVE->value."'
+            AND (JSON_CONTAINS(u.roles, '\"ROLE_ADMIN_TERRITORY\"') = 1)
+        ";
+
+        $connection = $this->getEntityManager()->getConnection();
+        $stmt = $connection->prepare($sql);
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
     public function findArchivedUserByEmail(string $email): ?User
     {
         $queryBuilder = $this->createQueryBuilder('u');
