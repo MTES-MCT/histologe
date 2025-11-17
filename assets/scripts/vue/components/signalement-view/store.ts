@@ -168,7 +168,8 @@ export const store = {
       { Id: 'travaux_faits_ou_en_cours', Text: 'Travaux faits ou en cours' },
       { Id: 'doublon', Text: 'Doublon' },
       { Id: 'autre', Text: 'Autre' }
-    ]
+    ],
+    selectedSavedSearchId: null as string | null
   },
   props: {
     ajaxurlSignalement: '',

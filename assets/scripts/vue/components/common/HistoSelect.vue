@@ -1,6 +1,6 @@
 <template>
   <div class="fr-select-group">
-    <label class="fr-label" :for="id">
+    <label v-if="$slots.label" class="fr-label" :for="id">
       <slot name="label"></slot>
     </label>
     <select
