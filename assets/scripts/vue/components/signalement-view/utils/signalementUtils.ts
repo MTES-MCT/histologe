@@ -143,6 +143,7 @@ export function handleSettings (context: any, requestResponse: any): any {
       context.sharedState.epcis.push((epci.nom as string) + ' ' + (epci.code as string))
     }
   }
+  localStorage.setItem('epci', JSON.stringify(context.sharedState.epcis))
 
   context.sharedState.savedSearches = []
   for (const id in requestResponse.savedSearches) {
@@ -151,13 +152,12 @@ export function handleSettings (context: any, requestResponse: any): any {
     if (variableTester.isNotEmpty(requestResponse.savedSearches[id])) {
       const savedSearch = requestResponse.savedSearches[id]
       optionItem.Text = (savedSearch.name as string)
+      optionItem.Params = savedSearch.params
     } else {
       optionItem.Text = 'Recherche inconnue'
     }
     context.sharedState.savedSearches.push(optionItem)
   }
-  
-  localStorage.setItem('epci', JSON.stringify(context.sharedState.epcis))
 }
 
 export function handleTerritoryChange (context: any, value: any): any {

@@ -49,21 +49,20 @@
           <label class="fr-toggle__label" for="toggle-is-zones-displayed">Afficher les zones du territoire</label>
         </div>
       </li>
-      <li>
+      <li class="fr-mr-2v select-wrapper">
         <HistoSelect
           v-if="sharedState.savedSearches.length > 0"
           id="filter-saver-recherche"
+          v-model="sharedState.selectedSavedSearchId"
+          @update:modelValue="applySavedSearch"
           title="Mes recherches favorites"
           :option-items=sharedState.savedSearches
           :placeholder="'Mes recherches favorites'"
         >
-          <!-- <template #label>Mes recherches favorites</template> -->
         </HistoSelect>
       </li>
       <li>
-        <button class="fr-btn fr-btn--secondary fr-icon-settings-5-line">
-          
-        </button>
+        <button class="fr-btn fr-btn--secondary fr-icon-settings-5-line"></button>
       </li>
     </ul>
   </div>
@@ -606,6 +605,7 @@ export default defineComponent({
       })
     },
     buildSearchName(filtersSanitized: Record<string, any>): string {
+      // TODO : enregistrer pagination et ordre de tri ?
       const parts: string[] = []
 
       for (const [key, value] of Object.entries(filtersSanitized)) {
@@ -618,6 +618,33 @@ export default defineComponent({
       }
 
       return parts.slice(0, 8).join(' • ')
+    },
+    applySavedSearch(value: string) {
+      if (!value) {
+        return
+      }
+
+      const selected = this.sharedState.savedSearches.find(s => s.Id === value)
+      console.log(selected)
+
+      if (!selected) {
+        console.warn('Saved search introuvable.')
+        return
+      }
+
+      const params = selected.Params as Record<string, any>
+
+      this.resetFilters()
+
+      const filters = this.sharedState.input.filters as Record<string, any>
+      for (const key in params) {
+        filters[key] = params[key]
+      }
+
+      if (typeof this.onChange === 'function') {
+        this.onChange(false)
+      }
+      this.sharedState.selectedSavedSearchId = value
     },
     resetFilters () {
       const keepIsImported = this.sharedState.input.filters.isImported
@@ -750,5 +777,10 @@ export default defineComponent({
   .filters-blocs {
     width: 100%;
     background-color: #f6f6f6;
+  }
+
+  .fr-grid-row.fr-tags-group {
+    display: flex;
+    align-items: center;
   }
 </style>
