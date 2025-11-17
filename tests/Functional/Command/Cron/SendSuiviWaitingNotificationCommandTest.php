@@ -28,7 +28,7 @@ class SendSuiviWaitingNotificationCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
 
         $this->assertEquals('[OK] Les notifications de 6 suivis ont été envoyées avec succès.', trim($output));
-        $this->assertEmailCount(4);
+        $this->assertEmailCount(10);
 
         $this->assertEquals(0, self::getContainer()->get('doctrine')->getManager()->getRepository(Suivi::class)->count(['waitingNotification' => 1]));
     }
