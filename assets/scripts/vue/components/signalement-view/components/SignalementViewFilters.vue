@@ -571,6 +571,8 @@ export default defineComponent({
       this.$emit('changeTerritory', value)
     },
     resetFilters () {
+      const keepIsImported = this.sharedState.input.filters.isImported
+
       this.sharedState.showOptions = false
       this.sharedState.input.filters = {
         territoire: null,
@@ -593,7 +595,7 @@ export default defineComponent({
         situation: null,
         dateDepot: null,
         dateDernierSuivi: null,
-        isImported: null,
+        isImported: keepIsImported,
         isZonesDisplayed: null,
         showMyAffectationOnly: null,
         showMySignalementsOnly: null,
@@ -626,7 +628,10 @@ export default defineComponent({
       }
 
       if (this.$refs.isImportedButton) {
-        (this.$refs.isImportedButton as HTMLElement).setAttribute('aria-pressed', 'false')
+        (this.$refs.isImportedButton as HTMLElement).setAttribute(
+            'aria-pressed',
+            keepIsImported === 'oui' ? 'true' : 'false'
+        )
       }
 
       if (this.$refs.isZonesDisplayedButton) {
