@@ -1,6 +1,6 @@
 <template>
   <div :class="[defineCssBloc1(), 'fr-p-1w']">
-    <ul class="fr-col-12 fr-toggle__list fr-toggle__list--inline fr-mt-2w">
+    <ul :class="['fr-col-12', 'fr-toggle__list', { 'fr-toggle__list--inline': viewType !== 'carto' }, 'fr-mt-2w']">
       <li>
         <div class="fr-toggle">
           <input 
@@ -508,10 +508,8 @@ export default defineComponent({
       this.sharedState.input.filters.showMySignalementsOnly = this.toggleStates.showMySignalementsOnly ? 'oui' : null
 
       if (this.toggleStates.showMySignalementsOnly) {
-        this.toggleStates.showWithoutAffectationOnly = false
-        this.toggleStates.showMyAffectationOnly = false
-        this.sharedState.input.filters.showWithoutAffectationOnly = null
-        this.sharedState.input.filters.showMyAffectationOnly = null
+        this.deactiveMyAffectationsOnly()
+        this.deactiveMySignalementsOnly()
       }
 
       if (typeof this.onChange === 'function') {
@@ -522,10 +520,8 @@ export default defineComponent({
       this.sharedState.input.filters.showWithoutAffectationOnly = this.toggleStates.showWithoutAffectationOnly ? 'oui' : null
 
       if (this.toggleStates.showWithoutAffectationOnly) {
-        this.toggleStates.showMyAffectationOnly = false
-        this.toggleStates.showMySignalementsOnly = false
-        this.sharedState.input.filters.showMyAffectationOnly = null
-        this.sharedState.input.filters.showMySignalementsOnly = null
+        this.deactiveMyAffectationsOnly()
+        this.deactiveMySignalementsOnly()
         this.sharedState.input.filters.partenaires = ['AUCUN']
       } else {
         this.sharedState.input.filters.partenaires = []
