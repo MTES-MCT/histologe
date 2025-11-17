@@ -5,13 +5,19 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
+use App\Entity\UserSavedSearch;
 use App\Repository\UserRepository;
+use App\Repository\UserSavedSearchRepository;
+use App\Tests\SessionHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementListControllerTest extends WebTestCase
 {
+    use SessionHelper;
+
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
@@ -317,5 +323,239 @@ class SignalementListControllerTest extends WebTestCase
         $result = json_decode((string) $client->getResponse()->getContent(), true);
 
         $this->assertEquals(0, $result['pagination']['total_items']);
+    }
+
+    public function testSaveSearchInvalidCsrf(): void
+    {
+        $client = static::createClient();
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_save_search');
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $client->loginUser($userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']));
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                '_token' => 'bad_token',
+                'name' => 'Test',
+                'params' => ['isImported' => 'oui'],
+            ])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response['status']);
+    }
+
+    public function testSaveSearchEmptyParams(): void
+    {
+        $client = static::createClient();
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_save_search');
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $client->loginUser($userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']));
+        $csrfToken = $this->generateCsrfToken($client, 'save_search');
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                '_token' => $csrfToken,
+                'name' => 'Test',
+                'params' => null,
+            ])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response['status']);
+    }
+
+    public function testSaveSearchLimitReached(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $repo = static::getContainer()->get(UserSavedSearchRepository::class);
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_save_search');
+
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $user = $userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+        $csrfToken = $this->generateCsrfToken($client, 'save_search');
+
+        for ($i = 0; $i < 5; ++$i) {
+            $search = new UserSavedSearch();
+            $search->setUser($user);
+            $search->setName("Test $i");
+            $search->setParams(['x' => $i]);
+            $em->persist($search);
+        }
+        $em->flush();
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                '_token' => $csrfToken,
+                'name' => 'Too Many',
+                'params' => ['isImported' => 'oui'],
+            ])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response['status']);
+    }
+
+    public function testSaveSearchSuccess(): void
+    {
+        $client = static::createClient();
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_save_search');
+
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $client->loginUser($userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']));
+        $csrfToken = $this->generateCsrfToken($client, 'save_search');
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                '_token' => $csrfToken,
+                'name' => 'Recherche Test',
+                'params' => ['isImported' => 'oui'],
+            ])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+
+        $this->assertSame(Response::HTTP_OK, $response['status']);
+        $this->assertArrayHasKey('data', $response);
+        $this->assertArrayHasKey('savedSearch', $response['data']);
+    }
+
+    public function testDeleteSearchInvalidCsrf(): void
+    {
+        $client = static::createClient();
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_delete_search', ['id' => 999]);
+
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $client->loginUser($userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']));
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode(['_token' => 'bad_token'])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response['status']);
+    }
+
+    public function testDeleteSearchNotFound(): void
+    {
+        $client = static::createClient();
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_delete_search', ['id' => 999999]);
+
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $client->loginUser($userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']));
+        $csrfToken = $this->generateCsrfToken($client, 'delete_search');
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode(['_token' => $csrfToken])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_NOT_FOUND, $response['status']);
+    }
+
+    public function testDeleteSearchSuccess(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $repo = static::getContainer()->get(UserRepository::class);
+        $user = $repo->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        $search = new UserSavedSearch();
+        $search->setUser($user);
+        $search->setName('À supprimer');
+        $search->setParams(['demo' => true]);
+        $em->persist($search);
+        $em->flush();
+
+        $csrfToken = $this->generateCsrfToken($client, 'delete_search');
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_delete_search', ['id' => $search->getId()]);
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode(['_token' => $csrfToken])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_OK, $response['status']);
+    }
+
+    public function testDeleteSearchNotOwned(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $userRepo = static::getContainer()->get(UserRepository::class);
+
+        $owner = $userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        $intruder = $userRepo->findOneBy(['email' => 'admin-territoire-69-mdl@signal-logement.fr']);
+
+        $search = new UserSavedSearch();
+        $search->setUser($owner);
+        $search->setName('Interdit');
+        $search->setParams(['demo' => true]);
+        $em->persist($search);
+        $em->flush();
+
+        $client->loginUser($intruder);
+
+        $csrfToken = $this->generateCsrfToken($client, 'delete_search');
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_delete_search', ['id' => $search->getId()]);
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode(['_token' => $csrfToken])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_NOT_FOUND, $response['status']);
     }
 }
