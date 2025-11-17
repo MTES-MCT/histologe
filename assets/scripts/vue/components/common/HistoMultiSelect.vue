@@ -1,7 +1,7 @@
 <template>
   <div
     :class="['histo-multi-select', 'fr-select-group', active ? 'active' : 'inactive']"
-    @focusout="isExpanded = false"
+    ref="multiSelectContainer"
     >
     <label class="fr-label" :for="id">
       <slot name="label"></slot>
@@ -76,13 +76,29 @@ export default defineComponent({
     }
   },
   emits: ['update:modelValue'],
+  mounted () {
+    document.addEventListener('click', this.handleClickOutside)
+  },
+  beforeUnmount () {
+    document.removeEventListener('click', this.handleClickOutside)
+  },
   methods: {
-    handleClickSelect () {
+    handleClickOutside (event: MouseEvent) {
+      const target = event.target as HTMLElement
+      const container = this.$refs.multiSelectContainer as HTMLElement
+      
+      if (container && !container.contains(target)) {
+        this.isExpanded = false
+      }
+    },
+    handleClickSelect (event: MouseEvent) {
+      event.stopPropagation()
       if (this.active) {
         this.isExpanded = !this.isExpanded
       }
     },
-    handleClickItem (event:any) {
+    handleClickItem (event: MouseEvent) {
+      event.stopPropagation()
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
 
@@ -96,7 +112,8 @@ export default defineComponent({
         this.onChange()
       }
     },
-    handleRemoveItem (event:any) {
+    handleRemoveItem (event: MouseEvent) {
+      event.stopPropagation()
       const clickedElement:any = event.target
       const clickedOptionId:string = clickedElement.dataset.optionid
       for (let i:number = this.modelValue.length - 1; i >= 0; i--) {

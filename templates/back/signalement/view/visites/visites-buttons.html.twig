@@ -16,18 +16,12 @@
             {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
-        {% if not intervention.rapportDeVisite %}
-            {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
-                <button class="fr-btn fr-btn--secondary fr-fi-file-fill" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
-                    Ajouter un rapport de visite
-                </button>
-            {% endif %}
-        {% else %}
-            {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
-                <button class="fr-btn fr-btn--secondary fr-fi-edit-line" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
-                    Editer la conclusion
-                </button>
-            {% endif %}
+        {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
+            <button class="fr-btn fr-btn--secondary fr-fi-edit-line" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
+                Editer la conclusion
+            </button>
+        {% endif %}
+        {% if intervention.rapportDeVisite %}
             <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
                 class="fr-btn fr-btn--secondary"
                 title="Voir le rapport de visite"

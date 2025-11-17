@@ -1,39 +1,53 @@
 <template>
   <div :class="[defineCssBloc1(), 'fr-p-1w']">
-    <ul class="fr-col-12 fr-tags-group fr-mt-2w">
+    <ul :class="['fr-col-12', 'fr-toggle__list', { 'fr-toggle__list--inline': viewType !== 'carto' }, 'fr-mt-2w']">
       <li>
-        <button class="fr-tag"
-                ref="mySignalementsButton"
-                :aria-pressed="ariaPressed.showMySignalementsOnly.toString()"
-                @click="toggleCurrentUserSignalements">
-          Afficher uniquement mes dossiers
-        </button>
+        <div class="fr-toggle">
+          <input 
+            type="checkbox" 
+            class="fr-toggle__input" 
+            id="toggle-my-signalements"
+            v-model="toggleStates.showMySignalementsOnly"
+            @change="toggleCurrentUserSignalements"
+          >
+          <label class="fr-toggle__label" for="toggle-my-signalements">Afficher uniquement mes dossiers</label>
+        </div>
       </li>
       <li v-if="sharedState.user.canSeeWithoutAffectation">
-        <button class="fr-tag"
-                ref="withoutAffectationButton"
-                :aria-pressed="ariaPressed.showWithoutAffectationOnly.toString()"
-                @click="toggleWithoutAffectation">
-          Afficher les signalements sans affectations uniquement
-        </button>
+        <div class="fr-toggle">
+          <input 
+          type="checkbox" 
+          class="fr-toggle__input" 
+          id="toggle-without-affectation"
+          v-model="toggleStates.showWithoutAffectationOnly"
+          @change="toggleWithoutAffectation"
+          >
+          <label class="fr-toggle__label" for="toggle-without-affectation">Afficher les signalements sans affectations uniquement</label>
+        </div>
       </li>
       <li v-if="sharedState.hasSignalementImported">
-        <button
-            ref="isImportedButton"
-            class="fr-tag"
-            :aria-pressed="ariaPressed.isImported.toString()"
-            @click="toggleIsImported"
-        >Afficher les signalements importés
-        </button>
+        <div class="fr-toggle">
+          <input 
+          type="checkbox" 
+          class="fr-toggle__input" 
+          id="toggle-is-imported"
+          v-model="toggleStates.isImported"
+          @change="toggleIsImported"
+          >
+          <label class="fr-toggle__label" for="toggle-is-imported">Afficher les signalements importés</label>
+        </div>
       </li>
       <li v-if="sharedState.zones.length > 0 && viewType === 'carto'">
-        <button
-            ref="isZonesDisplayedButton"
-            class="fr-tag"
-            :aria-pressed="ariaPressed.isZonesDisplayed.toString()"
-            @click="toggleIsZonesDisplayed"
-        >Afficher les zones du territoire
-        </button>
+        <div class="fr-toggle">
+          <input 
+          type="checkbox" 
+          class="fr-toggle__input" 
+          id="toggle-is-zones-displayed"
+          v-model="toggleStates.isZonesDisplayed"
+          @change="toggleIsZonesDisplayed"
+          >
+          <label class="fr-toggle__label" for="toggle-is-zones-displayed">Afficher les zones du territoire</label>
+        </div>
       </li>
     </ul>
   </div>
@@ -457,27 +471,22 @@ export default defineComponent({
       }
     },  
     toggleIsImported () {
-      this.sharedState.input.filters.isImported = this.sharedState.input.filters.isImported !== 'oui'
-        ? 'oui'
-        : null
+      this.sharedState.input.filters.isImported = this.toggleStates.isImported ? 'oui' : null
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
     },
     toggleIsZonesDisplayed () {
-      this.sharedState.input.filters.isZonesDisplayed = this.sharedState.input.filters.isZonesDisplayed !== 'oui'
-        ? 'oui'
-        : null
+      this.sharedState.input.filters.isZonesDisplayed = this.toggleStates.isZonesDisplayed ? 'oui' : null
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
     },
     toggleCurrentPartnerAffectation () {
       this.sharedState.input.filters.partenaires = []
-      this.sharedState.input.filters.showMyAffectationOnly =
-          this.sharedState.input.filters.showMyAffectationOnly !== 'oui' ? 'oui' : null
+      this.sharedState.input.filters.showMyAffectationOnly = this.toggleStates.showMyAffectationOnly ? 'oui' : null
 
-      if (this.sharedState.input.filters.showMyAffectationOnly === 'oui') {
+      if (this.toggleStates.showMyAffectationOnly) {
         this.deactiveWithoutAffectationsOnly()
         this.deactiveMySignalementsOnly()
         const currentPartners = this.sharedState.partenaires.filter((partner: HistoInterfaceSelectOption) => {
@@ -496,10 +505,9 @@ export default defineComponent({
     },
     toggleCurrentUserSignalements () {
       this.sharedState.input.filters.partenaires = []
-      this.sharedState.input.filters.showMySignalementsOnly =
-          this.sharedState.input.filters.showMySignalementsOnly !== 'oui' ? 'oui' : null
+      this.sharedState.input.filters.showMySignalementsOnly = this.toggleStates.showMySignalementsOnly ? 'oui' : null
 
-      if (this.sharedState.input.filters.showMySignalementsOnly === 'oui') {
+      if (this.toggleStates.showMySignalementsOnly) {
         this.deactiveWithoutAffectationsOnly()
         this.deactiveMyAffectationsOnly()
       }
@@ -509,16 +517,14 @@ export default defineComponent({
       }
     },
     toggleWithoutAffectation () {
-      this.sharedState.input.filters.partenaires = []
-      this.sharedState.input.filters.showWithoutAffectationOnly =
-          this.sharedState.input.filters.showWithoutAffectationOnly !== 'oui' ? 'oui' : null
+      this.sharedState.input.filters.showWithoutAffectationOnly = this.toggleStates.showWithoutAffectationOnly ? 'oui' : null
 
-      if (this.sharedState.input.filters.showWithoutAffectationOnly === 'oui') {
+      if (this.toggleStates.showWithoutAffectationOnly) {
         this.deactiveMyAffectationsOnly()
         this.deactiveMySignalementsOnly()
         this.sharedState.input.filters.partenaires = ['AUCUN']
       } else {
-        delete this.sharedState.input.filters.partenaires[0]
+        this.sharedState.input.filters.partenaires = []
       }
 
       if (typeof this.onChange === 'function') {
@@ -527,21 +533,15 @@ export default defineComponent({
     },
     deactiveMyAffectationsOnly () {
       this.sharedState.input.filters.showMyAffectationOnly = null
-      if (this.$refs.myAffectationButton) {
-        (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
-      }
+      this.toggleStates.showMyAffectationOnly = false
     },
     deactiveMySignalementsOnly () {
       this.sharedState.input.filters.showMySignalementsOnly = null
-      if (this.$refs.mySignalementsButton) {
-        (this.$refs.mySignalementsButton as HTMLElement).setAttribute('aria-pressed', 'false')
-      }
+      this.toggleStates.showMySignalementsOnly = false
     },
     deactiveWithoutAffectationsOnly () {
       this.sharedState.input.filters.showWithoutAffectationOnly = null
-      if (this.$refs.withoutAffectationButton) {
-        (this.$refs.withoutAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
-      }
+      this.toggleStates.showWithoutAffectationOnly = false
     },
     selectPartnerInList () {
       this.sharedState.input.filters.partenaires = this.sharedState.input.filters.partenaires.filter(partenaire => partenaire !== 'AUCUN')
@@ -613,24 +613,12 @@ export default defineComponent({
       }
       this.sharedState.currentTerritoryId = ''
 
-      if (this.$refs.myAffectationButton) {
-        (this.$refs.myAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
-      }
-
-      if (this.$refs.mySignalementsButton) {
-        (this.$refs.mySignalementsButton as HTMLElement).setAttribute('aria-pressed', 'false')
-      }
-
-      if (this.$refs.withoutAffectationButton) {
-        (this.$refs.withoutAffectationButton as HTMLElement).setAttribute('aria-pressed', 'false')
-      }
-
-      if (this.$refs.isImportedButton) {
-        (this.$refs.isImportedButton as HTMLElement).setAttribute('aria-pressed', 'false')
-      }
-
-      if (this.$refs.isZonesDisplayedButton) {
-        (this.$refs.isZonesDisplayedButton as HTMLElement).setAttribute('aria-pressed', 'false')
+      this.toggleStates = {
+        isImported: false,
+        isZonesDisplayed: false,
+        showMyAffectationOnly: false,
+        showMySignalementsOnly: false,
+        showWithoutAffectationOnly: false
       }
 
       this.reset = !this.reset
@@ -652,7 +640,7 @@ export default defineComponent({
       reset: false,
       sharedState: store.state,
       sharedProps: store.props,
-      ariaPressed: {
+      toggleStates: {
         isImported: store.state.input.filters.isImported === 'oui',
         isZonesDisplayed: store.state.input.filters.isZonesDisplayed === 'oui',
         showMyAffectationOnly: store.state.input.filters.showMyAffectationOnly === 'oui',
