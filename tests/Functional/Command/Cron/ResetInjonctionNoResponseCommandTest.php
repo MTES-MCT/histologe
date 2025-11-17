@@ -21,7 +21,7 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('2 signalements', $output);
-        $this->assertEmailCount(4);
+        $this->assertEmailCount(5);
         $expectedTags = [
             'Usager Nouveau Suivi Signalement',
             'Usager Nouveau Suivi Signalement',
