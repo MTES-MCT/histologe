@@ -147,6 +147,7 @@ export default defineComponent({
       requests.getSignalements(this.handleSignalements)
     },
     handleFilters () {
+      this.sharedState.selectedSavedSearchId = null
       handleFilters(this, initElements.dataset.ajaxurl)
     },    
     handleDelete (requestResponse: any) {
