@@ -19,6 +19,8 @@
          data-ajaxurl-remove-signalement="{{ path('back_signalement_delete', {'uuid' : '<uuid>'}) }}"
          data-ajaxurl-save-search="{{ path('back_signalements_list_save_search') }}"
          data-csrf-save-search="{{ csrf_token('save_search') }}"
+         data-ajaxurl-delete-search="{{ path('back_signalements_list_delete_search', {'id' : '<id>'}) }}"
+         data-csrf-delete-search="{{ csrf_token('delete_search') }}"
          data-platform-name="{{ platform.name }}"
     >
 

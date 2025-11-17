@@ -15,6 +15,7 @@
                 @changeTerritory="handleTerritoryChange"
                 @clickReset="handleClickReset"
                 @clickSaveSearch="handleClickSaveSearch"
+                @clickDeleteSearch="handleClickDeleteSearch"
                 :layout="'horizontal'"
                 :viewType="'list'"
             />
@@ -52,6 +53,7 @@ import SignalementViewFilters from './components/SignalementViewFilters.vue'
 import SignalementListHeader from './components/SignalementListHeader.vue'
 import SignalementListCards from './components/SignalementListCards.vue'
 import SignalementListPagination from './components/SignalementListPagination.vue'
+import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, addQueryParameter, removeQueryParameter, buildUrl, clearScreen } from './utils/signalementUtils'
 
 const initElements:any = document.querySelector('#app-signalement-view')
@@ -92,6 +94,8 @@ export default defineComponent({
         this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
         this.sharedProps.ajaxurlSaveSearch = initElements.dataset.ajaxurlSaveSearch
         this.sharedProps.csrfSaveSearch = initElements.dataset.csrfSaveSearch
+        this.sharedProps.ajaxurlDeleteSearch = initElements.dataset.ajaxurlDeleteSearch
+        this.sharedProps.csrfDeleteSearch = initElements.dataset.csrfDeleteSearch        
         this.sharedProps.platformName = initElements.dataset.platformName
         if (!reset) {
           handleQueryParameter(this)
@@ -115,6 +119,9 @@ export default defineComponent({
     },
     handleClickSaveSearch (payload: { name: string; params: any }) {
       requests.saveSearch(payload, this.sharedProps.csrfSaveSearch, this.handleSearchSaved)
+    },
+    handleClickDeleteSearch(id: string) {
+      requests.deleteSearch(id, this.sharedProps.csrfDeleteSearch, this.handleSearchDeleted)
     },
     handleSignalements (requestResponse: any) {
       handleSignalementsShared(this, requestResponse)
@@ -164,11 +171,35 @@ export default defineComponent({
       requests.getSignalements(this.handleSignalements)
     },
     handleSearchSaved (requestResponse: any) {
-      this.messageDeleteConfirmation = requestResponse.data.message 
+      this.messageDeleteConfirmation = requestResponse.data.message
       this.classNameDeleteConfirmation =
           requestResponse.status === 200
             ? 'fr-alert--success'
             : 'fr-alert--error'
+      if (requestResponse.status === 200 && requestResponse.data?.data?.savedSearch) {
+        const saved = requestResponse.data.data.savedSearch
+        const newOption = new HistoInterfaceSelectOption()
+        newOption.Id = saved.id.toString()
+        newOption.Text = saved.name
+        newOption.Params = saved.params
+        this.sharedState.savedSearches.push(newOption)
+        this.sharedState.selectedSavedSearchId = newOption.Id
+        this.sharedState.savedSearchSelectKey++
+      }
+    },
+    handleSearchDeleted (requestResponse: any, id: string = '') {
+      this.messageDeleteConfirmation = requestResponse.data.message
+      this.classNameDeleteConfirmation =
+          requestResponse.status === 200
+            ? 'fr-alert--success'
+            : 'fr-alert--error'
+      if (requestResponse.status === 200) {
+        const updatedSearches = this.sharedState.savedSearches.filter(s => s.Id !== id);
+        const selectedId = this.sharedState.selectedSavedSearchId === id ? '' : this.sharedState.selectedSavedSearchId;
+        this.sharedState.savedSearches = updatedSearches;
+        this.sharedState.selectedSavedSearchId = selectedId;
+        this.sharedState.savedSearchSelectKey++
+      }
     },
     async deleteItem (item: SignalementItem|null) {
       clearScreen(this)

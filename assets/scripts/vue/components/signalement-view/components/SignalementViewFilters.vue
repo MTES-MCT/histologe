@@ -1,4 +1,31 @@
 <template>
+  <dialog aria-labelledby="modal-delete-search-title" id="modal-delete-search" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-lg">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="modal-delete-search">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 id="modal-delete-search-title" class="fr-modal__title">
+                            Mes recherches sauvegardées
+                        </h1>
+                        <ul>
+                          <li v-for="search in sharedState.savedSearches" :key="search.Id" class="fr-mb-1v">
+                            {{ search.Text }}
+                            <button class="fr-btn fr-btn--icon-left fr-btn--sm fr-btn--secondary fr-icon-delete-line"
+                                    @click="deleteSavedSearch(search.Id)">
+                              Supprimer
+                            </button>
+                          </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </dialog>
   <div :class="[defineCssBloc1(), 'fr-p-1w']">
     <ul :class="['fr-col-12', 'fr-toggle__list', { 'fr-toggle__list--inline': viewType !== 'carto' }, 'fr-mt-2w']">
       <li>
@@ -51,6 +78,7 @@
       </li>
       <li class="fr-mr-2v select-wrapper">
         <HistoSelect
+          :key="sharedState.savedSearchSelectKey"
           v-if="sharedState.savedSearches.length > 0"
           id="filter-saver-recherche"
           v-model="sharedState.selectedSavedSearchId"
@@ -62,7 +90,12 @@
         </HistoSelect>
       </li>
       <li>
-        <button class="fr-btn fr-btn--secondary fr-icon-settings-5-line"></button>
+        <button
+          v-if="sharedState.savedSearches.length > 0"
+          data-fr-opened="false" 
+          aria-controls="modal-delete-search"
+          class="fr-btn fr-btn--secondary fr-icon-settings-5-line"
+        ></button>
       </li>
     </ul>
   </div>
@@ -416,7 +449,6 @@ import { buildBadge } from '../services/badgeFilterLabelBuilder'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
 import { removeLocalStorage } from '../utils/signalementUtils'
 
-
 export default defineComponent({
   name: 'SignalementViewFilters',
   components: {
@@ -440,7 +472,7 @@ export default defineComponent({
     },
     onChange: { type: Function }
   },
-  emits: ['changeTerritory', 'clickReset', 'clickSaveSearch'],
+  emits: ['changeTerritory', 'clickReset', 'clickSaveSearch', 'clickDeleteSearch'],
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
@@ -625,17 +657,14 @@ export default defineComponent({
       }
 
       const selected = this.sharedState.savedSearches.find(s => s.Id === value)
-      console.log(selected)
-
       if (!selected) {
         console.warn('Saved search introuvable.')
         return
       }
 
-      const params = selected.Params as Record<string, any>
-
       this.resetFilters()
 
+      const params = selected.Params as Record<string, any>
       const filters = this.sharedState.input.filters as Record<string, any>
       for (const key in params) {
         filters[key] = params[key]
@@ -645,6 +674,9 @@ export default defineComponent({
         this.onChange(false)
       }
       this.sharedState.selectedSavedSearchId = value
+    },
+    deleteSavedSearch(id: string) {
+      this.$emit('clickDeleteSearch', id)
     },
     resetFilters () {
       const keepIsImported = this.sharedState.input.filters.isImported
@@ -736,7 +768,8 @@ export default defineComponent({
       natureParcList: store.state.natureParcList,
       allocataireList: store.state.allocataireList,
       enfantMoinsSixList: store.state.enfantMoinsSixList,
-      motifClotureList: store.state.motifClotureList
+      motifClotureList: store.state.motifClotureList,
+      showSavedSearchesModal: false
     }
   }
 })

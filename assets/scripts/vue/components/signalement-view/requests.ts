@@ -66,7 +66,7 @@ export const requests = {
         params: payload.params
       })
       .then(response => {
-        functionReturn(response.data)
+        functionReturn(response)
       })
       .catch(error => {
         if (error.response !== undefined) {
@@ -75,6 +75,28 @@ export const requests = {
           const customResponse = {
             status: 500,
             message: 'Une erreur est survenue lors de la sauvegarde de votre recherche.'
+          }
+          functionReturn(customResponse)
+        }
+      })
+  },
+  deleteSearch (id: string, csrfToken: string, functionReturn: Function) {
+    let ajaxurlDeleteSearch = decodeURIComponent(store.props.ajaxurlDeleteSearch)
+    ajaxurlDeleteSearch = ajaxurlDeleteSearch.replace('<id>', id)
+    axios
+      .post(ajaxurlDeleteSearch, {
+        _token: csrfToken
+      })
+      .then(response => {
+        functionReturn(response, id)
+      })
+      .catch(error => {
+        if (error.response !== undefined) {
+          functionReturn(error.response)
+        } else {
+          const customResponse = {
+            status: 500,
+            message: 'Une erreur est survenue lors de la suppression de votre recherche.'
           }
           functionReturn(customResponse)
         }
