@@ -32,7 +32,7 @@ class FileVisibilityService
             }
 
             foreach ($partners as $partner) {
-                if (!$partner) {
+                if (!$partner || $partner->getIsArchive() || !$partner->getType()) {
                     continue;
                 }
 
@@ -49,16 +49,16 @@ class FileVisibilityService
     }
 
     /**
-     * @param array<mixed> $PartnerParameter
+     * @param array<mixed> $partnerParameter
      * @param array<mixed> $fileParameter
      */
-    private function enumsIntersect(array $PartnerParameter, array $fileParameter): bool
+    private function enumsIntersect(array $partnerParameter, array $fileParameter): bool
     {
         if (empty($fileParameter)) {
             return true;
         }
 
-        $valuesA = array_map(fn ($e) => $e->value, $PartnerParameter);
+        $valuesA = array_map(fn ($e) => $e->value, $partnerParameter);
         $valuesB = array_map(fn ($e) => $e->value, $fileParameter);
 
         return (bool) array_intersect($valuesA, $valuesB);
