@@ -1,4 +1,4 @@
-{% set partnerLabel = affectation and affectation.partner.type.value =='ARS'
+{% set partnerLabel = affectation and affectation.partner.type and affectation.partner.type.value =='ARS'
     ? constant('App\\Service\\Interconnection\\Esabora\\EsaboraSISHService::NAME_SI')
     : 'Esabora'
 %}
