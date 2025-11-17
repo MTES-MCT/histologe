@@ -76,7 +76,7 @@ class InjonctionBailleurService
     {
         $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, filterInjonctionBailleur: true);
         // Pour l'instant, on ne filtre que les partenaires ayant la compétence AIDE_BAILLEURS
-        // Peut-être qu'il faudra être plus proche de l'auto-affectation ? (insee occupant, procédures suspectées, etc.)
+        // Peut-être qu'il faudra être plus proche de l'auto-affectation ? (procédures suspectées, etc.)
         $helpingPartnersFromTerritory = $affectablePartners['not_affected'];
 
         $adminUser = $this->userManager->getSystemUser();

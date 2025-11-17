@@ -2,6 +2,8 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Enum\Qualification;
+use App\Entity\Partner;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -122,6 +124,9 @@ class UserVoter extends Voter
         $arrayDepts = json_decode($this->featureInjonctionBailleurDepts, true);
 
         return $user->isSuperAdmin()
-            || ($user->isTerritoryAdmin() && in_array($user->getFirstTerritory()->getZip(), $arrayDepts));
+            || ($user->isTerritoryAdmin() && in_array($user->getFirstTerritory()->getZip(), $arrayDepts))
+            || count($user->getPartners()->filter(function (Partner $partner) use ($arrayDepts) {
+                return $partner->hasCompetence(Qualification::AIDE_BAILLEURS) && in_array($partner->getTerritory()->getZip(), $arrayDepts);
+            }));
     }
 }

@@ -30,9 +30,12 @@ readonly class MenuBuilder
         }
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', routeParameters: $listRouteParameters, roleGranted: User::ROLE_USER));
+        if ($this->currentRoute->isGranted(UserVoter::SEE_INJONCTION_BAILLEUR, $user)) {
+            $signalementsSubMenu->addChild(new MenuItem(label: 'Signalements en cours d\'injonction', route: 'back_injonction_signalement_index', roleGranted: User::ROLE_USER));
+        }
         $signalementsSubMenu
-            ->addChild(new MenuItem(label: 'Mes brouillons', route: 'back_signalement_drafts', roleGranted: User::ROLE_USER));
-        $signalementsSubMenu->addChild(new MenuItem(label: 'Créer un signalement', route: 'back_signalement_create', roleGranted: User::ROLE_USER))
+            ->addChild(new MenuItem(label: 'Mes brouillons', route: 'back_signalement_drafts', roleGranted: User::ROLE_USER))
+            ->addChild(new MenuItem(label: 'Créer un signalement', route: 'back_signalement_create', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(route: 'back_signalement_view'))
         ;
 
@@ -48,9 +51,6 @@ readonly class MenuBuilder
             $adminToolsSubItem->addChild(new MenuItem(label: 'Mon partenaire'.$partnerName, route: 'back_partner_view', routeParameters: ['id' => $partner->getId()], roleGranted: User::ROLE_ADMIN_PARTNER, roleNotGranted: User::ROLE_ADMIN_TERRITORY));
         }
         $adminToolsSubItem->addChild(new MenuItem(label: 'Utilisateurs', route: 'back_user_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
-        if ($this->currentRoute->isGranted(UserVoter::SEE_INJONCTION_BAILLEUR, $user)) {
-            $adminToolsSubItem->addChild(new MenuItem(label: 'Signalements en cours d\'injonction', route: 'back_injonction_signalement_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
-        }
         if ($this->featureNewDocumentSpace) {
             $adminToolsSubItem->addChild(new MenuItem(label: $user->isSuperAdmin() ? 'Gérer les territoires' : 'Gérer mon territoire', route: 'back_territory_management_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
             $adminToolsSubItem->addChild(new MenuItem(route: 'back_territory_management_zone_index'))

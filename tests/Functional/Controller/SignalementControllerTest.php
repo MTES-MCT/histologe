@@ -329,7 +329,7 @@ class SignalementControllerTest extends WebTestCase
                 '_token' => $this->generateCsrfToken($client, 'message_usager'),
             ],
         ]);
-        if (SignalementStatus::ACTIVE->value === $status) {
+        if (in_array($status, [SignalementStatus::ACTIVE->value, SignalementStatus::INJONCTION_BAILLEUR->value])) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'/messages');
             $suivisUsager = self::getContainer()->get(SuiviRepository::class)->findBy(['category' => SuiviCategory::MESSAGE_USAGER, 'signalement' => $signalement]);
             $this->assertEquals(1, count($suivisUsager));
@@ -340,8 +340,6 @@ class SignalementControllerTest extends WebTestCase
             $this->assertEquals('Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.', $crawler->filter('.fr-alert p')->text());
         } elseif (SignalementStatus::CLOSED->value === $status) {
             $this->assertEquals('Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.', $crawler->filter('.fr-alert p')->text());
-        } elseif (SignalementStatus::INJONCTION_BAILLEUR->value === $status) {
-            $this->assertEquals('Votre dossier est en injonction bailleur, vous ne pouvez pas envoyer de messages.', $crawler->filter('.fr-alert p')->text());
         } elseif (SignalementStatus::INJONCTION_CLOSED->value === $status) {
             $this->assertEquals('Vous ne pouvez plus envoyer de messages.', $crawler->filter('.fr-alert p')->text());
         } else {

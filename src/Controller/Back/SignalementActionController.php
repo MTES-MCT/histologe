@@ -334,7 +334,9 @@ class SignalementActionController extends AbstractController
                     }
                 }
             }
-            $signalement->setStatut(SignalementStatus::ACTIVE);
+            if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+                $signalement->setStatut(SignalementStatus::ACTIVE);
+            }
             $subscriptionCreated = false;
             $suiviManager->createSuivi(
                 signalement: $signalement,

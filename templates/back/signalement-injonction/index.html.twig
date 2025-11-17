@@ -5,11 +5,9 @@
 {% block content %}
     <section class="fr-p-5v">
         {% include 'back/breadcrumb_bo.html.twig' with {
-            'level2Title': 'Outils admin',
+            'level2Title': 'Liste des signalements en cours d\'injonction',
             'level2Link': '',
-            'level2Label': '',
-            'level3Title': 'Signalements en cours d\'injonction',
-            'level3Link': '',
+            'level2Label': ''
         } %}
 
         <div class="fr-notice fr-notice--warning fr-mb-3v">
@@ -76,9 +74,8 @@
             <th scope="col">Nom de l'occupant</th>
             <th scope="col">Nom du bailleur</th>
             <th scope="col">Réponse bailleur</th>
-            {% if is_granted('ROLE_ADMIN') %}
-                <th scope="col">Actions</th>
-            {% endif %}
+            <th scope="col">Affectations acceptées</th>
+            <th scope="col">Actions</th>
         {% endset %}
 
         {% set tableBody %}
@@ -103,14 +100,15 @@
                     <td>{{ signalement.prenomOccupant ~ ' ' ~ signalement.nomOccupant }}</td>
                     <td>{{ signalement.getDisplayedNomProprio() }}</td>
                     <td><span class="fr-badge {{ classeBadgeReponseBailleur }} fr-badge--no-icon fr-ws-nowrap ">{{ labelReponseBailleur }}</span></td>
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <td>
-                            <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>
-                            <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line fr-btn--sm" target="_blank" rel="noopener">
-                                Courrier bailleur
-                            </a>
-                        </td>
-                    {% endif %}
+                    <td>{{ signalement.getCountAffectationsByStatus(enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED) }} / {{ signalement.affectations|length }}</td>
+                    <td>
+                        <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-btn fr-fi-arrow-right-line fr-btn--sm" title="Voir le signalement {{ signalement.reference }}"></a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line fr-btn--sm" target="_blank" rel="noopener" title="Afficher le courrier (Ouvre une nouvelle fenêtre)">
+                            Courrier bailleur
+                        </a>
+                        {% endif %}
+                    </td>
                 </tr>
             {% else %}
                 <tr>
