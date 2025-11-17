@@ -169,7 +169,8 @@ export const store = {
       { Id: 'doublon', Text: 'Doublon' },
       { Id: 'autre', Text: 'Autre' }
     ],
-    selectedSavedSearchId: null as string | null
+    selectedSavedSearchId: null as string | null,
+    savedSearchSelectKey: 0,
   },
   props: {
     ajaxurlSignalement: '',
@@ -179,6 +180,8 @@ export const store = {
     ajaxurlContact: '',
     ajaxurlSaveSearch: '',
     csrfSaveSearch: '',
+    ajaxurlDeleteSearch: '',
+    csrfDeleteSearch: '',
     platformName: '',
     token: ''
   }
