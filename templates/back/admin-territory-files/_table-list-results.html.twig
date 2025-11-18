@@ -1,0 +1,90 @@
+
+{% set tableHead %}
+    <th scope="col" class="number">ID</th>
+    <th scope="col">Document</th>
+    <th scope="col">Date d'ajout</th>
+    <th scope="col">Type</th>
+    {% if is_granted('ROLE_ADMIN') %}
+        <th scope="col">Territoire</th>
+    {% endif %}
+    <th scope="col">Visible par</th>
+    <th scope="col" class="fr-text--right">Actions</th>
+{% endset %}
+
+{% set tableBody %}
+    {% for file in files %}
+        <tr class="file-row">
+            <td>{{ file.id }}</td>
+            <td>{{ file.title }}</td>
+            <td>{{ file.createdAt.format('d/m/Y') }}</td>
+            <td>{{ file.documentType.label }}</td>
+            {% if is_granted('ROLE_ADMIN') %}
+            <td>
+                {% if file.territory %}
+                    {{ file.territory.zip }} - {{ file.territory.name }}
+                {% else %}
+                    Tous
+                {% endif %}
+            </td>
+            {% endif %}
+            <td>
+            {% if file.partnerCompetence|length > 0 or file.partnerType|length > 0 %}                        
+                <span class="fr-badge fr-badge--no-icon fr-badge--info">CERTAINS</span>
+            {% else %}
+                <span class="fr-badge fr-badge--no-icon fr-badge--success">TOUS</span>
+            {% endif %}
+            </td>
+            <td class="fr-text--right fr-ws-nowrap">
+                <button
+                    class="fr-btn fr-icon-eye-line open-modal-document-view"
+                    title="Voir les détails du document {{ file.title }}"
+                    data-fr-opened="false" 
+                    aria-controls="fr-modal-document-view"
+                    data-url="{{ path('back_territory_management_document_edit', { file: file.id }) }}"
+                    data-createdat="{{ file.createdAt|date('d/m/Y') }}"
+                    data-createdby="{{ file.uploadedBy ? file.uploadedBy.fullName : 'Admin' }}"
+                    data-title="{{ file.title }}"
+                    data-description="{{ file.description ?? '/' }}"
+                    data-partnertype="Type de partenaire : 
+                        {% if file.partnerType|length > 0 %}
+                            {% for type in file.partnerType %}
+                                <span class='fr-badge fr-badge--no-icon fr-badge--info'>{{ type.label() }}</span>
+                            {% endfor %}
+                        {% else %}/
+                        {% endif %}"
+                    data-partnercompetence="Compétences : 
+                        {% if file.partnerCompetence|length > 0 %}
+                            {% for competence in file.partnerCompetence %}
+                                <span class='fr-badge fr-badge--no-icon fr-badge--info'>{{ competence.label() }}</span>
+                            {% endfor %}
+                        {% else %}/
+                        {% endif %}"
+                    >Voir les détails du document {{ file.title }}</button>
+                <a href="{{ path('back_territory_management_document_edit', { file: file.id }) }}" class="fr-btn fr-icon-edit-line" title="Editer le document {{ file.title }}"
+                    >Editer le document {{ file.title }}</a>
+                <a href="{{ sign_url(path('show_file', {uuid: file.uuid})) }}"
+                        class="fr-btn fr-icon-download-line"
+                        title="Ouvrir le document {{ file.title }} - Ouvre une nouvelle fenêtre"
+                        target="_blank"
+                        rel="noopener"
+                    >Ouvrir le document {{ file.title }}</a>
+                <button
+                    class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-document-delete"
+                    title="Supprimer le document {{ file.title }}"
+                    data-fr-opened="false"
+                    aria-controls="fr-modal-document-delete"
+                    data-url="{{ path('back_territory_management_document_delete_ajax', { file: file.id }) }}?_token={{ csrf_token('document_delete') }}"
+                    data-title="{{ file.title }}"
+                    data-territoire="{{ file.territory ? file.territory.name : 'Tous' }}"
+                    >Supprimer le document {{ file.title }}</button>
+            </td>
+        </tr>
+    {% endfor %}
+{% endset %}
+
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des documents', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+    {% import '_partials/macros.html.twig' as macros %}
+    {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_territory_management_document', searchTerritoryFiles.urlParams) }}
+</div>
