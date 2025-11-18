@@ -3,7 +3,7 @@
 namespace App\Service\Menu;
 
 use App\Entity\User;
-use App\Security\Voter\UserVoter;
+use App\Security\Voter\InjonctionBailleurVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -30,7 +30,7 @@ readonly class MenuBuilder
         }
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', routeParameters: $listRouteParameters, roleGranted: User::ROLE_USER));
-        if ($this->currentRoute->isGranted(UserVoter::SEE_INJONCTION_BAILLEUR, $user)) {
+        if ($this->currentRoute->isGranted(InjonctionBailleurVoter::SEE, $user)) {
             $signalementsSubMenu->addChild(new MenuItem(label: 'Signalements en cours d\'injonction', route: 'back_injonction_signalement_index', roleGranted: User::ROLE_USER));
         }
         $signalementsSubMenu
