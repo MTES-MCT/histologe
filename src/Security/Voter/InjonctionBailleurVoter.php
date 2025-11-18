@@ -27,13 +27,13 @@ class InjonctionBailleurVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return self::SEE === $attribute && $subject instanceof User;
+        return self::SEE === $attribute && !$subject;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var User $user */
-        $user = $subject;
+        $user = $token->getUser();
 
         return match ($attribute) {
             self::SEE => $this->canSeeInjonctionBailleur($user),
