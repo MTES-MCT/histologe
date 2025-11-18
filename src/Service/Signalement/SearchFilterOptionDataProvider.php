@@ -66,7 +66,7 @@ class SearchFilterOptionDataProvider
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
                     'listVisiteStatus' => VisiteStatus::getLabelList(),
                     'hasSignalementsImported' => $user->isSuperAdmin() || $user->isTerritoryAdmin()
-                        ? $this->signalementRepository->countImported($territory) : false,
+                        ? $this->signalementRepository->countImported($territory) : $this->signalementRepository->countImported($territory, $user),
                     'bailleursSociaux' => $this->bailleurRepository->findBailleursByTerritory($user, $territory),
                 ];
             }
