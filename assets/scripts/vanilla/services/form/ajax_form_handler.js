@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/browser';
 
 const modalElements = document.querySelectorAll('[data-ajax-form] dialog');
+const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
 modalElements.forEach((modalElement) => {
   modalElement.addEventListener('dsfr.conceal', (event) => {
@@ -60,7 +61,7 @@ async function submitPayload(formElement) {
       });
     }
     if (response.redirected && response.url.endsWith('/connexion')) {
-      alert('Votre session a expiré. Veuillez vous reconnecter en rechargeant la page.');
+      addFlashMessage({type: 'alert', title: 'Erreur', message: "Votre session a expiré. Veuillez vous reconnecter en rechargeant la page."});
     } else if (response.redirected) {
       window.location.href = response.url;
     } else if (response.ok) {
@@ -69,26 +70,20 @@ async function submitPayload(formElement) {
           window.location.href = response.url;
         } else if(response.stayOnPage){
           if(response.flashMessages){
-            const flashMessagesContainer = document.getElementById('flash-messages-live-container');
             response.flashMessages.forEach((flashMessage) => {
-              const divElement = document.createElement('div');
-              divElement.classList.add('fr-notice', `fr-notice--${flashMessage.type}`);
-              divElement.setAttribute('role', 'alert');
-              divElement.innerHTML = `
-                <div class="fr-container">
-                    <div class="fr-notice__body">
-                        <p>
-                          <span class="fr-notice__title">${flashMessage.title}</span>
-                          <span class="fr-notice__text">${flashMessage.message}</span>
-                        </p>
-                        <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
-                    </div>
-                </div>
-              `;
-              flashMessagesContainer.appendChild(divElement);
+              addFlashMessage(flashMessage);
             });
           }
           resetSubmitButton();
+          if(response.htmlTargetContents){
+            response.htmlTargetContents.forEach((htmlTargetContent) => {
+              const targetElement = document.querySelector(htmlTargetContent.target);
+              if(targetElement){
+                targetElement.innerHTML = htmlTargetContent.content;
+              }
+            });
+          }
+
           if(response.closeModal){
             const openModalElement = document.querySelector('.fr-modal--opened');
             if(openModalElement){
@@ -147,6 +142,8 @@ async function submitPayload(formElement) {
         }
       }
       resetSubmitButton();
+    } else if (response.status === 403) {
+      addFlashMessage({type: 'alert', title: 'Erreur', message: "Vous n'avez pas les permissions nécessaires pour effectuer cette action."});
     } else {
       const responseData = await response.json();
       alert(responseData.message);
@@ -173,4 +170,22 @@ function resetSubmitButton() {
       submitElement.classList.remove('fr-btn--icon-left');
     }
   }
+}
+
+function addFlashMessage(flashMessage) {
+    const divElement = document.createElement('div');
+    divElement.classList.add('fr-notice', `fr-notice--${flashMessage.type}`);
+    divElement.setAttribute('role', 'alert');
+    divElement.innerHTML = `
+      <div class="fr-container">
+          <div class="fr-notice__body">
+              <p>
+                <span class="fr-notice__title">${flashMessage.title}</span>
+                <span class="fr-notice__text">${flashMessage.message}</span>
+              </p>
+              <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
+          </div>
+      </div>
+    `;
+    flashMessagesContainer.appendChild(divElement);
 }
