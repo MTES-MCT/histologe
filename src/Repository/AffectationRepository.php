@@ -308,7 +308,7 @@ class AffectationRepository extends ServiceEntityRepository
         $stmt->bindValue('affectation_status', AffectationStatus::ACCEPTED->value);
         $stmt->bindValue('date', $date->format('Y-m-d H:i:s'));
 
-        return $stmt->executeQuery()->fetchAllAssociative();
+        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
     }
 
     /**

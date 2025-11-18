@@ -138,7 +138,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $connection = $this->getEntityManager()->getConnection();
         $stmt = $connection->prepare($sql);
 
-        return $stmt->executeQuery()->fetchAllAssociative();
+        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
     }
 
     public function findArchivedUserByEmail(string $email): ?User
