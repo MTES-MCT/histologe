@@ -19,8 +19,8 @@ class SuiviVoter extends Voter
     public const string EDIT_SUIVI = 'EDIT_SUIVI';
 
     public function __construct(
-        #[Autowire(env: 'FEATURE_EDITION_SUIVI')]
-        private readonly bool $featureEditionSuivi,
+        #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
+        private readonly bool $editionSuiviEnable,
         #[Autowire(env: 'DELAY_SUIVI_EDITABLE_IN_MINUTES')]
         private readonly int $delaySuiviEditableInMinutes,
     ) {
@@ -62,7 +62,7 @@ class SuiviVoter extends Voter
 
     private function canEdit(Suivi $suivi, User $user): bool
     {
-        if (!$this->featureEditionSuivi) {
+        if (!$this->editionSuiviEnable) {
             return false;
         }
         if (null !== $suivi->getDeletedAt()) {
