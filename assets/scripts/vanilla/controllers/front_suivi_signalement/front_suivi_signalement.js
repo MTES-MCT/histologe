@@ -6,7 +6,6 @@ import {
 import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
 import { initComponentAdress } from '../../services/component/component_search_address';
 attacheAutocompleteAddressEvents();
-//DEBUG
 if (document.querySelector('#coordonnees_bailleur_adresseCompleteProprio')) {
   initComponentAdress('#coordonnees_bailleur_adresseCompleteProprio');
 }
