@@ -277,7 +277,7 @@ class SignalementController extends AbstractController
         if ($request->isMethod('POST')) {
             $manageFlashMessages = false;
             if ('application/json' === $request->headers->get('Content-Type')) {
-                $data = json_decode($request->getContent(), true);
+                $data = $request->getPayload()->all();
                 $profil = $data['profil'] ?? null;
                 $manageFlashMessages = true;
             } else {
@@ -804,7 +804,7 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
-            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -832,12 +832,12 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if ($signalement->getIsUsagerAbandonProcedure()) {
-            $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté d\'arrêter la procédure.');
+            $this->addFlash('error', ['title' => 'Demande déjà enregistrée', 'message' => 'L\'administration a déjà été informée de votre volonté d\'arrêter la procédure.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
-            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -879,7 +879,7 @@ class SignalementController extends AbstractController
             );
 
             $signalementManager->save($signalement);
-            $this->addFlash('success', 'Votre demande d\'arrêt de procédure a bien été prise en compte. Elle sera examinée par l\'administration.');
+            $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => 'Votre demande d\'arrêt de procédure a bien été prise en compte. Elle sera examinée par l\'administration.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -901,12 +901,12 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (false === $signalement->getIsUsagerAbandonProcedure()) {
-            $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté de poursuivre la procédure.');
+            $this->addFlash('error', ['title' => 'Demande déjà enregistrée', 'message' => 'L\'administration a déjà été informée de votre volonté de poursuivre la procédure.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
-            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -940,7 +940,7 @@ class SignalementController extends AbstractController
             );
 
             $signalementManager->save($signalement);
-            $this->addFlash('success', 'Votre demande de poursuivre la procédure a bien été prise en compte. Elle a été transmise à l\'administration.');
+            $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => 'Votre demande de poursuivre la procédure a bien été prise en compte. Elle a été transmise à l\'administration.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
