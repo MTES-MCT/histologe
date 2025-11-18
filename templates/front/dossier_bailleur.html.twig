@@ -47,137 +47,145 @@
 					</div>
 				</div>	
 			</div>
-		</div>
 
-		<div class="fr-col-12 fr-col-md-6">
-			<h3 class="fr-h5 fr-mb-3v">Coordonnées</h3>
-			<div class="fr-mb-1w">
-				<strong>Vos Coordonnées (bailleur)</strong>
-			</div>
-			{{signalement.nomProprio}}
-			{% if signalement.prenomProprio %}
-				{{ signalement.prenomProprio }}
-			{% endif %}
-			{% if signalement.adresseProprio %}
-				<br>
-				{{ signalement.adresseProprio }}
-			{% endif %}
-			{% if signalement.codePostalProprio %}
-				{{ signalement.codePostalProprio }}
-			{% endif %}
-			{% if signalement.villeProprio %}
-				{{ signalement.villeProprio }}
-			{% endif %}
-			{% if signalement.mailProprio %}
-				<br>
-				{{ signalement.mailProprio }}
-				{% if show_email_alert(signalement.mailProprio) %}
-					<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+			<div class="fr-mb-4w">
+				<h2 class="title-blue-france fr-mb-1w">Déclaration</h2>
+				{% if signalement.debutDesordres is not null %}
+					<ul>
+						<li>Les désordres ont commencé il y a : 
+						{{ signalement.debutDesordres.label}}
+						</li>
+					{% if signalement.hasSeenDesordres is not null %}
+						<li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
+					{% endif %}
+					</ul>
 				{% endif %}
-			{% endif %}
-			{% if signalement.telProprio %}
-				<br>
-				{{ signalement.telProprioDecoded|phone }}
-			{% endif %}
-			{% if signalement.telProprioSecondaire %}
-				<br>
-				{{ signalement.telProprioSecondaireDecoded|phone }}
-			{% endif %}
 
-			<div class="fr-mb-1w fr-mt-2w">
-				<strong>Adresse du logement</strong>
-			</div>
-			{{ signalement.adresseOccupant }}
-			{{ signalement.cpOccupant }}
-			{{ signalement.villeOccupant }}
-			{% if signalement.complementAdresseOccupant %}
-				<br>
-				{{signalement.complementAdresseOccupant}}
-			{% endif %}	
-		</div>
-
-		<div class="fr-col-12 fr-col-md-6">
-			<h2 class="title-blue-france fr-mb-1w">Déclaration</h2>
-			{% if signalement.debutDesordres is not null %}
-				<ul>
-					<li>Les désordres ont commencé il y a : 
-					{{ signalement.debutDesordres.label}}
-					</li>
-				{% if signalement.hasSeenDesordres is not null %}
-					<li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
+				{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
+					<h3 class="fr-h5 fr-mb-3v">Désordres sur le logement</h3>
+					{% set zone = 'logement' %}
+					{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
+						{% include 'front/_partials/_desordre.html.twig' %}
+					{% endfor %}
 				{% endif %}
-				</ul>
-			{% endif %}
-
-			{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
-				<h3 class="fr-h5 fr-mb-3v">Désordres sur le logement</h3>
-				{% set zone = 'logement' %}
-				{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
-					{% include 'front/_partials/_desordre.html.twig' %}
-				{% endfor %}
-			{% endif %}
-			{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
-				<h3 class="fr-h5 fr-mb-3v">Désordres sur le bâtiment ou les parties communes</h3>
-				{% set zone = 'batiment' %}
-				{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
-					{% include 'front/_partials/_desordre.html.twig' %}
-				{% endfor %}
-			{% endif %}
+				{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
+					<h3 class="fr-h5 fr-mb-3v">Désordres sur le bâtiment ou les parties communes</h3>
+					{% set zone = 'batiment' %}
+					{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
+						{% include 'front/_partials/_desordre.html.twig' %}
+					{% endfor %}
+				{% endif %}
+			</div>
 		</div>
 
 		<div class="fr-col-12 fr-col-md-6">
-			<h2 class="title-blue-france fr-mb-1w">Les photos et documents du dossier</h2>
-			{% set photos = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeImage) %}
-			{% set docs = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeDocument and not photo.isSuspicious) %}
-			{% if photos is empty and docs is empty %}
-				Aucun document ou photo disponible
-			{% endif %}
-			{% if photos is not empty %}
-				<p>Cliquez sur une photo pour l'afficher dans un nouvel onglet.</p>
-				<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-					{% for photo in photos %}
-						<div class="fr-col-6 fr-col-md-4 fr-rounded signalement-file-item">
-							<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
-								style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
-								>
-								<a  href="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'resize'})) }}" target="_blank" rel="noopener"
-									class="fr-btn fr-btn--sm fr-icon-eye-line" 
-									title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
-								></a>
+			<div class="fr-mb-4w">
+				<div class="fr-callout">
+					<h3 class="fr-callout__title">Quelles aides pour rénover mon logement ?</h3>
+					<p class="fr-callout__text">En tant que propriétaire, vous pouvez bénéficier d'aides pour rénover votre logement. Estimez vos aides grâce au simulateur France Rénov' en cliquant sur le bouton ci-dessous.</p>
+					<a href="https://mesaidesreno.beta.gouv.fr/simulation" target="_blank" title="Mes Aides Réno - Ouvre une nouvelle fenêtre" class="fr-btn">Accéder au simulateur</a>
+				</div>
+
+				<h3 class="fr-h5 fr-mb-3v">Coordonnées</h3>
+				<div class="fr-mb-1w">
+					<strong>Vos Coordonnées (bailleur)</strong>
+				</div>
+				{{signalement.nomProprio}}
+				{% if signalement.prenomProprio %}
+					{{ signalement.prenomProprio }}
+				{% endif %}
+				{% if signalement.adresseProprio %}
+					<br>
+					{{ signalement.adresseProprio }}
+				{% endif %}
+				{% if signalement.codePostalProprio %}
+					{{ signalement.codePostalProprio }}
+				{% endif %}
+				{% if signalement.villeProprio %}
+					{{ signalement.villeProprio }}
+				{% endif %}
+				{% if signalement.mailProprio %}
+					<br>
+					{{ signalement.mailProprio }}
+					{% if show_email_alert(signalement.mailProprio) %}
+						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+					{% endif %}
+				{% endif %}
+				{% if signalement.telProprio %}
+					<br>
+					{{ signalement.telProprioDecoded|phone }}
+				{% endif %}
+				{% if signalement.telProprioSecondaire %}
+					<br>
+					{{ signalement.telProprioSecondaireDecoded|phone }}
+				{% endif %}
+
+				<div class="fr-mb-1w fr-mt-2w">
+					<strong>Adresse du logement</strong>
+				</div>
+				{{ signalement.adresseOccupant }}
+				{{ signalement.cpOccupant }}
+				{{ signalement.villeOccupant }}
+				{% if signalement.complementAdresseOccupant %}
+					<br>
+					{{signalement.complementAdresseOccupant}}
+				{% endif %}
+			</div>
+
+			<div class="fr-mb-4w">
+				<h2 class="title-blue-france fr-mb-1w">Les photos et documents du dossier</h2>
+				{% set photos = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeImage) %}
+				{% set docs = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeDocument and not photo.isSuspicious) %}
+				{% if photos is empty and docs is empty %}
+					Aucun document ou photo disponible
+				{% endif %}
+				{% if photos is not empty %}
+					<p>Cliquez sur une photo pour l'afficher dans un nouvel onglet.</p>
+					<div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
+						{% for photo in photos %}
+							<div class="fr-col-6 fr-col-md-4 fr-rounded signalement-file-item">
+								<div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center"
+									style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
+									>
+									<a  href="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'resize'})) }}" target="_blank" rel="noopener"
+										class="fr-btn fr-btn--sm fr-icon-eye-line" 
+										title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
+									></a>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				{% endif %}
+				{% if docs is not empty %}
+					<p>Cliquez sur le document pour l'ouvrir dans un nouvel onglet.</p>
+					<div class="fr-grid-row fr-grid-row--gutters">
+					{% for doc in docs %}			
+						<div class="fr-col-12 fr-background-alt--grey fr-mb-2w">
+							<div class="fr-grid-row">
+								<div class="fr-col-6">
+									<span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
+								</div>
+								<div class="fr-col-6 fr-text--right">
+									<small>{{ doc.createdAt is defined ? doc.createdAt|date('d/m/Y') : 'N/R' }}</small>
+								</div>
+								<div class="fr-col-12 fr-p-2v">
+									<i><strong>{{ doc.title }}</strong></i>
+								</div>
+								<div class="fr-col-12">
+									<a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
+									class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-eye-fill img-box"
+									title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
+									target="_blank"
+									rel="noopener">
+										Afficher
+									</a>
+								</div>
 							</div>
 						</div>
 					{% endfor %}
-				</div>
-			{% endif %}
-			{% if docs is not empty %}
-				<p>Cliquez sur le document pour l'ouvrir dans un nouvel onglet.</p>
-				<div class="fr-grid-row fr-grid-row--gutters">
-				{% for doc in docs %}			
-					<div class="fr-col-12 fr-background-alt--grey fr-mb-2w">
-						<div class="fr-grid-row">
-							<div class="fr-col-6">
-								<span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ doc.documentType.label() }}</span>
-							</div>
-							<div class="fr-col-6 fr-text--right">
-								<small>{{ doc.createdAt is defined ? doc.createdAt|date('d/m/Y') : 'N/R' }}</small>
-							</div>
-							<div class="fr-col-12 fr-p-2v">
-								<i><strong>{{ doc.title }}</strong></i>
-							</div>
-							<div class="fr-col-12">
-								<a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
-								class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-eye-fill img-box"
-								title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
-								target="_blank"
-								rel="noopener">
-									Afficher
-								</a>
-							</div>
-						</div>
 					</div>
-				{% endfor %}
-				</div>
-			{% endif %}
+				{% endif %}
+			</div>
 		</div>
 
 		<div class="fr-col-12 fr-col-md-8 fr-col-offset-md-2">
