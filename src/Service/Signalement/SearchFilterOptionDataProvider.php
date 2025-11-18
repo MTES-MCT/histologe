@@ -65,7 +65,8 @@ class SearchFilterOptionDataProvider
                     'zipcodes' => $this->signalementRepository->findZipcodes($user, $territory),
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
                     'listVisiteStatus' => VisiteStatus::getLabelList(),
-                    'hasSignalementsImported' => $this->signalementRepository->countImported($territory, $user),
+                    'hasSignalementsImported' => $user->isSuperAdmin() || $user->isTerritoryAdmin()
+                        ? $this->signalementRepository->countImported($territory) : $this->signalementRepository->countImported($territory, $user),
                     'bailleursSociaux' => $this->bailleurRepository->findBailleursByTerritory($user, $territory),
                 ];
             }

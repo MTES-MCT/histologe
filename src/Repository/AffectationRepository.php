@@ -285,6 +285,33 @@ class AffectationRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<array{signalement_id: int, partner_id: int}>
+     */
+    public function findAllActiveAffectationOnPartnerWithRt(\DateTimeImmutable $date): array
+    {
+        $sql = '
+            SELECT DISTINCT a.signalement_id, a.partner_id
+            FROM affectation a
+            INNER JOIN signalement s ON a.signalement_id = s.id
+            INNER JOIN partner p ON a.partner_id = p.id
+            INNER JOIN user_partner up ON p.id = up.partner_id
+            INNER JOIN user u ON up.user_id = u.id
+            WHERE JSON_CONTAINS(u.roles, \'\"ROLE_ADMIN_TERRITORY\"\') = 1
+            AND a.answered_at <= :date
+            AND s.statut = :signalement_status
+            AND a.statut = :affectation_status
+        ';
+
+        $connection = $this->getEntityManager()->getConnection();
+        $stmt = $connection->prepare($sql);
+        $stmt->bindValue('signalement_status', SignalementStatus::ACTIVE->value);
+        $stmt->bindValue('affectation_status', AffectationStatus::ACCEPTED->value);
+        $stmt->bindValue('date', $date->format('Y-m-d H:i:s'));
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
+    /**
      * @return Paginator<Affectation>
      */
     public function findWithoutSubscriptionFilteredPaginated(SearchAffectationWithoutSubscription $searchAffectation, int $maxResult): Paginator
