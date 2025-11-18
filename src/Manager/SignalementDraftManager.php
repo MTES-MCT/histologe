@@ -64,7 +64,10 @@ class SignalementDraftManager extends AbstractManager
             ->setCurrentStep($signalementDraftRequest->getCurrentStep())
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
             ->setEmailDeclarant(SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest))
-            ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())));
+            ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($signalementDraftRequest->getProfil())))
+            ->setBailleurPrevenuAt(
+                SignalementDraftHelper::computeBailleurPrevenuAtFromRequest($signalementDraftRequest)
+            );
 
         if (self::LAST_STEP === $signalementDraftRequest->getCurrentStep()) {
             if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus()) {

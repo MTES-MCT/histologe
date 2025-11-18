@@ -45,12 +45,12 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
             return Command::FAILURE;
         }
 
-        $signalementDrafts = $this->signalementDraftRepository->findPendingBlockedBailLast3Months();
+        $signalementDrafts = $this->signalementDraftRepository->findPendingBlockedBailleurPrevenuPeriodPassed();
 
         $count = 0;
         /** @var SignalementDraft $signalementDraft */
         foreach ($signalementDrafts as $signalementDraft) {
-            if ($this->signalementDraftHelper->isPublicAndBailleurPrevenuPeriodPassed($signalementDraft)) {
+            if ($this->signalementDraftHelper->isPublicAndBailleurPrevenu($signalementDraft)) {
                 ++$count;
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(
