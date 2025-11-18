@@ -22,6 +22,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     protected ?string $mailerSubject = null;
     protected ?string $mailerButtonText = null;
     protected ?string $mailerTemplate = null;
+    protected ?string $brevoTemplateId = null;
     protected ?string $tagHeader = null;
     /**
      * @var array<mixed>
@@ -50,6 +51,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         $this->updateButtonTextFromNotification($notificationMail);
         $params = [
             'template' => $this->mailerTemplate,
+            'template_id' => $this->brevoTemplateId,
             'subject' => $this->mailerSubject,
             'btntext' => $this->mailerButtonText,
             'url' => $this->parameterBag->get('host_url'),
@@ -61,6 +63,24 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
         if (null !== $this->tagHeader) {
             $message->getHeaders()->add(new TagHeader($this->tagHeader));
+        }
+
+        if (!empty($this->brevoTemplateId)) {
+            $brevoParams = $params;
+            // Remove non-template parameters
+            unset(
+                $brevoParams['attachContent'],
+                $brevoParams['template'],
+                $brevoParams['template_id'],
+                $brevoParams['subject'],
+                $brevoParams['btntext'],
+                $brevoParams['url'],
+                $brevoParams['tagHeader'],
+                $brevoParams['attach'],
+            );
+            $message->getHeaders()
+                ->addTextHeader('templateId', $this->brevoTemplateId)
+                ->addParameterizedHeader('params', 'params', $brevoParams);
         }
 
         $territoryName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
@@ -103,7 +123,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             }
         }
         if (!empty($params['attachContent'])) {
-            $message->attach($params['attachContent']['content'], $params['attachContent']['filename']);
+            $message->attach(
+                $params['attachContent']['content'],
+                $params['attachContent']['filename'],
+                'application/pdf'
+            );
         }
         try {
             $this->mailer->send($message);
@@ -205,9 +229,11 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
     ): NotificationEmail {
         $notification = new NotificationEmail();
         $notification->markAsPublic();
+        if (null === $this->brevoTemplateId) {
+            $notification->htmlTemplate('emails/'.$this->mailerTemplate.'.html.twig');
+        }
 
-        return $notification->htmlTemplate('emails/'.$this->mailerTemplate.'.html.twig')
-            ->context($params)
+        return $notification->context($params)
             ->replyTo($this->parameterBag->get('reply_to_email'))
             ->subject(
                 mb_strtoupper($this->getPlatformName())

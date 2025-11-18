@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
         wget \
         zlib1g-dev \
+        libmagickwand-dev \
         libxml2-dev \
         libzip-dev \
         zip \
@@ -27,12 +28,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         # Install Redis
         && pecl install redis \
         && docker-php-ext-enable redis \
+        # PHP GD
+        && docker-php-ext-configure gd --with-freetype --with-jpeg \
         # Install others
-        && docker-php-ext-install -j2 bcmath ctype iconv pdo pdo_mysql pdo_sqlite zip xsl sockets\
+        && docker-php-ext-install -j2 bcmath ctype iconv pdo pdo_mysql pdo_sqlite zip xsl gd sockets\
         && docker-php-ext-enable opcache \
         && rm /usr/src/php/ext/*.tgz \
         && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer  \
-        && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+        && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
+        \
+        # Clean up
+        && rm -rf /var/lib/apt/lists/* /usr/src/php/ext/*.tgz
 
 RUN sed -E -i -e 's/memory_limit = 128M/memory_limit = 512M/' "$PHP_INI_DIR/php.ini" \
     && sed -E -i -e 's/post_max_size = 8M/post_max_size = 75M/' "$PHP_INI_DIR/php.ini" \
@@ -42,5 +48,7 @@ RUN chmod a+rwx /var/log/supervisor/
 
 COPY ./supervisord.conf /etc/supervisor/conf.d/
 EXPOSE 8089
+
+WORKDIR /app/
 
 ENTRYPOINT ["/usr/bin/supervisord"]

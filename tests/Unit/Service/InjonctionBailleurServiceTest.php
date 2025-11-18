@@ -12,7 +12,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
-use App\Service\InjonctionBailleurService;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
