@@ -15,13 +15,11 @@ if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   };
 }
 
-document.querySelectorAll('.open-modal-reinit-affectation').forEach((button) => {
-  button.addEventListener('click', (e) => {
-    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent =
-      e.target.dataset.partnerNom;
-    document.querySelector('form#fr-modal-reinit-affectation-form').action =
-      e.target.dataset.action;
-  });
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.open-modal-reinit-affectation')) {
+    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent = e.target.dataset.partnerNom;
+    document.querySelector('form#fr-modal-reinit-affectation-form').action = e.target.dataset.action;
+  }
 });
 
 document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
@@ -243,33 +241,11 @@ document?.querySelectorAll('[data-fr-select-target]')?.forEach((t) => {
     [...source.selectedOptions].forEach((s) => {
       target.append(s);
     });
-  });
-});
-
-document
-  ?.querySelector('#signalement-affectation-form-submit')
-  ?.addEventListeners('click touchdown', (e) => {
-    e.preventDefault();
-    e.target.disabled = true;
-    e.target?.form?.querySelectorAll('option').forEach((o) => {
+    document?.querySelectorAll('#signalement-affectation-select-affecte option').forEach((o) => {
       o.selected = true;
     });
-    document
-      ?.querySelectorAll('#signalement-affectation-form-row,#signalement-affectation-loader-row')
-      .forEach((el) => {
-        el.classList.toggle('fr-hidden');
-      });
-
-    const formData = new FormData(e.target.form);
-    fetch(e.target.getAttribute('formaction'), {
-      method: 'POST',
-      body: formData,
-    }).then((r) => {
-      if (r.ok) {
-        window.location.reload(true);
-      }
-    });
   });
+});
 
 const modalsElement = document?.querySelectorAll(
   '#cloture-modal, #fr-modal-add-suivi, #refus-signalement-modal, #refus-affectation-modal'

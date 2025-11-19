@@ -29,7 +29,9 @@
 
 {% block content %}
     {% if is_granted('SIGN_AFFECTATION_TOGGLE', signalement) %}
-        {% include '_partials/_modal_affectation.html.twig' %}
+        <div data-ajax-form>
+            {% include '_partials/_modal_affectation.html.twig' %}
+        </div>
     {% endif %}
     {% if is_granted('SIGN_AFFECTATION_SEE', signalement) %}        
         {% include '_partials/_modal_historique_affectation.html.twig' %}
@@ -47,7 +49,9 @@
         {% include '_partials/_modal_upload_files.html.twig' with {'context': 'form-bo-edit'} %}
     {% endif %}
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_INJONCTION', signalement) %}
-        {% include '_partials/_modal_reinit_affectation.html.twig' %}
+        <div data-ajax-form>
+            {% include '_partials/_modal_reinit_affectation.html.twig' %}
+        </div>
     {% endif %}
     {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
         {% include '_partials/_modal_localisation.html.twig' %}

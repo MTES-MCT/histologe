@@ -11,23 +11,19 @@
                 {% set messageTitle = message.title %}
                 {% set messageContent = message.message %}
             {% else %}
-                {% if label is same as 'error' or label is same as 'error error-raw'  %}
+                {% if label in ['error', 'error error-raw'] %}
                     {% set messageTitle = 'Erreur' %}
                 {% else %}
                     {% set messageTitle = label %}
                 {% endif %}
-                {% if label is same as('error error-raw')  %}
-                    {% set messageContent = message|raw %}
-                {% else %}
-                    {% set messageContent = message %}
-                {% endif %}
+                {% set messageContent = message %}
             {% endif %}
             <div role="alert" class="fr-notice fr-notice--{{ noticeType }}">
                 <div class="fr-container">
                     <div class="fr-notice__body">
                         <p>
                             <span class="fr-notice__title">{{ messageTitle }}</span>
-                            <span class="fr-notice__desc">{{ messageContent }}</span>
+                            <span class="fr-notice__desc">{% if label ends with '-raw' %}{{ messageContent|raw }}{% else %}{{ messageContent }}{% endif %}</span>
                         </p>
                         <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
                     </div>

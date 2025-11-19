@@ -1131,8 +1131,9 @@ ul.fr-toggle__list.fr-toggle__list--inline {
 #flash-messages-live-container{
     position: fixed;
     right: 2%;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 2%;
+    //top: 50%;
+    //transform: translateY(-50%);
     z-index: 9999;
     max-width: 350px;
 
