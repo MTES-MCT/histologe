@@ -5,7 +5,6 @@ import {
 } from '../../services/component/component_json_response_handler';
 
 const modalElements = document.querySelectorAll('[data-ajax-form] dialog');
-const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
 modalElements.forEach((modalElement) => {
   modalElement.addEventListener('dsfr.conceal', (event) => {
