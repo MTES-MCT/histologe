@@ -326,6 +326,31 @@ class SuiviRepository extends ServiceEntityRepository
      *
      * @throws Exception
      */
+    public function findSignalementsForThirdAskFeedbackRelance(
+        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+    ): array {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $parameters = [
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
+        ];
+
+        $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
+            dayPeriod: $period,
+            exactCount: 2
+        );
+        $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
+        $statement = $connection->prepare($sql);
+
+        return $statement->executeQuery($parameters)->fetchFirstColumn();
+    }
+
+    /**
+     * @return array<int, int|string>
+     *
+     * @throws Exception
+     */
     public function findSignalementsForLoopAskFeedbackRelance(
         int $loopDelay = Suivi::DEFAULT_PERIOD_BOUCLE,
     ): array {
@@ -342,31 +367,6 @@ class SuiviRepository extends ServiceEntityRepository
         );
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
 
-        $statement = $connection->prepare($sql);
-
-        return $statement->executeQuery($parameters)->fetchFirstColumn();
-    }
-
-    /**
-     * @return array<int, int|string>
-     *
-     * @throws Exception
-     */
-    public function findSignalementsForThirdAskFeedbackRelance(
-        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
-    ): array {
-        $connection = $this->getEntityManager()->getConnection();
-
-        $parameters = [
-            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
-            'status_active' => SignalementStatus::ACTIVE->value,
-        ];
-
-        $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
-            dayPeriod: $period,
-            exactCount: 2
-        );
-        $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();

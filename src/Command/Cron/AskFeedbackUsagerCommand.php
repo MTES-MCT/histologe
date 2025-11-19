@@ -70,8 +70,8 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         // Warning : order matters !
         $nbSignalementsLoopRelance = $this->processSignalementsLoopRelance($input);
         $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input);
-        $nbSignalementsSecondRelance = $this->processSignalementsLastSuiviTechnical($input);
-        $nbSignalementsFirstRelance = $this->processSignalementsLastSuiviPublic($input);
+        $nbSignalementsSecondRelance = $this->processSignalementsSecondRelance($input);
+        $nbSignalementsFirstRelance = $this->processSignalementsFirstRelance($input);
 
         if ($input->getOption('debug')) {
             // as in debug mode we do not create suivis, we need to adjust the counts to avoid double counting
@@ -168,7 +168,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     /**
      * @throws Exception
      */
-    protected function processSignalementsLastSuiviTechnical(
+    protected function processSignalementsSecondRelance(
         InputInterface $input,
     ): int {
         $signalementsIds = $this->suiviRepository->findSignalementsLastAskFeedbackSuiviTechnical();
@@ -190,7 +190,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     /**
      * @throws Exception
      */
-    protected function processSignalementsLastSuiviPublic(
+    protected function processSignalementsFirstRelance(
         InputInterface $input,
     ): int {
         $signalementsIds = $this->suiviRepository->findSignalementsLastSuiviPublic();
