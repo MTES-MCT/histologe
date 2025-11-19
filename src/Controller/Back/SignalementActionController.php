@@ -245,7 +245,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         SuiviRepository $suiviRepository,
         ManagerRegistry $doctrine,
-    ): RedirectResponse {
+    ): JsonResponse {
         $suivi = $suiviRepository->findOneBy(['id' => $request->get('suivi')]);
         $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_DELETE, $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->get('_token'))) {
@@ -264,9 +264,7 @@ class SignalementActionController extends AbstractController
             $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
         }
 
-        return $this->redirect(
-            $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis'
-        );
+        return $this->json(['redirect' => true, 'url' => $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()])]);
     }
 
     #[Route('/suivi/{suivi}/edit', name: 'back_signalement_edit_suivi', methods: ['GET', 'POST'])]

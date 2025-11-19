@@ -18,6 +18,7 @@ use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
+use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
@@ -52,6 +53,7 @@ class AffectationController extends AbstractController
         Request $request,
         Signalement $signalement,
         TagAwareCacheInterface $cache,
+        EmailAlertChecker $emailAlertChecker,
     ): RedirectResponse|JsonResponse {
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->get('_token'))) {
             $unnotifiedPartners = [];
@@ -88,6 +90,7 @@ class AffectationController extends AbstractController
                         $user
                     );
                     if ($affectation instanceof Affectation) {
+                        $signalement->addAffectation($affectation);
                         if (!$partner->receiveEmailNotifications()) {
                             $unnotifiedPartners[] = $partner;
                         }
@@ -104,12 +107,21 @@ class AffectationController extends AbstractController
                 $successMessage .= '<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : ';
                 $successMessage .= implode(', ', array_map(fn ($partner) => $partner->getNom(), $unnotifiedPartners));
             }
-            $this->addFlash('success success-raw', $successMessage);
+            $flashMessage = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
+            $htmlTargetContent = [
+                'target' => '#affectations-with-action',
+                'content' => $this->renderView('back/signalement/view/affectation/_item-with-action.html.twig', [
+                    'signalement' => $signalement,
+                    'partnerEmailAlerts' => $emailAlertChecker->buildPartnerEmailAlert($signalement),
+                ]
+                ),
+            ];
 
-            return $this->json(['status' => 'success']);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => [$htmlTargetContent]]);
         }
+        $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
 
-        return $this->json(['status' => 'denied'], 400);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
     }
 
     #[Route('/{uuid:signalement}/affectation/remove', name: 'back_signalement_remove_partner')]
@@ -118,42 +130,69 @@ class AffectationController extends AbstractController
         Request $request,
         Signalement $signalement,
         AffectationRepository $affectationRepository,
+        EmailAlertChecker $emailAlertChecker,
     ): RedirectResponse|JsonResponse {
         $idAffectation = $request->get('affectation');
         $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
         if (!$affectation || $affectation->getSignalement()->getId() !== $signalement->getId()) {
-            return $this->json(['status' => 'denied'], 403);
+            $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Affectation introuvable.'];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
         }
         if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), (string) $request->get('_token'))) {
             $partnersIdToRemove = [];
             $partnersIdToRemove[] = $affectation->getPartner()->getId();
             $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
             $this->affectationManager->flush();
-            $this->addFlash('success', 'Le partenaire a été désaffecté.');
+            $flashMessage = ['type' => 'success', 'title' => 'Affectation supprimée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été supprimée.'];
+            $htmlTargetContent = [
+                'target' => '#affectations-with-action',
+                'content' => $this->renderView('back/signalement/view/affectation/_item-with-action.html.twig', [
+                    'signalement' => $signalement,
+                    'partnerEmailAlerts' => $emailAlertChecker->buildPartnerEmailAlert($signalement),
+                ]
+                ),
+            ];
 
-            return $this->json(['status' => 'success']);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => [$htmlTargetContent]]);
         }
 
-        return $this->json(['status' => 'denied'], 400);
+        $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
     }
 
     #[Route('/affectation/{affectation}/reinit', name: 'back_signalement_affectation_reinit', methods: ['POST'])]
     public function reinitAffectation(
         Affectation $affectation,
         Request $request,
-    ): RedirectResponse {
+        EmailAlertChecker $emailAlertChecker,
+    ): JsonResponse {
         $this->denyAccessUnlessGranted(AffectationVoter::AFFECTATION_REINIT, $affectation);
+        $message = 'Une erreur est survenue lors de la réinitialisation de l\'affectation.';
         if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), (string) $request->get('_token'))) {
             /** @var User $user */
             $user = $this->getUser();
             $this->affectationManager->removeAffectationAndSubscriptions($affectation);
             $this->affectationManager->createAffectation($affectation->getSignalement(), $affectation->getPartner(), $user);
             $this->affectationManager->flush();
-        } else {
-            $this->addFlash('error', 'Token CSRF invalide, merci de réessayer.');
-        }
+            $flashMessage = ['type' => 'success', 'title' => 'Affectation réinitialisée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été réinitialisée.'];
+            $htmlTargetContent = [
+                'target' => '#affectations-with-action',
+                'content' => $this->renderView('back/signalement/view/affectation/_item-with-action.html.twig', [
+                    'signalement' => $affectation->getSignalement(),
+                    'partnerEmailAlerts' => $emailAlertChecker->buildPartnerEmailAlert($affectation->getSignalement()),
+                ]
+                ),
+            ];
 
-        return new RedirectResponse($this->generateUrl('back_signalement_view', ['uuid' => $affectation->getSignalement()->getUuid()]));
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => [$htmlTargetContent]]);
+        }
+        $message = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+
+        $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => $message];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
     }
 
     #[Route('/affectation/{affectation}/accept', name: 'back_signalement_affectation_accept', methods: 'POST')]
@@ -194,7 +233,7 @@ class AffectationController extends AbstractController
                 status: AffectationStatus::ACCEPTED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             );
-            $this->addFlash('success', 'Affectation acceptée avec succès !');
+            $this->addFlash('success', ['title' => 'Affectation acceptée', 'message' => 'L\'affectation a bien été acceptée.']);
 
             $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -210,9 +249,9 @@ class AffectationController extends AbstractController
             $userSignalementSubscriptionManager->createOrGet($user, $signalement, $user, $affectation);
             $userSignalementSubscriptionManager->flush();
 
-            $this->addFlash('success', 'Affectation acceptée avec succès !');
+            $this->addFlash('success', ['title' => 'Affectation acceptée', 'message' => 'L\'affectation a bien été acceptée.']);
         } else {
-            $this->addFlash('error', "Une erreur est survenue lors de l'affectation");
+            $this->addFlash('error', ['title' => 'Erreur', 'message' => 'L\'affectation n\'a pas pu être acceptée, veuillez réessayer.']);
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -248,7 +287,7 @@ class AffectationController extends AbstractController
             message: $refusAffectation->getDescription(),
             files: $refusAffectation->getFiles()
         );
-        $this->addFlash('success', 'Affectation refusée avec succès !');
+        $this->addFlash('success', ['title' => 'Affectation refusée', 'message' => 'L\'affectation a bien été refusée.']);
 
         $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
 

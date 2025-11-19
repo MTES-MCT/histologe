@@ -3,6 +3,7 @@ import '../styles/histologe.scss';
 
 import './base-import.ts';
 
+import './vanilla/services/component/component_json_response_handler.js';
 import './vanilla/services/component/component_search_address.js';
 import './vanilla/services/form/form_helper.js';
 import './vanilla/services/cookie/cookie_banner.js';
