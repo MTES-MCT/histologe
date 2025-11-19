@@ -7,7 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\SearchSignalementInjonctionType;
 use App\Repository\SignalementRepository;
-use App\Security\Voter\UserVoter;
+use App\Security\Voter\InjonctionBailleurVoter;
 use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,7 +28,7 @@ class SignalementInjonctionController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $this->denyAccessUnlessGranted(UserVoter::SEE_INJONCTION_BAILLEUR, $user);
+        $this->denyAccessUnlessGranted(InjonctionBailleurVoter::SEE);
 
         $searchSignalementInjonction = new SearchSignalementInjonction($user);
         $form = $this->createForm(SearchSignalementInjonctionType::class, $searchSignalementInjonction);
