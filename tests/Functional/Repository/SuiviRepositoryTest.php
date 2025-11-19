@@ -45,12 +45,6 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->assertEquals('2023-15', $signalement->getReference());
     }
 
-    public function testCountSignalementNoSuiviAfter3Relances(): void
-    {
-        $result = $this->suiviRepository->countSignalementNoSuiviAfter3Relances([]);
-        $this->assertEquals(0, $result);
-    }
-
     public function testFindLastSignalementsWithUserSuivi(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);

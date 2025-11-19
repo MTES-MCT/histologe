@@ -326,6 +326,32 @@ class SuiviRepository extends ServiceEntityRepository
      *
      * @throws Exception
      */
+    public function findSignalementsForLoopAskFeedbackRelance(
+        int $loopDelay = Suivi::DEFAULT_PERIOD_BOUCLE,
+    ): array {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $parameters = [
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
+            'nb_suivi_technical' => 3,
+        ];
+
+        $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
+            dayPeriod: $loopDelay
+        );
+        $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
+
+        $statement = $connection->prepare($sql);
+
+        return $statement->executeQuery($parameters)->fetchFirstColumn();
+    }
+
+    /**
+     * @return array<int, int|string>
+     *
+     * @throws Exception
+     */
     public function findSignalementsForThirdAskFeedbackRelance(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
@@ -334,52 +360,16 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
-            'nb_suivi_technical' => 2,
         ];
 
-        $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(dayPeriod: $period);
+        $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
+            dayPeriod: $period,
+            exactCount: 2
+        );
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
         $statement = $connection->prepare($sql);
 
         return $statement->executeQuery($parameters)->fetchFirstColumn();
-    }
-
-    /**
-     * @param array<int, Territory>          $territories
-     * @param ?ArrayCollection<int, Partner> $partners
-     *
-     * @throws Exception
-     */
-    public function countSignalementNoSuiviAfter3Relances(
-        array $territories,
-        ?ArrayCollection $partners = null,
-    ): int {
-        $connection = $this->getEntityManager()->getConnection();
-        $parameters = [
-            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
-            'status_active' => SignalementStatus::ACTIVE->value,
-            'nb_suivi_technical' => 3,
-        ];
-
-        if (\count($territories)) {
-            $parameters['territories'] = implode(',', array_keys($territories));
-        }
-        if (null !== $partners && !$partners->isEmpty()) {
-            $parameters['partners'] = $partners;
-            $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
-        }
-
-        $sql = 'SELECT COUNT(*) as count_signalement
-                FROM ('.
-                        $this->getSignalementsLastAskFeedbackSuivisQuery(
-                            excludeUsagerAbandonProcedure: false,
-                            partners: $partners,
-                            territories: $territories,
-                        )
-                .') as countSignalementSuivi';
-        $statement = $connection->prepare($sql);
-
-        return (int) $statement->executeQuery($parameters)->fetchOne();
     }
 
     /**
@@ -391,6 +381,7 @@ class SuiviRepository extends ServiceEntityRepository
         int $dayPeriod = 0,
         ?ArrayCollection $partners = null,
         array $territories = [],
+        ?int $exactCount = null,
     ): string {
         $joinMaxDateSuivi = $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure
         = $whereLastSuiviDelay = '';
@@ -420,6 +411,10 @@ class SuiviRepository extends ServiceEntityRepository
             ) su ON s.id = su.signalement_id ';
         }
 
+        $havingClause = null !== $exactCount
+            ? 'HAVING COUNT(*) = '.$exactCount
+            : 'HAVING COUNT(*) >= :nb_suivi_technical';
+
         return 'SELECT s.id
                 FROM signalement s
                 '.$joinMaxDateSuivi.'
@@ -429,7 +424,7 @@ class SuiviRepository extends ServiceEntityRepository
                     FROM suivi su
                     WHERE su.category = :category_ask_feedback
                     GROUP BY su.signalement_id
-                    HAVING COUNT(*) >= :nb_suivi_technical
+                    '.$havingClause.'
                 ) t1 ON s.id = t1.signalement_id
                 LEFT JOIN suivi su2 ON s.id = su2.signalement_id
                 AND su2.created_at > t1.min_date
