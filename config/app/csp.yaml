@@ -42,6 +42,7 @@ parameters:
     frame-src:
       - "'self'"
       - "blob:"
+      - "https://histologe-metabase.osc-fr1.scalingo.io/"
     object-src:
       - "'self'"
       - "blob:"

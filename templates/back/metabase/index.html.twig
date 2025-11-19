@@ -1,0 +1,45 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Statistiques (Expérimentation metabase){% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Données chiffrées',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Statistiques (Expérimentation metabase)',
+            'level3Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-6 fr-text--left">
+                    <h1 class="fr-mb-0 fr-h2">Statistiques (Expérimentation metabase)</h1>
+                </div>
+                {% if is_granted('ROLE_ADMIN') or app.user.isMultiTerritoire %}
+                    <div class="fr-col-6 fr-grid-row fr-grid-row--right">
+                        <div class="fr-col-4">
+                            {{ form_start(form) }}
+                            {{ form_row(form.territory) }}
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </header>
+    </section>
+    <section class="fr-px-5v">
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-text--left">
+                <h2 class="fr-mb-0">{{ headingTitle }}</h2>
+            </div>
+            <p id="metabase-iframe-description" class="fr-sr-only">
+                Ce tableau de bord affiche les statistiques des signalements pour le territoire.
+            </p>
+            {% include '_partials/metabase/_iframe.html.twig' with {
+                url: iframeUrl,
+                title: iframeTitle
+            } %}
+        </div>
+    </section>
+{% endblock %}

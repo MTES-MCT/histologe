@@ -15,6 +15,8 @@ readonly class MenuBuilder
         private readonly bool $featureNewDocumentSpace,
         #[Autowire(env: 'FEATURE_ANNUAIRE')]
         private readonly bool $featureAnnuaire,
+        #[Autowire(env: 'FEATURE_METABASE_STATS_ENABLE')]
+        private readonly bool $featureMetabaseStats,
     ) {
     }
 
@@ -41,8 +43,12 @@ readonly class MenuBuilder
 
         $donneesChiffreesSubMenu = (new MenuItem(label: 'Données chiffrées', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Cartographie', route: 'back_cartographie', roleGranted: User::ROLE_USER))
-            ->addChild(new MenuItem(label: 'Statistiques', route: 'back_statistiques', roleGranted: User::ROLE_USER))
-        ;
+            ->addChild(new MenuItem(label: 'Statistiques', route: 'back_statistiques', roleGranted: User::ROLE_USER));
+
+        if ($this->featureMetabaseStats) {
+            $donneesChiffreesSubMenu
+                ->addChild(new MenuItem(label: 'Statistiques (Expérimentation metabase)', route: 'back_metabase_statistiques', roleGranted: User::ROLE_USER));
+        }
 
         $adminToolsSubItem = (new MenuItem(label: 'Outils Admin', roleGranted: User::ROLE_ADMIN_PARTNER))
             ->addChild(new MenuItem(label: 'Partenaires', route: 'back_partner_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
