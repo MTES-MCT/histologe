@@ -39,6 +39,7 @@ class UserType extends AbstractType
                 'disabled' => !$options['can_edit_email'],
                 'label' => 'Adresse e-mail',
                 'required' => true,
+                'help' => 'L\'adresse e-mail ne peut pas être modifiée',
             ])
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
@@ -52,6 +53,8 @@ class UserType extends AbstractType
         $builder->add('territory', TerritoryChoiceType::class, [
             'mapped' => false,
             'data' => $territory,
+            'label' => 'Territoire',
+            'help' => 'Sélectionnez un territoire pour afficher les partenaires.',
         ]);
         $formModifier = function (FormInterface $form, ?Territory $territory = null) use ($user) {
             $partners = null === $territory ?
