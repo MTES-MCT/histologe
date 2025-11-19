@@ -40,7 +40,22 @@ class AffectationController extends AbstractController
         private readonly SignalementManager $signalementManager,
         private readonly AffectationManager $affectationManager,
         private readonly PartnerRepository $partnerRepository,
+        private readonly EmailAlertChecker $emailAlertChecker,
     ) {
+    }
+
+    private function getHtmlTargetContentsForAffectationWithActionItems(Signalement $signalement): array
+    {
+        return [
+            [
+                'target' => '#affectations-with-action',
+                'content' => $this->renderView('back/signalement/view/affectation/_item-with-action.html.twig', [
+                    'signalement' => $signalement,
+                    'partnerEmailAlerts' => $this->emailAlertChecker->buildPartnerEmailAlert($signalement),
+                ]
+                ),
+            ],
+        ];
     }
 
     /**
@@ -53,7 +68,6 @@ class AffectationController extends AbstractController
         Request $request,
         Signalement $signalement,
         TagAwareCacheInterface $cache,
-        EmailAlertChecker $emailAlertChecker,
     ): RedirectResponse|JsonResponse {
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->get('_token'))) {
             $unnotifiedPartners = [];
@@ -108,16 +122,9 @@ class AffectationController extends AbstractController
                 $successMessage .= implode(', ', array_map(fn ($partner) => $partner->getNom(), $unnotifiedPartners));
             }
             $flashMessage = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
-            $htmlTargetContent = [
-                'target' => '#affectations-with-action',
-                'content' => $this->renderView('back/signalement/view/affectation/_item-with-action.html.twig', [
-                    'signalement' => $signalement,
-                    'partnerEmailAlerts' => $emailAlertChecker->buildPartnerEmailAlert($signalement),
-                ]
-                ),
-            ];
+            $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => [$htmlTargetContent]]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
         $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
 
@@ -130,7 +137,6 @@ class AffectationController extends AbstractController
         Request $request,
         Signalement $signalement,
         AffectationRepository $affectationRepository,
-        EmailAlertChecker $emailAlertChecker,
     ): RedirectResponse|JsonResponse {
         $idAffectation = $request->get('affectation');
         $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
@@ -145,16 +151,9 @@ class AffectationController extends AbstractController
             $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
             $this->affectationManager->flush();
             $flashMessage = ['type' => 'success', 'title' => 'Affectation supprimée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été supprimée.'];
-            $htmlTargetContent = [
-                'target' => '#affectations-with-action',
-                'content' => $this->renderView('back/signalement/view/affectation/_item-with-action.html.twig', [
-                    'signalement' => $signalement,
-                    'partnerEmailAlerts' => $emailAlertChecker->buildPartnerEmailAlert($signalement),
-                ]
-                ),
-            ];
+            $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => [$htmlTargetContent]]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
 
         $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
@@ -166,7 +165,6 @@ class AffectationController extends AbstractController
     public function reinitAffectation(
         Affectation $affectation,
         Request $request,
-        EmailAlertChecker $emailAlertChecker,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(AffectationVoter::AFFECTATION_REINIT, $affectation);
         $message = 'Une erreur est survenue lors de la réinitialisation de l\'affectation.';
@@ -177,16 +175,9 @@ class AffectationController extends AbstractController
             $this->affectationManager->createAffectation($affectation->getSignalement(), $affectation->getPartner(), $user);
             $this->affectationManager->flush();
             $flashMessage = ['type' => 'success', 'title' => 'Affectation réinitialisée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été réinitialisée.'];
-            $htmlTargetContent = [
-                'target' => '#affectations-with-action',
-                'content' => $this->renderView('back/signalement/view/affectation/_item-with-action.html.twig', [
-                    'signalement' => $affectation->getSignalement(),
-                    'partnerEmailAlerts' => $emailAlertChecker->buildPartnerEmailAlert($affectation->getSignalement()),
-                ]
-                ),
-            ];
+            $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($affectation->getSignalement());
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => [$htmlTargetContent]]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
         $message = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
 

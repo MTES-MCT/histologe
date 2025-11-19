@@ -47,21 +47,13 @@ class AdminTerritoryFilesController extends AbstractController
     /**
      * @return array{FormInterface, SearchTerritoryFiles, Paginator<File>}
      */
-    private function handleSearch(Request $request, bool $fromJsonRequest = false): array
+    private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {
         /** @var User $user */
         $user = $this->getUser();
         $searchTerritoryFiles = new SearchTerritoryFiles($user);
         $form = $this->createForm(SearchTerritoryFilesType::class, $searchTerritoryFiles);
-        if ($fromJsonRequest) {
-            $data = $request->getPayload()->all();
-            $searchParams = is_string($data['search_params']) ? $data['search_params'] : '';
-            $formParams = [];
-            parse_str(urldecode($searchParams), $formParams);
-            $form->submit($formParams);
-        } else {
-            $form->handleRequest($request);
-        }
+        FormHelper::handleFormSubmitFromRequestOrSearchParams($form, $request, $fromSearchParams);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchTerritoryFiles = new SearchTerritoryFiles($user);
         }

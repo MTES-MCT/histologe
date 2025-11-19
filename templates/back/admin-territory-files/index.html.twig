@@ -132,7 +132,7 @@
                                 </ul>
                                 <p>Voulez-vous vraiment supprimer le document ?</p>
                             </div>
-                            <form id="fr-modal-document-delete-form" method="post" action="#">
+                            <form id="fr-modal-document-delete-form" method="post" action="#" data-submit-type="formData">
                                 <input type="hidden" name="search_params" value="{{ app.request.query.all|url_encode }}">
                             </form>
                             <div class="fr-modal__footer">

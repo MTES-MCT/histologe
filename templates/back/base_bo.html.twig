@@ -10,40 +10,7 @@
             {% include 'back/staging_notice.html.twig' %}
         {% endif %}
         {% include "flash-messages.html.twig" %}
-        <div id="flash-messages-live-container">
-            {# 
-            <div role="alert" class="fr-notice fr-notice--success">
-                <div class="fr-container">
-                    <div class="fr-notice__body">
-                        <p>
-                            <span class="fr-notice__title">
-                                Erreur
-                            </span>
-                            <span class="fr-notice__desc">
-                                Le brouillon n'est plus modifiable.
-                            </span>
-                        </p>
-                        <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
-                    </div>
-                </div>
-            </div>
-            <div role="alert" class="fr-notice fr-notice--alert">
-                <div class="fr-container">
-                    <div class="fr-notice__body">
-                        <p>
-                            <span class="fr-notice__title">
-                                Erreur
-                            </span>
-                            <span class="fr-notice__desc">
-                                Le brouillon n'est plus modifiable.
-                            </span>
-                        </p>
-                        <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
-                    </div>
-                </div>
-            </div>
-            #}
-        </div>
+        <div id="flash-messages-live-container"></div>
 
         <div class="{{ app.request.get('_route') in ['back_cartographie', 'back_signalements_index', 'back_dashboard'] ? 'fr-container-fluid' : container_class }}">
             <div class="fr-grid-row">
