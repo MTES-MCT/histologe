@@ -107,11 +107,17 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
 
         $csrfToken = $this->generateCsrfToken($client, 'document_delete');
 
-        $client->request('GET', $route.'?_token='.$csrfToken);
+        $client->request('POST', $route.'?_token='.$csrfToken);
 
-        $this->assertResponseRedirects();
-        $client->followRedirect();
-        $this->assertSelectorExists('.fr-notice--success');
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Le document a bien été supprimé.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     /**
@@ -131,10 +137,16 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
 
         $router = self::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_management_document_delete_ajax', ['file' => $file->getId()]);
-        $client->request('GET', $route.'?_token=invalid');
+        $client->request('POST', $route.'?_token=invalid');
 
-        $this->assertResponseRedirects();
-        $client->followRedirect();
-        $this->assertSelectorExists('.fr-notice--alert');
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertFalse($response['closeModal']);
+        $msgFlash = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 }

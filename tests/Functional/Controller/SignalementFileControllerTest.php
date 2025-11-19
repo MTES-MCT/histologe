@@ -175,9 +175,7 @@ class SignalementFileControllerTest extends WebTestCase
         /** @var Crawler $crawler */
         $crawler = $this->client->request('GET', $redirectUrl);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertStringContainsString(
-            'Le signalement au format PDF vous sera envoyé par e-mail à',
-            $crawler->filter('.fr-notice')->text()
-        );
+        $msg = 'Le dossier au format PDF a bien été envoyé par e-mail à l\'adresse suivante : nelson.monfort@yopmail.com. L\'envoi peut prendre plusieurs minutes. N\'oubliez pas de consulter vos courriers indésirables (spam) !';
+        $this->assertStringContainsString($msg, $crawler->filter('.fr-notice .fr-notice__desc')->text());
     }
 }

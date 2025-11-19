@@ -87,7 +87,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Vous devez sélectionner les responsables de territoire à abonner au dossier.');
+        $this->assertSelectorTextContains('.fr-notice--alert', 'Vous devez sélectionner les responsables de territoire à abonner au dossier.');
     }
 
     public function testValidationResponseAcceptSignalementSuccessWithChoiceRT(): void
@@ -253,7 +253,10 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertNotNull($suivi->getDeletedBy());
         $this->assertNotEquals($description, $suivi->getDescription());
         $this->assertStringContainsString(Suivi::DESCRIPTION_DELETED, $suivi->getDescription());
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertEquals('/bo/signalements/'.$signalement->getUuid(), $response['url']);
     }
 
     public function testDeleteSuiviPhysical(): void
@@ -278,8 +281,10 @@ class SignalementActionControllerTest extends WebTestCase
         );
 
         $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
-        $this->assertNull($suivi);
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertEquals('/bo/signalements/'.$signalement->getUuid(), $response['url']);
     }
 
     public function testEditSuiviSuccess(): void
