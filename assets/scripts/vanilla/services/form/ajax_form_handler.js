@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/browser';
+import { jsonResponseHandler, addFlashMessage } from '../../services/component/component_json_response_handler';
 
 const modalElements = document.querySelectorAll('[data-ajax-form] dialog');
-const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
 modalElements.forEach((modalElement) => {
   modalElement.addEventListener('dsfr.conceal', (event) => {
@@ -65,36 +65,8 @@ async function submitPayload(formElement) {
     } else if (response.redirected) {
       window.location.href = response.url;
     } else if (response.ok) {
-      response.json().then((response) => {
-        if (response.redirect) {
-          window.location.href = response.url;
-        } else if(response.stayOnPage){
-          if(response.flashMessages){
-            response.flashMessages.forEach((flashMessage) => {
-              addFlashMessage(flashMessage);
-            });
-          }
-          resetSubmitButton();
-          if(response.htmlTargetContents){
-            response.htmlTargetContents.forEach((htmlTargetContent) => {
-              const targetElement = document.querySelector(htmlTargetContent.target);
-              if(targetElement){
-                targetElement.innerHTML = htmlTargetContent.content;
-              }
-            });
-          }
-
-          if(response.closeModal){
-            const openModalElement = document.querySelector('.fr-modal--opened');
-            if(openModalElement){
-              dsfr(openModalElement).modal.conceal();
-            }
-          }
-        } else {
-          location.reload();
-          window.scrollTo(0, 0);
-        }
-      });
+      jsonResponseHandler(response)
+      resetSubmitButton()
     } else if (response.status === 400) {
       const responseData = await response.json();
       const errors = responseData.errors;
@@ -170,22 +142,4 @@ function resetSubmitButton() {
       submitElement.classList.remove('fr-btn--icon-left');
     }
   }
-}
-
-function addFlashMessage(flashMessage) {
-    const divElement = document.createElement('div');
-    divElement.classList.add('fr-notice', `fr-notice--${flashMessage.type}`);
-    divElement.setAttribute('role', 'alert');
-    divElement.innerHTML = `
-      <div class="fr-container">
-          <div class="fr-notice__body">
-              <p>
-                <span class="fr-notice__title">${flashMessage.title}</span>
-                <span class="fr-notice__text">${flashMessage.message}</span>
-              </p>
-              <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
-          </div>
-      </div>
-    `;
-    flashMessagesContainer.appendChild(divElement);
 }
