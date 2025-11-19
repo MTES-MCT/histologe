@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Dto\Request\Signalement\RequestInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class FormHelper
@@ -64,5 +65,18 @@ class FormHelper
         }
 
         return $errors;
+    }
+
+    public static function handleFormSubmitFromRequestOrSearchParams(FormInterface $form, Request $request, bool $fromSearchParams): void
+    {
+        if ($fromSearchParams) {
+            $searchParams = $request->request->get('search_params', '');
+            $searchParams = is_string($searchParams) ? $searchParams : '';
+            $formParams = [];
+            parse_str(urldecode($searchParams), $formParams);
+            $form->submit($formParams);
+        } else {
+            $form->handleRequest($request);
+        }
     }
 }
