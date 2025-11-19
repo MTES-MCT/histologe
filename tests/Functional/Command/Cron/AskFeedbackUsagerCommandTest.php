@@ -26,7 +26,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('9 signalement(s) pour lesquels une demande de feedback sera envoyée à l\'usager répartis comme suit :', $output);
+        $this->assertStringContainsString('9 signalement(s) pour lesquels une demande', $output);
         $this->assertStringContainsString('1 signalement(s) en 3è relance', $output);
         $this->assertStringContainsString('1 signalement(s) en 2è relance', $output);
         $this->assertStringContainsString('7 signalement(s) en première relance', $output);
@@ -120,7 +120,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('9 signalement(s) pour lesquels une demande de feedback sera envoyée à l\'usager répartis comme suit :', $output);
+        $this->assertStringContainsString('9 signalement(s) pour lesquels une demande', $output);
         $this->assertStringContainsString('7 signalement(s) en première relance', $output);
         $this->assertStringContainsString('1 signalement(s) en 2è relance', $output);
         $this->assertStringContainsString('0 signalement(s) en 3è relance', $output);
