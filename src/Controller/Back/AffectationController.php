@@ -69,7 +69,6 @@ class AffectationController extends AbstractController
         Request $request,
         Signalement $signalement,
         TagAwareCacheInterface $cache,
-        EmailAlertChecker $emailAlertChecker,
     ): RedirectResponse|JsonResponse {
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->get('_token'))) {
             $unnotifiedPartners = [];
@@ -139,7 +138,6 @@ class AffectationController extends AbstractController
         Request $request,
         Signalement $signalement,
         AffectationRepository $affectationRepository,
-        EmailAlertChecker $emailAlertChecker,
     ): RedirectResponse|JsonResponse {
         $idAffectation = $request->get('affectation');
         $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
