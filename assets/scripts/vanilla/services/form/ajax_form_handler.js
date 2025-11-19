@@ -143,3 +143,49 @@ function resetSubmitButton() {
     }
   }
 }
+
+//gère la suppression des affectations et des suivis
+document.addEventListener('click', (event) => {
+  const actionBtn = event.target.closest('[data-delete]');
+  
+  if (!actionBtn) return;
+  
+  event.preventDefault();
+  
+  if (confirm('Voulez-vous vraiment supprimer cet élément ?')) {
+    const formData = new FormData();
+    formData.append('_token', actionBtn.getAttribute('data-token'));
+    fetch(actionBtn.getAttribute('data-delete'), {
+      method: 'POST',
+      body: formData,
+    }).then((r) => {
+      if (r.ok) {
+        jsonResponseHandler(r);
+      }
+    });
+  }
+});
+
+//gére la réactivation des règles d'auto-affectation (et + a venir)
+document.addEventListener('submit', (event) => {
+  const formElement = event.target.closest('.simple-ajax-form');
+  
+  if (!formElement) return;
+  
+  event.preventDefault();
+  
+  const submitElement = formElement.querySelector('[type="submit"]');
+  submitElement.disabled = true;
+  
+  const formData = new FormData(formElement);
+  
+  fetch(formElement.action, {
+    method: 'POST',
+    body: formData,
+  }).then((r) => {
+    if (r.ok) {
+      jsonResponseHandler(r);
+    }
+    submitElement.disabled = false;
+  });
+});
