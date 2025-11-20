@@ -67,36 +67,29 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
             return Command::FAILURE;
         }
-        // Warning : order matters !
         $nbSignalementsLoopRelance = $this->processSignalementsLoopRelance($input);
         $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input);
         $nbSignalementsSecondRelance = $this->processSignalementsSecondRelance($input);
         $nbSignalementsFirstRelance = $this->processSignalementsFirstRelance($input);
-
+        $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsSecondRelance + $nbSignalementsFirstRelance + $nbSignalementsLoopRelance;
+        
         if ($input->getOption('debug')) {
-            $nbSignalementsFirstRelanceForDebug = $nbSignalementsFirstRelance;
-            $nbSignalementsSecondRelanceForDebug = $nbSignalementsSecondRelance;
-            $nbSignalementsThirdRelanceForDebug = $nbSignalementsThirdRelance;
-            $nbSignalementsLoopRelanceForDebug = $nbSignalementsLoopRelance;
-
-            $nbSignalementsForDebug = $nbSignalementsThirdRelanceForDebug + $nbSignalementsSecondRelanceForDebug + $nbSignalementsFirstRelanceForDebug + $nbSignalementsLoopRelanceForDebug;
             $this->io->info(\sprintf(
                 '%s signalement(s) pour lesquels une demande de feedback sera envoyée à l\'usager répartis comme suit :
                     %s '.self::FIRST_RELANCE_LOG_MESSAGE.', 
                     %s '.self::SECOND_RELANCE_LOG_MESSAGE.',
                     %s '.self::THIRD_RELANCE_LOG_MESSAGE.',
                     %s '.self::LOOP_LOG_MESSAGE,
-                $nbSignalementsForDebug,
-                $nbSignalementsFirstRelanceForDebug,
-                $nbSignalementsSecondRelanceForDebug,
-                $nbSignalementsThirdRelanceForDebug,
-                $nbSignalementsLoopRelanceForDebug
+                $nbSignalements,
+                $nbSignalementsFirstRelance,
+                $nbSignalementsSecondRelance,
+                $nbSignalementsThirdRelance,
+                $nbSignalementsLoopRelance
             ));
 
             return Command::SUCCESS;
         }
 
-        $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsSecondRelance + $nbSignalementsFirstRelance + $nbSignalementsLoopRelance;
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_CRON,
