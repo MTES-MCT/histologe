@@ -36,8 +36,6 @@ class SignalementExportFiltersDisplay
         'tags' => 'Etiquettes',
         'housetypes' => 'Nature du parc',
         'allocs' => 'Allocataire',
-        'delays' => 'Nb jours sans suivi',
-        'nouveau_suivi' => 'Avec nouveau suivi',
         'motifCloture' => 'Motif de clôture',
     ];
 
@@ -103,8 +101,6 @@ class SignalementExportFiltersDisplay
         unset($filters['sortBy']);
         unset($filters['orderBy']);
         unset($filters['signalement_ids']);
-        unset($filters['delays_partners']);
-        unset($filters['delays_territory']);
 
         if (!$this->security->isGranted('ROLE_ADMIN')) {
             unset($filters['territories']);
