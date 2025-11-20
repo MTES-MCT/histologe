@@ -40,6 +40,7 @@ class Suivi implements EntityHistoryInterface
 
     public const int DEFAULT_PERIOD_INACTIVITY = 30;
     public const int DEFAULT_PERIOD_RELANCE = 45;
+    public const int DEFAULT_PERIOD_BOUCLE = 90;
 
     public const string DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été cloturé pour tous';
     public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été cloturé pour';

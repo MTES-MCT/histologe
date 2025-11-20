@@ -21,12 +21,16 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
     name: 'app:ask-feedback-usager',
-    description: 'Ask feedback to usager if no suivi from 30 days',
+    description: 'Ask feedback to usagers on signalements that have been inactive for a certain period',
 )]
 class AskFeedbackUsagerCommand extends AbstractCronCommand
 {
     private SymfonyStyle $io;
     private const int FLUSH_COUNT = 1000;
+    public const string FIRST_RELANCE_LOG_MESSAGE = 'signalement(s) en première relance (dont le dernier suivi public a plus de '.Suivi::DEFAULT_PERIOD_RELANCE.' jours)';
+    public const string SECOND_RELANCE_LOG_MESSAGE = 'signalement(s) en 2è relance (dont le dernier suivi est un suivi technique demande de feedback et date de plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours)';
+    public const string THIRD_RELANCE_LOG_MESSAGE = 'signalement(s) en 3è relance (dont les deux derniers suivis sont des suivis techniques demande de feedback et le dernier a plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours)';
+    public const string LOOP_LOG_MESSAGE = 'signalement(s) en phase “boucle” (dont les trois derniers suivis sont des suivis techniques demande de feedback et le dernier a plus de '.Suivi::DEFAULT_PERIOD_BOUCLE.' jours)';
 
     public function __construct(
         private readonly SuiviManager $suiviManager,
@@ -46,13 +50,6 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
             InputOption::VALUE_NONE,
             'Check how many emails will be sent'
         );
-
-        $this->addOption(
-            '--period',
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Days of inactivity before sending feedback emails'
-        );
     }
 
     /**
@@ -70,19 +67,24 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
             return Command::FAILURE;
         }
-        $period = null !== $input->getOption('period') ? (int) $input->getOption('period') : null;
-        $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input, $period);
-        $nbSignalementsLastSuiviTechnical = $this->processSignalementsLastSuiviTechnical($input, $period);
-        $nbSignalementsLastSuiviPublic = $this->processSignalementsLastSuiviPublic($input, $period);
+        $nbSignalementsLoopRelance = $this->processSignalementsLoopRelance($input);
+        $nbSignalementsThirdRelance = $this->processSignalementsThirdRelance($input);
+        $nbSignalementsSecondRelance = $this->processSignalementsSecondRelance($input);
+        $nbSignalementsFirstRelance = $this->processSignalementsFirstRelance($input);
+        $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsSecondRelance + $nbSignalementsFirstRelance + $nbSignalementsLoopRelance;
 
-        $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsLastSuiviTechnical + $nbSignalementsLastSuiviPublic;
         if ($input->getOption('debug')) {
-            $nbSignalementsForDebug = ($nbSignalementsLastSuiviPublic - $nbSignalementsLastSuiviTechnical)
-            + ($nbSignalementsLastSuiviTechnical - $nbSignalementsThirdRelance)
-            + $nbSignalementsThirdRelance;
             $this->io->info(\sprintf(
-                '%s signalement(s) for which a request for feedback will be sent to the user',
-                $nbSignalementsForDebug
+                '%s signalement(s) pour lesquels une demande de feedback sera envoyée à l\'usager répartis comme suit :
+                    %s '.self::FIRST_RELANCE_LOG_MESSAGE.', 
+                    %s '.self::SECOND_RELANCE_LOG_MESSAGE.',
+                    %s '.self::THIRD_RELANCE_LOG_MESSAGE.',
+                    %s '.self::LOOP_LOG_MESSAGE,
+                $nbSignalements,
+                $nbSignalementsFirstRelance,
+                $nbSignalementsSecondRelance,
+                $nbSignalementsThirdRelance,
+                $nbSignalementsLoopRelance
             ));
 
             return Command::SUCCESS;
@@ -93,14 +95,16 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                 type: NotificationMailerType::TYPE_CRON,
                 to: (string) $this->parameterBag->get('admin_email'),
                 message: \sprintf(
-                    '%s signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager répartis comme suit :
-                    %s dont les deux derniers suivis sont des suivis techniques demande de feedback et le dernier a plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours,
-                    %s dont le dernier suivi est un suivi technique demande de feedback et date de plus de '.Suivi::DEFAULT_PERIOD_INACTIVITY.' jours,
-                    %s dont le dernier suivi public a plus de '.Suivi::DEFAULT_PERIOD_RELANCE.' jours. ',
+                    '%s signalement(s) pour lesquels une demande de feedback a été envoyée à l\'usager répartis comme suit :<ul>
+                        <li>%s '.self::FIRST_RELANCE_LOG_MESSAGE.',</li>
+                        <li>%s '.self::SECOND_RELANCE_LOG_MESSAGE.',</li>
+                        <li>%s '.self::THIRD_RELANCE_LOG_MESSAGE.',</li>
+                        <li>%s '.self::LOOP_LOG_MESSAGE.'.</li></ul>',
                     $nbSignalements,
+                    $nbSignalementsFirstRelance,
+                    $nbSignalementsSecondRelance,
                     $nbSignalementsThirdRelance,
-                    $nbSignalementsLastSuiviTechnical,
-                    $nbSignalementsLastSuiviPublic,
+                    $nbSignalementsLoopRelance
                 ),
                 cronLabel: 'demande de feedback à l\'usager',
             )
@@ -112,23 +116,40 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     /**
      * @throws Exception
      */
+    protected function processSignalementsLoopRelance(
+        InputInterface $input,
+    ): int {
+        $signalementsIds = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
+        $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
+            $input,
+            $signalementsIds,
+            NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD
+        );
+        if (!$input->getOption('debug')) {
+            $this->io->success(sprintf(
+                '%s '.self::LOOP_LOG_MESSAGE,
+                $nbSignalements
+            ));
+        }
+
+        return $nbSignalements;
+    }
+
+    /**
+     * @throws Exception
+     */
     protected function processSignalementsThirdRelance(
         InputInterface $input,
-        ?int $period = null,
     ): int {
-        $signalementsIds = isset($period)
-            ? $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance($period)
-            : $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
-
-        $nbSignalements = $this->sendMailToUsagers(
+        $signalementsIds = $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
+        $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,
             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_THIRD
         );
         if (!$input->getOption('debug')) {
             $this->io->success(\sprintf(
-                '%s signalement(s) for which the two last suivis are feedback requests and the last one is older than '
-                .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+                '%s '.self::THIRD_RELANCE_LOG_MESSAGE,
                 $nbSignalements
             ));
         }
@@ -139,23 +160,18 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     /**
      * @throws Exception
      */
-    protected function processSignalementsLastSuiviTechnical(
+    protected function processSignalementsSecondRelance(
         InputInterface $input,
-        ?int $period = null,
     ): int {
-        $signalementsIds = isset($period)
-            ? $this->suiviRepository->findSignalementsLastAskFeedbackSuiviTechnical($period)
-            : $this->suiviRepository->findSignalementsLastAskFeedbackSuiviTechnical();
-
-        $nbSignalements = $this->sendMailToUsagers(
+        $signalementsIds = $this->suiviRepository->findSignalementsForSecondAskFeedbackRelance();
+        $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,
             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_WITHOUT_RESPONSE
         );
         if (!$input->getOption('debug')) {
             $this->io->success(\sprintf(
-                '%s signalement(s) for which the last suivi is feedback request and is older than '
-                .Suivi::DEFAULT_PERIOD_INACTIVITY.' days',
+                '%s '.self::SECOND_RELANCE_LOG_MESSAGE,
                 $nbSignalements
             ));
         }
@@ -166,21 +182,18 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     /**
      * @throws Exception
      */
-    protected function processSignalementsLastSuiviPublic(
+    protected function processSignalementsFirstRelance(
         InputInterface $input,
-        ?int $period = null,
     ): int {
-        $signalementsIds = isset($period)
-            ? $this->suiviRepository->findSignalementsLastSuiviPublic($period)
-            : $this->suiviRepository->findSignalementsLastSuiviPublic();
-        $nbSignalements = $this->sendMailToUsagers(
+        $signalementsIds = $this->suiviRepository->findSignalementsForFirstAskFeedbackRelance();
+        $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,
             NotificationMailerType::TYPE_SIGNALEMENT_FEEDBACK_USAGER_WITH_RESPONSE
         );
         if (!$input->getOption('debug')) {
             $this->io->success(\sprintf(
-                '%s signalement(s) without suivi public from more than '.Suivi::DEFAULT_PERIOD_RELANCE.' days',
+                '%s '.self::FIRST_RELANCE_LOG_MESSAGE,
                 $nbSignalements
             ));
         }
@@ -189,7 +202,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     }
 
     /** @param array<int, int|string> $signalementsIds */
-    protected function sendMailToUsagers(
+    protected function sendMailAndCreateSuiviIfNoDebug(
         InputInterface $input,
         array $signalementsIds,
         NotificationMailerType $notificationMailerType,

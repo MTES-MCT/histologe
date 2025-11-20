@@ -35,7 +35,29 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->suiviRepository = $this->entityManager->getRepository(Suivi::class);
     }
 
-    public function testFindSignalementsForThirdRelance(): void
+    public function testFindSignalementsForFirstAskFeedbackRelance(): void
+    {
+        $result = $this->suiviRepository->findSignalementsForFirstAskFeedbackRelance();
+        $this->assertCount(6, $result);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        for ($i = 0; $i < count($result); ++$i) {
+            $signalement = $signalementRepository->findOneBy(['id' => $result[$i]]);
+            $this->assertContains($signalement->getReference(), ['2023-13', '2023-19', '2023-20', '2023-120', '2024-01', '2024-02']);
+        }
+    }
+
+    public function testFindSignalementsForSecondAskFeedbackRelance(): void
+    {
+        $result = $this->suiviRepository->findSignalementsForSecondAskFeedbackRelance();
+        $this->assertCount(1, $result);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalement = $signalementRepository->findOneBy(['id' => $result[0]]);
+        $this->assertEquals('2023-14', $signalement->getReference());
+    }
+
+    public function testFindSignalementsForThirdAskFeedbackRelance(): void
     {
         $result = $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
         $this->assertCount(1, $result);
@@ -45,10 +67,14 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->assertEquals('2023-15', $signalement->getReference());
     }
 
-    public function testCountSignalementNoSuiviAfter3Relances(): void
+    public function testFindSignalementsForLoopAskFeedbackRelance(): void
     {
-        $result = $this->suiviRepository->countSignalementNoSuiviAfter3Relances([]);
-        $this->assertEquals(0, $result);
+        $result = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
+        $this->assertCount(1, $result);
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        $signalement = $signalementRepository->findOneBy(['id' => $result[0]]);
+        $this->assertEquals('2022-8', $signalement->getReference());
     }
 
     public function testFindLastSignalementsWithUserSuivi(): void
@@ -175,7 +201,7 @@ class SuiviRepositoryTest extends KernelTestCase
     {
         $result = $this->suiviRepository->getAverageSuivi([]);
         $this->assertIsFloat($result);
-        $this->assertEquals(1.3333, round($result, 4));
+        $this->assertEquals(1.4, round($result, 4));
     }
 
     public function testGetAverageSuiviIn13(): void
@@ -183,7 +209,7 @@ class SuiviRepositoryTest extends KernelTestCase
         $territory = (new Territory())->setZip('13');
         $result = $this->suiviRepository->getAverageSuivi([13 => $territory]);
         $this->assertIsFloat($result);
-        $this->assertEquals(1.4783, round($result, 4));
+        $this->assertEquals(1.6087, round($result, 4));
     }
 
     public function testFindSignalementNoSuiviSince(): void

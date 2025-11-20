@@ -234,7 +234,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
 
         $signalements = $signalementRepository->findSignalementsLastSuiviByPartnerOlderThan($territory, 10, 0);
-        $this->assertCount(2, $signalements);
+        $this->assertCount(1, $signalements);
     }
 
     public function testfindOnSameAddress(): void
