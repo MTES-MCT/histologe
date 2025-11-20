@@ -14,8 +14,9 @@
                             <p>Si votre partenaire {{partner.nom}} a terminé son travail sur le dossier, veuillez clôturer le dossier</p>
                         </div>
                         <br>
-                        <p>Vous êtes le dernier agent de votre partenaire {{partner.nom}} en charge de ce dossier. <br>
-Avant de quitter le dossier, veuillez sélectionner un ou plusieurs agents de votre partenaire à qui l'attribuer. Pour attribuer le dossier à tous les agents, cliquez sur "Tout sélectionner".</p>
+                        <p>Vous êtes le dernier agent de votre partenaire {{partner.nom}} abonné à ce dossier.<br>
+                        Avant de quitter le dossier, veuillez sélectionner un ou plusieurs agents de votre partenaire à qui l'attribuer.
+                        Pour attribuer le dossier à tous les agents, cliquez sur "Tout sélectionner".</p>
                         {{ form_start(transferSubscriptionForm, {'attr': {'id': 'transfer-subscription-form', 'data-submit-type':'formData'}}) }}
                         <div class="fr-mb-2v">
                             <button id="select-all-agents-transfer-subscription" data-select-all-agents  class="fr-link">Tout sélectionner</button>
