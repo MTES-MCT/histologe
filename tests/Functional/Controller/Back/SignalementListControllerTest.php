@@ -67,7 +67,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Statut de la visite "Planifié"' => [['visiteStatus' => 'Planifiée', 'isImported' => 'oui'], 5];
         yield 'Search by Statut de la visite "Conclusion à renseigner"' => [['visiteStatus' => 'Conclusion à renseigner', 'isImported' => 'oui'], 1];
         yield 'Search by Statut de la visite "Terminé"' => [['visiteStatus' => 'Terminée', 'isImported' => 'oui'], 6];
-        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 6];
+        yield 'Search by Type de dernier suivi' => [['typeDernierSuivi' => 'automatique', 'isImported' => 'oui'], 7];
         yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 2];
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse', 'isImported' => 'oui'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6, 'isImported' => 'oui'], 9];
@@ -90,7 +90,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Demande fermeture usager all' => [['usagerAbandonProcedure' => '1'], 2];
         yield 'Search by created from ' => [['createdFrom' => 'formulaire-pro'], 10];
         yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 0];
-        yield 'Search by relanceUsagerSansReponse' => [['relanceUsagerSansReponse' => 'oui', 'isImported' => 'oui'], 0];
+        yield 'Search by relanceUsagerSansReponse' => [['relanceUsagerSansReponse' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Messages usagers après fermeture' => [['isMessagePostCloture' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Nouveaux messages usagers' => [['isNouveauMessage' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Messages usagers sans réponse' => [['isMessageWithoutResponse' => 'oui', 'isImported' => 'oui'], 0];
