@@ -56,8 +56,8 @@
         <link rel="stylesheet" href="{{ asset('build/tippy/tippy.css')}}">
     {% endif %}
 
-    {% if app.request.get('_route') == 'back_metabase_statistiques' %}
-        <meta http-equiv="refresh" content="{{ iframePageRefreshAt|default(60) }}">
+    {% if app.request.get('_route') == 'back_indicateur_pdlhi' %}
+        <meta http-equiv="refresh" content="{{ refreshDelayInSeconds|default(3600) }}"> <!-- in seconds -->
     {% endif %}
 
     {% block stylesheets %}{% endblock %}

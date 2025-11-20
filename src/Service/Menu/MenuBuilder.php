@@ -47,7 +47,7 @@ readonly class MenuBuilder
 
         if ($this->featureMetabaseStats) {
             $donneesChiffreesSubMenu
-                ->addChild(new MenuItem(label: 'Statistiques (Expérimentation metabase)', route: 'back_metabase_statistiques', roleGranted: User::ROLE_USER));
+                ->addChild(new MenuItem(label: 'Indicateurs PDLHI', route: 'back_indicateur_pdlhi', roleGranted: User::ROLE_USER));
         }
 
         $adminToolsSubItem = (new MenuItem(label: 'Outils Admin', roleGranted: User::ROLE_ADMIN_PARTNER))

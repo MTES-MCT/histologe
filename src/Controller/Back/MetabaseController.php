@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/statistiques/metabase')]
 class MetabaseController extends AbstractController
 {
-    #[Route('/', name: 'back_metabase_statistiques', methods: ['GET'])]
+    #[Route('/', name: 'back_indicateur_pdlhi', methods: ['GET'])]
     public function index(
         Request $request,
         DashboardUrlGenerator $dashboardUrlGenerator,
@@ -75,12 +75,11 @@ class MetabaseController extends AbstractController
             ? sprintf('Statistiques des signalements pour le territoire %s', $selectedTerritory->getZipAndName())
             : 'Statistiques des signalements';
 
-        return $this->render('back/metabase/index.html.twig', [
+        return $this->render('back/indicateurs_pdlhi/index.html.twig', [
             'form' => $form->createView(),
-            'headingTitle' => DashboardKey::DASHBOARD_BO->label(),
             'iframeUrl' => $url,
             'iframeTitle' => $iframeTitle,
-            'iframePageRefreshAt' => $dashboardUrlGenerator->getTtlInMinutes(),
+            'refreshDelayInSeconds' => $dashboardUrlGenerator->getTtlInSeconds(),
         ]);
     }
 }

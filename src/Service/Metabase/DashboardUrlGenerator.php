@@ -55,7 +55,7 @@ class DashboardUrlGenerator
         return null;
     }
 
-    public function getTtlInMinutes(): int
+    public function getTtlInSeconds(): int
     {
         $ttlInMinutes = (int) $this->ttlInMinutes;
         if ($ttlInMinutes > 1) {
