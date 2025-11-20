@@ -85,7 +85,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Vous devez indiquer les responsables de territoire abonnés au dossier.');
+        $this->assertSelectorTextContains('.fr-alert--error p', 'Vous devez sélectionner les responsables de territoire à abonner au dossier.');
     }
 
     public function testValidationResponseAcceptSignalementSuccessWithChoiceRT(): void

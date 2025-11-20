@@ -105,7 +105,7 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
         if ($this->isGranted('ROLE_ADMIN') || (count($userRepository->findActiveTerritoryAdminsInPartner($partner)) > 1)) {
-            $this->addFlash('error', 'Vous devez indiquer les responsables de territoire abonnés au dossier.');
+            $this->addFlash('error', 'Vous devez sélectionner les responsables de territoire à abonner au dossier.');
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }

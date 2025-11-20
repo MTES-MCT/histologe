@@ -70,7 +70,7 @@ class AcceptSignalementType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => AcceptSignalement::class,
-            'label' => 'Sélectionnez le(s) responsable(s) de territoire abonné(s) au dossier',
+            'label' => 'Sélectionnez le(s) responsable(s) de territoire à abonner au dossier',
         ]);
     }
 }
