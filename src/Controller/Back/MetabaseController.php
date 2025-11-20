@@ -57,7 +57,7 @@ class MetabaseController extends AbstractController
                 $territories = $territoryRepository->findBy(['isActive' => true]);
                 $territoryNames = array_map(fn (Territory $territory) => $territory->getName(), $territories);
             } elseif ($user->isMultiTerritoire()) {
-                $territoryNames = array_map(fn (Territory $territory) => $territory->getName(), $authorizedTerritories);
+                $territoryNames = array_map(fn (Territory $territory) => $territory->getName(), array_values($authorizedTerritories));
             } elseif ($firstTerritory = $user->getFirstTerritory()) {
                 $territoryNames = [$firstTerritory->getName()];
             }
