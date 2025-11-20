@@ -4,16 +4,12 @@ namespace App\Repository;
 
 use App\Dto\NotificationSuiviUser;
 use App\Entity\Enum\NotificationType;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Notification;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use App\Service\ListFilters\SearchNotification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;

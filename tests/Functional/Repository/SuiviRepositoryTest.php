@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Repository;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
