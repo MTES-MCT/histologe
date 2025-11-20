@@ -583,7 +583,7 @@ class SearchFilter
             return $qb;
         }
 
-        $status = trim(AffectationStatus::mapFilterStatus($statusAffectation));
+        $status = AffectationStatus::mapFilterStatus($statusAffectation);
         // Besoin de récupérer toutes les jointures en cours
         $joins = $qb->getDQLPart('join');
         $hasAffectationFiltrePartenaireJoin = false;
