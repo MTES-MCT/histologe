@@ -105,7 +105,7 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
         if ($this->isGranted('ROLE_ADMIN') || (count($userRepository->findActiveTerritoryAdminsInPartner($partner)) > 1)) {
-            $this->addFlash('error', 'Vous devez indiquer les responsables de territoire en charge du dossier.');
+            $this->addFlash('error', 'Vous devez indiquer les responsables de territoire abonnés au dossier.');
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
@@ -435,7 +435,7 @@ class SignalementActionController extends AbstractController
         $signalementSubscriptionManager->createOrGet($user, $signalement, $user);
         $signalementSubscriptionManager->flush();
 
-        $msg = 'Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents en charge du dossier.
+        $msg = 'Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
         Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.';
         $this->addFlash('success', $msg);
 
@@ -451,7 +451,7 @@ class SignalementActionController extends AbstractController
         Request $request,
     ): Response {
         $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
-        $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents en charge du dossier et vous ne recevrez plus les mises à jour du dossier.';
+        $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents abonnés au dossier et vous ne recevrez plus les mises à jour du dossier.';
 
         /** @var User $user */
         $user = $this->getUser();

@@ -32,7 +32,7 @@
         {% if subscriptionsInMyPartner|length %}
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12">
-                    {% include 'back/signalement/view/affectation/_subscriptions-list.html.twig' with {'title': 'Agents du partenaire en charge du dossier'} %}
+                    {% include 'back/signalement/view/affectation/_subscriptions-list.html.twig' with {'title': 'Agents du partenaire abonnés au dossier'} %}
                 </div>
             </div>
         {% endif %}
@@ -48,7 +48,7 @@
                 {% endfor %}
             </div>
             <div class="fr-col-12 fr-col-md-6">
-                {% include 'back/signalement/view/affectation/_subscriptions-list.html.twig' with {'title': 'Agents en charge du dossier (mon partenaire)'} %}
+                {% include 'back/signalement/view/affectation/_subscriptions-list.html.twig' with {'title': 'Agents abonnés au dossier (mon partenaire)'} %}
             </div>
         </div>
     </div>
