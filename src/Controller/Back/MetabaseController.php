@@ -80,6 +80,7 @@ class MetabaseController extends AbstractController
             'headingTitle' => DashboardKey::DASHBOARD_BO->label(),
             'iframeUrl' => $url,
             'iframeTitle' => $iframeTitle,
+            'iframePageRefreshAt' => $dashboardUrlGenerator->getTtlInMinutes(),
         ]);
     }
 }

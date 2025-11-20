@@ -56,6 +56,10 @@
         <link rel="stylesheet" href="{{ asset('build/tippy/tippy.css')}}">
     {% endif %}
 
+    {% if app.request.get('_route') == 'back_metabase_statistiques' %}
+        <meta http-equiv="refresh" content="{{ iframePageRefreshAt|default(60) }}">
+    {% endif %}
+
     {% block stylesheets %}{% endblock %}
     {% block customscripts %}
         {{ encore_entry_script_tags('app') }}

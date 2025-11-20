@@ -18,6 +18,8 @@ class DashboardUrlGenerator
         private readonly string $siteUrl,
         #[Autowire(env: 'METABASE_SECRET_KEY')]
         private readonly string $secretKey,
+        #[Autowire(env: 'METABASE_IFRAME_TTL')]
+        private readonly string $ttlInMinutes,
         private readonly ClockInterface $clock,
         private readonly LoggerInterface $logger,
     ) {
@@ -32,14 +34,13 @@ class DashboardUrlGenerator
         DashboardKey $dashboard,
         array $params = [],
         array $queryParams = [],
-        int $ttlInMinutes = 60,
     ): ?string {
         $dashboardId = $dashboard->value;
         try {
             $builder = $this->jwtConfig->builder()
                 ->withClaim('resource', ['dashboard' => $dashboardId])
                 ->withClaim('params', $params)
-                ->expiresAt($this->clock->now()->modify(sprintf('+%d minutes', $ttlInMinutes)));
+                ->expiresAt($this->clock->now()->modify(sprintf('+%d minutes', $this->ttlInMinutes)));
 
             $token = $builder->getToken(
                 $this->jwtConfig->signer(),
@@ -52,6 +53,16 @@ class DashboardUrlGenerator
         }
 
         return null;
+    }
+
+    public function getTtlInMinutes(): int
+    {
+        $ttlInMinutes = (int) $this->ttlInMinutes;
+        if ($ttlInMinutes > 1) {
+            return ($ttlInMinutes - 1) * 60;
+        }
+
+        return 60;
     }
 
     private function buildUrl(array $queryParams, string $token): string

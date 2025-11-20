@@ -25,23 +25,24 @@ class DashboardUrlGeneratorTest extends TestCase
     {
         $siteUrl = 'https://metabase.example.test';
         $secretKey = bin2hex(random_bytes(32));
+        $ttlInMinutes = '10';
 
         $clock = new MockClock(new \DateTimeImmutable('2025-01-01T10:00:00+00:00'));
         $logger = $this->createMock(LoggerInterface::class);
 
-        $generator = new DashboardUrlGenerator(
+        $dashboardUrlGenerator = new DashboardUrlGenerator(
             $siteUrl,
             $secretKey,
+            $ttlInMinutes,
             $clock,
             $logger
         );
 
         $params = ['territory' => '76'];
         $queryParams = ['foo' => 'bar', 'baz' => 'qux'];
-        $ttlInMinutes = 10;
 
         $dashboardKey = DashboardKey::DASHBOARD_BO;
-        $url = $generator->generate($dashboardKey, $params, $queryParams, $ttlInMinutes);
+        $url = $dashboardUrlGenerator->generate($dashboardKey, $params, $queryParams);
         $this->assertNotNull($url, 'URL should not be null');
 
         $this->assertStringStartsWith($siteUrl.'/embed/dashboard/', $url);
@@ -87,5 +88,7 @@ class DashboardUrlGeneratorTest extends TestCase
             $exp->format(\DATE_ATOM),
             'Expiration should be 10 minutes after the clock time'
         );
+
+        $this->assertEquals((10 - 1) * 60, $dashboardUrlGenerator->getTtlInMinutes());
     }
 }
