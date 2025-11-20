@@ -136,6 +136,7 @@ jobs:
 
       - name: Build frontend assets
         run: |
+          echo "Start npm"
           docker compose exec -T signal_logement_phpfpm npm ci
           docker compose exec -T signal_logement_phpfpm npm run build
 
