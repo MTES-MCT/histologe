@@ -128,7 +128,7 @@ class PartnerControllerTest extends WebTestCase
                 'partner[type]' => $partner->getType()->value,
             ]
         );
-        $this->assertSelectorNotExists('.fr-alert--error', 'E-mail de contact manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
+        $this->assertSelectorNotExists('.fr-notice--alert', 'E-mail de contact manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
     }
 
     public function testDeletePartner(): void

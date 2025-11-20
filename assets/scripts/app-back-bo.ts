@@ -4,7 +4,6 @@ import './vue/index';
 import './vue/signalement-list.ts';
 import './vue/signalement-carto.ts';
 
-import './vanilla/services/deprecated/data_delete.js'
 import './vanilla/services/bo_modales.js';
 import './vanilla/services/deprecated/table_sortable.js'
 import './vanilla/services/component/component_search_checkbox.js';

@@ -61,7 +61,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
+        $this->assertSelectorTextContains('.fr-notice--success p', 'Signalement accepté avec succès !');
 
         $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
@@ -85,7 +85,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Vous devez indiquer les responsables de territoire en charge du dossier.');
+        $this->assertSelectorTextContains('.fr-notice--alert', 'Vous devez indiquer les responsables de territoire en charge du dossier.');
     }
 
     public function testValidationResponseAcceptSignalementSuccessWithChoiceRT(): void
@@ -113,7 +113,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
+        $this->assertSelectorTextContains('.fr-notice--success p', 'Signalement accepté avec succès !');
 
         $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
@@ -251,7 +251,10 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertNotNull($suivi->getDeletedBy());
         $this->assertNotEquals($description, $suivi->getDescription());
         $this->assertStringContainsString(Suivi::DESCRIPTION_DELETED, $suivi->getDescription());
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertEquals('/bo/signalements/'.$signalement->getUuid(), $response['url']);
     }
 
     public function testDeleteSuiviPhysical(): void
@@ -276,8 +279,10 @@ class SignalementActionControllerTest extends WebTestCase
         );
 
         $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
-        $this->assertNull($suivi);
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertEquals('/bo/signalements/'.$signalement->getUuid(), $response['url']);
     }
 
     public function testEditSuiviSuccess(): void

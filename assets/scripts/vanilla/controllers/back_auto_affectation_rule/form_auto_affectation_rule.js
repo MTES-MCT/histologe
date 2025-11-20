@@ -5,20 +5,12 @@ import {
   updateLocalStorageOnEvent,
 } from '../../services/ui/list_filter_helper';
 
-document.querySelectorAll('.btn-delete-autoaffectationrule').forEach((swbtn) => {
-  swbtn.addEventListener('click', (evt) => {
-    const target = evt.target;
-    document.querySelector('.fr-modal-autoaffectationrule-delete-description').textContent =
-      target.getAttribute('data-autoaffectationrule-description');
-    document.querySelector('#fr-modal-autoaffectationrule-delete-id').value = target.getAttribute(
-      'data-autoaffectationrule-id'
-    );
-    document.querySelector('#autoaffectationrule_delete_form').addEventListener('submit', () => {
-      document.querySelector('#autoaffectationrule_delete_form_submit').textContent =
-        'Suppression en cours...';
-      document.querySelector('#autoaffectationrule_delete_form_submit').disabled = true;
-    });
-  });
+document.addEventListener('click', (evt) => {
+  const target = evt.target.closest('.btn-delete-autoaffectationrule');
+  if (target) {
+    document.querySelector('.fr-modal-autoaffectationrule-delete-description').textContent = target.getAttribute('data-autoaffectationrule-description');
+    document.querySelector('#fr-modal-autoaffectationrule-delete-id').value = target.getAttribute('data-autoaffectationrule-id');
+  }
 });
 
 const searchAutoAffectationRuleForm = document.getElementById('search-auto-affectation-rule-form');
