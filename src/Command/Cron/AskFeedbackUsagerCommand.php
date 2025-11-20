@@ -74,9 +74,8 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         $nbSignalementsFirstRelance = $this->processSignalementsFirstRelance($input);
 
         if ($input->getOption('debug')) {
-            // as in debug mode we do not create suivis, we need to adjust the counts to avoid double counting
-            $nbSignalementsFirstRelanceForDebug = $nbSignalementsFirstRelance - $nbSignalementsSecondRelance;
-            $nbSignalementsSecondRelanceForDebug = $nbSignalementsSecondRelance - $nbSignalementsThirdRelance - $nbSignalementsLoopRelance;
+            $nbSignalementsFirstRelanceForDebug = $nbSignalementsFirstRelance;
+            $nbSignalementsSecondRelanceForDebug = $nbSignalementsSecondRelance;
             $nbSignalementsThirdRelanceForDebug = $nbSignalementsThirdRelance;
             $nbSignalementsLoopRelanceForDebug = $nbSignalementsLoopRelance;
 
@@ -171,7 +170,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function processSignalementsSecondRelance(
         InputInterface $input,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsLastAskFeedbackSuiviTechnical();
+        $signalementsIds = $this->suiviRepository->findSignalementsForSecondAskFeedbackRelance();
         $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,
@@ -193,7 +192,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function processSignalementsFirstRelance(
         InputInterface $input,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsLastSuiviPublic();
+        $signalementsIds = $this->suiviRepository->findSignalementsForFirstAskFeedbackRelance();
         $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,

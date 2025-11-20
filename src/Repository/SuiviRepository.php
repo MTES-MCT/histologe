@@ -253,9 +253,14 @@ class SuiviRepository extends ServiceEntityRepository
      *
      * @throws Exception
      */
-    public function findSignalementsLastSuiviPublic(
+    public function findSignalementsForFirstAskFeedbackRelance(
         int $period = Suivi::DEFAULT_PERIOD_RELANCE,
     ): array {
+        // - dernier suivi public > 45 jours (Suivi::DEFAULT_PERIOD_RELANCE)
+        // - zéro ASK_FEEDBACK_SENT depuis ce dernier suivi public
+        // - statut actif
+        // - non importé
+        // - pas de demande d'abandon de procédure
         $connection = $this->getEntityManager()->getConnection();
 
         $parameters = [
@@ -264,20 +269,25 @@ class SuiviRepository extends ServiceEntityRepository
             'status_active' => SignalementStatus::ACTIVE->value,
         ];
 
-        $sql = 'SELECT s.id, s.created_at, MAX(su.max_date_suivi_technique_or_public) AS last_posted_at
+        $sql = 'SELECT s.id, s.created_at
         FROM signalement s
-        LEFT JOIN (
-            SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique_or_public
+        JOIN (
+            SELECT signalement_id, MAX(created_at) AS last_public
             FROM suivi
-            WHERE (category = :category_ask_feedback OR is_public = 1)
+            WHERE is_public = 1
             GROUP BY signalement_id
-        ) su ON s.id = su.signalement_id
-        WHERE s.statut = :status_active
+        ) pub ON pub.signalement_id = s.id
+        LEFT JOIN (
+            SELECT signalement_id, MAX(created_at) AS last_af
+            FROM suivi
+            WHERE category = :category_ask_feedback
+            GROUP BY signalement_id
+        ) af ON af.signalement_id = s.id
+        WHERE pub.last_public < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+        AND (af.last_af IS NULL OR af.last_af < pub.last_public)
+        AND s.statut = :status_active
         AND s.is_imported != 1
         AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
-        GROUP BY s.id
-        HAVING DATEDIFF(NOW(), IFNULL(last_posted_at, s.created_at)) > :day_period
-        ORDER BY last_posted_at
         LIMIT '.$this->limitDailyRelancesByRequest;
 
         $statement = $connection->prepare($sql);
@@ -290,9 +300,14 @@ class SuiviRepository extends ServiceEntityRepository
      *
      * @throws Exception
      */
-    public function findSignalementsLastAskFeedbackSuiviTechnical(
+    public function findSignalementsForSecondAskFeedbackRelance(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
+        // - dernier suivi public > 45 (Suivi::DEFAULT_PERIOD_RELANCE) + 30 (Suivi::DEFAULT_PERIOD_INACTIVITY) jours
+        // - 1 et un seul ASK_FEEDBACK_SENT depuis ce dernier suivi public > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
+        // - statut actif
+        // - non importé
+        // - pas de demande d'abandon de procédure
         $connection = $this->getEntityManager()->getConnection();
 
         $parameters = [
@@ -303,15 +318,29 @@ class SuiviRepository extends ServiceEntityRepository
 
         $sql = 'SELECT s.id
                 FROM signalement s
-                INNER JOIN (
-                    SELECT signalement_id, MAX(created_at) AS max_date_suivi_technique
+                JOIN (
+                    -- dernier suivi public
+                    SELECT signalement_id, MAX(created_at) AS last_public
                     FROM suivi
-                    WHERE category = :category_ask_feedback
+                    WHERE is_public = 1
                     GROUP BY signalement_id
-                ) su ON s.id = su.signalement_id
-                LEFT JOIN suivi su_last ON su_last.signalement_id = su.signalement_id AND su_last.created_at > su.max_date_suivi_technique
-                WHERE su_last.id IS NULL AND su.max_date_suivi_technique < DATE_SUB(NOW(), INTERVAL :day_period DAY)
-                AND s.statut = :status_active
+                ) pub ON pub.signalement_id = s.id
+                JOIN (
+                    -- compter le nombre de suivis ASK_FEEDBACK depuis le dernier public
+                    SELECT su.signalement_id, COUNT(*) AS nb_af, MAX(su.created_at) AS last_af
+                    FROM suivi su
+                    JOIN (
+                        SELECT signalement_id, MAX(created_at) AS last_public
+                        FROM suivi
+                        WHERE is_public = 1
+                        GROUP BY signalement_id
+                    ) pub2 ON pub2.signalement_id = su.signalement_id
+                    WHERE su.category = :category_ask_feedback
+                    AND su.created_at > pub2.last_public
+                    GROUP BY su.signalement_id
+                    HAVING nb_af = 1 AND last_af < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+                ) af ON af.signalement_id = s.id
+                WHERE s.statut = :status_active
                 AND s.is_imported != 1
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
                 LIMIT '.$this->limitDailyRelancesByRequest;
@@ -329,6 +358,10 @@ class SuiviRepository extends ServiceEntityRepository
     public function findSignalementsForThirdAskFeedbackRelance(
         int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
+        // - 2 et seulement 2 ASK_FEEDBACK_SENT depuis le dernier suivi public (dont le dernier) > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
+        // - statut actif
+        // - non importé
+        // - pas de demande d'abandon de procédure
         $connection = $this->getEntityManager()->getConnection();
 
         $parameters = [
@@ -340,6 +373,7 @@ class SuiviRepository extends ServiceEntityRepository
             dayPeriod: $period,
             exactCount: 2
         );
+
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
         $statement = $connection->prepare($sql);
 
@@ -354,6 +388,10 @@ class SuiviRepository extends ServiceEntityRepository
     public function findSignalementsForLoopAskFeedbackRelance(
         int $loopDelay = Suivi::DEFAULT_PERIOD_BOUCLE,
     ): array {
+        // - au moins 3 ASK_FEEDBACK_SENT depuis le dernier suivi public (dont le dernier) > 90 jours (Suivi::DEFAULT_PERIOD_BOUCLE)
+        // - statut actif
+        // - non importé
+        // - pas de demande d'abandon de procédure
         $connection = $this->getEntityManager()->getConnection();
 
         $parameters = [
@@ -365,6 +403,7 @@ class SuiviRepository extends ServiceEntityRepository
         $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
             dayPeriod: $loopDelay
         );
+
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
 
         $statement = $connection->prepare($sql);
@@ -422,7 +461,12 @@ class SuiviRepository extends ServiceEntityRepository
                 INNER JOIN (
                     SELECT su.signalement_id, MIN(su.created_at) AS min_date
                     FROM suivi su
+                    INNER JOIN signalement s2 ON s2.id = su.signalement_id
                     WHERE su.category = :category_ask_feedback
+                    AND su.created_at > COALESCE(
+                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND is_public = 1),
+                        s2.created_at
+                    )
                     GROUP BY su.signalement_id
                     '.$havingClause.'
                 ) t1 ON s.id = t1.signalement_id
