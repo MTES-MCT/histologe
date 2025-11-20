@@ -13,7 +13,6 @@ use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
-use App\Security\Voter\SignalementVoter;
 use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
@@ -26,6 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementFileController extends AbstractController
@@ -70,7 +70,7 @@ class SignalementFileController extends AbstractController
         if (SignalementStatus::DRAFT === $signalement->getStatut()) {
             $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
         } else {
-            $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+            $this->denyAccessUnlessGranted('SIGN_EDIT_INJONCTION', $signalement);
         }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
@@ -109,7 +109,7 @@ class SignalementFileController extends AbstractController
         if (SignalementStatus::DRAFT === $signalement->getStatut()) {
             $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
         } else {
-            $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+            $this->denyAccessUnlessGranted('SIGN_EDIT_INJONCTION', $signalement);
         }
         /** @var FileRepository $fileRepository */
         $fileRepository = $entityManager->getRepository(File::class);
@@ -306,13 +306,13 @@ class SignalementFileController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/file/{id:file}/rotation', name: 'back_signalement_file_rotate', methods: ['POST'])]
+    #[IsGranted('SIGN_EDIT_INJONCTION', subject: 'signalement')]
     public function rotateFile(
         Signalement $signalement,
         File $file,
         Request $request,
         ImageManipulationHandler $imageManipulationHandler,
     ): Response {
-        $this->denyAccessUnlessGranted(SignalementVoter::EDIT, $signalement);
         $rotate = (int) $request->get('rotate', 0);
         if (!$rotate) {
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));

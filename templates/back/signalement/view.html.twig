@@ -28,10 +28,10 @@
 {% endblock %}
 
 {% block content %}
-    {% if canSeePartnerAffectation and canTogglePartnerAffectation %}
+    {% if is_granted('AFFECTATION_TOGGLE', signalement) %}
         {% include '_partials/_modal_affectation.html.twig' %}
     {% endif %}
-    {% if canSeePartnerAffectation %}        
+    {% if is_granted('AFFECTATION_SEE', signalement) %}        
         {% include '_partials/_modal_historique_affectation.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_dpe.html.twig' %}
@@ -40,10 +40,10 @@
             {% include '_partials/_modal_cloture.html.twig' %}
         </div>
     {% endif %}
-    {% if canEditNDE %}
+    {% if is_granted('SIGN_EDIT_NDE', signalement) %}
         {% include '_partials/_modal_edit_nde.html.twig' %}
     {% endif %}
-    {% if is_granted('SIGN_EDIT', signalement) %}
+    {% if is_granted('SIGN_EDIT_INJONCTION', signalement) %}
         {% include '_partials/_modal_upload_files.html.twig' with {'context': 'form-bo-edit'} %}
         {% include '_partials/_modal_reinit_affectation.html.twig' %}
     {% endif %}
@@ -69,7 +69,7 @@
         {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
     {% endif %}
     
-    {% if canReopenAffectation %}
+    {% if is_granted('AFFECTATION_REOPEN', affectation) %}
         {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
     {% endif %}
 

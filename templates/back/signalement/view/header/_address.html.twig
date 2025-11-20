@@ -1,5 +1,5 @@
 <div data-ajax-form>
-    {% if canEditSignalement %}
+    {% if is_granted('SIGN_EDIT', signalement) %}
         {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
     {% endif %}
 </div>
@@ -8,10 +8,10 @@
     {{ signalement.adresseOccupant }}
     {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
     {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|capitalize }}
-    {% if canEditSignalement %}
-    <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line fr-a-edit">
-        Modifier
-    </a>
+    {% if is_granted('SIGN_EDIT', signalement) %}
+        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line fr-a-edit">
+            Modifier
+        </a>
     {% endif %}
 </span>
 
