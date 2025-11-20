@@ -72,7 +72,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         $nbSignalementsSecondRelance = $this->processSignalementsSecondRelance($input);
         $nbSignalementsFirstRelance = $this->processSignalementsFirstRelance($input);
         $nbSignalements = $nbSignalementsThirdRelance + $nbSignalementsSecondRelance + $nbSignalementsFirstRelance + $nbSignalementsLoopRelance;
-        
+
         if ($input->getOption('debug')) {
             $this->io->info(\sprintf(
                 '%s signalement(s) pour lesquels une demande de feedback sera envoyée à l\'usager répartis comme suit :
