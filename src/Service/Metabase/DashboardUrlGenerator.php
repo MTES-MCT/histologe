@@ -32,7 +32,7 @@ class DashboardUrlGenerator
         DashboardKey $dashboard,
         array $params = [],
         array $queryParams = [],
-        int $ttlInMinutes = 10,
+        int $ttlInMinutes = 60,
     ): ?string {
         $dashboardId = $dashboard->value;
         try {
