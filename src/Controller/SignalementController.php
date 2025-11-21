@@ -20,6 +20,7 @@ use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
 use App\Form\UsagerBasculeProcedureType;
 use App\Form\UsagerCancelProcedureType;
+use App\Form\UsagerCoordonneesTiersType;
 use App\Form\UsagerPoursuivreProcedureType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SignalementManager;
@@ -954,5 +955,67 @@ class SignalementController extends AbstractController
         $this->addFlash('success', 'Votre modification a bien été prise en compte.');
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/coordonnees-tiers', name: 'front_suivi_signalement_coordonnees_tiers', methods: ['GET', 'POST'])]
+    public function signalementCoordonneesTiers(
+        string $code,
+        Request $request,
+        SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
+        SuiviManager $suiviManager,
+        UserManager $userManager,
+        NotificationMailerRegistry $notificationMailerRegistry,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+        $user = $signalementUser->getUser();
+
+        $form = $this->createForm(
+            UsagerCoordonneesTiersType::class,
+            $signalement,
+            ['extended' => true],
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $signalementManager->save($signalement);
+
+            $description = 'L\'usager a ajouté les coordonnées d\'un tiers pour suivre le signalement :<br>';
+            $description .= '<ul>';
+            $description .= $signalement->getNomDeclarant() ? '<li>Nom : '.$signalement->getNomDeclarant().'</li>' : '';
+            $description .= $signalement->getPrenomDeclarant() ? '<li>Prénom : '.$signalement->getPrenomDeclarant().'</li>' : '';
+            $description .= $signalement->getMailDeclarant() ? '<li>E-mail : '.$signalement->getMailDeclarant().'</li>' : '';
+            $description .= '</ul>';
+
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+                user: $userManager->getSystemUser(),
+                isPublic: false,
+            );
+
+            $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_USAGER_INVITE_TIERS,
+                    to: $signalement->getMailDeclarant(),
+                    signalement: $signalement,
+                )
+            );
+
+            $this->addFlash('success', 'L\'invitation a été transmise à la personne qui pourra suivre votre dossier.');
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/suivi_signalement_coordonnees_tiers.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form->createView(),
+        ]);
     }
 }

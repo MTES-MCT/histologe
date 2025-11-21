@@ -158,10 +158,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
+    #[Assert\NotBlank(groups: ['fo_suivi_usager_tiers'])]
     private ?string $nomDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Assert\Length(max: 50)]
+    #[Assert\NotBlank(groups: ['fo_suivi_usager_tiers'])]
     private ?string $prenomDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
@@ -174,6 +176,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
+    #[Assert\NotBlank(groups: ['fo_suivi_usager_tiers'])]
     private ?string $mailDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]

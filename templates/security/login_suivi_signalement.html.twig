@@ -29,10 +29,7 @@
                     <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
                 </div>
             {% endif %}
-            {% if signalement.profileDeclarant
-                and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
-                and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE
-            %}
+            {% if signalement.mailDeclarant %}
                 <fieldset class="fr-fieldset fr-grid-row fr-grid-row--gutters fr-mb-10v" id="fieldset-visitor-type" aria-labelledby="fieldset-visitor-type-legend">
                     <legend class="fr-fieldset__legend" id="fieldset-visitor-type-legend">
                         Qui êtes-vous ?
@@ -49,7 +46,7 @@
                         <div class="fr-radio-group">
                             <input type="radio" id="radio-visitor-type-declarant" name="visitor-type" value="{{constant('App\\Manager\\UserManager::DECLARANT')}}">
                             <label class="fr-label" for="radio-visitor-type-declarant">
-                                La personne qui a déposé le signalement (tiers déclarant)
+                                La personne qui suit le signalement (tiers déclarant, aidant, ...)
                             </label>
                         </div>
                     </div>
