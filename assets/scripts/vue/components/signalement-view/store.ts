@@ -182,6 +182,8 @@ export const store = {
     csrfSaveSearch: '',
     ajaxurlDeleteSearch: '',
     csrfDeleteSearch: '',
+    ajaxurlEditSearch: '',
+    csrfEditSearch: '',
     platformName: '',
     token: ''
   }

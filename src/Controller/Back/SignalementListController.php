@@ -82,7 +82,20 @@ class SignalementListController extends AbstractController
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $name = $data['name'] ?? null;
+        $name = trim($data['name']);
+        if (empty($name)) {
+            return $this->json([
+                'status' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Aucun nom, impossible d’enregistrer la recherche.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (mb_strlen($name) > 50) {
+            return $this->json([
+                'status' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Le nom ne peut pas dépasser 60 caractères.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
         $params = $data['params'] ?? null;
         if (empty($params)) {
             return $this->json([
@@ -153,6 +166,56 @@ class SignalementListController extends AbstractController
         return $this->json([
             'status' => Response::HTTP_OK,
             'message' => 'Recherche supprimée',
+        ]);
+    }
+
+    #[Route('/list/signalements/search/edit/{id}', name: 'back_signalements_list_edit_search', methods: ['POST'])]
+    public function editSavedSearch(
+        int $id,
+        Request $request,
+        UserSavedSearchRepository $savedSearchRepository,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $data = json_decode($request->getContent(), true);
+        $csrfToken = $data['_token'] ?? null;
+        if (!$this->isCsrfTokenValid('edit_search', $csrfToken)) {
+            return $this->json([
+                'status' => Response::HTTP_FORBIDDEN,
+                'message' => 'Token CSRF invalide.',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $name = trim($data['name']);
+        if (empty($name)) {
+            return $this->json([
+                'status' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Aucun nom, impossible de modifier la recherche.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+        if (mb_strlen($name) > 50) {
+            return $this->json([
+                'status' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Le nom ne peut pas dépasser 60 caractères.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $savedSearch = $savedSearchRepository->findOneBy(['id' => $id, 'user' => $user]);
+        if (!$savedSearch) {
+            return $this->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Recherche introuvable',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $savedSearch->setName($name);
+        $entityManager->flush();
+
+        return $this->json([
+            'status' => Response::HTTP_OK,
+            'message' => 'Recherche éditée',
         ]);
     }
 }

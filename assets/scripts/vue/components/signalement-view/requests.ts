@@ -57,6 +57,7 @@ export const requests = {
 
     requests.doRequest(url, functionReturn)
   },
+  // TODO factoriser avec un doPostRequest ?
   saveSearch (payload: { name: string; params: any }, csrfToken: string, functionReturn: Function) {
     const ajaxUrlSaveSearch = decodeURIComponent(store.props.ajaxurlSaveSearch)
     axios
@@ -101,5 +102,28 @@ export const requests = {
           functionReturn(customResponse)
         }
       })
-  }
+  },
+  editSearch (id: string, newName: string, csrfToken: string, functionReturn: Function) {
+    let ajaxurlEditSearch = decodeURIComponent(store.props.ajaxurlEditSearch)
+    ajaxurlEditSearch = ajaxurlEditSearch.replace('<id>', id)
+    axios
+      .post(ajaxurlEditSearch, {
+        _token: csrfToken,
+        name: newName
+      })
+      .then(response => {
+        functionReturn(response, id, newName)
+      })
+      .catch(error => {
+        if (error.response !== undefined) {
+          functionReturn(error.response)
+        } else {
+          const customResponse = {
+            status: 500,
+            message: 'Une erreur est survenue lors de l\'édition de votre recherche.'
+          }
+          functionReturn(customResponse)
+        }
+      })
+  },
 }
