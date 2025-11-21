@@ -4,6 +4,8 @@
 		<div class="fr-col-12 fr-col-md-6">
 			{% if signalement.isNotOccupant %}
 				Déclarant
+			{% elseif signalement.mailDeclarant %}
+				Tiers aidant
 			{% else %}
 				Déclarant occupant
 			{% endif %}
@@ -22,7 +24,7 @@
 			<span class="info">#{{ signalement.reference }}</span>
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
-			{% if signalement.isNotOccupant %}
+			{% if signalement.isNotOccupant or signalement.mailDeclarant %}
 				Personne occupant le logement
 				<br>
 				<span class="info">{{ signalement.prenomOccupant }} {{ signalement.nomOccupant }}</span>
