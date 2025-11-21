@@ -7,6 +7,7 @@ use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\UserSavedSearchRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserSavedSearchRepository::class)]
 class UserSavedSearch implements EntityHistoryInterface
@@ -22,7 +23,8 @@ class UserSavedSearch implements EntityHistoryInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
+    #[Assert\Length(max: 50)]
     private ?string $name = null;
 
     #[ORM\Column]
