@@ -25,6 +25,7 @@ use App\Utils\ImportCommune;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use function Symfony\Component\String\u;
 
@@ -147,13 +148,13 @@ class SearchFilter
                     ->setParameter('filterPartners', $filterPartnerIds);
                 }
             } else {
-                $qb->leftJoin('s.affectations', 'afilt');
+                $qb->leftJoin('s.affectations', 'affectationFiltrePartenaire');
                 if (\in_array('AUCUN', $filters['partners'])) {
-                    $qb->andWhere('afilt.partner IS NULL');
+                    $qb->andWhere('affectationFiltrePartenaire.partner IS NULL');
                 } else {
-                    $qb->andWhere('afilt.partner IN (:partners)');
+                    $qb->andWhere('affectationFiltrePartenaire.partner IN (:partners)');
                     if (!empty($filters['affectations'])) {
-                        $qb->andWhere('afilt.statut IN (:affectations)')
+                        $qb->andWhere('affectationFiltrePartenaire.statut IN (:affectations)')
                         ->setParameter('affectations', $filters['affectations']);
                     }
                     $qb->setParameter('partners', $filters['partners']);
@@ -578,11 +579,31 @@ class SearchFilter
 
     private function addFilterStatusAffectation(QueryBuilder $qb, string $statusAffectation): QueryBuilder
     {
-        if ('accepte' === $statusAffectation
-            || 'en_attente' === $statusAffectation
-            || 'refuse' === $statusAffectation
-        ) {
-            $status = AffectationStatus::mapFilterStatus($statusAffectation);
+        if (!\in_array($statusAffectation, ['accepte', 'en_attente', 'refuse'], true)) {
+            return $qb;
+        }
+
+        $status = AffectationStatus::mapFilterStatus($statusAffectation);
+        // Besoin de récupérer toutes les jointures en cours
+        $joins = $qb->getDQLPart('join');
+        $hasAffectationFiltrePartenaireJoin = false;
+        if (!empty($joins['s'])) {
+            foreach ($joins['s'] as $join) {
+                /** @var Join $join */
+                if ('affectationFiltrePartenaire' === $join->getAlias()) {
+                    $hasAffectationFiltrePartenaireJoin = true;
+                    break;
+                }
+            }
+        }
+        if ($hasAffectationFiltrePartenaireJoin) {
+            // Si la jointure "affectationFiltrePartenaire" existe, on filtre le statut
+            // uniquement sur l’affectation du partenaire sélectionné.
+            $qb
+                ->andWhere('affectationFiltrePartenaire.statut = :status_affectation')
+                ->setParameter('status_affectation', $status);
+        } else {
+            // Sinon, on continue de filtrer sur affectationStatus.
             $qb
                 ->having('affectationStatus LIKE :status_affectation')
                 ->setParameter('status_affectation', '%'.$status.'%');
