@@ -16,10 +16,10 @@
                         </div>
                         {{ form_start(acceptAffectationForm, {'attr': {'id': 'accept-affectation-form', 'data-submit-type':'formData'}}) }}
                         <div class="fr-mb-2v">
-                            <button id="select-all-agents-accept-affectation" data-select-all-agents class="fr-link">Tout sélectionner</button>
+                            <button id="select-all-agents-accept-affectation" data-select-all-in-target=".agent-selection-container" class="fr-link">Tout sélectionner</button>
                         </div>
                         {{ form_errors(acceptAffectationForm) }}
-                        <div class="fr-select-group">
+                        <div class="fr-select-group agent-selection-container">
                             {{ form_label(acceptAffectationForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]'}}) }}
                             <div class="fr-grid-row">
                                 {% for agent in acceptAffectationForm.agents %}
