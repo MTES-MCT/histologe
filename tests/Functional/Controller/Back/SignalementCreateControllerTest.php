@@ -368,6 +368,9 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->request('POST', $route, [
             'consent_signalement_tiers' => 'on',
             'consent_donnees_sante' => 'on',
+            'accept_signalement' => [
+                'agents' => [$user->getId()],
+            ],
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
         ]);
 
@@ -401,6 +404,9 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->request('POST', $route, [
             'consent_signalement_tiers' => 'on',
             'consent_donnees_sante' => 'on',
+            'accept_signalement' => [
+                'agents' => [$user->getId()],
+            ],
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
             'partner-ids' => $partner1->getId().','.$partner2->getId(),
         ]);

@@ -2,9 +2,11 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\AcceptSignalement;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Form\AcceptSignalementType;
 use App\Form\SearchDraftType;
 use App\Form\SignalementDraftAddressType;
 use App\Form\SignalementDraftCoordonneesType;
@@ -14,6 +16,7 @@ use App\Form\SignalementDraftSituationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
+use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\BailleurRepository;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
@@ -418,6 +421,7 @@ class SignalementCreateController extends AbstractController
         FileRepository $fileRepository,
         ReferenceGenerator $referenceGenerator,
         NotificationAndMailSender $notificationAndMailSender,
+        UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         EntityManagerInterface $entityManager,
     ): Response {
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
@@ -457,13 +461,28 @@ class SignalementCreateController extends AbstractController
             $partners = $partnerRepository->findAllList($signalement->getTerritory());
         }
 
+        $acceptSignalementForm = null;
+        if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
+            $acceptSignalement = (new AcceptSignalement())->setSignalement($signalement);
+            $acceptSignalementForm = $this->createForm(AcceptSignalementType::class, $acceptSignalement, ['csrf_protection' => false]);
+        }
+
         $token = $request->request->get('_token');
         $partnerIds = $request->request->get('partner-ids');
         $hasConsentError = null;
+        $hasRtSelectionError = null;
         if (Request::METHOD_POST === $request->getMethod()) {
             $hasConsentError = $this->hasConsentError($request);
+            if ($this->isGranted('ROLE_ADMIN_TERRITORY') && $acceptSignalementForm) {
+                $acceptData = $request->request->all('accept_signalement');
+                $acceptSignalementForm->submit($acceptData);
+                if (!$acceptSignalementForm->isValid()) {
+                    $hasRtSelectionError = true;
+                }
+            }
         }
-        if (!$hasConsentError && !count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', (string) $token)) {
+
+        if (!$hasRtSelectionError && !$hasConsentError && !count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', (string) $token)) {
             $entityManager->beginTransaction();
 
             /** @var User $user */
@@ -495,16 +514,19 @@ class SignalementCreateController extends AbstractController
             $route = 'back_signalement_view';
             $params = ['uuid' => $signalement->getUuid()];
             if (count($assignablePartners)) {
-                $autoAssigner->assign($signalement);
+                $subscribeTerritoryAdmins = true;
+                if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
+                    $subscribeTerritoryAdmins = false;
+                    foreach ($acceptSignalement->getAgents() as $agent) { // @phpstan-ignore-line
+                        $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
+                    }
+                }
+                $autoAssigner->assign($signalement, subscribeTerritoryAdmins: $subscribeTerritoryAdmins);
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis par l\'auto-affectation');
                 $hasAssignable = $user->getPartners()->exists(function ($key, $partner) use ($assignablePartners) {
                     return in_array($partner, $assignablePartners, true);
                 });
-
-                if (
-                    !$this->isGranted('ROLE_ADMIN_TERRITORY')
-                    && !$hasAssignable
-                ) {
+                if (!$this->isGranted('ROLE_ADMIN_TERRITORY') && !$hasAssignable) {
                     $route = 'back_signalement_drafts';
                     $params = [];
                 }
@@ -516,25 +538,27 @@ class SignalementCreateController extends AbstractController
                         $signalement->addAffectation($affectation);
                     }
                 }
-                $subscriptionCreated = $signalementManager->activateSignalementAndCreateFirstSuivi(
+                foreach ($acceptSignalement->getAgents() as $agent) { // @phpstan-ignore-line
+                    $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
+                }
+                $signalementManager->activateSignalementAndCreateFirstSuivi(
                     $signalement,
                     $user,
-                    $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+                    $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                    false
                 );
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
             } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-                $subscriptionCreated = $signalementManager->activateSignalementAndCreateFirstSuivi(
+                foreach ($acceptSignalement->getAgents() as $agent) { // @phpstan-ignore-line
+                    $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
+                }
+                $signalementManager->activateSignalementAndCreateFirstSuivi(
                     $signalement,
                     $user,
-                    $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+                    $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                    false
                 );
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Vous n\'avez pas défini de partenaires à affecter, rendez-vous dans le signalement pour en affecter !');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
             } else {
                 $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
                 $notificationAndMailSender->sendNewSignalement($signalement);
@@ -559,6 +583,7 @@ class SignalementCreateController extends AbstractController
             'assignablePartners' => $assignablePartners,
             'errorMsgs' => $errorMsgs,
             'hasConsentError' => $hasConsentError,
+            'acceptSignalementForm' => $acceptSignalementForm,
         ]);
 
         return $this->json(['tabContent' => $tabContent]);
