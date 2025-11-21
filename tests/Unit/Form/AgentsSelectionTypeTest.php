@@ -97,7 +97,7 @@ class AgentsSelectionTypeTest extends KernelTestCase
         $config = $form->getConfig();
         $this->assertSame(AgentSelection::class, $config->getOption('data_class'));
         $this->assertNull($config->getOption('exclude_user'));
-        $this->assertSame('Sélectionnez le(s) agent(s) en charge du dossier', $config->getOption('label'));
+        $this->assertSame('Sélectionnez le(s) agent(s) abonné(s) au dossier', $config->getOption('label'));
     }
 
     public function testBlockPrefix(): void

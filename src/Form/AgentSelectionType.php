@@ -60,7 +60,7 @@ class AgentSelectionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => AgentSelection::class,
             'exclude_user' => null,
-            'label' => 'Sélectionnez le(s) agent(s) en charge du dossier',
+            'label' => 'Sélectionnez le(s) agent(s) abonné(s) au dossier',
         ]);
     }
 }

@@ -85,7 +85,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Vous devez indiquer les responsables de territoire en charge du dossier.');
+        $this->assertSelectorTextContains('.fr-alert--error p', 'Vous devez sélectionner les responsables de territoire à abonner au dossier.');
     }
 
     public function testValidationResponseAcceptSignalementSuccessWithChoiceRT(): void
@@ -466,7 +466,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
-        $this->assertEquals('Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents en charge du dossier.
+        $this->assertEquals('Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
         Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.', $flashBag->get('success')[0]);
 
         $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
