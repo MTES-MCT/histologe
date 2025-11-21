@@ -8,6 +8,7 @@ import './vanilla/services/deprecated/data_delete.js'
 import './vanilla/services/bo_modales.js';
 import './vanilla/services/deprecated/table_sortable.js'
 import './vanilla/services/component/component_search_checkbox.js';
+import './vanilla/services/component/component_select_all_checkbox.js';
 import './vanilla/services/component/component_search_autocomplete.js';
 import './vanilla/services/component/component_phone_number_row.js';
 import './vanilla/services/component/component_search_and_select_badges.js';
