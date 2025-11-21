@@ -126,7 +126,7 @@
         {{ sharedState.showOptions ? 'Masquer les options' : 'Plus d\'options de recherche' }}
       </button>
     </div>
-    <div :class="defineCssBlocMultiTerritoire(7,7)">
+    <div :class="defineCssBlocMultiTerritoire(5,5)">
       <ul class="fr-tags-group">
         <li v-for="(value, key) in filtersSanitized"  :key="key">
           <button
@@ -139,6 +139,13 @@
           </button>
         </li>
       </ul>
+    </div>
+    <div :class="defineCssBlocMultiTerritoire(2,2)" v-if="layout=='horizontal'">
+      <button
+          @click="saveSearch"
+          class="fr-link fr-link--icon-left fr-icon-star-line fr-text--sm">
+        Sauvegarder ma recherche
+      </button>
     </div>
     <div :class="defineCssBlocMultiTerritoire(2,2)">
       <button
@@ -393,7 +400,6 @@ import { buildBadge } from '../services/badgeFilterLabelBuilder'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
 import { removeLocalStorage } from '../utils/signalementUtils'
 
-
 export default defineComponent({
   name: 'SignalementViewFilters',
   components: {
@@ -417,7 +423,7 @@ export default defineComponent({
     },
     onChange: { type: Function }
   },
-  emits: ['changeTerritory', 'clickReset'],
+  emits: ['changeTerritory', 'clickReset', 'clickSaveSearch'],
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
@@ -435,6 +441,9 @@ export default defineComponent({
 
       return Object.fromEntries(filters)
     }
+    // hasEnoughFilters() {
+    //   return Object.keys(this.filtersSanitized).length > 1
+    // }
   },
   methods: {
     defineCssBloc1 () {
@@ -570,6 +579,30 @@ export default defineComponent({
       }
       this.$emit('changeTerritory', value)
     },
+    saveSearch () {
+      // const name = this.buildSearchName(this.filtersSanitized)
+      const name = 'test' // TODO ouvrir une modale
+
+      this.$emit('clickSaveSearch', {
+        name,
+        params: this.filtersSanitized
+      })
+    },
+    // buildSearchName(filtersSanitized: Record<string, any>): string {
+    //   // TODO : enregistrer pagination et ordre de tri ?
+    //   const parts: string[] = []
+
+    //   for (const [key, value] of Object.entries(filtersSanitized)) {
+    //     if (!value || value.length === 0) continue
+
+    //     const badge = buildBadge(key, value)
+    //     if (badge) {
+    //       parts.push(badge)
+    //     }
+    //   }
+
+    //   return parts.slice(0, 8).join(' • ')
+    // },
     resetFilters () {
       const keepIsImported = this.sharedState.input.filters.isImported
 
@@ -660,7 +693,8 @@ export default defineComponent({
       natureParcList: store.state.natureParcList,
       allocataireList: store.state.allocataireList,
       enfantMoinsSixList: store.state.enfantMoinsSixList,
-      motifClotureList: store.state.motifClotureList
+      motifClotureList: store.state.motifClotureList,
+      showSavedSearchesModal: false
     }
   }
 })
@@ -701,5 +735,10 @@ export default defineComponent({
   .filters-blocs {
     width: 100%;
     background-color: #f6f6f6;
+  }
+
+  .fr-grid-row.fr-tags-group {
+    display: flex;
+    align-items: center;
   }
 </style>

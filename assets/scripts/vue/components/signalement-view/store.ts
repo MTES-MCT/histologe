@@ -71,6 +71,7 @@ export const store = {
     bailleursSociaux: new Array<HistoInterfaceSelectOption>(),
     communes: new Array<string>(),
     epcis: new Array<string>(),
+    savedSearches: new Array<HistoInterfaceSelectOption>(),
     currentTerritoryId: '',
     currentCommunes: '',
     currentPartenaires: '',
@@ -167,7 +168,9 @@ export const store = {
       { Id: 'travaux_faits_ou_en_cours', Text: 'Travaux faits ou en cours' },
       { Id: 'doublon', Text: 'Doublon' },
       { Id: 'autre', Text: 'Autre' }
-    ]
+    ],
+    selectedSavedSearchId: null as string | null,
+    savedSearchSelectKey: 0,
   },
   props: {
     ajaxurlSignalement: '',
@@ -175,6 +178,12 @@ export const store = {
     ajaxurlExportCsv: '',
     ajaxurlSettings: '',
     ajaxurlContact: '',
+    ajaxurlSaveSearch: '',
+    csrfSaveSearch: '',
+    ajaxurlDeleteSearch: '',
+    csrfDeleteSearch: '',
+    ajaxurlEditSearch: '',
+    csrfEditSearch: '',
     platformName: '',
     token: ''
   }

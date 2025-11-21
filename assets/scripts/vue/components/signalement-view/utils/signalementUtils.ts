@@ -148,6 +148,21 @@ export function handleSettings (context: any, requestResponse: any): any {
     }
   }
   localStorage.setItem('epci', JSON.stringify(context.sharedState.epcis))
+
+  context.sharedState.savedSearches = []
+  for (const id in requestResponse.savedSearches) {
+    const optionItem = new HistoInterfaceSelectOption()
+    optionItem.Id = requestResponse.savedSearches[id].id.toString()
+    if (variableTester.isNotEmpty(requestResponse.savedSearches[id])) {
+      const savedSearch = requestResponse.savedSearches[id]
+      optionItem.Text = (savedSearch.name as string)
+      optionItem.NewName = (savedSearch.name as string)
+      optionItem.Params = savedSearch.params
+    } else {
+      optionItem.Text = 'Recherche inconnue'
+    }
+    context.sharedState.savedSearches.push(optionItem)
+  }
 }
 
 export function handleTerritoryChange (context: any, value: any): any {

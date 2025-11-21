@@ -1,7 +1,7 @@
 <template>
   <div class="fr-grid-row fr-mb-1w">
     <div class="fr-col fr-col-md-9">
-      <h2>{{ total }} signalement{{total > 1 ? 's' : ''}} trouv{{total > 1 ? 'és' : 'é'}}</h2>
+      <h2>{{ sharedState.selectedSavedSearchId !== null ? 'Résultats de la recherche sauvegardée - ' : '' }}{{ total }} signalement{{total > 1 ? 's' : ''}} trouv{{total > 1 ? 'és' : 'é'}}</h2>
     </div>
   </div>
   <div class="fr-grid-row fr-mb-1w">
