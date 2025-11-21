@@ -7,7 +7,7 @@
             <h3 id="title-nde" class="fr-h6">Non décence énergétique</h3>
         </div>
         <div class="fr-col-12 fr-col-md-4 fr-text--right">
-            {% if canEditNDE %}
+            {% if is_granted('SIGN_EDIT_NDE', signalement) %}
                 <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
                         aria-controls="fr-modal-edit-nde">
                     Modifier

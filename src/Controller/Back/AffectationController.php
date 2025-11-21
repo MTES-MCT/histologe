@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/bo/signalements')]
@@ -45,12 +46,12 @@ class AffectationController extends AbstractController
      * @throws InvalidArgumentException
      */
     #[Route('/{uuid:signalement}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
+    #[IsGranted('AFFECTATION_TOGGLE', subject: 'signalement')]
     public function toggleAffectationSignalement(
         Request $request,
         Signalement $signalement,
         TagAwareCacheInterface $cache,
     ): RedirectResponse|JsonResponse {
-        $this->denyAccessUnlessGranted(AffectationVoter::TOGGLE, $signalement);
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->get('_token'))) {
             $unnotifiedPartners = [];
             $data = $request->get('signalement-affectation');
@@ -111,12 +112,12 @@ class AffectationController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/affectation/remove', name: 'back_signalement_remove_partner')]
+    #[IsGranted('AFFECTATION_TOGGLE', subject: 'signalement')]
     public function removePartnerAffectation(
         Request $request,
         Signalement $signalement,
         AffectationRepository $affectationRepository,
     ): RedirectResponse|JsonResponse {
-        $this->denyAccessUnlessGranted(AffectationVoter::TOGGLE, $signalement);
         $idAffectation = $request->get('affectation');
         $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
         if (!$affectation || $affectation->getSignalement()->getId() !== $signalement->getId()) {

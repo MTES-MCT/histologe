@@ -24,6 +24,8 @@ class SignalementVoter extends Voter
     public const string REOPEN = 'SIGN_REOPEN';
     public const string DELETE = 'SIGN_DELETE';
     public const string EDIT = 'SIGN_EDIT';
+    public const string EDIT_CLOSED = 'SIGN_EDIT_CLOSED';
+    public const string EDIT_INJONCTION = 'SIGN_EDIT_INJONCTION';
     public const string EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
     public const string EDIT_NEED_VALIDATION = 'SIGN_EDIT_NEED_VALIDATION';
     public const string DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
@@ -33,6 +35,8 @@ class SignalementVoter extends Voter
     public const string EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SEE_NDE = 'SIGN_SEE_NDE';
     public const string CREATE_SUIVI = 'CREATE_SUIVI';
+    public const string AFFECTATION_TOGGLE = 'AFFECTATION_TOGGLE';
+    public const string AFFECTATION_SEE = 'AFFECTATION_SEE';
 
     public function __construct(
         private readonly Security $security,
@@ -44,6 +48,8 @@ class SignalementVoter extends Voter
         return \in_array($attribute,
             [
                 self::EDIT,
+                self::EDIT_CLOSED,
+                self::EDIT_INJONCTION,
                 self::EDIT_DRAFT,
                 self::EDIT_NEED_VALIDATION,
                 self::VIEW,
@@ -57,6 +63,8 @@ class SignalementVoter extends Voter
                 self::SEE_NDE,
                 self::DELETE_DRAFT,
                 self::CREATE_SUIVI,
+                self::AFFECTATION_TOGGLE,
+                self::AFFECTATION_SEE,
             ])
             && ($subject instanceof Signalement);
     }
@@ -90,11 +98,15 @@ class SignalementVoter extends Voter
             self::REOPEN => $this->canReopen($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
             self::EDIT => $this->canEdit($subject, $user),
+            self::EDIT_CLOSED => $this->canEditClosed($subject, $user),
+            self::EDIT_INJONCTION => $this->canEditInjonction($subject, $user),
             self::EDIT_NEED_VALIDATION => $this->canEditNeedValidation($subject, $user),
             self::VIEW => $this->canView($subject, $user),
             self::SUBSCRIBE => $this->canSubscribe($subject, $user),
             self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
             self::CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
+            self::AFFECTATION_TOGGLE => $this->canToggleAffectation($subject, $user),
+            self::AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),
             default => false,
         };
     }
@@ -137,19 +149,19 @@ class SignalementVoter extends Voter
         return $this->isAdminOrTerritoryAdmin($signalement, $user);
     }
 
-    private function canEdit(Signalement $signalement, User $user): bool
+    private function canEditStatus(Signalement $signalement, User $user, SignalementStatus $status, ?bool $checkAffectationAccepted = true): bool
     {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if (SignalementStatus::CLOSED === $signalement->getStatut() && $user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
-            return true;
-        }
-        if (!in_array($signalement->getStatut(), [SignalementStatus::ACTIVE, SignalementStatus::INJONCTION_BAILLEUR])) {
+        if ($status !== $signalement->getStatut()) {
             return false;
         }
         if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
             return true;
+        }
+        if (!$checkAffectationAccepted) {
+            return false;
         }
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
@@ -158,13 +170,49 @@ class SignalementVoter extends Voter
         })->count() > 0;
     }
 
-    private function canEditNeedValidation(Signalement $signalement, User $user): bool
+    private function canEdit(Signalement $signalement, User $user): bool
     {
-        if ($this->canEdit($signalement, $user)) {
+        return $this->canEditStatus($signalement, $user, SignalementStatus::ACTIVE);
+    }
+
+    private function canEditInjonction(Signalement $signalement, User $user): bool
+    {
+        if ($this->canEditStatus($signalement, $user, SignalementStatus::ACTIVE)) {
             return true;
         }
 
-        if (SignalementStatus::NEED_VALIDATION === $signalement->getStatut() && $this->isAdminOrTerritoryAdmin($signalement, $user)) {
+        return $this->canEditStatus($signalement, $user, SignalementStatus::INJONCTION_BAILLEUR);
+    }
+
+    private function canEditClosed(Signalement $signalement, User $user): bool
+    {
+        if ($this->canEditStatus($signalement, $user, SignalementStatus::ACTIVE)) {
+            return true;
+        }
+
+        return $this->canEditStatus($signalement, $user, SignalementStatus::CLOSED, false);
+    }
+
+    private function canEditNeedValidation(Signalement $signalement, User $user): bool
+    {
+        if ($this->canEditStatus($signalement, $user, SignalementStatus::ACTIVE)) {
+            return true;
+        }
+
+        return $this->canEditStatus($signalement, $user, SignalementStatus::NEED_VALIDATION, false);
+    }
+
+    private function canEditDraft(Signalement $signalement, User $user): bool
+    {
+        if (SignalementStatus::DRAFT !== $signalement->getStatut()) {
+            return false;
+        }
+
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
+        if ($user->getId() === $signalement->getCreatedBy()->getId()) {
             return true;
         }
 
@@ -264,23 +312,6 @@ class SignalementVoter extends Voter
         return false;
     }
 
-    private function canEditDraft(Signalement $signalement, User $user): bool
-    {
-        if (SignalementStatus::DRAFT !== $signalement->getStatut()) {
-            return false;
-        }
-
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            return true;
-        }
-
-        if ($user->getId() === $signalement->getCreatedBy()->getId()) {
-            return true;
-        }
-
-        return false;
-    }
-
     private function canCreateSuivi(Signalement $signalement, User $user, ?Vote $vote = null): bool
     {
         if (!$user->isSuperAdmin() && !$user->hasPartnerInTerritory($signalement->getTerritory())) {
@@ -300,5 +331,32 @@ class SignalementVoter extends Voter
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId() && AffectationStatus::ACCEPTED == $affectation->getStatut();
         })->count() > 0;
+    }
+
+    private function canSeeAffectation(Signalement $signalement, User $user): bool
+    {
+        if (SignalementStatus::NEED_VALIDATION === $signalement->getStatut()) {
+            return false;
+        }
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+        if (!$user->hasPartnerInTerritory($signalement->getTerritory())) {
+            return false;
+        }
+        if ($user->isTerritoryAdmin() || $user->hasPermissionAffectation()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function canToggleAffectation(Signalement $signalement, User $user): bool
+    {
+        if (!in_array($signalement->getStatut(), [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::ACTIVE])) {
+            return false;
+        }
+
+        return $this->canSeeAffectation($signalement, $user);
     }
 }

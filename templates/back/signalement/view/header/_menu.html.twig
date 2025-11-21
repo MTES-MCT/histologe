@@ -35,7 +35,7 @@
                             Rouvrir pour tous
                         </button>
                     </li>
-                {% elseif canReopenAffectation %}
+                {% elseif is_granted('AFFECTATION_REOPEN', affectation) %}
                     <li>
                         <button
                             class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill keep-when-signalement-closed"

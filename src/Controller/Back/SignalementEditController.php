@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -30,6 +31,7 @@ class SignalementEditController extends AbstractController
     private const string ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
 
     #[Route('/{uuid:signalement}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editAddress(
         Signalement $signalement,
         Request $request,
@@ -37,7 +39,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -72,6 +73,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-tiers', name: 'back_signalement_edit_coordonnees_tiers', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editCoordonneesTiers(
         Signalement $signalement,
         Request $request,
@@ -79,7 +81,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($signalement->isV2() && !$signalement->getIsNotOccupant()) {
             throw $this->createAccessDeniedException();
         }
@@ -121,6 +122,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-foyer', name: 'back_signalement_edit_coordonnees_foyer', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editCoordonneesFoyer(
         Signalement $signalement,
         Request $request,
@@ -128,7 +130,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -171,6 +172,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-bailleur', name: 'back_signalement_edit_coordonnees_bailleur', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editCoordonneesBailleur(
         Signalement $signalement,
         Request $request,
@@ -178,7 +180,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -224,6 +225,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-agence', name: 'back_signalement_edit_coordonnees_agence', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editCoordonneesAgence(
         Signalement $signalement,
         Request $request,
@@ -231,7 +233,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -277,6 +278,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-informations-logement', name: 'back_signalement_edit_informations_logement', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editInformationsLogement(
         Signalement $signalement,
         Request $request,
@@ -284,7 +286,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -329,6 +330,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-composition-logement', name: 'back_signalement_edit_composition_logement', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editCompositionLogement(
         Signalement $signalement,
         Request $request,
@@ -336,7 +338,6 @@ class SignalementEditController extends AbstractController
         SignalementDraftRequestSerializer $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -384,6 +385,7 @@ class SignalementEditController extends AbstractController
      * @throws \DateMalformedStringException
      */
     #[Route('/{uuid:signalement}/edit-situation-foyer', name: 'back_signalement_edit_situation_foyer', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editSituationFoyer(
         Signalement $signalement,
         Request $request,
@@ -391,7 +393,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -433,6 +434,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-procedure-demarches', name: 'back_signalement_edit_procedure_demarches', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
     public function editProcedureDemarches(
         Signalement $signalement,
         Request $request,
@@ -440,7 +442,6 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';

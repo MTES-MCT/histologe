@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalement')]
 class SignalementCreateController extends AbstractController
@@ -109,11 +110,11 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/brouillon/editer/{uuid:signalement}', name: 'back_signalement_edit_draft', methods: ['GET'])]
+    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
     public function editSignalement(
         Signalement $signalement,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
         $formAddress = $this->createForm(SignalementDraftAddressType::class, $signalement, [
             'action' => $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]),
         ]);
@@ -144,12 +145,11 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/brouillon/{uuid:signalement}/liste-fichiers', name: 'back_signalement_create_file_list', methods: ['GET'])]
+    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
     public function getSignalementFileList(
         Signalement $signalement,
         FileRepository $fileRepository,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
         $files = $fileRepository->findBy(['signalement' => $signalement]);
 
         $jsonResult = [];
@@ -165,14 +165,13 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-address/{uuid:signalement}', name: 'back_signalement_draft_form_address_edit', methods: ['POST'])]
+    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
     public function editFormAddress(
         Signalement $signalement,
         Request $request,
         SignalementRepository $signalementRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
         return $this->submitFormAddressHandler($signalement, $request, $signalementRepository, $entityManager);
     }
 
@@ -262,13 +261,12 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-logement/{uuid:signalement}', name: 'back_signalement_draft_form_logement_edit', methods: ['POST'])]
+    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
     public function editFormLogement(
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
         $entityManager->beginTransaction();
         $action = $this->generateUrl('back_signalement_draft_form_logement_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftLogementType::class, $signalement, ['action' => $action]);
@@ -294,13 +292,12 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-situation/{uuid:signalement}', name: 'back_signalement_draft_form_situation_edit', methods: ['POST'])]
+    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
     public function editFormSituation(
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
         $entityManager->beginTransaction();
         $action = $this->generateUrl('back_signalement_draft_form_situation_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftSituationType::class, $signalement, ['action' => $action]);
@@ -326,14 +323,13 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-coordonnees/{uuid:signalement}', name: 'back_signalement_draft_form_coordonnees_edit', methods: ['POST'])]
+    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
     public function editFormCoordonnees(
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
         BailleurRepository $bailleurRepository,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
         $entityManager->beginTransaction();
         $action = $this->generateUrl('back_signalement_draft_form_coordonnees_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftCoordonneesType::class, $signalement, ['action' => $action]);
@@ -368,14 +364,13 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-desordres/{uuid:signalement}', name: 'back_signalement_draft_form_desordres_edit', methods: ['POST'])]
+    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
     public function editFormDesordres(
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
         $entityManager->beginTransaction();
         $action = $this->generateUrl('back_signalement_draft_form_desordres_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftDesordresType::class, $signalement, ['action' => $action]);
@@ -410,6 +405,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-validation/{uuid:signalement}', name: 'back_signalement_draft_form_validation', methods: ['GET', 'POST'])]
+    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
     public function formValidation(
         Signalement $signalement,
         Request $request,
@@ -424,8 +420,6 @@ class SignalementCreateController extends AbstractController
         NotificationAndMailSender $notificationAndMailSender,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
         if (!$signalement->isTiersDeclarant()) {
