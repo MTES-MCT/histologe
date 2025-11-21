@@ -1,31 +1,4 @@
 <template>
-  <dialog aria-labelledby="modal-delete-search-title" id="modal-delete-search" class="fr-modal">
-    <div class="fr-container fr-container--fluid fr-container-lg">
-        <div class="fr-grid-row fr-grid-row--center">
-            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                <div class="fr-modal__body">
-                    <div class="fr-modal__header">
-                        <button type="button" class="fr-btn--close fr-btn" aria-controls="modal-delete-search">Fermer</button>
-                    </div>
-                    <div class="fr-modal__content">
-                        <h1 id="modal-delete-search-title" class="fr-modal__title">
-                            Mes recherches sauvegardées
-                        </h1>
-                        <ul>
-                          <li v-for="search in sharedState.savedSearches" :key="search.Id" class="fr-mb-1v">
-                            {{ search.Text }}
-                            <button class="fr-btn fr-btn--icon-left fr-btn--sm fr-btn--secondary fr-icon-delete-line"
-                                    @click="deleteSavedSearch(search.Id)">
-                              Supprimer
-                            </button>
-                          </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </dialog>
   <div :class="[defineCssBloc1(), 'fr-p-1w']">
     <ul :class="['fr-col-12', 'fr-toggle__list', { 'fr-toggle__list--inline': viewType !== 'carto' }, 'fr-mt-2w']">
       <li>
@@ -75,27 +48,6 @@
           >
           <label class="fr-toggle__label" for="toggle-is-zones-displayed">Afficher les zones du territoire</label>
         </div>
-      </li>
-      <li class="fr-mr-2v select-wrapper">
-        <HistoSelect
-          :key="sharedState.savedSearchSelectKey"
-          v-if="sharedState.savedSearches.length > 0"
-          id="filter-saver-recherche"
-          v-model="sharedState.selectedSavedSearchId"
-          @update:modelValue="applySavedSearch"
-          title="Mes recherches favorites"
-          :option-items=sharedState.savedSearches
-          :placeholder="'Mes recherches favorites'"
-        >
-        </HistoSelect>
-      </li>
-      <li>
-        <button
-          v-if="sharedState.savedSearches.length > 0"
-          data-fr-opened="false" 
-          aria-controls="modal-delete-search"
-          class="fr-btn fr-btn--secondary fr-icon-settings-5-line"
-        ></button>
       </li>
     </ul>
   </div>
@@ -190,7 +142,6 @@
     </div>
     <div :class="defineCssBlocMultiTerritoire(2,2)" v-if="layout=='horizontal'">
       <button
-          v-if="hasEnoughFilters"
           @click="saveSearch"
           class="fr-link fr-link--icon-left fr-icon-star-line fr-text--sm">
         Sauvegarder ma recherche
@@ -472,7 +423,7 @@ export default defineComponent({
     },
     onChange: { type: Function }
   },
-  emits: ['changeTerritory', 'clickReset', 'clickSaveSearch', 'clickDeleteSearch'],
+  emits: ['changeTerritory', 'clickReset', 'clickSaveSearch'],
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
@@ -489,10 +440,10 @@ export default defineComponent({
       })
 
       return Object.fromEntries(filters)
-    },
-    hasEnoughFilters() {
-      return Object.keys(this.filtersSanitized).length > 1
     }
+    // hasEnoughFilters() {
+    //   return Object.keys(this.filtersSanitized).length > 1
+    // }
   },
   methods: {
     defineCssBloc1 () {
@@ -629,55 +580,29 @@ export default defineComponent({
       this.$emit('changeTerritory', value)
     },
     saveSearch () {
-      const name = this.buildSearchName(this.filtersSanitized)
+      // const name = this.buildSearchName(this.filtersSanitized)
+      const name = 'test' // TODO ouvrir une modale
 
       this.$emit('clickSaveSearch', {
         name,
         params: this.filtersSanitized
       })
     },
-    buildSearchName(filtersSanitized: Record<string, any>): string {
-      // TODO : enregistrer pagination et ordre de tri ?
-      const parts: string[] = []
+    // buildSearchName(filtersSanitized: Record<string, any>): string {
+    //   // TODO : enregistrer pagination et ordre de tri ?
+    //   const parts: string[] = []
 
-      for (const [key, value] of Object.entries(filtersSanitized)) {
-        if (!value || value.length === 0) continue
+    //   for (const [key, value] of Object.entries(filtersSanitized)) {
+    //     if (!value || value.length === 0) continue
 
-        const badge = buildBadge(key, value)
-        if (badge) {
-          parts.push(badge)
-        }
-      }
+    //     const badge = buildBadge(key, value)
+    //     if (badge) {
+    //       parts.push(badge)
+    //     }
+    //   }
 
-      return parts.slice(0, 8).join(' • ')
-    },
-    applySavedSearch(value: string) {
-      if (!value) {
-        return
-      }
-
-      const selected = this.sharedState.savedSearches.find(s => s.Id === value)
-      if (!selected) {
-        console.warn('Saved search introuvable.')
-        return
-      }
-
-      this.resetFilters()
-
-      const params = selected.Params as Record<string, any>
-      const filters = this.sharedState.input.filters as Record<string, any>
-      for (const key in params) {
-        filters[key] = params[key]
-      }
-
-      if (typeof this.onChange === 'function') {
-        this.onChange(false)
-      }
-      this.sharedState.selectedSavedSearchId = value
-    },
-    deleteSavedSearch(id: string) {
-      this.$emit('clickDeleteSearch', id)
-    },
+    //   return parts.slice(0, 8).join(' • ')
+    // },
     resetFilters () {
       const keepIsImported = this.sharedState.input.filters.isImported
 

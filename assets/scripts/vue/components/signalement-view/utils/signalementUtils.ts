@@ -152,6 +152,7 @@ export function handleSettings (context: any, requestResponse: any): any {
     if (variableTester.isNotEmpty(requestResponse.savedSearches[id])) {
       const savedSearch = requestResponse.savedSearches[id]
       optionItem.Text = (savedSearch.name as string)
+      optionItem.NewName = (savedSearch.name as string)
       optionItem.Params = savedSearch.params
     } else {
       optionItem.Text = 'Recherche inconnue'

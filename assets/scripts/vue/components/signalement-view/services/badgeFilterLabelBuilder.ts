@@ -140,22 +140,25 @@ export function buildBadge (key: string, value: any): string | undefined | null 
 }
 
 function buildRangeDateBadge (key: string, value: any): string | undefined {
-  let label: string = ''
-  let startDate: string = ''
-  let endDate: string = ''
+  if (!value || value.length < 2) return undefined;
+  const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
 
-  startDate = value[0].toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  endDate = value[1].toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  const startDateObj = toDate(value[0]);
+  const endDateObj = toDate(value[1]);
 
+  if (isNaN(startDateObj.getTime()) || isNaN(endDateObj.getTime())) return undefined;
+
+  const startDate = startDateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const endDate = endDateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  let label = '';
   if (key === 'dateDernierSuivi') {
-    label = 'Date de dernier suivi : '
+    label = 'Date de dernier suivi :';
+  } else if (key === 'dateDepot') {
+    label = 'Date de dépôt :';
   }
 
-  if (key === 'dateDepot') {
-    label = 'Date de dépôt : '
-  }
-
-  return `${label} ${startDate} - ${endDate}`
+  return `${label} ${startDate} - ${endDate}`;
 }
 
 function buildStaticBadge (value: any): string | undefined {
