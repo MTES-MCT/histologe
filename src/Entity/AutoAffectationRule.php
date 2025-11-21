@@ -42,7 +42,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         options: ['comment' => 'Value possible enum PartnerType'])]
     #[Assert\NotBlank(message: 'Merci de choisir un type de partenaire.')]
     #[AppAssert\ValidPartnerType]
-    private PartnerType $partnerType;
+    private ?PartnerType $partnerType = null;
 
     #[ORM\Column(
         type: 'string',
@@ -51,7 +51,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     #[Assert\NotBlank(message: 'Merci de choisir un profil déclarant.')]
     #[Assert\Length(max: 255)]
     #[AppAssert\ValidProfileDeclarant()]
-    private string $profileDeclarant;
+    private ?string $profileDeclarant = null;
 
     #[ORM\Column(length: 255, options: ['comment' => 'Value possible empty or an array of code insee'])]
     #[Assert\Length(max: 255)]
@@ -122,24 +122,24 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
-    public function getPartnerType(): PartnerType
+    public function getPartnerType(): ?PartnerType
     {
         return $this->partnerType;
     }
 
-    public function setPartnerType(PartnerType $partnerType): self
+    public function setPartnerType(?PartnerType $partnerType): self
     {
         $this->partnerType = $partnerType;
 
         return $this;
     }
 
-    public function getProfileDeclarant(): string
+    public function getProfileDeclarant(): ?string
     {
         return $this->profileDeclarant;
     }
 
-    public function setProfileDeclarant(string $profileDeclarant): self
+    public function setProfileDeclarant(?string $profileDeclarant): self
     {
         $this->profileDeclarant = $profileDeclarant;
 
@@ -231,7 +231,7 @@ class AutoAffectationRule implements EntityHistoryInterface
 
     public function getDescription(bool $isShort = true): string
     {
-        $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()->label();
+        $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()?->label();
         if (!$isShort && $this->getPartnerToExclude()) {
             $description .= ' (à l\'exclusion des partenaires '.implode(',', $this->getPartnerToExclude()).')';
         }
