@@ -8,14 +8,12 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
 use App\Repository\EpciRepository;
-use App\Repository\NotificationRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
@@ -33,7 +31,6 @@ class SearchFilter
     private SignalementSearchQuery $request;
 
     public function __construct(
-        private NotificationRepository $notificationRepository,
         private SuiviRepository $suiviRepository,
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
@@ -71,16 +68,6 @@ class SearchFilter
         $territory = isset($filters['territories'][0]) ? $this->territoryRepository->find($filters['territories'][0]) : null;
         if (\in_array(User::ROLE_USER_PARTNER, $user->getRoles())) {
             $partners = $user->getPartners();
-        }
-
-        if (isset($filters['delays'])) {
-            $filters['delays_partners'] = $partners->map(fn ($partner) => $partner->getId())->toArray();
-            $filters['delays_territory'] = $territory;
-        }
-
-        if (isset($filters['nouveau_suivi'])) {
-            $signalementIds = $this->notificationRepository->findSignalementNewSuivi($user, $territory);
-            $filters['signalement_ids'] = $signalementIds;
         }
 
         if (isset($filters['bailleurSocial'])) {
@@ -214,32 +201,6 @@ class SearchFilter
                 ->setParameter('idUnclosedAffectation', $subquery->getQuery()->getSingleColumnResult())
                 ->setParameter('statut', SignalementStatus::ARCHIVED->value);
                 // TODO : à vérifier
-            }
-        }
-
-        if (!empty($filters['relances_usager'])) {
-            if (\in_array('NO_SUIVI_AFTER_3_RELANCES', $filters['relances_usager'])) {
-                $connection = $this->entityManager->getConnection();
-                $parameters = [
-                    'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
-                    'status_active' => SignalementStatus::ACTIVE->value,
-                    'nb_suivi_technical' => 3,
-                ];
-
-                $partners = ($user->isPartnerAdmin() || $user->isUserPartner()) ? new ArrayCollection($user->getPartners()->toArray()) : new ArrayCollection();
-                if (!$partners->isEmpty()) {
-                    $parameters['partners'] = $partners;
-                    $parameters['status_accepted'] = AffectationStatus::ACCEPTED->value;
-                }
-                $sql = $this->suiviRepository->getSignalementsLastAskFeedbackSuivisQuery(
-                    excludeUsagerAbandonProcedure: false,
-                    partners: $partners
-                );
-
-                $statement = $connection->prepare($sql);
-
-                $qb->andWhere('s.id IN (:subQuery)')
-                    ->setParameter('subQuery', $statement->executeQuery($parameters)->fetchFirstColumn());
             }
         }
 
@@ -382,15 +343,6 @@ class SearchFilter
         if (!empty($filters['proprios'])) {
             $qb->andWhere('s.isProprioAverti IN (:proprios)')
                 ->setParameter('proprios', $filters['proprios']);
-        }
-        if (!empty($filters['delays'])) {
-            $signalementIds = $this->suiviRepository->findSignalementNoSuiviSince(
-                $filters['delays'],
-                $filters['delays_territory'],
-                $filters['delays_partners']
-            );
-            $qb->andWhere('s.id IN (:signalement_ids)')
-                ->setParameter('signalement_ids', $signalementIds);
         }
         if (!empty($filters['scores'])) {
             if (!empty($filters['scores']['on'])) {

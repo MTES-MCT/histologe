@@ -87,12 +87,7 @@ class SignalementSearchQuery
         private readonly ?string $isImported = null,
         #[Assert\Choice(['oui'])]
         private readonly ?string $isZonesDisplayed = null,
-        #[Assert\Choice(['NO_SUIVI_AFTER_3_RELANCES'])]
-        private readonly ?string $relancesUsager = null,
         private readonly ?bool $usagerAbandonProcedure = false,
-        #[Assert\Choice(['oui'])]
-        private readonly ?string $nouveauSuivi = null,
-        private readonly ?int $sansSuiviPeriode = null,
         #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'])]
         private readonly string $sortBy = 'reference',
         #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
@@ -269,24 +264,9 @@ class SignalementSearchQuery
         return $this->isZonesDisplayed;
     }
 
-    public function getRelancesUsager(): ?string
-    {
-        return $this->relancesUsager;
-    }
-
     public function getUsagerAbandonProcedure(): ?bool
     {
         return $this->usagerAbandonProcedure;
-    }
-
-    public function getNouveauSuivi(): ?string
-    {
-        return $this->nouveauSuivi;
-    }
-
-    public function getSansSuiviPeriode(): ?int
-    {
-        return $this->sansSuiviPeriode;
     }
 
     public function getMotifCloture(): ?string
@@ -440,10 +420,7 @@ class SignalementSearchQuery
             default => null,
         };
 
-        $filters['relances_usager'] = [$this->getRelancesUsager()];
         $filters['usager_abandon_procedure'] = $this->getUsagerAbandonProcedure();
-        $filters['delays'] = $this->getSansSuiviPeriode();
-        $filters['nouveau_suivi'] = $this->getNouveauSuivi();
         $filters['bailleurSocial'] = $this->getBailleurSocial();
         $filters['motifCloture'] = $this->getMotifCloture();
         $filters['createdFrom'] = $this->getCreatedFrom();

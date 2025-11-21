@@ -38,9 +38,6 @@ class SignalementSearchQueryFactory
             if (isset($filteredData['criticiteScoreMax'])) {
                 $filteredData['criticiteScoreMax'] = (float) $filteredData['criticiteScoreMax'];
             }
-            if (isset($filteredData['sansSuiviPeriode'])) {
-                $filteredData['sansSuiviPeriode'] = (int) $filteredData['sansSuiviPeriode'];
-            }
             if (isset($filteredData['usagerAbandonProcedure'])) {
                 $filteredData['usagerAbandonProcedure'] = filter_var($filteredData['usagerAbandonProcedure'], \FILTER_VALIDATE_BOOLEAN);
             }
