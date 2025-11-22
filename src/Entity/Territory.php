@@ -424,4 +424,9 @@ class Territory implements EntityHistoryInterface
 
         return $this;
     }
+
+    public function getZipAndName(): string
+    {
+        return sprintf('%s - %s', $this->zip, $this->name);
+    }
 }

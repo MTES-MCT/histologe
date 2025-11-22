@@ -93,7 +93,7 @@ class Settings
         $this->tags = $tags;
         $this->zones = $zones;
         $this->hasSignalementImported = $hasSignalementImported;
-        $this->isMultiTerritoire = count($user->getPartnersTerritories()) > 1 ? true : false;
+        $this->isMultiTerritoire = $user->isMultiTerritoire();
         $this->bailleursSociaux = $bailleursSociaux;
     }
 

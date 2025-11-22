@@ -1096,4 +1096,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     {
         return Phone::format($this->phone);
     }
+
+    public function isMultiTerritoire(): bool
+    {
+        return count($this->getPartnersTerritories()) > 1;
+    }
 }

@@ -2,6 +2,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.2",
     "@gouvfr/dsfr": "^1.14.0",
+    "@iframe-resizer/parent": "^5.5.7",
     "@popperjs/core": "^2.11.8",
     "@sentry/browser": "^8.33.0",
     "@sentry/tracing": "^7.99.0",
