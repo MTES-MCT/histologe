@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre dossier #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+<main class="fr-container fr-pb-5w" id="content">
+	<div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-3w">
+		<div class="fr-col-12 fr-col-md-6">
+			<h1 class="fr-h3">Conditions générales d'utilisation</h1>
+
+			Avant d'accéder au suivi du dossier, merci d'accepter
+			les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et
+			la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service.
+
+			<form method="post" action="{{ path('suivi_signalement_tiers_cgu_accept', {'code': signalement.codeSuivi}) }}">
+				<button class="fr-btn fr-btn--primary fr-mt-3w" type="submit">Accepter les conditions générales d'utilisation</button>
+				<input type="hidden" name="_token" value="{{ csrf_token('suivi_signalement_tiers_cgu_accept' ~ signalement.codeSuivi) }}">
+			</form>
+		</div>
+	</div>
+
+</main>
+{% endblock %}

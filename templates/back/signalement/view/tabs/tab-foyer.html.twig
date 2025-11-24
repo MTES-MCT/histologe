@@ -1,11 +1,9 @@
 <h2 class="fr-h4">Informations du foyer</h2>
 
 <div data-ajax-form>
-{% if signalement.isNotOccupant or (not signalement.isV2 and signalement.mailDeclarant) %}
 {% include 'back/signalement/view/information/information-tiers.html.twig' %}
 
 <hr class="fr-mt-3w fr-hr">
-{% endif %}
 
 {% include 'back/signalement/view/information/information-foyer.html.twig' %}
 

@@ -10,11 +10,11 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignalementUsagerInviteTiersMailer extends AbstractNotificationMailer
+class SignalementInviteTiersMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_USAGER_INVITE_TIERS;
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_INVITE_TIERS;
     protected ?string $mailerSubject = 'Lien vers votre page de suivi';
-    protected ?string $mailerTemplate = 'usager_invite_tiers_email';
+    protected ?string $mailerTemplate = 'invite_tiers_email';
     protected ?string $tagHeader = 'Lien de suivi du signalement';
 
     public function __construct(
