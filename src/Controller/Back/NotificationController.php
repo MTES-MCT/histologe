@@ -7,7 +7,10 @@ use App\Entity\User;
 use App\Form\SearchNotificationType;
 use App\Repository\NotificationRepository;
 use App\Service\ListFilters\SearchNotification;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,11 +18,16 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo')]
 class NotificationController extends AbstractController
 {
-    #[Route('/notifications', name: 'back_notifications_list')]
-    public function list(
-        Request $request,
-        NotificationRepository $notificationRepository,
-    ): Response {
+    public function __construct(
+        private readonly NotificationRepository $notificationRepository,
+    ) {
+    }
+
+    /**
+     * @return array{FormInterface, SearchNotification, Paginator<Notification>}
+     */
+    private function handleSearch(Request $request, bool $fromSearchParams = false): array
+    {
         /** @var User $user */
         $user = $this->getUser();
         $searchNotification = new SearchNotification($user);
@@ -28,14 +36,46 @@ class NotificationController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchNotification = new SearchNotification($user);
         }
-        $maxListPagination = Notification::MAX_LIST_PAGINATION;
-        $paginatedNotifications = $notificationRepository->findFilteredPaginated($searchNotification, $maxListPagination);
+        $paginatedNotifications = $this->notificationRepository->findFilteredPaginated($searchNotification, Notification::MAX_LIST_PAGINATION);
+
+        return [$form, $searchNotification, $paginatedNotifications];
+    }
+
+    private function getHtmlTargetContentsForNotificationAction(Request $request): array
+    {
+        [, $searchNotification, $paginatedNotifications] = $this->handleSearch($request, true);
+
+        return [
+            [
+                'target' => '#title-list-results',
+                'content' => $this->renderView('back/notifications/_title-list-results.html.twig', ['notifications' => $paginatedNotifications]),
+            ],
+            [
+                'target' => '#table-list-results',
+                'content' => $this->renderView('back/notifications/_table-list-results.html.twig', [
+                    'searchNotification' => $searchNotification,
+                    'notifications' => $paginatedNotifications,
+                    'pages' => (int) ceil($paginatedNotifications->count() / Notification::MAX_LIST_PAGINATION),
+                    'searchParams' => $request->request->get('search_params'),
+                ]),
+            ],
+            [
+                'target' => '#notification-selected-buttons',
+                'content' => $this->renderView('back/notifications/_mass-action-btns.html.twig', ['searchParams' => $request->request->get('search_params')]),
+            ],
+        ];
+    }
+
+    #[Route('/notifications', name: 'back_notifications_list')]
+    public function list(Request $request): Response
+    {
+        [$form, $searchNotification, $paginatedNotifications] = $this->handleSearch($request);
 
         return $this->render('back/notifications/index.html.twig', [
             'form' => $form,
             'searchNotification' => $searchNotification,
             'notifications' => $paginatedNotifications,
-            'pages' => (int) ceil($paginatedNotifications->count() / $maxListPagination),
+            'pages' => (int) ceil($paginatedNotifications->count() / Notification::MAX_LIST_PAGINATION),
         ]);
     }
 
@@ -43,70 +83,72 @@ class NotificationController extends AbstractController
     public function read(
         Request $request,
         NotificationRepository $notificationRepository,
-    ): Response {
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        if ($request->get('selected_notifications')) {
-            if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('csrf_token'))) {
-                $notificationRepository->markUserNotificationsAsSeen($user, explode(',', $request->get('selected_notifications')));
-                $this->addFlash('success', 'Les notifications sélectionnées ont été marquées comme lues.');
-            }
-        } else {
-            if ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->get('mark_as_read'))) {
-                $notificationRepository->markUserNotificationsAsSeen($user);
-                $this->addFlash('success', 'Toutes les notifications ont été marquées comme lues.');
-            }
+        $flashMessages = [];
+        if ($request->request->get('selected_notifications') && $this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->request->get('csrf_token'))) {
+            $notificationRepository->markUserNotificationsAsSeen($user, explode(',', $request->request->get('selected_notifications')));
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les notifications sélectionnées ont bien été marquées comme lues.'];
+        } elseif ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->request->get('csrf_token'))) {
+            $notificationRepository->markUserNotificationsAsSeen($user);
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Toutes les notifications ont bien été marquées comme lues.'];
+        }
+        if (!count($flashMessages)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
-        return $this->redirectToRoute('back_notifications_list', $this->addParamFromRequest($request));
+        $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/notifications/supprimer', name: 'back_notifications_list_delete')]
     public function delete(
         Request $request,
         NotificationRepository $notificationRepository,
-    ): Response {
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        if ($request->get('selected_notifications')) {
-            if ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->get('csrf_token'))) {
-                $notificationRepository->deleteUserNotifications($user, explode(',', $request->get('selected_notifications')));
-                $this->addFlash('success', 'Les notifications sélectionnées ont été supprimées.');
-            }
-        } else {
-            if ($this->isCsrfTokenValid(
-                'delete_all_notifications_'.$user->getId(),
-                $request->get('delete_all_notifications')
-            )) {
-                $notificationRepository->deleteUserNotifications($user);
-                $this->addFlash('success', 'Toutes les notifications ont été supprimées.');
+        $flashMessages = [];
+        if ($request->request->get('selected_notifications') && $this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->request->get('csrf_token'))) {
+            $notificationRepository->deleteUserNotifications($user, explode(',', $request->request->get('selected_notifications')));
+            $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Les notifications sélectionnées ont bien été supprimées.'];
+        } elseif ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->request->get('csrf_token'))) {
+            $notificationRepository->deleteUserNotifications($user);
+            $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Toutes les notifications ont bien été supprimées.'];
+        }
+        if (!count($flashMessages)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
 
-                return $this->redirectToRoute('back_notifications_list');
-            }
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
-        return $this->redirectToRoute('back_notifications_list', $this->addParamFromRequest($request));
+        $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/notifications/{id}/supprimer', name: 'back_notifications_delete_notification')]
     public function deleteNotification(
+        Notification $notification,
         NotificationRepository $notificationRepository,
         Request $request,
     ): Response {
-        $notification = $notificationRepository->find($request->get('id'));
-        if (!$notification) {
-            return $this->redirectToRoute('back_notifications_list');
-        }
         /** @var User $user */
         $user = $this->getUser();
-        if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), (string) $request->get('_token'))) {
+        if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), (string) $request->request->get('csrf_token'))) {
             $notificationRepository->deleteUserNotifications($user, [$notification->getId()]);
-            $this->addFlash('success', 'Notification supprimée avec succès');
-        } else {
-            $this->addFlash('error', 'Erreur lors de la suppression de la notification.');
-        }
+            $flashMessages[] = ['type' => 'success', 'title' => 'Notification supprimée', 'message' => 'La notification a bien été supprimée.'];
+            $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
 
-        return $this->redirectToRoute('back_notifications_list', $this->addParamFromRequest($request));
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents]);
+        }
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'La notification n\'a pas pu être supprimée, veuillez réessayer..'];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 
     /**

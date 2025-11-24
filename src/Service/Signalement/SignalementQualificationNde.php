@@ -25,7 +25,7 @@ class SignalementQualificationNde
     {
         $signalementQualificationNDE = $this->signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,
-            'qualification' => Qualification::NON_DECENCE_ENERGETIQUE
+            'qualification' => Qualification::NON_DECENCE_ENERGETIQUE,
         ]);
 
         if (!$signalement->isV2()) {
@@ -42,5 +42,4 @@ class SignalementQualificationNde
 
         return [$signalementQualificationNDE, $signalementQualificationNDECriticites];
     }
-
 }
