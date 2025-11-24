@@ -12,10 +12,12 @@ use App\Service\FormHelper;
 use App\Service\Import\CsvParser;
 use App\Service\ListFilters\SearchZone;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,12 +30,19 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN_TERRITORY')]
 class BackZoneController extends AbstractController
 {
-    #[Route('/', name: 'back_territory_management_zone_index', methods: ['GET'])]
-    public function index(
-        Request $request,
-        ZoneRepository $zoneRepository,
-        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
-    ): Response {
+    public function __construct(
+        #[Autowire(param: 'standard_max_list_pagination')] 
+        private readonly int $maxListPagination,
+        private readonly ZoneRepository $zoneRepository,
+    )
+    {
+    }
+
+    /**
+     * @return array{FormInterface, SearchZone, Paginator<Zone>}
+     */
+    private function handleSearch(Request $request, bool $fromSearchParams = false): array
+    {
         /** @var User $user */
         $user = $this->getUser();
         $searchZone = new SearchZone($user);
@@ -42,7 +51,17 @@ class BackZoneController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchZone = new SearchZone($user);
         }
-        $paginatedZones = $zoneRepository->findFilteredPaginated($searchZone, $maxListPagination);
+        $paginatedZones = $this->zoneRepository->findFilteredPaginated($searchZone, $this->maxListPagination);
+
+        return [$form, $searchZone, $paginatedZones];
+    }
+
+
+    #[Route('/', name: 'back_territory_management_zone_index', methods: ['GET'])]
+    public function index(Request $request): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        [$form, $searchZone, $paginatedZones] = $this->handleSearch($request);
 
         $zone = new Zone();
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -55,7 +74,7 @@ class BackZoneController extends AbstractController
             'addForm' => $addForm,
             'searchZone' => $searchZone,
             'zones' => $paginatedZones,
-            'pages' => (int) ceil($paginatedZones->count() / $maxListPagination),
+            'pages' => (int) ceil($paginatedZones->count() / $this->maxListPagination),
         ]);
     }
 
@@ -91,7 +110,7 @@ class BackZoneController extends AbstractController
             $em->persist($zone);
             $em->flush();
 
-            $this->addFlash('success', 'La zone a bien été ajoutée.');
+            $this->addFlash('success', ['title' => 'Zone ajoutée', 'message' => 'La zone a bien été ajoutée.']);
 
             return $this->redirectToRoute('back_territory_management_zone_show', ['zone' => $zone->getId()]);
         }
@@ -115,7 +134,7 @@ class BackZoneController extends AbstractController
             $this->validateArea($zone, $form, $em);
             if ($form->isValid()) {
                 $em->flush();
-                $this->addFlash('success', 'La zone a bien été modifiée.');
+                $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La zone a bien été modifiée.']);
 
                 return $this->redirectToRoute('back_territory_management_zone_show', ['zone' => $zone->getId()]);
             }
@@ -140,20 +159,34 @@ class BackZoneController extends AbstractController
         ]);
     }
 
-    #[Route('/supprimer/{zone}', name: 'back_zone_delete', methods: ['GET'])]
-    public function delete(Zone $zone, Request $request, EntityManagerInterface $em): RedirectResponse
+    #[Route('/supprimer/{zone}', name: 'back_zone_delete', methods: ['POST'])]
+    public function delete(Zone $zone, Request $request, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted(ZoneVoter::ZONE_MANAGE, $zone);
         if (!$this->isCsrfTokenValid('zone_delete', $request->query->get('_token'))) {
-            $this->addFlash('error', 'Le token CSRF est invalide.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
 
-            return $this->redirectToRoute('back_territory_management_zone_index');
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }
         $em->remove($zone);
         $em->flush();
-        $this->addFlash('success', 'La zone a bien été supprimée.');
+        $flashMessages[] = ['type' => 'success', 'title' => 'Zone supprimée', 'message' => 'La zone a bien été supprimée.'];
 
-        return $this->redirectToRoute('back_territory_management_zone_index');
+        [, $searchZone, $paginatedZones] = $this->handleSearch($request, true);
+        $tableListResult = $this->renderView('back/zone/_table-list-results.html.twig', [
+            'searchZone' => $searchZone,
+            'zones' => $paginatedZones,
+            'pages' => (int) ceil($paginatedZones->count() / $this->maxListPagination),
+        ]);
+        $titleListResult = $this->renderView('back/zone/_title-list-results.html.twig', [
+            'zones' => $paginatedZones,
+        ]);
+        $htmlTargetContents = [
+            ['target' => '#table-list-results', 'content' => $tableListResult],
+            ['target' => '#title-list-results', 'content' => $titleListResult],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     private function manageCsvFileFormErrors(File $file, Zone $zone, Form $form, CsvParser $csvParser): void

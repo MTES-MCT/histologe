@@ -58,7 +58,7 @@ class ExportSignalementController extends AbstractController
         $request->getSession()->set('selectedCols', $selectedColumns);
 
         if (!in_array($format, ['csv', 'xlsx'])) {
-            $this->addFlash('error', "Merci de sélectionner le format de l'export.");
+            $this->addFlash('error', "Veuillez sélectionner un format pour l'export.");
 
             return $this->redirectToRoute('back_signalement_list_export');
         }
@@ -84,14 +84,11 @@ class ExportSignalementController extends AbstractController
             ->setSelectedColumns($selectedColumns);
 
         $messageBus->dispatch($message);
-
-        $this->addFlash(
-            'success',
-            \sprintf(
-                'L\'export vous sera envoyé par e-mail à l\'adresse suivante : %s. Il arrivera d\'ici quelques minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
+        $messageSuccess = \sprintf(
+                'L\'export a bien été envoyé par e-mail à l\'adresse suivante : %s. Il arrivera d\'ici quelques minutes. N\'oubliez pas de consulter vos courriers indésirables (spam) !',
                 $user->getEmail()
-            )
         );
+        $this->addFlash('success', ['title' => 'Export envoyé', 'message' => $messageSuccess]);
 
         return $this->redirectToRoute('back_signalement_list_export');
     }
