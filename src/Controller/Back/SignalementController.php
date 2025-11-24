@@ -29,14 +29,11 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
-use App\Repository\CriticiteRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
-use App\Repository\DesordrePrecisionRepository;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
-use App\Repository\SignalementQualificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -49,6 +46,7 @@ use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
+use App\Service\Signalement\SignalementQualificationNde;
 use App\Service\Signalement\SuiviSeenMarker;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -79,11 +77,9 @@ class SignalementController extends AbstractController
         TagRepository $tagsRepository,
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
-        SignalementQualificationRepository $signalementQualificationRepository,
-        CriticiteRepository $criticiteRepository,
+        SignalementQualificationNde $signalementQualificationNdeService,
         AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
-        DesordrePrecisionRepository $desordrePrecisionsRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         DesordreCategorieRepository $desordreCategorieRepository,
         DesordreCritereRepository $desordreCritereRepository,
@@ -221,21 +217,12 @@ class SignalementController extends AbstractController
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
-        $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
-            'signalement' => $signalement,
-            'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
-
-        if (!$signalement->isV2()) {
-            $signalementQualificationNDECriticites = $signalementQualificationNDE
-                ? $criticiteRepository->findBy(['id' => $signalementQualificationNDE->getCriticites()])
-                : null;
-        } else {
-            $signalementQualificationNDECriticites = $signalementQualificationNDE
-                ? $desordrePrecisionsRepository->findBy(
-                    ['id' => $signalementQualificationNDE->getDesordrePrecisionIds()]
-                )
-                : null;
+        $canEditSignalement = $this->isGranted('ROLE_ADMIN');
+        if (!$canEditSignalement && SignalementStatus::ACTIVE === $signalement->getStatut()) {
+            $canEditSignalement = $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffectationAccepted;
         }
+
+        [$signalementQualificationNDE, $signalementQualificationNDECriticites] = $signalementQualificationNdeService->getSignalementQualificationNdeAndCriticites($signalement);
 
         $partners = $signalementManager->findAffectablePartners(
             signalement: $signalement,
