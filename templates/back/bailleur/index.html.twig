@@ -38,8 +38,8 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-4v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(bailleurs|length, 'bailleur trouvé', 'bailleurs trouvés') }}</h2>
+    <section class="fr-col-12 fr-py-4v" id="title-list-results">
+        {% include 'back/bailleur/_title-list-results.html.twig' %}
     </section>
     
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
@@ -48,83 +48,44 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v">
-        {% set tableHead %}
-            <th scope="col">ID</th>
-            <th scope="col">Nom</th>
-            <th scope="col">Territoires</th>
-            <th scope="col">Actions</th>
-        {% endset %}
-        
-        {% set tableBody %}
-            {% for bailleur in bailleurs %}
-                <tr class="signalement-row">
-                    <td>{{ bailleur.id }}</td>
-                    <td>{{ bailleur.name }}</td>
-                    <td>
-                        {% for bailleurTerritory in bailleur.bailleurTerritories %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--success">{{bailleurTerritory.territory.zipAndName}}</span>
-                        {% endfor %}
-                    </td>
-                    <td class="fr-text--right fr-ws-nowrap">
-                        <a href="{{path('back_bailleur_edit', {bailleur: bailleur.id})}}" class="fr-btn fr-icon-edit-line" title="Editer le bailleur {{bailleur.name}}">
-                            Editer le bailleur {{ bailleur.name }}
-                        </a>
-                        {% if not bailleur.signalements|length %}
-                            <button 
-                                class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-bailleur-delete" 
-                                title="Supprimer le bailleur {{bailleur.name}}" 
-                                data-fr-opened="false" 
-                                aria-controls="fr-modal-bailleur-delete"
-                                data-url="{{path('back_bailleur_delete', {bailleur: bailleur.id})}}?_token={{ csrf_token('bailleur_delete') }}"
-                                data-name="{{bailleur.name}}" >
-                                Supprimer le bailleur {{ bailleur.name }}
-                            </button>
-                        {% else %}
-                            <button class="fr-btn fr-btn--secondary fr-icon-delete-line" title="Le bailleur est lié à de signalements" disabled>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        {% endset %}
-
-        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des bailleurs', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
-
-        <div id="territory-pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center">
-            {% import '_partials/macros.html.twig' as macros %}
-            {{ macros.customPagination(pages, searchBailleur.page, 'back_bailleur_index', searchBailleur.urlParams) }}
-        </div>
+    <section class="fr-col-12 fr-pt-0 fr-px-4v" id="table-list-results">
+        {% include 'back/bailleur/_table-list-results.html.twig' with { 'bailleurs': bailleurs, 'pages': pages, 'searchBailleur': searchBailleur } %}
     </section>
 
     {# Modale de suppression #}
-    <dialog aria-labelledby="fr-modal-title-bailleur-delete" id="fr-modal-bailleur-delete" class="fr-modal">
-        <div class="fr-container fr-container--fluid fr-container-md">
-            <div class="fr-grid-row fr-grid-row--center">
-                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                    <div class="fr-modal__body">
-                        <div class="fr-modal__header">
-                            <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-bailleur-delete">Fermer</button>
-                        </div>
-                        <div class="fr-modal__content">
-                            <h1 id="fr-modal-title-bailleur-delete" class="fr-modal__title">
-                                Supprimer le bailleur : <span id="fr-modal-bailleur-delete-bailleur-name"></span>
-                            </h1>
-                            <p>Vous êtes sur le point de supprimer un bailleur.</p>
-                            <p>Une fois le bailleur supprimé :</p>
-                            <ul>
-                                <li>Il ne sera plus proposé sur aucun département</li>
-                            </ul>
-                        </div>
-                        <div class="fr-modal__footer">
-                            <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                <a href="#" class="fr-btn fr-icon-check-line" id="fr-modal-bailleur-delete-btn-submit">Oui, supprimer</a>
-                                <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-bailleur-delete">Non, annuler</button>
+    <div data-ajax-form>
+        <dialog aria-labelledby="fr-modal-title-bailleur-delete" id="fr-modal-bailleur-delete" class="fr-modal">
+            <div class="fr-container fr-container--fluid fr-container-md">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                            <div class="fr-modal__header">
+                                <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-bailleur-delete">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
+                                <h1 id="fr-modal-title-bailleur-delete" class="fr-modal__title">
+                                    Supprimer le bailleur : <span id="fr-modal-bailleur-delete-bailleur-name"></span>
+                                </h1>
+                                <p>Vous êtes sur le point de supprimer un bailleur.</p>
+                                <p>Une fois le bailleur supprimé :</p>
+                                <ul>
+                                    <li>Il ne sera plus proposé sur aucun département</li>
+                                </ul>
+                                <form action="#" id="bailleur_delete_form" method="POST" data-submit-type="formData">
+                                    <input type="hidden" name="search_params" value="{{ app.request.query.all|url_encode }}">
+                                </form>
+                            </div>
+                            <div class="fr-modal__footer">
+                                <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                    <button class="fr-btn fr-icon-check-line" id="fr-modal-bailleur-delete-btn-submit" type="submit" form="bailleur_delete_form">Oui, supprimer</button>
+                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-bailleur-delete">Non, annuler</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </dialog>
+        </dialog>
+    </div>
 
 {% endblock %}
