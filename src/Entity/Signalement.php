@@ -256,6 +256,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'boolean')]
     private ?bool $isCguAccepted = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isCguTiersAccepted = null;
+
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
@@ -1294,6 +1297,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setIsCguAccepted(bool $isCguAccepted): self
     {
         $this->isCguAccepted = $isCguAccepted;
+
+        return $this;
+    }
+
+    public function getIsCguTiersAccepted(): ?bool
+    {
+        return $this->isCguTiersAccepted;
+    }
+
+    public function setIsCguTiersAccepted(bool $isCguTiersAccepted): self
+    {
+        $this->isCguTiersAccepted = $isCguTiersAccepted;
 
         return $this;
     }

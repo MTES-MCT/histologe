@@ -9,6 +9,7 @@ use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Signalement;
@@ -16,6 +17,9 @@ use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -104,6 +108,63 @@ class SignalementEditController extends AbstractController
                 $subscriptionCreated = $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', 'Les coordonnées du tiers déclarant ont bien été modifiées.');
+                if ($subscriptionCreated) {
+                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                }
+            } else {
+                $response = ['code' => Response::HTTP_BAD_REQUEST];
+                $response = [...$response, ...$errorMessage];
+            }
+        } else {
+            $response = [
+                'code' => Response::HTTP_UNAUTHORIZED,
+                'message' => self::ERROR_MSG,
+            ];
+        }
+
+        return $this->json($response, $response['code']);
+    }
+
+    #[Route('/{uuid:signalement}/edit-invite-tiers', name: 'back_signalement_edit_invite_tiers', methods: 'POST')]
+    public function editInviteTiers(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        NotificationMailerRegistry $notificationMailerRegistry,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if ($this->isCsrfTokenValid(
+            'signalement_edit_invite_tiers_'.$signalement->getId(),
+            $token
+        )) {
+            /** @var InviteTiersRequest $inviteTiersRequest */
+            $inviteTiersRequest = $serializer->deserialize(
+                json_encode($request->getPayload()->all()),
+                InviteTiersRequest::class,
+                'json'
+            );
+
+            $errorMessage = FormHelper::getErrorsFromRequest($validator, $inviteTiersRequest);
+
+            if (empty($errorMessage)) {
+                $signalement->setIsCguTiersAccepted(false); // saved in update
+                $subscriptionCreated = $signalementManager->updateFromInviteTiersRequest($signalement, $inviteTiersRequest);
+
+                $notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_INVITE_TIERS,
+                        to: $signalement->getMailDeclarant(),
+                        signalement: $signalement,
+                    )
+                );
+
+                $response = ['code' => Response::HTTP_OK];
+                $this->addFlash('success', 'Le tiers aidant a bien été invité.');
                 if ($subscriptionCreated) {
                     $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
                 }
