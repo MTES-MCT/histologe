@@ -89,6 +89,6 @@ class DashboardUrlGeneratorTest extends TestCase
             'Expiration should be 10 minutes after the clock time'
         );
 
-        $this->assertEquals((10 - 1) * 60, $dashboardUrlGenerator->getTtlInSeconds(), 'TTL should be 9 minutes = 540 seconds');
+        $this->assertEquals(10 * 60, $dashboardUrlGenerator->getTtlInSeconds(), 'TTL should be 10 minutes = 600 seconds');
     }
 }

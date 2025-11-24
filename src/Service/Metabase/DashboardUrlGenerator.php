@@ -59,7 +59,7 @@ class DashboardUrlGenerator
     {
         $ttlInMinutes = (int) $this->ttlInMinutes;
         if ($ttlInMinutes > 1) {
-            return ($ttlInMinutes - 1) * 60;
+            return $ttlInMinutes * 60;
         }
 
         return 3600;
