@@ -16,7 +16,13 @@ class SignalementDraftFactory
         SignalementDraftRequest $signalementDraftRequest,
         array $payload,
     ): SignalementDraft {
-        return (new SignalementDraft())
+        $signalementDraft = new SignalementDraft();
+        $bailleurPrevenuAt = SignalementDraftHelper::computeBailleurPrevenuAtFromRequest(
+            $signalementDraftRequest
+        );
+        $signalementDraft->setBailleurPrevenuAt($bailleurPrevenuAt);
+
+        return $signalementDraft
             ->setPayload($payload)
             ->setAddressComplete($signalementDraftRequest->getAdresseLogementAdresse())
             ->setEmailDeclarant(SignalementDraftHelper::getEmailDeclarant($signalementDraftRequest))
