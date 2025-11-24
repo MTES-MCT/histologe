@@ -85,8 +85,8 @@ class ExportSignalementController extends AbstractController
 
         $messageBus->dispatch($message);
         $messageSuccess = \sprintf(
-                'L\'export a bien été envoyé par e-mail à l\'adresse suivante : %s. Il arrivera d\'ici quelques minutes. N\'oubliez pas de consulter vos courriers indésirables (spam) !',
-                $user->getEmail()
+            'L\'export a bien été envoyé par e-mail à l\'adresse suivante : %s. Il arrivera d\'ici quelques minutes. N\'oubliez pas de consulter vos courriers indésirables (spam) !',
+            $user->getEmail()
         );
         $this->addFlash('success', ['title' => 'Export envoyé', 'message' => $messageSuccess]);
 

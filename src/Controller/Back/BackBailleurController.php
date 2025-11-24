@@ -24,11 +24,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BackBailleurController extends AbstractController
 {
     public function __construct(
-        #[Autowire(param: 'standard_max_list_pagination')] 
+        #[Autowire(param: 'standard_max_list_pagination')]
         private readonly int $maxListPagination,
         private readonly BailleurRepository $bailleurRepository,
-    )
-    {
+    ) {
     }
 
     /**
@@ -49,7 +48,8 @@ class BackBailleurController extends AbstractController
     }
 
     #[Route('/', name: 'back_bailleur_index', methods: ['GET'])]
-    public function index(Request $request): Response {
+    public function index(Request $request): Response
+    {
         [$form, $searchBailleur, $paginatedBailleurs] = $this->handleSearch($request);
 
         return $this->render('back/bailleur/index.html.twig', [
@@ -117,6 +117,7 @@ class BackBailleurController extends AbstractController
             ['target' => '#table-list-results', 'content' => $tableListResult],
             ['target' => '#title-list-results', 'content' => $titleListResult],
         ];
+
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 }

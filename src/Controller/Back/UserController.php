@@ -71,7 +71,7 @@ class UserController extends AbstractController
                 "L'export a bien été envoyé par e-mail à l'adresse suivante : %s. Il arrivera d'ici quelques minutes. N'oubliez pas de consulter vos courriers indésirables (spam) !",
                 $user->getEmail()
             );
-            $this->addFlash('success',['title' => 'Export envoyé', 'message' => $messageSuccess]);
+            $this->addFlash('success', ['title' => 'Export envoyé', 'message' => $messageSuccess]);
 
             return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams());
         }
@@ -119,7 +119,7 @@ class UserController extends AbstractController
                 "L'export a bien été envoyé par e-mail à l'adresse suivante : %s. Il arrivera d'ici quelques minutes. N'oubliez pas de consulter vos courriers indésirables (spam) !",
                 $user->getEmail()
             );
-            $this->addFlash('success',['title' => 'Export envoyé', 'message' => $messageSuccess]);
+            $this->addFlash('success', ['title' => 'Export envoyé', 'message' => $messageSuccess]);
 
             return $this->redirectToRoute('back_user_inactive_accounts');
         }

@@ -31,11 +31,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BackZoneController extends AbstractController
 {
     public function __construct(
-        #[Autowire(param: 'standard_max_list_pagination')] 
+        #[Autowire(param: 'standard_max_list_pagination')]
         private readonly int $maxListPagination,
         private readonly ZoneRepository $zoneRepository,
-    )
-    {
+    ) {
     }
 
     /**
@@ -56,9 +55,9 @@ class BackZoneController extends AbstractController
         return [$form, $searchZone, $paginatedZones];
     }
 
-
     #[Route('/', name: 'back_territory_management_zone_index', methods: ['GET'])]
-    public function index(Request $request): Response {
+    public function index(Request $request): Response
+    {
         /** @var User $user */
         $user = $this->getUser();
         [$form, $searchZone, $paginatedZones] = $this->handleSearch($request);

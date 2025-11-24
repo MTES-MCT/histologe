@@ -166,7 +166,7 @@ document.addEventListener('click', (event) => {
   }
 });
 
-//gére la réactivation des règles d'auto-affectation (et + a venir)
+
 document.addEventListener('submit', (event) => {
   const formElement = event.target.closest('.simple-ajax-form');
   
@@ -182,9 +182,11 @@ document.addEventListener('submit', (event) => {
   fetch(formElement.action, {
     method: 'POST',
     body: formData,
-  }).then((r) => {
-    if (r.ok) {
-      jsonResponseHandler(r);
+  }).then((response) => {
+    if (response.redirected && response.url.endsWith('/connexion')) {
+      addFlashMessage({type: 'alert', title: 'Erreur', message: "Votre session a expiré. Veuillez vous reconnecter en rechargeant la page."});
+    } else if (response.ok) {
+      jsonResponseHandler(response);
     }
     submitElement.disabled = false;
   });

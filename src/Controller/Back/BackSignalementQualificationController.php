@@ -51,10 +51,10 @@ class BackSignalementQualificationController extends AbstractController
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les modifications ont bien été enregistrées.'];
         [$signalementQualificationNDE, $signalementQualificationNDECriticites] = $signalementQualificationNdeService->getSignalementQualificationNdeAndCriticites($signalement);
         $nde = $this->renderView('back/signalement/view/nde.html.twig', [
-            'signalement' => $signalement, 
-            'canEditNDE' => $this->isGranted('SIGN_EDIT_NDE', $signalement), //TODO : delete after rebase
+            'signalement' => $signalement,
+            'canEditNDE' => $this->isGranted('SIGN_EDIT_NDE', $signalement), // TODO : delete after rebase
             'signalementQualificationNDE' => $signalementQualificationNDE,
-            'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites
+            'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
         ]);
         $htmlTargetContents = [['target' => '#signalement-bo-nde-container', 'content' => $nde]];
 
