@@ -17,10 +17,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/bo/statistiques/metabase')]
+#[Route('/bo/statistiques/indicateurs-pnlhi')]
 class MetabaseController extends AbstractController
 {
-    #[Route('/', name: 'back_indicateur_pdlhi', methods: ['GET'])]
+    #[Route('/', name: 'back_indicateur_pnlhi', methods: ['GET'])]
     public function index(
         Request $request,
         DashboardUrlGenerator $dashboardUrlGenerator,
@@ -75,7 +75,7 @@ class MetabaseController extends AbstractController
             ? sprintf('Statistiques des signalements pour le territoire %s', $selectedTerritory->getZipAndName())
             : 'Statistiques des signalements';
 
-        return $this->render('back/indicateurs_pdlhi/index.html.twig', [
+        return $this->render('back/indicateurs_pnlhi/index.html.twig', [
             'form' => $form->createView(),
             'iframeUrl' => $url,
             'iframeTitle' => $iframeTitle,
