@@ -1,7 +1,7 @@
 <template>
   <div class="fr-grid-row fr-mb-1w">
     <div class="fr-col fr-col-md-9">
-      <h2>{{ sharedState.selectedSavedSearchId !== null ? 'Résultats de la recherche sauvegardée - ' : '' }}{{ total }} signalement{{total > 1 ? 's' : ''}} trouv{{total > 1 ? 'és' : 'é'}}</h2>
+      <h2>{{ sharedState.selectedSavedSearchId !== undefined ? 'Résultats de la recherche sauvegardée - ' : '' }}{{ total }} signalement{{total > 1 ? 's' : ''}} trouv{{total > 1 ? 'és' : 'é'}}</h2>
     </div>
   </div>
   <div class="fr-grid-row fr-mb-1w">
@@ -15,7 +15,7 @@
       />
     </div>
     <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
-      <a :href="canExport ? `${sharedProps.ajaxurlExportCsv}` : null"
+      <a :href="canExport ? `${sharedProps.ajaxurlExportCsv}` : undefined"
          :class="[
               'fr-btn',
               'fr-btn--secondary',
@@ -27,7 +27,7 @@
       </a>
     </div>
     <div v-if="!sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
-      <a :href="(total > 0) ? `${sharedProps.ajaxurlExportCsv}` : null"
+      <a :href="(total > 0) ? `${sharedProps.ajaxurlExportCsv}` : undefined"
          :class="[
               'fr-btn',
               'fr-btn--secondary',
@@ -67,9 +67,9 @@ export default defineComponent({
     total: {
       type: Number,
       required: true
-    },
-    onChange: { type: Function }
+    }
   },
+  emits: ['change'],
   data () {
     return {
       sharedState: store.state,
@@ -92,8 +92,13 @@ export default defineComponent({
   computed: {
     canExport () {
       return Object.entries(this.sharedState.input.filters).some(
-        ([key, value]) => key !== 'isImported' && (value !== null && !(Array.isArray(value) && value.length === 0))
+        ([key, value]) => key !== 'isImported' && (value !== null && value !== undefined && !(Array.isArray(value) && value.length === 0))
       ) && this.total > 0
+    }
+  },
+  methods: {
+    onChange(refresh: boolean) {
+      this.$emit('change', refresh)
     }
   }
 })

@@ -2,7 +2,7 @@
 <template>
   <SignalementViewModalEditSearch/>
   <SignalementViewModalSaveSearch
-    @clickSaveSearch="handleClickSaveSearch"
+    @savedSearchSuccess="onSearchSaved"
   />
   <div v-if="classNameDeleteConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="classNameDeleteConfirmation">
     <p>{{ messageDeleteConfirmation }}</p>
@@ -82,10 +82,8 @@ import SignalementListCards from './components/SignalementListCards.vue'
 import SignalementListPagination from './components/SignalementListPagination.vue'
 import SignalementViewModalEditSearch from './components/SignalementViewModalEditSearch.vue'
 import SignalementViewModalSaveSearch from './components/SignalementViewModalSaveSearch.vue'
-import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 import HistoSelect from '../common/HistoSelect.vue'
 import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, addQueryParameter, removeQueryParameter, buildUrl, clearScreen } from './utils/signalementUtils'
-import { buildBadge } from './services/badgeFilterLabelBuilder'
 
 const initElements:any = document.querySelector('#app-signalement-view')
 
@@ -160,9 +158,6 @@ export default defineComponent({
     handleClickReset () {
       this.init(true)
     },
-    handleClickSaveSearch (payload: { name: string; params: any }) {
-      requests.saveSearch(payload, this.sharedProps.csrfSaveSearch, this.handleSearchSaved)
-    },
     handleSignalements (requestResponse: any) {
       handleSignalementsShared(this, requestResponse)
     },
@@ -194,38 +189,25 @@ export default defineComponent({
       requests.getSignalements(this.handleSignalements)
     },
     handleFilters () {
-      this.sharedState.selectedSavedSearchId = null
+      this.sharedState.selectedSavedSearchId = undefined
       handleFilters(this, initElements.dataset.ajaxurl)
     },    
     handleDelete (requestResponse: any) {
       this.messageDeleteConfirmation =
-          requestResponse.status === 200
-            ? requestResponse.message
+          requestResponse.data.status === 200
+            ? requestResponse.data.message
             : 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
       this.classNameDeleteConfirmation =
-          requestResponse.status === 200
+          requestResponse.data.status === 200
             ? 'fr-alert--success'
             : 'fr-alert--error'
 
       buildUrl(this, initElements.dataset.ajaxurl)
       requests.getSignalements(this.handleSignalements)
     },
-    handleSearchSaved (requestResponse: any) {
-      this.messageDeleteConfirmation = requestResponse.data.message
-      this.classNameDeleteConfirmation =
-          requestResponse.status === 200
-            ? 'fr-alert--success'
-            : 'fr-alert--error'
-      if (requestResponse.status === 200 && requestResponse.data?.data?.savedSearch) {
-        const saved = requestResponse.data.data.savedSearch
-        const newOption = new HistoInterfaceSelectOption()
-        newOption.Id = saved.id.toString()
-        newOption.Text = saved.name
-        newOption.Params = saved.params
-        this.sharedState.savedSearches.push(newOption)
-        this.sharedState.selectedSavedSearchId = newOption.Id
-        this.sharedState.savedSearchSelectKey++
-      }
+    onSearchSaved(message: string, className: string ) {
+      this.messageDeleteConfirmation = message
+      this.classNameDeleteConfirmation = className
     },
     applySavedSearch(value: string) {
       if (!value) {
@@ -246,9 +228,6 @@ export default defineComponent({
 
       this.handleFilters()
       this.sharedState.selectedSavedSearchId = value
-    },
-    getBadgeFilterLabel (key: string, value: any) {
-      return buildBadge(key, value)
     },
     async deleteItem (item: SignalementItem|null) {
       clearScreen(this)
