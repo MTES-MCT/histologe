@@ -118,7 +118,6 @@ class BackBailleurController extends AbstractController
             ['target' => '#table-list-results', 'content' => $tableListResult],
             ['target' => '#title-list-results', 'content' => $titleListResult],
         ];
-
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 }
