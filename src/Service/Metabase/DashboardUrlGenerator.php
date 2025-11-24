@@ -62,7 +62,7 @@ class DashboardUrlGenerator
             return ($ttlInMinutes - 1) * 60;
         }
 
-        return 60;
+        return 3600;
     }
 
     private function buildUrl(array $queryParams, string $token): string
