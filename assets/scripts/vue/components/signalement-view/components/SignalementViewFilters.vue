@@ -142,7 +142,8 @@
     </div>
     <div :class="defineCssBlocMultiTerritoire(2,2)" v-if="layout=='horizontal'">
       <button
-          @click="saveSearch"
+          data-fr-opened="false"
+          aria-controls="modal-save-search"
           class="fr-link fr-link--icon-left fr-icon-star-line fr-text--sm">
         Sauvegarder ma recherche
       </button>
@@ -423,7 +424,7 @@ export default defineComponent({
     },
     onChange: { type: Function }
   },
-  emits: ['changeTerritory', 'clickReset', 'clickSaveSearch'],
+  emits: ['changeTerritory', 'clickReset'],
   computed: {
     filtersSanitized () {
       const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
@@ -441,9 +442,6 @@ export default defineComponent({
 
       return Object.fromEntries(filters)
     }
-    // hasEnoughFilters() {
-    //   return Object.keys(this.filtersSanitized).length > 1
-    // }
   },
   methods: {
     defineCssBloc1 () {
@@ -579,30 +577,6 @@ export default defineComponent({
       }
       this.$emit('changeTerritory', value)
     },
-    saveSearch () {
-      // const name = this.buildSearchName(this.filtersSanitized)
-      const name = 'test' // TODO ouvrir une modale
-
-      this.$emit('clickSaveSearch', {
-        name,
-        params: this.filtersSanitized
-      })
-    },
-    // buildSearchName(filtersSanitized: Record<string, any>): string {
-    //   // TODO : enregistrer pagination et ordre de tri ?
-    //   const parts: string[] = []
-
-    //   for (const [key, value] of Object.entries(filtersSanitized)) {
-    //     if (!value || value.length === 0) continue
-
-    //     const badge = buildBadge(key, value)
-    //     if (badge) {
-    //       parts.push(badge)
-    //     }
-    //   }
-
-    //   return parts.slice(0, 8).join(' • ')
-    // },
     resetFilters () {
       const keepIsImported = this.sharedState.input.filters.isImported
 

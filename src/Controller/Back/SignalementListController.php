@@ -93,7 +93,7 @@ class SignalementListController extends AbstractController
         if (mb_strlen($name) > 50) {
             return $this->json([
                 'status' => Response::HTTP_BAD_REQUEST,
-                'message' => 'Le nom ne peut pas dépasser 60 caractères.',
+                'message' => 'Le nom ne peut pas dépasser 50 caractères.',
             ], Response::HTTP_BAD_REQUEST);
         }
         $params = $data['params'] ?? null;
