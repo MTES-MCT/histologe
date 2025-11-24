@@ -180,6 +180,7 @@ export const store = {
   },
   props: {
     ajaxurlSignalement: '',
+    baseAjaxUrlSignalement: '',
     ajaxurlRemoveSignalement: '',
     ajaxurlExportCsv: '',
     ajaxurlSettings: '',

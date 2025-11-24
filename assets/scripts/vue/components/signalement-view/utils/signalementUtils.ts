@@ -161,6 +161,14 @@ export function handleSettings (context: any, requestResponse: any): any {
     }
     context.sharedState.savedSearches.push(optionItem)
   }
+
+  context.$nextTick(() => {
+    // refresh HistoSelect via ref
+    const selectRef = context.$refs.savedSearchSelect as any | undefined
+    if (selectRef?.refreshDisplayedItems) {
+      selectRef.refreshDisplayedItems(context.sharedState.selectedSavedSearchId)
+    }
+  })
 }
 
 export function handleTerritoryChange (context: any, value: any): any {
@@ -185,6 +193,7 @@ export function handleSignalementsShared (context: any, requestResponse: any): a
 }
 
 export function handleFilters (context: any, ajaxurl: string): any {
+  context.sharedState.selectedSavedSearchId = undefined
   clearScreen(context)
 
   if (context.abortRequest !== null) {
@@ -196,7 +205,6 @@ export function handleFilters (context: any, ajaxurl: string): any {
   const url = new URL(window.location.toString())
   url.search = ''
   context.sharedState.input.queryParameters = []
-
   for (const [key, value] of Object.entries(context.sharedState.input.filters)) {
     if (variableTester.isNotEmpty(value)) {
       if (key === 'dateDepot' || key === 'dateDernierSuivi') {
@@ -236,7 +244,6 @@ export function handleFilters (context: any, ajaxurl: string): any {
   url.searchParams.set('direction', direction)
   addQueryParameter(context, 'sortBy', field)
   addQueryParameter(context, 'direction', direction)
-
   window.history.pushState({}, '', decodeURIComponent(url.toString()))
   buildUrl(context, ajaxurl)
   requests.getSignalements(context.handleSignalements, { signal: context.abortRequest?.signal })
@@ -320,3 +327,22 @@ export function sanitizeFilters(filters: Record<string, any>): Record<string, an
   return Object.fromEntries(entries)
 }
 
+export function applySavedSearch(context: any, value: string) {
+  if (!value) {
+    return
+  }
+
+  const selected = context.sharedState.savedSearches.find((s: SearchInterfaceSelectOption) => s.Id === value)
+  if (!selected) {
+    console.warn('Saved search introuvable.')
+    return
+  }
+
+  const params = selected.Params as Record<string, any>
+
+  context.sharedState.input.filters = JSON.parse(JSON.stringify(params))
+
+  context.sharedState.selectedSavedSearchId = undefined
+  handleFilters(context, context.sharedProps.baseAjaxUrlSignalement)
+  context.sharedState.selectedSavedSearchId = value
+}
