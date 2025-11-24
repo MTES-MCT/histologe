@@ -556,4 +556,158 @@ class SignalementListControllerTest extends WebTestCase
         $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertSame(Response::HTTP_NOT_FOUND, $response['status']);
     }
+
+    public function testEditSearchInvalidCsrf(): void
+    {
+        $client = static::createClient();
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_edit_search', ['id' => 1234]);
+
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $client->loginUser($userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']));
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode(['_token' => 'bad_token'])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response['status']);
+    }
+
+    public function testEditSearchEmptyName(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $user = $userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        $search = new UserSavedSearch();
+        $search->setUser($user);
+        $search->setName('Original');
+        $search->setParams(['demo' => true]);
+        $em->persist($search);
+        $em->flush();
+
+        $csrf = $this->generateCsrfToken($client, 'edit_search');
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_edit_search', ['id' => $search->getId()]);
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                '_token' => $csrf,
+                'name' => '',
+            ])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response['status']);
+    }
+
+    public function testEditSearchTooLongName(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $user = $userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        $search = new UserSavedSearch();
+        $search->setUser($user);
+        $search->setName('Original');
+        $search->setParams(['demo' => true]);
+        $em->persist($search);
+        $em->flush();
+
+        $csrf = $this->generateCsrfToken($client, 'edit_search');
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_edit_search', ['id' => $search->getId()]);
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                '_token' => $csrf,
+                'name' => str_repeat('A', 70),
+            ])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response['status']);
+    }
+
+    public function testEditSearchNotFound(): void
+    {
+        $client = static::createClient();
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $client->loginUser($userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']));
+
+        $csrf = $this->generateCsrfToken($client, 'edit_search');
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_edit_search', ['id' => 999999]);
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                '_token' => $csrf,
+                'name' => 'Nouvelle valeur',
+            ])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_NOT_FOUND, $response['status']);
+    }
+
+    public function testEditSearchSuccess(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $userRepo = static::getContainer()->get(UserRepository::class);
+        $user = $userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        $search = new UserSavedSearch();
+        $search->setUser($user);
+        $search->setName('Ancien nom');
+        $search->setParams(['demo' => true]);
+        $em->persist($search);
+        $em->flush();
+
+        $csrf = $this->generateCsrfToken($client, 'edit_search');
+        $url = static::getContainer()->get(UrlGeneratorInterface::class)
+            ->generate('back_signalements_list_edit_search', ['id' => $search->getId()]);
+
+        $client->request(
+            'POST',
+            $url,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                '_token' => $csrf,
+                'name' => 'Nom modifié',
+            ])
+        );
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame(Response::HTTP_OK, $response['status']);
+    }
 }
