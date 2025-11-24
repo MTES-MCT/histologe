@@ -83,7 +83,7 @@ import SignalementListPagination from './components/SignalementListPagination.vu
 import SignalementViewModalEditSearch from './components/SignalementViewModalEditSearch.vue'
 import SignalementViewModalSaveSearch from './components/SignalementViewModalSaveSearch.vue'
 import HistoSelect from '../common/HistoSelect.vue'
-import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, addQueryParameter, removeQueryParameter, buildUrl, clearScreen } from './utils/signalementUtils'
+import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, addQueryParameter, removeQueryParameter, buildUrl, clearScreen, applySavedSearch } from './utils/signalementUtils'
 
 const initElements:any = document.querySelector('#app-signalement-view')
 
@@ -120,6 +120,7 @@ export default defineComponent({
         this.abortRequest = new AbortController()
 
         this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl
+        this.sharedProps.baseAjaxUrlSignalement = initElements.dataset.ajaxurl
         this.sharedProps.ajaxurlRemoveSignalement = initElements.dataset.ajaxurlRemoveSignalement
         this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
         this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
@@ -144,13 +145,6 @@ export default defineComponent({
     },
     handleSettings (requestResponse: any) {
       handleSettings(this, requestResponse)
-      this.$nextTick(() => {
-        // refresh HistoSelect via ref
-        const selectRef = this.$refs.savedSearchSelect as any | undefined
-        if (selectRef?.refreshDisplayedItems) {
-          selectRef.refreshDisplayedItems(this.sharedState.selectedSavedSearchId)
-        }
-      })
     },
     handleTerritoryChange (value: any) {
       handleTerritoryChange(this, value)
@@ -189,7 +183,6 @@ export default defineComponent({
       requests.getSignalements(this.handleSignalements)
     },
     handleFilters () {
-      this.sharedState.selectedSavedSearchId = undefined
       handleFilters(this, initElements.dataset.ajaxurl)
     },    
     handleDelete (requestResponse: any) {
@@ -210,24 +203,7 @@ export default defineComponent({
       this.classNameDeleteConfirmation = className
     },
     applySavedSearch(value: string) {
-      if (!value) {
-        return
-      }
-
-      const selected = this.sharedState.savedSearches.find(s => s.Id === value)
-      if (!selected) {
-        console.warn('Saved search introuvable.')
-        return
-      }
-
-      const params = selected.Params as Record<string, any>
-      const filters = this.sharedState.input.filters as Record<string, any>
-      for (const key in params) {
-        filters[key] = params[key]
-      }
-
-      this.handleFilters()
-      this.sharedState.selectedSavedSearchId = value
+      applySavedSearch(this, value)
     },
     async deleteItem (item: SignalementItem|null) {
       clearScreen(this)
