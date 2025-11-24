@@ -43,13 +43,13 @@
     {% if is_granted('SIGN_EDIT_NDE', signalement) %}
         {% include '_partials/_modal_edit_nde.html.twig' %}
     {% endif %}
-    {% if is_granted('SIGN_EDIT_INJONCTION', signalement) %}
+    {% if is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_INJONCTION', signalement) %}
         {% include '_partials/_modal_upload_files.html.twig' with {'context': 'form-bo-edit'} %}
         {% include '_partials/_modal_reinit_affectation.html.twig' %}
     {% endif %}
     {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
         {% include '_partials/_modal_localisation.html.twig' %}
-    {% elseif is_granted('SIGN_EDIT_NEED_VALIDATION', signalement) %}
+    {% elseif is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_NEED_VALIDATION', signalement) %}
         {% include '_partials/_modal_pick_localisation.html.twig' %}
     {% endif %}
     {% if is_granted('ROLE_ADMIN') %}

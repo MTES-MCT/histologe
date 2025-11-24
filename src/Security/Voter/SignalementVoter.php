@@ -23,7 +23,7 @@ class SignalementVoter extends Voter
     public const string CLOSE = 'SIGN_CLOSE';
     public const string REOPEN = 'SIGN_REOPEN';
     public const string DELETE = 'SIGN_DELETE';
-    public const string EDIT = 'SIGN_EDIT';
+    public const string EDIT_ACTIVE = 'SIGN_EDIT_ACTIVE';
     public const string EDIT_CLOSED = 'SIGN_EDIT_CLOSED';
     public const string EDIT_INJONCTION = 'SIGN_EDIT_INJONCTION';
     public const string EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
@@ -47,7 +47,7 @@ class SignalementVoter extends Voter
     {
         return \in_array($attribute,
             [
-                self::EDIT,
+                self::EDIT_ACTIVE,
                 self::EDIT_CLOSED,
                 self::EDIT_INJONCTION,
                 self::EDIT_DRAFT,
@@ -97,7 +97,7 @@ class SignalementVoter extends Voter
             self::CLOSE => $this->canClose($subject, $user),
             self::REOPEN => $this->canReopen($subject, $user),
             self::DELETE => $this->canDelete($subject, $user),
-            self::EDIT => $this->canEdit($subject, $user),
+            self::EDIT_ACTIVE => $this->canEditActive($subject, $user),
             self::EDIT_CLOSED => $this->canEditClosed($subject, $user),
             self::EDIT_INJONCTION => $this->canEditInjonction($subject, $user),
             self::EDIT_NEED_VALIDATION => $this->canEditNeedValidation($subject, $user),
@@ -170,35 +170,23 @@ class SignalementVoter extends Voter
         })->count() > 0;
     }
 
-    private function canEdit(Signalement $signalement, User $user): bool
+    private function canEditActive(Signalement $signalement, User $user): bool
     {
         return $this->canEditStatus($signalement, $user, SignalementStatus::ACTIVE);
     }
 
     private function canEditInjonction(Signalement $signalement, User $user): bool
     {
-        if ($this->canEditStatus($signalement, $user, SignalementStatus::ACTIVE)) {
-            return true;
-        }
-
         return $this->canEditStatus($signalement, $user, SignalementStatus::INJONCTION_BAILLEUR);
     }
 
     private function canEditClosed(Signalement $signalement, User $user): bool
     {
-        if ($this->canEditStatus($signalement, $user, SignalementStatus::ACTIVE)) {
-            return true;
-        }
-
         return $this->canEditStatus($signalement, $user, SignalementStatus::CLOSED, false);
     }
 
     private function canEditNeedValidation(Signalement $signalement, User $user): bool
     {
-        if ($this->canEditStatus($signalement, $user, SignalementStatus::ACTIVE)) {
-            return true;
-        }
-
         return $this->canEditStatus($signalement, $user, SignalementStatus::NEED_VALIDATION, false);
     }
 
@@ -291,8 +279,7 @@ class SignalementVoter extends Voter
             $isSignalementNDEActif = QualificationStatus::ARCHIVED != $signalementQualificationNDE->getStatus();
         }
 
-        return $isSignalementNDEActif && $this->canSeeNde($signalement, $user)
-        && $this->canEdit($signalement, $user);
+        return $isSignalementNDEActif && $this->canSeeNde($signalement, $user) && $this->canEditActive($signalement, $user);
     }
 
     private function canSeeNde(Signalement $signalement, User $user): bool

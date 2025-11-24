@@ -361,7 +361,7 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/switch', name: 'back_signalement_switch_value', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT', subject: 'signalement')]
+    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
     public function switchValue(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): RedirectResponse|JsonResponse
     {
         if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), (string) $request->get('_token'))) {
@@ -384,13 +384,15 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/set-rnb', name: 'back_signalement_set_rnb', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_NEED_VALIDATION', subject: 'signalement')]
     public function setRnbId(
         Signalement $signalement,
         Request $request,
         RnbService $rnbService,
         SignalementManager $signalementManager,
     ): RedirectResponse {
+        if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_NEED_VALIDATION', $signalement)) {
+            throw $this->createAccessDeniedException();
+        }
         $rnbId = $request->get('rnbId');
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {

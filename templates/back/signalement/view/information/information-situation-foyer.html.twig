@@ -1,4 +1,4 @@
-{% if is_granted('SIGN_EDIT', signalement) %}
+{% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
     {% include 'back/signalement/view/edit-modals/edit-situation-foyer.html.twig' %}
 {% endif %}
 <div class="fr-grid-row">
@@ -6,7 +6,7 @@
         <h4 class="fr-h6">Situation du foyer</h4>
     </div>
     <div class="fr-col-12 fr-col-md-4 fr-text--right">
-        {% if is_granted('SIGN_EDIT', signalement) %}
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
             <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-situation-foyer" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">
                 Modifier
             </button>

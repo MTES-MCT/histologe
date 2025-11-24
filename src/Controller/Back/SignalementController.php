@@ -61,7 +61,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
@@ -442,13 +441,15 @@ class SignalementController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/save-tags', name: 'back_signalement_save_tags', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_CLOSED', 'signalement')]
     public function saveSignalementTags(
         Signalement $signalement,
         Request $request,
         TagRepository $tagRepository,
         EntityManagerInterface $entityManager,
     ): Response {
+        if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_CLOSED', $signalement)) {
+            throw $this->createAccessDeniedException();
+        }
         if (
             $this->isCsrfTokenValid('signalement_save_tags', (string) $request->request->get('_token'))
         ) {

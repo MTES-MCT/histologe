@@ -1,7 +1,7 @@
 {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
     <div class="fr-mt-4v fr-p-4v fr-background-alt--grey">
         <strong>Etiquettes</strong>
-        {% if is_granted('SIGN_EDIT_CLOSED', signalement) %}
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_CLOSED', signalement) %}
             <button class="keep-when-signalement-closed">
                 <a class="fr-btn--icon-left fr-a-edit fr-icon-bookmark-line fr-ml-2v" id="tags_select_tooltip_btn" href="#" data-fr-opened="false" aria-controls="fr-modal-etiquettes">
                     Gérer les étiquettes
