@@ -73,7 +73,7 @@ class DashboardUrlGenerator
             $baseUrl .= '?'.http_build_query($queryParams);
         }
 
-        $fragment = 'bordered=false&titled=false&theme=transparent';
+        $fragment = 'bordered=false&titled=false&theme=light';
 
         return $baseUrl.'#'.$fragment;
     }

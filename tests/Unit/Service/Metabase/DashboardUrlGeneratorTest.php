@@ -46,7 +46,7 @@ class DashboardUrlGeneratorTest extends TestCase
         $this->assertNotNull($url, 'URL should not be null');
 
         $this->assertStringStartsWith($siteUrl.'/embed/dashboard/', $url);
-        $this->assertStringContainsString('#bordered=false&titled=false&theme=transparent', $url);
+        $this->assertStringContainsString('#bordered=false&titled=false&theme=light', $url);
         $this->assertStringContainsString('?foo=bar&baz=qux', $url);
 
         $path = parse_url($url, \PHP_URL_PATH);
