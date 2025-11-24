@@ -11,8 +11,8 @@
               <h1 id="modal-save-search-title" class="fr-modal__title">
                 Sauvegarder ma recherche
               </h1>
-              <div v-if="classNameEditConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="classNameEditConfirmation">
-                <p>{{ messageEditConfirmation }}</p>
+              <div v-if="classNameSaveConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="classNameSaveConfirmation">
+                <p>{{ messageSaveConfirmation }}</p>
               </div>
               <strong>NB : vous pouvez sauvegarder 5 recherches favorites au maximum</strong>
               <div class="fr-my-4v">
@@ -28,7 +28,7 @@
                   <label class="fr-label">Votre recherche a les filtres suivants :</label>
                   <div class="fr-tags-group">
                     <span v-for="(value, key) in filtersSanitized" :key="key" class="fr-tag fr-tag--sm fr-tag--dismiss">
-                      {{ getBadgeFilterLabel(key, value) }}
+                      {{ getBadgeFilterLabel(key as string, value) }}
                     </span>
                   </div>
                 </div>
@@ -59,6 +59,9 @@
 import { defineComponent } from 'vue'
 import { store } from '../store'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
+import { sanitizeFilters } from '../utils/signalementUtils'
+import { requests } from '../requests'
+import SearchInterfaceSelectOption from '../interfaces/SearchInterfaceSelectOption'
 
 export default defineComponent({
   name: 'SignalementViewModalSaveSearch',
@@ -68,30 +71,16 @@ export default defineComponent({
     return {
       sharedProps: store.props,
       sharedState: store.state,
-      messageEditConfirmation: '',
-      classNameEditConfirmation: '',
+      messageSaveConfirmation: '',
+      classNameSaveConfirmation: '',
       nameSearch: ''
     }
   },
   props: {
   },
-  emits: ['clickSaveSearch'],
   computed: {
     filtersSanitized () {
-      const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
-        if (['isImported', 'isZonesDisplayed', 'showMyAffectationOnly', 'showMySignalementsOnly', 'showWithoutAffectationOnly'].includes(key)) {
-          return false
-        }
-        if (value !== null) {
-          if (Array.isArray(value)) {
-            return value.length > 0
-          }
-          return true
-        }
-        return false
-      })
-
-      return Object.fromEntries(filters)
+      return sanitizeFilters(this.sharedState.input.filters)
     }
   },
   methods: {
@@ -99,12 +88,42 @@ export default defineComponent({
       return buildBadge(key, value)
     },
     saveSearch () {
-      // TODO : gérer l'appel et le retour ici pour gérer les messages d'erreur / succès
-      this.$emit('clickSaveSearch', {
+      const payload = {
         name: this.nameSearch,
         params: this.filtersSanitized
-      })
+      }
+      requests.saveSearch(
+        payload, 
+        this.sharedProps.csrfSaveSearch, 
+        this.handleSearchSaved
+      )
     },
+    handleSearchSaved (requestResponse: any) {
+      const message = requestResponse.data?.message || 'Erreur inconnue'
+      const isSuccess = requestResponse.status === 200
+      const className = isSuccess ? 'fr-alert--success' : 'fr-alert--error'
+
+      if (isSuccess && requestResponse.data?.data?.savedSearch) {
+        const saved = requestResponse.data.data.savedSearch
+        const newOption = new SearchInterfaceSelectOption()
+        newOption.Id = saved.id.toString()
+        newOption.Text = saved.name
+        newOption.NewName = saved.name
+        newOption.Params = saved.params
+        this.sharedState.savedSearches.push(newOption)
+        this.sharedState.selectedSavedSearchId = newOption.Id
+        this.sharedState.savedSearchSelectKey++
+        this.nameSearch = ''
+        this.$emit('savedSearchSuccess', message, className)
+        const closeBtn = document.querySelector(
+          'button[aria-controls="modal-save-search"].fr-btn--close'
+        ) as HTMLButtonElement | null
+        closeBtn?.click()
+      } else {
+        this.messageSaveConfirmation = message
+        this.classNameSaveConfirmation = className
+      }
+    }
   }
 })
 </script>

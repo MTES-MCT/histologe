@@ -2,6 +2,8 @@ import { requests } from '../requests'
 import { PATTERN_BADGE_EPCI, store } from '../store'
 import { Filters, SEARCH_FILTERS } from '../interfaces/filters'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
+import SearchInterfaceSelectOption from '../interfaces/SearchInterfaceSelectOption'
+
 import { variableTester } from '../../../utils/variableTester'
 import { QueryParameter } from '../interfaces/queryParameter'
 
@@ -147,7 +149,7 @@ export function handleSettings (context: any, requestResponse: any): any {
 
   context.sharedState.savedSearches = []
   for (const id in requestResponse.savedSearches) {
-    const optionItem = new HistoInterfaceSelectOption()
+    const optionItem = new SearchInterfaceSelectOption()
     optionItem.Id = requestResponse.savedSearches[id].id.toString()
     if (variableTester.isNotEmpty(requestResponse.savedSearches[id])) {
       const savedSearch = requestResponse.savedSearches[id]
@@ -256,7 +258,7 @@ export function addQueryParameter (context: any, name: string, value: string): a
     .input
     .queryParameters
     .find((parameter: any) => parameter.name === name && parameter.value === value)
-  if (param != null) {
+  if (param != null && param !== undefined) {
     param.value = value
   } else {
     context.sharedState.input.queryParameters.push({ name, value })
@@ -296,3 +298,25 @@ export function removeLocalStorage (context: any): any {
     localStorage.removeItem('back_link_signalement_view')
   }
 }
+
+export function sanitizeFilters(filters: Record<string, any>): Record<string, any> {
+  const ignored = [
+    'isImported',
+    'isZonesDisplayed',
+    'showMyAffectationOnly',
+    'showMySignalementsOnly',
+    'showWithoutAffectationOnly'
+  ]
+
+  const entries = Object.entries(filters).filter(([key, value]) => {
+    if (ignored.includes(key)) return false
+
+    if (value !== null && value !== undefined) {
+      if (Array.isArray(value)) return value.length > 0
+      return true
+    }
+    return false
+  })
+  return Object.fromEntries(entries)
+}
+

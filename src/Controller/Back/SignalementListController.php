@@ -112,6 +112,22 @@ class SignalementListController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
+        $normalizedNew = $this->normalizeParams($params);
+        $existingSearches = $savedSearchRepository->findBy(['user' => $user]);
+        foreach ($existingSearches as $existing) {
+            $existingParams = $existing->getParams();
+            if (!is_array($existingParams)) {
+                continue;
+            }
+            $normalizedExisting = $this->normalizeParams($existingParams);
+            if ($normalizedExisting === $normalizedNew) {
+                return $this->json([
+                    'status' => Response::HTTP_BAD_REQUEST,
+                    'message' => 'Vous avez déjà une recherche avec les mêmes filtres.',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+        }
+
         $search = new UserSavedSearch();
         $search->setUser($user);
         $search->setName($name);
@@ -217,5 +233,22 @@ class SignalementListController extends AbstractController
             'status' => Response::HTTP_OK,
             'message' => 'Recherche éditée',
         ]);
+    }
+
+    /**
+     * @param array<mixed> $params
+     *
+     * @return array<mixed>
+     */
+    private function normalizeParams(array $params): array
+    {
+        ksort($params);
+        foreach ($params as &$value) {
+            if (is_array($value)) {
+                sort($value);
+            }
+        }
+
+        return $params;
     }
 }

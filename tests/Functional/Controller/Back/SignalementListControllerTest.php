@@ -7,7 +7,6 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Entity\UserSavedSearch;
 use App\Repository\UserRepository;
-use App\Repository\UserSavedSearchRepository;
 use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -381,7 +380,6 @@ class SignalementListControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
-        $repo = static::getContainer()->get(UserSavedSearchRepository::class);
         $url = static::getContainer()->get(UrlGeneratorInterface::class)
             ->generate('back_signalements_list_save_search');
 

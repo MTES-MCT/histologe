@@ -39,7 +39,7 @@ export function buildBadge (key: string, value: any): string | undefined | null 
 
   if (key === 'epcis' && value instanceof Array) {
     const epciData = localStorage.getItem('epci')
-    if (epciData !== null) {
+    if (epciData !== null && epciData !== undefined) {
       const listEpci = JSON.parse(epciData)
       if (value.length > 0) {
         const listEpciAsString = value
@@ -58,14 +58,14 @@ export function buildBadge (key: string, value: any): string | undefined | null 
 
   if (key === 'enfantsM6') {
     const item = store.state.enfantMoinsSixList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return item.Text
     }
   }
 
   if (key === 'allocataire') {
     const item = store.state.allocataireList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return item.Text
     }
   }
@@ -92,21 +92,21 @@ export function buildBadge (key: string, value: any): string | undefined | null 
 
   if (key === 'procedure') {
     const item = store.state.procedureList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return 'Procédure suspectée : ' + item.Text
     }
   }
 
   if (key === 'procedureConstatee') {
     const item = store.state.procedureConstateeList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return 'Procédure constatée : ' + item.Text
     }
   }
 
   if (key === 'motifCloture') {
     const item = store.state.motifClotureList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return 'Motif de clôture : ' + item.Text
     }
   }
@@ -174,7 +174,7 @@ function buildStaticBadge (value: any): string | undefined {
 
   for (const list of staticListsWithNoDuplicateId) {
     const item = list.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return item.Text
     }
   }

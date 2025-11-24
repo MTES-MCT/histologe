@@ -91,7 +91,6 @@ export default defineComponent({
       requests.editSearch(id, newName, this.sharedProps.csrfEditSearch, this.handleSearchEdited)
     },
     handleSearchEdited (requestResponse: any, id: string = '', newName: string = '') {
-      // TODO : message de retour dans la modale
       this.messageEditConfirmation = requestResponse.data.message
       this.classNameEditConfirmation =
           requestResponse.status === 200
