@@ -78,7 +78,7 @@ class SignalementListController extends AbstractController
         if (!$this->isCsrfTokenValid('save_search', $csrfToken)) {
             return $this->json([
                 'status' => Response::HTTP_FORBIDDEN,
-                'message' => 'Token CSRF invalide.',
+                'message' => 'Le token CSRF est invalide.',
             ], Response::HTTP_FORBIDDEN);
         }
 
@@ -164,7 +164,7 @@ class SignalementListController extends AbstractController
         if (!$this->isCsrfTokenValid('delete_search', $csrfToken)) {
             return $this->json([
                 'status' => Response::HTTP_FORBIDDEN,
-                'message' => 'Token CSRF invalide.',
+                'message' => 'Le token CSRF est invalide.',
             ], Response::HTTP_FORBIDDEN);
         }
 
@@ -200,7 +200,7 @@ class SignalementListController extends AbstractController
         if (!$this->isCsrfTokenValid('edit_search', $csrfToken)) {
             return $this->json([
                 'status' => Response::HTTP_FORBIDDEN,
-                'message' => 'Token CSRF invalide.',
+                'message' => 'Le token CSRF est invalide.',
             ], Response::HTTP_FORBIDDEN);
         }
 
