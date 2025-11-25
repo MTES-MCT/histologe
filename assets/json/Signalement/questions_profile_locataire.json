@@ -392,7 +392,7 @@
               },
               {
                 "type": "SignalementFormButton",
-                "label": "Suivant (injonction bailleur)",
+                "label": "Suivant",
                 "slug": "info_procedure_bail_next_injonction_bailleur",
                 "action": "goto.save:injonction_bailleur",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
@@ -501,19 +501,39 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Souhaitez-vous profiter de notre nouveau service pour tenter de résoudre votre problème ?",
     "slug": "injonction_bailleur",
     "screenCategory": "Injonction bailleur",
     "components": {
       "body": [
         {
-          "type": "SignalementFormInfo",
-          "label": "{{formStore.props.platformName}} peut vous aider à accélérer la résolution de votre dossier en contactant directement votre bailleur pour l'encourager à engager des travaux dans votre logement. Si celui-ci ne répond pas, nous transmettrons automatiquement votre dossier aux services compétents.",
-          "slug": "injonction_bailleur_info"
+          "type": "SignalementFormParagraph",
+          "label": "Ce nouveau service en cours de déploiement peut permettre de résoudre les situations conflictuelles plus rapidement.",
+          "slug": "injonction_bailleur_paragraph_1"
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "<strong>Comment cela fonctionne ?</strong><br>Votre bailleur (propriétaire) sera contacté et aura 3 semaines maximum pour venir consulter les désordres déclarés et se positionner officiellement sur les suites qu’il souhaite donner.",
+          "slug": "injonction_bailleur_paragraph_2"
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "1. Votre propriétaire reconnaît sa responsabilité et s'engage à réaliser les travaux.<br>L'avancement du dossier sera alors régulièrement suivi jusqu'à que le problème soit résolu.",
+          "slug": "injonction_bailleur_paragraph_3"
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "2. Votre propriétaire conteste le signalement et les désordres signalés. Votre dossier sera alors pris en charge par les services compétents. Ces services auront accès aux informations renseignées par votre propriétaire, ce qui permettra un traitement plus efficace de votre dossier.",
+          "slug": "injonction_bailleur_paragraph_4"
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "A tout moment, vous pourrez demander la prise en charge de votre dossier par l'administration compétente.",
+          "slug": "injonction_bailleur_paragraph_5"
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Souhaitez-vous que {{formStore.props.platformName}} contacte votre bailleur afin d'accélérer la résolution ?",
+          "label": "Souhaitez-vous que {{formStore.props.platformName}} contacte votre propriétaire pour lui demander de se positionner sur les désordres déclarés ? *",
           "slug": "injonction_bailleur_choice",
           "values": [
             {
@@ -531,6 +551,11 @@
           "accessibility": {
             "focus": true
           }
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "* Sous réserve de votre éligibilité à ce dispositif. Si les désordres déclarés mettent en danger votre santé ou votre sécurité, votre dossier sera directement transmis aux services compétents.",
+          "slug": "injonction_bailleur_paragraph_6"
         },
         {
           "type": "SignalementFormWarning",
@@ -734,7 +759,7 @@
               },
               {
                 "type": "SignalementFormButton",
-                "label": "Précédent (injonction bailleur)",
+                "label": "Précédent",
                 "slug": "zone_concernee_zone_previous_injonction",
                 "action": "goto:injonction_bailleur",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
@@ -2415,7 +2440,7 @@
               },
               {
                 "type": "SignalementFormButton",
-                "label": "Valider mon signalement (injonction bailleur TODO)",
+                "label": "Valider mon signalement",
                 "slug": "validation_signalement_next_injonction",
                 "action": "goto.save:eligibilite_injonction",
                 "customCss": "fr-btn--icon-left fr-icon-check-line",
@@ -2439,18 +2464,48 @@
   {
     "type": "SignalementFormScreen",
     "label": "Résultat de l'éligibilité à l'injonction",
-    "description": "TODO textes",
+    "description": "",
     "slug": "eligibilite_injonction",
     "screenCategory": "Récapitulatif",
     "components": {
       "body": [
         {
           "type": "SignalementFormSubscreen",
-          "label": "Félicitations pour ton éligibilité mec !",
+          "label": "Votre signalement est éligible !",
           "slug": "eligibilite_injonction_ok",
-          "description": "détails éligibilité",
+          "description": "Maintenant, {{formStore.props.platformName}} va contacter votre bailleur (propriétaire) par courrier et/ou e-mail dans les 24 à 48h afin de l'informer de votre signalement et l'inviter à en prendre connaissance.",
           "components": {
             "body": [
+              {
+                "type": "SignalementFormParagraph",
+                "label": "Nous lui rappellerons les obligations et les risques encourus en cas de manquements. Puis nous lui demanderons s’il souhaite faire face à une procédure administrative lourde ou s’il souhaite s’engager dans la remise en état du logement.",
+                "slug": "eligibilite_injonction_ok_1"
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Votre bailleur a 3 semaines maximum pour apporter une réponse.",
+                "slug": "eligibilite_injonction_info"
+              },
+              {
+                "type": "SignalementFormParagraph",
+                "label": "<strong>Vous serez informé·e de sa réponse en temps réel.</strong> S’il ne répond pas, votre signalement sera automatiquement transmis aux autorités compétentes de votre département pour le lancement des procédures administratives.",
+                "slug": "eligibilite_injonction_ok_2"
+              },
+              {
+                "type": "SignalementFormParagraph",
+                "label": "Si votre bailleur s’engage à résoudre les problèmes avant le lancement des procédures administratives, nous lui enverrons un message chaque mois pour connaître les avancées.",
+                "slug": "eligibilite_injonction_ok_3"
+              },
+              {
+                "type": "SignalementFormParagraph",
+                "label": "Vous pourrez, de même que votre bailleur, mettre un terme à cette résolution amiable à tout moment. A partir de votre espace de suivi, vous pourrez demander le lancement de la procédure administrative ou au contraire l’arrêt de votre signalement.",
+                "slug": "eligibilite_injonction_ok_4"
+              },
+              {
+                "type": "SignalementFormParagraph",
+                "label": "Un e-mail va vous être envoyé pour confirmer l’enregistrement de votre signalement. Celui-ci contiendra un lien vers votre espace de suivi qui vous permettra de suivre votre dossier (réponse de votre bailleur et, le cas échéant, actualisation des avancées).",
+                "slug": "eligibilite_injonction_ok_5"
+              }
             ]
           },
           "conditional": {
@@ -2459,11 +2514,21 @@
         },
         {
           "type": "SignalementFormSubscreen",
-          "label": "Dommage !",
+          "label": "",
           "slug": "eligibilite_injonction_ko",
-          "description": "Déso, t'es pas éligible à l'injonction automatisée. Mais t'inquiète, le PDLHI est là pour t'aider !",
+          "description": "Votre signalement n'est pas éligible pour l'envoi d'un courrier à votre bailleur",
           "components": {
             "body": [
+              {
+                "type": "SignalementFormInfo",
+                "label": "Rassurez-vous : il va être immédiatement transmis aux autorités compétentes de votre département pour être pris en charge par les différents services.",
+                "slug": "eligibilite_injonction_info"
+              },
+              {
+                "type": "SignalementFormParagraph",
+                "label": "Un e-mail va vous être envoyé pour confirmer l’enregistrement de votre signalement. Celui-ci contiendra un lien vers votre espace de suivi qui vous permettra de suivre et d’échanger avec les différents services pendant toute la durée de la procédure.",
+                "slug": "eligibilite_injonction_ok_2"
+              }
             ]
           },
           "conditional": {
@@ -2494,11 +2559,32 @@
   {
     "type": "SignalementFormScreen",
     "label": "Votre signalement a bien été enregistré !",
-    "description": "<p>Votre numéro de signalement est le : <b>#{{formStore.data.signalementReference}}</b><br>Il va être étudié par l'administration et vous recevrez un retour sous <u>7 jours ouvrés</u>.</p><p>Vous pouvez suivre l'avancée de votre dossier ou ajouter des informations en cliquant sur le bouton ci-dessous.</p>",
+    "description": "<p>Votre numéro de signalement est le : <b>#{{formStore.data.signalementReference}}</b></p>",
     "slug": "confirmation_signalement",
     "screenCategory": "Récapitulatif",
     "components": {
       "body": [
+        {
+          "type": "SignalementFormParagraph",
+          "label": "Il va être étudié par votre propriétaire, qui vous donnera une réponses sous <u>3 semaines maximum</u>. Sinon, votre signalement sera automatiquement transmis aux autorités compétentes de votre département",
+          "slug": "confirmation_signalement_injonction",
+          "conditional": {
+            "show": "formStore.data.signalementStatus === 'INJONCTION_BAILLEUR'"
+          }
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "Il va être étudié par l'administration et vous recevrez un retour sous <u>7 jours ouvrés</u>.",
+          "slug": "confirmation_signalement_injonction",
+          "conditional": {
+            "show": "formStore.data.signalementStatus !== 'INJONCTION_BAILLEUR'"
+          }
+        },
+        {
+          "type": "SignalementFormParagraph",
+          "label": "Vous pouvez suivre l'avancée de votre dossier ou ajouter des informations en cliquant sur le bouton ci-dessous.",
+          "slug": "confirmation_signalement_injonction"
+        },
         {
           "type": "SignalementFormInfo",
           "label": "Le lien vers votre page de suivi a aussi été envoyé par mail. N'oubliez pas de regarder dans vos courriers indésirables (spam) !",
