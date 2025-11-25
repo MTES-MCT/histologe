@@ -16,6 +16,7 @@ import './vanilla/services/ui/list_filter_helper.js';
 import './vanilla/services/ui/notice_helper.js';
 import './vanilla/services/ui/modales_helper.js';
 import './vanilla/services/ui/tabs_manager.js';
+import './vanilla/services/ui/metabase_resizer.js';
 
 import './vanilla/controllers/form_account.js';
 import './vanilla/controllers/form_nde.js';
