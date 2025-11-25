@@ -4,6 +4,11 @@ import {
   updateLocalStorageOnEvent,
 } from '../../services/ui/list_filter_helper';
 function histoUpdateSubmitButton(elementName, elementLabel) {
+  const button = document.querySelector(elementName);
+  if (!button) {
+    console.error(`histoUpdateSubmitButton: élément introuvable pour le sélecteur "${elementName}"`);
+    return;
+  }
   document.querySelector(elementName).innerHTML = elementLabel;
   document.querySelector(elementName).disabled = true;
 }
@@ -117,17 +122,14 @@ document.querySelectorAll('.btn-delete-partner-user').forEach((swbtn) => {
   });
 });
 
-document.querySelectorAll('.btn-delete-partner').forEach((swbtn) => {
-  swbtn.addEventListener('click', (evt) => {
-    const target = evt.target;
-    document.querySelectorAll('.fr-modal-partner-delete_name').forEach((userItem) => {
-      userItem.textContent = target.getAttribute('data-partnername');
-    });
-    histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target);
-    document.querySelector('#partner_delete_form').addEventListener('submit', () => {
-      histoUpdateSubmitButton('#partner_delete_form_submit', 'Suppression en cours...');
-    });
+document.addEventListener('click', (evt) => {
+  const target = evt.target.closest('.btn-delete-partner');
+  if (!target) return;
+
+  document.querySelectorAll('.fr-modal-partner-delete_name').forEach((userItem) => {
+    userItem.textContent = target.getAttribute('data-partnername');
   });
+  histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target);
 });
 
 if (document.querySelector('#partner_type')) {

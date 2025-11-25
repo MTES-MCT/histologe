@@ -29,6 +29,7 @@ use App\Repository\UserRepository;
 use App\Security\Voter\PartnerVoter;
 use App\Security\Voter\UserVoter;
 use App\Service\EmailAlertChecker;
+use App\Service\FormHelper;
 use App\Service\ListFilters\SearchPartner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -36,9 +37,11 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Sanitizer;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,28 +55,42 @@ use Symfony\Component\Workflow\WorkflowInterface;
 #[Route('/bo/partenaires')]
 class PartnerController extends AbstractController
 {
-    #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN_TERRITORY')]
-    public function index(
-        Request $request,
-        PartnerRepository $partnerRepository,
-        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
-    ): Response {
+    public function __construct(
+        private readonly PartnerRepository $partnerRepository,
+        #[Autowire(param: 'standard_max_list_pagination')]
+        private readonly int $maxListPagination,
+    ) {
+    }
+
+    /**
+     * @return array{FormInterface, SearchPartner, Paginator<Partner>}
+     */
+    private function handleSearch(Request $request, bool $fromSearchParams = false): array
+    {
         /** @var User $user */
         $user = $this->getUser();
         $searchPartner = new SearchPartner($user);
         $form = $this->createForm(SearchPartnerType::class, $searchPartner);
-        $form->handleRequest($request);
+        FormHelper::handleFormSubmitFromRequestOrSearchParams($form, $request, $fromSearchParams);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchPartner = new SearchPartner($user);
         }
-        $paginatedPartners = $partnerRepository->findFilteredPaginated($searchPartner, $maxListPagination);
+        $paginatedPartners = $this->partnerRepository->findFilteredPaginated($searchPartner, $this->maxListPagination);
+
+        return [$form, $searchPartner, $paginatedPartners];
+    }
+
+    #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN_TERRITORY')]
+    public function index(Request $request): Response
+    {
+        [$form, $searchPartner, $paginatedPartners] = $this->handleSearch($request);
 
         return $this->render('back/partner/index.html.twig', [
             'form' => $form,
             'searchPartner' => $searchPartner,
             'partners' => $paginatedPartners,
-            'pages' => (int) ceil($paginatedPartners->count() / $maxListPagination),
+            'pages' => (int) ceil($paginatedPartners->count() / $this->maxListPagination),
         ]);
     }
 
@@ -92,7 +109,7 @@ class PartnerController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($partner);
             $entityManager->flush();
-            $this->addFlash('success', 'Le partenaire a bien été créé.');
+            $this->addFlash('success', ['title' => 'Partenaire ajouté', 'message' => 'Le partenaire a bien été créé.']);
 
             return $this->redirectToRoute('back_partner_view', [
                 'id' => $partner->getId(),
@@ -208,7 +225,7 @@ class PartnerController extends AbstractController
             }
 
             $entityManager->flush();
-            $this->addFlash('success', 'Le partenaire a bien été modifié.');
+            $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le partenaire a bien été modifié.']);
 
             return $this->redirectToRoute('back_partner_view', [
                 'id' => $partner->getId(),
@@ -238,7 +255,7 @@ class PartnerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $partnerManager->save($partner);
-            $this->addFlash('success', 'Le périmètre a bien été modifié.');
+            $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le périmètre a bien été modifié.']);
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'perimetre']);
         }
@@ -311,13 +328,26 @@ class PartnerController extends AbstractController
 
             $entityManager->persist($partner);
             $entityManager->flush();
-            $this->addFlash('success', 'Le partenaire a bien été supprimé.');
+            $flashMessages[] = ['type' => 'success', 'title' => 'Partenaire supprimé', 'message' => 'Le partenaire a bien été supprimé.'];
+            [, $searchPartner, $paginatedPartners] = $this->handleSearch($request, true);
+            $tableListResult = $this->renderView('back/partner/_table-list-results.html.twig', [
+                'searchPartner' => $searchPartner,
+                'partners' => $paginatedPartners,
+                'pages' => (int) ceil($paginatedPartners->count() / $this->maxListPagination),
+            ]);
+            $titleListResult = $this->renderView('back/partner/_title-list-results.html.twig', [
+                'partners' => $paginatedPartners,
+            ]);
+            $htmlTargetContents = [
+                ['target' => '#table-list-results', 'content' => $tableListResult],
+                ['target' => '#title-list-results', 'content' => $titleListResult],
+            ];
 
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
-        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'Une erreur est survenue lors de la suppression, veuillez réessayer.'];
 
-        return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
     }
 
     private function cancelOrReplanVisites(
@@ -385,7 +415,7 @@ class PartnerController extends AbstractController
                     )
                 );
                 $message = 'L\'utilisateur a bien été ajouté à votre partenaire. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
-                $this->addFlash('success', $message);
+                $this->addFlash('success', ['title' => 'Utilisateur ajouté', 'message' => $message]);
 
                 $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -440,7 +470,7 @@ class PartnerController extends AbstractController
             $userManager->persist($userPartner);
             $userManager->save($user);
             $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
-            $this->addFlash('success', $message);
+            $this->addFlash('success', ['title' => 'Utilisateur ajouté', 'message' => $message]);
 
             $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
 

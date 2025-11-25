@@ -86,11 +86,12 @@ class NotificationController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
+        $token = is_string($request->request->get('csrf_token')) ? $request->request->get('csrf_token') : '';
         $flashMessages = [];
-        if ($request->request->get('selected_notifications') && $this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->request->get('csrf_token'))) {
-            $notificationRepository->markUserNotificationsAsSeen($user, explode(',', $request->request->get('selected_notifications')));
+        if ($request->request->get('selected_notifications') && $this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $token)) {
+            $notificationRepository->markUserNotificationsAsSeen($user, explode(',', (string) $request->request->get('selected_notifications')));
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les notifications sélectionnées ont bien été marquées comme lues.'];
-        } elseif ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $request->request->get('csrf_token'))) {
+        } elseif ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $token)) {
             $notificationRepository->markUserNotificationsAsSeen($user);
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Toutes les notifications ont bien été marquées comme lues.'];
         }
@@ -112,11 +113,12 @@ class NotificationController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
+        $token = is_string($request->request->get('csrf_token')) ? $request->request->get('csrf_token') : '';
         $flashMessages = [];
-        if ($request->request->get('selected_notifications') && $this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->request->get('csrf_token'))) {
-            $notificationRepository->deleteUserNotifications($user, explode(',', $request->request->get('selected_notifications')));
+        if ($request->request->get('selected_notifications') && $this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $token)) {
+            $notificationRepository->deleteUserNotifications($user, explode(',', (string) $request->request->get('selected_notifications')));
             $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Les notifications sélectionnées ont bien été supprimées.'];
-        } elseif ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $request->request->get('csrf_token'))) {
+        } elseif ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $token)) {
             $notificationRepository->deleteUserNotifications($user);
             $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Toutes les notifications ont bien été supprimées.'];
         }
@@ -149,21 +151,5 @@ class NotificationController extends AbstractController
         $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'La notification n\'a pas pu être supprimée, veuillez réessayer..'];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function addParamFromRequest(Request $request): array
-    {
-        $params = [];
-        if ($request->get('orderType')) {
-            $params['orderType'] = $request->get('orderType');
-        }
-        if ($request->get('page')) {
-            $params['page'] = $request->get('page');
-        }
-
-        return $params;
     }
 }

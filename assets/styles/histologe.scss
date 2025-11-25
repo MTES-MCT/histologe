@@ -212,6 +212,10 @@ legend.required::after, label.required::after {
     display: inline;
 }
 
+.fr-display-inline-block {
+    display: inline-block;
+}
+
 .fr-display-flex-column {
     display: flex;
     flex-direction: column;
