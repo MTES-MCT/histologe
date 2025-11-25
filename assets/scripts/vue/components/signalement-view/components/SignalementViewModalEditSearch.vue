@@ -26,8 +26,8 @@
                   <div class="fr-grid-row fr-grid-row--bottom fr-mb-2v">
                     <div class="fr-col-9">
                       <div class="fr-input-group fr-mr-2v">
-                        <label class="fr-label">Nom de la recherche :</label>
-                        <input type="text" class="fr-input" v-model="search.NewName" :placeholder="search.Text" :maxlength="50"/>
+                        <label class="fr-label" :for="`saved-search-name-${search.Id}`">Nom de la recherche :</label>
+                        <input type="text" class="fr-input" v-model="search.NewName" :placeholder="search.Text" :maxlength="50" :id="`saved-search-name-${search.Id}`"/>
                       </div>
                     </div>
                     <div class="fr-col-3 fr-text-right">
@@ -38,8 +38,8 @@
                   </div>
 
                   <div class="fr-mb-2v">
-                    <label class="fr-label">Filtres de la recherche :</label>
-                    <div class="fr-tags-group">
+                    <label class="fr-label" :for="`saved-search-filters-${search.Id}`">Filtres de la recherche :</label>
+                    <div class="fr-tags-group" :id="`saved-search-filters-${search.Id}`">
                       <span v-for="(value, key) in search.Params" :key="key" class="fr-tag fr-tag--sm fr-tag--dismiss">
                         {{ getBadgeFilterLabel(key, value) }}
                       </span>
@@ -126,5 +126,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-</style>

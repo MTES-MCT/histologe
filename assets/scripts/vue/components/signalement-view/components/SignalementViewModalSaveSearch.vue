@@ -17,16 +17,16 @@
               <strong>NB : vous pouvez sauvegarder 5 recherches favorites au maximum</strong>
               <div class="fr-my-4v">
                 <div class="fr-input-group fr-mr-2v">
-                  <label class="fr-label">
+                  <label class="fr-label" for="search-name">
                     Saisissez un nom pour votre recherche <span class="text-required">*</span>
                     <span class="fr-hint-text">Le nom sera affiché dans votre liste de recherches favorites. 50 caractères maximum.</span>
                   </label>
-                  <input type="text" class="fr-input" v-model="nameSearch" :maxlength="50"/>
+                  <input type="text" class="fr-input" v-model="nameSearch" :maxlength="50" id="search-name"/>
                 </div>
 
                 <div class="fr-mb-2v">
-                  <label class="fr-label">Votre recherche a les filtres suivants :</label>
-                  <div class="fr-tags-group">
+                  <label class="fr-label" for="search-filters">Votre recherche a les filtres suivants :</label>
+                  <div class="fr-tags-group" id="search-filters">
                     <span v-for="(value, key) in filtersSanitized" :key="key" class="fr-tag fr-tag--sm fr-tag--dismiss">
                       {{ getBadgeFilterLabel(key as string, value) }}
                     </span>
@@ -127,5 +127,3 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-</style>
