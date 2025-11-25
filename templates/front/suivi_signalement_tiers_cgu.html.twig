@@ -12,8 +12,12 @@
 			les&nbsp;<a href='/cgu' target='_blank' rel='noopener' title='conditions générales d&apos;utilisation - ouvre une nouvelle fenêtre'>conditions générales d'utilisation</a>&nbsp;et
 			la&nbsp;<a href='/politique-de-confidentialite' target='_blank' rel='noopener' title='politique de confidentialité - ouvre une nouvelle fenêtre'>politique de confidentialité</a>&nbsp;du service.
 
-			<form method="post" action="{{ path('suivi_signalement_tiers_cgu_accept', {'code': signalement.codeSuivi}) }}">
-				<button class="fr-btn fr-btn--primary fr-mt-3w" type="submit">Accepter les conditions générales d'utilisation</button>
+			<form method="post" action="{{ path('suivi_signalement_tiers_cgu_accept', {'code': signalement.codeSuivi}) }}" class="fr-mt-3v">
+				<div class="fr-toggle">
+					<input type="checkbox" class="fr-toggle__input" id="toggle-accept" aria-describedby="toggle-messages toggle-hint" name="accept">
+					<label class="fr-toggle__label" for="toggle-accept" data-fr-checked-label="Activé" data-fr-unchecked-label="Désactivé">J'accepte les conditions générales d'utilisation et la politique de confidentialité du service</label>
+				</div>
+				<button class="fr-btn fr-btn--primary fr-mt-3w" type="submit">Accéder au dossier</button>
 				<input type="hidden" name="_token" value="{{ csrf_token('suivi_signalement_tiers_cgu_accept' ~ signalement.codeSuivi) }}">
 			</form>
 		</div>

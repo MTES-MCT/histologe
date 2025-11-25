@@ -517,14 +517,16 @@ class SignalementController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $token = $request->get('_token');
-            if ($this->isCsrfTokenValid('suivi_signalement_tiers_cgu_accept'.$signalement->getCodeSuivi(), $token)) {
+            if (!$this->isCsrfTokenValid('suivi_signalement_tiers_cgu_accept'.$signalement->getCodeSuivi(), $token)) {
+                $this->addFlash('error', 'Le jeton CSRF est invalide.');
+            } elseif (!$request->get('accept')) {
+                $this->addFlash('error', 'Vous devez accepter les CGU pour accéder au dossier.');
+            } else {
                 $signalement->setIsCguTiersAccepted(true);
                 $signalementRepository->save($signalement, true);
 
                 return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
             }
-
-            $this->addFlash('error', 'Le jeton CSRF est invalide.');
         }
 
         return $this->render('front/suivi_signalement_tiers_cgu.html.twig', [
@@ -1084,6 +1086,7 @@ class SignalementController extends AbstractController
             $description .= $signalement->getNomDeclarant() ? '<li>Nom : '.$signalement->getNomDeclarant().'</li>' : '';
             $description .= $signalement->getPrenomDeclarant() ? '<li>Prénom : '.$signalement->getPrenomDeclarant().'</li>' : '';
             $description .= $signalement->getMailDeclarant() ? '<li>E-mail : '.$signalement->getMailDeclarant().'</li>' : '';
+            $description .= $signalement->getTelDeclarant() ? '<li>Téléphone : '.$signalement->getTelDeclarantDecoded().'</li>' : '';
             $description .= '</ul>';
 
             $suiviManager->createSuivi(

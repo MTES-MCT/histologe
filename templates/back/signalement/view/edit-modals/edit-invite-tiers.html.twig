@@ -29,6 +29,11 @@
                                 <input class="fr-input" type="text" id="coordonneesTiersMail" name="mail" value="{{ signalement.mailDeclarant }}">
                             </div>
 
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="coordonneesTiersTelephone">Téléphone (facultatif)</label>
+                                <input class="fr-input" type="text" id="coordonneesTiersTelephone" name="telephone" value="{{ signalement.telDeclarantDecoded }}">
+                            </div>
+
                             <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_invite_tiers_'~signalement.id) }}">
                         </div>
                         

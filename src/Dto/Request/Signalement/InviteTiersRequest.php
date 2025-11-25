@@ -2,14 +2,12 @@
 
 namespace App\Dto\Request\Signalement;
 
-use App\Validator\DateNaissanceValidatorTrait;
+use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
 class InviteTiersRequest implements RequestInterface
 {
-    use DateNaissanceValidatorTrait;
-
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
         #[Assert\Length(max: 50, maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.')]
@@ -21,6 +19,8 @@ class InviteTiersRequest implements RequestInterface
         #[Email(mode: Email::VALIDATION_MODE_STRICT)]
         #[Assert\Length(max: 255, maxMessage: 'L\'email ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
+        #[AppAssert\TelephoneFormat]
+        private readonly ?string $telephone = null,
     ) {
     }
 
@@ -37,5 +37,10 @@ class InviteTiersRequest implements RequestInterface
     public function getMail(): ?string
     {
         return $this->mail;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
     }
 }

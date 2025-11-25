@@ -391,7 +391,8 @@ class SignalementManager extends AbstractManager
     ): bool {
         $signalement->setNomDeclarant($inviteTiersRequest->getNom())
             ->setPrenomDeclarant($inviteTiersRequest->getPrenom())
-            ->setMailDeclarant($inviteTiersRequest->getMail());
+            ->setMailDeclarant($inviteTiersRequest->getMail())
+            ->setTelDeclarant($inviteTiersRequest->getTelephone());
 
         $this->save($signalement);
 
