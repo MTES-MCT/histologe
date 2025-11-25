@@ -37,6 +37,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementActionController extends AbstractController
@@ -184,13 +185,13 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
+    #[IsGranted('CREATE_SUIVI', subject: 'signalement')]
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,
         SuiviManager $suiviManager,
         LoggerInterface $logger,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('CREATE_SUIVI', $signalement);
         $suivi = (new Suivi())->setSignalement($signalement);
         $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(AddSuiviType::class, $suivi, ['action' => $addSuiviRoute]);
@@ -360,9 +361,9 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/switch', name: 'back_signalement_switch_value', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
     public function switchValue(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): RedirectResponse|JsonResponse
     {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), (string) $request->get('_token'))) {
             $value = $request->get('value');
 
@@ -389,7 +390,9 @@ class SignalementActionController extends AbstractController
         RnbService $rnbService,
         SignalementManager $signalementManager,
     ): RedirectResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT_NEED_VALIDATION', $signalement);
+        if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_NEED_VALIDATION', $signalement)) {
+            throw $this->createAccessDeniedException();
+        }
         $rnbId = $request->get('rnbId');
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {

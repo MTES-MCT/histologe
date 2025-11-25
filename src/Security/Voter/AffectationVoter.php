@@ -5,7 +5,6 @@ namespace App\Security\Voter;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -13,12 +12,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * @extends Voter<string, Affectation|Signalement>
+ * @extends Voter<string, Affectation>
  */
 class AffectationVoter extends Voter
 {
-    public const string SEE = 'AFFECTATION_SEE';
-    public const string TOGGLE = 'AFFECTATION_TOGGLE';
     public const string ANSWER = 'AFFECTATION_ANSWER';
     public const string CLOSE = 'AFFECTATION_CLOSE';
     public const string REOPEN = 'AFFECTATION_REOPEN';
@@ -31,12 +28,11 @@ class AffectationVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::SEE, self::TOGGLE, self::ANSWER, self::CLOSE, self::REOPEN, self::AFFECTATION_REINIT], true)
-            && ($subject instanceof Affectation || $subject instanceof Signalement);
+        return \in_array($attribute, [self::ANSWER, self::CLOSE, self::REOPEN, self::AFFECTATION_REINIT], true) && ($subject instanceof Affectation);
     }
 
     /**
-     * @param Signalement|Affectation $subject
+     * @param Affectation $subject
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
@@ -49,51 +45,12 @@ class AffectationVoter extends Voter
         }
 
         return match ($attribute) {
-            self::SEE => $subject instanceof Signalement
-                ? $this->canSee($subject, $user)
-                : false,
-
-            self::TOGGLE => $subject instanceof Signalement
-                ? $this->canToggle($subject, $user)
-                : false,
-
-            self::ANSWER => $subject instanceof Affectation
-                ? $this->canAnswer($subject, $user)
-                : false,
-
-            self::CLOSE => $subject instanceof Affectation
-                ? $this->canClose($subject, $user)
-                : false,
-
-            self::REOPEN => $subject instanceof Affectation
-                ? $this->canReopen($subject, $user)
-                : false,
-
-            self::AFFECTATION_REINIT => $subject instanceof Affectation
-                ? $this->canReinit($subject, $user)
-                : false,
+            self::ANSWER => $this->canAnswer($subject, $user),
+            self::CLOSE => $this->canClose($subject, $user),
+            self::REOPEN => $this->canReopen($subject, $user),
+            self::AFFECTATION_REINIT => $this->canReinit($subject, $user),
             default => false,
         };
-    }
-
-    private function canSee(Signalement $signalement, User $user): bool
-    {
-        return (
-            $user->isSuperAdmin()
-            || $user->isTerritoryAdmin()
-            || $user->hasPermissionAffectation()
-        )
-            && SignalementStatus::NEED_VALIDATION !== $signalement->getStatut();
-    }
-
-    private function canToggle(Signalement $signalement, User $user): bool
-    {
-        return (
-            $user->isSuperAdmin()
-            || $user->isTerritoryAdmin()
-            || $user->hasPermissionAffectation()
-        )
-            && in_array($signalement->getStatut(), [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::ACTIVE]);
     }
 
     private function canAnswer(Affectation $affectation, User $user): bool

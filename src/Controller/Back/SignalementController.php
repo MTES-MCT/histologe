@@ -149,7 +149,6 @@ class SignalementController extends AbstractController
         $canValidateOrRefuseSignalement = $this->isGranted(SignalementVoter::VALIDATE, $signalement)
                                             && !$isClosedForMe
                                             && SignalementStatus::NEED_VALIDATION === $signalement->getStatut();
-        $canReopenAffectation = $affectation && $this->isGranted(AffectationVoter::REOPEN, $affectation);
 
         $isUserSubscribed = false;
         if ($signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
@@ -222,12 +221,6 @@ class SignalementController extends AbstractController
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
-        $canEditSignalement = $this->isGranted('ROLE_ADMIN');
-        if (!$canEditSignalement && SignalementStatus::ACTIVE === $signalement->getStatut()) {
-            $canEditSignalement = $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffectationAccepted;
-        }
-        $canEditClosedSignalement = SignalementStatus::CLOSED === $signalement->getStatut() && $this->isGranted('ROLE_ADMIN_TERRITORY');
-
         $signalementQualificationNDE = $signalementQualificationRepository->findOneBy([
             'signalement' => $signalement,
             'qualification' => Qualification::NON_DECENCE_ENERGETIQUE, ]);
@@ -249,7 +242,6 @@ class SignalementController extends AbstractController
             filterInjonctionBailleur: SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()
         );
 
-        $canEditNDE = $this->isGranted('SIGN_EDIT_NDE', $signalement);
         $listQualificationStatusesLabelsCheck = [];
         if (null !== $signalement->getSignalementQualifications()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
@@ -295,9 +287,8 @@ class SignalementController extends AbstractController
             exclusiveStatus: [],
             excludedStatus: SignalementStatus::excludedStatuses(),
         );
-        $canSeePartnerAffectation = $this->isGranted(AffectationVoter::SEE, $signalement);
         $subscriptionsInMyPartner = [];
-        if ($canSeePartnerAffectation || (!$isClosedForMe && $isAffectationAccepted)) {
+        if ($this->isGranted('AFFECTATION_SEE', $signalement) || (!$isClosedForMe && $isAffectationAccepted)) {
             $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
         }
         $twigParams = [
@@ -305,12 +296,9 @@ class SignalementController extends AbstractController
             'situations' => $infoDesordres['criticitesArranged'],
             'photos' => $infoDesordres['photos'],
             'criteres' => $infoDesordres['criteres'],
-            'canEditSignalement' => $canEditSignalement,
-            'canEditClosedSignalement' => $canEditClosedSignalement,
             'canAnswerAffectation' => $canAnswerAffectation,
             'canCancelRefusedAffectation' => $canCancelRefusedAffectation,
             'canValidateOrRefuseSignalement' => $canValidateOrRefuseSignalement,
-            'canReopenAffectation' => $canReopenAffectation,
             'affectation' => $affectation,
             'isAffectationAccepted' => $isAffectationAccepted,
             'isSignalementClosed' => SignalementStatus::CLOSED === $signalement->getStatut(),
@@ -330,7 +318,6 @@ class SignalementController extends AbstractController
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
-            'canEditNDE' => $canEditNDE,
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
             'partnersCanVisite' => $partnerVisite,
@@ -338,8 +325,6 @@ class SignalementController extends AbstractController
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'linkToVisitGrid' => $linkToVisitGrid,
             'allPhotosOrdered' => $allPhotosOrdered,
-            'canTogglePartnerAffectation' => $this->isGranted(AffectationVoter::TOGGLE, $signalement),
-            'canSeePartnerAffectation' => $canSeePartnerAffectation,
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
             'signalementsOnSameAddress' => $signalementsOnSameAddress,
             'isUserSubscribed' => $isUserSubscribed,
@@ -462,8 +447,9 @@ class SignalementController extends AbstractController
         TagRepository $tagRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
-
+        if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_CLOSED', $signalement)) {
+            throw $this->createAccessDeniedException();
+        }
         if (
             $this->isCsrfTokenValid('signalement_save_tags', (string) $request->request->get('_token'))
         ) {

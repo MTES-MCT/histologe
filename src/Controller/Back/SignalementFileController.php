@@ -13,7 +13,6 @@ use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
-use App\Security\Voter\SignalementVoter;
 use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
@@ -67,10 +66,8 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
     ): Response {
-        if (SignalementStatus::DRAFT === $signalement->getStatut()) {
-            $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-        } else {
-            $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if (!$this->isGranted('SIGN_EDIT_DRAFT', $signalement) && !$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_INJONCTION', $signalement)) {
+            throw $this->createAccessDeniedException();
         }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
@@ -106,10 +103,8 @@ class SignalementFileController extends AbstractController
         SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
-        if (SignalementStatus::DRAFT === $signalement->getStatut()) {
-            $this->denyAccessUnlessGranted('SIGN_EDIT_DRAFT', $signalement);
-        } else {
-            $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
+        if (!$this->isGranted('SIGN_EDIT_DRAFT', $signalement) && !$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_INJONCTION', $signalement)) {
+            throw $this->createAccessDeniedException();
         }
         /** @var FileRepository $fileRepository */
         $fileRepository = $entityManager->getRepository(File::class);
@@ -312,7 +307,9 @@ class SignalementFileController extends AbstractController
         Request $request,
         ImageManipulationHandler $imageManipulationHandler,
     ): Response {
-        $this->denyAccessUnlessGranted(SignalementVoter::EDIT, $signalement);
+        if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_INJONCTION', $signalement)) {
+            throw $this->createAccessDeniedException();
+        }
         $rotate = (int) $request->get('rotate', 0);
         if (!$rotate) {
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
