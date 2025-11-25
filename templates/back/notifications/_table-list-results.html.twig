@@ -35,9 +35,8 @@
             <td>{{ auteur }}</td>
             <td class="fr-text--right fr-ws-nowrap">
                 {% set link = path('back_signalement_view', {uuid: notification.signalement.uuid}) ~ (notification.suivi ? '#suivis' : '') %}
-                <a href="{{ link }}"
-                class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
-                <form method="POST" action="{{ path('back_notifications_delete_notification', {id: notification.id}) }}" class="simple-ajax-form inline-form">
+                <a href="{{ link }}" class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
+                <form method="POST" action="{{ path('back_notifications_delete_notification', {id: notification.id}) }}" class="simple-ajax-form fr-display-inline-block">
                     <button type="submit" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></button>
                     <input type="hidden" name="csrf_token" value="{{ csrf_token('back_delete_notification_'~notification.id) }}">
                     <input type="hidden" name="search_params" value="{{searchParams}}">
