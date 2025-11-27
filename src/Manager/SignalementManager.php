@@ -898,12 +898,11 @@ class SignalementManager extends AbstractManager
         }
     }
 
-    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser, ?Partner $partner = null): bool
+    public function activateSignalementAndCreateFirstSuivi(Signalement $signalement, ?User $adminUser, ?Partner $partner = null, bool $createSubscription = true): void
     {
         $signalement->setStatut(SignalementStatus::ACTIVE);
         $signalement->setValidatedAt(new \DateTimeImmutable());
         $this->persist($signalement);
-        $subscriptionCreated = false;
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Signalement validé',
@@ -914,10 +913,8 @@ class SignalementManager extends AbstractManager
             isPublic: true,
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             flush: false,
-            subscriptionCreated: $subscriptionCreated
+            createSubscription: $createSubscription,
         );
         $this->persist($suivi);
-
-        return $subscriptionCreated;
     }
 }

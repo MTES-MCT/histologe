@@ -59,7 +59,7 @@ class AutoAssigner
      *
      * @throws ExceptionInterface|Exception
      */
-    public function assign(Signalement $signalement, bool $simulation = false): array
+    public function assign(Signalement $signalement, bool $simulation = false, bool $subscribeTerritoryAdmins = true): array
     {
         $this->countAffectations = 0;
         $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(function (AutoAffectationRule $autoAffectationRule) {
@@ -107,9 +107,14 @@ class AutoAssigner
         $assignablePartners = array_values($assignablePartners);
 
         if (!$simulation && !empty($assignablePartners)) {
-            $this->signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $adminUser);
-            $this->assignPartners($signalement, $adminUser, $assignablePartners);
-            $this->subscribeTerritoryAdmins($signalement, $adminUser);
+            if ($subscribeTerritoryAdmins) {
+                $this->signalementManager->activateSignalementAndCreateFirstSuivi($signalement, $adminUser);
+                $this->assignPartners($signalement, $adminUser, $assignablePartners);
+                $this->subscribeTerritoryAdmins($signalement, $adminUser);
+            } else {
+                $this->signalementManager->activateSignalementAndCreateFirstSuivi(signalement: $signalement, adminUser: $adminUser, createSubscription: false);
+                $this->assignPartners($signalement, $adminUser, $assignablePartners);
+            }
         }
 
         return $assignablePartners;
