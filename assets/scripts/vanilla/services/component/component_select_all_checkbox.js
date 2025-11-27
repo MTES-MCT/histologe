@@ -4,7 +4,7 @@ document.addEventListener('click', (e) => {
 
   e.preventDefault();
 
-  const targetSelector = link.getAttribute('data-select-all-in-target');
+  const targetSelector = link.dataset.selectAllInTarget;
   const target = document.querySelector(targetSelector);
   if (!targetSelector) return;
 
