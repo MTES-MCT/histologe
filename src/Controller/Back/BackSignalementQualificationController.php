@@ -52,7 +52,6 @@ class BackSignalementQualificationController extends AbstractController
         [$signalementQualificationNDE, $signalementQualificationNDECriticites] = $signalementQualificationNdeService->getSignalementQualificationNdeAndCriticites($signalement);
         $nde = $this->renderView('back/signalement/view/nde.html.twig', [
             'signalement' => $signalement,
-            'canEditNDE' => $this->isGranted('SIGN_EDIT_NDE', $signalement), // TODO : delete after rebase
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
         ]);

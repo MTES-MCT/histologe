@@ -38,6 +38,7 @@ async function submitPayload(formElement) {
   let response;
   try {
     const formData = new FormData(formElement);
+    const submitElement = document.querySelector('.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]');
 
     if (
       formElement.enctype === 'multipart/form-data' ||
@@ -66,7 +67,7 @@ async function submitPayload(formElement) {
       window.location.href = response.url;
     } else if (response.ok) {
       jsonResponseHandler(response)
-      resetSubmitButton()
+      setTimeout(() => {resetSubmitButton(submitElement);}, 500);
     } else if (response.status === 400) {
       const responseData = await response.json();
       const errors = responseData.errors;
@@ -113,7 +114,7 @@ async function submitPayload(formElement) {
           firstErrorElement = false;
         }
       }
-      resetSubmitButton();
+      resetSubmitButton(submitElement);
     } else if (response.status === 403) {
       addFlashMessage({type: 'alert', title: 'Erreur', message: "Vous n'avez pas les permissions nécessaires pour effectuer cette action."});
     } else {
@@ -131,10 +132,7 @@ const containerElements = document.querySelectorAll(
 );
 containerElements.forEach((containerElement) => handleSubmitForm(containerElement));
 
-function resetSubmitButton() {
-  const submitElement = document.querySelector(
-    '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
-  );
+function resetSubmitButton(submitElement) {
   if (submitElement) {
     submitElement.disabled = false;
     submitElement.classList.remove('fr-btn--loading', 'fr-icon-refresh-line');
