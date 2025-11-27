@@ -3,6 +3,19 @@
   <div id="histo-app-signalement-carto">
     <div class="fr-grid-row">
       <div class="fr-col-3 fr-col-md-2 filter-container-carto">
+        <HistoSelect
+          class="fr-ml-2v"
+          :key="sharedState.savedSearchSelectKey"
+          id="filter-save-search"
+          v-model="sharedState.selectedSavedSearchId"
+          @update:modelValue="applySavedSearch"
+          title="Mes recherches sauvegardées"
+          :option-items="sharedState.savedSearches"
+          :placeholder="sharedState.savedSearches.length > 0 
+            ? 'Mes recherches sauvegardées' 
+            : 'Aucune recherche sauvegardée'"
+          ref="savedSearchSelect"
+        />
         <SignalementViewFilters
             :shared-props="sharedProps"
             @change="handleFilters"
@@ -28,7 +41,8 @@ import { store } from './store'
 import { requests } from './requests'
 import SignalementViewFilters from './components/SignalementViewFilters.vue'
 import SignalementViewCarto from './components/SignalementViewCarto.vue'
-import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, buildUrl } from './utils/signalementUtils'
+import HistoSelect from '../common/HistoSelect.vue'
+import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, buildUrl, applySavedSearch } from './utils/signalementUtils'
 
 const initElements:any = document.querySelector('#app-signalement-carto')
 
@@ -36,7 +50,8 @@ export default defineComponent({
   name: 'TheSignalementCartoApp',
   components: {
     SignalementViewFilters,
-    SignalementViewCarto
+    SignalementViewCarto,
+    HistoSelect
   },
   data () {
     return {
@@ -91,7 +106,10 @@ export default defineComponent({
         const topPosition = cartographyDiv.getBoundingClientRect().top; 
         document.documentElement.style.setProperty('--offset-top', `${topPosition}px`);
       }
-    }
+    },
+    applySavedSearch(value: string) {
+      applySavedSearch(this, value)
+    },
   },
   mounted() {
     this.updateHeight(); 
