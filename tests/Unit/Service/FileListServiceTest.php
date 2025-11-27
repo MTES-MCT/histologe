@@ -56,6 +56,14 @@ class FileListServiceTest extends WebTestCase
         $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
         $this->assertArrayHasKey('Documents types', $choices);
         $this->assertCount(6, $choices['Documents de la situation']);
+
+        $files = $choices['Documents de la situation'];
+
+        $titles = array_map(fn ($file) => $file->getTitle(), $files);
+        $sorted = $titles;
+        sort($sorted, \SORT_NATURAL | \SORT_FLAG_CASE);
+
+        $this->assertSame($sorted, $titles, 'Les fichiers ne sont pas triés alphabétiquement');
     }
 
     public function testGetFileChoicesForSignalementNDE(): void
@@ -77,6 +85,14 @@ class FileListServiceTest extends WebTestCase
         $this->assertArrayHasKey('Modèle de courrier', $choices['Documents types']);
         $this->assertCount(6, $choices['Documents de la situation']);
         $this->assertCount(6, $choices['Documents types']['Modèle de courrier']);
+
+        $files = $choices['Documents de la situation'];
+
+        $titles = array_map(fn ($file) => $file->getTitle(), $files);
+        $sorted = $titles;
+        sort($sorted, \SORT_NATURAL | \SORT_FLAG_CASE);
+
+        $this->assertSame($sorted, $titles, 'Les fichiers ne sont pas triés alphabétiquement');
     }
 
     public function testGetFileChoicesForSignalementNonNDEUser(): void
@@ -98,5 +114,13 @@ class FileListServiceTest extends WebTestCase
         $this->assertArrayNotHasKey('Documents liés à la procédure', $choices);
         $this->assertArrayNotHasKey('Documents types', $choices);
         $this->assertCount(6, $choices['Documents de la situation']);
+
+        $files = $choices['Documents de la situation'];
+
+        $titles = array_map(fn ($file) => $file->getTitle(), $files);
+        $sorted = $titles;
+        sort($sorted, \SORT_NATURAL | \SORT_FLAG_CASE);
+
+        $this->assertSame($sorted, $titles, 'Les fichiers ne sont pas triés alphabétiquement');
     }
 }

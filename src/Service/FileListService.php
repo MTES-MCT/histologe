@@ -53,14 +53,22 @@ class FileListService
         $situationFiles = $signalement->getFiles()->filter(function (File $file) {
             return !$file->getIsSuspicious() && ($file->isSituation() || null === $file->getDocumentType());
         });
-        $choices['Documents de la situation'] = $situationFiles->toArray();
+        $situationFilesSorted = $situationFiles->toArray();
+        usort($situationFilesSorted, function (File $a, File $b) {
+            return strcmp($a->getTitle(), $b->getTitle());
+        });
+        $choices['Documents de la situation'] = $situationFilesSorted;
 
         // 2. Documents liés à la procédure
         $procedureFiles = $signalement->getFiles()->filter(function (File $file) {
             return !$file->getIsSuspicious() && $file->isProcedure();
         });
         if (!$procedureFiles->isEmpty()) {
-            $choices['Documents liés à la procédure'] = $procedureFiles->toArray();
+            $procedureFilesSorted = $procedureFiles->toArray();
+            usort($procedureFilesSorted, function (File $a, File $b) {
+                return strcmp($a->getTitle(), $b->getTitle());
+            });
+            $choices['Documents liés à la procédure'] = $procedureFilesSorted;
         }
 
         // 3. Documents types (fichiers standalone)
