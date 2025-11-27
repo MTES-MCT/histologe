@@ -426,34 +426,9 @@ class SignalementCreateController extends AbstractController
     ): Response {
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
-        if (!$signalement->isTiersDeclarant()) {
-            $signalement->setMailDeclarant(null);
-            $signalement->setNomDeclarant(null);
-            $signalement->setPrenomDeclarant(null);
-            $signalement->setStructureDeclarant(null);
-            $signalement->setTelDeclarant(null);
-        }
-        if (!$signalement->getIsLogementSocial() && $signalement->getBailleur()) {
-            $signalement->setBailleur(null);
-        }
-        if (!$signalement->getNomProprio() && $signalement->getDenominationProprio()) {
-            $signalement->setNomProprio($signalement->getDenominationProprio());
-        }
+        $this->setSignalementDataConsistentBeforeValidation($signalement);
         $signalementManager->flush();
-
-        $errorMsgs = [];
-        if (!$signalement->getAdresseOccupant()) {
-            $errorMsgs[] = 'Vous devez renseigner l\'adresse du logement pour pouvoir soumettre le signalement.';
-        }
-        if (null === $signalement->getIsLogementSocial()) {
-            $errorMsgs[] = 'Vous devez renseigner le champ logement social pour pouvoir soumettre le signalement.';
-        }
-        if (null === $signalement->getProfileDeclarant()) {
-            $errorMsgs[] = 'Vous devez renseigner le profil du déclarant pour pouvoir soumettre le signalement.';
-        }
-        if (!count($signalement->getDesordrePrecisions())) {
-            $errorMsgs[] = 'Vous devez renseigner au moins un désordre pour pouvoir soumettre le signalement.';
-        }
+        $errorMsgs = $this->getErrorMsgsOnValidation($signalement);
 
         $partners = [];
         $assignablePartners = $autoAssigner->assign($signalement, true);
@@ -484,32 +459,9 @@ class SignalementCreateController extends AbstractController
 
         if (!$hasRtSelectionError && !$hasConsentError && !count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', (string) $token)) {
             $entityManager->beginTransaction();
-
             /** @var User $user */
             $user = $this->getUser();
-            if ($signalement->isTiersDeclarant()) {
-                if (!$signalement->getMailDeclarant()) {
-                    $signalement->setMailDeclarant($user->getEmail());
-                }
-                if (!$signalement->getNomDeclarant()) {
-                    $signalement->setNomDeclarant($user->getNom());
-                }
-                if (!$signalement->getPrenomDeclarant()) {
-                    $signalement->setPrenomDeclarant($user->getPrenom());
-                }
-                $signalement->setIsNotOccupant(true);
-            } else {
-                if (!$signalement->getMailOccupant()) {
-                    $signalement->setMailOccupant($user->getEmail());
-                }
-                if (!$signalement->getNomOccupant()) {
-                    $signalement->setNomOccupant($user->getNom());
-                }
-                if (!$signalement->getPrenomOccupant()) {
-                    $signalement->setPrenomOccupant($user->getPrenom());
-                }
-                $signalement->setIsNotOccupant(false);
-            }
+            $this->setSignalementDefaultValuesOnValidation($signalement, $user);
 
             $route = 'back_signalement_view';
             $params = ['uuid' => $signalement->getUuid()];
@@ -542,10 +494,10 @@ class SignalementCreateController extends AbstractController
                     $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
                 }
                 $signalementManager->activateSignalementAndCreateFirstSuivi(
-                    $signalement,
-                    $user,
-                    $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
-                    false
+                    signalement: $signalement,
+                    adminUser: $user,
+                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                    createSubscription: false
                 );
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis.');
             } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
@@ -553,10 +505,10 @@ class SignalementCreateController extends AbstractController
                     $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
                 }
                 $signalementManager->activateSignalementAndCreateFirstSuivi(
-                    $signalement,
-                    $user,
-                    $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
-                    false
+                    signalement: $signalement,
+                    adminUser: $user,
+                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                    createSubscription: false
                 );
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Vous n\'avez pas défini de partenaires à affecter, rendez-vous dans le signalement pour en affecter !');
             } else {
@@ -589,9 +541,71 @@ class SignalementCreateController extends AbstractController
         return $this->json(['tabContent' => $tabContent]);
     }
 
+    private function setSignalementDataConsistentBeforeValidation(Signalement $signalement): void
+    {
+        if (!$signalement->isTiersDeclarant()) {
+            $signalement->setMailDeclarant(null);
+            $signalement->setNomDeclarant(null);
+            $signalement->setPrenomDeclarant(null);
+            $signalement->setStructureDeclarant(null);
+            $signalement->setTelDeclarant(null);
+        }
+        if (!$signalement->getIsLogementSocial() && $signalement->getBailleur()) {
+            $signalement->setBailleur(null);
+        }
+        if (!$signalement->getNomProprio() && $signalement->getDenominationProprio()) {
+            $signalement->setNomProprio($signalement->getDenominationProprio());
+        }
+    }
+
+    private function getErrorMsgsOnValidation(Signalement $signalement): array
+    {
+        $errorMsgs = [];
+        if (!$signalement->getAdresseOccupant()) {
+            $errorMsgs[] = 'Vous devez renseigner l\'adresse du logement pour pouvoir soumettre le signalement.';
+        }
+        if (null === $signalement->getIsLogementSocial()) {
+            $errorMsgs[] = 'Vous devez renseigner le champ logement social pour pouvoir soumettre le signalement.';
+        }
+        if (null === $signalement->getProfileDeclarant()) {
+            $errorMsgs[] = 'Vous devez renseigner le profil du déclarant pour pouvoir soumettre le signalement.';
+        }
+        if (!count($signalement->getDesordrePrecisions())) {
+            $errorMsgs[] = 'Vous devez renseigner au moins un désordre pour pouvoir soumettre le signalement.';
+        }
+
+        return $errorMsgs;
+    }
+
     private function hasConsentError(Request $request): bool
     {
-        return !$request->get('consent_signalement_tiers')
-            || !$request->get('consent_donnees_sante');
+        return !$request->get('consent_signalement_tiers') || !$request->get('consent_donnees_sante');
+    }
+
+    private function setSignalementDefaultValuesOnValidation(Signalement $signalement, User $user): void
+    {
+        if ($signalement->isTiersDeclarant()) {
+            if (!$signalement->getMailDeclarant()) {
+                $signalement->setMailDeclarant($user->getEmail());
+            }
+            if (!$signalement->getNomDeclarant()) {
+                $signalement->setNomDeclarant($user->getNom());
+            }
+            if (!$signalement->getPrenomDeclarant()) {
+                $signalement->setPrenomDeclarant($user->getPrenom());
+            }
+            $signalement->setIsNotOccupant(true);
+        } else {
+            if (!$signalement->getMailOccupant()) {
+                $signalement->setMailOccupant($user->getEmail());
+            }
+            if (!$signalement->getNomOccupant()) {
+                $signalement->setNomOccupant($user->getNom());
+            }
+            if (!$signalement->getPrenomOccupant()) {
+                $signalement->setPrenomOccupant($user->getPrenom());
+            }
+            $signalement->setIsNotOccupant(false);
+        }
     }
 }
