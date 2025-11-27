@@ -170,7 +170,7 @@ clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(SYMFONY) c:c --env=$(env)
 
 npm-newman-install: ## Install newman CLI
-	@bash -l -c 'cd tools/newman && npm install'
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm sh -c 'cd tools/newman && $(NPM) install'
 
 cc: clear-cache
 
