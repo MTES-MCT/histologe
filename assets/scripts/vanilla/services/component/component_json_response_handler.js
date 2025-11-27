@@ -2,33 +2,38 @@ const flashMessagesContainer = document.getElementById('flash-messages-live-cont
 
 export function jsonResponseHandler(response) {
     response.json().then((response) => {
-        if (response.redirect) {
-          window.location.href = response.url;
-        } else if(response.stayOnPage){
-          if(response.flashMessages){
-            response.flashMessages.forEach((flashMessage) => {
-              addFlashMessage(flashMessage);
-            });
-          }
-          if(response.htmlTargetContents){
-            response.htmlTargetContents.forEach((htmlTargetContent) => {
-              const targetElement = document.querySelector(htmlTargetContent.target);
-              if(targetElement){
-                targetElement.innerHTML = htmlTargetContent.content;
-              }
-            });
-          }
-          if(response.closeModal){
-            const openModalElement = document.querySelector('.fr-modal--opened');
-            if(openModalElement){
-              dsfr(openModalElement).modal.conceal();
-            }
-          }
-        } else {
-          location.reload();
-          window.scrollTo(0, 0);
-        }
+        jsonResponseProcess(response);
     });
+}
+
+export function jsonResponseProcess(response) {
+  if (response.redirect) {
+    window.location.href = response.url;
+    window.location.reload();
+  } else if(response.stayOnPage){
+    if(response.flashMessages){
+      response.flashMessages.forEach((flashMessage) => {
+        addFlashMessage(flashMessage);
+      });
+    }
+    if(response.htmlTargetContents){
+      response.htmlTargetContents.forEach((htmlTargetContent) => {
+        const targetElement = document.querySelector(htmlTargetContent.target);
+        if(targetElement){
+          targetElement.innerHTML = htmlTargetContent.content;
+        }
+      });
+    }
+    if(response.closeModal){
+      const openModalElement = document.querySelector('.fr-modal--opened');
+      if(openModalElement){
+        dsfr(openModalElement).modal.conceal();
+      }
+    }
+  } else {
+    location.reload();
+    window.scrollTo(0, 0);
+  }
 }
 
 export function addFlashMessage(flashMessage) {

@@ -59,6 +59,7 @@ class PartnerController extends AbstractController
         private readonly PartnerRepository $partnerRepository,
         #[Autowire(param: 'standard_max_list_pagination')]
         private readonly int $maxListPagination,
+        private readonly EmailAlertChecker $emailAlertChecker,
     ) {
     }
 
@@ -78,6 +79,19 @@ class PartnerController extends AbstractController
         $paginatedPartners = $this->partnerRepository->findFilteredPaginated($searchPartner, $this->maxListPagination);
 
         return [$form, $searchPartner, $paginatedPartners];
+    }
+
+    private function getHtmlTargetContentsForPartnerAgentList(Partner $partner): array
+    {
+        return [
+            [
+                'target' => '#view-agent-list',
+                'content' => $this->renderView('back/partner/_view-agent-list.html.twig', [
+                    'partner' => $partner,
+                    'emailsWithAlert' => $this->emailAlertChecker->buildUserEmailAlert($partner->getUsers()),
+                ]),
+            ],
+        ];
     }
 
     #[Route('/', name: 'back_partner_index', methods: ['GET', 'POST'])]
@@ -487,7 +501,7 @@ class PartnerController extends AbstractController
         User $user,
         Request $request,
         UserManager $userManager,
-    ): JsonResponse|RedirectResponse {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted(UserVoter::USER_EDIT, $user);
         $originalEmail = $user->getEmail();
         $editUserRoute = $this->generateUrl('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $user->getId(), 'from' => $request->query->get('from')]);
@@ -509,13 +523,17 @@ class PartnerController extends AbstractController
                 }
                 $user->setRoles([$formUserPartner->get('role')->getData()]);
                 $userManager->flush();
-                $this->addFlash('success', 'L\'utilisateur a bien été modifié.');
-                $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
-                if ('users' == $request->query->get('from')) {
-                    $url = $this->generateUrl('back_user_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-                }
 
-                return $this->json(['redirect' => true, 'url' => $url]);
+                if ('users' == $request->query->get('from')) {
+                    $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'L\'utilisateur a bien été modifié.']);
+                    $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                    return $this->json(['redirect' => true, 'url' => $url]);
+                }
+                $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'utilisateur a bien été modifié.'];
+                $htmlTargetContents = $this->getHtmlTargetContentsForPartnerAgentList($partner);
+
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
             }
         }
         $content = $this->renderView('_partials/_modal_user_edit_form.html.twig', ['formUserPartner' => $formUserPartner, 'user' => $user]);
@@ -524,37 +542,39 @@ class PartnerController extends AbstractController
     }
 
     #[Route('/{id}/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
-    public function transferUser(Request $request, Partner $fromPartner, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): Response
+    public function transferUser(Request $request, Partner $fromPartner, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): JsonResponse
     {
         $data = $request->get('user_transfer');
         if (!$this->isCsrfTokenValid('partner_user_transfer', (string) $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
+            $this->addFlash('error', '');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
 
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         /** @var Partner $toPartner */
         $toPartner = $partnerManager->find($data['partner']);
         /** @var User $user */
         $user = $userManager->find($data['user']);
         if (!$toPartner || !$user) {
-            $this->addFlash('error', 'Partenaire ou utilisateur introuvable.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le partenaire ou l\'utilisateur est introuvable.'];
 
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         $this->denyAccessUnlessGranted(UserVoter::USER_TRANSFER, $user);
         if (!$this->isGranted('ROLE_ADMIN')) {
             $partnersAuthorized = $partnerRepository->findAllList($fromPartner->getTerritory());
             if (!isset($partnersAuthorized[$toPartner->getId()])) {
-                $this->addFlash('error', 'Vous n\'avez pas les droits pour transférer sur ce partenaire.');
+                $flashMessages[] = ['type' => 'alert', 'title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour transférer sur ce partenaire.'];
 
-                return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
             }
         }
 
         $userManager->transferUserToPartner($user, $fromPartner, $toPartner);
-        $this->addFlash('success', 'L\'utilisateur a bien été transféré.');
+        $flashMessages[] = ['type' => 'success', 'title' => 'Utilisateur transféré', 'message' => 'L\'utilisateur a bien été transféré.'];
+        $htmlTargetContents = $this->getHtmlTargetContentsForPartnerAgentList($fromPartner);
 
-        return $this->redirectToRoute('back_partner_view', ['id' => $toPartner->getId(), '_fragment' => 'agents'], Response::HTTP_SEE_OTHER);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{id}/supprimerutilisateur', name: 'back_partner_user_delete', methods: ['POST'])]
@@ -564,27 +584,28 @@ class PartnerController extends AbstractController
         UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
-    ): Response {
+    ): JsonResponse {
         /** @var int|string $userId */
         $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('partner_user_delete', (string) $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
 
-            return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         /** @var User $user */
         $user = $userManager->find($userId);
         if (!$user || !$user->hasPartner($partner)) {
-            $this->addFlash('error', 'Utilisateur introuvable sur le partenaire.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'L\'utilisateur ne fait pas partie de ce partenaire.'];
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
         $this->denyAccessUnlessGranted(UserVoter::USER_DELETE, $user);
         if (UserStatus::ARCHIVE === $user->getStatut()) {
-            $this->addFlash('error', 'Cet utilisateur est déjà supprimé.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'Cet utilisateur est déjà supprimé.'];
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
         if ($user->getUserPartners()->count() > 1) {
@@ -603,10 +624,11 @@ class PartnerController extends AbstractController
                     params: ['partner_name' => $partner->getNom()]
                 )
             );
-            $this->addFlash('success', 'L\'utilisateur a bien été supprimé du partenaire.');
-            $this->addFlash('warning', 'Attention, cet utilisateur est toujours actif sur d\'autres territoires.');
+            $flashMessages[] = ['type' => 'success', 'title' => 'Utilisateur supprimé', 'message' => 'L\'utilisateur a bien été supprimé du partenaire.'];
+            $flashMessages[] = ['type' => 'warning', 'title' => 'Attention', 'message' => 'Attention, cet utilisateur est toujours actif sur d\'autres territoires.'];
+            $htmlTargetContents = $this->getHtmlTargetContentsForPartnerAgentList($partner);
 
-            return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
         $notificationMailerRegistry->send(
             new NotificationMail(
@@ -619,9 +641,10 @@ class PartnerController extends AbstractController
         $user->setStatut(UserStatus::ARCHIVE);
         $user->setProConnectUserId(null);
         $userManager->save($user);
-        $this->addFlash('success', 'L\'utilisateur a bien été supprimé.');
+        $flashMessages[] = ['type' => 'success', 'title' => 'Utilisateur supprimé', 'message' => 'L\'utilisateur a bien été supprimé.'];
+        $htmlTargetContents = $this->getHtmlTargetContentsForPartnerAgentList($partner);
 
-        return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{id}/add-user-email', name: 'back_partner_add_user_email')]
