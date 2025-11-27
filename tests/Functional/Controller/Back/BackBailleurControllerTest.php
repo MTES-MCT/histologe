@@ -80,11 +80,17 @@ class BackBailleurControllerTest extends WebTestCase
         $route = $router->generate('back_bailleur_delete', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_delete');
-        $this->client->request('GET', $route, ['_token' => $csrfToken]);
+        $this->client->request('POST', $route.'?_token='.$csrfToken);
 
         $bailleur = $bailleurRepository->findOneBy(['id' => $bailleur->getId()]);
         $this->assertNotNull($bailleur);
-        $this->assertResponseRedirects();
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'Le bailleur ne peut pas être supprimé car il est lié à 1 signalements.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testBailleurDeleteOK(): void
@@ -98,7 +104,7 @@ class BackBailleurControllerTest extends WebTestCase
         $route = $router->generate('back_bailleur_delete', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_delete');
-        $this->client->request('GET', $route, ['_token' => $csrfToken]);
+        $this->client->request('POST', $route.'?_token='.$csrfToken);
 
         $bailleur = $bailleurRepository->findOneBy(['id' => $bailleur->getId()]);
         $this->assertNull($bailleur);
