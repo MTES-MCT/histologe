@@ -1,3 +1,5 @@
+import { applyFilter } from "../../controllers/back_signalement_view/toggle-suivi-auto";
+
 const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
 export function jsonResponseHandler(response) {
@@ -29,6 +31,15 @@ export function jsonResponseProcess(response) {
       if(openModalElement){
         dsfr(openModalElement).modal.conceal();
       }
+    }
+    if(response.functions){
+      response.functions.forEach((fn) => {
+        switch(fn.name){
+          case 'applyFilter':
+            applyFilter();
+            break;
+        }
+      });
     }
   } else {
     location.reload();
