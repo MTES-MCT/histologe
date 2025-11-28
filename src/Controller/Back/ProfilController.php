@@ -41,6 +41,26 @@ class ProfilController extends AbstractController
 {
     private const ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
 
+    private function getHtmlTargetContentsForProfilMesInformations(User $user): array
+    {
+        $formProfilInfo = $this->createForm(UserProfilInfoType::class, $user, ['action' => $this->generateUrl('back_profil_edit_infos')]);
+
+        return [
+            [
+                'target' => '#mes-informations',
+                'content' => $this->renderView('back/profil/_mes-informations.html.twig'),
+            ],
+            [
+                'target' => '#fr-modal-profil-edit-infos-content',
+                'content' => $this->renderView('back/profil/_modal_profil_infos_content.html.twig', ['formProfilInfo' => $formProfilInfo]),
+            ],
+            [
+                'target' => '#nav-bo-profile-link',
+                'content' => $this->renderView('back/_nav_bo_profile_link.html.twig'),
+            ],
+        ];
+    }
+
     #[Route('/', name: 'back_profil', methods: ['GET', 'POST'])]
     public function index(
         UserRepository $userRepository,
@@ -87,10 +107,15 @@ class ProfilController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setIsMailingActive(true);
             $entityManager->flush();
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Vos préférences en matière de notifications par e-mail ont bien été enregistrées.'];
+            $htmlTargetContents = [
+                [
+                    'target' => '#notifications-email',
+                    'content' => $this->renderView('back/profil/_notifications-email.html.twig'),
+                ],
+            ];
 
-            $this->addFlash('success', 'Vos préférences en matière de notifications par e-mail ont bien été enregistrées.');
-
-            return $this->json(['code' => Response::HTTP_OK]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
         $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
 
@@ -105,7 +130,7 @@ class ProfilController extends AbstractController
         LoggerInterface $logger,
         ImageManipulationHandler $imageManipulationHandler,
         FileScanner $fileScanner,
-    ): Response {
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(UserProfilInfoType::class, $user, ['action' => $this->generateUrl('back_profil_edit_infos')]);
@@ -149,13 +174,15 @@ class ProfilController extends AbstractController
         }
 
         if (empty($errorMessage)) {
-            $response = ['code' => Response::HTTP_OK];
             $entityManager->flush();
-            $this->addFlash('success', 'Les informations de votre profil ont bien été modifiées.');
-        } else {
-            $response = ['code' => Response::HTTP_BAD_REQUEST];
-            $response = [...$response, ...$errorMessage];
+
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les informations de votre profil ont bien été modifiées.'];
+            $htmlTargetContents = $this->getHtmlTargetContentsForProfilMesInformations($user);
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
+        $response = ['code' => Response::HTTP_BAD_REQUEST];
+        $response = [...$response, ...$errorMessage];
 
         return $this->json($response, (int) $response['code']);
     }
@@ -164,21 +191,22 @@ class ProfilController extends AbstractController
     public function deleteAvatar(
         ManagerRegistry $doctrine,
         UploadHandlerService $uploadHandlerService,
-    ): Response {
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
         if ($user->getAvatarFilename()) {
             $uploadHandlerService->deleteSingleFile($user->getAvatarFilename());
             $user->setAvatarFilename(null);
             $doctrine->getManager()->flush();
-            $this->addFlash('success', 'L\'avatar a bien été supprimé.');
 
-            return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+            $flashMessages[] = ['type' => 'success', 'title' => 'Avatar supprimé', 'message' => 'L\'avatar a bien été supprimé.'];
+            $htmlTargetContents = $this->getHtmlTargetContentsForProfilMesInformations($user);
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'Une erreur est survenue lors de la suppression, veuilez réessayer.'];
 
-        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
-
-        return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 
     #[Route('/edit-email', name: 'back_profil_edit_email', methods: ['POST'])]
@@ -188,7 +216,7 @@ class ProfilController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         UserRepository $userRepository,
         PartnerRepository $partnerRepository,
-    ): Response {
+    ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         /** @var User $user */
@@ -227,12 +255,18 @@ class ProfilController extends AbstractController
                     $doctrine->getManager()->persist($user);
                     $doctrine->getManager()->flush();
 
-                    $this->addFlash('success', 'Votre adresse e-mail a bien été confirmée !');
-                    $response = ['code' => Response::HTTP_OK];
-                } else {
-                    $response = ['code' => Response::HTTP_BAD_REQUEST];
-                    $response = [...$response, ...$errorMessage];
+                    $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Votre adresse e-mail a bien été confirmée.'];
+                    $htmlTargetContents = [
+                        [
+                            'target' => '#adresse-email',
+                            'content' => $this->renderView('back/profil/_adresse-email.html.twig'),
+                        ],
+                    ];
+
+                    return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
                 }
+                $response = ['code' => Response::HTTP_BAD_REQUEST];
+                $response = [...$response, ...$errorMessage];
             } else {
                 // Étape 1: Envoi du code de confirmation par email
                 $email = $payload['profil_edit_email[email]'];
@@ -273,10 +307,9 @@ class ProfilController extends AbstractController
                 }
             }
         } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => self::ERROR_MSG];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
         return $this->json($response, (int) $response['code']);
@@ -346,17 +379,13 @@ class ProfilController extends AbstractController
                     user: $user
                 )
             );
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Votre mot de passe a bien été modifié.'];
 
-            $this->addFlash('success', 'Votre mot de passe a bien été modifié.');
-            $response = ['code' => Response::HTTP_OK];
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
         }
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => self::ERROR_MSG];
 
-        return $this->json($response, $response['code']);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 
     #[Route('/dismiss-modal-duplicate-addresses', name: 'dismiss_modal_duplicate_addresses', methods: ['POST'])]

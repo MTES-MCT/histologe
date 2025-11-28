@@ -1,0 +1,69 @@
+<div class="fr-grid-row fr-grid-row--middle">                
+    <div class="fr-col-12 fr-col-md-8 fr-text--left">
+        <h2>Mes informations</h2>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        <button class="fr-button fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line"
+            title="Modifier mes infos"
+            data-fr-opened="false" 
+            aria-controls="fr-modal-profil-edit-infos"
+            >
+            Modifier mes infos
+        </button>
+    </div>
+</div>
+<div class="fr-grid-row fr-grid-row--middle">
+    <div class="fr-display-inline-flex fr-align-items-center">
+        {{ user_avatar_or_placeholder(app.user, 74) }}
+        <div class="fr-ml-3v">
+            <span class="fr-display-block"><strong>{{ app.user.prenom ~' '~app.user.nom }}</strong></span>
+            Fonction : {{ app.user.fonction }}
+            <br>
+            Téléphone pro : {{ app.user.phoneDecoded }}
+        </div>
+    </div>
+</div>
+<div class="fr-grid-row fr-mt-3v">
+    <div class="fr-col-12">
+        <h3>Mon compte sur {{ platform.name }}</h3>
+    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="fr-col-12">
+            <div class="fr-alert fr-alert--info fr-alert--sm">
+                <p>J'ai un compte Super Admin</p>
+            </div>
+        </div>
+    {% else %}
+        {% for partner in app.user.partners %}
+            <div class="fr-col-12 fr-col-md-6">
+                <p>
+                    <strong>Territoire : {{ partner.territory.zip }} - {{ partner.territory.name }}</strong>
+                    <br>
+                    J'ai un compte {{ app.user.roleLabel }} dans le partenaire {{ partner.nom }}.
+                    <br>
+                    Responsable(s) du territoire {{ partner.territory.zip }} - {{ partner.territory.name }} :
+                </p>
+                <ul>
+                    {% for userAdmin in activeTerritoryAdminsByTerritory[partner.territory.id] %}
+                    {% set partner = userAdmin.getPartnerInTerritoryOrFirstOne(partner.territory) %}
+                    <li>
+                        {{ userAdmin.prenom }} {{ userAdmin.nom }} du partenaire {{ partner.nom }}
+                        {% if partner.email %}
+                            - {{ partner.email }}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+
+        <div class="fr-col-12">
+            <div class="fr-alert fr-alert--info fr-alert--sm">
+                <p>
+                    Vous ne pouvez pas modifier vos partenaires vous-mêmes.
+                    Si vous souhaitez modifier vos partenaires, contactez vos responsables de territoire !
+                </p>
+            </div>
+        </div>
+    {% endif %}
+</div>
