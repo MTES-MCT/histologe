@@ -1,21 +1,19 @@
-const allSuivis = document?.querySelectorAll('.suivi-item');
-const items = Array.from(allSuivis).map((item) => ({
-  el: item,
-  isAuto: item.classList.contains('suivi-auto'),
-}));
-const btnDisplayAll = document?.querySelector('#btn-display-all-suivis');
 const toggleWrapper = document?.querySelector('#toggle-hide-technical')?.closest('.fr-toggle');
 const toggle = document?.querySelector('#toggle-hide-technical');
 let expanded = false;
-if (toggleWrapper) {
-  const hasAuto = items.some(({ isAuto }) => isAuto);
-  if (!hasAuto) {
-    toggleWrapper.classList.add('fr-hidden');
-  }
-}
-function applyFilter() {
+export function applyFilter() {
+  const allSuivis = document?.querySelectorAll('.suivi-item');
+  const items = Array.from(allSuivis).map(item => ({el: item, isAuto: item.classList.contains('suivi-auto')}));
+  const btnDisplayAll = document?.querySelector('#btn-display-all-suivis');
   const hideAuto = toggle?.checked === true;
   let shown = 0;
+
+  if (toggleWrapper) {
+    const hasAuto = items.some(({ isAuto }) => isAuto);
+    if (!hasAuto) {
+      toggleWrapper.classList.add('fr-hidden');
+    }
+  }
 
   items.forEach(({ el, isAuto }) => {
     let shouldShow = true;
@@ -53,9 +51,13 @@ toggle?.addEventListener('change', () => {
   applyFilter();
 });
 
-btnDisplayAll?.addEventListeners('click touchdown', (e) => {
+document.addEventListener('click', (e) => {
+  const target = e.target;
+  const btn = target.closest('#btn-display-all-suivis');
+  if (!btn) return;
+
   e.preventDefault();
   expanded = true;
   applyFilter();
-  btnDisplayAll.classList.add('fr-hidden');
+  btn.classList.add('fr-hidden');
 });
