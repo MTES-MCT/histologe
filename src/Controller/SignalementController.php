@@ -1062,14 +1062,6 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
-        /** @var SignalementUser $signalementUser */
-        $signalementUser = $this->getUser();
-
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
-            return $redirect;
-        }
-
         $form = $this->createForm(
             UsagerCoordonneesTiersType::class,
             $signalement,

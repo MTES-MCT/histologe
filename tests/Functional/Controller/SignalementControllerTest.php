@@ -347,6 +347,39 @@ class SignalementControllerTest extends WebTestCase
         }
     }
 
+    public function testUsagerCoordonneesTiers(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2024-01']);
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $urlCoordonneesTiers = $router->generate('front_suivi_signalement_coordonnees_tiers', ['code' => $signalement->getCodeSuivi()]);
+
+        $newMail = 'paulpote@gmail.com';
+
+        $client->request('POST', $urlCoordonneesTiers, [
+            'usager_coordonnees_tiers' => [
+                'nomDeclarant' => 'Pote',
+                'prenomDeclarant' => 'Paul',
+                'mailDeclarant' => $newMail,
+                '_token' => $this->generateCsrfToken($client, 'usager_coordonnees_tiers'),
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi());
+        $this->assertEquals($newMail, $signalement->getMailDeclarant());
+        $this->assertFalse($signalement->getIsCguTiersAccepted());
+        $this->assertEmailCount(2);
+    }
+
     public function testUsagerAddDocuments(): void
     {
         $client = static::createClient();

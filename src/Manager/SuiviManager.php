@@ -149,6 +149,34 @@ class SuiviManager extends Manager
         return $subscriptionCreated;
     }
 
+    public function addInviteSuiviIfNeeded(Signalement $signalement): bool
+    {
+        $subscriptionCreated = false;
+        if ($this->signalementUpdatedListener->updateOccurred()) {
+            /** @var User $user */
+            $user = $this->security->getUser();
+            $description = 'Les coordonnées d\'un tiers ont été ajoutées pour suivre le signalement :<br>';
+            $description .= '<ul>';
+            $description .= $signalement->getNomDeclarant() ? '<li>Nom : '.$signalement->getNomDeclarant().'</li>' : '';
+            $description .= $signalement->getPrenomDeclarant() ? '<li>Prénom : '.$signalement->getPrenomDeclarant().'</li>' : '';
+            $description .= $signalement->getMailDeclarant() ? '<li>E-mail : '.$signalement->getMailDeclarant().'</li>' : '';
+            $description .= $signalement->getTelDeclarant() ? '<li>Téléphone : '.$signalement->getTelDeclarantDecoded().'</li>' : '';
+            $description .= '</ul>';
+            $this->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                user: $user,
+                isPublic: true,
+                subscriptionCreated: $subscriptionCreated
+            );
+        }
+
+        return $subscriptionCreated;
+    }
+
     /**
      * @param array<int, File> $files
      */
