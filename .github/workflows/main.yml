@@ -88,10 +88,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '18'
-      - run: npm install --omit=dev
-
-      - name: Install Symfony Encore
-        run: npm install @symfony/webpack-encore --save-dev
+      - run: npm ci --ignore-scripts=true --omit=dev
 
       - name: NPM build
         run: npm run build
