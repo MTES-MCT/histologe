@@ -6,12 +6,12 @@ import {
 const searchTerritoryForm = document.getElementById('search-bailleur-form');
 
 if (searchTerritoryForm) {
-  document.querySelectorAll('.open-modal-bailleur-delete').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      document.getElementById('fr-modal-bailleur-delete-bailleur-name').textContent =
-        e.target.dataset.name;
-      document.getElementById('fr-modal-bailleur-delete-btn-submit').href = e.target.dataset.url;
-    });
+  document.addEventListener('click', (e) => {
+    const button = e.target.closest('.open-modal-bailleur-delete');
+    if (!button) return;
+
+    document.getElementById('fr-modal-bailleur-delete-bailleur-name').textContent = button.dataset.name;
+    document.getElementById('bailleur_delete_form').action = button.dataset.url;
   });
   updateLocalStorageWithFormParams('search-bailleur-form');
 }
