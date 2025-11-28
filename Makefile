@@ -18,9 +18,9 @@ help:
 build: ## Install local environment (use SKIP_NPM_BUILD=1 to skip npm-build step)
 	@if [ "$(SKIP_NPM_BUILD)" = "1" ]; then \
 		echo "Skipping npm-build step"; \
-		bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db create-db-test npm-install mock-stop mock-start'; \
+		bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db create-db-test npm-ci mock-stop mock-start'; \
 	else \
-		bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db create-db-test npm-install npm-build mock-stop mock-start'; \
+		bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db create-db-test npm-ci npm-build mock-stop mock-start'; \
 	fi
 run: ## Start containers
 	@echo -e '\e[1;32mStart containers\032'
@@ -157,8 +157,8 @@ require: ## Symfony require
 update: ## Symfony require
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer update $(ARGS)
 
-npm-install: ## Install the dependencies in the local node_modules folder
-	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(NPM) install
+npm-ci: ## Install the dependencies in the local node_modules folder
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(NPM) ci
 
 npm-build: ## Build the dependencies in the local node_modules folder
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(NPM) run build
