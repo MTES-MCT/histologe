@@ -164,6 +164,19 @@ document.addEventListener('click', (event) => {
   }
 });
 
+document.addEventListener('click', (event) => {
+  const link = event.target.closest('.simple-ajax-link');
+  
+  if (!link) return;
+  
+  event.preventDefault();
+  fetch(link.href, {method: 'GET'}).then((response) => {
+    if (response.ok) {
+      jsonResponseHandler(response);
+    }
+  });
+});
+
 
 document.addEventListener('submit', (event) => {
   const formElement = event.target.closest('.simple-ajax-form');
