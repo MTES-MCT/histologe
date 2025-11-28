@@ -136,7 +136,7 @@ jobs:
 
       - name: Build frontend assets
         run: |
-          docker compose exec -T signal_logement_phpfpm npm ci
+          docker compose exec -T signal_logement_phpfpm npm ci --ignore-scripts=true
           docker compose exec -T signal_logement_phpfpm npm run build
 
       - name: Cache clear & warmup
@@ -169,7 +169,7 @@ jobs:
       - name: Install Playwright dependencies
         working-directory: tests/e2e
         run: |
-          npm ci
+          npm ci --ignore-scripts=true
           npx playwright install --with-deps
 
       - name: Run Playwright tests
