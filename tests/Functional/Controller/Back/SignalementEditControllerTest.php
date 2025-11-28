@@ -73,6 +73,29 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals('Habitat Social Solidaire', $signalement->getDenominationProprio());
     }
 
+    public function testInviteTiers(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000001']);
+        $route = $this->router->generate(
+            'back_signalement_edit_invite_tiers',
+            ['uuid' => $signalement->getUuid()]
+        );
+
+        $newMail = 'paulpote@gmail.com';
+
+        $payload = [
+            'nom' => 'Pote',
+            'prenom' => 'Paul',
+            'mail' => $newMail,
+            '_token' => $this->getCsrfToken('signalement_edit_invite_tiers_', $signalement->getId()),
+        ];
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals($newMail, $signalement->getMailDeclarant());
+        $this->assertFalse($signalement->getIsCguTiersAccepted());
+    }
+
     /**
      * @dataProvider provideEditSignalementRoutes
      *

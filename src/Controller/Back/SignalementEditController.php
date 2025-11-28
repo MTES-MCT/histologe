@@ -126,6 +126,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-invite-tiers', name: 'back_signalement_edit_invite_tiers', methods: 'POST')]
+    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
     public function editInviteTiers(
         Signalement $signalement,
         Request $request,
@@ -134,7 +135,6 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_EDIT', $signalement);
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -152,7 +152,7 @@ class SignalementEditController extends AbstractController
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $inviteTiersRequest);
 
             if (empty($errorMessage)) {
-                $signalement->setIsCguTiersAccepted(false); // saved in update
+                $signalement->setIsCguTiersAccepted(false); // saved in update method below
                 $subscriptionCreated = $signalementManager->updateFromInviteTiersRequest($signalement, $inviteTiersRequest);
 
                 $notificationMailerRegistry->send(

@@ -396,10 +396,7 @@ class SignalementManager extends AbstractManager
 
         $this->save($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
-            signalement: $signalement,
-            description: 'Un tiers aidant a été invité par ',
-        );
+        return $this->suiviManager->addInviteSuiviIfNeeded($signalement);
     }
 
     public function updateFromCoordonneesFoyerRequest(
