@@ -204,7 +204,30 @@
 				{{ signalement.telOccupantBisDecoded|phone }}
 			{% endif %}
 
-			{% if signalement.isTiersDeclarant %}
+			{% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE %}
+				<div class="fr-mb-1w fr-mt-2w">
+					<strong>Coordonnées du tiers aidant</strong>
+				</div>
+
+				{% if signalement.mailDeclarant %}
+					{{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
+					<br>
+					{{ signalement.mailDeclarant }}
+					{% if show_email_alert(signalement.mailDeclarant) %}
+						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+					{% endif %}
+					{% if signalement.telDeclarant %}
+						<br>
+						{{ signalement.telDeclarantDecoded|phone }}
+					{% endif %}
+				{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
+					Afin de faciliter les échanges avec l'administration, vous pouvez donner accès au dossier à un tiers (famille, travailleur social, association, etc.) en renseignant son adresse e-mail.
+					<br>
+					<a href="{{ path('front_suivi_signalement_coordonnees_tiers', {code: signalement.codeSuivi}) }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-box-line fr-mt-3v"
+						>Inviter un tiers sur mon dossier</a>
+				{% endif %}
+
+			{% elseif signalement.isTiersDeclarant %}
 				<div class="fr-mb-1w fr-mt-2w">
 					<strong>Coordonnées du tiers déclarant</strong>
 				</div>

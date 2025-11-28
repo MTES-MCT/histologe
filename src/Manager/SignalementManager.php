@@ -9,6 +9,7 @@ use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
@@ -382,6 +383,20 @@ class SignalementManager extends AbstractManager
             signalement: $signalement,
             description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
         );
+    }
+
+    public function updateFromInviteTiersRequest(
+        Signalement $signalement,
+        InviteTiersRequest $inviteTiersRequest,
+    ): bool {
+        $signalement->setNomDeclarant($inviteTiersRequest->getNom())
+            ->setPrenomDeclarant($inviteTiersRequest->getPrenom())
+            ->setMailDeclarant($inviteTiersRequest->getMail())
+            ->setTelDeclarant($inviteTiersRequest->getTelephone());
+
+        $this->save($signalement);
+
+        return $this->suiviManager->addInviteSuiviIfNeeded($signalement);
     }
 
     public function updateFromCoordonneesFoyerRequest(
