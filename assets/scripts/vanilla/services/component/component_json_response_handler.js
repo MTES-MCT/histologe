@@ -71,6 +71,15 @@ export function jsonResponseProcess(response) {
         dsfr(openModalElement).modal.conceal();
       }
     }
+    if(response.functions){
+      response.functions.forEach((fn) => {
+        switch(fn.name){
+          case 'applyFilter':
+            applyFilter();
+            break;
+        }
+      });
+    }
   } else {
     location.reload();
     window.scrollTo(0, 0);
