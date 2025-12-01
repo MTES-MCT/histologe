@@ -1008,7 +1008,7 @@ signalements:
     cp_occupant: "34170"
     ville_occupant: "Castelnau-le-Lez"
     statut: "INJONCTION_BAILLEUR"
-    login_bailleur: "salutsalut"
+    login_bailleur: "xxxx-xxxx-xxxx-xxxx"
     geoloc: "{\"lat\": 43.635067, \"lng\": 3.919457}"
     insee_occupant: "34057"
     nb_pieces_logement: 3
