@@ -24,11 +24,10 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
 
     public function supports(Request $request): bool
     {
-        if ($request->get('bailleur_reference') && $request->get('bailleur_code')) {
-            return true;
-        }
-
-        return false;
+        return $request->isMethod('POST')
+            && $request->get('bailleur_reference')
+            && $request->get('bailleur_code')
+        ;
     }
 
     public function authenticate(Request $request): Passport
