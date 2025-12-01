@@ -6,6 +6,7 @@ parameters:
       - "'self'"
       - "'unsafe-inline'"
       - "'unsafe-eval'"
+      - "https://cdn.matomo.cloud/histologe.matomo.cloud/matomo.js" # todo: remove when matomo is migrated to dinum tracker
       - "https://stats.beta.gouv.fr/matomo.js"
       - "https://cdn.jsdelivr.net/gh/nelmio/NelmioApiDocBundle/public/swagger-ui/"
       - "https://cdn.jsdelivr.net/gh/nelmio/NelmioApiDocBundle/public/"
@@ -31,7 +32,9 @@ parameters:
     connect-src:
       - "'self'"
       - "https://data.geopf.fr"
-      - "https://stats.beta.gouv.fr" #matomo
+      - "https://cdn.matomo.cloud" # todo: remove when matomo is migrated to dinum tracker
+      - "https://histologe.matomo.cloud" # todo: remove when matomo is migrated to dinum tracker
+      - "https://stats.beta.gouv.fr" #new matomo
       - "https://koumoul.com"
       - "https://sentry.incubateur.net"
       - "https://rnb-api.beta.gouv.fr"

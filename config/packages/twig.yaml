@@ -48,7 +48,7 @@ when@prod:
     twig:
         globals:
             matomo:
-                url: https://stats.beta.gouv.fr/
-                cdn: https://stats.beta.gouv.fr/matomo.js
+                url: '%matomo_url%'
+                cdn: '%matomo_cdn%'
                 site_id: '%matomo_site_id%'
                 enable: '%matomo_enable%'
