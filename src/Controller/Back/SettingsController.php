@@ -33,6 +33,8 @@ class SettingsController extends AbstractController
         $territory = null;
         if ($territoryId && ($security->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoryId]))) {
             $territory = $territoryRepository->find($territoryId);
+        } elseif (1 === count($authorizedTerritories)) {
+            $territory = $authorizedTerritories[array_key_first($authorizedTerritories)];
         }
 
         return $this->json(
