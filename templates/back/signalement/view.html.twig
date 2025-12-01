@@ -28,6 +28,18 @@
 {% endblock %}
 
 {% block content %}
+    {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
+        </div>
+    {% endif %}
+    {% if signalementsOnSameAddress|length > 0 %}
+        {% set routeForListOfSignalementOnAddress = path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': signalement.adresseOccupant|trim, 'communes[]': signalement.cpOccupant }) %}
+        {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}
+        {% else %}
+            {% include '_partials/_modal-duplicate-addresses.html.twig' %}
+        {% endif %}
+    {% endif %}
     {% if is_granted('SIGN_AFFECTATION_TOGGLE', signalement) %}
         <div data-ajax-form>
             {% include '_partials/_modal_affectation.html.twig' %}
@@ -53,10 +65,12 @@
             {% include '_partials/_modal_reinit_affectation.html.twig' %}
         </div>
     {% endif %}
-    {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
-        {% include '_partials/_modal_localisation.html.twig' %}
-    {% elseif is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_NEED_VALIDATION', signalement) %}
-        {% include '_partials/_modal_pick_localisation.html.twig' %}
+    {# on intégre la modale affichant la map même si on à pas de coordonées afin de gérer l'affichage suite à la sélection de batiment (sans rechargement de page) #}
+    {% include '_partials/_modal_localisation.html.twig' %}
+    {% if (is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_NEED_VALIDATION', signalement)) and (signalement.geoloc.lat is not defined or signalement.geoloc.lng is not defined) %}
+        <div data-ajax-form>
+            {% include '_partials/_modal_pick_localisation.html.twig' %}
+        </div>
     {% endif %}
     {% if is_granted('ROLE_ADMIN') %}
         <div data-ajax-form>
