@@ -19,6 +19,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
@@ -329,7 +330,7 @@ class SignalementActionController extends AbstractController
                 $affectationRepository->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
             } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && SignalementStatus::CLOSED === $signalement->getStatut()) {
-                $this->addFlash('error', 'Seul un responsable de territoire peut réouvrir un signalement fermé !');
+                $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Seul un responsable de territoire peut réouvrir un dossier fermé.']);
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             } else {
@@ -356,12 +357,12 @@ class SignalementActionController extends AbstractController
                 isPublic: '1' === $request->get('publicSuivi'),
                 subscriptionCreated: $subscriptionCreated,
             );
-            $this->addFlash('success', 'Signalement rouvert avec succès !');
+            $this->addFlash('success', ['title' => 'Réouverture enregistrée',  'Le dossier a bien été rouvert.']);
             if ($subscriptionCreated) {
-                $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                $this->addFlash('success', ['title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
             }
         } else {
-            $this->addFlash('error', 'Erreur lors de la réouverture du signalement !');
+            $this->addFlash('error', 'Erreur lors de la réouverture du dossier, veuillez réessayer.');
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -396,33 +397,45 @@ class SignalementActionController extends AbstractController
         Request $request,
         RnbService $rnbService,
         SignalementManager $signalementManager,
-    ): RedirectResponse {
+        SignalementRepository $signalementRepository,
+    ): JsonResponse {
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_NEED_VALIDATION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         $rnbId = $request->get('rnbId');
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
 
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         if (!empty($signalement->getGeoloc())) {
-            $this->addFlash('error', 'Le signalement a déjà une géolocalisation.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le signalement a déjà une géolocalisation.'];
 
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         $building = $rnbService->getBuilding($rnbId);
         if (!$building) {
-            $this->addFlash('error', 'Le bâtiment n\'a pas été trouvé.');
-        } else {
-            $signalement->setRnbIdOccupant($building->getRnbId());
-            $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
-            $signalementManager->flush();
-            $this->addFlash('success', 'Le bâtiment a été mis à jour avec succès.');
-        }
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le bâtiment n\'a pas été trouvé.'];
 
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        $signalement->setRnbIdOccupant($building->getRnbId());
+        $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
+        $signalementManager->flush();
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Le bâtiment a bien été mis à jour.'];
+        $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(signalement: $signalement, exclusiveStatus: [], excludedStatus: SignalementStatus::excludedStatuses());
+        $htmlTargetContents = [
+            [
+                'target' => '#header-address',
+                'content' => $this->renderView('back/signalement/view/header/_address.html.twig', [
+                    'signalement' => $signalement,
+                    'signalementsOnSameAddress' => $signalementsOnSameAddress,
+                ]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/subscribe', name: 'back_signalement_subscribe_list', methods: 'POST')]
