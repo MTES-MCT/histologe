@@ -6,7 +6,7 @@ parameters:
       - "'self'"
       - "'unsafe-inline'"
       - "'unsafe-eval'"
-      - "https://cdn.matomo.cloud/histologe.matomo.cloud/matomo.js"
+      - "https://stats.beta.gouv.fr/matomo.js"
       - "https://cdn.jsdelivr.net/gh/nelmio/NelmioApiDocBundle/public/swagger-ui/"
       - "https://cdn.jsdelivr.net/gh/nelmio/NelmioApiDocBundle/public/"
     style-src:
@@ -31,8 +31,7 @@ parameters:
     connect-src:
       - "'self'"
       - "https://data.geopf.fr"
-      - "https://cdn.matomo.cloud"
-      - "https://histologe.matomo.cloud"
+      - "https://stats.beta.gouv.fr" #matomo
       - "https://koumoul.com"
       - "https://sentry.incubateur.net"
       - "https://rnb-api.beta.gouv.fr"
