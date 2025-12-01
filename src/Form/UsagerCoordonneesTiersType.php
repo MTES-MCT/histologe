@@ -35,7 +35,6 @@ class UsagerCoordonneesTiersType extends AbstractType
                 'constraints' => [
                     new TelephoneFormat([
                         'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        'groups' => ['bo_step_coordonnees'],
                     ]),
                 ],
             ]);

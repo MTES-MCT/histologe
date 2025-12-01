@@ -32,9 +32,9 @@ class CoordonneesFoyerRequest implements RequestInterface
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
         #[Assert\Length(max: 50, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
-        #[Assert\NotBlank(message: 'Merci de saisir un email.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\NotBlank(message: 'Merci de saisir un e-mail.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Email(mode: Email::VALIDATION_MODE_STRICT)]
-        #[Assert\Length(max: 255, maxMessage: 'L\'email ne doit pas dépasser {{ limit }} caractères.')]
+        #[Assert\Length(max: 255, maxMessage: 'L\'e-mail ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
         #[Assert\NotBlank(
             message: 'Merci de saisir un numéro de téléphone.',

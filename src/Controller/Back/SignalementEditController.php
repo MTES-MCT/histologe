@@ -85,7 +85,8 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
-        if ($signalement->isV2() && !$signalement->getIsNotOccupant()) {
+        // On bloque si ça a été crééé par un occupant et qu'aucun mail n'a encore été renseigné (via invitation)
+        if ($signalement->isV2() && !$signalement->getIsNotOccupant() && empty($signalement->getMailDeclarant())) {
             throw $this->createAccessDeniedException();
         }
         /** @var array<string, mixed> $payload */
@@ -135,6 +136,11 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
     ): JsonResponse {
+        // On bloque si tiers déjà renseigné ou si créé par tiers
+        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant())) {
+            throw $this->createAccessDeniedException();
+        }
+
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -152,7 +158,6 @@ class SignalementEditController extends AbstractController
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $inviteTiersRequest);
 
             if (empty($errorMessage)) {
-                $signalement->setIsCguTiersAccepted(false); // saved in update method below
                 $subscriptionCreated = $signalementManager->updateFromInviteTiersRequest($signalement, $inviteTiersRequest);
 
                 $notificationMailerRegistry->send(

@@ -386,7 +386,8 @@ class SignalementManager extends AbstractManager
         $signalement->setNomDeclarant($inviteTiersRequest->getNom())
             ->setPrenomDeclarant($inviteTiersRequest->getPrenom())
             ->setMailDeclarant($inviteTiersRequest->getMail())
-            ->setTelDeclarant($inviteTiersRequest->getTelephone());
+            ->setTelDeclarant($inviteTiersRequest->getTelephone())
+            ->setIsCguTiersAccepted(false);
 
         $this->save($signalement);
 

@@ -257,7 +257,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?bool $isCguAccepted = null;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isCguTiersAccepted = null;
+    private ?bool $isCguTiersAccepted = null; // null for no invitation, false invitation sent, true accepted
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;

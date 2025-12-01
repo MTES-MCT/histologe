@@ -15,9 +15,9 @@ class InviteTiersRequest implements RequestInterface
         #[Assert\NotBlank(message: 'Merci de saisir un prénom.')]
         #[Assert\Length(max: 50, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $prenom = null,
-        #[Assert\NotBlank(message: 'Merci de saisir un courriel.')]
+        #[Assert\NotBlank(message: 'Merci de saisir un e-mail.')]
         #[Email(mode: Email::VALIDATION_MODE_STRICT)]
-        #[Assert\Length(max: 255, maxMessage: 'L\'email ne doit pas dépasser {{ limit }} caractères.')]
+        #[Assert\Length(max: 255, maxMessage: 'L\'e-mail ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,

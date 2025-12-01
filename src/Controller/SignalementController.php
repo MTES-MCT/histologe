@@ -518,7 +518,7 @@ class SignalementController extends AbstractController
         if ($request->isMethod('POST')) {
             $token = $request->get('_token');
             if (!$this->isCsrfTokenValid('suivi_signalement_tiers_cgu_accept'.$signalement->getCodeSuivi(), $token)) {
-                $this->addFlash('error', 'Le jeton CSRF est invalide.');
+                $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
             } elseif (!$request->get('accept')) {
                 $this->addFlash('error', 'Vous devez accepter les CGU pour accéder au dossier.');
             } else {
@@ -1062,6 +1062,11 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
+        // On bloque si tiers déjà renseigné ou si créé par tiers
+        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant())) {
+            throw $this->createAccessDeniedException();
+        }
+
         $form = $this->createForm(
             UsagerCoordonneesTiersType::class,
             $signalement,
@@ -1115,6 +1120,7 @@ class SignalementController extends AbstractController
             return null;
         }
 
+        // If null, not invited yet ; if true, already accepted
         if (false !== $signalement->getIsCguTiersAccepted()) {
             return null;
         }
