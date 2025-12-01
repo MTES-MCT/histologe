@@ -21,10 +21,7 @@ class CourrierBailleurGenerator
     {
         $writer = new PngWriter();
 
-        $url = $this->urlGenerator->generate('app_login_bailleur', [
-            'bailleur_reference' => $signalement->getReference(),
-            'bailleur_code' => $signalement->getLoginBailleur(),
-        ], referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
+        $url = $this->urlGenerator->generate('app_login_bailleur', [], referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
         $qrCode = new QrCode(data: $url);
 
         $result = $writer->write($qrCode);

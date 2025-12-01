@@ -40,10 +40,7 @@ class SignalementConfirmInjonctionBailleurMailer extends AbstractNotificationMai
             'NOM_COMPLET_DECLARANT' => $signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(),
             'LINK_DOSSIER_BAILLEUR' => $this->urlGenerator->generate(
                 'app_login_bailleur',
-                [
-                    'bailleur_reference' => $signalement->getReference(),
-                    'bailleur_code' => $signalement->getLoginBailleur(),
-                ],
+                [],
                 referenceType: UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'attachContent' => $attachment ? [
