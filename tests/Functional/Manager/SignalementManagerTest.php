@@ -110,7 +110,6 @@ class SignalementManagerTest extends WebTestCase
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
             $this->bailleurRepository,
-            $this->affectationManager,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,
@@ -150,6 +149,14 @@ class SignalementManagerTest extends WebTestCase
         }
         $signalementClosed = $this->signalementManager->closeSignalementForAllPartners(
             $signalementAffectationClose,
+            $affectation->getPartner()
+        );
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $this->affectationManager->closeBySignalement(
+            $signalementClosed,
+            $signalementAffectationClose->getMotifCloture(),
+            $user,
             $affectation->getPartner()
         );
 
