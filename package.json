@@ -3,6 +3,7 @@
     "@braintree/sanitize-url": "6.0.4",
     "@gouvfr/dsfr": "1.14.2",
     "@popperjs/core": "2.11.8",
+    "@iframe-resizer/parent": "5.5.7",
     "@sentry/browser": "8.55.0",
     "@sentry/tracing": "7.120.4",
     "@symfony/webpack-encore": "5.2.0",
