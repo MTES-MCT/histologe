@@ -16,9 +16,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class AffectationVoter extends Voter
 {
-    public const string ANSWER = 'AFFECTATION_ANSWER';
-    public const string CLOSE = 'AFFECTATION_CLOSE';
-    public const string REOPEN = 'AFFECTATION_REOPEN';
+    public const string AFFECTATION_ACCEPT_OR_REFUSE = 'AFFECTATION_ACCEPT_OR_REFUSE';
+    public const string AFFECTATION_CANCEL_REFUSED = 'AFFECTATION_CANCEL_REFUSED';
+    public const string AFFECTATION_CLOSE = 'AFFECTATION_CLOSE';
+    public const string AFFECTATION_REOPEN = 'AFFECTATION_REOPEN';
     public const string AFFECTATION_REINIT = 'AFFECTATION_REINIT';
 
     public function __construct(
@@ -28,7 +29,7 @@ class AffectationVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::ANSWER, self::CLOSE, self::REOPEN, self::AFFECTATION_REINIT], true) && ($subject instanceof Affectation);
+        return \in_array($attribute, [self::AFFECTATION_ACCEPT_OR_REFUSE, self::AFFECTATION_CANCEL_REFUSED, self::AFFECTATION_CLOSE, self::AFFECTATION_REOPEN, self::AFFECTATION_REINIT], true) && ($subject instanceof Affectation);
     }
 
     /**
@@ -45,9 +46,10 @@ class AffectationVoter extends Voter
         }
 
         return match ($attribute) {
-            self::ANSWER => $this->canAnswer($subject, $user),
-            self::CLOSE => $this->canClose($subject, $user),
-            self::REOPEN => $this->canReopen($subject, $user),
+            self::AFFECTATION_ACCEPT_OR_REFUSE => $this->canAcceptOrRefuse($subject, $user),
+            self::AFFECTATION_CANCEL_REFUSED => $this->canCancelRefused($subject, $user),
+            self::AFFECTATION_CLOSE => $this->canClose($subject, $user),
+            self::AFFECTATION_REOPEN => $this->canReopen($subject, $user),
             self::AFFECTATION_REINIT => $this->canReinit($subject, $user),
             default => false,
         };
@@ -63,6 +65,16 @@ class AffectationVoter extends Voter
         }
 
         return false;
+    }
+
+    private function canAcceptOrRefuse(Affectation $affectation, User $user): bool
+    {
+        return $this->canAnswer($affectation, $user) && AffectationStatus::WAIT === $affectation->getStatut();
+    }
+
+    private function canCancelRefused(Affectation $affectation, User $user): bool
+    {
+        return $this->canAnswer($affectation, $user) && AffectationStatus::REFUSED === $affectation->getStatut();
     }
 
     private function canClose(Affectation $affectation, User $user): bool

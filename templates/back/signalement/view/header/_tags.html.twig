@@ -2,7 +2,7 @@
     <div class="fr-mt-4v fr-p-4v fr-background-alt--grey">
         <strong>Etiquettes</strong>
         {% if is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_CLOSED', signalement) %}
-            <button class="keep-when-signalement-closed">
+            <button>
                 <a class="fr-btn--icon-left fr-a-edit fr-icon-bookmark-line fr-ml-2v" id="tags_select_tooltip_btn" href="#" data-fr-opened="false" aria-controls="fr-modal-etiquettes">
                     Gérer les étiquettes
                 </a>
@@ -92,12 +92,12 @@
                             <div class="fr-modal__footer">
                                 <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                                     <li>
-                                        <button class="fr-btn fr-icon-check-line keep-when-signalement-closed" form="form-signalement-save-tags" type="submit">
+                                        <button class="fr-btn fr-icon-check-line" form="form-signalement-save-tags" type="submit">
                                             Valider
                                         </button>
                                     </li>
                                     <li>
-                                        <button class="fr-btn fr-btn--secondary fr-icon-close-line keep-when-signalement-closed" type="button" aria-controls="fr-modal-etiquettes">
+                                        <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-etiquettes">
                                             Annuler
                                         </button>
                                     </li>

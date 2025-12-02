@@ -2,12 +2,12 @@
     <ul class="fr-tabs__list" role="tablist" aria-label="Informations du signalement">
         <li role="presentation">
             <button id="tabpanel-activite" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="0" role="tab"
-                {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION or canAnswerAffectation %}aria-selected="false"{% else %}aria-selected="true"{% endif %}
+                {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION or is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) %}aria-selected="false"{% else %}aria-selected="true"{% endif %}
                 aria-controls="tabpanel-activite-panel">Activité PNLHI ({{ signalement.suivis|length }})</button>
         </li>
         <li role="presentation">
             <button id="tabpanel-situation" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab"
-                {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION or canAnswerAffectation %}aria-selected="true"{% else %}aria-selected="false"{% endif %}
+                {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION or is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) %}aria-selected="true"{% else %}aria-selected="false"{% endif %}
                 aria-controls="tabpanel-situation-panel">Situation</button>
         </li>
         <li role="presentation">
