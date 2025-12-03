@@ -223,7 +223,7 @@ class SignalementManager extends AbstractManager
         return $partners;
     }
 
-    public function closeSignalementForAllPartners(SignalementAffectationClose $signalementAffectationClose, Partner $partner): Signalement
+    public function closeSignalement(SignalementAffectationClose $signalementAffectationClose): Signalement
     {
         $signalement = $signalementAffectationClose->getSignalement();
         $signalement

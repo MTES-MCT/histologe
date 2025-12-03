@@ -147,10 +147,7 @@ class SignalementManagerTest extends WebTestCase
         if (!$affectation) {
             $this->fail('No affectation found for the signalement');
         }
-        $signalementClosed = $this->signalementManager->closeSignalementForAllPartners(
-            $signalementAffectationClose,
-            $affectation->getPartner()
-        );
+        $signalementClosed = $this->signalementManager->closeSignalement($signalementAffectationClose);
         /** @var User $user */
         $user = $this->security->getUser();
         $this->affectationManager->closeBySignalement(
