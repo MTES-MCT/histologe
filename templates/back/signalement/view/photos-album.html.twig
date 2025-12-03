@@ -1,11 +1,11 @@
 <div class="photos-album fr-hidden">
     <div class="photos-album-close-button-container">
-        <button class="photos-album-btn-close fr-btn fr-btn--icon-left fr-icon-close-line keep-when-signalement-closed">Fermer</button>
+        <button class="photos-album-btn-close fr-btn fr-btn--icon-left fr-icon-close-line">Fermer</button>
     </div>
     {% set loopLength = allPhotosOrdered|length %}
     <div class="photos-album-navigation-container">
         <div>
-            <button class="fr-btn photos-album-swipe keep-when-signalement-closed" data-direction="-1">&lt;</button>
+            <button class="fr-btn photos-album-swipe" data-direction="-1">&lt;</button>
         </div>
         <div>
             {% for index, photo in allPhotosOrdered %}
@@ -15,17 +15,17 @@
                 </div>
                 <div class="photos-album-flex">
                     <div>
-                        <button class="photos-album-main-btn-edit fr-btn fr-btn--icon-left fr-icon-edit-line keep-when-signalement-closed" data-id="{{ photo.id }}">Modifier l'orientation</button>
+                        <button class="photos-album-main-btn-edit fr-btn fr-btn--icon-left fr-icon-edit-line" data-id="{{ photo.id }}">Modifier l'orientation</button>
                         <ul class="photos-album-list-btn-edit fr-hidden fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--center" data-id="{{ photo.id }}">
                             <li>
-                                <button class="photo-album-rotate-left-btn fr-btn fr-icon-arrow-go-back-line keep-when-signalement-closed" data-id="{{ photo.id }}">Pivoter à gauche</button>
+                                <button class="photo-album-rotate-left-btn fr-btn fr-icon-arrow-go-back-line" data-id="{{ photo.id }}">Pivoter à gauche</button>
                             </li>
                             <li>
-                                <button class="photo-album-rotate-right-btn fr-btn fr-btn--icon-right fr-icon-arrow-go-forward-line keep-when-signalement-closed" data-id="{{ photo.id }}">Pivoter à droite</button>
+                                <button class="photo-album-rotate-right-btn fr-btn fr-btn--icon-right fr-icon-arrow-go-forward-line" data-id="{{ photo.id }}">Pivoter à droite</button>
                             </li>
                             <li>
                                 <button 
-                                    class="photo-album-save-rotation fr-btn fr-icon-save-3-line keep-when-signalement-closed" 
+                                    class="photo-album-save-rotation fr-btn fr-icon-save-3-line" 
                                     disabled 
                                     data-action="{{path('back_signalement_file_rotate', {uuid: photo.signalement.uuid, id: photo.id})}}" 
                                     data-id="{{ photo.id }}">Enregistrer
@@ -63,15 +63,15 @@
                         Photo ajoutée par {{ photo.uploadedBy.nomComplet ?? 'l\'usager' }}
                     </div>
                     <div class="fr-grid-row fr-mt-2v fr-grid-row--right" id="zoom">
-                        <button class="photos-album-btn-zoom-out fr-btn fr-btn--icon-center fr-icon-zoom-out-line keep-when-signalement-closed fr-mr-4v" data-id="{{ photo.id }}"></button>
-                        <button class="photos-album-btn-zoom-in fr-btn fr-btn--icon-center fr-icon-zoom-in-line keep-when-signalement-closed" data-id="{{ photo.id }}"></button>
+                        <button class="photos-album-btn-zoom-out fr-btn fr-btn--icon-center fr-icon-zoom-out-line fr-mr-4v" data-id="{{ photo.id }}"></button>
+                        <button class="photos-album-btn-zoom-in fr-btn fr-btn--icon-center fr-icon-zoom-in-line" data-id="{{ photo.id }}"></button>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
         <div>
-            <button class="fr-btn photos-album-swipe keep-when-signalement-closed" data-direction="1">&gt;</button>
+            <button class="fr-btn photos-album-swipe" data-direction="1">&gt;</button>
         </div>
     </div>
     <script type="text/javascript" nonce="{{ app.request.attributes.get('csp_script_nonce') }}">

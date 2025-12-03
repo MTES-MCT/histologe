@@ -73,21 +73,18 @@
         {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
     {% endif %}
 
-    <div class="fr-background--white
-            {{ (isClosedForMe and not is_granted('ROLE_ADMIN_TERRITORY'))
-                or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED
-                or signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED
-            ? 'signalement-invalid'
-            : ''
-            }}">
-        <section id="signalement-{{ signalement.id }}-content"
-            class="fr-p-5v">
-
+    {% set signalementInvalidClass = '' %}
+    {% 
+       if signalement.statut in [enum('App\\Entity\\Enum\\SignalementStatus').CLOSED, enum('App\\Entity\\Enum\\SignalementStatus').REFUSED] 
+       or (not is_granted('ROLE_ADMIN_TERRITORY') and affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED)
+     %}
+        {% set signalementInvalidClass = 'signalement-invalid' %}
+    {% endif %}
+    <div class="fr-background--white {{ signalementInvalidClass }}">
+        <section id="signalement-{{ signalement.id }}-content" class="fr-p-5v">
             {% include 'back/signalement/view/photos-album.html.twig' %}
-            
             {% include 'back/signalement/view/header.html.twig' %}
         </section>
-
         {% include 'back/signalement/view/tabs.html.twig' %}
     </div>
 {% endblock %}

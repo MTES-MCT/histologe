@@ -38,7 +38,7 @@
                                         Clôturer pour tous les partenaires
                                     </button>
                                 </li>
-                                {% if affectation and isAffectationAccepted %}
+                                {% if affectation and affectation.statut is same as constant('App\\Entity\\Enum\\AffectationStatus::ACCEPTED') %}
                                     <li>
                                         <button class="fr-btn fr-icon-check-line" form="cloture_form" type="submit" data-cloture-type="partner">
                                             Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}

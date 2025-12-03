@@ -156,12 +156,12 @@ class AffectationController extends AbstractController
     }
 
     #[Route('/affectation/{affectation}/accept', name: 'back_signalement_affectation_accept', methods: 'POST')]
+    #[IsGranted(AffectationVoter::AFFECTATION_ACCEPT_OR_REFUSE, subject: 'affectation')]
     public function affectationResponseSignalement(
         Affectation $affectation,
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
     ): Response {
-        $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
         $signalement = $affectation->getSignalement();
         /** @var User $user */
         $user = $this->getUser();
@@ -218,11 +218,11 @@ class AffectationController extends AbstractController
     }
 
     #[Route('/affectation/{affectation}/deny', name: 'back_signalement_affectation_deny', methods: 'POST')]
+    #[IsGranted(AffectationVoter::AFFECTATION_ACCEPT_OR_REFUSE, subject: 'affectation')]
     public function affectationResponseDenySignalement(
         Affectation $affectation,
         Request $request,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted(AffectationVoter::ANSWER, $affectation);
         $signalement = $affectation->getSignalement();
         /** @var User $user */
         $user = $this->getUser();

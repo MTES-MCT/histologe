@@ -118,47 +118,16 @@ class SignalementController extends AbstractController
             SignalementViewedEvent::NAME
         );
 
-        $canAnswerAffectation = $canCancelRefusedAffectation = false;
-        $isAffectationRefused = $isAffectationAccepted = false;
-        $isClosedForMe = null;
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
-        $affectation = $signalement->getAffectations()
-            ->filter(function (Affectation $affectation) use ($partner) {
-                return $affectation->getPartner() === $partner;
-            })
-            ->first();
-        if ($affectation) {
-            switch ($affectation->getStatut()) {
-                case AffectationStatus::ACCEPTED:
-                    $isAffectationAccepted = true;
-                    break;
-                case AffectationStatus::REFUSED:
-                    $isAffectationRefused = true;
-                    $canCancelRefusedAffectation = $this->isGranted(AffectationVoter::ANSWER, $affectation);
-                    break;
-                case AffectationStatus::CLOSED:
-                    $isClosedForMe = true;
-                    break;
-                case AffectationStatus::WAIT:
-                    $canAnswerAffectation = $this->isGranted(AffectationVoter::ANSWER, $affectation);
-                    break;
-            }
-        }
-
-        $isClosedForMe = $isClosedForMe ?? SignalementStatus::CLOSED === $signalement->getStatut();
-        $canValidateOrRefuseSignalement = $this->isGranted(SignalementVoter::VALIDATE, $signalement)
-                                            && !$isClosedForMe
-                                            && SignalementStatus::NEED_VALIDATION === $signalement->getStatut();
-
-        $isUserSubscribed = false;
-        if ($signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement])) {
-            $isUserSubscribed = true;
-        }
+        $affectation = $signalement->getAffectationForPartner($partner);
+        $canAnswerAffectation = $this->isGranted(AffectationVoter::AFFECTATION_ACCEPT_OR_REFUSE, $affectation);
+        $canCancelRefusedAffectation = $this->isGranted(AffectationVoter::AFFECTATION_CANCEL_REFUSED, $affectation);
+        $isUserSubscribed = $signalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]) ? true : false;
 
         $acceptSignalementForm = null;
         $refusSignalementForm = null;
         $isUniqueRtInCurrentPartner = false;
-        if ($canValidateOrRefuseSignalement) {
+        if ($this->isGranted(SignalementVoter::VALIDATE, $signalement)) {
             if ($user->isTerritoryAdmin()) {
                 if (1 === count($userRepository->findActiveTerritoryAdminsInPartner($partner))) {
                     $isUniqueRtInCurrentPartner = true;
@@ -287,23 +256,14 @@ class SignalementController extends AbstractController
             exclusiveStatus: [],
             excludedStatus: SignalementStatus::excludedStatuses(),
         );
-        $subscriptionsInMyPartner = [];
-        if ($this->isGranted('AFFECTATION_SEE', $signalement) || (!$isClosedForMe && $isAffectationAccepted)) {
-            $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
-        }
+        $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
+
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
             'photos' => $infoDesordres['photos'],
             'criteres' => $infoDesordres['criteres'],
-            'canAnswerAffectation' => $canAnswerAffectation,
-            'canCancelRefusedAffectation' => $canCancelRefusedAffectation,
-            'canValidateOrRefuseSignalement' => $canValidateOrRefuseSignalement,
             'affectation' => $affectation,
-            'isAffectationAccepted' => $isAffectationAccepted,
-            'isSignalementClosed' => SignalementStatus::CLOSED === $signalement->getStatut(),
-            'isClosedForMe' => $isClosedForMe,
-            'isAffectationRefused' => $isAffectationRefused,
             'isDanger' => $infoDesordres['isDanger'],
             'signalement' => $signalement,
             'partner' => $partner,
@@ -351,7 +311,7 @@ class SignalementController extends AbstractController
         $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
         })->first();
-        if (!$this->isGranted('SIGN_CLOSE', $signalement) && (!$affectation || !$this->isGranted('AFFECTATION_CLOSE', $affectation))) {
+        if (!$this->isGranted('SIGN_CLOSE', $signalement) && (!$affectation || !$this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation))) {
             return $this->json(['code' => Response::HTTP_FORBIDDEN, 'message' => 'Vous n\'êtes pas autorisé à fermer ce signalement ou cette affectation.'], Response::HTTP_FORBIDDEN);
         }
 

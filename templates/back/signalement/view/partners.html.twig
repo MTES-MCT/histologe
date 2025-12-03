@@ -37,8 +37,10 @@
             </div>
         {% endif %}
     </div>
-
-{% elseif not isClosedForMe and isAffectationAccepted %}
+{% elseif 
+    signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED 
+    and (affectation and affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED) 
+%}
     <div class="fr-container--fluid">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-6">

@@ -1,6 +1,6 @@
 {% set currentPartner =  app.user.partnerInTerritoryOrFirstOne(signalement.territory) %}
 {% set isAloneInCurrentPartner = app.user.isAloneInPartner(currentPartner) %}
-{% if (canAnswerAffectation or canCancelRefusedAffectation) and not isAloneInCurrentPartner %}
+{% if (is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) or is_granted('AFFECTATION_CANCEL_REFUSED', affectation)) and not isAloneInCurrentPartner %}
     <div data-ajax-form class="fr-display-inline">
         {% include '_partials/_modal_accept_affectation.html.twig' %}
     </div>
@@ -10,7 +10,7 @@
         {% include '_partials/_modal_transfer_subscription.html.twig' %}
     </div>
 {% endif %}
-{% if canValidateOrRefuseSignalement and not isUniqueRtInCurrentPartner %}
+{% if is_granted('SIGN_VALIDATE', signalement) and not isUniqueRtInCurrentPartner %}
     <div data-ajax-form>
         {% include '_partials/_modal_accept_signalement.html.twig' %}
     </div>
@@ -26,7 +26,7 @@
         </div>
     </div>
 {% endif %}
-{% if canAnswerAffectation %}
+{% if is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) %}
     <div data-ajax-form class="fr-display-inline">
         {% include '_partials/_modal_refus_affectation.html.twig' %}
     </div>
@@ -61,7 +61,7 @@
         aria-controls="refus-affectation-modal">
         Refuser l'affectation
     </a>
-{% elseif canValidateOrRefuseSignalement %}
+{% elseif is_granted('SIGN_VALIDATE', signalement) %}
     <div class="fr-notice fr-notice--info fr-my-4v fr-text--left">
         <div class="fr-pl-3v">
             <div class="fr-notice__body">
