@@ -328,7 +328,7 @@
           "slug": "info_procedure_bail_date",
           "placeholder": "01/1970",
           "validate": {
-            "pattern": "^(0[1-9]|1[0-2])\\/\\d{4}$",
+            "pattern": "^(0[1-9]|1[0-2])\\/(19|20)\\d{2}$",
             "patternMessage": "Veuillez renseigner quand vous avez prévenu votre bailleur.",
             "message": "Veuillez renseigner quand vous avez prévenu votre bailleur."
           },
