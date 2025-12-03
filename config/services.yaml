@@ -33,6 +33,8 @@ parameters:
     platform_logo: '%env(resolve:PLATFORM_LOGO)%'
     matomo_enable: '%env(bool:MATOMO_ENABLE)%'
     matomo_site_id: '%env(resolve:MATOMO_SITE_ID)%'
+    matomo_url: '%env(resolve:MATOMO_URL)%'
+    matomo_cdn: '%env(resolve:MATOMO_CDN)%'
     maintenance_enable: '%env(bool:MAINTENANCE_ENABLE)%'
     maintenance_banner_enable: '%env(bool:MAINTENANCE_BANNER_ENABLE)%'
     maintenance_banner_message: '%env(resolve:MAINTENANCE_BANNER_MESSAGE)%'
