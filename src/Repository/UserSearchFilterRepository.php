@@ -3,18 +3,18 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Entity\UserSavedSearch;
+use App\Entity\UserSearchFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<UserSavedSearch>
+ * @extends ServiceEntityRepository<UserSearchFilter>
  */
-class UserSavedSearchRepository extends ServiceEntityRepository
+class UserSearchFilterRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, UserSavedSearch::class);
+        parent::__construct($registry, UserSearchFilter::class);
     }
 
     public function countForUser(User $user): int
@@ -28,7 +28,7 @@ class UserSavedSearchRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return UserSavedSearch[]
+     * @return UserSearchFilter[]
      */
     public function findByUser(User $user): array
     {

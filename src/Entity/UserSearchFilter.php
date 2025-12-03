@@ -5,12 +5,21 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
-use App\Repository\UserSavedSearchRepository;
+use App\Repository\UserSearchFilterRepository;
+use App\Validator\UserSearchFilterParams;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: UserSavedSearchRepository::class)]
-class UserSavedSearch implements EntityHistoryInterface
+#[ORM\Entity(repositoryClass: UserSearchFilterRepository::class)]
+#[ORM\UniqueConstraint(name: 'uniq_user_search_name', columns: ['user_id', 'name'])]
+#[UniqueEntity(
+    fields: ['user', 'name'],
+    message: 'Vous avez déjà enregistré une recherche avec ce nom.'
+)]
+#[UserSearchFilterParams]
+#[ORM\HasLifecycleCallbacks]
+class UserSearchFilter implements EntityHistoryInterface
 {
     use TimestampableTrait;
 
@@ -19,7 +28,7 @@ class UserSavedSearch implements EntityHistoryInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userSavedSearches')]
+    #[ORM\ManyToOne(inversedBy: 'userSearchFilters')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
@@ -29,11 +38,6 @@ class UserSavedSearch implements EntityHistoryInterface
 
     #[ORM\Column]
     private array $params = [];
-
-    public function __construct()
-    {
-        $this->createdAt = new \DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {

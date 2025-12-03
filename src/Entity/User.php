@@ -216,10 +216,10 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private ?string $phone = null;
 
     /**
-     * @var Collection<int, UserSavedSearch>
+     * @var Collection<int, UserSearchFilter>
      */
-    #[ORM\OneToMany(mappedBy: 'User', targetEntity: UserSavedSearch::class, orphanRemoval: true)]
-    private Collection $userSavedSearches;
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: UserSearchFilter::class, orphanRemoval: true)]
+    private Collection $userSearchFilters;
 
     public function __construct()
     {
@@ -237,7 +237,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->hasDoneSubscriptionsChoice = false;
         $this->userApiPermissions = new ArrayCollection();
-        $this->userSavedSearches = new ArrayCollection();
+        $this->userSearchFilters = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1108,31 +1108,31 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     {
         return count($this->getPartnersTerritories()) > 1;
     }
-    
+
     /**
-     * @return Collection<int, UserSavedSearch>
+     * @return Collection<int, UserSearchFilter>
      */
-    public function getUserSavedSearches(): Collection
+    public function getUserSearchFilters(): Collection
     {
-        return $this->userSavedSearches;
+        return $this->userSearchFilters;
     }
 
-    public function addUserSavedSearch(UserSavedSearch $userSavedSearch): static
+    public function addUserSearchFilter(UserSearchFilter $userSearchFilter): static
     {
-        if (!$this->userSavedSearches->contains($userSavedSearch)) {
-            $this->userSavedSearches->add($userSavedSearch);
-            $userSavedSearch->setUser($this);
+        if (!$this->userSearchFilters->contains($userSearchFilter)) {
+            $this->userSearchFilters->add($userSearchFilter);
+            $userSearchFilter->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeUserSavedSearch(UserSavedSearch $userSavedSearch): static
+    public function removeUserSearchFilter(UserSearchFilter $userSearchFilter): static
     {
-        if ($this->userSavedSearches->removeElement($userSavedSearch)) {
+        if ($this->userSearchFilters->removeElement($userSearchFilter)) {
             // set the owning side to null (unless already changed)
-            if ($userSavedSearch->getUser() === $this) {
-                $userSavedSearch->setUser(null);
+            if ($userSearchFilter->getUser() === $this) {
+                $userSearchFilter->setUser(null);
             }
         }
 

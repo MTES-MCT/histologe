@@ -40,7 +40,7 @@
                   <div class="fr-mb-2v">
                     <label class="fr-label" :for="`saved-search-filters-${search.Id}`">Filtres de la recherche :</label>
                     <div class="fr-tags-group" :id="`saved-search-filters-${search.Id}`">
-                      <span v-for="(value, key) in search.Params" :key="key" class="fr-tag fr-tag--sm fr-tag--dismiss">
+                      <span v-for="(value, key) in search.Params" :key="key" class="fr-tag fr-tag--sm">
                         {{ getBadgeFilterLabel(key, value) }}
                       </span>
                     </div>
@@ -76,14 +76,40 @@ export default defineComponent({
       sharedProps: store.props,
       sharedState: store.state,
       messageEditConfirmation: '',
-      classNameEditConfirmation: ''
+      classNameEditConfirmation: '',
+      modalObserver: null as MutationObserver | null
     }
   },
-  props: {
+  mounted() {
+    const modal = document.getElementById('modal-edit-search') as HTMLDialogElement
+    if (!modal) return
+
+    const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+        if (m.attributeName === 'open') {
+            this.resetModalState()
+        }
+      })
+    })
+
+    observer.observe(modal, { attributes: true })
+    this.modalObserver = observer
   },
-  computed: {
+  beforeUnmount() {
+    if (this.modalObserver) {
+      this.modalObserver.disconnect()
+      this.modalObserver = null
+    }
   },
   methods: {
+    resetModalState() {
+      this.messageEditConfirmation = ''
+      this.classNameEditConfirmation = ''
+
+      for (const search of this.sharedState.savedSearches) {
+          search.NewName = (search.Text as string)
+      }
+    },
     getBadgeFilterLabel (key: string, value: any) {
       return buildBadge(key, value)
     },

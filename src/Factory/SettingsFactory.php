@@ -5,7 +5,7 @@ namespace App\Factory;
 use App\Dto\Settings;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Repository\UserSavedSearchRepository;
+use App\Repository\UserSearchFilterRepository;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Service\UserAvatar;
 use Psr\Cache\InvalidArgumentException;
@@ -15,7 +15,7 @@ class SettingsFactory
     public function __construct(
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         private readonly UserAvatar $userAvatar,
-        private readonly UserSavedSearchRepository $userSaveSearchRepository,
+        private readonly UserSearchFilterRepository $userSaveSearchRepository,
     ) {
     }
 

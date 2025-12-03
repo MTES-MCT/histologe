@@ -27,7 +27,7 @@
                 <div class="fr-mb-2v">
                   <label class="fr-label" for="search-filters">Votre recherche a les filtres suivants :</label>
                   <div class="fr-tags-group" id="search-filters">
-                    <span v-for="(value, key) in filtersSanitized" :key="key" class="fr-tag fr-tag--sm fr-tag--dismiss">
+                    <span v-for="(value, key) in filtersSanitized" :key="key" class="fr-tag fr-tag--sm">
                       {{ getBadgeFilterLabel(key as string, value) }}
                     </span>
                   </div>
@@ -73,10 +73,30 @@ export default defineComponent({
       sharedState: store.state,
       messageSaveConfirmation: '',
       classNameSaveConfirmation: '',
-      nameSearch: ''
+      nameSearch: '',
+      modalObserver: null as MutationObserver | null
     }
   },
-  props: {
+  mounted() {
+    const modal = document.getElementById('modal-save-search') as HTMLDialogElement
+    if (!modal) return
+
+    const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+        if (m.attributeName === 'open') {
+            this.resetModalState()
+        }
+      })
+    })
+
+    observer.observe(modal, { attributes: true })
+    this.modalObserver = observer
+  },
+  beforeUnmount() {
+    if (this.modalObserver) {
+      this.modalObserver.disconnect()
+      this.modalObserver = null
+    }
   },
   computed: {
     filtersSanitized () {
@@ -84,6 +104,10 @@ export default defineComponent({
     }
   },
   methods: {
+    resetModalState() {
+      this.messageSaveConfirmation = ''
+      this.classNameSaveConfirmation = ''
+    },
     getBadgeFilterLabel (key: string, value: any) {
       return buildBadge(key, value)
     },
