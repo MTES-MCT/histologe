@@ -24,11 +24,11 @@ readonly class MenuBuilder
     {
         /** @var User $user */
         $user = $this->currentRoute->getUser();
-        $listRouteParameters = [];
+        $listRouteParameters = ['isImported' => 'oui'];
         if ($this->currentRoute->isGranted(User::ROLE_ADMIN)) {
-            $listRouteParameters = ['status' => 'nouveau', 'isImported' => 'oui'];
+            $listRouteParameters['status'] = 'nouveau';
         } elseif ($user->isUserPartner()) {
-            $listRouteParameters = ['showMySignalementsOnly' => 'oui'];
+            $listRouteParameters['showMySignalementsOnly'] = 'oui';
         }
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', routeParameters: $listRouteParameters, roleGranted: User::ROLE_USER));

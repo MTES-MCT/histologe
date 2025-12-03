@@ -26,6 +26,8 @@ class SettingsControllerTest extends WebTestCase
         $this->assertArrayHasKey('lastname', $responseContent);
         $this->assertArrayHasKey('roleLabel', $responseContent);
         $this->assertArrayHasKey('territories', $responseContent);
+        $this->assertArrayHasKey('hasSignalementImported', $responseContent);
+        $this->assertTrue($responseContent['hasSignalementImported']);
     }
 
     public function testSettingsWithTerritory(): void
@@ -47,5 +49,27 @@ class SettingsControllerTest extends WebTestCase
         $this->assertArrayHasKey('partners', $responseContent);
         $this->assertArrayHasKey('epcis', $responseContent);
         $this->assertArrayHasKey('tags', $responseContent);
+    }
+
+    public function testSettingsWithoutImported(): void
+    {
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        $router = self::getContainer()->get(RouterInterface::class);
+        $client->request('GET', $router->generate('back_settings'));
+
+        $this->assertEquals('200', $client->getResponse()->getStatusCode());
+        $responseContent = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('firstname', $responseContent);
+        $this->assertArrayHasKey('lastname', $responseContent);
+        $this->assertArrayHasKey('roleLabel', $responseContent);
+        $this->assertArrayHasKey('territories', $responseContent);
+        $this->assertArrayHasKey('hasSignalementImported', $responseContent);
+        $this->assertFalse($responseContent['hasSignalementImported']);
     }
 }
