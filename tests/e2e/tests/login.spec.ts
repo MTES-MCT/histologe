@@ -36,7 +36,7 @@ test('login for bailleur', async ({page, context}) => {
   await page.getByRole('textbox', { name: 'Référence du dossier' }).click();
   await page.getByRole('textbox', { name: 'Référence du dossier' }).fill('2025-12');
   await page.getByRole('textbox', { name: 'Code de connexion' }).click();
-  await page.getByRole('textbox', { name: 'Code de connexion' }).fill('xxxx-xxxx-xxxx-xxxx');
+  await page.getByRole('textbox', { name: 'Code de connexion' }).fill('XXXX-XXXX-XXXX-XXXX');
   await page.getByRole('button', { name: 'Envoyer' }).click();
 
   // Attendre la navigation vers la page bailleur
