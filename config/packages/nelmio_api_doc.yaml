@@ -207,4 +207,4 @@ nelmio_api_doc:
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
         name_patterns:
-          - '%env(FEATURE_API_CREATION_SIGNALEMENT)%'
+          - '%env(string:default:feature_api_doc_pattern_fallback:FEATURE_API_CREATION_SIGNALEMENT)%'
