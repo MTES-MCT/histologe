@@ -9,6 +9,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
@@ -31,6 +32,7 @@ class SuiviManagerTest extends KernelTestCase
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
     private UserRepository $userRepository;
     private SuiviManager $suiviManager;
+    private UserManager $userManager;
 
     protected function setUp(): void
     {
@@ -43,6 +45,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
         $this->userRepository = self::getContainer()->get(UserRepository::class);
         $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->userManager = static::getContainer()->get(UserManager::class);
         $this->suiviManager = new SuiviManager(
             $this->managerRegistry,
             $this->signalementUpdatedListener,
@@ -50,6 +53,7 @@ class SuiviManagerTest extends KernelTestCase
             $this->security,
             $this->htmlSanitizerInterface,
             $this->userSignalementSubscriptionManager,
+            $this->userManager,
             true,
             Suivi::class,
         );

@@ -19,10 +19,12 @@ class UsagerCoordonneesTiersType extends AbstractType
             ->add('nomDeclarant', TextType::class, [
                 'label' => 'Nom de famille',
                 'required' => false,
+                'attr' => ['maxlength' => 50],
             ])
             ->add('prenomDeclarant', TextType::class, [
                 'label' => 'Prénom',
                 'required' => false,
+                'attr' => ['maxlength' => 50],
             ])
             ->add('mailDeclarant', TextType::class, [
                 'label' => 'Adresse e-mail',

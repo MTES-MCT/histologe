@@ -70,6 +70,7 @@ class SignalementManager extends AbstractManager
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private readonly SuiviManager $suiviManager,
+        private readonly UserManager $userManager,
         private readonly BailleurRepository $bailleurRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
@@ -389,9 +390,12 @@ class SignalementManager extends AbstractManager
             ->setTelDeclarant($inviteTiersRequest->getTelephone())
             ->setIsCguTiersAccepted(false);
 
+        // Create user corresponding to declarant
+        $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+
         $this->save($signalement);
 
-        return $this->suiviManager->addInviteSuiviIfNeeded($signalement);
+        return $this->suiviManager->addInviteSuiviFromBo($signalement);
     }
 
     public function updateFromCoordonneesFoyerRequest(

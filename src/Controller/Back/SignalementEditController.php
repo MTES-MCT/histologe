@@ -24,6 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -129,10 +130,11 @@ class SignalementEditController extends AbstractController
     #[Route('/{uuid:signalement}/edit-invite-tiers', name: 'back_signalement_edit_invite_tiers', methods: 'POST')]
     #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
     public function editInviteTiers(
+        #[MapRequestPayload(validationGroups: ['false'])]
+        InviteTiersRequest $inviteTiersRequest,
         Signalement $signalement,
         Request $request,
         SignalementManager $signalementManager,
-        SerializerInterface $serializer,
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
     ): JsonResponse {
@@ -148,13 +150,6 @@ class SignalementEditController extends AbstractController
             'signalement_edit_invite_tiers_'.$signalement->getId(),
             $token
         )) {
-            /** @var InviteTiersRequest $inviteTiersRequest */
-            $inviteTiersRequest = $serializer->deserialize(
-                json_encode($request->getPayload()->all()),
-                InviteTiersRequest::class,
-                'json'
-            );
-
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $inviteTiersRequest);
 
             if (empty($errorMessage)) {

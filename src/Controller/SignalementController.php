@@ -480,8 +480,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -516,10 +515,10 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
 
         if ($request->isMethod('POST')) {
-            $token = $request->get('_token');
+            $token = (string) $request->request->get('_token');
             if (!$this->isCsrfTokenValid('suivi_signalement_tiers_cgu_accept'.$signalement->getCodeSuivi(), $token)) {
                 $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
-            } elseif (!$request->get('accept')) {
+            } elseif (!$request->request->get('accept')) {
                 $this->addFlash('error', 'Vous devez accepter les CGU pour accéder au dossier.');
             } else {
                 $signalement->setIsCguTiersAccepted(true);
@@ -546,8 +545,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -582,8 +580,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -662,8 +659,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -731,8 +727,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -799,8 +794,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -833,8 +827,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -904,8 +897,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -957,8 +949,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -1008,8 +999,7 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail());
-        if ($redirect instanceof Response) {
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
 
@@ -1075,25 +1065,13 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Create user corresponding to declarant
+            $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+
             $signalement->setIsCguTiersAccepted(false);
             $signalementManager->save($signalement);
 
-            $description = 'L\'usager a ajouté les coordonnées d\'un tiers pour suivre le signalement :<br>';
-            $description .= '<ul>';
-            $description .= $signalement->getNomDeclarant() ? '<li>Nom : '.$signalement->getNomDeclarant().'</li>' : '';
-            $description .= $signalement->getPrenomDeclarant() ? '<li>Prénom : '.$signalement->getPrenomDeclarant().'</li>' : '';
-            $description .= $signalement->getMailDeclarant() ? '<li>E-mail : '.$signalement->getMailDeclarant().'</li>' : '';
-            $description .= $signalement->getTelDeclarant() ? '<li>Téléphone : '.$signalement->getTelDeclarantDecoded().'</li>' : '';
-            $description .= '</ul>';
-
-            $suiviManager->createSuivi(
-                signalement: $signalement,
-                description: $description,
-                type: Suivi::TYPE_AUTO,
-                category: SuiviCategory::SIGNALEMENT_EDITED_FO,
-                user: $userManager->getSystemUser(),
-                isPublic: false,
-            );
+            $suiviManager->addInviteSuiviFromFo($signalement);
 
             $notificationMailerRegistry->send(
                 new NotificationMail(

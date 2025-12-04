@@ -157,12 +157,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?bool $isNotOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    #[Assert\Length(max: 50)]
+    #[Assert\Length(max: 50, groups: ['Default', 'fo_suivi_usager_tiers'])]
     #[Assert\NotBlank(groups: ['fo_suivi_usager_tiers'])]
     private ?string $nomDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    #[Assert\Length(max: 50)]
+    #[Assert\Length(max: 50, groups: ['Default', 'fo_suivi_usager_tiers'])]
     #[Assert\NotBlank(groups: ['fo_suivi_usager_tiers'])]
     private ?string $prenomDeclarant = null;
 
@@ -175,7 +175,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telDeclarantSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du déclarant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees', 'fo_suivi_usager_tiers'])]
     #[Assert\NotBlank(groups: ['fo_suivi_usager_tiers'])]
     private ?string $mailDeclarant = null;
 
@@ -568,7 +568,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->criticites;
     }
 
-    public function addCriticite(Criticite $criticite): self
+    public function addCriticite(Criticite $criticite): static
     {
         if (!$this->criticites->contains($criticite)) {
             $this->criticites[] = $criticite;
@@ -577,7 +577,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function removeCriticite(Criticite $criticite): self
+    public function removeCriticite(Criticite $criticite): static
     {
         $this->criticites->removeElement($criticite);
 
@@ -589,7 +589,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->details;
     }
 
-    public function setDetails(?string $details): self
+    public function setDetails(?string $details): static
     {
         $this->details = $details;
 
@@ -601,7 +601,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isProprioAverti;
     }
 
-    public function setIsProprioAverti(?bool $isProprioAverti): self
+    public function setIsProprioAverti(?bool $isProprioAverti): static
     {
         $this->isProprioAverti = $isProprioAverti;
 
@@ -621,7 +621,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode @see setTypeCompositionLogement() afin de mettre à jour le nombre de personnes qui vivent dans le logement
      */
-    public function setNbAdultes(?string $nbAdultes): self
+    public function setNbAdultes(?string $nbAdultes): static
     {
         $this->nbAdultes = $nbAdultes;
 
@@ -641,7 +641,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode @see setTypeCompositionLogement() afin de mettre si des enfants de moins de 6 ans occupe le logement
      */
-    public function setNbEnfantsM6(?string $nbEnfantsM6): self
+    public function setNbEnfantsM6(?string $nbEnfantsM6): static
     {
         $this->nbEnfantsM6 = $nbEnfantsM6;
 
@@ -663,7 +663,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * Il n'est plus utile de connaitre le nombre d'enfant de plus de 6 ans
      * Sera supprimé à la prochaine version
      */
-    public function setNbEnfantsP6(?string $nbEnfantsP6): self
+    public function setNbEnfantsP6(?string $nbEnfantsP6): static
     {
         $this->nbEnfantsP6 = $nbEnfantsP6;
 
@@ -706,7 +706,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isAllocataire;
     }
 
-    public function setIsAllocataire(?string $isAllocataire): self
+    public function setIsAllocataire(?string $isAllocataire): static
     {
         $this->isAllocataire = $isAllocataire;
 
@@ -718,7 +718,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->numAllocataire;
     }
 
-    public function setNumAllocataire(?string $numAllocataire): self
+    public function setNumAllocataire(?string $numAllocataire): static
     {
         $this->numAllocataire = $numAllocataire;
 
@@ -730,7 +730,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->natureLogement;
     }
 
-    public function setNatureLogement(?string $natureLogement): self
+    public function setNatureLogement(?string $natureLogement): static
     {
         $this->natureLogement = null !== $natureLogement ? mb_strtolower($natureLogement) : null;
 
@@ -742,7 +742,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->superficie;
     }
 
-    public function setSuperficie(?float $superficie): self
+    public function setSuperficie(?float $superficie): static
     {
         if (empty($superficie)) {
             $superficie = null;
@@ -758,7 +758,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->loyer;
     }
 
-    public function setLoyer(?float $loyer): self
+    public function setLoyer(?float $loyer): static
     {
         $this->loyer = $loyer;
 
@@ -770,7 +770,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isBailEnCours;
     }
 
-    public function setIsBailEnCours(?bool $isBailEnCours): self
+    public function setIsBailEnCours(?bool $isBailEnCours): static
     {
         $this->isBailEnCours = $isBailEnCours;
 
@@ -782,7 +782,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isLogementVacant;
     }
 
-    public function setIsLogementVacant(?bool $isLogementVacant): self
+    public function setIsLogementVacant(?bool $isLogementVacant): static
     {
         $this->isLogementVacant = $isLogementVacant;
 
@@ -794,7 +794,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->dateEntree;
     }
 
-    public function setDateEntree(?\DateTimeInterface $dateEntree): self
+    public function setDateEntree(?\DateTimeInterface $dateEntree): static
     {
         $this->dateEntree = $dateEntree;
 
@@ -806,7 +806,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->typeProprio;
     }
 
-    public function setTypeProprio(?ProprioType $typeProprio): self
+    public function setTypeProprio(?ProprioType $typeProprio): static
     {
         $this->typeProprio = $typeProprio;
 
@@ -818,7 +818,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nomProprio;
     }
 
-    public function setNomProprio(?string $nomProprio): self
+    public function setNomProprio(?string $nomProprio): static
     {
         $this->nomProprio = TrimHelper::safeTrim($nomProprio);
 
@@ -834,7 +834,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->denominationProprio;
     }
 
-    public function setDenominationProprio(?string $denominationProprio): self
+    public function setDenominationProprio(?string $denominationProprio): static
     {
         $this->denominationProprio = $denominationProprio;
 
@@ -862,7 +862,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->adresseProprio;
     }
 
-    public function setAdresseProprio(?string $adresseProprio): self
+    public function setAdresseProprio(?string $adresseProprio): static
     {
         $this->adresseProprio = $adresseProprio;
 
@@ -879,7 +879,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telProprio, $national);
     }
 
-    public function setTelProprio(?string $telProprio): self
+    public function setTelProprio(?string $telProprio): static
     {
         $this->telProprio = $telProprio;
 
@@ -891,7 +891,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->mailProprio;
     }
 
-    public function setMailProprio(?string $mailProprio): self
+    public function setMailProprio(?string $mailProprio): static
     {
         $this->mailProprio = TrimHelper::safeTrim($mailProprio);
 
@@ -903,7 +903,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isLogementSocial;
     }
 
-    public function setIsLogementSocial(?bool $isLogementSocial): self
+    public function setIsLogementSocial(?bool $isLogementSocial): static
     {
         $this->isLogementSocial = $isLogementSocial;
 
@@ -915,7 +915,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isPreavisDepart;
     }
 
-    public function setIsPreavisDepart(?bool $isPreavisDepart): self
+    public function setIsPreavisDepart(?bool $isPreavisDepart): static
     {
         $this->isPreavisDepart = $isPreavisDepart;
 
@@ -927,7 +927,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isRelogement;
     }
 
-    public function setIsRelogement(?bool $isRelogement): self
+    public function setIsRelogement(?bool $isRelogement): static
     {
         $this->isRelogement = $isRelogement;
 
@@ -939,7 +939,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isRefusIntervention;
     }
 
-    public function setIsRefusIntervention(?bool $isRefusIntervention): self
+    public function setIsRefusIntervention(?bool $isRefusIntervention): static
     {
         $this->isRefusIntervention = $isRefusIntervention;
 
@@ -959,7 +959,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Sera supprimé à la prochaine version
      */
-    public function setRaisonRefusIntervention(?string $raisonRefusIntervention): self
+    public function setRaisonRefusIntervention(?string $raisonRefusIntervention): static
     {
         $this->raisonRefusIntervention = $raisonRefusIntervention;
 
@@ -971,7 +971,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isNotOccupant;
     }
 
-    public function setIsNotOccupant(?bool $isNotOccupant): self
+    public function setIsNotOccupant(?bool $isNotOccupant): static
     {
         $this->isNotOccupant = $isNotOccupant;
 
@@ -983,7 +983,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nomDeclarant;
     }
 
-    public function setNomDeclarant(?string $nomDeclarant): self
+    public function setNomDeclarant(?string $nomDeclarant): static
     {
         $this->nomDeclarant = TrimHelper::safeTrim($nomDeclarant);
 
@@ -995,7 +995,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->prenomDeclarant;
     }
 
-    public function setPrenomDeclarant(?string $prenomDeclarant): self
+    public function setPrenomDeclarant(?string $prenomDeclarant): static
     {
         $this->prenomDeclarant = TrimHelper::safeTrim($prenomDeclarant);
 
@@ -1012,7 +1012,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telDeclarant, $national);
     }
 
-    public function setTelDeclarant(?string $telDeclarant): self
+    public function setTelDeclarant(?string $telDeclarant): static
     {
         $this->telDeclarant = $telDeclarant;
 
@@ -1024,7 +1024,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->mailDeclarant;
     }
 
-    public function setMailDeclarant(?string $mailDeclarant): self
+    public function setMailDeclarant(?string $mailDeclarant): static
     {
         $this->mailDeclarant = TrimHelper::safeTrim($mailDeclarant);
 
@@ -1051,7 +1051,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->structureDeclarant;
     }
 
-    public function setStructureDeclarant(?string $structureDeclarant): self
+    public function setStructureDeclarant(?string $structureDeclarant): static
     {
         $this->structureDeclarant = $structureDeclarant;
 
@@ -1063,7 +1063,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nomOccupant;
     }
 
-    public function setNomOccupant(?string $nomOccupant): self
+    public function setNomOccupant(?string $nomOccupant): static
     {
         $this->nomOccupant = TrimHelper::safeTrim($nomOccupant);
 
@@ -1075,7 +1075,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->prenomOccupant;
     }
 
-    public function setPrenomOccupant(?string $prenomOccupant): self
+    public function setPrenomOccupant(?string $prenomOccupant): static
     {
         $this->prenomOccupant = TrimHelper::safeTrim($prenomOccupant);
 
@@ -1092,7 +1092,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telOccupant, $national);
     }
 
-    public function setTelOccupant(?string $telOccupant): self
+    public function setTelOccupant(?string $telOccupant): static
     {
         $this->telOccupant = $telOccupant;
 
@@ -1104,7 +1104,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->mailOccupant;
     }
 
-    public function setMailOccupant(?string $mailOccupant): self
+    public function setMailOccupant(?string $mailOccupant): static
     {
         $this->mailOccupant = TrimHelper::safeTrim($mailOccupant);
 
@@ -1116,7 +1116,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->adresseOccupant;
     }
 
-    public function setAdresseOccupant(string $adresseOccupant): self
+    public function setAdresseOccupant(string $adresseOccupant): static
     {
         $this->adresseOccupant = $adresseOccupant;
 
@@ -1128,7 +1128,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->cpOccupant;
     }
 
-    public function setCpOccupant(?string $cpOccupant): self
+    public function setCpOccupant(?string $cpOccupant): static
     {
         $this->cpOccupant = $cpOccupant;
 
@@ -1140,7 +1140,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->villeOccupant;
     }
 
-    public function setVilleOccupant(string $villeOccupant): self
+    public function setVilleOccupant(string $villeOccupant): static
     {
         $this->villeOccupant = $villeOccupant;
 
@@ -1164,7 +1164,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->banIdOccupant;
     }
 
-    public function setBanIdOccupant(?string $banIdOccupant): self
+    public function setBanIdOccupant(?string $banIdOccupant): static
     {
         $this->banIdOccupant = $banIdOccupant;
 
@@ -1176,7 +1176,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nomAgence;
     }
 
-    public function setNomAgence(?string $nomAgence): self
+    public function setNomAgence(?string $nomAgence): static
     {
         $this->nomAgence = $nomAgence;
 
@@ -1188,7 +1188,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->denominationAgence;
     }
 
-    public function setDenominationAgence(?string $denominationAgence): self
+    public function setDenominationAgence(?string $denominationAgence): static
     {
         $this->denominationAgence = $denominationAgence;
 
@@ -1200,7 +1200,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->prenomAgence;
     }
 
-    public function setPrenomAgence(?string $prenomAgence): self
+    public function setPrenomAgence(?string $prenomAgence): static
     {
         $this->prenomAgence = $prenomAgence;
 
@@ -1212,7 +1212,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->adresseAgence;
     }
 
-    public function setAdresseAgence(?string $adresseAgence): self
+    public function setAdresseAgence(?string $adresseAgence): static
     {
         $this->adresseAgence = $adresseAgence;
 
@@ -1224,7 +1224,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->codePostalAgence;
     }
 
-    public function setCodePostalAgence(?string $codePostalAgence): self
+    public function setCodePostalAgence(?string $codePostalAgence): static
     {
         $this->codePostalAgence = $codePostalAgence;
 
@@ -1236,7 +1236,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->villeAgence;
     }
 
-    public function setVilleAgence(?string $villeAgence): self
+    public function setVilleAgence(?string $villeAgence): static
     {
         $this->villeAgence = $villeAgence;
 
@@ -1253,7 +1253,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telAgence, $national);
     }
 
-    public function setTelAgence(?string $telAgence): self
+    public function setTelAgence(?string $telAgence): static
     {
         $this->telAgence = $telAgence;
 
@@ -1270,7 +1270,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telAgenceSecondaire, $national);
     }
 
-    public function setTelAgenceSecondaire(?string $telAgenceSecondaire): self
+    public function setTelAgenceSecondaire(?string $telAgenceSecondaire): static
     {
         $this->telAgenceSecondaire = $telAgenceSecondaire;
 
@@ -1282,7 +1282,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->mailAgence;
     }
 
-    public function setMailAgence(?string $mailAgence): self
+    public function setMailAgence(?string $mailAgence): static
     {
         $this->mailAgence = $mailAgence;
 
@@ -1294,7 +1294,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isCguAccepted;
     }
 
-    public function setIsCguAccepted(bool $isCguAccepted): self
+    public function setIsCguAccepted(bool $isCguAccepted): static
     {
         $this->isCguAccepted = $isCguAccepted;
 
@@ -1306,7 +1306,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isCguTiersAccepted;
     }
 
-    public function setIsCguTiersAccepted(bool $isCguTiersAccepted): self
+    public function setIsCguTiersAccepted(bool $isCguTiersAccepted): static
     {
         $this->isCguTiersAccepted = $isCguTiersAccepted;
 
@@ -1318,7 +1318,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
@@ -1330,7 +1330,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->modifiedAt;
     }
 
-    public function setModifiedAt(?\DateTimeImmutable $modifiedAt): self
+    public function setModifiedAt(?\DateTimeImmutable $modifiedAt): static
     {
         $this->modifiedAt = $modifiedAt;
 
@@ -1342,7 +1342,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->modifiedBy;
     }
 
-    public function setModifiedBy(?User $modifiedBy): self
+    public function setModifiedBy(?User $modifiedBy): static
     {
         $this->modifiedBy = $modifiedBy;
 
@@ -1354,7 +1354,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->createdBy;
     }
 
-    public function setCreatedBy(?User $createdBy): self
+    public function setCreatedBy(?User $createdBy): static
     {
         $this->createdBy = $createdBy;
 
@@ -1366,7 +1366,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->statut;
     }
 
-    public function setStatut(SignalementStatus $statut): self
+    public function setStatut(SignalementStatus $statut): static
     {
         $this->statut = $statut;
 
@@ -1378,7 +1378,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->reference;
     }
 
-    public function setReference(string $reference): self
+    public function setReference(string $reference): static
     {
         $this->reference = $reference;
 
@@ -1392,7 +1392,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /** @param array<mixed> $jsonContent */
-    public function setJsonContent(array $jsonContent): self
+    public function setJsonContent(array $jsonContent): static
     {
         $this->jsonContent = $jsonContent;
 
@@ -1406,7 +1406,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /** @param array<mixed> $geoloc */
-    public function setGeoloc(array $geoloc): self
+    public function setGeoloc(array $geoloc): static
     {
         $this->geoloc = $geoloc;
 
@@ -1418,7 +1418,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->uuid;
     }
 
-    public function setUuid(string $uuid): self
+    public function setUuid(string $uuid): static
     {
         $this->uuid = $uuid;
 
@@ -1430,7 +1430,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->montantAllocation;
     }
 
-    public function setMontantAllocation(?float $montantAllocation): self
+    public function setMontantAllocation(?float $montantAllocation): static
     {
         $this->montantAllocation = $montantAllocation;
 
@@ -1445,7 +1445,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->suivis;
     }
 
-    public function addSuivi(Suivi $suivi): self
+    public function addSuivi(Suivi $suivi): static
     {
         if (!$this->suivis->contains($suivi)) {
             $this->suivis[] = $suivi;
@@ -1455,7 +1455,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function removeSuivi(Suivi $suivi): self
+    public function removeSuivi(Suivi $suivi): static
     {
         if ($this->suivis->removeElement($suivi)) {
             // set the owning side to null (unless already changed)
@@ -1472,7 +1472,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->codeProcedure;
     }
 
-    public function setCodeProcedure(?string $codeProcedure): self
+    public function setCodeProcedure(?string $codeProcedure): static
     {
         $this->codeProcedure = $codeProcedure;
 
@@ -1513,7 +1513,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->etageOccupant;
     }
 
-    public function setEtageOccupant(?string $etageOccupant): self
+    public function setEtageOccupant(?string $etageOccupant): static
     {
         $this->etageOccupant = $etageOccupant;
 
@@ -1525,7 +1525,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->escalierOccupant;
     }
 
-    public function setEscalierOccupant(?string $escalierOccupant): self
+    public function setEscalierOccupant(?string $escalierOccupant): static
     {
         $this->escalierOccupant = $escalierOccupant;
 
@@ -1537,7 +1537,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->numAppartOccupant;
     }
 
-    public function setNumAppartOccupant(?string $numAppartOccupant): self
+    public function setNumAppartOccupant(?string $numAppartOccupant): static
     {
         $this->numAppartOccupant = $numAppartOccupant;
 
@@ -1549,7 +1549,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->adresseAutreOccupant;
     }
 
-    public function setAdresseAutreOccupant(?string $adresseAutreOccupant): self
+    public function setAdresseAutreOccupant(?string $adresseAutreOccupant): static
     {
         $this->adresseAutreOccupant = $adresseAutreOccupant;
 
@@ -1583,7 +1583,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->inseeOccupant;
     }
 
-    public function setInseeOccupant(?string $inseeOccupant): self
+    public function setInseeOccupant(?string $inseeOccupant): static
     {
         $this->inseeOccupant = $inseeOccupant;
 
@@ -1595,7 +1595,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->manualAddressOccupant;
     }
 
-    public function setManualAddressOccupant(?bool $manualAddressOccupant): self
+    public function setManualAddressOccupant(?bool $manualAddressOccupant): static
     {
         $this->manualAddressOccupant = $manualAddressOccupant;
 
@@ -1607,7 +1607,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->codeSuivi;
     }
 
-    public function setCodeSuivi(string $codeSuivi): self
+    public function setCodeSuivi(string $codeSuivi): static
     {
         $this->codeSuivi = $codeSuivi;
 
@@ -1619,7 +1619,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->lienDeclarantOccupant;
     }
 
-    public function setLienDeclarantOccupant(?string $lienDeclarantOccupant): self
+    public function setLienDeclarantOccupant(?string $lienDeclarantOccupant): static
     {
         $this->lienDeclarantOccupant = $lienDeclarantOccupant;
 
@@ -1631,7 +1631,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isConsentementTiers;
     }
 
-    public function setIsConsentementTiers(?bool $isConsentementTiers): self
+    public function setIsConsentementTiers(?bool $isConsentementTiers): static
     {
         $this->isConsentementTiers = $isConsentementTiers;
 
@@ -1643,7 +1643,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->validatedAt;
     }
 
-    public function setValidatedAt(?\DateTimeImmutable $validatedAt): self
+    public function setValidatedAt(?\DateTimeImmutable $validatedAt): static
     {
         $this->validatedAt = $validatedAt;
 
@@ -1655,7 +1655,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isRsa;
     }
 
-    public function setIsRsa(?bool $isRsa): self
+    public function setIsRsa(?bool $isRsa): static
     {
         $this->isRsa = $isRsa;
 
@@ -1667,7 +1667,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->anneeConstruction;
     }
 
-    public function setAnneeConstruction(?string $anneeConstruction): self
+    public function setAnneeConstruction(?string $anneeConstruction): static
     {
         $this->anneeConstruction = $anneeConstruction;
 
@@ -1679,7 +1679,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->typeEnergieLogement;
     }
 
-    public function setTypeEnergieLogement(?string $typeEnergieLogement): self
+    public function setTypeEnergieLogement(?string $typeEnergieLogement): static
     {
         $this->typeEnergieLogement = $typeEnergieLogement;
 
@@ -1691,7 +1691,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->origineSignalement;
     }
 
-    public function setOrigineSignalement(?string $origineSignalement): self
+    public function setOrigineSignalement(?string $origineSignalement): static
     {
         $this->origineSignalement = $origineSignalement;
 
@@ -1711,7 +1711,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez @see setProfileDeclarant() afin d'affecter la situation de l'occupant (LOCATAIRE, BAILLEUR_OCCUPANT)
      */
-    public function setSituationOccupant(?string $situationOccupant): self
+    public function setSituationOccupant(?string $situationOccupant): static
     {
         $this->situationOccupant = $situationOccupant;
 
@@ -1723,7 +1723,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->situationProOccupant;
     }
 
-    public function setSituationProOccupant(?string $situationProOccupant): self
+    public function setSituationProOccupant(?string $situationProOccupant): static
     {
         $this->situationProOccupant = $situationProOccupant;
 
@@ -1750,7 +1750,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * Utilisez @see InformationComplementaire::setInformationsComplementairesSituationOccupantsDateNaissance()
      * afin de savoir la date de naissance du bailleur
      */
-    public function setNaissanceOccupants(?string $naissanceOccupants): self
+    public function setNaissanceOccupants(?string $naissanceOccupants): static
     {
         $this->naissanceOccupants = $naissanceOccupants;
 
@@ -1762,7 +1762,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isLogementCollectif;
     }
 
-    public function setIsLogementCollectif(?bool $isLogementCollectif): self
+    public function setIsLogementCollectif(?bool $isLogementCollectif): static
     {
         $this->isLogementCollectif = $isLogementCollectif;
 
@@ -1774,7 +1774,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isConstructionAvant1949;
     }
 
-    public function setIsConstructionAvant1949(?bool $isConstructionAvant1949): self
+    public function setIsConstructionAvant1949(?bool $isConstructionAvant1949): static
     {
         $this->isConstructionAvant1949 = $isConstructionAvant1949;
 
@@ -1786,7 +1786,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isDiagSocioTechnique;
     }
 
-    public function setIsDiagSocioTechnique(?bool $isDiagSocioTechnique): self
+    public function setIsDiagSocioTechnique(?bool $isDiagSocioTechnique): static
     {
         $this->isDiagSocioTechnique = $isDiagSocioTechnique;
 
@@ -1798,7 +1798,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isFondSolidariteLogement;
     }
 
-    public function setIsFondSolidariteLogement(?bool $isFondSolidariteLogement): self
+    public function setIsFondSolidariteLogement(?bool $isFondSolidariteLogement): static
     {
         $this->isFondSolidariteLogement = $isFondSolidariteLogement;
 
@@ -1810,7 +1810,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isRisqueSurOccupation;
     }
 
-    public function setIsRisqueSurOccupation(?bool $isRisqueSurOccupation): self
+    public function setIsRisqueSurOccupation(?bool $isRisqueSurOccupation): static
     {
         $this->isRisqueSurOccupation = $isRisqueSurOccupation;
 
@@ -1822,7 +1822,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->proprioAvertiAt;
     }
 
-    public function setProprioAvertiAt(?\DateTimeImmutable $proprioAvertiAt): self
+    public function setProprioAvertiAt(?\DateTimeImmutable $proprioAvertiAt): static
     {
         $this->proprioAvertiAt = $proprioAvertiAt;
 
@@ -1834,7 +1834,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nomReferentSocial;
     }
 
-    public function setNomReferentSocial(?string $nomReferentSocial): self
+    public function setNomReferentSocial(?string $nomReferentSocial): static
     {
         $this->nomReferentSocial = $nomReferentSocial;
 
@@ -1846,7 +1846,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->structureReferentSocial;
     }
 
-    public function setStructureReferentSocial(?string $structureReferentSocial): self
+    public function setStructureReferentSocial(?string $structureReferentSocial): static
     {
         $this->structureReferentSocial = $structureReferentSocial;
 
@@ -1858,7 +1858,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->numeroInvariant;
     }
 
-    public function setNumeroInvariant(?string $numeroInvariant): self
+    public function setNumeroInvariant(?string $numeroInvariant): static
     {
         $this->numeroInvariant = $numeroInvariant;
 
@@ -1870,7 +1870,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->numeroInvariantRial;
     }
 
-    public function setNumeroInvariantRial(?string $numeroInvariantRial): self
+    public function setNumeroInvariantRial(?string $numeroInvariantRial): static
     {
         $this->numeroInvariantRial = $numeroInvariantRial;
 
@@ -1882,7 +1882,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nbPiecesLogement;
     }
 
-    public function setNbPiecesLogement(?int $nbPiecesLogement): self
+    public function setNbPiecesLogement(?int $nbPiecesLogement): static
     {
         $this->nbPiecesLogement = $nbPiecesLogement;
 
@@ -1900,7 +1900,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Utilisez la méthode getTypeComposition() afin de savoir le nombre de pièces dans le logement
      */
-    public function setNbChambresLogement(?int $nbChambresLogement): self
+    public function setNbChambresLogement(?int $nbChambresLogement): static
     {
         $this->nbChambresLogement = $nbChambresLogement;
 
@@ -1912,7 +1912,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nbNiveauxLogement;
     }
 
-    public function setNbNiveauxLogement(?int $nbNiveauxLogement): self
+    public function setNbNiveauxLogement(?int $nbNiveauxLogement): static
     {
         $this->nbNiveauxLogement = $nbNiveauxLogement;
 
@@ -1924,7 +1924,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->nbOccupantsLogement;
     }
 
-    public function setNbOccupantsLogement(?int $nbOccupantsLogement): self
+    public function setNbOccupantsLogement(?int $nbOccupantsLogement): static
     {
         $this->nbOccupantsLogement = $nbOccupantsLogement;
 
@@ -1939,7 +1939,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->affectations;
     }
 
-    public function addAffectation(Affectation $affectation): self
+    public function addAffectation(Affectation $affectation): static
     {
         if (!$this->affectations->contains($affectation)) {
             $this->affectations[] = $affectation;
@@ -1949,7 +1949,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function removeAffectation(Affectation $affectation): self
+    public function removeAffectation(Affectation $affectation): static
     {
         if ($this->affectations->removeElement($affectation)) {
             // set the owning side to null (unless already changed)
@@ -1992,7 +1992,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->motifCloture;
     }
 
-    public function setMotifCloture(?MotifCloture $motifCloture): self
+    public function setMotifCloture(?MotifCloture $motifCloture): static
     {
         $this->motifCloture = $motifCloture;
 
@@ -2004,7 +2004,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->motifRefus;
     }
 
-    public function setMotifRefus(?MotifRefus $motifRefus): self
+    public function setMotifRefus(?MotifRefus $motifRefus): static
     {
         $this->motifRefus = $motifRefus;
 
@@ -2016,7 +2016,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->closedAt;
     }
 
-    public function setClosedAt(?\DateTimeImmutable $closedAt): self
+    public function setClosedAt(?\DateTimeImmutable $closedAt): static
     {
         $this->closedAt = $closedAt;
 
@@ -2033,7 +2033,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telOccupantBis, $national);
     }
 
-    public function setTelOccupantBis(?string $telOccupantBis): self
+    public function setTelOccupantBis(?string $telOccupantBis): static
     {
         $this->telOccupantBis = $telOccupantBis;
 
@@ -2058,7 +2058,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         });
     }
 
-    public function addTag(Tag $tag): self
+    public function addTag(Tag $tag): static
     {
         if (!$this->tags->contains($tag)) {
             $this->tags[] = $tag;
@@ -2068,7 +2068,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function removeTag(Tag $tag): self
+    public function removeTag(Tag $tag): static
     {
         if ($this->tags->removeElement($tag)) {
             $tag->removeSignalement($this);
@@ -2082,7 +2082,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): self
+    public function setTerritory(?Territory $territory): static
     {
         $this->territory = $territory;
 
@@ -2094,7 +2094,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isImported;
     }
 
-    public function setIsImported(?bool $isImported): self
+    public function setIsImported(?bool $isImported): static
     {
         $this->isImported = $isImported;
 
@@ -2106,7 +2106,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->closedBy;
     }
 
-    public function setClosedBy(?User $closedBy): self
+    public function setClosedBy(?User $closedBy): static
     {
         $this->closedBy = $closedBy;
 
@@ -2118,7 +2118,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->lastSuiviAt;
     }
 
-    public function setLastSuiviAt(?\DateTimeImmutable $lastSuiviAt): self
+    public function setLastSuiviAt(?\DateTimeImmutable $lastSuiviAt): static
     {
         $this->lastSuiviAt = $lastSuiviAt;
 
@@ -2133,7 +2133,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->signalementQualifications;
     }
 
-    public function addSignalementQualification(SignalementQualification $signalementQualification): self
+    public function addSignalementQualification(SignalementQualification $signalementQualification): static
     {
         if (!$this->signalementQualifications->contains($signalementQualification)) {
             $this->signalementQualifications->add($signalementQualification);
@@ -2143,7 +2143,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function removeSignalementQualification(SignalementQualification $signalementQualification): self
+    public function removeSignalementQualification(SignalementQualification $signalementQualification): static
     {
         if ($this->signalementQualifications->removeElement($signalementQualification)) {
             // set the owning side to null (unless already changed)
@@ -2160,7 +2160,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->lastSuiviBy;
     }
 
-    public function setLastSuiviBy(?string $lastSuiviBy): self
+    public function setLastSuiviBy(?string $lastSuiviBy): static
     {
         $this->lastSuiviBy = $lastSuiviBy;
 
@@ -2172,7 +2172,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->score;
     }
 
-    public function setScore(float $score): self
+    public function setScore(float $score): static
     {
         $this->score = $score;
 
@@ -2184,7 +2184,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->scoreLogement;
     }
 
-    public function setScoreLogement(float $scoreLogement): self
+    public function setScoreLogement(float $scoreLogement): static
     {
         $this->scoreLogement = $scoreLogement;
 
@@ -2196,7 +2196,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->scoreBatiment;
     }
 
-    public function setScoreBatiment(float $scoreBatiment): self
+    public function setScoreBatiment(float $scoreBatiment): static
     {
         $this->scoreBatiment = $scoreBatiment;
 
@@ -2208,7 +2208,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->isUsagerAbandonProcedure;
     }
 
-    public function setIsUsagerAbandonProcedure(?bool $isUsagerAbandonProcedure): self
+    public function setIsUsagerAbandonProcedure(?bool $isUsagerAbandonProcedure): static
     {
         $this->isUsagerAbandonProcedure = $isUsagerAbandonProcedure;
 
@@ -2223,7 +2223,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->interventions;
     }
 
-    public function addIntervention(Intervention $intervention): self
+    public function addIntervention(Intervention $intervention): static
     {
         if (!$this->interventions->contains($intervention)) {
             $this->interventions->add($intervention);
@@ -2233,7 +2233,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function removeIntervention(Intervention $intervention): self
+    public function removeIntervention(Intervention $intervention): static
     {
         if ($this->interventions->removeElement($intervention)) {
             if ($intervention->getSignalement() === $this) {
@@ -2249,7 +2249,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->dateNaissanceOccupant;
     }
 
-    public function setDateNaissanceOccupant(?\DateTimeImmutable $dateNaissanceOccupant): self
+    public function setDateNaissanceOccupant(?\DateTimeImmutable $dateNaissanceOccupant): static
     {
         $this->dateNaissanceOccupant = $dateNaissanceOccupant;
 
@@ -2301,7 +2301,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         });
     }
 
-    public function addFile(File $file): self
+    public function addFile(File $file): static
     {
         if (!$this->files->contains($file)) {
             $this->files->add($file);
@@ -2311,7 +2311,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function removeFile(File $file): self
+    public function removeFile(File $file): static
     {
         if ($this->files->removeElement($file)) {
             // set the owning side to null (unless already changed)
@@ -2333,7 +2333,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->createdFrom;
     }
 
-    public function setCreatedFrom(?SignalementDraft $createdFrom): self
+    public function setCreatedFrom(?SignalementDraft $createdFrom): static
     {
         $this->createdFrom = $createdFrom;
 
@@ -2345,7 +2345,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->profileDeclarant;
     }
 
-    public function setProfileDeclarant(?ProfileDeclarant $profileDeclarant): self
+    public function setProfileDeclarant(?ProfileDeclarant $profileDeclarant): static
     {
         $this->profileDeclarant = $profileDeclarant;
 
@@ -2372,7 +2372,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->prenomProprio;
     }
 
-    public function setPrenomProprio(?string $prenomProprio): self
+    public function setPrenomProprio(?string $prenomProprio): static
     {
         $this->prenomProprio = TrimHelper::safeTrim($prenomProprio);
 
@@ -2384,7 +2384,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->codePostalProprio;
     }
 
-    public function setCodePostalProprio(?string $codePostalProprio): self
+    public function setCodePostalProprio(?string $codePostalProprio): static
     {
         $this->codePostalProprio = $codePostalProprio;
 
@@ -2396,7 +2396,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->villeProprio;
     }
 
-    public function setVilleProprio(?string $villeProprio): self
+    public function setVilleProprio(?string $villeProprio): static
     {
         $this->villeProprio = $villeProprio;
 
@@ -2413,7 +2413,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telProprioSecondaire, $national);
     }
 
-    public function setTelProprioSecondaire(?string $telProprioSecondaire): self
+    public function setTelProprioSecondaire(?string $telProprioSecondaire): static
     {
         $this->telProprioSecondaire = $telProprioSecondaire;
 
@@ -2430,7 +2430,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return Phone::format($this->telDeclarantSecondaire, $national);
     }
 
-    public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): self
+    public function setTelDeclarantSecondaire(?string $telDeclarantSecondaire): static
     {
         $this->telDeclarantSecondaire = $telDeclarantSecondaire;
 
@@ -2450,7 +2450,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->civiliteOccupant;
     }
 
-    public function setCiviliteOccupant(?string $civiliteOccupant): self
+    public function setCiviliteOccupant(?string $civiliteOccupant): static
     {
         $this->civiliteOccupant = $civiliteOccupant;
 
@@ -2462,7 +2462,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->typeCompositionLogement;
     }
 
-    public function setTypeCompositionLogement(?TypeCompositionLogement $typeCompositionLogement): self
+    public function setTypeCompositionLogement(?TypeCompositionLogement $typeCompositionLogement): static
     {
         $this->typeCompositionLogement = $typeCompositionLogement;
 
@@ -2474,7 +2474,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->situationFoyer;
     }
 
-    public function setSituationFoyer(?SituationFoyer $situationFoyer): self
+    public function setSituationFoyer(?SituationFoyer $situationFoyer): static
     {
         $this->situationFoyer = $situationFoyer;
 
@@ -2486,7 +2486,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->informationProcedure;
     }
 
-    public function setInformationProcedure(?InformationProcedure $informationProcedure): self
+    public function setInformationProcedure(?InformationProcedure $informationProcedure): static
     {
         $this->informationProcedure = $informationProcedure;
 
@@ -2498,7 +2498,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->informationComplementaire;
     }
 
-    public function setInformationComplementaire(?InformationComplementaire $informationComplementaire): self
+    public function setInformationComplementaire(?InformationComplementaire $informationComplementaire): static
     {
         $this->informationComplementaire = $informationComplementaire;
 
@@ -2528,7 +2528,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->desordrePrecisions;
     }
 
-    public function addDesordrePrecision(DesordrePrecision $desordrePrecision): self
+    public function addDesordrePrecision(DesordrePrecision $desordrePrecision): static
     {
         if (!$this->desordrePrecisions->contains($desordrePrecision)) {
             $this->desordrePrecisions->add($desordrePrecision);
@@ -2537,14 +2537,14 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): self
+    public function removeDesordrePrecision(DesordrePrecision $desordrePrecision): static
     {
         $this->desordrePrecisions->removeElement($desordrePrecision);
 
         return $this;
     }
 
-    public function removeAllDesordrePrecision(): self
+    public function removeAllDesordrePrecision(): static
     {
         $this->desordrePrecisions->clear();
 
@@ -2619,7 +2619,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->bailleur;
     }
 
-    public function setBailleur(?Bailleur $bailleur): self
+    public function setBailleur(?Bailleur $bailleur): static
     {
         $this->bailleur = $bailleur;
 
@@ -2631,7 +2631,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->lastSuiviIsPublic;
     }
 
-    public function setLastSuiviIsPublic(?bool $lastSuiviIsPublic): self
+    public function setLastSuiviIsPublic(?bool $lastSuiviIsPublic): static
     {
         $this->lastSuiviIsPublic = $lastSuiviIsPublic;
 
@@ -2649,7 +2649,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /** @param array<mixed> $data */
-    public function setSynchroData(array $data, string $key): self
+    public function setSynchroData(array $data, string $key): static
     {
         $this->synchroData[$key] = $data;
 

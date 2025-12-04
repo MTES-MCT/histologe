@@ -15,7 +15,7 @@ class SignalementInviteTiersMailer extends AbstractNotificationMailer
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_INVITE_TIERS;
     protected ?string $mailerSubject = 'Lien vers votre page de suivi';
     protected ?string $mailerTemplate = 'invite_tiers_email';
-    protected ?string $tagHeader = 'Lien de suivi du signalement';
+    protected ?string $tagHeader = 'Usager Invitation Tiers';
 
     public function __construct(
         protected MailerInterface $mailer,
