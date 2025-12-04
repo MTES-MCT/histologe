@@ -120,6 +120,7 @@ class SignalementBuilderTest extends KernelTestCase
             ->withProcedure()
             ->withInformationComplementaire()
             ->withDesordres()
+            ->withStatus()
             ->build()
         ;
 

@@ -44,6 +44,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'id' => 1,
             'uuid' => '00000000-0000-0000-2022-000000000001',
             'reference' => '2022-1',
+            'referenceInjonction' => null,
             'createdAt' => new \DateTimeImmutable(),
             'statut' => SignalementStatus::ACTIVE,
             'score' => 25,
@@ -86,6 +87,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertEquals($dataSignalement['id'], $signalementAffectationListView->getId());
         $this->assertEquals($dataSignalement['uuid'], $signalementAffectationListView->getUuid());
         $this->assertEquals($dataSignalement['reference'], $signalementAffectationListView->getReference());
+        $this->assertEquals($dataSignalement['referenceInjonction'], $signalementAffectationListView->getReferenceInjonction());
         $this->assertSame($dataSignalement['createdAt'], $signalementAffectationListView->getCreatedAt());
         $this->assertEquals($dataSignalement['statut'], $signalementAffectationListView->getStatut());
         $this->assertEquals($dataSignalement['score'], $signalementAffectationListView->getScore());

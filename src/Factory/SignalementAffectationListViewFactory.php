@@ -34,6 +34,7 @@ class SignalementAffectationListViewFactory
             id: $data['id'],
             uuid: $data['uuid'],
             reference: $data['reference'],
+            referenceInjonction: $data['referenceInjonction'],
             createdAt: $data['createdAt'],
             statut: $status,
             score: $data['score'],

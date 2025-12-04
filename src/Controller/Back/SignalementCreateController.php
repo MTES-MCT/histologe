@@ -519,7 +519,7 @@ class SignalementCreateController extends AbstractController
                 $route = 'back_signalement_drafts';
                 $params = [];
             }
-            $signalement->setReference($referenceGenerator->generate($signalement->getTerritory()));
+            $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
             $signalement->setCreatedAt(new \DateTimeImmutable());
             $userManager->createUsagersFromSignalement($signalement);
             $fileRepository->updateIsWaitingSuiviForSignalement($signalement);

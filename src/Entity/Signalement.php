@@ -19,6 +19,7 @@ use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Repository\SignalementRepository;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\InjonctionBailleur\BailleurLoginCodeGenerator;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\TimezoneProvider;
@@ -264,6 +265,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', length: 100)]
     private ?string $reference = null;
+
+    #[ORM\Column(type: 'integer', nullable: true, unique: true)]
+    private ?int $referenceInjonction = null;
 
     /** @var array<mixed> $jsonContent */
     #[ORM\Column(type: 'json')]
@@ -1357,12 +1361,32 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getReference(): ?string
     {
+        if (SignalementStatus::INJONCTION_BAILLEUR === $this->getStatut()) {
+            return $this->getReferenceInjonction();
+        }
+
         return $this->reference;
     }
 
     public function setReference(string $reference): self
     {
         $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getReferenceInjonction(): ?string
+    {
+        if ($this->referenceInjonction) {
+            return InjonctionBailleurService::REFERENCE_PREFIX.$this->referenceInjonction;
+        }
+
+        return null;
+    }
+
+    public function setReferenceInjonction(?int $referenceInjonction): self
+    {
+        $this->referenceInjonction = $referenceInjonction;
 
         return $this;
     }

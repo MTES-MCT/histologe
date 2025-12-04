@@ -72,6 +72,9 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
     public function loadSuivi(ObjectManager $manager, array $row): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+        if (!$signalement) {
+            $signalement = $this->signalementRepository->findOneBy(['uuid' => $row['signalement']]);
+        }
         $createdBy = isset($row['created_by']) ? $this->userRepository->findOneBy(['email' => $row['created_by']]) : null;
         $createdAt = new \DateTimeImmutable();
         if (isset($row['created_at'])) {

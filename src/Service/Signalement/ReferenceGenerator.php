@@ -17,7 +17,7 @@ class ReferenceGenerator
      * @throws TransactionRequiredException
      * @throws NonUniqueResultException
      */
-    public function generate(Territory $territory, bool $isDefinitive = true): string
+    public function generateReference(Territory $territory, bool $isDefinitive = true): string
     {
         $todayYear = (new \DateTime())->format('Y');
 
@@ -40,5 +40,15 @@ class ReferenceGenerator
         }
 
         return $todayYear.'-'. 1;
+    }
+
+    public function generateReferenceInjonction(): int
+    {
+        $maxRef = $this->signalementRepository->findMaxReferenceInjonction();
+        if ($maxRef) {
+            return $maxRef + 1;
+        }
+
+        return 2363;
     }
 }
