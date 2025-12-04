@@ -168,7 +168,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2025-12']);
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false, true);
         $this->assertCount(0, $partners);

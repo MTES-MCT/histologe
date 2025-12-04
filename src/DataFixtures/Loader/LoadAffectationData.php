@@ -56,6 +56,9 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
     public function loadAffectation(array $row): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
+        if (!$signalement) {
+            $signalement = $this->signalementRepository->findOneBy(['uuid' => $row['signalement']]);
+        }
         $partner = $this->partnerRepository->findOneBy(['email' => $row['partner']]);
         $answeredBy = $this->userRepository->findOneBy(['email' => $row['answered_by']]);
         $affectation = (new Affectation())

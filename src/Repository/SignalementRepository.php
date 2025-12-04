@@ -23,6 +23,7 @@ use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
@@ -523,6 +524,13 @@ class SignalementRepository extends ServiceEntityRepository
             ->getQuery()
             ->setLockMode(LockMode::PESSIMISTIC_WRITE)
             ->getOneOrNullResult();
+    }
+
+    public function findMaxReferenceInjonction(): ?int
+    {
+        $qb = $this->createQueryBuilder('s')->select('MAX(s.referenceInjonction)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -2351,12 +2359,14 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function findOneForLoginBailleur(string $reference, string $loginBailleur): ?Signalement
+    public function findOneForLoginBailleur(string $referenceInjonction, string $loginBailleur): ?Signalement
     {
+        $referenceInjonction = str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', $referenceInjonction);
+
         return $this->createQueryBuilder('s')
             ->leftJoin('s.suivis', 'su')
-            ->where('s.reference = :reference')
-            ->setParameter('reference', $reference)
+            ->where('s.referenceInjonction = :referenceInjonction')
+            ->setParameter('referenceInjonction', $referenceInjonction)
             ->andWhere('s.loginBailleur = :loginBailleur')
             ->setParameter('loginBailleur', $loginBailleur)
             ->andWhere('s.statut = :statutInjonction OR su.category IN (:injonctionCategories)')

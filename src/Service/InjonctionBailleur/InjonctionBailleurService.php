@@ -16,11 +16,13 @@ use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Service\HtmlCleaner;
 use App\Service\Signalement\AutoAssigner;
+use App\Service\Signalement\ReferenceGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 
 class InjonctionBailleurService
 {
     public const string DELAIS_DE_REPONSE = '3 weeks';
+    public const string REFERENCE_PREFIX = 'INJ-';
 
     public function __construct(
         private readonly SuiviManager $suiviManager,
@@ -30,6 +32,7 @@ class InjonctionBailleurService
         private readonly UserManager $userManager,
         private readonly SignalementManager $signalementManager,
         private readonly PartnerRepository $partnerRepository,
+        private readonly ReferenceGenerator $referenceGenerator,
     ) {
     }
 
@@ -56,7 +59,7 @@ class InjonctionBailleurService
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON;
                 $this->suiviManager->createSuivi(signalement: $signalement, description: $contenu, type: Suivi::TYPE_AUTO, category: $category, isPublic: true);
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
-                $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+                $this->switchFromInjonctionToProcedure($signalement);
                 $this->entityManager->flush();
                 $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
                 break;
@@ -118,8 +121,15 @@ class InjonctionBailleurService
             category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
         );
 
-        $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+        $this->switchFromInjonctionToProcedure($signalement);
         $this->entityManager->flush();
         $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
+    }
+
+    public function switchFromInjonctionToProcedure(Signalement $signalement): void
+    {
+        $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+        $signalement->setCreatedAt(new \DateTimeImmutable());
+        $signalement->setReference($this->referenceGenerator->generateReference($signalement->getTerritory()));
     }
 }

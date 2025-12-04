@@ -51,7 +51,7 @@ class ReferenceGeneratorTest extends KernelTestCase
 
         $referenceGenerator = new ReferenceGenerator($signalementRepository);
 
-        $referenceGenerated = $referenceGenerator->generate($territory);
+        $referenceGenerated = $referenceGenerator->generateReference($territory);
         $this->assertEquals($todayYear.'-12', $referenceGenerated);
     }
 
@@ -75,7 +75,7 @@ class ReferenceGeneratorTest extends KernelTestCase
 
         $referenceGenerator = new ReferenceGenerator($signalementRepository);
 
-        $referenceGenerated = $referenceGenerator->generate($territory);
+        $referenceGenerated = $referenceGenerator->generateReference($territory);
         $year = (new \DateTime())->format('Y');
         $this->assertEquals($year.'-1', $referenceGenerated);
     }

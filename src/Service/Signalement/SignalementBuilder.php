@@ -87,7 +87,6 @@ class SignalementBuilder
             ->setCreatedFrom($this->signalementDraft)
             ->setTerritory($this->territory)
             ->setIsCguAccepted(true)
-            ->setReference($this->referenceGenerator->generate($this->territory))
             ->setDetails($this->signalementDraftRequest->getMessageAdministration())
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($this->signalementDraftRequest->getProfil())));
 
@@ -346,17 +345,29 @@ class SignalementBuilder
 
     public function withStatus(): self
     {
+        if ($this->isEligibleForInjonctionBailleur()) {
+            $this->signalement->setReference($this->referenceGenerator->generateReference(territory: $this->territory, isDefinitive: false));
+            $this->signalement->setReferenceInjonction($this->referenceGenerator->generateReferenceInjonction());
+            $this->signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
+        }
+        $this->signalement->setReference($this->referenceGenerator->generateReference($this->territory));
+
+        return $this;
+    }
+
+    private function isEligibleForInjonctionBailleur(): bool
+    {
         if (!$this->featureInjonctionBailleurEnabled || empty($this->featureInjonctionBailleurDepts)) {
-            return $this;
+            return false;
         }
 
         // Sort de la fonction si le signalement a la qualification DANGER
         foreach ($this->signalement->getSignalementQualifications() as $qualification) {
             if (Qualification::DANGER === $qualification->getQualification()) {
-                return $this;
+                return false;
             }
             if (Qualification::INSALUBRITE === $qualification->getQualification()) {
-                return $this;
+                return false;
             }
         }
 
@@ -378,10 +389,10 @@ class SignalementBuilder
             && (!empty($this->signalement->getMailProprio()) || !empty($this->signalement->getAdresseProprio()))
             && \in_array($this->signalement->getTerritory()->getZip(), $arrayDepts, true)
         ) {
-            $this->signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
+            return true;
         }
 
-        return $this;
+        return false;
     }
 
     public function build(): ?Signalement
