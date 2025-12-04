@@ -70,7 +70,6 @@ class SignalementManager extends AbstractManager
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private readonly SuiviManager $suiviManager,
         private readonly BailleurRepository $bailleurRepository,
-        private readonly AffectationManager $affectationManager,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
@@ -224,7 +223,7 @@ class SignalementManager extends AbstractManager
         return $partners;
     }
 
-    public function closeSignalementForAllPartners(SignalementAffectationClose $signalementAffectationClose, Partner $partner): Signalement
+    public function closeSignalement(SignalementAffectationClose $signalementAffectationClose): Signalement
     {
         $signalement = $signalementAffectationClose->getSignalement();
         $signalement
@@ -232,11 +231,6 @@ class SignalementManager extends AbstractManager
             ->setMotifCloture($signalementAffectationClose->getMotifCloture())
             ->setClosedAt(new \DateTimeImmutable())
             ->setComCloture($this->htmlSanitizer->sanitize($signalementAffectationClose->getDescription()));
-
-        /** @var User $user */
-        $user = $this->security->getUser();
-        $this->affectationManager->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user, $partner);
-        $this->managerRegistry->getManager()->flush();
 
         return $signalement;
     }

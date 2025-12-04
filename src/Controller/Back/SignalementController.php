@@ -304,6 +304,7 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         EventDispatcherInterface $eventDispatcher,
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -335,9 +336,12 @@ class SignalementController extends AbstractController
         $entity = $reference = null;
         if ('all' === $signalementAffectationClose->getType() && $this->isGranted('ROLE_ADMIN_TERRITORY')) {
             $signalementAffectationClose->setSubject('tous les partenaires');
-            $entity = $signalement = $signalementManager->closeSignalementForAllPartners($signalementAffectationClose, $partner);
+            $entity = $signalement = $signalementManager->closeSignalement($signalementAffectationClose);
             $reference = $signalement->getReference();
             $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose, $partner), SignalementClosedEvent::NAME);
+            // on cloture les affectation et supprime les abonnnement des agent aprés le dispatch de l'event pour qu'ils soient notifiés de l'action
+            $affectationManager->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user, $partner);
+            $entityManager->flush();
         /* @var Affectation $affectation */
         } elseif ($affectation) {
             $entity = $affectationManager->closeAffectation(

@@ -110,7 +110,6 @@ class SignalementManagerTest extends WebTestCase
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
             $this->bailleurRepository,
-            $this->affectationManager,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,
@@ -148,8 +147,13 @@ class SignalementManagerTest extends WebTestCase
         if (!$affectation) {
             $this->fail('No affectation found for the signalement');
         }
-        $signalementClosed = $this->signalementManager->closeSignalementForAllPartners(
-            $signalementAffectationClose,
+        $signalementClosed = $this->signalementManager->closeSignalement($signalementAffectationClose);
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $this->affectationManager->closeBySignalement(
+            $signalementClosed,
+            $signalementAffectationClose->getMotifCloture(),
+            $user,
             $affectation->getPartner()
         );
 
