@@ -267,7 +267,7 @@ class UserSearchFilterControllerTest extends WebTestCase
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            (string) json_encode(['_token' => 'bad_token', 'name' => 'Popopolop',])
+            (string) json_encode(['_token' => 'bad_token', 'name' => 'Popopolop'])
         );
 
         $response = json_decode((string) $client->getResponse()->getContent(), true);

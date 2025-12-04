@@ -2,7 +2,7 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\UserSearchFilterRequest;
+use App\Dto\Request\UserSearchFilterRequest;
 use App\Entity\User;
 use App\Entity\UserSearchFilter;
 use App\Repository\UserSearchFilterRepository;
@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -19,19 +20,17 @@ class UserSearchFilterController extends AbstractController
 {
     #[Route('/user/search-filters/save', name: 'back_user_search_filters_save')]
     public function saveSearch(
-        Request $request,
+        #[MapRequestPayload(validationGroups: ['false'])]
+        UserSearchFilterRequest $dto,
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
 
-        $data = json_decode($request->getContent(), true);
-
-        $dto = new UserSearchFilterRequest();
-        $dto->name = $data['name'] ?? null;
-        $dto->params = $data['params'] ?? null;
-        $dto->_token = $data['_token'] ?? null;
+        if (!$this->isCsrfTokenValid('save_search', $dto->_token)) {
+            return $this->jsonForbidden();
+        }
 
         $errors = $validator->validate($dto);
         if (count($errors) > 0) {
@@ -40,10 +39,6 @@ class UserSearchFilterController extends AbstractController
 
         if (empty($dto->params)) {
             return $this->jsonBadRequest("Aucun filtre n'a été transmis.");
-        }
-
-        if (!$this->isCsrfTokenValid('save_search', $dto->_token)) {
-            return $this->jsonForbidden();
         }
 
         $search = new UserSearchFilter();
@@ -105,7 +100,8 @@ class UserSearchFilterController extends AbstractController
     #[Route('/user/search-filters/edit/{id}', name: 'back_user_search_filters_edit', methods: ['POST'])]
     public function editSavedSearch(
         int $id,
-        Request $request,
+        #[MapRequestPayload(validationGroups: ['false'])]
+        UserSearchFilterRequest $dto,
         ValidatorInterface $validator,
         UserSearchFilterRepository $savedSearchRepository,
         EntityManagerInterface $entityManager,
@@ -113,21 +109,15 @@ class UserSearchFilterController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $data = json_decode($request->getContent(), true);
-
-        $dto = new UserSearchFilterRequest();
-        $dto->name = $data['name'] ?? null;
-        $dto->_token = $data['_token'] ?? null;
-        $errors = $validator->validate($dto);
-        if (count($errors) > 0) {
-            return $this->jsonValidation($errors);
-        }
-
         if (!$this->isCsrfTokenValid('edit_search', $dto->_token)) {
             return $this->jsonForbidden();
         }
 
-        $name = trim($data['name']);
+        $errors = $validator->validate($dto);
+        if (count($errors) > 0) {
+            return $this->jsonValidation($errors);
+        }
+        $name = trim($dto->name);
 
         $savedSearch = $savedSearchRepository->findOneBy(['id' => $id, 'user' => $user]);
         if (!$savedSearch) {
