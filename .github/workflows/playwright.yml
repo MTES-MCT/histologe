@@ -131,8 +131,6 @@ jobs:
       - name: Install PHP dependencies
         run: |
           docker compose exec -T signal_logement_phpfpm composer install --no-interaction --optimize-autoloader
-          docker compose exec -T signal_logement_phpfpm composer install --working-dir=tools/php-cs-fixer --no-interaction --optimize-autoloader
-          docker compose exec -T signal_logement_phpfpm composer install --working-dir=tools/wiremock --no-interaction --optimize-autoloader
           docker compose exec -T signal_logement_phpfpm composer require symfony/redis-messenger --no-interaction
 
       - name: Build frontend assets
