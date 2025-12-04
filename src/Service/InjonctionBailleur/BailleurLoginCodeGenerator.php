@@ -5,7 +5,7 @@ namespace App\Service\InjonctionBailleur;
 class BailleurLoginCodeGenerator
 {
     public const LOGIN_CODE_LENGTH = 16;
-    public const KEYSPACE = '23456789abcdefghjkmnopqrstuvwxyz';
+    public const KEYSPACE = '23456789ABCDEFGHJKLMNPQRSTUVQXYZ';
 
     public static function generate(): string
     {
