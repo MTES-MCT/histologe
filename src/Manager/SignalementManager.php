@@ -914,19 +914,4 @@ class SignalementManager extends AbstractManager
 
         return $subscriptionCreated;
     }
-
-    public static function getNewLoginBailleurCode(): string
-    {
-        $keyspace = '23456789abcdefghjkmnopqrstuvwxyz';
-        $loginCode = '';
-        $max = mb_strlen($keyspace, '8bit') - 1;
-        for ($i = 1; $i <= 16; ++$i) {
-            $loginCode .= $keyspace[random_int(0, $max)];
-            if (0 == $i % 4 && 16 !== $i) {
-                $loginCode .= '-';
-            }
-        }
-
-        return $loginCode;
-    }
 }
