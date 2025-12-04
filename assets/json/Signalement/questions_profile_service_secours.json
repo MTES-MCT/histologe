@@ -414,7 +414,7 @@
           "placeholder": "01/1970",
           "validate": {
             "pattern": "^(0[1-9]|1[0-2])\\/(19|20)\\d{2}$",
-            "patternMessage": "Veuillez renseigner une date passée valide et cohérente au format mm/aaaa.",
+            "patternMessage": "Veuillez renseigner une date passée valide et cohérente au format MM/AAAA.",
             "required": false,
             "maxLength": 7
           },
