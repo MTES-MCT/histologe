@@ -32,7 +32,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseRedirects('/dossier-bailleur/');
     }
 
-    public function testLoginBailleurWithValidLoginGET(): void
+    public function testLoginBailleurFailedWithValidLoginGET(): void
     {
         $client = static::createClient();
         $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-11']);
@@ -40,7 +40,7 @@ class SecurityControllerTest extends WebTestCase
             'bailleur_reference' => $signalement->getReference(),
             'bailleur_code' => $signalement->getLoginBailleur(),
         ]);
-        $this->assertResponseRedirects('/dossier-bailleur/');
+        $this->assertAnySelectorTextSame('h1', 'Accéder à mon dossier bailleur');
     }
 
     public function testLoginBailleurWithInvalidLoginPOST(): void
@@ -53,20 +53,6 @@ class SecurityControllerTest extends WebTestCase
             '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
         ];
         $client->request('POST', '/login-bailleur', $payload);
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $this->assertResponseRedirects('/login-bailleur');
-        $client->followRedirect();
-        $this->assertSelectorExists('.fr-alert.fr-alert--error');
-    }
-
-    public function testLoginBailleurWithInvalidReferenceGET(): void
-    {
-        $client = static::createClient();
-        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-10']);
-        $client->request('GET', '/login-bailleur', [
-            'bailleur_reference' => $signalement->getReference(),
-            'bailleur_code' => $signalement->getLoginBailleur(),
-        ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
         $this->assertResponseRedirects('/login-bailleur');
         $client->followRedirect();

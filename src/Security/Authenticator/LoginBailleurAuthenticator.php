@@ -32,8 +32,8 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $reference = $request->request->get('bailleur_reference');
-        $code = $request->request->get('bailleur_code');
+        $reference = (string) $request->request->get('bailleur_reference');
+        $code = (string) $request->request->get('bailleur_code');
         $signalement = $this->signalementRepository->findOneForLoginBailleur($reference, $code);
 
         if (!$signalement) {
