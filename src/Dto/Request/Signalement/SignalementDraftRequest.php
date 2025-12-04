@@ -3,6 +3,7 @@
 namespace App\Dto\Request\Signalement;
 
 use App\Validator as AppAssert;
+use App\Validator\Behaviour\MonthYearValidatorTrait;
 use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
@@ -17,6 +18,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class SignalementDraftRequest
 {
     use DateNaissanceValidatorTrait;
+    use MonthYearValidatorTrait;
+
     /** @var string[] */
     public const array PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe', 'desordres_logement_chauffage_details_dpe'];
     /** @var string[] */
@@ -528,6 +531,7 @@ class SignalementDraftRequest
         $this->validateDateNaissance($this->logementSocialDateNaissance, 'logementSocialDateNaissance', $context);
         $this->validateDateNaissance($this->informationsComplementairesSituationOccupantsDateNaissance, 'informationsComplementairesSituationOccupantsDateNaissance', $context);
         $this->validateDateNaissance($this->informationsComplementairesSituationBailleurDateNaissance, 'informationsComplementairesSituationBailleurDateNaissance', $context);
+        $this->validateMonthYear($this->infoProcedureBailDate, 'infoProcedureBailDate', $context);
     }
 
     public function getProfil(): ?string
