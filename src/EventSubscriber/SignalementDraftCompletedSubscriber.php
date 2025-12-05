@@ -9,7 +9,6 @@ use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
-use App\Messenger\Message\SignalementAddressUpdateAndAutoAssignMessage;
 use App\Messenger\Message\SignalementDraftFileMessage;
 use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
@@ -71,7 +70,6 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->sendNotifications($signalement);
                 $this->processFiles($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
-                $this->dispatchUpdateFromAddress($signalement);
                 $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
                 $this->entityManager->commit();
             } else {
@@ -121,12 +119,5 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 new DelayStamp($delayInMs),
             ]
         );
-    }
-
-    public function dispatchUpdateFromAddress(Signalement $signalement): void
-    {
-        $this->messageBus->dispatch(new SignalementAddressUpdateAndAutoAssignMessage(
-            $signalement->getId()
-        ));
     }
 }
