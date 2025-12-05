@@ -142,6 +142,7 @@
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
 			{% include 'front/_partials/_suivi_signalement_prevenir_bailleur.html.twig' with {'cssDiv': 'fr-icon-information-line'} %}
+			{% include 'front/_partials/_suivi_signalement_inviter_tiers.html.twig' with {'cssDiv': 'fr-icon-information-line'} %}
 			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED
 				and signalement.motifRefus 
 				and signalement.motifRefus is same as enum('App\\Entity\\Enum\\MotifRefus').DOUBLON %}

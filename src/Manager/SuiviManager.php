@@ -31,6 +31,7 @@ class SuiviManager extends Manager
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        private readonly UserManager $userManager,
         #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
         private readonly bool $editionSuiviEnable,
         string $entityName = Suivi::class,
@@ -147,6 +148,56 @@ class SuiviManager extends Manager
         }
 
         return $subscriptionCreated;
+    }
+
+    public function addInviteSuiviFromBo(Signalement $signalement): bool
+    {
+        $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $description = 'Les coordonnées d\'un tiers ont été ajoutées pour suivre le signalement :';
+        $description .= $this->getInviteSuiviHtmlContent($signalement);
+
+        $this->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            user: $user,
+            isPublic: true,
+            subscriptionCreated: $subscriptionCreated
+        );
+
+        return $subscriptionCreated;
+    }
+
+    public function addInviteSuiviFromFo(Signalement $signalement): void
+    {
+        $description = 'L\'usager a ajouté les coordonnées d\'un tiers pour suivre le signalement :';
+        $description .= $this->getInviteSuiviHtmlContent($signalement);
+
+        $this->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+            user: $this->userManager->getSystemUser(),
+            isPublic: false,
+        );
+    }
+
+    private function getInviteSuiviHtmlContent(Signalement $signalement): string
+    {
+        $description = '<br>';
+        $description .= '<ul>';
+        $description .= $signalement->getNomDeclarant() ? '<li>Nom : '.$signalement->getNomDeclarant().'</li>' : '';
+        $description .= $signalement->getPrenomDeclarant() ? '<li>Prénom : '.$signalement->getPrenomDeclarant().'</li>' : '';
+        $description .= $signalement->getMailDeclarant() ? '<li>E-mail : '.$signalement->getMailDeclarant().'</li>' : '';
+        $description .= $signalement->getTelDeclarant() ? '<li>Téléphone : '.$signalement->getTelDeclarantDecoded().'</li>' : '';
+        $description .= '</ul>';
+
+        return $description;
     }
 
     /**
