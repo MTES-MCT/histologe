@@ -1,22 +1,56 @@
-<div>
-    {{ signalement.displayedNomProprio }}
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <div style="text-align: left;">
+        <strong>Signal logement</strong><br>
+        Direction générale de l'aménagement, du logement et de la nature (DGALN)<br>
+        Ministère de la transition écologique, aménagement du territoire, transports, villes et logement<br>
+        Tour Sequoïa<br>
+        1 place Carpeaux<br>
+        92800 PUTEAUX
+        <br><br>
+        Références :<br>
+        Dossier #{{ signalement.reference }}<br>
+        Date d'enregistrement : {{ signalement.createdAt|date('d/m/Y') }}
+    </div>
+    <br><br>
+    <div style="text-align: right;">
+        {{ signalement.displayedNomProprio }}<br>
+        {{ signalement.adresseProprio }} <br>
+        {{ signalement.codePostalProprio }} {{ signalement.villeProprio }}
+    </div>
+    <br><br>
+    <div style="font-weight: bold;">
+        Objet : Réception d’un signalement par la plateforme « Signal Logement » relatif à un logement dont vous êtes propriétaire
+    </div>
+    <br><br>
+    Madame, Monsieur,
+    <br><br>
+
+    <p style="margin-bottom: 16px;">Nous avons reçu par la plateforme « Signal Logement » , service public en ligne de la Direction générale de l'Aménagement, du Logement et de la Nature (DGALN), <strong>un signalement le {{ signalement.createdAt|date('d/m/Y') }}  pour le logement {{ signalement.addressCompleteOccupant }} dont vous êtes propriétaire.</strong></p>
+    <p style="margin-bottom: 16px;">L’occupant de ce logement nous a communiqué vos coordonnées (nom, prénom, courriel, adresse postale) afin que nous puissions vous contacter.</p>
+    <p style="margin-bottom: 16px;">« Signal Logement » permet aux locataires occupants de signaler aux services compétents des manquements relatifs aux dispositions en vigueur, notamment, les articles L. 1331-22 et suivants du code de la santé publique, L. 511-22 du code de la construction et de l'habitation, ou encore le décret n°2002-120 du 30 janvier 2002 relatif aux caractéristiques du logement décent pris pour l'application de l'article 187 de la loi n° 2000-1208 du 13 décembre 2000 relative à la solidarité et au renouvellement urbains.</p>
+    <p style="margin-bottom: 16px;"><strong>Suite à ce signalement et après accord de votre locataire, ce message vous est envoyé pour vous donner l’opportunité d’une résolution amiable de votre différend.</strong></p>
+    <p style="margin-bottom: 16px;">L’objectif de cette démarche est d’établir un rapport de confiance et de transparence entre les occupants, les propriétaires bailleurs et les services administratifs. Vous avez ainsi la possibilité de corriger les anomalies signalées avant le déclenchement des contrôles et procédures légaux.</p>
+    <p style="margin-bottom: 16px;">Vous pouvez consulter le signalement concernant le logement en question suivez les instructions de connexion indiquées.</p>
+    <div>
+        <br>
+        Merci de vous connecter sur <strong>{{ url('app_login_bailleur') }}</strong> avec les codes suivant
+        <br>
+        Référence : <strong>{{ signalement.reference }}</strong>
+        <br>
+        Login bailleur : <strong>{{ signalement.loginBailleur }}</strong>
+        <br>
+        <br>
+        Ou en utilisant le QR code ci-dessous :
+    </div>
+
+    <img src="{{ qrCode }}">
+    <p style="margin-bottom: 16px;">Vous disposez d’un <strong>délai de 3 semaines</strong> pour accéder à votre espace et vous positionner quant au signalement effectué par votre locataire. Passé ce délai, la procédure prévue par les articles sus mentionnés s’enclenchera.</p>
+    <p style="margin-bottom: 16px;">Dans tous les cas, le signalement est enregistré dans la base de données de la DGALN, de la direction de l'habitat, de l'urbanisme et des paysages (DHUP) ainsi que dans celles de la Direction Départementale des Territoires (DDT).</p>
     <br>
-    {{ signalement.adresseProprio }}
-    <hr>
-    <br>
-    Police du logement bonjour.
-    <br>
-    Nous avons reçu un signalement concernant le logement situé <strong>{{ signalement.addressCompleteOccupant }}</strong>.
-    <br>
-    <br>
-    Merci de vous connecter sur <strong>{{ url('app_login_bailleur') }}</strong> avec les codes suivant
-    <br>
-    Référence : <strong>{{ signalement.reference }}</strong>
-    <br>
-    Login bailleur : <strong>{{ signalement.loginBailleur }}</strong>
-    <br>
-    <br>
-    Ou en utilisant le QR code ci-dessous :
+    <p>Nous restons à votre disposition pour tout renseignement complémentaire.</p>
+    <br><br>
+    <div style="text-align: right;">
+        L’équipe Signal Logement
+    </div>
 </div>
 
-<img src="{{ qrCode }}">

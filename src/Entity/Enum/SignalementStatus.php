@@ -39,8 +39,8 @@ enum SignalementStatus: string
             self::REFUSED->name => 'refusé',
             self::ARCHIVED->name => 'archivé',
             self::DRAFT_ARCHIVED->name => 'brouillon archivé',
-            self::INJONCTION_BAILLEUR->name => 'injonction bailleur',
-            self::INJONCTION_CLOSED->name => 'injonction clôturée',
+            self::INJONCTION_BAILLEUR->name => 'démarche accélérée',
+            self::INJONCTION_CLOSED->name => 'démarche accélérée clôturée',
         ];
     }
 

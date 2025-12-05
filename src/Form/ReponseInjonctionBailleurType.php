@@ -15,7 +15,8 @@ class ReponseInjonctionBailleurType extends AbstractType
     {
         $builder
             ->add('reponse', ChoiceType::class, [
-                'label' => 'Je m\'engage à résoudre les désordres',
+                'label' => 'Engagement à mettre le logement en conformité',
+                'help' => 'Indiquez si vous reconnaissez les désordres déclarés et si vous vous engagez à réaliser les travaux nécessaires pour les résoudre.',
                 'choices' => [
                     'Oui' => ReponseInjonctionBailleur::REPONSE_OUI,
                     'Oui avec aide' => ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE,
@@ -24,6 +25,24 @@ class ReponseInjonctionBailleurType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'expanded' => true,
+                'choice_label' => false, // on gère les labels dans le template
+                'choice_attr' => function (?string $choice, ?string $key, ?string $value) {
+                    return match ($value) {
+                        ReponseInjonctionBailleur::REPONSE_OUI => [
+                            'data-dsfr-label' => 'Oui, je m\'engage à réaliser les travaux nécessaires',
+                            'data-dsfr-hint' => null,
+                        ],
+                        ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE => [
+                            'data-dsfr-label' => 'Oui, je m\'engage à réaliser les travaux nécessaires et j\'ai besoin d\'un accompagnement',
+                            'data-dsfr-hint' => 'Les services de l\'ADIL et de France Rénov pourront vous accompagner',
+                        ],
+                        ReponseInjonctionBailleur::REPONSE_NON => [
+                            'data-dsfr-label' => 'Non, je conteste les désordres déclarés et ne m\'engage pas à réaliser de travaux',
+                            'data-dsfr-hint' => 'Le dossier sera transmis aux autorités compétentes.',
+                        ],
+                        default => [],
+                    };
+                },
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Commentaire',

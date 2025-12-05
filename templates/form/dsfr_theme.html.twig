@@ -116,10 +116,20 @@
     {% set display_mode = display_mode|default('inline') %}
     <div {{ block('widget_container_attributes') }} class="fr-fieldset fr-mt-1w fr-mb-0">
     {% for child in form %}
-        <div class="fr-fieldset__element {% if display_mode == 'inline' and 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline{% elseif display_mode == 'block' and 'radio' in child.vars.block_prefixes %}fr-border--light fr-p-2w fr-mx-2w {% endif %}">
+        {% set rich_label = child.vars.attr['data-dsfr-label'] ?? null %}
+        {% set rich_hint  = child.vars.attr['data-dsfr-hint'] ?? null %}
+        <div class="fr-fieldset__element 
+            {% if display_mode == 'inline' and 'radio' in child.vars.block_prefixes %}fr-fieldset__element--inline
+            {% elseif display_mode == 'block' and 'radio' in child.vars.block_prefixes %}fr-border--light fr-p-2w fr-mx-2w 
+            {% endif %}">
             <div class="{% if 'radio' in child.vars.block_prefixes %}fr-radio-group{% else %}fr-checkbox-group{% endif %}">
                 {{form_widget(child)}}
-                {{form_label(child, null, {translation_domain: choice_translation_domain})}}
+                <label class="fr-label" for="{{ child.vars.id }}">
+                    {{ rich_label ?: child.vars.label }}
+                    {% if rich_hint %}
+                        <span class="fr-hint-text">{{ rich_hint }}</span>
+                    {% endif %}
+                </label>
             </div>
         </div>
     {% endfor %}
