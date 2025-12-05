@@ -146,7 +146,7 @@ function buildRangeDateBadge (key: string, value: any): string | undefined {
   const startDateObj = toDate(value[0]);
   const endDateObj = toDate(value[1]);
 
-  if (isNaN(startDateObj.getTime()) || isNaN(endDateObj.getTime())) return undefined;
+  if (Number.isNaN(startDateObj.getTime()) || Number.isNaN(endDateObj.getTime())) return undefined;
 
   const startDate = startDateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const endDate = endDateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });

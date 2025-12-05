@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Dto\Request\UserSearchFilterRequest;
 use App\Entity\User;
 use App\Entity\UserSearchFilter;
@@ -39,6 +40,12 @@ class UserSearchFilterController extends AbstractController
 
         if (empty($dto->params)) {
             return $this->jsonBadRequest("Aucun filtre n'a été transmis.");
+        }
+
+        $searchQuery = SignalementSearchQuery::fromParams($dto->params);
+        $errors = $validator->validate($searchQuery);
+        if (count($errors) > 0) {
+            return $this->jsonValidation($errors);
         }
 
         $search = new UserSearchFilter();
