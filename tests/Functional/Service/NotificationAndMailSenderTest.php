@@ -92,7 +92,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertEmailCount(1);
         /** @var NotificationEmail $mail */
         $mail = $this->getMailerMessages()[0];
-        $this->assertEmailSubjectContains($mail, 'Un signalement a été fait sur un de vos logements !');
+        $this->assertEmailSubjectContains($mail, 'Manquements aux réglementations concernant un de vos logements');
         $this->assertEmailAddressContains($mail, 'to', $signalement->getMailProprio());
         $this->assertEmailAttachmentCount($mail, 1);
         $this->assertEmailHasHeader($mail, 'templateId', '253');
