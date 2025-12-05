@@ -142,6 +142,31 @@
                 <input type="hidden" class="search-and-select-badges-input" id="affectation-partner-ids" name="partner-ids" value="">   
         </div>
     {% endif %}
+    {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+        <h3 class="fr-h6 fr-mt-2w">Abonnement des responsables de territoire en charge du dossier</h3>
+        <p>
+            Sélectionnez le ou les responsable de territoire en charge de la gestion du dossier. 
+            Ces responsables de territoire recevront les notifications sur le dossier et apparaîtront dans la liste des agents abonnés au dossier.
+            Pour attribuer le dossier à tous les responsables de territoire, cliquez sur "Tout sélectionner".
+        </p>
+        <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v" id="accept-signalement-info">
+            Vous devez sélectionner au moins un responsable de territoire.
+        </div>
+        <div class="fr-mb-2v">
+            <button id="select-all-agents-accept-signalement" data-select-all-in-target=".rt-selection-container" class="fr-link" type="button">Tout sélectionner</button>
+        </div>
+        <div class="fr-select-group rt-selection-container  {% if acceptSignalementForm is defined and not acceptSignalementForm.agents.vars.valid %}fr-select-group--error{% endif %}">
+            {{ form_label(acceptSignalementForm.agents, null, {'label_attr': {'class': 'fr-mb-2v'}}) }}
+            <div class="fr-grid-row">
+                {% for agent in acceptSignalementForm.agents %}
+                    <div class="fr-checkbox-group fr-col-6">
+                        {{ form_row(agent) }}
+                    </div>
+                {% endfor %}
+            </div>
+            {{ form_errors(acceptSignalementForm.agents) }}
+        </div>
+    {% endif %}
 
     <div class="fr-grid-row fr-grid-row--right">
         <div>

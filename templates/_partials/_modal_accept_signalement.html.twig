@@ -20,10 +20,10 @@
                         </div>
                         {{ form_start(acceptSignalementForm, {'attr': {'id': 'accept-signalement-form', 'data-submit-type':'formData'}}) }}
                         <div class="fr-mb-2v">
-                            <button id="select-all-agents-accept-signalement" data-select-all-agents class="fr-link">Tout sélectionner</button>
+                            <button id="select-all-agents-accept-signalement" data-select-all-in-target=".rt-selection-container" class="fr-link">Tout sélectionner</button>
                         </div>
                         {{ form_errors(acceptSignalementForm) }}
-                        <div class="fr-select-group">
+                        <div class="fr-select-group rt-selection-container">
                             {{ form_label(acceptSignalementForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]'}}) }}
                             <div class="fr-grid-row">
                                 {% for agent in acceptSignalementForm.agents %}
