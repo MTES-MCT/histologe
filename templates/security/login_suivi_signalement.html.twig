@@ -66,6 +66,8 @@
                                 and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE
                             %}
                             <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du prénom de la personne qui a déposé le dossier</span>
+                            {% elseif signalement.mailDeclarant %}
+                            <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du prénom de la personne qui aide à suivre le dossier</span>
                             {% endif %}
                         </label>
                         <input class="fr-input" aria-describedby="login-first-letter-prenom-error-desc-error" type="text" maxlength="1"
@@ -82,6 +84,8 @@
                                 and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE
                             %}
                             <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du nom de famille de la personne qui a déposé le dossier</span>
+                            {% elseif signalement.mailDeclarant %}
+                            <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du nom de famille de la personne qui aide à suivre le dossier</span>
                             {% endif %}
                         </label>
                         <input class="fr-input" aria-describedby="login-first-letter-nom-error-desc-error" type="text" maxlength="1"
