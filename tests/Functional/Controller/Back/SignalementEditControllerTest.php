@@ -89,7 +89,12 @@ class SignalementEditControllerTest extends WebTestCase
             'mail' => $newMail,
             '_token' => $this->getCsrfToken('signalement_edit_invite_tiers_', $signalement->getId()),
         ];
-        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+        $this->client->request(
+            method: 'POST',
+            uri: $route,
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: (string) json_encode($payload)
+        );
 
         $this->assertResponseIsSuccessful();
         $this->assertEquals($newMail, $signalement->getMailDeclarant());
