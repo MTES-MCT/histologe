@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[Groups(['signalements:read'])]
@@ -28,6 +29,7 @@ class SignalementAffectationListView
         private ?int $id = null,
         private ?string $uuid = null,
         private ?string $reference = null,
+        private ?string $referenceInjonction = null,
         private ?\DateTimeImmutable $createdAt = null,
         private ?SignalementStatus $statut = null,
         private ?string $score = null,
@@ -63,6 +65,15 @@ class SignalementAffectationListView
     public function getReference(): ?string
     {
         return $this->reference;
+    }
+
+    public function getReferenceInjonction(): ?string
+    {
+        if ($this->referenceInjonction) {
+            return InjonctionBailleurService::REFERENCE_PREFIX.$this->referenceInjonction;
+        }
+
+        return null;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable

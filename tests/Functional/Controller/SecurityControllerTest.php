@@ -22,7 +22,7 @@ class SecurityControllerTest extends WebTestCase
     public function testLoginBailleurWithValidLoginPOST(): void
     {
         $client = static::createClient();
-        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
         $payload = [
             'bailleur_reference' => $signalement->getReference(),
             'bailleur_code' => $signalement->getLoginBailleur(),
@@ -35,7 +35,7 @@ class SecurityControllerTest extends WebTestCase
     public function testLoginBailleurFailedWithValidLoginGET(): void
     {
         $client = static::createClient();
-        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
         $client->request('GET', '/login-bailleur', [
             'bailleur_reference' => $signalement->getReference(),
             'bailleur_code' => $signalement->getLoginBailleur(),
@@ -46,7 +46,7 @@ class SecurityControllerTest extends WebTestCase
     public function testLoginBailleurWithInvalidLoginPOST(): void
     {
         $client = static::createClient();
-        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
         $payload = [
             'bailleur_reference' => $signalement->getReference(),
             'bailleur_code' => 'invalid_code',

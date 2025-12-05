@@ -7,6 +7,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\Territory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -14,6 +15,7 @@ use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\AutoAssigner;
+use App\Service\Signalement\ReferenceGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -28,6 +30,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
     private UserManager $userManager;
     private SignalementManager $signalementManager;
     private PartnerRepository $partnerRepository;
+    private ReferenceGenerator $referenceGenerator;
     private InjonctionBailleurService $service;
 
     protected function setUp(): void
@@ -44,6 +47,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $this->userManager = self::getContainer()->get(UserManager::class);
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
+        $this->referenceGenerator = self::getContainer()->get(ReferenceGenerator::class);
 
         $this->service = new InjonctionBailleurService(
             $this->suiviManager,
@@ -53,12 +57,15 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             $this->userManager,
             $this->signalementManager,
             $this->partnerRepository,
+            $this->referenceGenerator
         );
     }
 
     public function testHandleStopProcedure(): void
     {
         $signalement = new Signalement();
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '30']);
+        $signalement->setTerritory($territory);
         $stopProcedure = new StopProcedure();
         $stopProcedure->setSignalement($signalement);
         $stopProcedure->setDescription('Le bailleur souhaite repasser en procédure classique.');
@@ -84,17 +91,20 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             );
 
         $this->autoAssigner->expects($this->once())->method('assignOrSendNewSignalementNotification')->with($signalement);
-
+        $this->entityManager->beginTransaction();
         $this->service->handleStopProcedure($stopProcedure);
+        $this->entityManager->commit();
 
         $this->assertSame(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+        $this->assertStringStartsWith(date('Y').'-', $signalement->getReference());
+        $this->assertStringNotContainsString('-TEMPORAIRE', $signalement->getReference());
     }
 
     public function testAssignHelpingPartners(): void
     {
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2025-12']);
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
 
         $this->service->assignHelpingPartners($signalement);
 

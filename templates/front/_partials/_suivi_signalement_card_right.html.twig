@@ -14,7 +14,12 @@
 			<div class="fr-col-12">
 				Référence du dossier
 				<br>
-				<span class="info">#{{ signalement.reference }}</span>
+				<span class="info">
+					#{{ signalement.reference }}
+					{% if signalement.referenceInjonction and signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+						<small>(#{{ signalement.referenceInjonction }})</small>
+					{% endif %}
+				</span>
 			</div>
 			<div class="fr-col-12">
 				Statut du dossier

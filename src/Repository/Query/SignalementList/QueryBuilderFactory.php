@@ -37,6 +37,7 @@ readonly class QueryBuilderFactory
             DISTINCT s.id,
             s.uuid,
             s.reference,
+            s.referenceInjonction,
             s.createdAt,
             s.statut,
             s.score,

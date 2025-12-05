@@ -15,6 +15,7 @@ use App\Security\User\SignalementBailleur;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +32,7 @@ class SuiviBailleurController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         InjonctionBailleurService $injonctionBailleurService,
         EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
     ): Response {
         /**
          * @var SignalementBailleur $user
@@ -68,8 +70,16 @@ class SuiviBailleurController extends AbstractController
                     $formStopProcedure->handleRequest($request);
 
                     if ($formStopProcedure->isSubmitted() && $formStopProcedure->isValid()) {
-                        $injonctionBailleurService->handleStopProcedure($stopProcedure);
-                        $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
+                        $entityManager->beginTransaction();
+                        try {
+                            $injonctionBailleurService->handleStopProcedure($stopProcedure);
+                            $entityManager->commit();
+                            $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
+                        } catch (\Exception $e) {
+                            $logger->critical($e->getMessage());
+                            $entityManager->rollback();
+                            $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
+                        }
 
                         return $this->redirectToRoute('front_dossier_bailleur');
                     }
@@ -82,8 +92,18 @@ class SuiviBailleurController extends AbstractController
                 ]);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
-                    $injonctionBailleurService->handleResponse($reponseInjonctionBailleur);
-                    $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
+                    $entityManager->beginTransaction();
+                    try {
+                        $injonctionBailleurService->handleResponse($reponseInjonctionBailleur);
+                        $entityManager->commit();
+                        $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
+                    } catch (\Exception $e) {
+                        $logger->critical($e->getMessage());
+                        $entityManager->rollback();
+                        $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
+
+                        return $this->redirectToRoute('front_dossier_bailleur');
+                    }
 
                     return $this->redirectToRoute('front_dossier_bailleur');
                 }

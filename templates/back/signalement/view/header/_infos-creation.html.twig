@@ -8,4 +8,8 @@
     {% else %}
         depuis le formulaire usager
     {% endif %}
+    {% if signalement.referenceInjonction and signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+        <br>
+        Le dossier existait auparavant en injonction bailleur sous la référence #{{ signalement.referenceInjonction }}
+    {% endif %}
 </div>
