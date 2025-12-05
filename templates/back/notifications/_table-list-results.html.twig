@@ -1,0 +1,59 @@
+{% set tableHead %}
+    <th scope="col"></th>
+    <th scope="col">Signalement</th>
+    <th scope="col">Date</th>
+    <th scope="col">Description</th>
+    <th scope="col">Par</th>
+    <th scope="col" class="fr-text--right">actions</th>
+{% endset %}
+
+{% set tableBody %}
+    {% for notification in notifications %}
+        <tr class="partner-row">
+            <td>
+                <div class="fr-fieldset__element">
+                    <div class="fr-checkbox-group">
+                        <input name="check-notification-{{ notification.id }}" id="check-notification-{{ notification.id }}" type="checkbox" class="check-notification" data-notification-id="{{ notification.id }}">
+                        <label class="fr-label" for="check-notification-{{ notification.id }}">&nbsp;</label>
+                    </div>
+                </div>
+            </td>
+            <td>
+                {{ notification.signalement.reference }}
+                <br>
+                ({{ notification.signalement.villeOccupant }})
+            </td>
+            <td>{{ notification.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
+            <td class="word-wrap-anywhere">{{ notification.suivi? transform_suivi_description(notification.suivi)|raw : notification.description }}</td>
+            {% if notification.suivi and notification.suivi.createdBy %}
+                {% set auteur =  notification.suivi.createdBy.nomComplet %} 
+            {% elseif notification.affectation and notification.affectation.answeredBy %}
+                {% set auteur = notification.affectation.answeredBy.nomComplet %}
+            {% else %}
+                {% set auteur = notification.signalement.nomOccupant|upper~' '~notification.signalement.prenomOccupant|capitalize %}   
+            {% endif %}
+            <td>{{ auteur }}</td>
+            <td class="fr-text--right fr-ws-nowrap">
+                {% set link = path('back_signalement_view', {uuid: notification.signalement.uuid}) ~ (notification.suivi ? '#suivis' : '') %}
+                <a href="{{ link }}" class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
+                <form method="POST" action="{{ path('back_notifications_delete_notification', {id: notification.id}) }}" class="simple-ajax-form fr-display-inline-block">
+                    <button type="submit" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></button>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token('back_delete_notification_'~notification.id) }}">
+                    <input type="hidden" name="search_params" value="{{searchParams}}">
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="6" class="fr-text--center">Aucun suivi non lu</td>
+        </tr>
+    {% endfor %}
+{% endset %}
+
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des notifications', 'tableHead': tableHead, 'tableBody': tableBody, cancelSortable: true } %}
+
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="notifications-pagination">
+    {% import '_partials/macros.html.twig' as macros %}
+    {{ macros.customPagination(pages, searchNotification.page, 'back_notifications_list', searchNotification.urlParams) }}
+</div>
+</section>

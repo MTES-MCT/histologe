@@ -21,6 +21,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
@@ -56,7 +57,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         SuiviManager $suiviManager,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
         /** @var User $user */
         $user = $this->getUser();
@@ -89,9 +90,9 @@ class SignalementActionController extends AbstractController
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             createSubscription: false
         );
-        $this->addFlash('success', 'Signalement accepté avec succès !');
+        $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.']);
 
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        return $this->json(['redirect' => true, 'url' => $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()])]);
     }
 
     #[Route('/{uuid:signalement}/accept', name: 'back_signalement_accept', methods: 'GET')]
@@ -125,12 +126,12 @@ class SignalementActionController extends AbstractController
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 subscriptionCreated: $subscriptionCreated,
             );
-            $this->addFlash('success', 'Signalement accepté avec succès !');
+            $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.']);
             if ($subscriptionCreated) {
-                $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue...');
+            $this->addFlash('error', 'Une erreur est survenue, veuilez réessayer.');
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -174,9 +175,9 @@ class SignalementActionController extends AbstractController
             files: $refusSignalement->getFiles(),
             subscriptionCreated: $subscriptionCreated,
         );
-        $this->addFlash('success', 'Signalement refusé avec succès !');
+        $this->addFlash('success', ['title' => 'Signalement refusé', 'message' => 'Le signalement a bien été refusé.']);
         if ($subscriptionCreated) {
-            $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+            $this->addFlash('success', ['title' => 'Signalement refusé', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
         }
 
         $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -227,13 +228,14 @@ class SignalementActionController extends AbstractController
 
             return $this->json($response, $response['code']);
         }
-        $response = ['code' => Response::HTTP_OK];
-        $this->addFlash('success', 'Suivi publié avec succès !');
+        $flashMessages[] = ['type' => 'success', 'title' => 'Suivi publié', 'message' => 'Le suivi a bien été publié.'];
         if ($subscriptionCreated) {
-            $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
+        $htmlTargetContents = [['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])]];
+        $functions = [['name' => 'applyFilter']];
 
-        return $this->json($response, $response['code']);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
 
     #[Route('/{uuid:signalement}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
@@ -242,7 +244,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         SuiviRepository $suiviRepository,
         ManagerRegistry $doctrine,
-    ): RedirectResponse {
+    ): JsonResponse {
         $suivi = $suiviRepository->findOneBy(['id' => $request->get('suivi')]);
         $this->denyAccessUnlessGranted('DELETE_SUIVI', $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->get('_token'))) {
@@ -256,14 +258,15 @@ class SignalementActionController extends AbstractController
                 $suivi->setDeletedBy($user);
             }
             $doctrine->getManager()->flush();
-            $this->addFlash('success', 'Le suivi a été supprimé.');
-        } else {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
-        }
+            $flashMessages[] = ['type' => 'success', 'title' => 'Suivi supprimé', 'message' => 'Le suivi a été supprimé.'];
+            $htmlTargetContents = [['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])]];
+            $functions = [['name' => 'applyFilter']];
 
-        return $this->redirect(
-            $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]).'#suivis'
-        );
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+        }
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 
     #[Route('/suivi/{suivi}/edit', name: 'back_signalement_edit_suivi', methods: ['GET', 'POST'])]
@@ -294,9 +297,11 @@ class SignalementActionController extends AbstractController
             $entityManager->flush();
 
             $response = ['code' => Response::HTTP_OK];
-            $this->addFlash('success', 'Le suivi a été modifié avec succès !');
+            $flashMessages[] = ['type' => 'success', 'title' => 'Suivi modifié', 'message' => 'Le suivi a été modifié avec succès !'];
+            $htmlTargetContents = [['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $suivi->getSignalement()])]];
+            $functions = [['name' => 'applyFilter']];
 
-            return $this->json($response, $response['code']);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
         }
 
         $html = $this->renderView('back/signalement/view/add-edit-suivi-form.html.twig', [
@@ -322,7 +327,7 @@ class SignalementActionController extends AbstractController
                 $affectationRepository->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
             } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && SignalementStatus::CLOSED === $signalement->getStatut()) {
-                $this->addFlash('error', 'Seul un responsable de territoire peut réouvrir un signalement fermé !');
+                $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Seul un responsable de territoire peut réouvrir un dossier fermé.']);
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             } else {
@@ -349,12 +354,12 @@ class SignalementActionController extends AbstractController
                 isPublic: '1' === $request->get('publicSuivi'),
                 subscriptionCreated: $subscriptionCreated,
             );
-            $this->addFlash('success', 'Signalement rouvert avec succès !');
+            $this->addFlash('success', ['title' => 'Réouverture enregistrée',  'Le dossier a bien été rouvert.']);
             if ($subscriptionCreated) {
-                $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                $this->addFlash('success', ['title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
             }
         } else {
-            $this->addFlash('error', 'Erreur lors de la réouverture du signalement !');
+            $this->addFlash('error', 'Erreur lors de la réouverture du dossier, veuillez réessayer.');
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -389,33 +394,45 @@ class SignalementActionController extends AbstractController
         Request $request,
         RnbService $rnbService,
         SignalementManager $signalementManager,
-    ): RedirectResponse {
+        SignalementRepository $signalementRepository,
+    ): JsonResponse {
         if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_NEED_VALIDATION', $signalement)) {
             throw $this->createAccessDeniedException();
         }
         $rnbId = $request->get('rnbId');
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
 
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         if (!empty($signalement->getGeoloc())) {
-            $this->addFlash('error', 'Le signalement a déjà une géolocalisation.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le signalement a déjà une géolocalisation.'];
 
-            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         $building = $rnbService->getBuilding($rnbId);
         if (!$building) {
-            $this->addFlash('error', 'Le bâtiment n\'a pas été trouvé.');
-        } else {
-            $signalement->setRnbIdOccupant($building->getRnbId());
-            $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
-            $signalementManager->flush();
-            $this->addFlash('success', 'Le bâtiment a été mis à jour avec succès.');
-        }
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le bâtiment n\'a pas été trouvé.'];
 
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        $signalement->setRnbIdOccupant($building->getRnbId());
+        $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
+        // $signalementManager->flush();
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Le bâtiment a bien été mis à jour.'];
+        $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(signalement: $signalement, exclusiveStatus: [], excludedStatus: SignalementStatus::excludedStatuses());
+        $htmlTargetContents = [
+            [
+                'target' => '#header-address',
+                'content' => $this->renderView('back/signalement/view/header/_address.html.twig', [
+                    'signalement' => $signalement,
+                    'signalementsOnSameAddress' => $signalementsOnSameAddress,
+                ]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/subscribe', name: 'back_signalement_subscribe', methods: 'GET')]

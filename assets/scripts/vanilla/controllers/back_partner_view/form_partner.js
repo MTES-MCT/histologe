@@ -1,9 +1,12 @@
-import {
-  loadWindowWithLocalStorage,
-  updateLocalStorageWithPaginationParams,
-  updateLocalStorageOnEvent,
-} from '../../services/ui/list_filter_helper';
+import {loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent} from '../../services/ui/list_filter_helper';
+import { jsonResponseProcess } from '../../services/component/component_json_response_handler';
+
 function histoUpdateSubmitButton(elementName, elementLabel) {
+  const button = document.querySelector(elementName);
+  if (!button) {
+    console.error(`histoUpdateSubmitButton: élément introuvable pour le sélecteur "${elementName}"`);
+    return;
+  }
   document.querySelector(elementName).innerHTML = elementLabel;
   document.querySelector(elementName).disabled = true;
 }
@@ -90,44 +93,35 @@ function updateMailingSumaryState() {
   }
 }
 
-document.querySelectorAll('.btn-transfer-partner-user').forEach((swbtn) => {
-  swbtn.addEventListener('click', (evt) => {
-    const target = evt.target;
-    document.querySelector('#fr-modal-user-transfer_username').textContent =
-      target.getAttribute('data-username');
-    histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', target);
-    document.querySelector('#user_transfer_form').addEventListener('submit', () => {
-      histoUpdateSubmitButton('#user_transfer_form_submit', 'Transfert en cours...');
-    });
-  });
-});
-document.querySelectorAll('.btn-delete-partner-user').forEach((swbtn) => {
-  swbtn.addEventListener('click', (evt) => {
-    const target = evt.target;
-    document.querySelectorAll('.fr-modal-user-delete_username').forEach((userItem) => {
-      userItem.textContent = target.getAttribute('data-username');
-    });
-    document.querySelectorAll('.fr-modal-user-delete_useremail').forEach((userItem) => {
-      userItem.textContent = target.getAttribute('data-useremail');
-    });
-    histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', target);
-    document.querySelector('#user_delete_form').addEventListener('submit', () => {
-      histoUpdateSubmitButton('#user_delete_form_submit', 'Suppression en cours...');
-    });
-  });
+document.addEventListener('click', (evt) => {
+  const target = evt.target.closest('.btn-transfer-partner-user');
+  if (!target) return;
+
+  document.querySelector('#fr-modal-user-transfer_username').textContent = target.getAttribute('data-username');
+  histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', target);
 });
 
-document.querySelectorAll('.btn-delete-partner').forEach((swbtn) => {
-  swbtn.addEventListener('click', (evt) => {
-    const target = evt.target;
-    document.querySelectorAll('.fr-modal-partner-delete_name').forEach((userItem) => {
-      userItem.textContent = target.getAttribute('data-partnername');
-    });
-    histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target);
-    document.querySelector('#partner_delete_form').addEventListener('submit', () => {
-      histoUpdateSubmitButton('#partner_delete_form_submit', 'Suppression en cours...');
-    });
+document.addEventListener('click', (evt) => {
+  const target = evt.target.closest('.btn-delete-partner-user');
+  if (!target) return;
+
+  document.querySelectorAll('.fr-modal-user-delete_username').forEach((userItem) => {
+      userItem.textContent = target.getAttribute('data-username');
   });
+  document.querySelectorAll('.fr-modal-user-delete_useremail').forEach((userItem) => {
+    userItem.textContent = target.getAttribute('data-useremail');
+  });
+  histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', target);
+});
+
+document.addEventListener('click', (evt) => {
+  const target = evt.target.closest('.btn-delete-partner');
+  if (!target) return;
+
+  document.querySelectorAll('.fr-modal-partner-delete_name').forEach((userItem) => {
+    userItem.textContent = target.getAttribute('data-partnername');
+  });
+  histoUpdateValueFromData('#fr-modal-partner-delete_partnerid', 'data-partnerid', target);
 });
 
 if (document.querySelector('#partner_type')) {
@@ -189,17 +183,17 @@ updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_p
 updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners');
 updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners');
 
-document.querySelectorAll('.btn-edit-partner-user').forEach((swbtn) => {
-  swbtn.addEventListener('click', (event) => {
-    const refreshUrl = event.target.dataset.refreshUrl;
+document.addEventListener('click', (evt) => {
+  const target = evt.target.closest('.btn-edit-partner-user');
+  if (!target) return;
+
+  const refreshUrl = target.dataset.refreshUrl;
     document.querySelector('#fr-modal-user-edit button[type="submit"]').disabled = true;
     document.querySelector('#fr-modal-user-edit-title').innerHTML = 'Chargement en cours...';
-    document.querySelector('#fr-modal-user-edit-form-container').innerHTML =
-      'Chargement en cours...';
+    document.querySelector('#fr-modal-user-edit-form-container').innerHTML = 'Chargement en cours...';
     fetch(refreshUrl).then((response) => {
       updateModaleFromResponse(response, '#fr-modal-user-edit', addEventListenerOnFormUser);
     });
-  });
 });
 
 const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create');
@@ -239,14 +233,10 @@ function addEventListenerOnFormUser() {
 function updateModaleFromResponse(response, modalSelector, callback = null) {
   if (response.ok) {
     response.json().then((response) => {
-      if (response.redirect) {
-        window.location.href = response.url;
-        window.location.reload();
-      } else {
+      if (response.title && response.content) {
         document.querySelector(modalSelector + '-title').innerHTML = response.title;
         document.querySelector(modalSelector + '-form-container').innerHTML = response.content;
-        document.querySelector(modalSelector + ' button[type="submit"]').innerHTML =
-          response.submitLabel ? response.submitLabel : 'Valider';
+        document.querySelector(modalSelector + ' button[type="submit"]').innerHTML = response.submitLabel ? response.submitLabel : 'Valider';
         attachSubmitFormModal(modalSelector, callback);
         if (typeof callback === 'function') {
           callback();
@@ -255,6 +245,8 @@ function updateModaleFromResponse(response, modalSelector, callback = null) {
           return;
         }
         document.querySelector(modalSelector + ' button[type="submit"]').disabled = false;
+      }else {
+        jsonResponseProcess(response)
       }
     });
   } else {

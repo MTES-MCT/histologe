@@ -48,7 +48,12 @@
                                         data-fr-select-target="signalement-affectation-select-affecte"></button>
                             </div>
                             <div class="fr-col-5">
-                                <form method="POST" name="signalement-affectation" id="signalement-affectation-form">
+                                <form method="POST" 
+                                      name="signalement-affectation" 
+                                      id="signalement-affectation-form" 
+                                      action="{{ path('back_signalement_toggle_affectation',{uuid:signalement.uuid}) }}"
+                                      data-submit-type="formData"
+                                      >
                                     <label for="signalement-affectation-select-affecte" class="fr-label fr-text--bold">Partenaire(s)
                                         affecté(s)</label>
                                     <select id="signalement-affectation-select-affecte" multiple
@@ -56,7 +61,7 @@
                                             size="10" data-fr-select-count="fr-modal-affectation-count"
                                             name="signalement-affectation[partners][]">
                                         {% for partner in partners['affected'] %}
-                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }}
+                                            <option value="{{ partner['id'] }}" selected>{{ partner['name']|upper }}
                                             {% if partner.competence|default %}
                                                 ({% for competence in partner.competence %}
                                                     {{ competence.label }}
@@ -74,9 +79,7 @@
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <li>
-                                <button class="fr-btn fr-icon-check-line" type="submit"
-                                        form="signalement-affectation-form" id="signalement-affectation-form-submit"
-                                        formaction="{{ path('back_signalement_toggle_affectation',{uuid:signalement.uuid}) }}">
+                                <button class="fr-btn fr-icon-check-line" type="submit" form="signalement-affectation-form" id="signalement-affectation-form-submit">
                                     Affecter partenaire(s)
                                 </button>
                             </li>

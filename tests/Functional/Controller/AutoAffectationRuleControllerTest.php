@@ -102,8 +102,16 @@ class AutoAffectationRuleControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/auto-affectation/');
         $this->assertEquals(AutoAffectationRule::STATUS_ARCHIVED, $autoAffectationRule->getStatus());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'La règle a bien été archivée.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testReactiveAutoAffectationRule(): void
@@ -121,7 +129,13 @@ class AutoAffectationRuleControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/auto-affectation/');
         $this->assertEquals(AutoAffectationRule::STATUS_ACTIVE, $autoAffectationRule->getStatus());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'La règle a bien été réactivée.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 }

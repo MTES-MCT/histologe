@@ -1,9 +1,3 @@
-<div data-ajax-form>
-    {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-        {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
-    {% endif %}
-</div>
-
 <span class="fr-h5">
     {{ signalement.adresseOccupant }}
     {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
@@ -21,22 +15,17 @@
     </div>
 {% endif %}
 
-{% if signalementsOnSameAddress|length > 0 %}
-    {% set routeForListOfSignalementOnAddress = path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': signalement.adresseOccupant|trim, 'communes[]': signalement.cpOccupant }) %}
-    {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}
-    {% else %}
-        {% include '_partials/_modal-duplicate-addresses.html.twig' %}
-    {% endif %}
-{% endif %}
-
 <div class="fr-mt-3v">
     <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
         {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
             <li>
                 <button 
                     class="fr-btn fr-icon-france-line" 
+                    id="fr-modal-localisation-btn"
                     data-fr-opened="false" 
                     aria-controls="fr-modal-localisation"
+                    data-lat="{{signalement.geoloc.lat}}"
+                    data-lng="{{signalement.geoloc.lng}}"
                 >
                     Voir sur la carte
                 </button>
