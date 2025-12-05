@@ -52,10 +52,6 @@
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-arrows/icons-arrows.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
 
-    {% if 'back_signalement_view' in app.request.get('_route') %}
-        <link rel="stylesheet" href="{{ asset('build/tippy/tippy.css')}}">
-    {% endif %}
-
     {% if app.request.get('_route') == 'back_indicateur_pnlhi' %}
         <meta http-equiv="refresh" content="{{ refreshDelayInSeconds|default(3600) }}"> <!-- in seconds -->
     {% endif %}
@@ -144,7 +140,6 @@
 
 {% if 'back_signalement_view' in app.request.get('_route') %}
     <script src="{{ asset('build/popper/umd/popper.min.js') }}"></script>
-    <script src="{{ asset('build/tippy/tippy.umd.min.js') }}"></script>
     <script src="{{ asset('build/tinymce/tinymce.min.js') }}"></script>
 {% endif %}
 

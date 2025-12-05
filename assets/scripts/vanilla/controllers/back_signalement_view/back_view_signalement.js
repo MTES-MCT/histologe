@@ -34,7 +34,6 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
         response.json().then((data) => {
           document.querySelectorAll('.container-situation').forEach((container) => {
             container.innerHTML = data.html;
-            initTippy();
             openPhotoAlbumAddEventListeners();
             btnSignalementFileEditAddEventListeners();
             btnSignalementFileDeleteAddEventListeners();
@@ -45,26 +44,6 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
   });
 });
 
-function initTippy() {
-  tippy('.part-infos-hover', {
-    content(reference) {
-      const id = reference.getAttribute('data-template');
-      const template = document.getElementById(id);
-      return template.innerHTML;
-    },
-    allowHTML: true,
-    interactive: true,
-    hideOnClick: true,
-    theme: 'light-border',
-    arrow: true,
-    placement: 'bottom',
-    maxWidth: '100%',
-  });
-}
-
-if (typeof tippy !== 'undefined') {
-  initTippy();
-}
 openPhotoAlbumAddEventListeners();
 
 function openPhotoAlbumAddEventListeners() {

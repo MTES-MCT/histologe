@@ -44,10 +44,6 @@ Encore
         from: './node_modules/tinymce/',
         to: 'tinymce/[path][name].[ext]'
     })
-    .copyFiles({
-        from: './node_modules/tippy.js/dist/',
-        to: 'tippy/[path][name].[ext]'
-    })
 
     .copyFiles({
         from: './node_modules/leaflet/dist/images',

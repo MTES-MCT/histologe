@@ -31,7 +31,7 @@
                 {{ suivi.createdAt|date('d/m/Y') }}
             </strong>            <br>
             {% if suivi.createdBy is not null %}
-                <div class="fr-hidden" id="tippy_suivi_{{ suivi.id }}">
+                <span class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
                     <strong class="fr-ws-nowrap">{{ suivi.createdBy.nomComplet }}</strong>
                     <hr class="fr-pb-1v">
                     <span class="fr-ws-nowrap">{{ suivi.createdBy.email }}</span>
@@ -43,12 +43,12 @@
                         <hr class="fr-pb-1v">
                         <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded }}</span>
                     {% endif %}
-                </div>
-                <div class="part-infos-hover" data-template="tippy_suivi_{{ suivi.id }}" >
-            {% endif %}
+                </span>
+                <span aria-describedby="tooltip_suivi_{{ suivi.id }}">
+                    {{ suivi.getCreatedByLabel('\n')|nl2br }}
+                </span>
+            {% else %}
                 {{ suivi.getCreatedByLabel('\n')|nl2br }}
-            {% if suivi.createdBy is not null %}
-                </div>
             {% endif %}
         </div>
 

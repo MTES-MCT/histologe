@@ -64,11 +64,11 @@
             {% elseif listAllPhotos is not defined and filesFilter is same as 'situation' and nbPhotos > 12 and loop.index > 12 %}
             {% else %}
                 <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-                    <div class="fr-hidden" id="tippy_photodoc_{{ photo.id }}">
-                        {% include '_partials/_tippy_photo_template.html.twig' %}
+                    <div class="fr-tooltip fr-placement" id="tooltip_photodoc_{{ photo.id }}" role="tooltip">
+                        {% include '_partials/_tooltip_photo_template.html.twig' %}
                     </div>
                     <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
-                        data-template="tippy_photodoc_{{ photo.id }}"
+                        aria-describedby="tooltip_photodoc_{{ photo.id }}"
                         style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
                         >
                         <button 
