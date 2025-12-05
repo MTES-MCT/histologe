@@ -21,7 +21,7 @@ class SignalementSearchQuery
     public function __construct(
         private readonly ?string $territoire = null,
         private readonly ?string $searchTerms = null,
-        #[Assert\Choice(['nouveau', 'en_cours', 'ferme', 'refuse'])]
+        #[Assert\Choice(['nouveau', 'en_cours', 'ferme', 'refuse'], message: 'Statut de signalement invalide')]
         private readonly ?string $status = null,
         private readonly ?array $communes = null,
         private readonly ?array $epcis = null,
@@ -33,7 +33,7 @@ class SignalementSearchQuery
         private readonly ?string $dateDepotFin = null,
         private readonly ?array $partenaires = null,
         private readonly ?string $bailleurSocial = null,
-        #[Assert\Choice(['Non planifiée', 'Planifiée', 'Conclusion à renseigner', 'Terminée'])]
+        #[Assert\Choice(['Non planifiée', 'Planifiée', 'Conclusion à renseigner', 'Terminée'], message: 'Statut de visite invalide')]
         private readonly ?string $visiteStatus = null,
         #[Assert\Choice(['partenaire', 'usager', 'automatique'])]
         private readonly ?string $typeDernierSuivi = null,
@@ -41,7 +41,7 @@ class SignalementSearchQuery
         private readonly ?string $dateDernierSuiviDebut = null,
         #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
         private readonly ?string $dateDernierSuiviFin = null,
-        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'cloture_un_partenaire', 'cloture_tous_partenaire'])]
+        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'cloture_un_partenaire', 'cloture_tous_partenaire'], message: 'Statut d\'affectation invalide')]
         private readonly ?string $statusAffectation = null,
         #[Assert\GreaterThanOrEqual(0)]
         private readonly ?float $criticiteScoreMin = null,
@@ -55,13 +55,13 @@ class SignalementSearchQuery
             'service_secours',
             'bailleur', ])]
         private readonly ?string $typeDeclarant = null,
-        #[Assert\Choice(['privee', 'public', 'non_renseigne'])]
+        #[Assert\Choice(['privee', 'public', 'non_renseigne'], message: 'Nature du parc invalide')]
         private readonly ?string $natureParc = null,
-        #[Assert\Choice(['caf', 'msa', 'oui', 'non', 'non_renseigne'])]
+        #[Assert\Choice(['caf', 'msa', 'oui', 'non', 'non_renseigne'], message: 'Allocataire invalide')]
         private readonly ?string $allocataire = null,
-        #[Assert\Choice(['oui', 'non', 'non_renseigne'])]
+        #[Assert\Choice(['oui', 'non', 'non_renseigne'], message: 'Enfants de moins de 6 ans invalide')]
         private readonly ?string $enfantsM6 = null,
-        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart', 'logement_vacant'])]
+        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart', 'logement_vacant'], message: 'Situation invalide')]
         private readonly ?string $situation = null,
         #[Assert\Choice([
             'non_decence_energetique',
@@ -71,7 +71,8 @@ class SignalementSearchQuery
             'insalubrite',
             'mise_en_securite_peril',
             'suroccupation',
-            'assurantiel', ])]
+            'assurantiel', ],
+            message: 'Procédure suspectée invalide')]
         private readonly ?string $procedure = null,
         #[Assert\Choice([
             'non_decence',
@@ -80,17 +81,18 @@ class SignalementSearchQuery
             'mise_en_securite_peril',
             'logement_decent',
             'responsabilite_occupant_assurantiel',
-            'autre', ])]
+            'autre', ],
+            message: 'Procédure constatée invalide')]
         private readonly ?string $procedureConstatee = null,
         private readonly ?int $page = 1,
-        #[Assert\Choice(['oui'])]
+        #[Assert\Choice(['oui'], message: 'Le filtre des signalements importés est invalide')]
         private readonly ?string $isImported = null,
-        #[Assert\Choice(['oui'])]
+        #[Assert\Choice(['oui'], message: 'Le filtre des zones affichées est invalide')]
         private readonly ?string $isZonesDisplayed = null,
         private readonly ?bool $usagerAbandonProcedure = false,
-        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'])]
+        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
         private readonly string $sortBy = 'reference',
-        #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
+        #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'], message: 'Direction de tri invalide')]
         private readonly string $direction = 'DESC',
         #[Assert\Choice([
             'abandon_de_procedure_absence_de_reponse',
@@ -108,9 +110,9 @@ class SignalementSearchQuery
             'travaux_faits_ou_en_cours',
             'doublon',
             'autre',
-        ])]
+        ], message: 'Motif de clôture invalide')]
         private readonly ?string $motifCloture = null,
-        #[Assert\Choice(['formulaire-usager', 'formulaire-pro'])]
+        #[Assert\Choice(['formulaire-usager', 'formulaire-pro'], message: 'Source de création invalide')]
         private readonly ?string $createdFrom = null,
         private readonly ?string $showMySignalementsOnly = null,
         private readonly ?string $relanceUsagerSansReponse = null,
@@ -454,5 +456,53 @@ class SignalementSearchQuery
         }
 
         return UrlHelper::arrayToQueryString($params);
+    }
+
+    public static function fromParams(array $params): self
+    {
+        return new self(
+            territoire: $params['territoire'] ?? null,
+            searchTerms: $params['searchTerms'] ?? null,
+            status: $params['status'] ?? null,
+            communes: isset($params['communes']) && is_array($params['communes']) ? $params['communes'] : null,
+            epcis: isset($params['epcis']) && is_array($params['epcis']) ? $params['epcis'] : null,
+            etiquettes: isset($params['etiquettes']) && is_array($params['etiquettes']) ? $params['etiquettes'] : null,
+            zones: isset($params['zones']) && is_array($params['zones']) ? $params['zones'] : null,
+            dateDepotDebut: $params['dateDepotDebut'] ?? null,
+            dateDepotFin: $params['dateDepotFin'] ?? null,
+            partenaires: isset($params['partenaires']) && is_array($params['partenaires']) ? $params['partenaires'] : null,
+            bailleurSocial: $params['bailleurSocial'] ?? null,
+            visiteStatus: $params['visiteStatus'] ?? null,
+            typeDernierSuivi: $params['typeDernierSuivi'] ?? null,
+            dateDernierSuiviDebut: $params['dateDernierSuiviDebut'] ?? null,
+            dateDernierSuiviFin: $params['dateDernierSuiviFin'] ?? null,
+            statusAffectation: $params['statusAffectation'] ?? null,
+            criticiteScoreMin: isset($params['criticiteScoreMin']) ? (float) $params['criticiteScoreMin'] : null,
+            criticiteScoreMax: isset($params['criticiteScoreMax']) ? (float) $params['criticiteScoreMax'] : null,
+            typeDeclarant: $params['typeDeclarant'] ?? null,
+            natureParc: $params['natureParc'] ?? null,
+            allocataire: $params['allocataire'] ?? null,
+            enfantsM6: $params['enfantsM6'] ?? null,
+            situation: $params['situation'] ?? null,
+            procedure: $params['procedure'] ?? null,
+            procedureConstatee: $params['procedureConstatee'] ?? null,
+            page: isset($params['page']) ? (int) $params['page'] : 1,
+            isImported: $params['isImported'] ?? null,
+            isZonesDisplayed: $params['isZonesDisplayed'] ?? null,
+            usagerAbandonProcedure: isset($params['usagerAbandonProcedure']) ? (bool) $params['usagerAbandonProcedure'] : false,
+            sortBy: $params['sortBy'] ?? 'reference',
+            direction: $params['direction'] ?? 'DESC',
+            motifCloture: $params['motifCloture'] ?? null,
+            createdFrom: $params['createdFrom'] ?? null,
+            showMySignalementsOnly: $params['showMySignalementsOnly'] ?? null,
+            relanceUsagerSansReponse: $params['relanceUsagerSansReponse'] ?? null,
+            isMessagePostCloture: $params['isMessagePostCloture'] ?? null,
+            isNouveauMessage: $params['isNouveauMessage'] ?? null,
+            isMessageWithoutResponse: $params['isMessageWithoutResponse'] ?? null,
+            isDossiersSansActivite: $params['isDossiersSansActivite'] ?? null,
+            isEmailAVerifier: $params['isEmailAVerifier'] ?? null,
+            isDossiersSansAgent: $params['isDossiersSansAgent'] ?? null,
+            isActiviteRecente: $params['isActiviteRecente'] ?? null,
+        );
     }
 }

@@ -215,6 +215,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[AppAssert\TelephoneFormat(groups: ['user_partner', 'Default'])]
     private ?string $phone = null;
 
+    /**
+     * @var Collection<int, UserSearchFilter>
+     */
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: UserSearchFilter::class, orphanRemoval: true)]
+    private Collection $userSearchFilters;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -231,6 +237,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->hasDoneSubscriptionsChoice = false;
         $this->userApiPermissions = new ArrayCollection();
+        $this->userSearchFilters = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1100,5 +1107,35 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function isMultiTerritoire(): bool
     {
         return count($this->getPartnersTerritories()) > 1;
+    }
+
+    /**
+     * @return Collection<int, UserSearchFilter>
+     */
+    public function getUserSearchFilters(): Collection
+    {
+        return $this->userSearchFilters;
+    }
+
+    public function addUserSearchFilter(UserSearchFilter $userSearchFilter): static
+    {
+        if (!$this->userSearchFilters->contains($userSearchFilter)) {
+            $this->userSearchFilters->add($userSearchFilter);
+            $userSearchFilter->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSearchFilter(UserSearchFilter $userSearchFilter): static
+    {
+        if ($this->userSearchFilters->removeElement($userSearchFilter)) {
+            // set the owning side to null (unless already changed)
+            if ($userSearchFilter->getUser() === $this) {
+                $userSearchFilter->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

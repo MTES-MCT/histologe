@@ -39,7 +39,7 @@ export function buildBadge (key: string, value: any): string | undefined | null 
 
   if (key === 'epcis' && value instanceof Array) {
     const epciData = localStorage.getItem('epci')
-    if (epciData !== null) {
+    if (epciData !== null && epciData !== undefined) {
       const listEpci = JSON.parse(epciData)
       if (value.length > 0) {
         const listEpciAsString = value
@@ -58,14 +58,14 @@ export function buildBadge (key: string, value: any): string | undefined | null 
 
   if (key === 'enfantsM6') {
     const item = store.state.enfantMoinsSixList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return item.Text
     }
   }
 
   if (key === 'allocataire') {
     const item = store.state.allocataireList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return item.Text
     }
   }
@@ -92,21 +92,21 @@ export function buildBadge (key: string, value: any): string | undefined | null 
 
   if (key === 'procedure') {
     const item = store.state.procedureList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return 'Procédure suspectée : ' + item.Text
     }
   }
 
   if (key === 'procedureConstatee') {
     const item = store.state.procedureConstateeList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return 'Procédure constatée : ' + item.Text
     }
   }
 
   if (key === 'motifCloture') {
     const item = store.state.motifClotureList.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return 'Motif de clôture : ' + item.Text
     }
   }
@@ -140,22 +140,25 @@ export function buildBadge (key: string, value: any): string | undefined | null 
 }
 
 function buildRangeDateBadge (key: string, value: any): string | undefined {
-  let label: string = ''
-  let startDate: string = ''
-  let endDate: string = ''
+  if (!value || value.length < 2) return undefined;
+  const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
 
-  startDate = value[0].toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  endDate = value[1].toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  const startDateObj = toDate(value[0]);
+  const endDateObj = toDate(value[1]);
 
+  if (Number.isNaN(startDateObj.getTime()) || Number.isNaN(endDateObj.getTime())) return undefined;
+
+  const startDate = startDateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const endDate = endDateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  let label = '';
   if (key === 'dateDernierSuivi') {
-    label = 'Date de dernier suivi : '
+    label = 'Date de dernier suivi :';
+  } else if (key === 'dateDepot') {
+    label = 'Date de dépôt :';
   }
 
-  if (key === 'dateDepot') {
-    label = 'Date de dépôt : '
-  }
-
-  return `${label} ${startDate} - ${endDate}`
+  return `${label} ${startDate} - ${endDate}`;
 }
 
 function buildStaticBadge (value: any): string | undefined {
@@ -171,7 +174,7 @@ function buildStaticBadge (value: any): string | undefined {
 
   for (const list of staticListsWithNoDuplicateId) {
     const item = list.find(item => item.Id === value)
-    if (item != null) {
+    if (item != null && item !== undefined) {
       return item.Text
     }
   }

@@ -6,12 +6,15 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementListControllerTest extends WebTestCase
 {
+    use SessionHelper;
+
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
