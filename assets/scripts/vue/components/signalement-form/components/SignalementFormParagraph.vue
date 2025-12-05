@@ -1,5 +1,5 @@
 <template>
-  <p v-html="variablesReplacer.replace(label)">
+  <p v-html="variablesReplacer.replace(label)" :class="customCss">
   </p>
 </template>
 
@@ -12,6 +12,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     label: { type: String, default: null },
+    customCss: { type: String, default: '' },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C
