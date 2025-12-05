@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\InjonctionBailleur;
 
 use App\Dto\StopProcedure;
 use App\Entity\Enum\SignalementStatus;
