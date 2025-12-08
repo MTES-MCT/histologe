@@ -20,29 +20,29 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserSearchFilterController extends AbstractController
 {
     #[Route('/user/search-filters/save', name: 'back_user_search_filters_save')]
-    public function saveSearch(
+    public function saveSearchFilter(
         #[MapRequestPayload(validationGroups: ['false'])]
-        UserSearchFilterRequest $dto,
+        UserSearchFilterRequest $userSearchFilterRequest,
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->isCsrfTokenValid('save_search', $dto->_token)) {
+        if (!$this->isCsrfTokenValid('save_search', $userSearchFilterRequest->_token)) {
             return $this->jsonForbidden();
         }
 
-        $errors = $validator->validate($dto);
+        $errors = $validator->validate($userSearchFilterRequest);
         if (count($errors) > 0) {
             return $this->jsonValidation($errors);
         }
 
-        if (empty($dto->params)) {
+        if (empty($userSearchFilterRequest->params)) {
             return $this->jsonBadRequest("Aucun filtre n'a été transmis.");
         }
 
-        $searchQuery = SignalementSearchQuery::fromParams($dto->params);
+        $searchQuery = SignalementSearchQuery::fromParams($userSearchFilterRequest->params);
         $errors = $validator->validate($searchQuery);
         if (count($errors) > 0) {
             return $this->jsonValidation($errors);
@@ -50,8 +50,8 @@ class UserSearchFilterController extends AbstractController
 
         $search = new UserSearchFilter();
         $search->setUser($user);
-        $search->setName($dto->name);
-        $search->setParams($dto->params);
+        $search->setName($userSearchFilterRequest->name);
+        $search->setParams($userSearchFilterRequest->params);
 
         $errors = $validator->validate($search);
         if (count($errors) > 0) {
@@ -75,10 +75,10 @@ class UserSearchFilterController extends AbstractController
     }
 
     #[Route('/user/search-filters/delete/{id}', name: 'back_user_search_filters_delete', methods: ['POST'])]
-    public function deleteSavedSearch(
+    public function deleteSearchFilter(
         int $id,
         Request $request,
-        UserSearchFilterRepository $savedSearchRepository,
+        UserSearchFilterRepository $userSearchFilterRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var User $user */
@@ -90,12 +90,12 @@ class UserSearchFilterController extends AbstractController
             return $this->jsonForbidden();
         }
 
-        $savedSearch = $savedSearchRepository->findOneBy(['id' => $id, 'user' => $user]);
-        if (!$savedSearch) {
+        $userSearchFilter = $userSearchFilterRepository->findOneBy(['id' => $id, 'user' => $user]);
+        if (!$userSearchFilter) {
             return $this->jsonNotFound('Recherche introuvable.');
         }
 
-        $entityManager->remove($savedSearch);
+        $entityManager->remove($userSearchFilter);
         $entityManager->flush();
 
         return $this->json([
@@ -105,34 +105,34 @@ class UserSearchFilterController extends AbstractController
     }
 
     #[Route('/user/search-filters/edit/{id}', name: 'back_user_search_filters_edit', methods: ['POST'])]
-    public function editSavedSearch(
+    public function editSearchFilter(
         int $id,
         #[MapRequestPayload(validationGroups: ['false'])]
-        UserSearchFilterRequest $dto,
+        UserSearchFilterRequest $userSearchFilterRequest,
         ValidatorInterface $validator,
-        UserSearchFilterRepository $savedSearchRepository,
+        UserSearchFilterRepository $userSearchFilterRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->isCsrfTokenValid('edit_search', $dto->_token)) {
+        if (!$this->isCsrfTokenValid('edit_search', $userSearchFilterRequest->_token)) {
             return $this->jsonForbidden();
         }
 
-        $errors = $validator->validate($dto);
+        $errors = $validator->validate($userSearchFilterRequest);
         if (count($errors) > 0) {
             return $this->jsonValidation($errors);
         }
-        $name = trim($dto->name);
+        $name = trim($userSearchFilterRequest->name);
 
-        $savedSearch = $savedSearchRepository->findOneBy(['id' => $id, 'user' => $user]);
-        if (!$savedSearch) {
+        $userSearchFilter = $userSearchFilterRepository->findOneBy(['id' => $id, 'user' => $user]);
+        if (!$userSearchFilter) {
             return $this->jsonNotFound('Recherche introuvable.');
         }
 
-        $savedSearch->setName($name);
-        $errors = $validator->validate($savedSearch);
+        $userSearchFilter->setName($name);
+        $errors = $validator->validate($userSearchFilter);
         if (count($errors) > 0) {
             return $this->jsonValidation($errors);
         }

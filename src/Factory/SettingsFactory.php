@@ -15,7 +15,7 @@ class SettingsFactory
     public function __construct(
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         private readonly UserAvatar $userAvatar,
-        private readonly UserSearchFilterRepository $userSaveSearchRepository,
+        private readonly UserSearchFilterRepository $userSearchFilterRepository,
     ) {
     }
 
@@ -37,7 +37,7 @@ class SettingsFactory
             hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
-            savedSearches: $this->userSaveSearchRepository->findAllForUserArray($user),
+            savedSearches: $this->userSearchFilterRepository->findAllForUserArray($user),
         );
     }
 
