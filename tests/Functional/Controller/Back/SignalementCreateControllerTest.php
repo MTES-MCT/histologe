@@ -47,6 +47,8 @@ class SignalementCreateControllerTest extends WebTestCase
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
             'signalement_draft_address[isLogementSocial]' => '1',
+            'signalement_draft_address[natureLogement]' => 'autre',
+            'signalement_draft_address[natureLogementAutre]' => 'roulotte',
             'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
         ]);
         $this->client->submit($form);
@@ -95,6 +97,8 @@ class SignalementCreateControllerTest extends WebTestCase
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => 'Route des Funeries 44850 Le Cellier',
             'signalement_draft_address[isLogementSocial]' => '1',
+            'signalement_draft_address[natureLogement]' => 'autre',
+            'signalement_draft_address[natureLogementAutre]' => 'roulotte',
             'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
         ]);
         $this->client->submit($form);
@@ -182,6 +186,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $form->setValues([
             'signalement_draft_address[adresseCompleteOccupant]' => '5 Rue Basse 44350 Guérande',
             'signalement_draft_address[isLogementSocial]' => '0',
+            'signalement_draft_address[natureLogement]' => 'maison',
             'signalement_draft_address[profileDeclarant]' => 'BAILLEUR_OCCUPANT',
             'signalement_draft_address[nbOccupantsLogement]' => '4',
             'signalement_draft_address[nbEnfantsDansLogement]' => '2',
@@ -204,6 +209,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('44350', $signalement->getCpOccupant());
         $this->assertEquals('Guérande', $signalement->getVilleOccupant());
         $this->assertEquals(ProfileDeclarant::BAILLEUR_OCCUPANT, $signalement->getProfileDeclarant());
+        $this->assertEquals('maison', $signalement->getNatureLogement());
         $this->assertEquals(4, $signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes());
         $this->assertEquals(2, $signalement->getTypeCompositionLogement()->getCompositionLogementNombreEnfants());
         $this->assertEquals('non', $signalement->getTypeCompositionLogement()->getCompositionLogementEnfants());
@@ -233,8 +239,6 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $form = $crawler->filter('#bo-form-signalement-logement')->form();
         $form->setValues([
-            'signalement_draft_logement[natureLogement]' => 'autre',
-            'signalement_draft_logement[natureLogementAutre]' => 'roulotte',
             'signalement_draft_logement[superficie]' => '15',
             'signalement_draft_logement[cuisine]' => 'oui',
         ]);
@@ -247,8 +251,6 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
         $this->assertEquals(SignalementStatus::DRAFT, $signalement->getStatut());
-        $this->assertEquals('autre', $signalement->getNatureLogement());
-        $this->assertEquals('roulotte', $signalement->getTypeCompositionLogement()->getTypeLogementNatureAutrePrecision());
         $this->assertEquals(15, $signalement->getSuperficie());
         $this->assertEquals('oui', $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine());
     }
