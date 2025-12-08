@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Messenger\MessageHandler;
 
 use App\Entity\Enum\SignalementStatus;
-use App\Messenger\Message\SignalementDraftFileMessage;
+use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Messenger\MessageHandler\SignalementAddressUpdateAndAutoAssignMessageHandler;
 use App\Repository\AffectationRepository;
 use App\Repository\NotificationRepository;
@@ -25,7 +25,7 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
         $notifications = $notificationRepository->findBy(['signalement' => $signalement, 'type' => 'NOUVEAU_SIGNALEMENT']);
         $this->assertCount(0, $notifications);
 
-        $message = new SignalementDraftFileMessage($signalement->getCreatedFrom()?->getId(), $signalement->getId());
+        $message = new SignalementDraftProcessMessage($signalement->getCreatedFrom()?->getId(), $signalement->getId());
         $messageBus->dispatch($message);
         $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();
@@ -40,7 +40,7 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
         $this->assertEmailCount(0);
     }
 
-    public function testWitAutoAffectation(): void
+    public function testWithAutoAffectation(): void
     {
         self::bootKernel();
         $container = static::getContainer();
@@ -56,7 +56,7 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
         $affectations = $affectationRepository->findBy(['signalement' => $signalement]);
         $this->assertCount(0, $affectations);
 
-        $message = new SignalementDraftFileMessage($signalement->getCreatedFrom()?->getId(), $signalement->getId());
+        $message = new SignalementDraftProcessMessage($signalement->getCreatedFrom()?->getId(), $signalement->getId());
         $messageBus->dispatch($message);
         $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();
@@ -92,7 +92,7 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
         $affectations = $affectationRepository->findBy(['signalement' => $signalement]);
         $this->assertCount(0, $affectations);
 
-        $message = new SignalementDraftFileMessage($signalement->getCreatedFrom()?->getId(), $signalement->getId());
+        $message = new SignalementDraftProcessMessage($signalement->getCreatedFrom()?->getId(), $signalement->getId());
         $messageBus->dispatch($message);
         $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();

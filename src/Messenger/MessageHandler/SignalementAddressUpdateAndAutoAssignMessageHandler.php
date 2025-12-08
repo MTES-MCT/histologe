@@ -3,7 +3,7 @@
 namespace App\Messenger\MessageHandler;
 
 use App\Entity\Enum\SignalementStatus;
-use App\Messenger\Message\SignalementDraftFileMessage;
+use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Repository\SignalementRepository;
 use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
@@ -25,16 +25,16 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
     ) {
     }
 
-    public function __invoke(SignalementDraftFileMessage $signalementDraftFileMessage): void
+    public function __invoke(SignalementDraftProcessMessage $signalementDraftProcessMessage): void
     {
-        $this->logger->info('Start handling SignalementDraftFileMessage', [
-            'signalementDraftId' => $signalementDraftFileMessage->getSignalementDraftId(),
-            'signalementId' => $signalementDraftFileMessage->getSignalementId(),
+        $this->logger->info('Start handling SignalementAddressUpdateAndAutoAssignMessageHandler', [
+            'signalementDraftId' => $signalementDraftProcessMessage->getSignalementDraftId(),
+            'signalementId' => $signalementDraftProcessMessage->getSignalementId(),
             'step' => 'auto-assign',
         ]);
 
         try {
-            $signalement = $this->signalementRepository->find($signalementDraftFileMessage->getSignalementId());
+            $signalement = $this->signalementRepository->find($signalementDraftProcessMessage->getSignalementId());
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
             $this->entityManager->flush();
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
@@ -46,14 +46,14 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
             $this->logger->error(
                 sprintf(
                     'The update from address of the signalement (%s) failed for the following reason : %s',
-                    $signalementDraftFileMessage->getSignalementId(),
+                    $signalementDraftProcessMessage->getSignalementId(),
                     $exception->getMessage()
                 )
             );
         }
 
-        $this->logger->info('SignalementDraftFileMessage handled successfully', [
-            'signalementId' => $signalementDraftFileMessage->getSignalementId(),
+        $this->logger->info('SignalementAddressUpdateAndAutoAssignMessageHandler handled successfully', [
+            'signalementId' => $signalementDraftProcessMessage->getSignalementId(),
             'step' => 'auto-assign',
         ]);
     }

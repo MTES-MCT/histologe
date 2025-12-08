@@ -3,7 +3,7 @@
 namespace App\Tests\Functional\Messenger\MessageHandler;
 
 use App\Entity\Enum\DocumentType;
-use App\Messenger\Message\SignalementDraftFileMessage;
+use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Messenger\MessageHandler\SignalementDraftFileMessageHandler;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
@@ -34,7 +34,7 @@ class SignalementDraftFileMessageHandlerTest extends KernelTestCase
         );
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000003']);
         $this->assertCount(0, $signalement->getFiles());
-        $message = new SignalementDraftFileMessage($signalementDraft->getId(), $signalement->getId());
+        $message = new SignalementDraftProcessMessage($signalementDraft->getId(), $signalement->getId());
 
         $this->messageBus->dispatch($message);
         $transport = static::getContainer()->get('messenger.transport.async_priority_high');
@@ -67,7 +67,7 @@ class SignalementDraftFileMessageHandlerTest extends KernelTestCase
             'uuid' => '00000000-0000-0000-2024-locataire002',
         ]);
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000003']);
-        $message = new SignalementDraftFileMessage($signalementDraft->getId(), $signalement->getId());
+        $message = new SignalementDraftProcessMessage($signalementDraft->getId(), $signalement->getId());
 
         $this->expectException(\Throwable::class);
 

@@ -9,9 +9,7 @@ use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
-use App\Messenger\Message\SignalementDraftFileMessage;
-use App\Messenger\MessageHandler\SignalementAddressUpdateAndAutoAssignMessageHandler;
-use App\Messenger\MessageHandler\SignalementDraftFileMessageHandler;
+use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -132,7 +130,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
     private function dispatchDraftProcessing(SignalementDraft $signalementDraft, Signalement $signalement): void
     {
         $this->messageBus->dispatch(
-            new SignalementDraftFileMessage($signalementDraft->getId(), $signalement->getId())
+            new SignalementDraftProcessMessage($signalementDraft->getId(), $signalement->getId())
         );
     }
 }
