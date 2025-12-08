@@ -55,9 +55,9 @@ class ExportSignalementController extends AbstractController
     ): RedirectResponse {
         $selectedColumns = $request->get('cols') ?? [];
         $format = $request->get('file-format');
+        $request->getSession()->set('selectedCols', $selectedColumns);
 
         if (!in_array($format, ['csv', 'xlsx'])) {
-            $request->getSession()->set('selectedCols', $selectedColumns);
             $this->addFlash('error', "Merci de sélectionner le format de l'export.");
 
             return $this->redirectToRoute('back_signalement_list_export');

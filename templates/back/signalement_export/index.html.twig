@@ -46,13 +46,13 @@
         </div>
 
         <h2 class="fr-mb-0 fr-mt-5v" id="desc-table">
-            Infos à sélectionner
+            Infos disponibles
             <div class="fr-text--sm fr-text--light">
-                Dans le tableau ci-dessous, sélectionnez les colonnes à ajouter à votre fichier.
+                Dans le tableau ci-dessous, sélectionnez ou désélectionnez les informations pour télécharger uniquement les informations dont vous avez besoin.
                 <br>
                 Cliquez sur la case dans l'en-tête pour tout sélectionner.
                 <br>
-                Si vous ne cochez aucune case, seule les informations obligatoires vous seront transmises.
+                Si vous ne cochez aucune case supplémentaire, seule les informations pré sélectionnées vous seront transmises.
             </div>
         </h2>
         
@@ -79,7 +79,10 @@
                 <th class="fr-cell--fixed" scope="row">
                     <div class="fr-checkbox-group fr-checkbox-group--sm">
                         <input name="cols[]" value="{{ colId }}" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column"
-                            {% if colId in selected_cols %}checked="checked"{% endif %}>
+                            {%  if (selected_cols is not empty and colId in selected_cols)
+                                or (selected_cols is empty and col.preselected is same as(true)) %}
+                                checked="checked"
+                            {% endif %}>
                         <label class="fr-label" for="table-select-checkbox-{{ colId }}">
                             {{ col.name }}
                         </label>
