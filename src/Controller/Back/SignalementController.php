@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AcceptSignalement;
 use App\Dto\AgentSelection;
 use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
@@ -19,7 +18,6 @@ use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
-use App\Form\AcceptSignalementType;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
 use App\Form\ClotureType;
@@ -127,6 +125,7 @@ class SignalementController extends AbstractController
         $acceptSignalementForm = null;
         $refusSignalementForm = null;
         $isUniqueRtInCurrentPartner = false;
+        $agentSelection = (new AgentSelection())->setSignalement($signalement)->setAgents([$user]);
         if ($this->isGranted(SignalementVoter::VALIDATE, $signalement)) {
             if ($user->isTerritoryAdmin()) {
                 if (1 === count($userRepository->findActiveTerritoryAdminsInPartner($partner))) {
@@ -134,12 +133,14 @@ class SignalementController extends AbstractController
                 }
             }
             if (!$isUniqueRtInCurrentPartner) {
-                $acceptSignalement = (new AcceptSignalement())->setSignalement($signalement)->setAgents([$user]);
                 $acceptSignalementFormRoute = $this->generateUrl('back_signalement_accept_post', ['uuid' => $signalement->getUuid()]);
                 $acceptSignalementForm = $this->createForm(
-                    AcceptSignalementType::class,
-                    $acceptSignalement,
-                    ['action' => $acceptSignalementFormRoute]
+                    AgentSelectionType::class,
+                    $agentSelection,
+                    [
+                        'action' => $acceptSignalementFormRoute,
+                        'only_rt' => true,
+                        'label' => 'Sélectionnez le(s) responsable(s) de territoire en charge du dossier']
                 );
             }
             $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
@@ -164,28 +165,28 @@ class SignalementController extends AbstractController
 
         $acceptAffectationForm = null;
         if (($canAnswerAffectation || $canCancelRefusedAffectation) && $affectation) {
-            $acceptAffectation = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $acceptAffectationFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
-            $acceptAffectationForm = $this->createForm(
-                AgentSelectionType::class,
-                $acceptAffectation,
-                ['action' => $acceptAffectationFormRoute]
-            );
+            $acceptAffectationForm = $this->createForm(AgentSelectionType::class, $agentSelection, ['action' => $acceptAffectationFormRoute]);
         }
 
         $transferSubscriptionForm = null;
         if ($isUserSubscribed && $affectation) {
-            $transferSubscription = (new AgentSelection())->setAffectation($affectation)->setAgents([$user]);
             $transferSubscriptionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
             $transferSubscriptionForm = $this->createForm(
                 AgentSelectionType::class,
-                $transferSubscription,
+                $agentSelection,
                 [
                     'action' => $transferSubscriptionFormRoute,
                     'exclude_user' => $this->getUser(),
                     'label' => 'Sélectionnez le(s) agent(s) à qui transmettre le dossier',
                 ]
             );
+        }
+
+        $agentsSubscriptionForm = null;
+        if ($isUserSubscribed) {
+            $agentsSubscriptionFormRoute = $this->generateUrl('back_signalement_subscribe_list', ['uuid' => $signalement->getUuid()]);
+            $agentsSubscriptionForm = $this->createForm(AgentSelectionType::class, $agentSelection, ['action' => $agentsSubscriptionFormRoute]);
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
@@ -275,6 +276,7 @@ class SignalementController extends AbstractController
             'acceptAffectationForm' => $acceptAffectationForm,
             'refusAffectationForm' => $refusAffectationForm,
             'transferSubscriptionForm' => $transferSubscriptionForm,
+            'agentsSubscriptionForm' => $agentsSubscriptionForm,
             'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,

@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AcceptSignalement;
 use App\Dto\AgentSelection;
 use App\Dto\RefusSignalement;
 use App\Entity\Enum\AffectationStatus;
@@ -13,7 +12,6 @@ use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Entity\Tag;
 use App\Entity\User;
-use App\Form\AcceptSignalementType;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
 use App\Form\RefusSignalementType;
@@ -62,8 +60,11 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
 
-        $acceptSignalement = (new AcceptSignalement())->setSignalement($signalement);
-        $form = $this->createForm(AcceptSignalementType::class, $acceptSignalement);
+        $agentSelection = (new AgentSelection())->setSignalement($signalement);
+        $form = $this->createForm(AgentSelectionType::class, $agentSelection, [
+            'only_rt' => true,
+            'label' => 'Sélectionnez le(s) responsable(s) de territoire à abonner au dossier',
+        ]);
         $form->handleRequest($request);
         if (!$form->isSubmitted()) {
             return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
@@ -73,7 +74,7 @@ class SignalementActionController extends AbstractController
 
             return $this->json($response, $response['code']);
         }
-        foreach ($acceptSignalement->getAgents() as $agent) {
+        foreach ($agentSelection->getAgents() as $agent) {
             $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
         }
         $signalement->setValidatedAt(new \DateTimeImmutable());
@@ -418,6 +419,41 @@ class SignalementActionController extends AbstractController
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
+    #[Route('/{uuid:signalement}/subscribe', name: 'back_signalement_subscribe_list', methods: 'POST')]
+    public function subscribeList(
+        Signalement $signalement,
+        UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
+        UserSignalementSubscriptionManager $signalementSubscriptionManager,
+        EntityManagerInterface $entityManager,
+        Request $request,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
+        /** @var User $user */
+        $user = $this->getUser();
+        $subscription = $signalementSubscriptionRepository->findOneBy(['signalement' => $signalement, 'user' => $user]);
+        if (!$subscription) {
+            throw $this->createAccessDeniedException();
+        }
+        $agentSelection = (new AgentSelection())->setSignalement($signalement);
+        $agentsSubscriptionForm = $this->createForm(AgentSelectionType::class, $agentSelection);
+        $agentsSubscriptionForm->handleRequest($request);
+        if ($agentsSubscriptionForm->isSubmitted() && $agentsSubscriptionForm->isValid()) {
+            foreach ($agentSelection->getAgents() as $agent) {
+                $signalementSubscriptionManager->createOrGet($agent, $signalement, $user);
+            }
+            $entityManager->flush();
+            $this->addFlash('success', 'Les agents ont bien été abonnés au dossier.');
+
+            return $this->json(['redirect' => true, 'url' => $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()])]);
+        }
+        if (!$agentsSubscriptionForm->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $agentsSubscriptionForm, withPrefix: true)];
+
+        return $this->json($response, $response['code']);
+    }
+
     #[Route('/{uuid:signalement}/subscribe', name: 'back_signalement_subscribe', methods: 'GET')]
     public function subscribe(
         Signalement $signalement,
@@ -474,7 +510,7 @@ class SignalementActionController extends AbstractController
 
                         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
                     }
-                    $agentsSelection = (new AgentSelection())->setAffectation($affectation);
+                    $agentsSelection = (new AgentSelection())->setSignalement($signalement);
                     $agentsSelectionFormRoute = $this->generateUrl('back_signalement_unsubscribe', ['uuid' => $signalement->getUuid()]);
                     $form = $this->createForm(
                         AgentSelectionType::class,

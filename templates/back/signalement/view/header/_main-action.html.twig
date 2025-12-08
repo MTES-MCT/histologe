@@ -10,6 +10,11 @@
         {% include '_partials/_modal_transfer_subscription.html.twig' %}
     </div>
 {% endif %}
+{% if is_granted('SIGN_SUBSCRIBE', signalement) and isUserSubscribed %}
+    <div data-ajax-form class="fr-display-inline">
+        {% include '_partials/_modal_agents_subscription.html.twig' %}
+    </div>
+{% endif %}
 {% if is_granted('SIGN_VALIDATE', signalement) and not isUniqueRtInCurrentPartner %}
     <div data-ajax-form>
         {% include '_partials/_modal_accept_signalement.html.twig' %}

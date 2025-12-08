@@ -7,6 +7,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Suivi;
+use App\Entity\UserSignalementSubscription;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
@@ -102,10 +103,10 @@ class SignalementActionControllerTest extends WebTestCase
         }
         $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
 
-        $tokenId = 'accept_signalement';
+        $tokenId = 'agents_selection';
 
         $this->client->request('POST', $route, [
-            'accept_signalement' => [
+            'agents_selection' => [
                 'agents' => $agentIds,
                 '_token' => $this->generateCsrfToken($this->client, $tokenId),
             ],
@@ -612,5 +613,34 @@ class SignalementActionControllerTest extends WebTestCase
             'signalement' => $signalement,
         ]);
         $this->assertNotNull($sub);
+    }
+
+    public function testSubscribeList(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-34-02@signal-logement.fr']);
+        $this->client->loginUser($user);
+        $sub = new UserSignalementSubscription();
+        $sub->setSignalement($signalement);
+        $sub->setUser($user);
+        $sub->setCreatedBy($user);
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->persist($sub);
+        $em->flush();
+
+        $userToSubscribe = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
+        $this->assertNull($this->userSignalementSubscriptionRepository->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]));
+
+        $route = $this->router->generate('back_signalement_subscribe_list', ['uuid' => $signalement->getUuid()]);
+
+        $this->client->request('POST', $route, [
+            'agents_selection' => [
+                'agents' => [$userToSubscribe->getId()],
+                '_token' => $this->generateCsrfToken($this->client, 'agents_selection'),
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertNotNull($this->userSignalementSubscriptionRepository->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]));
     }
 }
