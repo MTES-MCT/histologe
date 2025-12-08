@@ -79,8 +79,6 @@ class SignalementDraftFileMessageHandler
             $this->signalementRepository->save($signalement, true);
         }
 
-        sleep(120);
-
         $this->logger->info('SignalementDraftFileMessage handled successfully', [
             'signalementId' => $signalementDraftFileMessage->getSignalementId(),
             'nbFiles' => \count($signalementDraftRequest->getFiles()),
