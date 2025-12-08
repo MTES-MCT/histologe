@@ -10,6 +10,8 @@ use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Messenger\Message\SignalementDraftFileMessage;
+use App\Messenger\MessageHandler\SignalementAddressUpdateAndAutoAssignMessageHandler;
+use App\Messenger\MessageHandler\SignalementDraftFileMessageHandler;
 use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -19,6 +21,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 
@@ -68,9 +71,8 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                     $signalement->getTerritory()->getName()
                 ));
                 $this->sendNotifications($signalement);
-                $this->processFiles($signalementDraft, $signalement);
+                $this->dispatchDraftProcessing($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
-                $this->dispatchUpdateFromAddress($signalement);
                 $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
                 $this->entityManager->commit();
             } else {
@@ -102,14 +104,9 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function processFiles(SignalementDraft $signalementDraft, Signalement $signalement): void
-    {
-        $this->messageBus->dispatch(new SignalementDraftFileMessage(
-            $signalementDraft->getId(),
-            $signalement->getId()
-        ));
-    }
-
+    /**
+     * @throws ExceptionInterface
+     */
     private function dispatchCheckFiles(Signalement $signalement): void
     {
         $delayInMinutes = (int) $this->parameterBag->get('delay_min_check_new_signalement_files');
@@ -122,11 +119,20 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         );
     }
 
-    private function dispatchUpdateFromAddress(Signalement $signalement): void
+    /**
+     * Dispatch le traitement asynchrone du draft.
+     * Les handlers liés à ce message seront exécutés
+     * séquentiellement selon leur priorité.
+     *
+     * @throws ExceptionInterface
+     *
+     * @see SignalementAddressUpdateAndAutoAssignMessageHandler
+     * @see SignalementDraftFileMessageHandler
+     */
+    private function dispatchDraftProcessing(SignalementDraft $signalementDraft, Signalement $signalement): void
     {
-        $this->messageBus->dispatch(new SignalementDraftFileMessage(
-            $signalement->getCreatedFrom()->getId(),
-            $signalement->getId(),
-        ));
+        $this->messageBus->dispatch(
+            new SignalementDraftFileMessage($signalementDraft->getId(), $signalement->getId())
+        );
     }
 }
