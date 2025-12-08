@@ -42,78 +42,78 @@
     <div class="container-{{ filesFilter }}">
 {% endif %}
         <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
-        {% if filesFilter is same as 'visite' %}
-            {% set photos = signalement.files|filter(
-                photo => (
-                    filesFilter is same as 'visite' and photo.isTypeImage and photo.intervention is not null and photo.intervention.id is same as interventionId
-                )
-            ) %}
-        {% else %}
-            {% set photos = signalement.getSortedPhotos(filesFilter) %}
-        {% endif %}
-
-        {% set nbPhotos = photos|length %}
-        {% for photo in photos %}
-            {% if listAllPhotos is not defined and filesFilter is same as 'situation' and nbPhotos > 12 and loop.index == 12 %}
-                <div class="fr-col-6 fr-col-md-2 fr-text--center">
-                    <button class="fr-btn fr-btn--tertiary-no-outline btn-list-all-photo-situation" type="button" 
-                        data-url="{{ path('back_signalement_list_all_photo_situation', {uuid: signalement.uuid}) }}">
-                        Voir les {{nbPhotos}} photos
-                    </button>
-                </div>
-            {% elseif listAllPhotos is not defined and filesFilter is same as 'situation' and nbPhotos > 12 and loop.index > 12 %}
+            {% if filesFilter is same as 'visite' %}
+                {% set photos = signalement.files|filter(
+                    photo => (
+                        filesFilter is same as 'visite' and photo.isTypeImage and photo.intervention is not null and photo.intervention.id is same as interventionId
+                    )
+                ) %}
             {% else %}
-                <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
-                    <div class="fr-tooltip fr-placement" id="tooltip_photodoc_{{ photo.id }}" role="tooltip">
-                        {% include '_partials/_tooltip_photo_template.html.twig' %}
-                    </div>
-                    <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
-                        aria-describedby="tooltip_photodoc_{{ photo.id }}"
-                        style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
-                        >
-                        <button 
-                            class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
-                            data-id={{ photo.id }} 
-                            title="Voir la photo {{ photo.filename }}"
-                        ></button>
-                        {% if is_granted('FILE_EDIT', photo) %}                   
-                            <button 
-                                class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
-                                id="file_edit_{{ photo.id }}" 
-                                title="Editer la photo {{ photo.filename }}"
-                                aria-controls="fr-modal-edit-file"
-                                data-fr-opened="false" 
-                                data-filename="{{ photo.filename }}" 
-                                data-type="photo" 
-                                data-file-id="{{ photo.id}}" 
-                                data-signalement-uuid="{{ photo.signalement.uuid}}" 
-                                data-description="{{ photo.description }}" 
-                                data-file-path="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}"
-                                data-file-filter="{{ filesFilter }}"
-                                data-documentType="{{ photo.documentType.name }}" 
-                                data-desodreSlug="{{ photo.desordreSlug }}"
-                                data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
-                                data-partner-name="{{ photo.partner ? photo.partner.nom ~ ' - ' : '' }}"
-                                data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
-                                data-desordreSlug="{{ photo.desordreSlug }}"
-                                data-signalement-desordres="{{ criteres | json_encode }}"
-                            ></button>
-                        {% endif %}
-                        {% if is_granted('FILE_DELETE', photo) %}
-                            <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
-                                id="file_delete_{{ photo.id }}" 
-                                title="Supprimer la photo {{ photo.filename }}"
-                                aria-controls="fr-modal-delete-file"
-                                data-fr-opened="false" 
-                                data-filename="{{ photo.filename }}" 
-                                data-file-id="{{ photo.id}}"                     
-                            ></button>
-                        {% endif %}
-                    </div>
-                </div>
+                {% set photos = signalement.getSortedPhotos(filesFilter) %}
             {% endif %}
-        {% endfor %}
-    </div>
+
+            {% set nbPhotos = photos|length %}
+            {% for photo in photos %}
+                {% if listAllPhotos is not defined and filesFilter is same as 'situation' and nbPhotos > 12 and loop.index == 12 %}
+                    <div class="fr-col-6 fr-col-md-2 fr-text--center">
+                        <button class="fr-btn fr-btn--tertiary-no-outline btn-list-all-photo-situation" type="button" 
+                            data-url="{{ path('back_signalement_list_all_photo_situation', {uuid: signalement.uuid}) }}">
+                            Voir les {{nbPhotos}} photos
+                        </button>
+                    </div>
+                {% elseif listAllPhotos is not defined and filesFilter is same as 'situation' and nbPhotos > 12 and loop.index > 12 %}
+                {% else %}
+                    <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+                        <span class="fr-tooltip fr-placement" id="tooltip_photodoc_{{ photo.id }}_{{context}}" role="tooltip">
+                            {% include '_partials/_tooltip_photo_template.html.twig' %}
+                        </span>
+                        <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
+                            aria-describedby="tooltip_photodoc_{{ photo.id }}_{{context}}"
+                            style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
+                            >
+                            <button 
+                                class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
+                                data-id={{ photo.id }} 
+                                title="Voir la photo {{ photo.filename }}"
+                            ></button>
+                            {% if is_granted('FILE_EDIT', photo) %}                   
+                                <button 
+                                    class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
+                                    id="file_edit_{{ photo.id }}" 
+                                    title="Editer la photo {{ photo.filename }}"
+                                    aria-controls="fr-modal-edit-file"
+                                    data-fr-opened="false" 
+                                    data-filename="{{ photo.filename }}" 
+                                    data-type="photo" 
+                                    data-file-id="{{ photo.id}}" 
+                                    data-signalement-uuid="{{ photo.signalement.uuid}}" 
+                                    data-description="{{ photo.description }}" 
+                                    data-file-path="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}"
+                                    data-file-filter="{{ filesFilter }}"
+                                    data-documentType="{{ photo.documentType.name }}" 
+                                    data-desodreSlug="{{ photo.desordreSlug }}"
+                                    data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
+                                    data-partner-name="{{ photo.partner ? photo.partner.nom ~ ' - ' : '' }}"
+                                    data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"
+                                    data-desordreSlug="{{ photo.desordreSlug }}"
+                                    data-signalement-desordres="{{ criteres | json_encode }}"
+                                ></button>
+                            {% endif %}
+                            {% if is_granted('FILE_DELETE', photo) %}
+                                <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
+                                    id="file_delete_{{ photo.id }}" 
+                                    title="Supprimer la photo {{ photo.filename }}"
+                                    aria-controls="fr-modal-delete-file"
+                                    data-fr-opened="false" 
+                                    data-filename="{{ photo.filename }}" 
+                                    data-file-id="{{ photo.id}}"                     
+                                ></button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
 {% if listAllPhotos is not defined %}
     </div>
 {% endif %}

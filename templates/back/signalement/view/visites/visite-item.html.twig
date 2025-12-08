@@ -96,5 +96,5 @@
 </div>
 
 {% if intervention is defined and isForBO is defined and isForBO %}
-    {% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': null,'filesFilter': 'visite','interventionId': intervention.id} %}
+    {% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': null,'filesFilter': 'visite','interventionId': intervention.id,'context': 'visiteitem'} %}
 {% endif %}

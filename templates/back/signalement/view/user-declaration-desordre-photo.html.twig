@@ -1,7 +1,7 @@
 <div class="fr-col-6 fr-col-sm-4 fr-col-md-6 fr-col-lg-4 fr-col-xl-3 fr-rounded signalement-file-item">
-    <div class="fr-tooltip fr-placement" id="tooltip_photodesordre_{{ photo.id }}" role="tooltip">
+    <span class="fr-tooltip fr-placement" id="tooltip_photodesordre_{{ photo.id }}" role="tooltip">
         {% include '_partials/_tooltip_photo_template.html.twig' %}
-    </div>
+    </span>
     <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
         aria-describedby="tooltip_photodesordre_{{ photo.id }}"
         style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover">
