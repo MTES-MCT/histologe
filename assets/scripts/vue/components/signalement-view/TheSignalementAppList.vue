@@ -1,5 +1,9 @@
 
 <template>
+  <SignalementViewModalEditSearch/>
+  <SignalementViewModalSaveSearch
+    @savedSearchSuccess="onSearchSaved"
+  />
   <div v-if="classNameDeleteConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="classNameDeleteConfirmation">
     <p>{{ messageDeleteConfirmation }}</p>
   </div>
@@ -7,7 +11,32 @@
     <section class="fr-background--white" :style="'block'">
       <div class="fr-grid-row fr-p-3w fr-pb-6w' fr-container-sml">
         <div class="fr-col-12">
-          <h1 class="fr-mb-2w fr-h2">Liste des signalements</h1>
+          <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+            <div class="fr-col">
+              <h1 class="fr-h2">Liste des signalements</h1>
+            </div>
+            <div class="fr-col fr-grid-row fr-grid-row--right fr-grid-row--middle fr-gap-2v">
+              <button
+                data-fr-opened="false"
+                aria-controls="modal-edit-search"
+                class="fr-btn fr-btn--secondary fr-icon-settings-5-line"
+                :disabled="sharedState.savedSearches.length === 0"
+              ></button>
+              <HistoSelect
+                class="fr-ml-2v"
+                :key="sharedState.savedSearchSelectKey"
+                id="filter-save-search"
+                v-model="sharedState.selectedSavedSearchId"
+                @update:modelValue="applySavedSearch"
+                title="Mes recherches sauvegardées"
+                :option-items="sharedState.savedSearches"
+                :placeholder="sharedState.savedSearches.length > 0 
+                  ? 'Mes recherches sauvegardées' 
+                  : 'Aucune recherche sauvegardée'"
+                ref="savedSearchSelect"
+              />
+            </div>
+          </div>
           <div class="fr-container--fluid" role="search">
             <SignalementViewFilters
                 :shared-props="sharedProps"
@@ -51,7 +80,10 @@ import SignalementViewFilters from './components/SignalementViewFilters.vue'
 import SignalementListHeader from './components/SignalementListHeader.vue'
 import SignalementListCards from './components/SignalementListCards.vue'
 import SignalementListPagination from './components/SignalementListPagination.vue'
-import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, addQueryParameter, removeQueryParameter, buildUrl, clearScreen } from './utils/signalementUtils'
+import SignalementViewModalEditSearch from './components/SignalementViewModalEditSearch.vue'
+import SignalementViewModalSaveSearch from './components/SignalementViewModalSaveSearch.vue'
+import HistoSelect from '../common/HistoSelect.vue'
+import { handleQueryParameter, handleSettings, handleTerritoryChange, handleSignalementsShared, handleFilters, addQueryParameter, removeQueryParameter, buildUrl, clearScreen, applySavedSearch } from './utils/signalementUtils'
 
 const initElements:any = document.querySelector('#app-signalement-view')
 
@@ -61,7 +93,10 @@ export default defineComponent({
     SignalementListHeader,
     SignalementViewFilters,
     SignalementListCards,
-    SignalementListPagination
+    SignalementListPagination,
+    SignalementViewModalEditSearch,
+    SignalementViewModalSaveSearch,
+    HistoSelect
   },
   data () {
     return {
@@ -85,10 +120,17 @@ export default defineComponent({
         this.abortRequest = new AbortController()
 
         this.sharedProps.ajaxurlSignalement = initElements.dataset.ajaxurl
+        this.sharedProps.baseAjaxUrlSignalement = initElements.dataset.ajaxurl
         this.sharedProps.ajaxurlRemoveSignalement = initElements.dataset.ajaxurlRemoveSignalement
         this.sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings
         this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
         this.sharedProps.ajaxurlContact = initElements.dataset.ajaxurlContact
+        this.sharedProps.ajaxurlSaveSearch = initElements.dataset.ajaxurlSaveSearch
+        this.sharedProps.csrfSaveSearch = initElements.dataset.csrfSaveSearch
+        this.sharedProps.ajaxurlDeleteSearch = initElements.dataset.ajaxurlDeleteSearch
+        this.sharedProps.csrfDeleteSearch = initElements.dataset.csrfDeleteSearch
+        this.sharedProps.ajaxurlEditSearch = initElements.dataset.ajaxurlEditSearch
+        this.sharedProps.csrfEditSearch = initElements.dataset.csrfEditSearch
         this.sharedProps.platformName = initElements.dataset.platformName
         if (!reset) {
           handleQueryParameter(this)
@@ -145,16 +187,23 @@ export default defineComponent({
     },    
     handleDelete (requestResponse: any) {
       this.messageDeleteConfirmation =
-          requestResponse.status === 200
-            ? requestResponse.message
+          requestResponse.data.status === 200
+            ? requestResponse.data.message
             : 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
       this.classNameDeleteConfirmation =
-          requestResponse.status === 200
+          requestResponse.data.status === 200
             ? 'fr-alert--success'
             : 'fr-alert--error'
 
       buildUrl(this, initElements.dataset.ajaxurl)
       requests.getSignalements(this.handleSignalements)
+    },
+    onSearchSaved(message: string, className: string ) {
+      this.messageDeleteConfirmation = message
+      this.classNameDeleteConfirmation = className
+    },
+    applySavedSearch(value: string) {
+      applySavedSearch(this, value)
     },
     async deleteItem (item: SignalementItem|null) {
       clearScreen(this)

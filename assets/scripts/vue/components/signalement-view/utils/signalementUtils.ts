@@ -2,6 +2,8 @@ import { requests } from '../requests'
 import { PATTERN_BADGE_EPCI, store } from '../store'
 import { Filters, SEARCH_FILTERS } from '../interfaces/filters'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
+import SearchInterfaceSelectOption from '../interfaces/SearchInterfaceSelectOption'
+
 import { variableTester } from '../../../utils/variableTester'
 import { QueryParameter } from '../interfaces/queryParameter'
 
@@ -144,6 +146,29 @@ export function handleSettings (context: any, requestResponse: any): any {
     }
   }
   localStorage.setItem('epci', JSON.stringify(context.sharedState.epcis))
+
+  context.sharedState.savedSearches = []
+  for (const id in requestResponse.savedSearches) {
+    const optionItem = new SearchInterfaceSelectOption()
+    optionItem.Id = requestResponse.savedSearches[id].id.toString()
+    if (variableTester.isNotEmpty(requestResponse.savedSearches[id])) {
+      const savedSearch = requestResponse.savedSearches[id]
+      optionItem.Text = (savedSearch.name as string)
+      optionItem.NewName = (savedSearch.name as string)
+      optionItem.Params = savedSearch.params
+    } else {
+      optionItem.Text = 'Recherche inconnue'
+    }
+    context.sharedState.savedSearches.push(optionItem)
+  }
+
+  context.$nextTick(() => {
+    // refresh HistoSelect via ref
+    const selectRef = context.$refs.savedSearchSelect as any | undefined
+    if (selectRef?.refreshDisplayedItems) {
+      selectRef.refreshDisplayedItems(context.sharedState.selectedSavedSearchId)
+    }
+  })
 }
 
 export function handleTerritoryChange (context: any, value: any): any {
@@ -168,6 +193,7 @@ export function handleSignalementsShared (context: any, requestResponse: any): a
 }
 
 export function handleFilters (context: any, ajaxurl: string): any {
+  context.sharedState.selectedSavedSearchId = undefined
   clearScreen(context)
 
   if (context.abortRequest !== null) {
@@ -179,7 +205,6 @@ export function handleFilters (context: any, ajaxurl: string): any {
   const url = new URL(window.location.toString())
   url.search = ''
   context.sharedState.input.queryParameters = []
-
   for (const [key, value] of Object.entries(context.sharedState.input.filters)) {
     if (variableTester.isNotEmpty(value)) {
       if (key === 'dateDepot' || key === 'dateDernierSuivi') {
@@ -219,7 +244,6 @@ export function handleFilters (context: any, ajaxurl: string): any {
   url.searchParams.set('direction', direction)
   addQueryParameter(context, 'sortBy', field)
   addQueryParameter(context, 'direction', direction)
-
   window.history.pushState({}, '', decodeURIComponent(url.toString()))
   buildUrl(context, ajaxurl)
   requests.getSignalements(context.handleSignalements, { signal: context.abortRequest?.signal })
@@ -241,7 +265,7 @@ export function addQueryParameter (context: any, name: string, value: string): a
     .input
     .queryParameters
     .find((parameter: any) => parameter.name === name && parameter.value === value)
-  if (param != null) {
+  if (param != null && param !== undefined) {
     param.value = value
   } else {
     context.sharedState.input.queryParameters.push({ name, value })
@@ -280,4 +304,45 @@ export function removeLocalStorage (context: any): any {
     // on n'enregistre en localStorage les filtres que si on est sur la liste de signalements
     localStorage.removeItem('back_link_signalement_view')
   }
+}
+
+export function sanitizeFilters(filters: Record<string, any>): Record<string, any> {
+  const ignored = [
+    'isImported',
+    'isZonesDisplayed',
+    'showMyAffectationOnly',
+    'showMySignalementsOnly',
+    'showWithoutAffectationOnly'
+  ]
+
+  const entries = Object.entries(filters).filter(([key, value]) => {
+    if (ignored.includes(key)) return false
+
+    if (value !== null && value !== undefined) {
+      if (Array.isArray(value)) return value.length > 0
+      return true
+    }
+    return false
+  })
+  return Object.fromEntries(entries)
+}
+
+export function applySavedSearch(context: any, value: string) {
+  if (!value) {
+    return
+  }
+
+  const selected = context.sharedState.savedSearches.find((s: SearchInterfaceSelectOption) => s.Id === value)
+  if (!selected) {
+    console.warn('Saved search introuvable.')
+    return
+  }
+
+  const params = selected.Params as Record<string, any>
+
+  context.sharedState.input.filters = JSON.parse(JSON.stringify(params))
+
+  context.sharedState.selectedSavedSearchId = undefined
+  handleFilters(context, context.sharedProps.baseAjaxUrlSignalement)
+  context.sharedState.selectedSavedSearchId = value
 }

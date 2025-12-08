@@ -17,6 +17,12 @@
          data-ajaxurl-settings="{{ path('back_settings') }}"
          data-ajaxurl-contact="{{ sites_faciles_url }}une-question/"
          data-ajaxurl-remove-signalement="{{ path('back_signalement_delete', {'uuid' : '<uuid>'}) }}"
+         data-ajaxurl-save-search="{{ path('back_user_search_filters_save') }}"
+         data-csrf-save-search="{{ csrf_token('save_search') }}"
+         data-ajaxurl-delete-search="{{ path('back_user_search_filters_delete', {'id' : '<id>'}) }}"
+         data-csrf-delete-search="{{ csrf_token('delete_search') }}"
+         data-ajaxurl-edit-search="{{ path('back_user_search_filters_edit', {'id' : '<id>'}) }}"
+         data-csrf-edit-search="{{ csrf_token('edit_search') }}"
          data-platform-name="{{ platform.name }}"
     >
 

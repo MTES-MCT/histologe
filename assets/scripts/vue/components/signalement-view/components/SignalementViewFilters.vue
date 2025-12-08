@@ -126,7 +126,7 @@
         {{ sharedState.showOptions ? 'Masquer les options' : 'Plus d\'options de recherche' }}
       </button>
     </div>
-    <div :class="defineCssBlocMultiTerritoire(7,7)">
+    <div :class="defineCssBlocMultiTerritoire(5,5)">
       <ul class="fr-tags-group">
         <li v-for="(value, key) in filtersSanitized"  :key="key">
           <button
@@ -139,6 +139,14 @@
           </button>
         </li>
       </ul>
+    </div>
+    <div :class="defineCssBlocMultiTerritoire(2,2)" v-if="layout=='horizontal'">
+      <button
+          data-fr-opened="false"
+          aria-controls="modal-save-search"
+          class="fr-link fr-link--icon-left fr-icon-star-line fr-text--sm">
+        Sauvegarder ma recherche
+      </button>
     </div>
     <div :class="defineCssBlocMultiTerritoire(2,2)">
       <button
@@ -391,8 +399,7 @@ import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
 import { store } from '../store'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
-import { removeLocalStorage } from '../utils/signalementUtils'
-
+import { removeLocalStorage, sanitizeFilters } from '../utils/signalementUtils'
 
 export default defineComponent({
   name: 'SignalementViewFilters',
@@ -414,29 +421,18 @@ export default defineComponent({
       type: String,
       required: false,
       default: 'list'
-    },
-    onChange: { type: Function }
+    }
   },
-  emits: ['changeTerritory', 'clickReset'],
+  emits: ['changeTerritory', 'clickReset', 'change'],
   computed: {
     filtersSanitized () {
-      const filters = Object.entries(this.sharedState.input.filters).filter(([key, value]) => {
-        if (['isImported', 'isZonesDisplayed', 'showMyAffectationOnly', 'showMySignalementsOnly', 'showWithoutAffectationOnly'].includes(key)) {
-          return false
-        }
-        if (value !== null) {
-          if (Array.isArray(value)) {
-            return value.length > 0
-          }
-          return true
-        }
-        return false
-      })
-
-      return Object.fromEntries(filters)
+      return sanitizeFilters(this.sharedState.input.filters)
     }
   },
   methods: {
+    onChange(refresh: boolean) {
+      this.$emit('change', refresh)
+    },
     defineCssBloc1 () {
       if (this.layout === 'vertical'){
         return 'filters-blocs'
@@ -471,20 +467,20 @@ export default defineComponent({
       }
     },  
     toggleIsImported () {
-      this.sharedState.input.filters.isImported = this.toggleStates.isImported ? 'oui' : null
+      this.sharedState.input.filters.isImported = this.toggleStates.isImported ? 'oui' : undefined
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
     },
     toggleIsZonesDisplayed () {
-      this.sharedState.input.filters.isZonesDisplayed = this.toggleStates.isZonesDisplayed ? 'oui' : null
+      this.sharedState.input.filters.isZonesDisplayed = this.toggleStates.isZonesDisplayed ? 'oui' : undefined
       if (typeof this.onChange === 'function') {
         this.onChange(false)
       }
     },
     toggleCurrentPartnerAffectation () {
       this.sharedState.input.filters.partenaires = []
-      this.sharedState.input.filters.showMyAffectationOnly = this.toggleStates.showMyAffectationOnly ? 'oui' : null
+      this.sharedState.input.filters.showMyAffectationOnly = this.toggleStates.showMyAffectationOnly ? 'oui' : undefined
 
       if (this.toggleStates.showMyAffectationOnly) {
         this.deactiveWithoutAffectationsOnly()
@@ -505,7 +501,7 @@ export default defineComponent({
     },
     toggleCurrentUserSignalements () {
       this.sharedState.input.filters.partenaires = []
-      this.sharedState.input.filters.showMySignalementsOnly = this.toggleStates.showMySignalementsOnly ? 'oui' : null
+      this.sharedState.input.filters.showMySignalementsOnly = this.toggleStates.showMySignalementsOnly ? 'oui' : undefined
 
       if (this.toggleStates.showMySignalementsOnly) {
         this.deactiveWithoutAffectationsOnly()
@@ -517,7 +513,7 @@ export default defineComponent({
       }
     },
     toggleWithoutAffectation () {
-      this.sharedState.input.filters.showWithoutAffectationOnly = this.toggleStates.showWithoutAffectationOnly ? 'oui' : null
+      this.sharedState.input.filters.showWithoutAffectationOnly = this.toggleStates.showWithoutAffectationOnly ? 'oui' : undefined
 
       if (this.toggleStates.showWithoutAffectationOnly) {
         this.deactiveMyAffectationsOnly()
@@ -532,15 +528,15 @@ export default defineComponent({
       }
     },
     deactiveMyAffectationsOnly () {
-      this.sharedState.input.filters.showMyAffectationOnly = null
+      this.sharedState.input.filters.showMyAffectationOnly = undefined
       this.toggleStates.showMyAffectationOnly = false
     },
     deactiveMySignalementsOnly () {
-      this.sharedState.input.filters.showMySignalementsOnly = null
+      this.sharedState.input.filters.showMySignalementsOnly = undefined
       this.toggleStates.showMySignalementsOnly = false
     },
     deactiveWithoutAffectationsOnly () {
-      this.sharedState.input.filters.showWithoutAffectationOnly = null
+      this.sharedState.input.filters.showWithoutAffectationOnly = undefined
       this.toggleStates.showWithoutAffectationOnly = false
     },
     selectPartnerInList () {
@@ -575,43 +571,43 @@ export default defineComponent({
 
       this.sharedState.showOptions = false
       this.sharedState.input.filters = {
-        territoire: null,
+        territoire: undefined,
         etiquettes: [],
         zones: [],
         partenaires: [],
         communes: [],
         epcis: [],
-        searchTerms: null,
-        status: null,
-        procedure: null,
-        procedureConstatee: null,
-        visiteStatus: null,
-        typeDernierSuivi: null,
-        typeDeclarant: null,
-        natureParc: null,
-        bailleurSocial: null,
-        allocataire: null,
-        enfantsM6: null,
-        situation: null,
-        dateDepot: null,
-        dateDernierSuivi: null,
+        searchTerms: undefined,
+        status: undefined,
+        procedure: undefined,
+        procedureConstatee: undefined,
+        visiteStatus: undefined,
+        typeDernierSuivi: undefined,
+        typeDeclarant: undefined,
+        natureParc: undefined,
+        bailleurSocial: undefined,
+        allocataire: undefined,
+        enfantsM6: undefined,
+        situation: undefined,
+        dateDepot: undefined,
+        dateDernierSuivi: undefined,
         isImported: keepIsImported,
-        isZonesDisplayed: null,
-        showMyAffectationOnly: null,
-        showMySignalementsOnly: null,
-        isMessagePostCloture: null,
-        isNouveauMessage: null,
-        isMessageWithoutResponse: null,
-        isDossiersSansActivite: null,
-        isEmailAVerifier: null,
-        isDossiersSansAgent: null,
-        isActiviteRecente: null,
-        showWithoutAffectationOnly: null,
-        statusAffectation: null,
-        criticiteScoreMin: null,
-        criticiteScoreMax: null,
-        motifCloture: null,
-        relanceUsagerSansReponse: null
+        isZonesDisplayed: undefined,
+        showMyAffectationOnly: undefined,
+        showMySignalementsOnly: undefined,
+        isMessagePostCloture: undefined,
+        isNouveauMessage: undefined,
+        isMessageWithoutResponse: undefined,
+        isDossiersSansActivite: undefined,
+        isEmailAVerifier: undefined,
+        isDossiersSansAgent: undefined,
+        isActiviteRecente: undefined,
+        showWithoutAffectationOnly: undefined,
+        statusAffectation: undefined,
+        criticiteScoreMin: undefined,
+        criticiteScoreMax: undefined,
+        motifCloture: undefined,
+        relanceUsagerSansReponse: undefined
       }
       this.sharedState.currentTerritoryId = ''
 
@@ -701,5 +697,10 @@ export default defineComponent({
   .filters-blocs {
     width: 100%;
     background-color: #f6f6f6;
+  }
+
+  .fr-grid-row.fr-tags-group {
+    display: flex;
+    align-items: center;
   }
 </style>

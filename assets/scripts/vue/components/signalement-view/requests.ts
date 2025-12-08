@@ -22,6 +22,27 @@ export const requests = {
         }
       })
   },
+  doPostRequest(
+    ajaxUrl: string,
+    payload: Record<string, any>,
+    functionReturn: Function,
+    extraArgs: any[] = []
+  ) {
+    axios
+      .post(ajaxUrl, payload)
+      .then(response => functionReturn(response, ...extraArgs))
+      .catch(error => {
+        if (error.response !== undefined) {
+          functionReturn(error.response, ...extraArgs)
+        } else {
+          const customResponse = {
+            status: 500,
+            message: 'Une erreur est survenue lors de la requête.'
+          }
+          functionReturn(customResponse, ...extraArgs)
+        }
+      })
+  },
   getSignalements (functionReturn: Function, options = {}) {
     const ajaxUrl = store.props.ajaxurlSignalement
     this.doRequest(ajaxUrl, functionReturn, options)
@@ -29,25 +50,7 @@ export const requests = {
   deleteSignalement (uuid: string, csrfToken: string, functionReturn: Function) {
     let ajaxurlRemoveSignalement = decodeURIComponent(store.props.ajaxurlRemoveSignalement)
     ajaxurlRemoveSignalement = ajaxurlRemoveSignalement.replace('<uuid>', uuid)
-
-    axios
-      .post(ajaxurlRemoveSignalement, { _token: csrfToken })
-      .then(response => {
-        const responseData = response.data
-        functionReturn(responseData)
-      })
-      .catch(error => {
-        Sentry.captureException(new Error(error))
-        if (error.response !== undefined) {
-          functionReturn(error.response)
-        } else {
-          const customResponse = {
-            status: 500,
-            message: 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
-          }
-          functionReturn(customResponse)
-        }
-      })
+    this.doPostRequest(ajaxurlRemoveSignalement, { _token: csrfToken }, functionReturn)
   },
   getSettings (functionReturn: Function) {
     let url = store.props.ajaxurlSettings
@@ -56,5 +59,23 @@ export const requests = {
     }
 
     requests.doRequest(url, functionReturn)
+  },
+  saveSearch (payload: { name: string; params: any }, csrfToken: string, functionReturn: Function) {
+    const ajaxUrlSaveSearch = decodeURIComponent(store.props.ajaxurlSaveSearch)
+    this.doPostRequest(
+      ajaxUrlSaveSearch,
+      { _token: csrfToken, name: payload.name, params: payload.params },
+      functionReturn
+    )
+  },
+  deleteSearch (id: string, csrfToken: string, functionReturn: Function) {
+    let ajaxurlDeleteSearch = decodeURIComponent(store.props.ajaxurlDeleteSearch)
+    ajaxurlDeleteSearch = ajaxurlDeleteSearch.replace('<id>', id)
+    this.doPostRequest(ajaxurlDeleteSearch, { _token: csrfToken }, functionReturn, [id])
+  },
+  editSearch (id: string, newName: string, csrfToken: string, functionReturn: Function) {
+    let ajaxurlEditSearch = decodeURIComponent(store.props.ajaxurlEditSearch)
+    ajaxurlEditSearch = ajaxurlEditSearch.replace('<id>', id)
+    this.doPostRequest(ajaxurlEditSearch, { _token: csrfToken, name: newName }, functionReturn, [id, newName])
   }
 }

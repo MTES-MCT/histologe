@@ -5,6 +5,7 @@ namespace App\Factory;
 use App\Dto\Settings;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\UserSearchFilterRepository;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Service\UserAvatar;
 use Psr\Cache\InvalidArgumentException;
@@ -14,6 +15,7 @@ class SettingsFactory
     public function __construct(
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         private readonly UserAvatar $userAvatar,
+        private readonly UserSearchFilterRepository $userSearchFilterRepository,
     ) {
     }
 
@@ -34,7 +36,8 @@ class SettingsFactory
             zones: $filterOptionData['zones'],
             hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
-            avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80)
+            avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
+            savedSearches: $this->userSearchFilterRepository->findAllForUserArray($user),
         );
     }
 
