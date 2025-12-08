@@ -6,7 +6,6 @@ use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Manager\UserManager;
-use App\Messenger\Message\SignalementAddressUpdateAndAutoAssignMessage;
 use App\Messenger\Message\SignalementDraftFileMessage;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
@@ -16,9 +15,8 @@ use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
-#[AsMessageHandler]
+#[AsMessageHandler(priority: 10)]
 class SignalementDraftFileMessageHandler
 {
     public function __construct(
@@ -30,7 +28,6 @@ class SignalementDraftFileMessageHandler
         private readonly LoggerInterface $logger,
         private readonly UserManager $userManager,
         private readonly FileScanner $fileScanner,
-        private readonly MessageBusInterface $messageBus,
         #[Autowire(env: 'CLAMAV_SCAN_ENABLE')]
         private readonly bool $clamavScanEnable,
     ) {
@@ -41,6 +38,7 @@ class SignalementDraftFileMessageHandler
         $this->logger->info('Start handling SignalementDraftFileMessage', [
             'signalementDraftId' => $signalementDraftFileMessage->getSignalementDraftId(),
             'signalementId' => $signalementDraftFileMessage->getSignalementId(),
+            'step' => 'send-files',
         ]);
 
         $signalementDraft = $this->signalementDraftRepository->find(
@@ -81,13 +79,10 @@ class SignalementDraftFileMessageHandler
             $this->signalementRepository->save($signalement, true);
         }
 
-        $this->messageBus->dispatch(new SignalementAddressUpdateAndAutoAssignMessage(
-            $signalement->getId()
-        ));
-
         $this->logger->info('SignalementDraftFileMessage handled successfully', [
             'signalementId' => $signalementDraftFileMessage->getSignalementId(),
             'nbFiles' => \count($signalementDraftRequest->getFiles()),
+            'step' => 'send-files',
         ]);
     }
 }

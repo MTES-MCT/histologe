@@ -150,7 +150,7 @@ class UploadHandlerService
     public function moveFromBucketTempFolder(string $filename, ?string $directory = null): ?string
     {
         $filename = null === $directory ? $filename : $directory.$filename;
-        $this->logger->info($filename);
+        $this->logger->info('Move files from bucket temp folder to root folder', ['filename' => $filename]);
         $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
         $tmpFilepath = $distantFolder.$filename;
 
