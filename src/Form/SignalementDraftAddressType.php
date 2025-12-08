@@ -13,8 +13,10 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -178,6 +180,50 @@ class SignalementDraftAddressType extends AbstractType
                         message: 'Veuillez renseigner si il s\'agit d\'un logement social.',
                         groups: ['bo_step_address'],
                     ),
+                ],
+            ])
+            ->add('natureLogement', ChoiceType::class, [
+                'label' => 'Type de logement <span class="text-required">*</span>',
+                'label_html' => true,
+                'choices' => [
+                    'Appartement' => 'appartement',
+                    'Maison seule' => 'maison',
+                    'Autre' => 'autre',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'constraints' => [
+                    new Assert\NotNull(
+                        message: 'Veuillez sélectionner un type de logement.',
+                        groups: ['bo_step_address'],
+                    ),
+                ],
+                'data' => $signalement->getNatureLogement(),
+            ])
+            ->add('natureLogementAutre', TextType::class, [
+                'label' => 'Précisez le type de logement :',
+                'help' => 'Format attendu : 15 caractères maximum',
+                'required' => false,
+                'mapped' => false,
+                'data' => $signalement->getTypeCompositionLogement()?->getTypeLogementNatureAutrePrecision(),
+                'constraints' => [
+                    new Assert\Callback(
+                        callback: function (?string $value, ExecutionContextInterface $context): void {
+                            /** @var FormInterface $form */
+                            $form = $context->getRoot();
+                            if (!$form->has('natureLogement')) {
+                                return;
+                            }
+
+                            $nature = $form->get('natureLogement')->getData();
+                            if ('autre' === $nature && empty($value)) {
+                                $context->buildViolation('Veuillez préciser le type de logement.')
+                                    ->atPath('')
+                                    ->addViolation();
+                            }
+                        }, groups: ['bo_step_address']),
                 ],
             ])
             ->add('logementVacant', ChoiceType::class, [
