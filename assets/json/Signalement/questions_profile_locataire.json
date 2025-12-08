@@ -2521,7 +2521,7 @@
               {
                 "type": "SignalementFormParagraph",
                 "label": "Au vu des éléments renseignés, votre dossier n’entre pas dans le cadre de la démarche accélérée.",
-                "slug": "eligibilite_injonction_oko_1"
+                "slug": "eligibilite_injonction_ko_1"
               },
               {
                 "type": "SignalementFormInfo",
