@@ -19,6 +19,7 @@ use App\Factory\SignalementFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Manager\UserManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
@@ -59,6 +60,7 @@ class SignalementManagerTest extends WebTestCase
     private DesordrePrecisionRepository $desordrePrecisionRepository;
     private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
     private SuiviManager $suiviManager;
+    private UserManager $userManager;
     private BailleurRepository $bailleurRepository;
     private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationManager $affectationManager;
@@ -88,6 +90,7 @@ class SignalementManagerTest extends WebTestCase
         $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
         $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
+        $this->userManager = static::getContainer()->get(UserManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationManager = static::getContainer()->get(AffectationManager::class);
@@ -109,6 +112,7 @@ class SignalementManagerTest extends WebTestCase
             $this->desordrePrecisionRepository,
             $this->desordreCompositionLogementLoader,
             $this->suiviManager,
+            $this->userManager,
             $this->bailleurRepository,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,

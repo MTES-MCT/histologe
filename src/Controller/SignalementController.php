@@ -20,6 +20,7 @@ use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
 use App\Form\UsagerBasculeProcedureType;
 use App\Form\UsagerCancelProcedureType;
+use App\Form\UsagerCoordonneesTiersType;
 use App\Form\UsagerPoursuivreProcedureType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SignalementManager;
@@ -476,6 +477,13 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
 
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
         $demandeLienSignalement = new DemandeLienSignalement();
         $formDemandeLienSignalement = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [
             'action' => $this->generateUrl('front_demande_lien_signalement'),
@@ -497,6 +505,34 @@ class SignalementController extends AbstractController
         ]);
     }
 
+    #[Route('/suivre-mon-signalement/{code}/accepter-cgu-tiers', name: 'suivi_signalement_tiers_cgu_accept', methods: ['GET', 'POST'])]
+    public function suiviSignalementTiersCguAccept(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+
+        if ($request->isMethod('POST')) {
+            $token = (string) $request->request->get('_token');
+            if (!$this->isCsrfTokenValid('suivi_signalement_tiers_cgu_accept'.$signalement->getCodeSuivi(), $token)) {
+                $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+            } elseif (!$request->request->get('accept')) {
+                $this->addFlash('error', 'Vous devez accepter les CGU pour accéder au dossier.');
+            } else {
+                $signalement->setIsCguTiersAccepted(true);
+                $signalementRepository->save($signalement, true);
+
+                return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+            }
+        }
+
+        return $this->render('front/suivi_signalement_tiers_cgu.html.twig', [
+            'signalement' => $signalement,
+        ]);
+    }
+
     #[Route('/suivre-mon-signalement/{code}/dossier', name: 'front_suivi_signalement_dossier', methods: ['GET', 'POST'])]
     public function suiviSignalementDossier(
         string $code,
@@ -505,6 +541,13 @@ class SignalementController extends AbstractController
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
@@ -533,8 +576,13 @@ class SignalementController extends AbstractController
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
@@ -607,6 +655,14 @@ class SignalementController extends AbstractController
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_COMPLETE', $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
         $formCoordonneesBailleur = $this->createForm(
             CoordonneesBailleurType::class,
             $signalement,
@@ -617,8 +673,6 @@ class SignalementController extends AbstractController
             $formCoordonneesBailleur->isSubmitted()
             && $formCoordonneesBailleur->isValid()
         ) {
-            /** @var SignalementUser $signalementUser */
-            $signalementUser = $this->getUser();
             /** @var User $user */
             $user = $signalementUser->getUser();
             $signalementManager->save($signalement);
@@ -672,6 +726,10 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
@@ -736,6 +794,10 @@ class SignalementController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
         return $this->render('front/suivi_signalement_cancel_procedure_intro.html.twig', [
             'signalement' => $signalement,
             'usager' => $signalementUser->getUser(),
@@ -764,6 +826,11 @@ class SignalementController extends AbstractController
         }
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
         $user = $signalementUser->getUser();
 
         $form = $this->createForm(UsagerCancelProcedureType::class);
@@ -829,6 +896,11 @@ class SignalementController extends AbstractController
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
         $user = $signalementUser->getUser();
 
         $form = $this->createForm(UsagerPoursuivreProcedureType::class);
@@ -876,6 +948,11 @@ class SignalementController extends AbstractController
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
         $user = $signalementUser->getUser();
 
         $form = $this->createForm(UsagerBasculeProcedureType::class);
@@ -919,6 +996,13 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
         if ($signalement->getIsProprioAverti()
             || ProfileDeclarant::BAILLEUR === $signalement->getProfileDeclarant()
             || ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()
@@ -927,8 +1011,7 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        /** @var SignalementUser $signalementUser */
-        $signalementUser = $this->getUser();
+
         $user = $signalementUser->getUser();
 
         $description = $user->getNomComplet(true).' a indiqué que le bailleur a été prévenu.';
@@ -954,5 +1037,72 @@ class SignalementController extends AbstractController
         $this->addFlash('success', 'Votre modification a bien été prise en compte.');
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/coordonnees-tiers', name: 'front_suivi_signalement_coordonnees_tiers', methods: ['GET', 'POST'])]
+    public function signalementCoordonneesTiers(
+        string $code,
+        Request $request,
+        SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
+        SuiviManager $suiviManager,
+        UserManager $userManager,
+        NotificationMailerRegistry $notificationMailerRegistry,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+
+        // On bloque si tiers déjà renseigné ou si créé par tiers
+        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant())) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(
+            UsagerCoordonneesTiersType::class,
+            $signalement,
+            ['extended' => true],
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Create user corresponding to declarant
+            $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+
+            $signalement->setIsCguTiersAccepted(false);
+            $signalementManager->save($signalement);
+
+            $suiviManager->addInviteSuiviFromFo($signalement);
+
+            $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_INVITE_TIERS,
+                    to: $signalement->getMailDeclarant(),
+                    signalement: $signalement,
+                )
+            );
+
+            $this->addFlash('success', 'L\'invitation a été transmise à la personne qui pourra suivre votre dossier.');
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/suivi_signalement_coordonnees_tiers.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    private function redirectIfTiersNeedsToAcceptCgu(Signalement $signalement, string $userEmail): ?Response
+    {
+        if ($userEmail !== $signalement->getMailDeclarant()) {
+            return null;
+        }
+
+        // If null, not invited yet ; if true, already accepted
+        if (false !== $signalement->getIsCguTiersAccepted()) {
+            return null;
+        }
+
+        return $this->redirectToRoute('suivi_signalement_tiers_cgu_accept', ['code' => $signalement->getCodeSuivi()]);
     }
 }

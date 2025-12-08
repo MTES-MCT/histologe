@@ -1,0 +1,41 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+	<p>
+		Vous avez été invité à suivre l'avancement d'un dossier sur la plateforme {{ platform.name }}.<br><br>
+		Voici les coordonnées de l'occupant :<br>
+		<strong>{{signalement_prenomOccupant}} {{signalement_nomOccupant}}</strong><br>
+		<strong>{{signalement_adresseOccupant}} {{signalement_cpOccupant}} {{signalement_villeOccupant}}</strong>
+	</p>
+	<p>Cette page de suivi vous permet de :</p>
+	<ul>
+		<li>Suivre l'avancée du dossier</li>
+		<li>Ajouter des photos, des documents ou des précisions sur la situation</li>
+		<li>Envoyer un message à l'administration</li>
+	</ul>
+
+	<p>Conservez précieusement cet e-mail pour pouvoir y accéder à tout moment.</p>
+
+	<p>Pour suivre l'avancée du dossier, cliquez sur le bouton ci-dessous :</p>
+
+	<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="text-align: center">
+		<tbody>
+			<tr>
+				<td align="left">
+					<table role="presentation" border="0" cellpadding="0" cellspacing="0">
+						<tbody>
+							<tr style="text-align: center;width: 100%">
+								<td>
+									<a href="{{ lien_suivi|raw }}" target="_blank" rel="noopener">{{ "Accéder à la page de suivi" }}</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<p>Si le bouton ne fonctionne pas
+		<a href="{{ lien_suivi|raw }}">cliquez ici</a>
+	</p>
+{% endblock %}

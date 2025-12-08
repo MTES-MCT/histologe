@@ -183,7 +183,7 @@ class SignalementDraftRequest
         groups: ['POST_LOCATAIRE', 'POST_BAILLEUR_OCCUPANT']
     )]
     #[Email(mode: Email::VALIDATION_MODE_STRICT)]
-    #[Assert\Length(max: 255, maxMessage: 'Votre email ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 255, maxMessage: 'Votre e-mail ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $vosCoordonneesOccupantEmail = null;
     #[Assert\NotBlank(
         message: 'Merci de renseigner votre numéro de téléphone.',
