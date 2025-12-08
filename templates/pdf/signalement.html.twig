@@ -7,7 +7,12 @@
 
     <div class="page">
         <section>
-            <h1 style="text-align: right">Signalement #{{ signalement.reference }}</h1>
+            <h1 style="text-align: right">
+                Signalement #{{ signalement.reference }}
+                {% if signalement.referenceInjonction and signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+                    <small>(#{{ signalement.referenceInjonction }})</small>
+                {% endif %}
+            </h1>
             <h3 style="text-align: right">Déposé le {{ signalement.createdAt|format_datetime(locale='fr', timezone=signalement.getTimezone) }}</h3>
             {% if signalement.isNotOccupant %}
                 <h3 style="text-align: right">Signalement par un tiers</h3>

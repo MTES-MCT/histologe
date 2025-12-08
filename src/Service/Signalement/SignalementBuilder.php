@@ -349,8 +349,9 @@ class SignalementBuilder
             $this->signalement->setReference($this->referenceGenerator->generateReference(territory: $this->territory, isDefinitive: false));
             $this->signalement->setReferenceInjonction($this->referenceGenerator->generateReferenceInjonction());
             $this->signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
+        } else {
+            $this->signalement->setReference($this->referenceGenerator->generateReference($this->territory));
         }
-        $this->signalement->setReference($this->referenceGenerator->generateReference($this->territory));
 
         return $this;
     }
