@@ -189,6 +189,31 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->assertEquals(0, $result);
     }
 
+    public function testCountSuivisPostClotureDeleted(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        /** @var Signalement $signalementWithSuiviPostCloture */
+        $signalementWithSuiviPostCloture = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-2']);
+        /** @var Notification $notification */
+        $notification = $this->entityManager->getRepository(Notification::class)->findOneBy([
+            'signalement' => $signalementWithSuiviPostCloture,
+            'user' => $user,
+            'type' => NotificationType::NOUVEAU_SUIVI,
+        ]);
+        $notification->setDeleted(true);
+        $this->entityManager->persist($notification);
+        $this->entityManager->flush();
+
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '0',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->countSuivisPostCloture($user, $tabQueryParameter);
+        $this->assertIsInt($result);
+        $this->assertEquals(0, $result);
+    }
+
     public function testCountSuivisPostClotureNoNotification(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);

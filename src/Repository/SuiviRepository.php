@@ -595,12 +595,8 @@ class SuiviRepository extends ServiceEntityRepository
 
     private function addFilterNotificationNotSeen(
         QueryBuilder $qb,
-        ?User $user = null,
+        User $user,
     ): QueryBuilder {
-        if (null === $user) {
-            throw new \InvalidArgumentException('User is required to filter unseen notifications.');
-        }
-
         $qb->innerJoin(
             Notification::class,
             'n',
@@ -608,7 +604,9 @@ class SuiviRepository extends ServiceEntityRepository
             'n.suivi = s AND n.user = :currentUser'
         )
             ->andWhere('n.seenAt IS NULL')
-            ->setParameter('currentUser', $user);
+            ->setParameter('currentUser', $user)
+            ->andWhere('n.deleted = :deleted')
+            ->setParameter('deleted', false);
 
         $qb->andWhere('signalement.statut = :statut')
             ->setParameter('statut', SignalementStatus::CLOSED);
