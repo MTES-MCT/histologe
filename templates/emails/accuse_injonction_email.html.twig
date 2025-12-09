@@ -1,12 +1,12 @@
 {% extends 'emails/base_email.html.twig' %}
 
 {% block body %}
-    <p>Bonjour TODO,</p>
+    <p>Bonjour,</p>
     <p>
-        Nous avons bien reçu votre signalement concernant le logement situé <br>
-        <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong><br>
-        Votre propriétaire est averti de votre signalement.<br>
-        Si il ne répond pas dans les trois prochaines semaines, le signalement sera transmis automatiquement aux services compétents.
+        Votre dossier concernant le logement situé <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong> a été créé.<br>
+        Nous nous chargeons de contacter votre propriétaire. Il dispose de trois semaines pour répondre.<br>
+        Sans réponse de sa part, le signalement sera transmis automatiquement aux services compétents.<br>
+        Pour plus d’informations concernant la démarche, rendez-vous sur <a href="https://signal-logement.beta.gouv.fr/une-question/" target="_blank" rel="noopener">ce lien</a>
     </p>
     <p>Pour suivre l'avancée de votre dossier, cliquez sur le bouton ci-dessous :</p>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"

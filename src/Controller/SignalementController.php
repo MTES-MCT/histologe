@@ -843,7 +843,7 @@ class SignalementController extends AbstractController
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
                 $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
                 $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
-                $description = $user->getNomComplet().' a clôturé son dossier en injonction bailleur pour le motif suivant :
+                $description = $user->getNomComplet().' a clôturé son dossier en démarche accélérée pour le motif suivant :
                     '.$form->get('reason')->getData().\PHP_EOL
                     .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
             } else {
@@ -964,7 +964,7 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $description = $user->getNomComplet().' a indiqué vouloir basculer de la procédure d\'injonction bailleur vers la procédure administrative';
+            $description = $user->getNomComplet().' a indiqué vouloir basculer de la démarche accélérée vers la procédure administrative';
             $description .= \PHP_EOL.'Commentaire : '.$form->get('details')->getData();
             $entityManager->beginTransaction();
             try {

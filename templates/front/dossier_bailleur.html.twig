@@ -7,6 +7,15 @@
 <main class="fr-container fr-pb-5w fr-pt-5w" id="content">
 	<div class="fr-grid-row fr-grid-row--gutters">
 
+		<div class="fr-col-12 fr-col-md-12 fr-background-alt--blue-france">
+			<p>Votre locataire souhaite tenter une dernière démarche amiable avant le déclenchement des contrôles et procédures légales. </p>
+			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+				{% set maintenant = date() %}
+				{% set interval = maintenant.diff(dateLimit) %}
+				<p>Il vous reste <strong>{{ interval.days }} jours</strong> pour préciser vos intentions quant aux désordres déclarés par votre locataire. </p>
+			{% endif %}
+			<p>Des dispositifs d'accompagnement ou d’aides peuvent éventuellement vous être proposés, selon votre situation (voir plus bas). Au-delà de ce délai, le dossier sera automatiquement transmis aux autorités compétentes.</p>
+		</div>
 		<div class="fr-col-12 fr-col-md-6">
 			<h1 class="title-blue-france">Détails du dossier</h1>
 			<div class="signalement-card fr-mb-3w">
@@ -76,61 +85,6 @@
 					{% endfor %}
 				{% endif %}
 			</div>
-		</div>
-
-		<div class="fr-col-12 fr-col-md-6">
-			<div class="fr-mb-4w">
-				<div class="fr-callout">
-					<h3 class="fr-callout__title">Quelles aides pour rénover mon logement ?</h3>
-					<p class="fr-callout__text">En tant que propriétaire, vous pouvez bénéficier d'aides pour rénover votre logement. Estimez vos aides grâce au simulateur France Rénov' en cliquant sur le bouton ci-dessous.</p>
-					<a href="https://mesaidesreno.beta.gouv.fr/simulation" target="_blank" title="Mes Aides Réno - Ouvre une nouvelle fenêtre" class="fr-btn">Accéder au simulateur</a>
-				</div>
-
-				<h3 class="fr-h5 fr-mb-3v">Coordonnées</h3>
-				<div class="fr-mb-1w">
-					<strong>Vos Coordonnées (bailleur)</strong>
-				</div>
-				{{signalement.nomProprio}}
-				{% if signalement.prenomProprio %}
-					{{ signalement.prenomProprio }}
-				{% endif %}
-				{% if signalement.adresseProprio %}
-					<br>
-					{{ signalement.adresseProprio }}
-				{% endif %}
-				{% if signalement.codePostalProprio %}
-					{{ signalement.codePostalProprio }}
-				{% endif %}
-				{% if signalement.villeProprio %}
-					{{ signalement.villeProprio }}
-				{% endif %}
-				{% if signalement.mailProprio %}
-					<br>
-					{{ signalement.mailProprio }}
-					{% if show_email_alert(signalement.mailProprio) %}
-						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
-					{% endif %}
-				{% endif %}
-				{% if signalement.telProprio %}
-					<br>
-					{{ signalement.telProprioDecoded|phone }}
-				{% endif %}
-				{% if signalement.telProprioSecondaire %}
-					<br>
-					{{ signalement.telProprioSecondaireDecoded|phone }}
-				{% endif %}
-
-				<div class="fr-mb-1w fr-mt-2w">
-					<strong>Adresse du logement</strong>
-				</div>
-				{{ signalement.adresseOccupant }}
-				{{ signalement.cpOccupant }}
-				{{ signalement.villeOccupant }}
-				{% if signalement.complementAdresseOccupant %}
-					<br>
-					{{signalement.complementAdresseOccupant}}
-				{% endif %}
-			</div>
 
 			<div class="fr-mb-4w">
 				<h2 class="title-blue-france fr-mb-1w">Les photos et documents du dossier</h2>
@@ -188,7 +142,77 @@
 			</div>
 		</div>
 
-		<div class="fr-col-12 fr-col-md-8 fr-col-offset-md-2">
+		<div class="fr-col-12 fr-col-md-6">
+			<div class="fr-mb-4w">
+				<h2 class="title-blue-france fr-mb-1w">Coordonnées</h2>
+				<div class="fr-mb-1w">
+					<strong>Vos Coordonnées (bailleur)</strong>
+				</div>
+				{{signalement.nomProprio}}
+				{% if signalement.prenomProprio %}
+					{{ signalement.prenomProprio }}
+				{% endif %}
+				{% if signalement.adresseProprio %}
+					<br>
+					{{ signalement.adresseProprio }}
+				{% endif %}
+				{% if signalement.codePostalProprio %}
+					{{ signalement.codePostalProprio }}
+				{% endif %}
+				{% if signalement.villeProprio %}
+					{{ signalement.villeProprio }}
+				{% endif %}
+				{% if signalement.mailProprio %}
+					<br>
+					{{ signalement.mailProprio }}
+					{% if show_email_alert(signalement.mailProprio) %}
+						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+					{% endif %}
+				{% endif %}
+				{% if signalement.telProprio %}
+					<br>
+					{{ signalement.telProprioDecoded|phone }}
+				{% endif %}
+				{% if signalement.telProprioSecondaire %}
+					<br>
+					{{ signalement.telProprioSecondaireDecoded|phone }}
+				{% endif %}
+
+				<div class="fr-mb-1w fr-mt-2w">
+					<strong>Adresse du logement</strong>
+				</div>
+				{{ signalement.adresseOccupant }}
+				{{ signalement.cpOccupant }}
+				{{ signalement.villeOccupant }}
+				{% if signalement.complementAdresseOccupant %}
+					<br>
+					{{signalement.complementAdresseOccupant}}
+				{% endif %}
+			</div>
+
+			<div class="fr-mb-4w">
+				<div class="fr-callout">
+					<h3 class="fr-callout__title">Quelles aides pour rénover mon logement ?</h3>
+					<p class="fr-callout__text">En tant que propriétaire, vous pouvez bénéficier d'aides pour rénover votre logement. Estimez vos aides grâce au simulateur France Rénov' en cliquant sur le bouton ci-dessous.</p>
+					<a href="https://mesaidesreno.beta.gouv.fr/simulation" target="_blank" title="Mes Aides Réno - Ouvre une nouvelle fenêtre" class="fr-btn">Accéder au simulateur</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+		<div class="fr-col-12 fr-col-md-8">
+			<div class="fr-highlight">
+				<p>Bon à savoir : 
+					<ul>
+						<li>Si vous acceptez de remédier aux désordres, <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">vous devrez signer une lettre d’engagement à réalisation des travaux</a>. Un suivi sera opéré mensuellement avec les deux parties afin de vérifier l’avancement.</li>
+						<li>En cas de nécessité vous pourrez mettre un terme à votre engagement et le dossier sera automatiquement transmis aux autorités compétentes.</li>
+						<li>Les éléments constitutifs d’un logement décent sont définis par la loi et peuvent être consultés ici : <a href="{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/" target="_blank" rel="noopener external" title="Signal Logement : procédures de l'habitat indigne - Ouvre une nouvelle fenêtre">{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/</a></li>
+						<li>Afin d’améliorer les rapports locatifs, la <a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000509310/2025-01-01/" target="_blank" rel="noopener external" title="legifrance.gouv.fr - Ouvre une nouvelle fenêtre">loi n°89-462 du 6 juillet 1989 </a>dispose quelles réparations incombent au locataire d’un logement et lesquelles incombent au propriétaire. Vous pouvez consulter le guide ici : <a href="{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/" target="_blank" rel="noopener external" title="Signal Logement : qui paye quoi - Ouvre une nouvelle fenêtre">{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/</a></li>
+					</ul>
+				</p>
+			</div>
+		</div>
+		<div class="fr-col-12 fr-col-md-8">
 			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}				
 				{% if suiviReponse %}
 					{% if suiviReponse.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_NON %}
@@ -198,6 +222,11 @@
 						<div class="fr-consent-placeholder">
 							<h4 class="fr-h6">Je m'engage à résoudre les désordres</h4>
 							<p class="fr-mt-5w">{{signalement.prenomProprio}} {{signalement.nomProprio}} le {{ suiviReponse.createdAt|date('d/m/Y') }}</p>
+							<p>Vous optez pour une résolution amiable avant le déclenchement des contrôles et procédures.<br>
+								Par ce choix <strong>vous vous engagez à remédier dans les meilleurs délais aux désordres</strong> déclarés afin de remettre le logement loué aux normes.<br><br>
+								Pour formaliser votre engagement,  <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">merci de compléter le document suivant</a>.<br><br>
+								Un suivi sera réalisé mensuellement. Nous vous invitons à mettre à jour le dossier régulièrement avec les justificatifs permettant d’attester de l’avancement des démarches engagées.
+							</p>
 						</div>
 						{% if form is not null %}
 						<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>

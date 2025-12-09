@@ -55,7 +55,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         $this->assertStringContainsString('Votre réponse a été enregistrée avec succès.', $crawler->filter('.fr-alert.fr-alert--success')->text());
         $this->assertStringContainsString('Oui', $crawler->filter('.signalement-card .info')->eq(2)->text());
-        $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(2)->text());
+        $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(3)->text());
 
         $signalement = $entityManager->getRepository(Suivi::class)->findBy([
             'signalement' => $signalement->getId(),
@@ -101,8 +101,8 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         $this->assertStringContainsString('Votre réponse a été enregistrée avec succès.', $crawler->filter('.fr-alert.fr-alert--success')->text());
         $this->assertStringContainsString('Oui avec aide', $crawler->filter('.signalement-card .info')->eq(2)->text());
-        $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(2)->text());
-        $this->assertStringContainsString('Coordonnées manquantes', $crawler->filter('h2')->eq(3)->text());
+        $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(3)->text());
+        $this->assertStringContainsString('Coordonnées manquantes', $crawler->filter('h2')->eq(4)->text());
 
         $suivi = $entityManager->getRepository(Suivi::class)->findBy([
             'signalement' => $signalement->getId(),
