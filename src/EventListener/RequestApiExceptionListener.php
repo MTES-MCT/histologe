@@ -29,7 +29,7 @@ class RequestApiExceptionListener
             $errors = [];
             foreach ($violations as $violation) {
                 $errors[] = [
-                    'property' => $violation->getPropertyPath(),
+                    'property' => $violation->getPropertyPath() ? $violation->getPropertyPath() : null,
                     'message' => $violation->getMessage(),
                     'invalidValue' => $violation->getInvalidValue(),
                 ];

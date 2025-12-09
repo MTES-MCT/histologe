@@ -783,29 +783,29 @@ class SignalementRequest implements RequestInterface
                 $context->buildViolation('Le champ lienDeclarantOccupant ne doit être transmis que si le profilDeclarant = TIERS_PARTICULIER.')->atPath('lienDeclarantOccupant')->addViolation();
             }
             if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value]) && $this->isLogementVacant) {
-                $context->buildViolation('Le champ isLogementVacant ne peux être true que si le profilDeclarant = TIERS_PARTICULIER, TIERS_PRO, SERVICE_SECOURS ou BAILLEUR.')->atPath('isLogementVacant')->addViolation();
+                $context->buildViolation('Le champ isLogementVacant ne peut être true que si le profilDeclarant = TIERS_PARTICULIER, TIERS_PRO, SERVICE_SECOURS ou BAILLEUR.')->atPath('isLogementVacant')->addViolation();
             }
         }
         if ($this->natureLogementAutre && 'autre' !== $this->natureLogement) {
-            $context->buildViolation('Le champ natureLogementAutre ne peux être true que si natureLogement = "autre".')->atPath('natureLogementAutre')->addViolation();
+            $context->buildViolation('Le champ natureLogementAutre ne peut être true que si natureLogement = "autre".')->atPath('natureLogementAutre')->addViolation();
         }
         if ($this->etageAppartement && 'appartement' !== $this->natureLogement) {
-            $context->buildViolation('Le champ etageAppartement ne peux être true que si natureLogement = "appartement".')->atPath('etageAppartement')->addViolation();
+            $context->buildViolation('Le champ etageAppartement ne peut être true que si natureLogement = "appartement".')->atPath('etageAppartement')->addViolation();
         }
         if ($this->isAppartementAvecFenetres && 'appartement' !== $this->natureLogement) {
-            $context->buildViolation('Le champ isAppartementAvecFenetres ne peux être true que si natureLogement = "appartement".')->atPath('isAppartementAvecFenetres')->addViolation();
+            $context->buildViolation('Le champ isAppartementAvecFenetres ne peut être true que si natureLogement = "appartement".')->atPath('isAppartementAvecFenetres')->addViolation();
         }
         if ($this->isCuisineCollective && false !== $this->isCuisine) {
-            $context->buildViolation('Le champ isCuisineCollective ne peux être true que si isCuisine = false.')->atPath('isCuisineCollective')->addViolation();
+            $context->buildViolation('Le champ isCuisineCollective ne peut être true que si isCuisine = false.')->atPath('isCuisineCollective')->addViolation();
         }
         if ($this->isSalleDeBainCollective && false !== $this->isSalleDeBain) {
-            $context->buildViolation('Le champ isSalleDeBainCollective ne peux être true que si isSalleDeBain = false.')->atPath('isSalleDeBainCollective')->addViolation();
+            $context->buildViolation('Le champ isSalleDeBainCollective ne peut être true que si isSalleDeBain = false.')->atPath('isSalleDeBainCollective')->addViolation();
         }
         if ($this->isWcCollectif && false !== $this->isWc) {
-            $context->buildViolation('Le champ isWcCollectif ne peux être true que si isWc = false.')->atPath('isWcCollectif')->addViolation();
+            $context->buildViolation('Le champ isWcCollectif ne peut être true que si isWc = false.')->atPath('isWcCollectif')->addViolation();
         }
         if ($this->isWcCuisineMemePiece && (true !== $this->isWc || true !== $this->isCuisine)) {
-            $context->buildViolation('Le champ isWcCuisineMemePiece ne peux être true que si isWc = true et isCuisine = true.')->atPath('isWcCuisineMemePiece')->addViolation();
+            $context->buildViolation('Le champ isWcCuisineMemePiece ne peut être true que si isWc = true et isCuisine = true.')->atPath('isWcCuisineMemePiece')->addViolation();
         }
         if (true !== $this->isAllocataire) {
             if ($this->caisseAllocations) {
