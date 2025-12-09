@@ -131,8 +131,10 @@ export default defineComponent({
           return '#18753c' // vert
         case 'CLOSED':
           return '#3a3a3a' // gris foncé
+        case 'REFUSED':
+          return '#CACAFB' // gris clair
         default:
-          return '#DDDDDD' // blanc
+          return '#EEE' // blanc
       }
     },
     getIconImage(status: string): string {
@@ -143,6 +145,8 @@ export default defineComponent({
           return '/build/dsfr/icons/system/fr--warning-line.svg'
         case 'CLOSED':
           return '/build/dsfr/icons/system/close-line.svg'
+        case 'REFUSED':
+          return '/build/dsfr/icons/system/fr--error-line.svg'
         default:
           return '' // Pas d'icône par défaut
       }
