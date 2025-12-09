@@ -174,7 +174,8 @@ export default defineComponent({
         const markerLayer = layer as L.Marker
         const markerOptions = markerLayer.options as L.MarkerOptions as SignalementMarkerOptions
         const type = this.getBadgeType(markerOptions.status)
-        const popupContent = this.getPopupTemplate(markerLayer.options, type)
+        const label = this.getBadgeLabel(markerOptions.status)
+        const popupContent = this.getPopupTemplate(markerLayer.options, type, label)
         markerLayer.bindPopup(popupContent, { maxWidth: 500 }).on('popupopen', (event: any) => {
           const px = this.map?.project(event.target._popup._latlng)
           if (px && this.map) {
@@ -207,17 +208,35 @@ export default defineComponent({
           return 'neutral'
       }
     },
-    getPopupTemplate (options: any, type: string) {
+    getBadgeLabel (status: string) {
+      switch (status) {
+        case 'NEED_VALIDATION':
+          return 'Nouveau'
+        case 'ACTIVE':
+          return 'En cours'
+        case 'CLOSED':
+          return 'Clôturé'
+        case 'REFUSED':
+          return 'Refusé'
+        case 'INJONCTION_BAILLEUR':
+          return 'Démarche accélérée'
+        default:
+          return ''
+      }
+    },
+    getPopupTemplate (options: any, type: string, label: string) {
       return `
         <div class="fr-grid-row" style="width: 500px">
         <div class="fr-col-8">
-            <a href="${options.url}" class="fr-badge fr-badge--${type} fr-mt-1v fr-mb-0">#${options.reference}</a>
-            <p><strong>${options.name}</strong><br>
+          <a href="${options.url}" class="fr-text--lg">#${options.reference}</a>
+          <span class="fr-badge fr-badge--${type} fr-ml-2v">${label}</span>
+          <p>
+            <strong>${options.name}</strong><br>
             <small>
                 ${options.address} <br>
                 ${options.zip} ${options.city}
             </small>
-            </p>
+          </p>
         </div>
         <div class="fr-col-4 fr-mt-1v fr-mb-0 fr-text--center">
             <span class="fr-badge fr-badge--info fr-m-0">${parseFloat(options.score).toFixed(2)}%</span>
