@@ -94,7 +94,10 @@ export default defineComponent({
             url: `/bo/signalements/${signalement.uuid}`,
             details: signalement.details
           }
-          const marker = L.marker([signalement.geoloc.lat, signalement.geoloc.lng], signalementOptions)
+          const marker = L.marker([signalement.geoloc.lat, signalement.geoloc.lng], {
+            ...signalementOptions,
+            icon: this.createCustomIcon(signalement.statut)
+          })
           this.markers.addLayer(marker)
         }
       })
@@ -120,12 +123,59 @@ export default defineComponent({
       const colors = ['#3388ff', '#ff3333', '#33cc33', '#ff9900', '#9966ff', '#ff33cc', '#00cccc', '#ffcc00', '#cc6600', '#999999']
       return colors[index % colors.length]
     },
+    getMarkerColor(status: string): string {
+      switch (status) {
+        case 'NEED_VALIDATION':
+          return '#b34000' // orange
+        case 'ACTIVE':
+          return '#18753c' // vert
+        case 'CLOSED':
+          return '#3a3a3a' // gris foncé
+        case 'REFUSED':
+          return '#CACAFB' // gris clair
+        default:
+          return '#EEE' // blanc
+      }
+    },
+    getIconImage(status: string): string {
+      switch (status) {
+        case 'ACTIVE':
+          return '/build/dsfr/icons/system/check-line.svg'
+        case 'NEED_VALIDATION':
+          return '/build/dsfr/icons/system/fr--warning-line.svg'
+        case 'CLOSED':
+          return '/build/dsfr/icons/system/close-line.svg'
+        case 'REFUSED':
+          return '/build/dsfr/icons/system/fr--error-line.svg'
+        default:
+          return '' // Pas d'icône par défaut
+      }
+    },
+    createCustomIcon(status: string): L.DivIcon {
+      const color = this.getMarkerColor(status)
+      const iconImage = this.getIconImage(status)
+      const iconHtml = iconImage
+        ? `<img src="${iconImage}" alt="" style="position: absolute; top: 7px; left: 7px; width: 11px; height: 11px; filter: brightness(0) invert(1);" />`
+        : `<circle fill="white" cx="12.5" cy="12.5" r="5"/>`
+
+      return L.divIcon({
+        className: 'custom-marker',
+        html: `<svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+          <path fill="${color}" stroke="white" stroke-width="1.5" d="M12.5 0C5.6 0 0 5.6 0 12.5c0 8.4 12.5 28.5 12.5 28.5S25 20.9 25 12.5C25 5.6 19.4 0 12.5 0z"/>
+          ${iconImage ? '' : iconHtml}
+        </svg>${iconImage ? iconHtml : ''}`,
+        iconSize: [25, 41],
+        iconAnchor: [12.5, 41],
+        popupAnchor: [0, -41]
+      })
+    },
     configurePopups () {
       this.markers.getLayers().forEach((layer: any) => {
         const markerLayer = layer as L.Marker
         const markerOptions = markerLayer.options as L.MarkerOptions as SignalementMarkerOptions
         const type = this.getBadgeType(markerOptions.status)
-        const popupContent = this.getPopupTemplate(markerLayer.options, type)
+        const label = this.getBadgeLabel(markerOptions.status)
+        const popupContent = this.getPopupTemplate(markerLayer.options, type, label)
         markerLayer.bindPopup(popupContent, { maxWidth: 500 }).on('popupopen', (event: any) => {
           const px = this.map?.project(event.target._popup._latlng)
           if (px && this.map) {
@@ -148,27 +198,45 @@ export default defineComponent({
     },
     getBadgeType (status: string) {
       switch (status) {
-        case '1':
-          return 'info'
-        case '2':
+        case 'NEED_VALIDATION':
+          return 'warning'
+        case 'ACTIVE':
           return 'success'
-        case '6':
+        case 'CLOSED':
           return 'error'
         default:
           return 'neutral'
       }
     },
-    getPopupTemplate (options: any, type: string) {
+    getBadgeLabel (status: string) {
+      switch (status) {
+        case 'NEED_VALIDATION':
+          return 'Nouveau'
+        case 'ACTIVE':
+          return 'En cours'
+        case 'CLOSED':
+          return 'Clôturé'
+        case 'REFUSED':
+          return 'Refusé'
+        case 'INJONCTION_BAILLEUR':
+          return 'Démarche accélérée'
+        default:
+          return ''
+      }
+    },
+    getPopupTemplate (options: any, type: string, label: string) {
       return `
         <div class="fr-grid-row" style="width: 500px">
         <div class="fr-col-8">
-            <a href="${options.url}" class="fr-badge fr-badge--${type} fr-mt-1v fr-mb-0">#${options.reference}</a>
-            <p><strong>${options.name}</strong><br>
+          <a href="${options.url}" class="fr-text--lg">#${options.reference}</a>
+          <span class="fr-badge fr-badge--${type} fr-ml-2v">${label}</span>
+          <p>
+            <strong>${options.name}</strong><br>
             <small>
                 ${options.address} <br>
                 ${options.zip} ${options.city}
             </small>
-            </p>
+          </p>
         </div>
         <div class="fr-col-4 fr-mt-1v fr-mb-0 fr-text--center">
             <span class="fr-badge fr-badge--info fr-m-0">${parseFloat(options.score).toFixed(2)}%</span>
@@ -191,16 +259,23 @@ export default defineComponent({
     width: 100%;
     height: 100%;
     display: flex;
-    align-items: center; 
+    align-items: center;
     justify-content: center;
   }
   .no-signalements-message {
     position: absolute;
-    z-index: 1000; 
-    background-color: rgba(255, 255, 255, 0.9); 
-    color: #000; 
-    padding: 1rem 2rem; 
-    border-radius: 8px; 
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #000;
+    padding: 1rem 2rem;
+    border-radius: 8px;
     text-align: center;
+  }
+</style>
+
+<style>
+  .custom-marker {
+    background: none;
+    border: none;
   }
 </style>
