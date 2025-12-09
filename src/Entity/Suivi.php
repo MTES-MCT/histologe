@@ -358,6 +358,15 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
+    public function isSubmittedByBailleur(): bool
+    {
+        if (null === $this->category) {
+            return false;
+        }
+
+        return in_array($this->category, SuiviCategory::CategoriesSubmittedByBailleur(), true);
+    }
+
     public function setSeenByUsager(bool $seen): void
     {
         $this->seenByUsager = $seen;

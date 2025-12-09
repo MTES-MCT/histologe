@@ -463,6 +463,7 @@ class SignalementController extends AbstractController
             'zonetitle' => null,
             'filesFilter' => 'situation',
             'listAllPhotos' => true,
+            'context' => 'allphotosituation',
         ]);
 
         return $this->json(['html' => $html]);
