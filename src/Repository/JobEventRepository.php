@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Affectation;
 use App\Entity\Enum\InterfacageType;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
@@ -246,37 +245,5 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
             ->setParameter('status_failed', JobEvent::STATUS_FAILED);
 
         return $qb->getQuery()->getSingleResult();
-    }
-
-    /**
-     * @return array<int, Affectation>
-     */
-    public function findFailedJobEvents(string $service, string $action): array
-    {
-        $qb = $this->createQueryBuilder('j');
-
-        $subQueryBuilder = $this->createQueryBuilder('j2')
-            ->select('1')
-            ->where('j2.signalementId = j.signalementId')
-            ->andWhere('j2.partnerId = j.partnerId')
-            ->andWhere('j2.codeStatus = 200')
-            ->andWhere('j2.service LIKE :service')
-            ->andWhere('j2.action LIKE :action')
-            ->getDQL();
-
-        return $qb->select('a')
-            ->innerJoin(Affectation::class,
-                'a',
-                'WITH',
-                'a.signalement = j.signalementId AND a.partner = j.partnerId'
-            )
-            ->andWhere('j.codeStatus > 399')
-            ->andWhere('j.service LIKE :service')
-            ->andWhere('j.action LIKE :action')
-            ->andWhere($qb->expr()->not($qb->expr()->exists($subQueryBuilder)))
-            ->setParameter('service', $service)
-            ->setParameter('action', $action)
-            ->getQuery()
-            ->getResult();
     }
 }
