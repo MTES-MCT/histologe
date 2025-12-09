@@ -8,6 +8,8 @@ class SignalementExportHeader
 
     /**
      * @return array<string>
+     *
+     * @warning This array must stay in sync with the selectable columns defined in SignalementExportSelectableColumns::SELECTABLE_COLS
      */
     public static function getHeaders(): array
     {
@@ -15,7 +17,6 @@ class SignalementExportHeader
             'Référence',
             'Déposé le',
             'Statut',
-            'Criticité au dépôt',
             'Description',
             'Type déclarant',
             'Nom occupant',
@@ -34,6 +35,7 @@ class SignalementExportHeader
             'Complément',
             'Situations',
             'Désordres',
+            'Criticité au dépôt',
             'Début des désordres',
             'Étiquettes',
             'Photos',

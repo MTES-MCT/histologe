@@ -63,6 +63,12 @@ class ExportSignalementController extends AbstractController
             return $this->redirectToRoute('back_signalement_list_export');
         }
 
+        if (empty($selectedColumns)) {
+            $this->addFlash('error', 'Merci de sélectionner au moins une information à exporter.');
+
+            return $this->redirectToRoute('back_signalement_list_export');
+        }
+
         /** @var User $user */
         $user = $this->getUser();
 
