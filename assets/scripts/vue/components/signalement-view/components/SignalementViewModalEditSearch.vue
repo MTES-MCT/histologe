@@ -20,7 +20,7 @@
               </div>
 
               <div v-else>
-                <div v-for="search in sharedState.savedSearches" :key="search.Id" class="fr-mb-4v">
+                <div v-for="(search, index) in sharedState.savedSearches" :key="search.Id">
                   <h2 class="fr-h4 fr-mb-2v">{{ search.Text }}</h2>
 
                   <div class="fr-grid-row fr-grid-row--bottom fr-mb-2v">
@@ -46,10 +46,11 @@
                     </div>
                   </div>
 
-                  <button class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-delete-line"
+                  <button class="fr-btn fr-btn--icon-left fr-btn--tertiary fr-icon-delete-line fr-mb-5v"
                           @click="deleteSavedSearch(search.Id)">
                     Supprimer la recherche
                   </button>
+                  <hr v-if="index < sharedState.savedSearches.length - 1">
                 </div>
               </div>
 
