@@ -29,7 +29,8 @@
         <div class="fr-col-3">
             <strong {% if app.user.isSuperAdmin or app.environment == 'dev' %} title="{{ suivi.createdAt|date('d/m/Y H:i:s') }}" {% endif %}>
                 {{ suivi.createdAt|date('d/m/Y') }}
-            </strong>            <br>
+            </strong>
+            <br>
             {% if suivi.createdBy is not null %}
                 <span class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
                     <strong class="fr-ws-nowrap">{{ suivi.createdBy.nomComplet }}</strong>
@@ -42,6 +43,17 @@
                     {% if suivi.createdBy.phone %}
                         <hr class="fr-pb-1v">
                         <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded }}</span>
+                    {% endif %}
+                </span>
+                <span aria-describedby="tooltip_suivi_{{ suivi.id }}">
+                    {{ suivi.getCreatedByLabel('\n')|nl2br }}
+                </span>
+            {% elseif suivi.isSubmittedByBailleur() %}
+                <span class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
+                    <strong class="fr-ws-nowrap">{{ suivi.signalement.displayedNomProprio }}</strong>
+                    {% if suivi.signalement.mailProprio %}
+                        <hr class="fr-pb-1v">
+                        <span class="fr-ws-nowrap">{{ suivi.signalement.mailProprio }}</span>
                     {% endif %}
                 </span>
                 <span aria-describedby="tooltip_suivi_{{ suivi.id }}">
