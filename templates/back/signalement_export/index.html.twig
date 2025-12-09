@@ -45,37 +45,14 @@
             <p>Les informations contenues dans ce fichier ne doivent en aucun cas être partagées en dehors des services compétents à traiter le dossier.</p>
         </div>
 
-        <h3 class="fr-mt-5v">Infos obligatoires</h3>
-        <p>
-            Par défaut, votre fichier contient les informations suivantes :
-        </p>
-        <ul>
-            <li><strong>Référence :</strong> la référence du signalement</li>
-            <li><strong>Déposé le :</strong> la date de dépôt du signalement</li>
-            <li><strong>Statut :</strong> le statut du signalement (nouveau, en cours, fermé)</li>
-            <li><strong>Description :</strong> le message laissé par l'usager au dépôt du signalement, décrivant la situation</li>
-            <li><strong>Type déclarant :</strong> le type de déclarant (occupant, tiers, propriétaire occupant, services de secours...)</li>
-            <li><strong>Nom occupant :</strong> le nom de l'occupant du logement</li>
-            <li><strong>Prénom occupant :</strong> le prénom de l'occupant du logement</li>
-            <li><strong>Téléphone occupant :</strong> le numéro de téléphone de l'occupant</li>
-            <li><strong>E-mail occupant :</strong> l'adresse e-mail de l'occupant</li>
-            <li><strong>Adresse :</strong> l'adresse postale du logement</li>
-            <li><strong>Code postal :</strong> le code postal du logement</li>
-            <li><strong>Commune :</strong> la commune du logement</li>
-            <li><strong>Situation :</strong> les catégories de désordres présents dans le logement</li>
-            <li><strong>Désordres :</strong> le détail des désordres présents dans le logement</li>
-            <li><strong>Allocataire :</strong> si l'usager est allocataire ou non</li>
-            <li><strong>Logement social :</strong> s'il s'agit d'un logement social ou non</li>
-        </ul>
-
-        <h2 class="fr-mb-0" id="desc-table">
-            Infos à sélectionner
+        <h2 class="fr-mb-0 fr-mt-5v" id="desc-table">
+            Infos disponibles
             <div class="fr-text--sm fr-text--light">
-                Dans le tableau ci-dessous, sélectionnez les colonnes à ajouter à votre fichier.
+                Dans le tableau ci-dessous, sélectionnez ou désélectionnez les informations pour télécharger uniquement les informations dont vous avez besoin.
                 <br>
                 Cliquez sur la case dans l'en-tête pour tout sélectionner.
                 <br>
-                Si vous ne cochez aucune case, seule les informations obligatoires vous seront transmises.
+                Si vous ne cochez aucune case supplémentaire, seule les informations pré sélectionnées vous seront transmises.
             </div>
         </h2>
         
@@ -102,7 +79,10 @@
                 <th class="fr-cell--fixed" scope="row">
                     <div class="fr-checkbox-group fr-checkbox-group--sm">
                         <input name="cols[]" value="{{ colId }}" id="table-select-checkbox-{{ colId }}" type="checkbox" class="checkbox-column"
-                            {% if colId in selected_cols %}checked="checked"{% endif %}>
+                            {%  if (selected_cols is not empty and colId in selected_cols)
+                                or (selected_cols is empty and col.preselected is same as(true)) %}
+                                checked="checked"
+                            {% endif %}>
                         <label class="fr-label" for="table-select-checkbox-{{ colId }}">
                             {{ col.name }}
                         </label>

@@ -8,6 +8,8 @@ class SignalementExportHeader
 
     /**
      * @return array<string>
+     *
+     * @warning This array must stay in sync with the selectable columns defined in SignalementExportSelectableColumns::SELECTABLE_COLS
      */
     public static function getHeaders(): array
     {
@@ -15,7 +17,6 @@ class SignalementExportHeader
             'Référence',
             'Déposé le',
             'Statut',
-            'Criticité au dépôt',
             'Description',
             'Type déclarant',
             'Nom occupant',
@@ -34,10 +35,20 @@ class SignalementExportHeader
             'Complément',
             'Situations',
             'Désordres',
+            'Criticité au dépôt',
             'Début des désordres',
             'Étiquettes',
             'Photos',
             'Documents',
+            'Nom bailleur',
+            'Prénom bailleur',
+            'Dénomination bailleur',
+            'Adresse bailleur',
+            'Code postal bailleur',
+            'Ville bailleur',
+            'Tél. bailleur',
+            'Tél. sec. bailleur',
+            'E-mail bailleur',
             'Propriétaire averti',
             'Date d\'information du propriétaire',
             'Moyen d\'information du propriétaire',
@@ -48,7 +59,6 @@ class SignalementExportHeader
             'Numéro allocataire',
             'Nature du logement',
             'Superficie',
-            'Nom bailleur',
             'Logement social',
             'Préavis de départ',
             'Demande de relogement',
@@ -64,7 +74,7 @@ class SignalementExportHeader
             'Ccl. de la dernière visite',
             'Comm. de la dernière visite',
             'Dernière MAJ le',
-            'Clôturé le',
+            'Fermé le',
             'Motif de clôture',
             'Commentaire de clôture',
             'Longitude',

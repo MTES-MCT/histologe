@@ -24,8 +24,8 @@ class SignalementExportLoaderTest extends TestCase
         $user = $this->getUserFromRole(User::ROLE_ADMIN);
 
         $signalementExports = [
-            new SignalementExport('2023-01', '31-03-2023', 'nouveau'),
-            new SignalementExport('2023-02', '31-03-2023', 'nouveau'),
+            new SignalementExport(reference: '2023-01', createdAt: '31-03-2023', statut: 'nouveau'),
+            new SignalementExport(reference: '2023-02', createdAt: '31-03-2023', statut: 'nouveau'),
         ];
 
         $signalementManager->expects($this->once())
@@ -34,7 +34,7 @@ class SignalementExportLoaderTest extends TestCase
             ->willReturn($this->getSignalementExportGenerator($signalementExports));
 
         $loader = new SignalementExportLoader($signalementManager);
-        $spreadsheet = $loader->load($user, $formatExtension, $filters);
+        $spreadsheet = $loader->load($user, $formatExtension, $filters, ['REFERENCE', 'CREATED_AT', 'STATUT']);
         $this->assertEquals('Référence', $spreadsheet->getActiveSheet()->getCell('A1')->getValue());
         $this->assertEquals('2023-01', $spreadsheet->getActiveSheet()->getCell('A2')->getValue());
         $style = $spreadsheet->getActiveSheet()->getStyle('A2');
