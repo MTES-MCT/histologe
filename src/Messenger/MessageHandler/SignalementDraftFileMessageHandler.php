@@ -6,7 +6,7 @@ use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Manager\UserManager;
-use App\Messenger\Message\SignalementDraftFileMessage;
+use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler]
+#[AsMessageHandler(priority: 10)]
 class SignalementDraftFileMessageHandler
 {
     public function __construct(
@@ -33,15 +33,16 @@ class SignalementDraftFileMessageHandler
     ) {
     }
 
-    public function __invoke(SignalementDraftFileMessage $signalementDraftFileMessage): void
+    public function __invoke(SignalementDraftProcessMessage $signalementDraftProcessMessage): void
     {
-        $this->logger->info('Start handling SignalementDraftFileMessage', [
-            'signalementDraftId' => $signalementDraftFileMessage->getSignalementDraftId(),
-            'signalementId' => $signalementDraftFileMessage->getSignalementId(),
+        $this->logger->info('Start handling SignalementDraftFileMessageHandler', [
+            'signalementDraftId' => $signalementDraftProcessMessage->getSignalementDraftId(),
+            'signalementId' => $signalementDraftProcessMessage->getSignalementId(),
+            'step' => 'send-files',
         ]);
 
         $signalementDraft = $this->signalementDraftRepository->find(
-            $signalementDraftFileMessage->getSignalementDraftId()
+            $signalementDraftProcessMessage->getSignalementDraftId()
         );
 
         /** @var SignalementDraftRequest $signalementDraftRequest */
@@ -50,7 +51,7 @@ class SignalementDraftFileMessageHandler
             SignalementDraftRequest::class
         );
 
-        $signalement = $this->signalementRepository->find($signalementDraftFileMessage->getSignalementId());
+        $signalement = $this->signalementRepository->find($signalementDraftProcessMessage->getSignalementId());
         /** @var User|null $uploadUser */
         $uploadUser = $this->userManager->findOneBy(['email' => $signalement->getMailDeclarant()]);
         if ($files = $signalementDraftRequest->getFiles()) {
@@ -78,9 +79,10 @@ class SignalementDraftFileMessageHandler
             $this->signalementRepository->save($signalement, true);
         }
 
-        $this->logger->info('SignalementDraftFileMessage handled successfully', [
-            'signalementId' => $signalementDraftFileMessage->getSignalementId(),
+        $this->logger->info('SignalementDraftFileMessageHandler handled successfully', [
+            'signalementId' => $signalementDraftProcessMessage->getSignalementId(),
             'nbFiles' => \count($signalementDraftRequest->getFiles()),
+            'step' => 'send-files',
         ]);
     }
 }
