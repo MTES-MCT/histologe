@@ -199,8 +199,9 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="fr-col-12 fr-col-md-8 fr-col-offset-md-2">
+	</div>
+	<div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+		<div class="fr-col-12 fr-col-md-8">
 			<div class="fr-highlight">
 				<p>Bon à savoir : 
 					<ul>
@@ -212,7 +213,7 @@
 				</p>
 			</div>
 		</div>
-		<div class="fr-col-12 fr-col-md-8 fr-col-offset-md-2">
+		<div class="fr-col-12 fr-col-md-8">
 			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}				
 				{% if suiviReponse %}
 					{% if suiviReponse.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_NON %}
