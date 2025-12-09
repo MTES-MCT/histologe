@@ -154,6 +154,7 @@ class SignalementRequest implements RequestInterface
         description: 'Nature du logement.',
         example: 'appartement',
     )]
+    #[Assert\NotBlank(message: 'Veuillez renseigner la nature du logement.')]
     #[Assert\Choice(
         choices: [
             'appartement',
@@ -764,6 +765,9 @@ class SignalementRequest implements RequestInterface
                 if ($this->mailDeclarant) {
                     $context->buildViolation('Le champ mailDeclarant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE ou BAILLEUR_OCCUPANT.')->atPath('mailDeclarant')->addViolation();
                 }
+                if ($this->telDeclarant) {
+                    $context->buildViolation('Le champ telDeclarant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE ou BAILLEUR_OCCUPANT.')->atPath('telDeclarant')->addViolation();
+                }
             } else {
                 if (empty($this->nomDeclarant)) {
                     $context->buildViolation('Veuillez renseigner le nom du déclarant.')->atPath('nomDeclarant')->addViolation();
@@ -775,10 +779,10 @@ class SignalementRequest implements RequestInterface
                     $context->buildViolation('Veuillez renseigner l\'e-mail du déclarant.')->atPath('mailDeclarant')->addViolation();
                 }
             }
-            if ($this->profilDeclarant !== ProfileDeclarant::TIERS_PARTICULIER->value && $this->lienDeclarantOccupant) {
-                $context->buildViolation('Le champ lienDeclarantOccupant ne doit être renseigné que si le profilDeclarant = TIERS_PARTICULIER.')->atPath('lienDeclarantOccupant')->addViolation();
+            if ($this->profilDeclarant !== ProfileDeclarant::TIERS_PARTICULIER->value && null !== $this->lienDeclarantOccupant) {
+                $context->buildViolation('Le champ lienDeclarantOccupant ne doit être transmis que si le profilDeclarant = TIERS_PARTICULIER.')->atPath('lienDeclarantOccupant')->addViolation();
             }
-            if (in_array($this->profilDeclarant, [ProfileDeclarant::TIERS_PARTICULIER->value, ProfileDeclarant::TIERS_PRO->value, ProfileDeclarant::SERVICE_SECOURS->value, ProfileDeclarant::BAILLEUR->value]) && $this->isLogementVacant) {
+            if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value]) && $this->isLogementVacant) {
                 $context->buildViolation('Le champ isLogementVacant ne peux être true que si le profilDeclarant = TIERS_PARTICULIER, TIERS_PRO, SERVICE_SECOURS ou BAILLEUR.')->atPath('isLogementVacant')->addViolation();
             }
         }
@@ -850,6 +854,13 @@ class SignalementRequest implements RequestInterface
             $now = new \DateTime();
             if ($dateEntree && $dateEntree > $now) {
                 $context->buildViolation('La date d\'entrée dans le logement ne peut pas être dans le futur.')->atPath('dateEntreeLogement')->addViolation();
+            }
+        }
+        if ($this->dateBailleurAverti) {
+            $dateBailleurAverti = \DateTime::createFromFormat('Y-m-d', $this->dateBailleurAverti);
+            $now = new \DateTime();
+            if ($dateBailleurAverti && $dateBailleurAverti > $now) {
+                $context->buildViolation('La date à laquelle le bailleur a été informé ne peut pas être dans le futur.')->atPath('dateBailleurAverti')->addViolation();
             }
         }
         $identifiants = [];

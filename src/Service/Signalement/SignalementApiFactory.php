@@ -45,6 +45,9 @@ class SignalementApiFactory
         $signalement->setCpOccupant($request->codePostalOccupant);
         $signalement->setVilleOccupant($request->communeOccupant);
         $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
+        if (!$signalement->getInseeOccupant()) {
+            return $signalement;
+        }
         $territory = $this->postalCodeHomeChecker->getActiveTerritory($signalement->getInseeOccupant());
         $signalement->setTerritory($territory);
         $signalement->setEtageOccupant($request->etageOccupant);

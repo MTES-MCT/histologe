@@ -612,6 +612,7 @@ class SignalementCreateControllerTest extends WebTestCase
         "communeOccupant": "Vézénobres",
         "profilDeclarant": "LOCATAIRE",
         "isLogementSocial": true,
+        "natureLogement": "maison",
         "nomOccupant": "Gluten_",
         "prenomOccupant": "Joey",
         "mailOccupant": "gnagnagna@blabla.org",
