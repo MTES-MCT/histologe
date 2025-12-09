@@ -194,7 +194,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_abandon', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
@@ -261,7 +261,7 @@ class SignalementControllerTest extends WebTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_bascule', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
@@ -280,6 +280,8 @@ class SignalementControllerTest extends WebTestCase
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
         $this->assertNull($signalement->getIsUsagerAbandonProcedure());
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+        $this->assertStringStartsWith(date('Y').'-', $signalement->getReference());
+        $this->assertStringNotContainsString('-TEMPORAIRE', $signalement->getReference());
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertEquals($lastSuivi->getCategory(), SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER);

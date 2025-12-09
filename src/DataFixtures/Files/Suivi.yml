@@ -143,13 +143,13 @@ suivis:
   created_by: null
   description: "Le bailleur s'engage à résoudre les désordres signalés."
   is_public: 1
-  signalement: "2025-12"
+  signalement: "00000000-0000-0000-2025-000000000012"
   type: 1
   category: "INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE"
 - 
   created_by: viens@ramontafrez.com
   description: "Je veux faire les travaux, mais je ne sais pas comment m'y prendre."
   is_public: 0
-  signalement: "2025-12"
+  signalement: "00000000-0000-0000-2025-000000000012"
   type: 1
   category: "INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE"

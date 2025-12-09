@@ -330,7 +330,7 @@ affectations:
     territory: "Bouches-du-Rhône"
     is_synchronized: true
   -
-    signalement: 2025-12
+    signalement: 00000000-0000-0000-2025-000000000012
     partner: "aide-bailleur-34@signal-logement.fr"
     statut: "NOUVEAU"
     answered_by: ""

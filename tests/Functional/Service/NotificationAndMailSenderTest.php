@@ -86,7 +86,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
     public function testSendNewSignalementInjonction(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-12']);
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
         $this->notificationAndMailSender->sendNewSignalementInjonction($signalement);
 
         $this->assertEmailCount(1);

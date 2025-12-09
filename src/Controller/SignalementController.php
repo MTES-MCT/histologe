@@ -34,6 +34,7 @@ use App\Security\User\SignalementUser;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\HtmlCleaner;
 use App\Service\ImageManipulationHandler;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -45,6 +46,7 @@ use App\Service\Signalement\SignalementDuplicateChecker;
 use App\Service\Signalement\SuiviSeenMarker;
 use App\Service\SuiviCategoryMapper;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -942,6 +944,9 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
         AutoAssigner $autoAssigner,
+        InjonctionBailleurService $injonctionBailleurService,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_BASCULE_PROCEDURE', $signalement);
@@ -961,18 +966,27 @@ class SignalementController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $description = $user->getNomComplet().' a indiqué vouloir basculer de la procédure d\'injonction bailleur vers la procédure administrative';
             $description .= \PHP_EOL.'Commentaire : '.$form->get('details')->getData();
+            $entityManager->beginTransaction();
+            try {
+                $suiviManager->createSuivi(
+                    signalement: $signalement,
+                    description: HtmlCleaner::cleanFrontEndEntry($description),
+                    type: Suivi::TYPE_USAGER,
+                    category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+                    user: $user,
+                    isPublic: true,
+                );
 
-            $suiviManager->createSuivi(
-                signalement: $signalement,
-                description: HtmlCleaner::cleanFrontEndEntry($description),
-                type: Suivi::TYPE_USAGER,
-                category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
-                user: $user,
-                isPublic: true,
-            );
+                $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
+                $signalementManager->save($signalement);
+                $entityManager->commit();
+            } catch (\Exception $e) {
+                $entityManager->rollback();
+                $logger->critical($e->getMessage());
+                $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
 
-            $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
-            $signalementManager->save($signalement);
+                return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+            }
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);
 
             $this->addFlash('success', 'Votre demande a bien été prise en compte. Votre signalement a été transmis à l\'administration.');

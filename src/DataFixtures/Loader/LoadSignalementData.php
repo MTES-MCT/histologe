@@ -31,6 +31,7 @@ use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
+use App\Service\Signalement\ReferenceGenerator;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -54,6 +55,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private readonly UserManager $userManager,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly ReferenceGenerator $referenceGenerator,
     ) {
     }
 
@@ -433,6 +435,10 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (SignalementStatus::REFUSED->value === $row['statut']) {
             $signalement
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
+        }
+
+        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            $signalement->setReferenceInjonction($this->referenceGenerator->generateReferenceInjonction());
         }
 
         if (isset($row['created_by'])) {

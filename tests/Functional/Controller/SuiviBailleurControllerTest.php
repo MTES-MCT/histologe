@@ -14,6 +14,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SuiviBailleurControllerTest extends WebTestCase
 {
+    private const string SIGN_2025_11_UUID = '00000000-0000-0000-2025-000000000011';
+
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
@@ -26,7 +28,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur');
@@ -69,7 +71,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         $signalement->setMailProprio(null);
         $entityManager->flush();
 
@@ -117,7 +119,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -130,7 +132,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'login_bailleur');
         $crawler = $client->request('GET', $urlDossierBailleur);
 
-        $this->assertStringContainsString('2025-11', $crawler->filter('.signalement-card .info')->eq(1)->text());
+        $this->assertStringContainsString('INJ-2363', $crawler->filter('.signalement-card .info')->eq(1)->text());
 
         $form = $crawler->filter('form[name="reponse_injonction_bailleur"]')->form();
         $form['reponse_injonction_bailleur[reponse]'] = ReponseInjonctionBailleur::REPONSE_NON;
@@ -152,8 +154,10 @@ class SuiviBailleurControllerTest extends WebTestCase
         );
         $this->assertEquals(2, count($suivi));
         $this->assertStringContainsString('Même pas peur. &lt;i&gt;test&lt;/i&gt;', $suivi[1]->getDescription());
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+        $this->assertStringStartsWith(date('Y').'-', $signalement->getReference());
+        $this->assertStringNotContainsString('-TEMPORAIRE', $signalement->getReference());
     }
 
     public function testDossierBailleurStopProcedure(): void
@@ -163,7 +167,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
 
         $suiviReponse = new Suivi();
         $suiviReponse->setSignalement($signalement);
@@ -216,7 +220,9 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertEquals('Je préfère passer en procédure classique. &lt;strong&gt;Merci&lt;/strong&gt;', $suivis[0]->getDescription());
 
         /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-11']);
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+        $this->assertStringStartsWith(date('Y').'-', $signalement->getReference());
+        $this->assertStringNotContainsString('-TEMPORAIRE', $signalement->getReference());
     }
 }

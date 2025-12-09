@@ -120,6 +120,7 @@ class SignalementBuilderTest extends KernelTestCase
             ->withProcedure()
             ->withInformationComplementaire()
             ->withDesordres()
+            ->withStatus()
             ->build()
         ;
 
@@ -271,6 +272,9 @@ class SignalementBuilderTest extends KernelTestCase
             ->build()
         ;
         $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
+        $this->assertStringStartsWith('INJ-', $signalement->getReference());
+        $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+        $this->assertEquals(date('Y').'-TEMPORAIRE', $signalement->getReference());
 
         $this->entityManager->commit();
     }
