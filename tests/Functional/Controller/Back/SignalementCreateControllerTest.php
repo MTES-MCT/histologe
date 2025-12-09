@@ -8,6 +8,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SignalementUsagerRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -22,6 +23,7 @@ class SignalementCreateControllerTest extends WebTestCase
     private SignalementRepository $signalementRepository;
     private PartnerRepository $partnerRepository;
     private SignalementUsagerRepository $signalementUsagerRepository;
+    private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
     private RouterInterface $router;
 
     protected function setUp(): void
@@ -32,6 +34,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->signalementUsagerRepository = static::getContainer()->get(SignalementUsagerRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->router = static::getContainer()->get(RouterInterface::class);
     }
 
@@ -368,7 +371,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->request('POST', $route, [
             'consent_signalement_tiers' => 'on',
             'consent_donnees_sante' => 'on',
-            'accept_signalement' => [
+            'agents_selection' => [
                 'agents' => [$user->getId()],
             ],
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
@@ -388,6 +391,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertNull($signalementUsager->getDeclarant());
 
         $this->assertEmailCount(2);
+        $this->assertCount(1, $this->userSignalementSubscriptionRepository->findBy(['signalement' => $signalement]));
     }
 
     public function testValidationSignalementWithManualAffectationWithRT(): void
@@ -404,7 +408,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->request('POST', $route, [
             'consent_signalement_tiers' => 'on',
             'consent_donnees_sante' => 'on',
-            'accept_signalement' => [
+            'agents_selection' => [
                 'agents' => [$user->getId()],
             ],
             '_token' => $this->generateCsrfToken($this->client, 'form_signalement_validation'),
@@ -425,6 +429,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertCount(2, $signalement->getAffectations());
 
         $this->assertEmailCount(4);
+        $this->assertCount(1, $this->userSignalementSubscriptionRepository->findBy(['signalement' => $signalement]));
     }
 
     public function testValidationSignalementWithManualAffectationWithAgent(): void

@@ -453,7 +453,7 @@ class SignalementCreateController extends AbstractController
         if (Request::METHOD_POST === $request->getMethod()) {
             $hasConsentError = $this->hasConsentError($request);
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && $acceptSignalementForm) {
-                $acceptData = $request->request->all('accept_signalement');
+                $acceptData = $request->request->all('agents_selection');
                 $acceptSignalementForm->submit($acceptData);
                 if (!$acceptSignalementForm->isValid()) {
                     $hasRtSelectionError = true;
