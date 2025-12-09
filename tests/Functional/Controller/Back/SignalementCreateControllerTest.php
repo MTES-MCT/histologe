@@ -48,7 +48,6 @@ class SignalementCreateControllerTest extends WebTestCase
             'signalement_draft_address[adresseCompleteOccupant]' => '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert',
             'signalement_draft_address[isLogementSocial]' => '1',
             'signalement_draft_address[natureLogement]' => 'autre',
-            'signalement_draft_address[natureLogementAutre]' => 'roulotte',
             'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
         ]);
         $this->client->submit($form);

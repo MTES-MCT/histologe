@@ -16,7 +16,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -208,23 +207,6 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $signalement->getTypeCompositionLogement()?->getTypeLogementNatureAutrePrecision(),
-                'constraints' => [
-                    new Assert\Callback(
-                        callback: function (?string $value, ExecutionContextInterface $context): void {
-                            /** @var FormInterface $form */
-                            $form = $context->getRoot();
-                            if (!$form->has('natureLogement')) {
-                                return;
-                            }
-
-                            $nature = $form->get('natureLogement')->getData();
-                            if ('autre' === $nature && empty($value)) {
-                                $context->buildViolation('Veuillez préciser le type de logement.')
-                                    ->atPath('')
-                                    ->addViolation();
-                            }
-                        }, groups: ['bo_step_address']),
-                ],
             ])
             ->add('logementVacant', ChoiceType::class, [
                 'label' => 'S\'agit-il d\'un logement vacant ?',
