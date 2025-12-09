@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementConfirmInjonctionMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_CONFIRM_INJONCTION_TO_USAGER;
-    protected ?string $mailerSubject = 'Votre signalement a bien été reçu ! -- TODO Injonction';
+    protected ?string $mailerSubject = 'Démarche accélérée - votre dossier a été enregistré';
     protected ?string $mailerButtonText = 'Accéder à mon dossier';
     protected ?string $mailerTemplate = 'accuse_injonction_email';
     protected ?string $tagHeader = 'Usager Accusé Reception Signalement Injonction';

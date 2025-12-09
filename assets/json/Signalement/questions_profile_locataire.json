@@ -526,18 +526,18 @@
         {
           "type": "SignalementFormParagraph",
           "customCss": "fr-ml-5v",
-          "label": "<strong>Contestation du signalement :</strong> votre propriétaire conteste le signalement et les désordres signalés. Votre dossier sera alors pris en charge par les services compétents.",
+          "label": "<strong>Contestation du signalement :</strong> votre propriétaire conteste le signalement et les désordres signalés. Votre dossier sera pris en charge par les services compétents.",
           "slug": "injonction_bailleur_paragraph_4"
         },
         {
           "type": "SignalementFormParagraph",
           "customCss": "fr-ml-5v",
-          "label": "<strong>Pas de réponse du propriétaire :</strong> votre dossier sera alors pris en charge par les services compétents.",
+          "label": "<strong>Pas de réponse du propriétaire :</strong> votre dossier sera pris en charge par les services compétents.",
           "slug": "injonction_bailleur_paragraph_5"
         },
         {
           "type": "SignalementFormParagraph",
-          "label": "Bon à savoir : <br><ul><li>A tout moment, vous pouvez sortir de la démarche accélérée et passer sur une procédure ordinaire sans déposer un nouveau signalement.</li><li>Votre propriétaire accèdera uniquement aux informations suivantes : votre identité, adresse, les désordres déclarés et les photos des désordres.</li></ul>",
+          "label": "Bon à savoir : <br><ul><li>A tout moment, vous pouvez sortir de la démarche accélérée et passer sur une procédure ordinaire sans déposer un nouveau signalement.</li><li>Votre propriétaire accédera uniquement aux informations suivantes : votre identité, adresse, les désordres déclarés et les photos des désordres.</li></ul>",
           "slug": "injonction_bailleur_paragraph_6"
         },
         {
@@ -2487,8 +2487,19 @@
             "body": [
               {
                 "type": "SignalementFormParagraph",
-                "label": "{{formStore.props.platformName}} va contacter votre propriétaire/bailleur par courrier dans les 24 à 48h et/ou e-mail dès l'enregistrement de votre dossier/ afin de l’informer de votre signalement.",
-                "slug": "eligibilite_injonction_ok_1"
+                "label": "{{formStore.props.platformName}} va contacter votre propriétaire/bailleur par courrier dans les 24 à 48h afin de l’informer de votre signalement.",
+                "slug": "eligibilite_injonction_ok_1_courrier",
+                "conditional": {
+                  "show": "(formStore.data.coordonnees_bailleur_adresse !== '' && formStore.data.coordonnees_bailleur_adresse !== undefined) && (formStore.data.coordonnees_bailleur_email === '' || formStore.data.coordonnees_bailleur_email === undefined)"
+                }
+              },
+              {
+                "type": "SignalementFormParagraph",
+                "label": "{{formStore.props.platformName}} va contacter votre propriétaire/bailleur par e-mail dès l'enregistrement de votre dossier afin de l’informer de votre signalement.",
+                "slug": "eligibilite_injonction_ok_1_email",
+                "conditional": {
+                  "show": "(formStore.data.coordonnees_bailleur_email !== '' && formStore.data.coordonnees_bailleur_email !== undefined)"
+                }
               },
               {
                 "type": "SignalementFormInfo",
@@ -2497,7 +2508,7 @@
               },
               {
                 "type": "SignalementFormParagraph",
-                "label": "Bon à savoir : <ul><li>A tout moment, vous pouvez sortir de la démarche accélérée et passer sur une procédure ordinaire sans déposer un nouveau signalement.</li><li>Votre propriétaire accèdera uniquement aux informations suivantes : votre identité, adresse, les désordres déclarés et les photos des désordres.</li><li><strong>Vous serez informé·e de sa réponse en temps réel</strong><ul><li>Si votre propriétaire s’engage à résoudre les problèmes nous ferons un point mensuel sur les avancées avec vous et votre propriétaire</li><li>Si votre propriétaire ne répond pas, votre signalement sera automatiquement transmis aux autorités compétentes</li></ul></li></ul>",
+                "label": "Bon à savoir : <ul><li>A tout moment, vous pouvez sortir de la démarche accélérée et passer sur une procédure ordinaire sans déposer un nouveau signalement.</li><li>Votre propriétaire accédera uniquement aux informations suivantes : votre identité, adresse, les désordres déclarés et les photos des désordres.</li><li><strong>Vous serez informé·e de sa réponse en temps réel</strong><ul><li>Si votre propriétaire s’engage à résoudre les problèmes nous ferons un point mensuel sur les avancées avec vous et votre propriétaire</li><li>Si votre propriétaire ne répond pas, votre signalement sera automatiquement transmis aux autorités compétentes</li></ul></li></ul>",
                 "slug": "eligibilite_injonction_ok_2"
               },
               {
