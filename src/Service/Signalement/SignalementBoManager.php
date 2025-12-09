@@ -41,6 +41,10 @@ class SignalementBoManager
         $signalement->setProfileDeclarant($profileDeclarant);
         $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+        $signalement->setNatureLogement($form->get('natureLogement')->getData());
+        if ('autre' === $signalement->getNatureLogement()) {
+            $typeCompositionLogement->setTypeLogementNatureAutrePrecision($form->get('natureLogementAutre')->getData());
+        }
         $typeCompositionLogement->setCompositionLogementNombrePersonnes($form->get('nbOccupantsLogement')->getData());
         $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData());
         $typeCompositionLogement->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData());
@@ -104,10 +108,6 @@ class SignalementBoManager
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
         $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
 
-        $signalement->setNatureLogement($form->get('natureLogement')->getData());
-        if ('autre' === $signalement->getNatureLogement()) {
-            $typeCompositionLogement->setTypeLogementNatureAutrePrecision($form->get('natureLogementAutre')->getData());
-        }
         if ('appartement' === $signalement->getNatureLogement()) {
             /** @var EtageType $appartementEtage */
             $appartementEtage = $form->get('appartementEtage')->getData();

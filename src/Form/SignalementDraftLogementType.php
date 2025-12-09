@@ -11,7 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -78,26 +77,6 @@ class SignalementDraftLogementType extends AbstractType
         $typeChauffage = ChauffageType::tryFrom($typeChauffageLabel);
 
         $builder
-            ->add('natureLogement', ChoiceType::class, [
-                'label' => 'Type de logement',
-                'choices' => [
-                    'Appartement' => 'appartement',
-                    'Maison seule' => 'maison',
-                    'Autre' => 'autre',
-                ],
-                'expanded' => true,
-                'multiple' => false,
-                'required' => false,
-                'placeholder' => false,
-                'data' => $signalement->getNatureLogement(),
-            ])
-            ->add('natureLogementAutre', TextType::class, [
-                'label' => 'Précisez le type de logement :',
-                'help' => 'Format attendu : 15 caractères maximum',
-                'required' => false,
-                'mapped' => false,
-                'data' => $signalement->getTypeCompositionLogement()->getTypeLogementNatureAutrePrecision(),
-            ])
             ->add('appartementEtage', EnumType::class, [
                 'label' => 'Localisation de l\'appartement',
                 'class' => EtageType::class,

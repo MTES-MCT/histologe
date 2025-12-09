@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -179,6 +180,33 @@ class SignalementDraftAddressType extends AbstractType
                         groups: ['bo_step_address'],
                     ),
                 ],
+            ])
+            ->add('natureLogement', ChoiceType::class, [
+                'label' => 'Type de logement <span class="text-required">*</span>',
+                'label_html' => true,
+                'choices' => [
+                    'Appartement' => 'appartement',
+                    'Maison seule' => 'maison',
+                    'Autre' => 'autre',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'constraints' => [
+                    new Assert\NotNull(
+                        message: 'Veuillez sélectionner un type de logement.',
+                        groups: ['bo_step_address'],
+                    ),
+                ],
+                'data' => $signalement->getNatureLogement(),
+            ])
+            ->add('natureLogementAutre', TextType::class, [
+                'label' => 'Précisez le type de logement :',
+                'help' => 'Format attendu : 15 caractères maximum',
+                'required' => false,
+                'mapped' => false,
+                'data' => $signalement->getTypeCompositionLogement()?->getTypeLogementNatureAutrePrecision(),
             ])
             ->add('logementVacant', ChoiceType::class, [
                 'label' => 'S\'agit-il d\'un logement vacant ?',
