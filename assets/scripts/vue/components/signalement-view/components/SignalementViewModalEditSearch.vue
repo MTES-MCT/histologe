@@ -27,12 +27,23 @@
                     <div class="fr-col-9">
                       <div class="fr-input-group fr-mr-2v">
                         <label class="fr-label" :for="`saved-search-name-${search.Id}`">Nom de la recherche :</label>
-                        <input type="text" class="fr-input" v-model="search.NewName" :placeholder="search.Text" :maxlength="50" :id="`saved-search-name-${search.Id}`"/>
+                        <input
+                          type="text"
+                          class="fr-input"
+                          v-model="search.NewName"
+                          :disabled="!search.IsEditing"
+                          :placeholder="search.Text"
+                          :maxlength="50"
+                          :id="`saved-search-name-${search.Id}`"
+                        />
                       </div>
                     </div>
                     <div class="fr-col-3 fr-text-right">
-                      <button class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-edit-line" @click="editSavedSearch(search.Id, search.NewName)">
-                        Modifier le nom
+                      <button
+                        class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-edit-line"
+                        @click="toggleEdit(search)"
+                      >
+                        {{ search.IsEditing ? 'Valider' : 'Modifier le nom' }}
                       </button>
                     </div>
                   </div>
@@ -67,6 +78,7 @@ import { defineComponent } from 'vue'
 import { store } from '../store'
 import { requests } from '../requests'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
+import SearchInterfaceSelectOption from '../interfaces/SearchInterfaceSelectOption';
 
 export default defineComponent({
   name: 'SignalementViewModalEditSearch',
@@ -109,10 +121,20 @@ export default defineComponent({
 
       for (const search of this.sharedState.savedSearches) {
           search.NewName = (search.Text as string)
+          search.IsEditing = false 
       }
     },
     getBadgeFilterLabel (key: string, value: any) {
       return buildBadge(key, value)
+    },
+    toggleEdit(search: SearchInterfaceSelectOption) {
+      if (!search.IsEditing) {
+        search.IsEditing = true
+      } else {
+        this.editSavedSearch(search.Id, search.NewName)
+
+        search.IsEditing = false
+      }
     },
     editSavedSearch(id: string, newName: string) {
       requests.editSearch(id, newName, this.sharedProps.csrfEditSearch, this.handleSearchEdited)
