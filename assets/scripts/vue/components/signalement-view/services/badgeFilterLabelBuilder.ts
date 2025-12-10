@@ -135,6 +135,21 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'isActiviteRecente') {
     return 'Dossiers avec activité récente'
   }
+  if (key === 'isImported') {
+    return 'Avec signalements importés'
+  }
+  if (key === 'isZonesDisplayed') {
+    return 'Avec zones affichées'
+  }
+  if (key === 'showMyAffectationOnly') {
+    return 'Uniquement mes affectations'
+  }
+  if (key === 'showMySignalementsOnly') {
+    return 'Uniquement mes dossiers'
+  }
+  if (key === 'showWithoutAffectationOnly') {
+    return 'Dossiers sans affectations'
+  }
     
   return buildStaticBadge(value)
 }

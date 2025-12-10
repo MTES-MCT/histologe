@@ -306,7 +306,10 @@ export function removeLocalStorage (context: any): any {
   }
 }
 
-export function sanitizeFilters(filters: Record<string, any>): Record<string, any> {
+export function sanitizeFilters(
+  filters: Record<string, any>,
+  keepIgnored: boolean = false
+): Record<string, any> {
   const ignored = [
     'isImported',
     'isZonesDisplayed',
@@ -316,7 +319,7 @@ export function sanitizeFilters(filters: Record<string, any>): Record<string, an
   ]
 
   const entries = Object.entries(filters).filter(([key, value]) => {
-    if (ignored.includes(key)) return false
+    if (!keepIgnored && ignored.includes(key)) return false
 
     if (value !== null && value !== undefined) {
       if (Array.isArray(value)) return value.length > 0
@@ -345,4 +348,5 @@ export function applySavedSearch(context: any, value: string) {
   context.sharedState.selectedSavedSearchId = undefined
   handleFilters(context, context.sharedProps.baseAjaxUrlSignalement)
   context.sharedState.selectedSavedSearchId = value
+  context.sharedState.filtersApplyKey++;
 }
