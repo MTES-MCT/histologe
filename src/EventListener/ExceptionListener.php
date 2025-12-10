@@ -7,6 +7,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -24,6 +25,7 @@ readonly class ExceptionListener
         MethodNotAllowedException::class,
         NotFoundHttpException::class,
         AccessDeniedHttpException::class,
+        SuspiciousOperationException::class,
     ];
 
     public function __construct(
