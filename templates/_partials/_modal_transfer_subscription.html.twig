@@ -19,11 +19,11 @@
                         Pour attribuer le dossier à tous les agents, cliquez sur "Tout sélectionner".</p>
                         {{ form_start(transferSubscriptionForm, {'attr': {'id': 'transfer-subscription-form', 'data-submit-type':'formData'}}) }}
                         <div class="fr-mb-2v">
-                            <button id="select-all-agents-transfer-subscription" data-select-all-in-target=".agent-selection-container"  class="fr-link">Tout sélectionner</button>
+                            <button id="select-all-agents-transfer-subscription" data-select-all-in-target=".agent-transfer-container"  class="fr-link">Tout sélectionner</button>
                         </div>
                         {{ form_errors(transferSubscriptionForm) }}
-                        <div class="fr-select-group agent-selection-container">
-                            {{ form_label(transferSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'transfer_subscription[agents]'}}) }}
+                        <div class="fr-select-group agent-transfer-container">
+                            {{ form_label(transferSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]'}}) }}
                             <div class="fr-grid-row">
                                 {% for agent in transferSubscriptionForm.agents %}
                                     <div class="fr-checkbox-group fr-col-6">

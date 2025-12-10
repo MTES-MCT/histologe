@@ -8,17 +8,24 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Form\AgentSelectionType;
 use App\Repository\AffectationRepository;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use App\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class AgentsSelectionTypeTest extends KernelTestCase
+class AgentsSelectionTypeTest extends WebTestCase
 {
+    private ?KernelBrowser $client = null;
     private FormFactoryInterface $formFactory;
 
     protected function setUp(): void
     {
-        self::bootKernel();
+        $this->client = static::createClient();
         $this->formFactory = static::getContainer()->get(FormFactoryInterface::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->client->loginUser($user);
     }
 
     public function testAgentLabelsFromFixtures(): void
@@ -28,7 +35,7 @@ class AgentsSelectionTypeTest extends KernelTestCase
         $affectationRepo = $em->getRepository(Affectation::class);
 
         $affectation = $affectationRepo->findOneBy(['statut' => 'NOUVEAU']);
-        $dto = (new AgentSelection())->setAffectation($affectation);
+        $dto = (new AgentSelection())->setSignalement($affectation->getSignalement());
         $form = $this->formFactory->create(AgentSelectionType::class, $dto, [
             'csrf_protection' => false,
         ]);
@@ -73,7 +80,7 @@ class AgentsSelectionTypeTest extends KernelTestCase
         $users = $affectation->getPartner()->getUsers();
         $excluded = $users->first(); // prend le premier pour le test
 
-        $dto = (new AgentSelection())->setAffectation($affectation);
+        $dto = (new AgentSelection())->setSignalement($affectation->getSignalement());
         $form = $this->formFactory->create(AgentSelectionType::class, $dto, [
             'csrf_protection' => false,
             'exclude_user' => $excluded,
@@ -91,7 +98,7 @@ class AgentsSelectionTypeTest extends KernelTestCase
         $users = $affectation->getPartner()->getUsers();
         $excluded = $users->first(); // prend le premier pour le test
 
-        $dto = (new AgentSelection())->setAffectation($affectation);
+        $dto = (new AgentSelection())->setSignalement($affectation->getSignalement());
         $form = $this->formFactory->create(AgentSelectionType::class, $dto);
 
         $config = $form->getConfig();
@@ -102,7 +109,10 @@ class AgentsSelectionTypeTest extends KernelTestCase
 
     public function testBlockPrefix(): void
     {
-        $formType = new AgentSelectionType();
+        $formType = new AgentSelectionType(
+            static::getContainer()->get(UserRepository::class),
+            static::getContainer()->get(Security::class)
+        );
         $this->assertSame('agents_selection', $formType->getBlockPrefix());
     }
 }

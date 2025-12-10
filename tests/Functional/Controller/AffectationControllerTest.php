@@ -8,6 +8,7 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\UserSignalementSubscription;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
@@ -220,15 +221,68 @@ class AffectationControllerTest extends WebTestCase
 
         $route = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
 
+        $tokenId = 'agents_selection';
         $this->client->request('POST', $route, [
             'agents_selection' => [
                 'agents' => [99999],
+                '_token' => $this->generateCsrfToken($this->client, $tokenId),
             ],
         ]);
 
         $this->assertResponseStatusCodeSame(400);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('errors', $response);
+    }
+
+    public function testAffectationAcceptFormConstraintValidation(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
+        $this->client->loginUser($user);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
+        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement]);
+
+        $route = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+
+        $tokenId = 'agents_selection';
+        $this->client->request('POST', $route, [
+            'agents_selection' => [
+                'agents' => [],
+                '_token' => $this->generateCsrfToken($this->client, $tokenId),
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('errors', $response);
+        $this->assertStringContainsString('Veuillez sélectionner au moins un agent.', $response['errors']['agents_selection[agents]']['errors'][0]);
+    }
+
+    public function testAffectationAcceptFormWhenAlreadySubscriptionForPartner(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_34_30]);
+        $this->client->loginUser($user);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
+        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement]);
+
+        $sub = new UserSignalementSubscription();
+        $sub->setSignalement($signalement);
+        $sub->setUser($user);
+        $sub->setCreatedBy($user);
+        $em = self::getContainer()->get('doctrine')->getManager();
+        $em->persist($sub);
+        $em->flush();
+
+        $route = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
+
+        $tokenId = 'agents_selection';
+        $this->client->request('POST', $route, [
+            'agents_selection' => [
+                'agents' => [],
+                '_token' => $this->generateCsrfToken($this->client, $tokenId),
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testCheckingNoDuplicatedMailSentWhenPartnerAffectationIsMultiple(): void

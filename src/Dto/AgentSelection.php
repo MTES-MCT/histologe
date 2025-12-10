@@ -2,27 +2,26 @@
 
 namespace App\Dto;
 
-use App\Entity\Affectation;
+use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class AgentSelection
 {
-    #[Assert\NotNull(message: 'Affectation manquante.')]
-    private ?Affectation $affectation = null;
+    #[Assert\NotNull(message: 'Signalement manquant.')]
+    private ?Signalement $signalement = null;
 
     /** @var array<User> */
-    #[Assert\Count(min: 1, minMessage: 'Veuillez sélectionner au moins un agent.')]
     private array $agents = [];
 
-    public function getAffectation(): ?Affectation
+    public function getSignalement(): ?Signalement
     {
-        return $this->affectation;
+        return $this->signalement;
     }
 
-    public function setAffectation(Affectation $affectation): self
+    public function setSignalement(Signalement $signalement): self
     {
-        $this->affectation = $affectation;
+        $this->signalement = $signalement;
 
         return $this;
     }

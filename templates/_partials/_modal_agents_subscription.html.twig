@@ -1,0 +1,48 @@
+<dialog aria-labelledby="modal-agents-subscription-title" id="agents-subscription-modal" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-10">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="agents-subscription-modal">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content fr-text--left">
+                        <h1 class="fr-modal__title" id="modal-agents-subscription-title">
+                            Attribuer le dossier #{{ signalement.reference }}
+                        </h1>
+                        {{ form_start(agentsSubscriptionForm, {'attr': {'id': 'agents-subscription-form', 'data-submit-type':'formData'}}) }}
+                        <div class="fr-mb-2v">
+                            <button id="select-all-agents-subscription" data-select-all-in-target=".agent-subscription-container"  class="fr-link">Tout sélectionner</button>
+                        </div>
+                        {{ form_errors(agentsSubscriptionForm) }}
+                        <div class="fr-select-group agent-subscription-container">
+                            {{ form_label(agentsSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]'}}) }}
+                            <div class="fr-grid-row">
+                                {% for agent in agentsSubscriptionForm.agents %}
+                                    <div class="fr-checkbox-group fr-col-6">
+                                        {{ form_row(agent) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {{ form_end(agentsSubscriptionForm) }}
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-icon-check-line" form="agents-subscription-form" type="submit">
+                                    Valider
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="agents-subscription-modal">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

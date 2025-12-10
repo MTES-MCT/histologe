@@ -166,7 +166,7 @@ class AffectationController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         if (!$user->isAloneInPartner($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()))) {
-            $agentsSelection = (new AgentSelection())->setAffectation($affectation);
+            $agentsSelection = (new AgentSelection())->setSignalement($signalement);
             $agentsSelectionFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $form = $this->createForm(
                 AgentSelectionType::class,

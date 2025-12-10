@@ -2,11 +2,11 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\AcceptSignalement;
+use App\Dto\AgentSelection;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Form\AcceptSignalementType;
+use App\Form\AgentSelectionType;
 use App\Form\SearchDraftType;
 use App\Form\SignalementDraftAddressType;
 use App\Form\SignalementDraftCoordonneesType;
@@ -438,8 +438,12 @@ class SignalementCreateController extends AbstractController
 
         $acceptSignalementForm = null;
         if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $acceptSignalement = (new AcceptSignalement())->setSignalement($signalement);
-            $acceptSignalementForm = $this->createForm(AcceptSignalementType::class, $acceptSignalement, ['csrf_protection' => false]);
+            $agentSelection = (new AgentSelection())->setSignalement($signalement);
+            $acceptSignalementForm = $this->createForm(AgentSelectionType::class, $agentSelection, [
+                'csrf_protection' => false,
+                'only_rt' => true,
+                'label' => 'Sélectionnez le(s) responsable(s) de territoire en charge du dossier',
+            ]);
         }
 
         $token = $request->request->get('_token');
@@ -449,7 +453,7 @@ class SignalementCreateController extends AbstractController
         if (Request::METHOD_POST === $request->getMethod()) {
             $hasConsentError = $this->hasConsentError($request);
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && $acceptSignalementForm) {
-                $acceptData = $request->request->all('accept_signalement');
+                $acceptData = $request->request->all('agents_selection');
                 $acceptSignalementForm->submit($acceptData);
                 if (!$acceptSignalementForm->isValid()) {
                     $hasRtSelectionError = true;
@@ -469,7 +473,7 @@ class SignalementCreateController extends AbstractController
                 $subscribeTerritoryAdmins = true;
                 if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
                     $subscribeTerritoryAdmins = false;
-                    foreach ($acceptSignalement->getAgents() as $agent) { // @phpstan-ignore-line
+                    foreach ($agentSelection->getAgents() as $agent) { // @phpstan-ignore-line
                         $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
                     }
                 }
@@ -490,7 +494,7 @@ class SignalementCreateController extends AbstractController
                         $signalement->addAffectation($affectation);
                     }
                 }
-                foreach ($acceptSignalement->getAgents() as $agent) { // @phpstan-ignore-line
+                foreach ($agentSelection->getAgents() as $agent) { // @phpstan-ignore-line
                     $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
                 }
                 $signalementManager->activateSignalementAndCreateFirstSuivi(
@@ -501,7 +505,7 @@ class SignalementCreateController extends AbstractController
                 );
                 $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis.');
             } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
-                foreach ($acceptSignalement->getAgents() as $agent) { // @phpstan-ignore-line
+                foreach ($agentSelection->getAgents() as $agent) { // @phpstan-ignore-line
                     $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
                 }
                 $signalementManager->activateSignalementAndCreateFirstSuivi(
