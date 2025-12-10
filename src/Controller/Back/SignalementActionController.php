@@ -188,7 +188,7 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
-    #[IsGranted('CREATE_SUIVI', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::CREATE_SUIVI, subject: 'signalement')]
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,
@@ -364,7 +364,7 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/switch', name: 'back_signalement_switch_value', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function switchValue(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): RedirectResponse|JsonResponse
     {
         if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), (string) $request->get('_token'))) {
