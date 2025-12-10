@@ -7,6 +7,8 @@ use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\OccupantLink;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Partner;
@@ -113,6 +115,13 @@ class SignalementImportLoader
                     $progressBar->advance();
                 }
                 $signalement = $this->signalementManager->createOrUpdateFromArrayForImport($territory, $dataMapped);
+                if (!$signalement->getIsNotOccupant()) {
+                    $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
+                } elseif (OccupantLink::PRO->name == mb_strtoupper($signalement->getLienDeclarantOccupant())) {
+                    $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
+                } else {
+                    $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
+                }
                 $this->signalementManager->persist($signalement);
 
                 $signalement = $this->loadTags($signalement, $territory, $dataMapped);
