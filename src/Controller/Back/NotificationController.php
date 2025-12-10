@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Form\SearchNotificationType;
 use App\Repository\NotificationRepository;
 use App\Service\ListFilters\SearchNotification;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -92,7 +91,6 @@ class NotificationController extends AbstractController
     #[Route('/notifications/{id}/supprimer', name: 'back_notifications_delete_notification')]
     public function deleteNotification(
         NotificationRepository $notificationRepository,
-        EntityManagerInterface $em,
         Request $request,
     ): Response {
         $notification = $notificationRepository->find($request->get('id'));
@@ -102,8 +100,7 @@ class NotificationController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), (string) $request->get('_token'))) {
-            $em->remove($notification);
-            $em->flush();
+            $notificationRepository->deleteUserNotifications($user, [$notification->getId()]);
             $this->addFlash('success', 'Notification supprimée avec succès');
         } else {
             $this->addFlash('error', 'Erreur lors de la suppression de la notification.');

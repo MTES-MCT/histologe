@@ -7,6 +7,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\UserStatus;
+use App\Entity\Notification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -592,15 +593,34 @@ class SuiviRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
+    private function addFilterNotificationNotSeen(
+        QueryBuilder $qb,
+        User $user,
+    ): QueryBuilder {
+        $qb->innerJoin(
+            Notification::class,
+            'n',
+            'WITH',
+            'n.suivi = s AND n.user = :currentUser'
+        )
+            ->andWhere('n.seenAt IS NULL')
+            ->setParameter('currentUser', $user)
+            ->andWhere('n.deleted = :deleted')
+            ->setParameter('deleted', false);
+
+        $qb->andWhere('signalement.statut = :statut')
+            ->setParameter('statut', SignalementStatus::CLOSED);
+
+        return $qb;
+    }
+
     /**
      * @return array<int>
      */
     public function getSignalementsIdWithSuivisPostCloture(User $user, ?TabQueryParameters $params): array
     {
         $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, true);
-
-        $qb->andWhere('signalement.statut = :statut')
-            ->setParameter('statut', SignalementStatus::CLOSED);
+        $qb = $this->addFilterNotificationNotSeen($qb, $user);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
         return $qb->getQuery()->getSingleColumnResult();
@@ -612,9 +632,7 @@ class SuiviRepository extends ServiceEntityRepository
     public function findSuivisPostCloture(User $user, ?TabQueryParameters $params): array
     {
         $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, false);
-
-        $qb->andWhere('signalement.statut = :statut')
-            ->setParameter('statut', SignalementStatus::CLOSED);
+        $qb = $this->addFilterNotificationNotSeen($qb, $user);
         $qb = $this->addSelectAndOrder($qb, $params);
 
         return $qb->getQuery()->getResult();
@@ -623,8 +641,7 @@ class SuiviRepository extends ServiceEntityRepository
     public function countSuivisPostCloture(User $user, ?TabQueryParameters $params): int
     {
         $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, true);
-        $qb->andWhere('signalement.statut = :statut')
-            ->setParameter('statut', SignalementStatus::CLOSED);
+        $qb = $this->addFilterNotificationNotSeen($qb, $user);
         $qb = $this->addSelectAndOrder($qb, $params, true);
 
         return (int) $qb->getQuery()->getSingleScalarResult();

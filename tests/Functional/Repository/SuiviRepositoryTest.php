@@ -2,6 +2,8 @@
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Enum\NotificationType;
+use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -103,21 +105,21 @@ class SuiviRepositoryTest extends KernelTestCase
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
         $tabQueryParameter = new TabQueryParameters(
-            mesDossiersMessagesUsagers: '1',
+            mesDossiersMessagesUsagers: '0',
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );
 
         $result = $this->suiviRepository->countSuivisUsagersWithoutAskFeedbackBefore($user, $tabQueryParameter);
         $this->assertIsInt($result);
-        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertEquals(1, $result);
     }
 
     public function testFindSuivisUsagersWithoutAskFeedbackBefore(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
         $tabQueryParameter = new TabQueryParameters(
-            mesDossiersMessagesUsagers: '1',
+            mesDossiersMessagesUsagers: '0',
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );
@@ -125,7 +127,9 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->assertIsArray($result);
 
         if (count($result) > 0) {
-            $this->assertInstanceOf(Suivi::class, $result[0]);
+            $this->assertIsArray($result[0]);
+            $this->assertArrayHasKey('reference', $result[0]);
+            $this->assertEquals('2022-4', $result[0]['reference']);
         }
     }
 
@@ -133,20 +137,20 @@ class SuiviRepositoryTest extends KernelTestCase
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
         $tabQueryParameter = new TabQueryParameters(
-            mesDossiersMessagesUsagers: '1',
+            mesDossiersMessagesUsagers: '0',
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );
         $result = $this->suiviRepository->countSuivisPostCloture($user, $tabQueryParameter);
         $this->assertIsInt($result);
-        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertEquals(1, $result);
     }
 
     public function testFindSuivisPostCloture(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
         $tabQueryParameter = new TabQueryParameters(
-            mesDossiersMessagesUsagers: '1',
+            mesDossiersMessagesUsagers: '0',
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );
@@ -154,8 +158,84 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->assertIsArray($result);
 
         if (count($result) > 0) {
-            $this->assertInstanceOf(Suivi::class, $result[0]);
+            $this->assertIsArray($result[0]);
+            $this->assertArrayHasKey('reference', $result[0]);
+            $this->assertEquals('2022-2', $result[0]['reference']);
         }
+    }
+
+    public function testCountSuivisPostClotureSeen(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        /** @var Signalement $signalementWithSuiviPostCloture */
+        $signalementWithSuiviPostCloture = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-2']);
+        /** @var Notification $notification */
+        $notification = $this->entityManager->getRepository(Notification::class)->findOneBy([
+            'signalement' => $signalementWithSuiviPostCloture,
+            'user' => $user,
+            'type' => NotificationType::NOUVEAU_SUIVI,
+        ]);
+        $notification->setSeenAt(new \DateTimeImmutable());
+        $this->entityManager->persist($notification);
+        $this->entityManager->flush();
+
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '0',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->countSuivisPostCloture($user, $tabQueryParameter);
+        $this->assertIsInt($result);
+        $this->assertEquals(0, $result);
+    }
+
+    public function testCountSuivisPostClotureDeleted(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        /** @var Signalement $signalementWithSuiviPostCloture */
+        $signalementWithSuiviPostCloture = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-2']);
+        /** @var Notification $notification */
+        $notification = $this->entityManager->getRepository(Notification::class)->findOneBy([
+            'signalement' => $signalementWithSuiviPostCloture,
+            'user' => $user,
+            'type' => NotificationType::NOUVEAU_SUIVI,
+        ]);
+        $notification->setDeleted(true);
+        $this->entityManager->persist($notification);
+        $this->entityManager->flush();
+
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '0',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->countSuivisPostCloture($user, $tabQueryParameter);
+        $this->assertIsInt($result);
+        $this->assertEquals(0, $result);
+    }
+
+    public function testCountSuivisPostClotureNoNotification(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        /** @var Signalement $signalementWithSuiviPostCloture */
+        $signalementWithSuiviPostCloture = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-2']);
+        /** @var Notification $notification */
+        $notification = $this->entityManager->getRepository(Notification::class)->findOneBy([
+            'signalement' => $signalementWithSuiviPostCloture,
+            'user' => $user,
+            'type' => NotificationType::NOUVEAU_SUIVI,
+        ]);
+        $this->entityManager->remove($notification);
+        $this->entityManager->flush();
+
+        $tabQueryParameter = new TabQueryParameters(
+            mesDossiersMessagesUsagers: '0',
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+        $result = $this->suiviRepository->countSuivisPostCloture($user, $tabQueryParameter);
+        $this->assertIsInt($result);
+        $this->assertEquals(0, $result);
     }
 
     public function testCountSuivisUsagerOrPoursuiteWithAskFeedbackBefore(): void
