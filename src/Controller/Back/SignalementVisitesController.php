@@ -14,6 +14,8 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Manager\InterventionManager;
 use App\Repository\InterventionRepository;
+use App\Security\Voter\InterventionVoter;
+use App\Security\Voter\SignalementVoter;
 use App\Service\Files\FilenameGenerator;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
@@ -78,7 +80,7 @@ class SignalementVisitesController extends AbstractController
         ValidatorInterface $validator,
         TimezoneProvider $timezoneProvider,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_ADD_VISITE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_ADD_VISITE, $signalement);
 
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
@@ -154,7 +156,7 @@ class SignalementVisitesController extends AbstractController
 
             return $this->redirectToRoute('back_signalements_index');
         }
-        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
 
         if ($intervention->hasScheduledDatePassed()) {
             $this->addFlash('error', 'Cette visite est déja passée et ne peut pas être annulée, merci de la noter comme non-effectuée.');
@@ -209,7 +211,7 @@ class SignalementVisitesController extends AbstractController
 
             return $this->redirectToRoute('back_signalements_index');
         }
-        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
 
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
@@ -287,7 +289,7 @@ class SignalementVisitesController extends AbstractController
 
             return $this->redirectToRoute('back_signalements_index');
         }
-        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
 
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
@@ -344,7 +346,7 @@ class SignalementVisitesController extends AbstractController
 
             return $this->redirectToRoute('back_signalements_index');
         }
-        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
 
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
@@ -395,7 +397,7 @@ class SignalementVisitesController extends AbstractController
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
     ): Response {
-        $this->denyAccessUnlessGranted('INTERVENTION_EDIT_VISITE', $intervention);
+        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
         if (!$this->isCsrfTokenValid('delete_rapport', (string) $request->get('_token')) || !$intervention->getRapportDeVisite()) {
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]);
         }

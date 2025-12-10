@@ -15,8 +15,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class SuiviVoter extends Voter
 {
-    public const string DELETE_SUIVI = 'DELETE_SUIVI';
-    public const string EDIT_SUIVI = 'EDIT_SUIVI';
+    public const string SUIVI_DELETE = 'SUIVI_DELETE';
+    public const string SUIVI_EDIT = 'SUIVI_EDIT';
 
     public function __construct(
         #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
@@ -28,7 +28,7 @@ class SuiviVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE_SUIVI, self::EDIT_SUIVI]) && ($subject instanceof Suivi);
+        return \in_array($attribute, [self::SUIVI_DELETE, self::SUIVI_EDIT]) && ($subject instanceof Suivi);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -42,8 +42,8 @@ class SuiviVoter extends Voter
         }
 
         return match ($attribute) {
-            self::DELETE_SUIVI => $this->canDelete($subject, $user),
-            self::EDIT_SUIVI => $this->canEdit($subject, $user),
+            self::SUIVI_DELETE => $this->canDelete($subject, $user),
+            self::SUIVI_EDIT => $this->canEdit($subject, $user),
             default => false,
         };
     }

@@ -4,12 +4,12 @@
      aria-labelledby="tabpanel-dossiers-a-verifier"
      tabindex="0">
     {% include 'back/dashboard/tabs/dossiers_a_verifier/_header_dossier_a_verifier.html.twig' %}
-    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-sans-activite-partenaire') %}
+    {% if is_granted('TAB_PANEL_VIEW', 'dossiers-sans-activite-partenaire') %}
         <div id="dossiers-sans-activite-partenaire" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-sans-activite-partenaire' }) }}">
             Chargement...
         </div>
     {% endif %}
-    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-adresse-email-a-verifier') %}
+    {% if is_granted('TAB_PANEL_VIEW', 'dossiers-adresse-email-a-verifier') %}
         <div id="dossiers-adresse-email-a-verifier" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-adresse-email-a-verifier' }) }}">
             Chargement...
         </div>

@@ -9,6 +9,7 @@ use App\Form\EditTagType;
 use App\Form\SearchTagType;
 use App\Manager\TagManager;
 use App\Repository\TagRepository;
+use App\Security\Voter\TagVoter;
 use App\Service\FormHelper;
 use App\Service\ListFilters\SearchTag;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
@@ -59,7 +60,7 @@ class TagController extends AbstractController
         EntityManagerInterface $entityManager,
         TagAwareCacheInterface $cache,
     ): Response {
-        $this->denyAccessUnlessGranted('TAG_CREATE');
+        $this->denyAccessUnlessGranted(TagVoter::TAG_CREATE);
         $tag = new Tag();
         if (!$this->isGranted('ROLE_ADMIN')) {
             /** @var User $user */
@@ -94,7 +95,7 @@ class TagController extends AbstractController
         EntityManagerInterface $entityManager,
         TagAwareCacheInterface $cache,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('TAG_EDIT', $tag);
+        $this->denyAccessUnlessGranted(TagVoter::TAG_EDIT, $tag);
         $form = $this->createForm(EditTagType::class, $tag);
 
         $form->submit($request->getPayload()->all());
@@ -124,7 +125,7 @@ class TagController extends AbstractController
         $tagId = $request->request->get('tag_id');
         /** @var Tag $tag */
         $tag = $tagManager->find($tagId);
-        $this->denyAccessUnlessGranted('TAG_DELETE', $tag);
+        $this->denyAccessUnlessGranted(TagVoter::TAG_DELETE, $tag);
 
         if (
             $tag

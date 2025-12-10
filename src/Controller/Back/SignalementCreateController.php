@@ -21,6 +21,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
+use App\Security\Voter\SignalementVoter;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
@@ -82,7 +83,7 @@ class SignalementCreateController extends AbstractController
         /** @var Signalement $signalement */
         $signalement = $signalementManager->find($draftId);
 
-        $this->denyAccessUnlessGranted('SIGN_DELETE_DRAFT', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_DELETE_DRAFT, $signalement);
 
         if (
             $signalement
