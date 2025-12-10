@@ -67,7 +67,7 @@
         <div class="fr-col-6 bloc-suivi-content-row fr-pl-3v">
         {{ transform_suivi_description(suivi)|raw}}
         </div>
-        {% set nbCol = is_granted('DELETE_SUIVI', suivi) or is_granted('EDIT_SUIVI', suivi) ? '2' : '3' %}
+        {% set nbCol = is_granted('SUIVI_DELETE', suivi) or is_granted('SUIVI_EDIT', suivi) ? '2' : '3' %}
         <div class="fr-col-{{ nbCol }}">
             {% if suivi.isPublic %}
                 <span class="fr-badge fr-badge--no-icon" title="Visible par l'usager">Visible par l'usager</span>
@@ -79,9 +79,9 @@
                 <span class="fr-badge fr-badge--{{ suivi.isSeenByUsager ? 'success fr-background--notif-info' : 'error fr-background--notif-error' }} fr-mt-1v">{{ suivi.isSeenByUsager ? 'Lu' : 'Non lu' }}</span>
             {% endif %}
         </div>
-        {% if is_granted('DELETE_SUIVI', suivi) or is_granted('EDIT_SUIVI', suivi) %}
+        {% if is_granted('SUIVI_DELETE', suivi) or is_granted('SUIVI_EDIT', suivi) %}
             <div class="fr-col-1 fr-text--right">
-                {% if is_granted('EDIT_SUIVI', suivi) %}
+                {% if is_granted('SUIVI_EDIT', suivi) %}
                     <button title="Modifier le suivi" 
                         class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line btn-edit-suivi"
                         data-fr-opened="false"
@@ -90,7 +90,7 @@
                         >
                     </button>
                 {% endif %}
-                {% if is_granted('DELETE_SUIVI', suivi) %}
+                {% if is_granted('SUIVI_DELETE', suivi) %}
                     <button title="Supprimer le suivi"
                         data-delete="{{ path('back_signalement_delete_suivi',{uuid:signalement.uuid,suivi:suivi.id}) }}"
                         data-token="{{ csrf_token('signalement_delete_suivi_'~signalement.id) }}"

@@ -25,7 +25,7 @@ class TabPanelVoterTest extends TestCase
         $voter = new TabPanelVoter();
         $subject = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION;
 
-        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::VIEW_TAB_PANEL]);
+        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::TAB_PANEL_VIEW]);
 
         $this->assertSame(-1, $voteResult, 'Voter should deny access when the user lacks USER_PERMISSION_AFFECTATION.');
     }
@@ -40,7 +40,7 @@ class TabPanelVoterTest extends TestCase
         $voter = new TabPanelVoter();
         $subject = TabBodyType::TAB_DATA_TYPE_DOSSIERS_NON_AFFECTATION;
 
-        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::VIEW_TAB_PANEL]);
+        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::TAB_PANEL_VIEW]);
 
         $this->assertSame(-1, $voteResult, 'Voter should deny access for unauthenticated users.');
     }
@@ -57,7 +57,7 @@ class TabPanelVoterTest extends TestCase
         $voter = new TabPanelVoter();
         $subject = 'unknown-tab-type';
 
-        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::VIEW_TAB_PANEL]);
+        $voteResult = $voter->vote($token, $subject, [TabPanelVoter::TAB_PANEL_VIEW]);
 
         $this->assertSame(-1, $voteResult, 'Voter should deny access for an unknown tab type.');
     }

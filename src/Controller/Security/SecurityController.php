@@ -7,6 +7,8 @@ use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementBailleur;
+use App\Security\Voter\SignalementFoVoter;
+use App\Security\Voter\SignalementVoter;
 use App\Service\Files\ImageVariantProvider;
 use Nelmio\ApiDocBundle\Attribute\Security;
 use OpenApi\Attributes as OA;
@@ -173,7 +175,7 @@ class SecurityController extends AbstractController
         $request = Request::createFromGlobals();
         if (
             !$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t'))
-            && !$this->isGranted('SIGN_VIEW', $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_VIEW, $signalement)
         ) {
             throw $this->createAccessDeniedException();
         }
@@ -203,7 +205,7 @@ class SecurityController extends AbstractController
         SignalementRepository $signalementRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
         try {
             $file = $imageVariantProvider->getFileVariant($filename);

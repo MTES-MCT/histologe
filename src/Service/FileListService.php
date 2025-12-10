@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\FileRepository;
 use App\Repository\SignalementQualificationRepository;
+use App\Security\Voter\SignalementVoter;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -38,7 +39,7 @@ class FileListService
                 'qualification' => Qualification::NON_DECENCE_ENERGETIQUE,
             ]);
             $choices = ['Documents du dossier' => $signalementFiles->toArray()];
-            if ($this->security->isGranted('SIGN_SEE_NDE', $signalement) && $this->qualificationStatusService->canSeenNDEEditZone($signalementQualificationNDE)) {
+            if ($this->security->isGranted(SignalementVoter::SIGN_SEE_NDE, $signalement) && $this->qualificationStatusService->canSeenNDEEditZone($signalementQualificationNDE)) {
                 $standaloneFiles = $this->fileRepository->findBy(['isStandalone' => true], ['title' => 'ASC']);
                 $choices['Documents types'] = $standaloneFiles;
             }

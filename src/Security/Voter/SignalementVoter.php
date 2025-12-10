@@ -19,21 +19,21 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class SignalementVoter extends Voter
 {
-    public const string VALIDATE = 'SIGN_VALIDATE';
-    public const string CLOSE = 'SIGN_CLOSE';
-    public const string REOPEN = 'SIGN_REOPEN';
-    public const string DELETE = 'SIGN_DELETE';
-    public const string EDIT_ACTIVE = 'SIGN_EDIT_ACTIVE';
-    public const string EDIT_CLOSED = 'SIGN_EDIT_CLOSED';
-    public const string EDIT_INJONCTION = 'SIGN_EDIT_INJONCTION';
-    public const string EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
-    public const string EDIT_NEED_VALIDATION = 'SIGN_EDIT_NEED_VALIDATION';
-    public const string DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
-    public const string VIEW = 'SIGN_VIEW';
-    public const string SUBSCRIBE = 'SIGN_SUBSCRIBE';
-    public const string ADD_VISITE = 'SIGN_ADD_VISITE';
-    public const string EDIT_NDE = 'SIGN_EDIT_NDE';
-    public const string SEE_NDE = 'SIGN_SEE_NDE';
+    public const string SIGN_VALIDATE = 'SIGN_VALIDATE';
+    public const string SIGN_CLOSE = 'SIGN_CLOSE';
+    public const string SIGN_REOPEN = 'SIGN_REOPEN';
+    public const string SIGN_DELETE = 'SIGN_DELETE';
+    public const string SIGN_EDIT_ACTIVE = 'SIGN_EDIT_ACTIVE';
+    public const string SIGN_EDIT_CLOSED = 'SIGN_EDIT_CLOSED';
+    public const string SIGN_EDIT_INJONCTION = 'SIGN_EDIT_INJONCTION';
+    public const string SIGN_EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
+    public const string SIGN_EDIT_NEED_VALIDATION = 'SIGN_EDIT_NEED_VALIDATION';
+    public const string SIGN_DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
+    public const string SIGN_VIEW = 'SIGN_VIEW';
+    public const string SIGN_SUBSCRIBE = 'SIGN_SUBSCRIBE';
+    public const string SIGN_ADD_VISITE = 'SIGN_ADD_VISITE';
+    public const string SIGN_EDIT_NDE = 'SIGN_EDIT_NDE';
+    public const string SIGN_SEE_NDE = 'SIGN_SEE_NDE';
     public const string CREATE_SUIVI = 'CREATE_SUIVI';
     public const string AFFECTATION_TOGGLE = 'AFFECTATION_TOGGLE';
     public const string AFFECTATION_SEE = 'AFFECTATION_SEE';
@@ -47,21 +47,21 @@ class SignalementVoter extends Voter
     {
         return \in_array($attribute,
             [
-                self::EDIT_ACTIVE,
-                self::EDIT_CLOSED,
-                self::EDIT_INJONCTION,
-                self::EDIT_DRAFT,
-                self::EDIT_NEED_VALIDATION,
-                self::VIEW,
-                self::SUBSCRIBE,
-                self::DELETE,
-                self::VALIDATE,
-                self::CLOSE,
-                self::REOPEN,
-                self::ADD_VISITE,
-                self::EDIT_NDE,
-                self::SEE_NDE,
-                self::DELETE_DRAFT,
+                self::SIGN_EDIT_ACTIVE,
+                self::SIGN_EDIT_CLOSED,
+                self::SIGN_EDIT_INJONCTION,
+                self::SIGN_EDIT_DRAFT,
+                self::SIGN_EDIT_NEED_VALIDATION,
+                self::SIGN_VIEW,
+                self::SIGN_SUBSCRIBE,
+                self::SIGN_DELETE,
+                self::SIGN_VALIDATE,
+                self::SIGN_CLOSE,
+                self::SIGN_REOPEN,
+                self::SIGN_ADD_VISITE,
+                self::SIGN_EDIT_NDE,
+                self::SIGN_SEE_NDE,
+                self::SIGN_DELETE_DRAFT,
                 self::CREATE_SUIVI,
                 self::AFFECTATION_TOGGLE,
                 self::AFFECTATION_SEE,
@@ -80,12 +80,12 @@ class SignalementVoter extends Voter
             return false;
         }
 
-        if (in_array($attribute, [self::ADD_VISITE])) {
+        if (in_array($attribute, [self::SIGN_ADD_VISITE])) {
             return $this->canAddVisite($subject, $user);
         }
 
-        if (in_array($attribute, [self::EDIT_NDE, self::SEE_NDE])) {
-            if (self::EDIT_NDE === $attribute) {
+        if (in_array($attribute, [self::SIGN_EDIT_NDE, self::SIGN_SEE_NDE])) {
+            if (self::SIGN_EDIT_NDE === $attribute) {
                 return $this->canEditNDE($subject, $user);
             }
 
@@ -93,17 +93,17 @@ class SignalementVoter extends Voter
         }
 
         return match ($attribute) {
-            self::VALIDATE => $this->canValidate($subject, $user),
-            self::CLOSE => $this->canClose($subject, $user),
-            self::REOPEN => $this->canReopen($subject, $user),
-            self::DELETE => $this->canDelete($subject, $user),
-            self::EDIT_ACTIVE => $this->canEditActive($subject, $user),
-            self::EDIT_CLOSED => $this->canEditClosed($subject, $user),
-            self::EDIT_INJONCTION => $this->canEditInjonction($subject, $user),
-            self::EDIT_NEED_VALIDATION => $this->canEditNeedValidation($subject, $user),
-            self::VIEW => $this->canView($subject, $user),
-            self::SUBSCRIBE => $this->canSubscribe($subject, $user),
-            self::EDIT_DRAFT, self::DELETE_DRAFT => $this->canEditDraft($subject, $user),
+            self::SIGN_VALIDATE => $this->canValidate($subject, $user),
+            self::SIGN_CLOSE => $this->canClose($subject, $user),
+            self::SIGN_REOPEN => $this->canReopen($subject, $user),
+            self::SIGN_DELETE => $this->canDelete($subject, $user),
+            self::SIGN_EDIT_ACTIVE => $this->canEditActive($subject, $user),
+            self::SIGN_EDIT_CLOSED => $this->canEditClosed($subject, $user),
+            self::SIGN_EDIT_INJONCTION => $this->canEditInjonction($subject, $user),
+            self::SIGN_EDIT_NEED_VALIDATION => $this->canEditNeedValidation($subject, $user),
+            self::SIGN_VIEW => $this->canView($subject, $user),
+            self::SIGN_SUBSCRIBE => $this->canSubscribe($subject, $user),
+            self::SIGN_EDIT_DRAFT, self::SIGN_DELETE_DRAFT => $this->canEditDraft($subject, $user),
             self::CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
             self::AFFECTATION_TOGGLE => $this->canToggleAffectation($subject, $user),
             self::AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),

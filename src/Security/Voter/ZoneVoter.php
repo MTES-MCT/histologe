@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class ZoneVoter extends Voter
 {
-    public const string MANAGE = 'ZONE_MANAGE';
+    public const string ZONE_MANAGE = 'ZONE_MANAGE';
 
     public function __construct(private readonly Security $security)
     {
@@ -22,7 +22,7 @@ class ZoneVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::MANAGE]) && ($subject instanceof Zone);
+        return \in_array($attribute, [self::ZONE_MANAGE]) && ($subject instanceof Zone);
     }
 
     /**
@@ -39,7 +39,7 @@ class ZoneVoter extends Voter
         }
 
         return match ($attribute) {
-            self::MANAGE => $this->canManage($subject, $user),
+            self::ZONE_MANAGE => $this->canManage($subject, $user),
             default => false,
         };
     }

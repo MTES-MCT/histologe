@@ -14,8 +14,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class TerritoryVoter extends Voter
 {
-    public const string GET_DOCUMENT = 'GET_DOCUMENT';
-    public const string GET_BAILLEURS_LIST = 'GET_BAILLEURS_LIST';
+    public const string TERRITORY_GET_DOCUMENT = 'TERRITORY_GET_DOCUMENT';
+    public const string TERRITORY_GET_BAILLEURS_LIST = 'TERRITORY_GET_BAILLEURS_LIST';
 
     public function __construct(private readonly Security $security)
     {
@@ -23,7 +23,7 @@ class TerritoryVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::GET_DOCUMENT, self::GET_BAILLEURS_LIST]) && ($subject instanceof Territory);
+        return \in_array($attribute, [self::TERRITORY_GET_DOCUMENT, self::TERRITORY_GET_BAILLEURS_LIST]) && ($subject instanceof Territory);
     }
 
     /**
@@ -40,8 +40,8 @@ class TerritoryVoter extends Voter
         }
 
         return match ($attribute) {
-            self::GET_DOCUMENT => $this->isInTerritory($subject, $user),
-            self::GET_BAILLEURS_LIST => $this->canGetBailleursList($subject, $user),
+            self::TERRITORY_GET_DOCUMENT => $this->isInTerritory($subject, $user),
+            self::TERRITORY_GET_BAILLEURS_LIST => $this->canGetBailleursList($subject, $user),
             default => false,
         };
     }

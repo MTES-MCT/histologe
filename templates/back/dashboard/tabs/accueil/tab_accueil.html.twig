@@ -3,7 +3,7 @@
          role="tabpanel"
          aria-labelledby=tabpanel-dernieres-actions"
          tabindex="0">
-        {% if is_granted('VIEW_TAB_PANEL', 'derniers-dossiers') %}
+        {% if is_granted('TAB_PANEL_VIEW', 'derniers-dossiers') %}
             <div id="derniers-dossiers" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'derniers-dossiers' }) }}">
                 Chargement...
             </div>

@@ -13,13 +13,13 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class TagVoter extends Voter
 {
-    public const string CREATE = 'TAG_CREATE';
-    public const string EDIT = 'TAG_EDIT';
-    public const string DELETE = 'TAG_DELETE';
+    public const string TAG_CREATE = 'TAG_CREATE';
+    public const string TAG_EDIT = 'TAG_EDIT';
+    public const string TAG_DELETE = 'TAG_DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::CREATE, self::EDIT, self::DELETE])
+        return \in_array($attribute, [self::TAG_CREATE, self::TAG_EDIT, self::TAG_DELETE])
             && ($subject instanceof Tag || !$subject);
     }
 
@@ -40,9 +40,9 @@ class TagVoter extends Voter
         }
 
         return match ($attribute) {
-            self::CREATE => $this->canCreate($user),
-            self::EDIT => $this->canEdit($subject, $user),
-            self::DELETE => $this->canDelete($subject, $user),
+            self::TAG_CREATE => $this->canCreate($user),
+            self::TAG_EDIT => $this->canEdit($subject, $user),
+            self::TAG_DELETE => $this->canDelete($subject, $user),
             default => false,
         };
     }
