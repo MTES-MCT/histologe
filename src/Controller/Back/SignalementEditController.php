@@ -15,6 +15,7 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\SignalementManager;
+use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
 use App\Service\Mailer\NotificationMail;
@@ -36,7 +37,7 @@ class SignalementEditController extends AbstractController
     private const string ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
 
     #[Route('/{uuid:signalement}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editAddress(
         Signalement $signalement,
         Request $request,
@@ -78,7 +79,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-tiers', name: 'back_signalement_edit_coordonnees_tiers', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editCoordonneesTiers(
         Signalement $signalement,
         Request $request,
@@ -128,7 +129,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-invite-tiers', name: 'back_signalement_edit_invite_tiers', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editInviteTiers(
         #[MapRequestPayload(validationGroups: ['false'])]
         InviteTiersRequest $inviteTiersRequest,
@@ -183,7 +184,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-foyer', name: 'back_signalement_edit_coordonnees_foyer', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editCoordonneesFoyer(
         Signalement $signalement,
         Request $request,
@@ -233,7 +234,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-bailleur', name: 'back_signalement_edit_coordonnees_bailleur', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editCoordonneesBailleur(
         Signalement $signalement,
         Request $request,
@@ -286,7 +287,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-agence', name: 'back_signalement_edit_coordonnees_agence', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editCoordonneesAgence(
         Signalement $signalement,
         Request $request,
@@ -339,7 +340,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-informations-logement', name: 'back_signalement_edit_informations_logement', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editInformationsLogement(
         Signalement $signalement,
         Request $request,
@@ -391,7 +392,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-composition-logement', name: 'back_signalement_edit_composition_logement', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editCompositionLogement(
         Signalement $signalement,
         Request $request,
@@ -446,7 +447,7 @@ class SignalementEditController extends AbstractController
      * @throws \DateMalformedStringException
      */
     #[Route('/{uuid:signalement}/edit-situation-foyer', name: 'back_signalement_edit_situation_foyer', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editSituationFoyer(
         Signalement $signalement,
         Request $request,
@@ -495,7 +496,7 @@ class SignalementEditController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/edit-procedure-demarches', name: 'back_signalement_edit_procedure_demarches', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editProcedureDemarches(
         Signalement $signalement,
         Request $request,
