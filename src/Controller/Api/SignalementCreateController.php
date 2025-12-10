@@ -264,6 +264,19 @@ class SignalementCreateController extends AbstractController
 
     private function checkPartnerAndTerritory(Partner $partner, SignalementRequest $signalementRequest, Signalement $signalement, ConstraintViolationListInterface $errors): ConstraintViolationListInterface
     {
+        if (!$signalement->getInseeOccupant()) {
+            $violation = new ConstraintViolation(
+                'L\'adresse de l\'occupant est invalide ou incomplète, merci de vérifier le code postal et la commune.',
+                null,
+                [],
+                $signalementRequest,
+                null,
+                $signalement->getAddressCompleteOccupant(false)
+            );
+            $errors->add($violation);
+
+            return $errors;
+        }
         if ($partner->getTerritory() !== $signalement->getTerritory()) {
             $violation = new ConstraintViolation(
                 'Vous n\'avez pas le droit de créer un signalement sur le territoire "'.$signalement->getTerritory()->getName().'".',
