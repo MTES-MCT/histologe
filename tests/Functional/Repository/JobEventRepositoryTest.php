@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Repository;
 
 use App\Entity\Enum\InterfacageType;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
+use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -91,16 +94,42 @@ class JobEventRepositoryTest extends KernelTestCase
         $this->assertEquals(AbstractEsaboraService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
     }
 
-    public function testFindFailedJobEvents(): void
+    /** @dataProvider provideDataForFailedJobEvents */
+    public function testFindAffectationsWithFailedJobEvents(string $interfacageType, string $action, array $partnerTypes, int $expectedCount): void
     {
         $container = static::getContainer();
-        $jobEventRepository = $container->get(JobEventRepository::class);
+        $affectationRepository = $container->get(AffectationRepository::class);
 
-        $jobEvents = $jobEventRepository->findFailedJobEvents(
-            InterfacageType::ESABORA->value,
-            AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE
+        $affectationsWithFailedJobEvents = $affectationRepository->findAffectationsWithFailedJobEvents(
+            $interfacageType,
+            $action,
+            $partnerTypes
         );
 
-        $this->assertCount(1, $jobEvents);
+        $this->assertCount($expectedCount, $affectationsWithFailedJobEvents);
+    }
+
+    public function provideDataForFailedJobEvents(): \Generator
+    {
+        yield 'sish - push dossier adresse' => [
+            InterfacageType::ESABORA->value,
+            AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
+            [],
+            1,
+        ];
+
+        yield 'schs - push dossier SCHS' => [
+            InterfacageType::ESABORA->value,
+            AbstractEsaboraService::ACTION_PUSH_DOSSIER,
+            [PartnerType::COMMUNE_SCHS],
+            0,
+        ];
+
+        yield 'idoss - push dossier IDOSS' => [
+            InterfacageType::IDOSS->value,
+            IdossService::ACTION_PUSH_DOSSIER,
+            [],
+            1,
+        ];
     }
 }

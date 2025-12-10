@@ -9,6 +9,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\JobEvent;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -355,5 +356,62 @@ class AffectationRepository extends ServiceEntityRepository
         $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($qb->getQuery());
+    }
+
+    /**
+     * @param array<int, PartnerType> $partnerTypes
+     *
+     * @return array<int, Affectation>
+     */
+    public function findAffectationsWithFailedJobEvents(
+        string $service,
+        string $action,
+        array $partnerTypes = [],
+    ): array {
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder
+            ->innerJoin(
+                JobEvent::class,
+                'j',
+                'WITH',
+                'a.signalement = j.signalementId AND a.partner = j.partnerId'
+            )
+            ->andWhere('j.codeStatus > 399')
+            ->andWhere('j.service LIKE :service')
+            ->andWhere('j.action LIKE :action')
+        ;
+
+        $subQueryBuilder = $this->_em->createQueryBuilder()
+            ->select('1')
+            ->from(JobEvent::class, 'j2')
+            ->where('j2.signalementId = j.signalementId')
+            ->andWhere('j2.partnerId = j.partnerId')
+            ->andWhere('j2.codeStatus = 200')
+            ->andWhere('j2.service LIKE :service')
+            ->andWhere('j2.action LIKE :action')
+        ;
+
+        if (!empty($partnerTypes)) {
+            $subQueryBuilder
+                ->andWhere('j2.partnerType IN (:partnerTypes)');
+        }
+
+        $queryBuilder
+            ->andWhere(
+                $queryBuilder->expr()->not(
+                    $queryBuilder->expr()->exists($subQueryBuilder->getDQL())
+                )
+            )
+            ->setParameter('service', $service)
+            ->setParameter('action', $action)
+        ;
+
+        if (!empty($partnerTypes)) {
+            $queryBuilder
+                ->andWhere('j.partnerType IN (:partnerTypes)')
+                ->setParameter('partnerTypes', $partnerTypes);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }
