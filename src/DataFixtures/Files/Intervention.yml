@@ -111,3 +111,12 @@ interventions:
     user: "admin-partenaire-13-01@signal-logement.fr"
     scheduled_at: '+2 days'
     status: 'PLANNED'
+  - 
+    signalement: "2024-12"
+    partner: "partenaire-30-01@signal-logement.fr "
+    scheduled_at: '2024-12-12 15:30:00'
+    status: 'DONE'
+    occupant_present: 1
+    proprietaire_present: 0
+    details: "<p>Rapport de visite ajouté au dossier</p>"
+    conclude_procedure: [ 'INSALUBRITE' ]
