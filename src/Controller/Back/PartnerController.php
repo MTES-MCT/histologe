@@ -437,9 +437,6 @@ class PartnerController extends AbstractController
                 $user = $userExist;
                 $userManager->sendAccountActivationNotification($user);
             }
-            if (!$userExist) {
-                $user->setHasDoneSubscriptionsChoice(true);
-            }
             $userManager->persist($userPartner);
             $userManager->save($user);
             $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();

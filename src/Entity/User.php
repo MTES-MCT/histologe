@@ -199,9 +199,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSignalementSubscription::class, orphanRemoval: true)]
     private Collection $userSignalementSubscriptions;
 
-    #[ORM\Column]
-    private ?bool $hasDoneSubscriptionsChoice = null;
-
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $duplicateModalDismissedAt = null;
 
@@ -235,7 +232,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->popNotifications = new ArrayCollection();
         $this->isMailingSummary = true;
         $this->userSignalementSubscriptions = new ArrayCollection();
-        $this->hasDoneSubscriptionsChoice = false;
         $this->userApiPermissions = new ArrayCollection();
         $this->userSearchFilters = new ArrayCollection();
     }
@@ -1029,18 +1025,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
                 $userSignalementSubscription->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function hasDoneSubscriptionsChoice(): ?bool
-    {
-        return $this->hasDoneSubscriptionsChoice;
-    }
-
-    public function setHasDoneSubscriptionsChoice(bool $hasDoneSubscriptionsChoice): static
-    {
-        $this->hasDoneSubscriptionsChoice = $hasDoneSubscriptionsChoice;
 
         return $this;
     }
