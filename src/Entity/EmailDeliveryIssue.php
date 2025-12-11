@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: EmailDeliveryIssueRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
 #[UniqueEntity('email')]
+#[ORM\Index(columns: ['email'], name: 'idx_edi_email')]
 class EmailDeliveryIssue
 {
     use TimestampableTrait;
