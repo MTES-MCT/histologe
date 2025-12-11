@@ -262,6 +262,10 @@ signalements:
     qualifications:
       - "RSD"
       - "NON_DECENCE"
+    files: 
+      - file: "rapport-de-visite-sans-intervention-id.pdf"
+        titre: "rapport-de-visite-sans-intervention-id.pdf"
+        document_type: "PROCEDURE_RAPPORT_DE_VISITE"
   -
     territory: "Hérault"
     uuid: "00000000-0000-0000-2024-000000000006"
