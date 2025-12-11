@@ -406,4 +406,25 @@ class SignalementRepositoryTest extends KernelTestCase
             $this->assertStringContainsStringIgnoringCase('Marseille', $row['adresse']);
         }
     }
+
+    public function testFindOneForLoginBailleur(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $referenceInjonction = 'INJ-2364';
+        $loginBailleur = 'XXXX-XXXX-XXXX-XXXX';
+        $signalement = $signalementRepository->findOneForLoginBailleur($referenceInjonction, $loginBailleur);
+        $this->assertInstanceOf(Signalement::class, $signalement);
+
+        $referenceInjonction = 'inj-2364';
+        $loginBailleur = 'XXXX-XXXX-XXXX-XXXX';
+        $signalement = $signalementRepository->findOneForLoginBailleur($referenceInjonction, $loginBailleur);
+        $this->assertInstanceOf(Signalement::class, $signalement);
+
+        $referenceInjonction = 'PLOP-2364';
+        $loginBailleur = 'XXXX-XXXX-XXXX-XXXX';
+        $signalement = $signalementRepository->findOneForLoginBailleur($referenceInjonction, $loginBailleur);
+        $this->assertNull($signalement);
+    }
 }

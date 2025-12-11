@@ -2361,7 +2361,7 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function findOneForLoginBailleur(string $referenceInjonction, string $loginBailleur): ?Signalement
     {
-        $referenceInjonction = str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', $referenceInjonction);
+        $referenceInjonction = str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', strtoupper($referenceInjonction));
 
         return $this->createQueryBuilder('s')
             ->leftJoin('s.suivis', 'su')
