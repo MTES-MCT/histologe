@@ -2376,16 +2376,13 @@ class SignalementRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function countInjonctionsAvecAide(
+    public function countInjonctions(
         User $user,
         ?TabQueryParameters $params,
     ): int {
         $qb = $this->createQueryBuilder('s')
             ->where('s.statut = :statut')
-            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
-            ->innerJoin('s.suivis', 'su')
-            ->andWhere('su.category = :aideCategory')
-            ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
 
         $qb->select('COUNT(s.id)');
 

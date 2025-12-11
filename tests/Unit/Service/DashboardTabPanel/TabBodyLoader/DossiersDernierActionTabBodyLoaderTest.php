@@ -45,7 +45,7 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
             ->with($tabQueryParameters)
             ->willReturn($expectedData);
         $tabDataManager->expects($this->once())
-            ->method('countInjonctionsAvecAide')
+            ->method('countInjonctions')
             ->with($tabQueryParameters)
             ->willReturn($expectedKpi['injonctions']);
         $tabDataManager->expects($this->once())

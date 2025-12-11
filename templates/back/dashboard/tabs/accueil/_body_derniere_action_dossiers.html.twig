@@ -50,7 +50,7 @@
                     <h2 class="fr-mb-8v">Administrer mon territoire</h2>
                 {% endif %}
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {% set linkInjonction = { injonctionAvecAide: 'oui' } %}
+                    {% set linkInjonction = {} %}
                     {% if is_granted('ROLE_ADMIN') %}
                         {% set linkInjonction = linkInjonction|merge({ territoire: items.territory_id }) %}
                     {% endif %}
