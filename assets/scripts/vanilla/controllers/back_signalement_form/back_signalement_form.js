@@ -690,7 +690,6 @@ function initBoFormSignalementAdresse() {
 
 function initBoFormSignalementLogement() {
   const boFormSignalementLogement = document?.querySelector('#bo-form-signalement-logement');
-
   const compositionLogementInputs = boFormSignalementLogement?.querySelectorAll(
     '#signalement_draft_logement_pieceUnique input'
   );
