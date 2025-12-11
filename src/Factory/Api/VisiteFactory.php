@@ -29,9 +29,8 @@ readonly class VisiteFactory
         $signalement = $intervention->getSignalement();
 
         foreach ($signalement->getFiles() as $file) {
-            if (in_array(
-                $file->getDocumentType(),
-                [DocumentType::PHOTO_VISITE, DocumentType::PROCEDURE_RAPPORT_DE_VISITE])
+            if (in_array($file->getDocumentType(), [DocumentType::PHOTO_VISITE, DocumentType::PROCEDURE_RAPPORT_DE_VISITE])
+                && $file->getIntervention()
                 && $file->getIntervention()->getId() == $intervention->getId()
             ) {
                 $visite->files[] = $this->fileFactory->createFrom($file);

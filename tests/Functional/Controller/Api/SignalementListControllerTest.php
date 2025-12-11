@@ -33,6 +33,29 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
+    public function testGetSignalementListUserApi02(): void
+    {
+        $client = static::createClient();
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+            'email' => 'api-02@signal-logement.fr',
+        ]);
+        $client->loginUser($user, 'api');
+        $client->request('GET', '/api/signalements');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+
+        foreach ($response as $signalement) {
+            $this->assertIsArray($signalement['affectations']);
+            if ('2024-12' === $signalement['reference']) {
+                $this->assertCount(1, $signalement['files']);
+                $this->assertCount(1, haystack: $signalement['visites']);
+            }
+        }
+        $this->assertCount(1, $response);
+        $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
+    }
+
     public function testGetSignalementListWithLimit(): void
     {
         $client = static::createClient();
