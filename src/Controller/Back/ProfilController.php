@@ -2,12 +2,18 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\AffectationStatus;
+use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\UserNotificationEmailType;
 use App\Form\UserProfilInfoType;
 use App\Manager\UserManager;
+use App\Manager\UserSignalementSubscriptionManager;
+use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\FormHelper;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
@@ -37,6 +43,8 @@ class ProfilController extends AbstractController
     #[Route('/', name: 'back_profil', methods: ['GET', 'POST'])]
     public function index(
         UserRepository $userRepository,
+        SignalementRepository $signalementRepository,
+        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
     ): Response {
         $activeTerritoryAdminsByTerritory = [];
         /** @var User $user */
@@ -50,10 +58,17 @@ class ProfilController extends AbstractController
         $formProfilInfo = $this->createForm(UserProfilInfoType::class, $user, ['action' => $this->generateUrl('back_profil_edit_infos')]);
         $notificationEmailForm = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
 
+        $nbActiveSignalements = $signalementRepository->getActiveSignalementsForUser(user: $user, count: true);
+        $nbActiveSignalementsWithInteractions = $signalementRepository->getActiveSignalementsWithInteractionsForUser(user: $user, count: true);
+        $nbSubsOnActiveSignalements = $userSignalementSubscriptionRepository->countSubscriptionsOnActiveSignalementsForUser($user);
+
         return $this->render('back/profil/index.html.twig', [
             'activeTerritoryAdminsByTerritory' => $activeTerritoryAdminsByTerritory,
             'formProfilInfo' => $formProfilInfo,
             'notificationEmailForm' => $notificationEmailForm,
+            'nbActiveSignalements' => $nbActiveSignalements,
+            'nbActiveSignalementsWithInteractions' => $nbActiveSignalementsWithInteractions,
+            'nbSubsOnActiveSignalements' => $nbSubsOnActiveSignalements,
         ]);
     }
 
@@ -352,5 +367,56 @@ class ProfilController extends AbstractController
         }
 
         return $this->json(['status' => 'success']);
+    }
+
+    #[Route('/subscriptions-changes', name: 'profil_subscriptions_changes', methods: ['GET'])]
+    public function subscriptionsChanges(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SignalementRepository $signalementRepository,
+        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        AffectationRepository $affectationRepository,
+        UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+    ): Response {
+        if (!$this->isCsrfTokenValid('subscriptions_changes', (string) $request->query->get('_token'))) {
+            $this->addFlash('error', 'Une erreur est survenue lors de la modification de vos abonnements');
+
+            return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+        /** @var Signalement[] $activeSignalements */
+        $activeSignalements = $signalementRepository->getActiveSignalementsForUser($user);
+        if ('unsubscribe' === $request->query->get('action')) {
+            /** @var Signalement[] $activeSignalementsWithInteractions */
+            $activeSignalementsWithInteractions = $signalementRepository->getActiveSignalementsWithInteractionsForUser(user: $user);
+            foreach ($activeSignalements as $signalement) {
+                if (!in_array($signalement, $activeSignalementsWithInteractions)) {
+                    $toDelete = $userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+                    if (!$toDelete) {
+                        continue; // pas d'abonnement à supprimer
+                    }
+                    if ($user->isSuperAdmin()) {
+                        $entityManager->remove($toDelete);
+                        continue; // les super admins peuvent se désabonner de tout
+                    }
+                    $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+                    $affectation = $affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $partner, 'statut' => AffectationStatus::ACCEPTED]);
+                    $subsForPartner = $userSignalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
+                    if ($affectation && 1 === count($subsForPartner)) {
+                        continue; // ne pas permettre de se désabonner si le partenaire est affecté et que l'utilisateur est le seul abonné pour ce partenaire
+                    }
+                    $entityManager->remove($toDelete);
+                }
+            }
+        } else {
+            foreach ($activeSignalements as $signalement) {
+                $userSignalementSubscriptionManager->createOrGet(userToSubscribe: $user, signalement: $signalement, createdBy: $user);
+            }
+        }
+        $entityManager->flush();
+        $this->addFlash('success', 'Vos abonnements ont bien été mis à jour.');
+
+        return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
     }
 }

@@ -105,11 +105,4 @@
         {{ render(controller('App\\Controller\\Back\\PopNotificationController::show')) }}
     {% endif %}
 
-    {% if not app.user.hasDoneSubscriptionsChoice %}
-        <button class="fr-hidden" data-fr-opened="false" aria-controls="fr-modal-subscriptions-choice"></button>
-        <div data-ajax-form>
-            {% include '_partials/_modal_subscriptions_choice.twig' %}
-        </div>
-    {% endif %}
-
 {% endblock %}

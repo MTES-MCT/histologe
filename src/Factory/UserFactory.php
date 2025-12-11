@@ -29,7 +29,6 @@ class UserFactory
             ->setHasPermissionAffectation($hasPermissionAffectation)
             ->setPhone($phone)
             ->setFonction($fonction);
-        $user->setHasDoneSubscriptionsChoice(true);
 
         return $user;
     }
