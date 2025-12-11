@@ -135,19 +135,19 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'isActiviteRecente') {
     return 'Dossiers avec activité récente'
   }
-  if (key === 'isImported') {
+  if (key === 'isImported' && value === 'oui') {
     return 'Avec signalements importés'
   }
-  if (key === 'isZonesDisplayed') {
+  if (key === 'isZonesDisplayed' && value === 'oui') {
     return 'Avec zones affichées'
   }
-  if (key === 'showMyAffectationOnly') {
+  if (key === 'showMyAffectationOnly' && value === 'oui') {
     return 'Uniquement mes affectations'
   }
-  if (key === 'showMySignalementsOnly') {
+  if (key === 'showMySignalementsOnly' && value === 'oui') {
     return 'Uniquement mes dossiers'
   }
-  if (key === 'showWithoutAffectationOnly') {
+  if (key === 'showWithoutAffectationOnly' && value === 'oui') {
     return 'Dossiers sans affectations'
   }
     

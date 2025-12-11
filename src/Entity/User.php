@@ -218,7 +218,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     /**
      * @var Collection<int, UserSearchFilter>
      */
-    #[ORM\OneToMany(mappedBy: 'User', targetEntity: UserSearchFilter::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSearchFilter::class, orphanRemoval: true)]
     private Collection $userSearchFilters;
 
     public function __construct()

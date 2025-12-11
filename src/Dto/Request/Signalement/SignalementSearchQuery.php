@@ -85,9 +85,9 @@ class SignalementSearchQuery
             message: 'Procédure constatée invalide')]
         private readonly ?string $procedureConstatee = null,
         private readonly ?int $page = 1,
-        #[Assert\Choice(['oui'], message: 'Le filtre des signalements importés est invalide')]
+        #[Assert\Choice(['oui'], message: 'La valeur pour l\'affichage des signalements importés est invalide')]
         private readonly ?string $isImported = null,
-        #[Assert\Choice(['oui'], message: 'Le filtre des zones affichées est invalide')]
+        #[Assert\Choice(['oui'], message: 'La valeur pour l\'affichage des zones est invalide')]
         private readonly ?string $isZonesDisplayed = null,
         private readonly ?bool $usagerAbandonProcedure = false,
         #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
@@ -114,14 +114,23 @@ class SignalementSearchQuery
         private readonly ?string $motifCloture = null,
         #[Assert\Choice(['formulaire-usager', 'formulaire-pro'], message: 'Source de création invalide')]
         private readonly ?string $createdFrom = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour mes abonnements est invalide')]
         private readonly ?string $showMySignalementsOnly = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour les relances usagers sans réponse est invalide')]
         private readonly ?string $relanceUsagerSansReponse = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour les messages post-cloture est invalide')]
         private readonly ?string $isMessagePostCloture = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour les nouveaux messages est invalide')]
         private readonly ?string $isNouveauMessage = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour les messages sans réponse est invalide')]
         private readonly ?string $isMessageWithoutResponse = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour les dossiers sans activité est invalide')]
         private readonly ?string $isDossiersSansActivite = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour les adresses e-mail à vérifier est invalide')]
         private readonly ?string $isEmailAVerifier = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour les dossiers sans abonnements est invalide')]
         private readonly ?string $isDossiersSansAgent = null,
+        #[Assert\Choice(['oui'], message: 'La valeur pour activité récente est invalide')]
         private readonly ?string $isActiviteRecente = null,
     ) {
     }
