@@ -33,6 +33,7 @@
         </include>
         <exclude>
             <directory>src/DataFixtures</directory>
+            <directory>src/Command/Temp</directory>
         </exclude>
     </coverage>
 
