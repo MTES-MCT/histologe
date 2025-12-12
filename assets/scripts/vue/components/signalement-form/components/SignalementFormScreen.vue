@@ -137,7 +137,7 @@ export default defineComponent({
       } else if (type.includes('resolve')) {
         this.navigateToDisorderScreen(param, param2, type.includes('save'))
       } else if (type.includes('finish')) {
-        this.finishLater(type.includes('save'), param2)
+        this.finishLater(type.includes('check'), type.includes('save'), param2)
       }
     },
     showComponentBySlug (slug:string, slugButton:string) {
@@ -230,21 +230,24 @@ export default defineComponent({
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
     },
-    finishLater (isSaveAndCheck:boolean, slugButton:string) {
+    finishLater (isCheck:boolean, isSave:boolean, slugButton:string) {
       this.formStore.lastButtonClicked = slugButton
       if (this.mailSentForDraftThisSession) {
         return
       }
       formStore.validationErrors = {}
 
-      if (isSaveAndCheck) {
+      if (isCheck) {
         if (this.validateAndFocusFirstError()) {
           this.formStore.lastButtonClicked = ''
           return
         }
       }
       this.mailSentForDraftThisSession = true
-      requests.saveSignalementDraft(this.sendMailContinueFromDraft)
+
+      if (isSave) {
+        requests.saveSignalementDraft(this.sendMailContinueFromDraft)
+      }
     },
     sendMailContinueFromDraft (requestResponse: any) {
       formStore.data.errorMessage = ''
