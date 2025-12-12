@@ -115,12 +115,14 @@ class SignalementImportLoader
                     $progressBar->advance();
                 }
                 $signalement = $this->signalementManager->createOrUpdateFromArrayForImport($territory, $dataMapped);
-                if (!$signalement->getIsNotOccupant()) {
-                    $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
-                } elseif (OccupantLink::PRO->name == mb_strtoupper($signalement->getLienDeclarantOccupant())) {
-                    $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
-                } else {
-                    $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
+                if (!$signalement->getProfileDeclarant()) {
+                    if (!$signalement->getIsNotOccupant()) {
+                        $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
+                    } elseif (OccupantLink::PRO->name == mb_strtoupper($signalement->getLienDeclarantOccupant())) {
+                        $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
+                    } else {
+                        $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
+                    }
                 }
                 $this->signalementManager->persist($signalement);
 
