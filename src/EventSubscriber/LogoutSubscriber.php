@@ -41,7 +41,7 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
         $logoutUrl = null;
 
         if ($user instanceof SignalementUser) {
-            $this->logger->info('Déconnexion d\'un usager');
+            $this->logger->info('App usager logout');
             $this->clearSession($session);
             $response = new RedirectResponse(
                 $this->urlGenerator->generate(
@@ -53,7 +53,7 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
             return;
         }
         if ($user instanceof SignalementBailleur) {
-            $this->logger->info('Déconnexion d\'un bailleur');
+            $this->logger->info('App bailleur logout');
             $this->clearSession($session);
             $response = new RedirectResponse($this->urlGenerator->generate('app_login_bailleur'));
             $event->setResponse($response);
@@ -66,14 +66,14 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
                 $logoutUrl = $this->proConnectAuthentication->getLogoutUrl();
                 $this->clearSession($session);
                 if ($logoutUrl) {
-                    $this->logger->info('Déconnexion d\'un utilisateur via ProConnect');
+                    $this->logger->info('ProConnect logout');
                     $event->setResponse(new RedirectResponse($logoutUrl));
 
                     return;
                 }
             }
         } catch (\Throwable $exception) {
-            $this->logger->error('Échec de la déconnexion automatique ProConnect', [
+            $this->logger->error('Erreur ProConnect getLogoutUrl', [
                 'exception' => $exception,
             ]);
             if ($logoutUrl) {
@@ -93,7 +93,7 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
 
             return;
         }
-        $this->logger->info('Déconnexion d\'un utilisateur');
+        $this->logger->info('App logout');
         $this->clearSession($session);
     }
 
