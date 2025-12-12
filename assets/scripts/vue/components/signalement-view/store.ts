@@ -177,6 +177,7 @@ export const store = {
     ],
     selectedSavedSearchId: undefined as string | undefined,
     savedSearchSelectKey: 0,
+    filtersApplyKey: 0
   },
   props: {
     ajaxurlSignalement: '',

@@ -429,7 +429,21 @@ export default defineComponent({
       return sanitizeFilters(this.sharedState.input.filters)
     }
   },
+  watch: {
+    'sharedState.filtersApplyKey': function (newList) {
+      this.syncToggleStatesWithFilters()
+    }
+  },
   methods: {
+    syncToggleStatesWithFilters() {
+      const filters = this.sharedState.input.filters
+
+      this.toggleStates.isImported = filters.isImported === 'oui'
+      this.toggleStates.isZonesDisplayed = filters.isZonesDisplayed === 'oui'
+      this.toggleStates.showMyAffectationOnly = filters.showMyAffectationOnly === 'oui'
+      this.toggleStates.showMySignalementsOnly = filters.showMySignalementsOnly === 'oui'
+      this.toggleStates.showWithoutAffectationOnly = filters.showWithoutAffectationOnly === 'oui'
+    },
     onChange(refresh: boolean) {
       this.$emit('change', refresh)
     },

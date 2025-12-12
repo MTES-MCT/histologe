@@ -100,7 +100,7 @@ export default defineComponent({
   },
   computed: {
     filtersSanitized () {
-      return sanitizeFilters(this.sharedState.input.filters)
+      return sanitizeFilters(this.sharedState.input.filters, true)
     }
   },
   methods: {

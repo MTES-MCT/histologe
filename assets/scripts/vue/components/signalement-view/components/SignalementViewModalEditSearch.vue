@@ -20,19 +20,30 @@
               </div>
 
               <div v-else>
-                <div v-for="search in sharedState.savedSearches" :key="search.Id" class="fr-mb-4v">
+                <div v-for="(search, index) in sharedState.savedSearches" :key="search.Id">
                   <h2 class="fr-h4 fr-mb-2v">{{ search.Text }}</h2>
 
                   <div class="fr-grid-row fr-grid-row--bottom fr-mb-2v">
                     <div class="fr-col-9">
                       <div class="fr-input-group fr-mr-2v">
                         <label class="fr-label" :for="`saved-search-name-${search.Id}`">Nom de la recherche :</label>
-                        <input type="text" class="fr-input" v-model="search.NewName" :placeholder="search.Text" :maxlength="50" :id="`saved-search-name-${search.Id}`"/>
+                        <input
+                          type="text"
+                          class="fr-input"
+                          v-model="search.NewName"
+                          :disabled="!search.IsEditing"
+                          :placeholder="search.Text"
+                          :maxlength="50"
+                          :id="`saved-search-name-${search.Id}`"
+                        />
                       </div>
                     </div>
                     <div class="fr-col-3 fr-text-right">
-                      <button class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-edit-line" @click="editSavedSearch(search.Id, search.NewName)">
-                        Modifier le nom
+                      <button
+                        class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-edit-line"
+                        @click="toggleEdit(search)"
+                      >
+                        {{ search.IsEditing ? 'Valider' : 'Modifier le nom' }}
                       </button>
                     </div>
                   </div>
@@ -46,10 +57,11 @@
                     </div>
                   </div>
 
-                  <button class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-delete-line"
+                  <button class="fr-btn fr-btn--icon-left fr-btn--tertiary fr-icon-delete-line fr-mb-5v"
                           @click="deleteSavedSearch(search.Id)">
                     Supprimer la recherche
                   </button>
+                  <hr v-if="index < sharedState.savedSearches.length - 1">
                 </div>
               </div>
 
@@ -66,6 +78,7 @@ import { defineComponent } from 'vue'
 import { store } from '../store'
 import { requests } from '../requests'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
+import SearchInterfaceSelectOption from '../interfaces/SearchInterfaceSelectOption';
 
 export default defineComponent({
   name: 'SignalementViewModalEditSearch',
@@ -108,10 +121,20 @@ export default defineComponent({
 
       for (const search of this.sharedState.savedSearches) {
           search.NewName = (search.Text as string)
+          search.IsEditing = false 
       }
     },
     getBadgeFilterLabel (key: string, value: any) {
       return buildBadge(key, value)
+    },
+    toggleEdit(search: SearchInterfaceSelectOption) {
+      if (!search.IsEditing) {
+        search.IsEditing = true
+      } else {
+        this.editSavedSearch(search.Id, search.NewName)
+
+        search.IsEditing = false
+      }
     },
     editSavedSearch(id: string, newName: string) {
       requests.editSearch(id, newName, this.sharedProps.csrfEditSearch, this.handleSearchEdited)

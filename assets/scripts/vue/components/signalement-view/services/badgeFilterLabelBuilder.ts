@@ -111,29 +111,44 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     }
   }
 
-  if (key === 'relanceUsagerSansReponse') {
+  if (key === 'relanceUsagerSansReponse' && value === 'oui') {
     return 'Relances usager restées sans réponse'
   }
-  if (key === 'isMessagePostCloture') {
+  if (key === 'isMessagePostCloture' && value === 'oui') {
     return 'Messages usagers après fermeture'
   }
-  if (key === 'isNouveauMessage') {
+  if (key === 'isNouveauMessage' && value === 'oui') {
     return 'Nouveaux messages usagers'
   }
-  if (key === 'isMessageWithoutResponse') {
+  if (key === 'isMessageWithoutResponse' && value === 'oui') {
     return 'Messages usagers sans réponse'
   }
-  if (key === 'isDossiersSansActivite') {
+  if (key === 'isDossiersSansActivite' && value === 'oui') {
     return 'Dossiers sans activité partenaire'
   }
-  if (key === 'isEmailAVerifier') {
+  if (key === 'isEmailAVerifier' && value === 'oui') {
     return 'Adresses e-mail usager à vérifier'
   }
-  if (key === 'isDossiersSansAgent') {
+  if (key === 'isDossiersSansAgent' && value === 'oui') {
     return 'Dossiers sans agent'
   }
-  if (key === 'isActiviteRecente') {
+  if (key === 'isActiviteRecente' && value === 'oui') {
     return 'Dossiers avec activité récente'
+  }
+  if (key === 'isImported' && value === 'oui') {
+    return 'Avec signalements importés'
+  }
+  if (key === 'isZonesDisplayed' && value === 'oui') {
+    return 'Avec zones affichées'
+  }
+  if (key === 'showMyAffectationOnly' && value === 'oui') {
+    return 'Uniquement mes affectations'
+  }
+  if (key === 'showMySignalementsOnly' && value === 'oui') {
+    return 'Uniquement mes dossiers'
+  }
+  if (key === 'showWithoutAffectationOnly' && value === 'oui') {
+    return 'Dossiers sans affectations'
   }
     
   return buildStaticBadge(value)
