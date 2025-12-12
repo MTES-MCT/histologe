@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -86,5 +87,29 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
             ->setParameter('statut', AffectationStatus::ACCEPTED);
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function countSubscriptionsOnActiveSignalementsForUser(User $user): int
+    {
+        $qb = $this->createQueryBuilder('sub')
+            ->select('COUNT(sub.id)')
+            ->innerJoin('sub.signalement', 's')
+            ->where('sub.user = :user')
+            ->setParameter('user', $user)
+            ->andWhere('s.statut = :statut')
+            ->setParameter('statut', SignalementStatus::ACTIVE);
+
+        if ($user->isTerritoryAdmin()) {
+            $qb->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
+        } else {
+            $qb->innerJoin('s.affectations', 'a')
+                ->andWhere('a.statut = :affectationStatut')
+                ->andWhere('a.partner IN (:partners)')
+                ->setParameter('affectationStatut', AffectationStatus::ACCEPTED)
+                ->setParameter('partners', $user->getPartners());
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }

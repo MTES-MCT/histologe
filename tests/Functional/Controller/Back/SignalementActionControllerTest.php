@@ -553,7 +553,6 @@ class SignalementActionControllerTest extends WebTestCase
 
         $signalement->addAffectation($affectation);
         $em = self::getContainer()->get('doctrine')->getManager();
-        $em->persist($signalement);
         $em->persist($affectation);
         $em->flush();
         $em->refresh($affectation);
@@ -571,7 +570,7 @@ class SignalementActionControllerTest extends WebTestCase
         $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
         $this->assertNotNull($sub);
         $partnerUsers = $partner->getUsers();
-        $otherAgent = $partnerUsers->filter(fn ($u) => $u !== $user)->first();
+        $otherAgent = $partnerUsers->filter(fn ($u) => $u->getId() !== $user->getId())->first();
         if (!$otherAgent) {
             $this->fail('No other agent found for the partner');
         }
