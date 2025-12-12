@@ -3,11 +3,13 @@
 namespace App\Security\Authenticator;
 
 use App\Repository\SignalementRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
@@ -17,8 +19,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
 {
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private SignalementRepository $signalementRepository,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -46,6 +49,18 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         return new RedirectResponse($this->urlGenerator->generate('front_dossier_bailleur'));
+    }
+
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
+    {
+        $reference = (string) $request->request->get('bailleur_reference', 'inconnu');
+        $code = (string) $request->request->get('bailleur_code', 'inconnu');
+        $this->logger->warning('Authentification failed for bailleur', [
+            'reference' => $reference,
+            'code' => $code,
+        ]);
+
+        return parent::onAuthenticationFailure($request, $exception);
     }
 
     protected function getLoginUrl(Request $request): string

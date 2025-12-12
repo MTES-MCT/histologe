@@ -30,4 +30,9 @@ class SignalementBailleur implements UserInterface
     public function eraseCredentials(): void
     {
     }
+
+    public function getUser(): null
+    {
+        return null;
+    }
 }

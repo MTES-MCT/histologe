@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\User;
 use App\Manager\HistoryEntryManager;
@@ -12,6 +13,7 @@ use App\Security\User\SignalementUser;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class AuthentificationSuccessListener
@@ -33,7 +35,7 @@ class AuthentificationSuccessListener
         if (self::CHECK_2FA_PATH === $event->getRequest()->getPathInfo()) {
             return;
         }
-        if ($event->getAuthenticationToken()->getUser() instanceof User) {
+        if ($event->getAuthenticationToken()->getUser() instanceof User || $event->getAuthenticationToken()->getUser() instanceof SignalementBailleur) {
             $user = $event->getAuthenticationToken()->getUser();
         } elseif ($event->getAuthenticationToken()->getUser() instanceof SignalementUser) {
             $user = $event->getAuthenticationToken()->getUser()->getUser();
@@ -57,31 +59,37 @@ class AuthentificationSuccessListener
         );
     }
 
-    private function handleSuccessfulLogin(?User $user, HistoryEntryEvent $eventType): void
+    private function handleSuccessfulLogin(?UserInterface $user, HistoryEntryEvent $eventType): void
     {
         if (!$user) {
             return;
         }
 
-        $user->setLastLoginAt(new \DateTimeImmutable());
-        $this->userManager->save($user, true);
+        if ($user instanceof User) {
+            $user->setLastLoginAt(new \DateTimeImmutable());
+            $this->userManager->save($user, true);
+        }
+
         $this->createAuthentificationHistory($eventType, $user);
     }
 
-    private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, SignalementBailleur|SignalementUser|User $user): void
+    private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, UserInterface $user): void
     {
         if (!$this->historyTrackingEnable) {
             return;
         }
         try {
+            $signalement = null;
             if ($user instanceof SignalementUser) {
                 $signalement = $this->signalementRepository->findOneByCodeForPublic($user->getCodeSuivi());
             } elseif ($user instanceof SignalementBailleur) {
                 $signalement = $this->signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
             }
+            /** @var EntityHistoryInterface $entityHistory */
+            $entityHistory = $user instanceof SignalementUser || $user instanceof SignalementBailleur ? $signalement : $user;
             $historyEntry = $this->historyEntryManager->create(
                 historyEntryEvent: $historyEntryEvent,
-                entityHistory: $user instanceof SignalementUser || $user instanceof SignalementBailleur ? $signalement : $user,
+                entityHistory: $entityHistory,
             );
 
             $source = $this->historyEntryManager->getSource();
@@ -101,12 +109,14 @@ class AuthentificationSuccessListener
                     $exception->getMessage(),
                     $signalement->getId()
                 ));
-            } else {
+            } elseif ($user instanceof User) {
                 $this->logger->error(\sprintf(
                     'Failed to create login history entry (%s) on user : %d',
                     $exception->getMessage(),
                     $user->getId()
                 ));
+            } else {
+                $this->logger->error('Failed unknown user type');
             }
         }
     }

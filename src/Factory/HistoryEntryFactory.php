@@ -8,6 +8,7 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\HistoryEntry;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
+use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -23,10 +24,12 @@ readonly class HistoryEntryFactory
         HistoryEntryEvent $historyEntryEvent,
         EntityHistoryInterface $entityHistory,
     ): HistoryEntry {
-        /** @var User $user */
+        /** @var User|SignalementBailleur $user */
         $user = $this->security->getUser();
         if ($user instanceof SignalementUser) {
             $user = $user->getUser();
+        } elseif ($user instanceof SignalementBailleur) {
+            $user = null;
         }
         $historyEntry = (new HistoryEntry())
             ->setEvent($historyEntryEvent)
