@@ -11,7 +11,7 @@ final class Version20251211114325 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Remove has_done_subscriptions_choice column from user table';
     }
 
     public function up(Schema $schema): void
