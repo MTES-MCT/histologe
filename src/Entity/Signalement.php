@@ -45,6 +45,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['cp_occupant'], name: 'idx_signalement_cp_occupant')]
 #[ORM\Index(columns: ['statut', 'territory_id'], name: 'idx_signalement_statut_territory')]
 #[ORM\Index(columns: ['statut', 'id'], name: 'idx_signalement_statut_id')]
+#[ORM\Index(columns: ['mail_occupant'], name: 'idx_signalement_mail_occupant')]
+#[ORM\Index(columns: ['mail_declarant'], name: 'idx_signalement_mail_declarant')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
     #[ORM\Id]
