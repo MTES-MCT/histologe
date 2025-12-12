@@ -164,7 +164,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_occupant_tel",
-          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
+          "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
@@ -284,7 +284,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_bailleur_tel",
-          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
+          "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
