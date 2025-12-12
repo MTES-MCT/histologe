@@ -57,10 +57,12 @@ class AgentSelectionType extends AbstractType
         $constraints = [];
         if (!$existingSubscriptionsInChoices) {
             $label = 'Veuillez sélectionner au moins un agent.';
+            $groups = ['Default'];
             if ($options['only_rt']) {
                 $label = 'Veuillez sélectionner au moins un responsable de territoire.';
+                $groups = ['only_rt'];
             }
-            $constraints[] = new Assert\Count(['min' => 1, 'minMessage' => $label]);
+            $constraints[] = new Assert\Count(['min' => 1, 'minMessage' => $label, 'groups' => $groups]);
         }
 
         $builder->add('agents', EntityType::class, [
