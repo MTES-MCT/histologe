@@ -139,7 +139,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/login-bailleur', name: 'app_login_bailleur')]
+    #[Route('/connexion-bailleur', name: 'app_login_bailleur')]
     public function loginBailleur(
         AuthenticationUtils $authenticationUtils,
         #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR')]
