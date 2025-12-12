@@ -29,7 +29,7 @@ class SecurityControllerTest extends WebTestCase
             'bailleur_code' => $signalement->getLoginBailleur(),
             '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
         ];
-        $client->request('POST', '/login-bailleur', $payload);
+        $client->request('POST', '/connexion-bailleur', $payload);
         $this->assertResponseRedirects('/dossier-bailleur/');
     }
 
@@ -37,7 +37,7 @@ class SecurityControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
-        $client->request('GET', '/login-bailleur', [
+        $client->request('GET', '/connexion-bailleur', [
             'bailleur_reference' => $signalement->getReference(),
             'bailleur_code' => $signalement->getLoginBailleur(),
         ]);
@@ -53,9 +53,9 @@ class SecurityControllerTest extends WebTestCase
             'bailleur_code' => 'invalid_code',
             '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
         ];
-        $client->request('POST', '/login-bailleur', $payload);
+        $client->request('POST', '/connexion-bailleur', $payload);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $this->assertResponseRedirects('/login-bailleur');
+        $this->assertResponseRedirects('/connexion-bailleur');
         $client->followRedirect();
         $this->assertSelectorExists('.fr-alert.fr-alert--error');
     }

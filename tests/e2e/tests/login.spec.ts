@@ -30,7 +30,7 @@ test('login for bailleur', async ({page, context}) => {
   await context.clearCookies();
   await context.clearPermissions();
 
-  await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/login-bailleur`);
+  await page.goto(`${process.env.BASE_URL ?? 'http://localhost:8080'}/connexion-bailleur`);
   await page.waitForLoadState('networkidle');
 
   await page.getByRole('textbox', { name: 'Référence du dossier' }).click();
