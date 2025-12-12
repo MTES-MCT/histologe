@@ -28,10 +28,10 @@
 {% endblock %}
 
 {% block content %}
-    {% if is_granted('AFFECTATION_TOGGLE', signalement) %}
+    {% if is_granted('SIGN_AFFECTATION_TOGGLE', signalement) %}
         {% include '_partials/_modal_affectation.html.twig' %}
     {% endif %}
-    {% if is_granted('AFFECTATION_SEE', signalement) %}        
+    {% if is_granted('SIGN_AFFECTATION_SEE', signalement) %}        
         {% include '_partials/_modal_historique_affectation.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_dpe.html.twig' %}

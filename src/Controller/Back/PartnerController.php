@@ -362,7 +362,7 @@ class PartnerController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
     ): JsonResponse|RedirectResponse {
-        $this->denyAccessUnlessGranted(PartnerVoter::USER_CREATE, $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
         $userTmp = new User();
         $userPartner = (new UserPartner())->setUser($userTmp)->setPartner($partner);
         $userTmp->addUserPartner($userPartner);
@@ -405,7 +405,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         UserManager $userManager,
     ): JsonResponse|RedirectResponse {
-        $this->denyAccessUnlessGranted(PartnerVoter::USER_CREATE, $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
         $user = new User();
         $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
         $user->addUserPartner($userPartner);
@@ -604,7 +604,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         UserRepository $userRepository,
     ): Response {
-        $this->denyAccessUnlessGranted(PartnerVoter::USER_CREATE, $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
         $user = new User();
         $user->setIsMailingActive(true);
         $user->addUserPartner((new UserPartner())->setUser($user)->setPartner($partner));

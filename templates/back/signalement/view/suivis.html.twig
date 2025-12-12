@@ -8,7 +8,7 @@
             <label class="fr-toggle__label" for="toggle-hide-technical">Cacher les suivis automatiques</label>
         </div>
     </div>
-    {% if is_granted('CREATE_SUIVI', signalement) %}
+    {% if is_granted('SIGN_CREATE_SUIVI', signalement) %}
         <div data-ajax-form>
             {% include '_partials/signalement/add_suivi.html.twig' %}
         </div>

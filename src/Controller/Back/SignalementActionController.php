@@ -188,7 +188,7 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
-    #[IsGranted(SignalementVoter::CREATE_SUIVI, subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_CREATE_SUIVI, subject: 'signalement')]
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,

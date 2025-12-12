@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class InjonctionBailleurVoter extends Voter
 {
-    public const string SEE_INJONCTION_BAILLEUR = 'SEE_INJONCTION_BAILLEUR';
+    public const string INJONCTION_BAILLEUR_SEE = 'INJONCTION_BAILLEUR_SEE';
 
     public function __construct(
         #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR')]
@@ -27,7 +27,7 @@ class InjonctionBailleurVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return self::SEE_INJONCTION_BAILLEUR === $attribute && !$subject;
+        return self::INJONCTION_BAILLEUR_SEE === $attribute && !$subject;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -36,7 +36,7 @@ class InjonctionBailleurVoter extends Voter
         $user = $token->getUser();
 
         return match ($attribute) {
-            self::SEE_INJONCTION_BAILLEUR => $this->canSeeInjonctionBailleur($user),
+            self::INJONCTION_BAILLEUR_SEE => $this->canSeeInjonctionBailleur($user),
             default => false,
         };
     }

@@ -34,9 +34,9 @@ class SignalementVoter extends Voter
     public const string SIGN_ADD_VISITE = 'SIGN_ADD_VISITE';
     public const string SIGN_EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SIGN_SEE_NDE = 'SIGN_SEE_NDE';
-    public const string CREATE_SUIVI = 'CREATE_SUIVI';
-    public const string AFFECTATION_TOGGLE = 'AFFECTATION_TOGGLE';
-    public const string AFFECTATION_SEE = 'AFFECTATION_SEE';
+    public const string SIGN_CREATE_SUIVI = 'SIGN_CREATE_SUIVI';
+    public const string SIGN_AFFECTATION_TOGGLE = 'SIGN_AFFECTATION_TOGGLE';
+    public const string SIGN_AFFECTATION_SEE = 'SIGN_AFFECTATION_SEE';
 
     public function __construct(
         private readonly Security $security,
@@ -62,9 +62,9 @@ class SignalementVoter extends Voter
                 self::SIGN_EDIT_NDE,
                 self::SIGN_SEE_NDE,
                 self::SIGN_DELETE_DRAFT,
-                self::CREATE_SUIVI,
-                self::AFFECTATION_TOGGLE,
-                self::AFFECTATION_SEE,
+                self::SIGN_CREATE_SUIVI,
+                self::SIGN_AFFECTATION_TOGGLE,
+                self::SIGN_AFFECTATION_SEE,
             ])
             && ($subject instanceof Signalement);
     }
@@ -104,9 +104,9 @@ class SignalementVoter extends Voter
             self::SIGN_VIEW => $this->canView($subject, $user),
             self::SIGN_SUBSCRIBE => $this->canSubscribe($subject, $user),
             self::SIGN_EDIT_DRAFT, self::SIGN_DELETE_DRAFT => $this->canEditDraft($subject, $user),
-            self::CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
-            self::AFFECTATION_TOGGLE => $this->canToggleAffectation($subject, $user),
-            self::AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),
+            self::SIGN_CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
+            self::SIGN_AFFECTATION_TOGGLE => $this->canToggleAffectation($subject, $user),
+            self::SIGN_AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),
             default => false,
         };
     }

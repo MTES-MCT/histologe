@@ -14,11 +14,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class PartnerVoter extends Voter
 {
-    public const string PARTNER_CREATE = 'PARTNER_CREATE';
     public const string PARTNER_EDIT = 'PARTNER_EDIT';
     public const string PARTNER_DELETE = 'PARTNER_DELETE';
-    public const string USER_CREATE = 'USER_CREATE';
-    public const string ASSIGN_PERMISSION_AFFECTATION = 'ASSIGN_PERMISSION_AFFECTATION';
+    public const string PARTNER_USER_CREATE = 'PARTNER_USER_CREATE';
+    public const string PARTNER_ASSIGN_PERMISSION_AFFECTATION = 'PARTNER_ASSIGN_PERMISSION_AFFECTATION';
 
     public function __construct(
         private Security $security,
@@ -27,7 +26,7 @@ class PartnerVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::PARTNER_CREATE, self::PARTNER_EDIT, self::PARTNER_DELETE, self::USER_CREATE, self::ASSIGN_PERMISSION_AFFECTATION]) && ($subject instanceof Partner);
+        return \in_array($attribute, [self::PARTNER_EDIT, self::PARTNER_DELETE, self::PARTNER_USER_CREATE, self::PARTNER_ASSIGN_PERMISSION_AFFECTATION]) && ($subject instanceof Partner);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -46,8 +45,8 @@ class PartnerVoter extends Voter
         return match ($attribute) {
             self::PARTNER_EDIT => $this->canEdit($subject, $user),
             self::PARTNER_DELETE => $this->canDelete($subject, $user),
-            self::USER_CREATE => $this->canCreateUser($subject, $user),
-            self::ASSIGN_PERMISSION_AFFECTATION => $this->canAssignPermissionAffectation($subject, $user),
+            self::PARTNER_USER_CREATE => $this->canCreateUser($subject, $user),
+            self::PARTNER_ASSIGN_PERMISSION_AFFECTATION => $this->canAssignPermissionAffectation($subject, $user),
             default => false,
         };
     }
