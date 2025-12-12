@@ -624,6 +624,45 @@ function initBoFormSignalementAdresse() {
   );
 
   const boFormSignalementAdresse = document?.querySelector('#bo-form-signalement-adresse');
+  const natureLogementInputs = boFormSignalementAdresse?.querySelectorAll(
+    '#signalement_draft_address_natureLogement input'
+  );
+
+  natureLogementInputs.forEach((natureLogementInput) => {
+    natureLogementInput.addEventListener('click', () => {
+      refreshFromNatureLogement();
+    });
+  });
+  refreshFromNatureLogement();
+
+  function refreshFromNatureLogement() {
+    let natureLogementValue = '';
+    natureLogementInputs.forEach((natureLogementInput) => {
+      if (natureLogementInput.checked) {
+        natureLogementValue = natureLogementInput.value;
+      }
+    });
+
+    refreshElementEnable(
+      'enable',
+      'adresse',
+      '#signalement_draft_address_natureLogementAutre',
+      natureLogementValue === 'autre'
+    );
+    refreshElementEnable(
+      'enable',
+      'logement',
+      '#signalement_draft_logement_appartementEtage',
+      natureLogementValue === 'appartement'
+    );
+    refreshElementEnable(
+      'enable',
+      'logement',
+      '#signalement_draft_logement_appartementAvecFenetres',
+      natureLogementValue === 'appartement'
+    );
+  }
+
   const profileDeclarantInputs = boFormSignalementAdresse?.querySelectorAll(
     '#signalement_draft_address_profileDeclarant input'
   );
@@ -651,44 +690,6 @@ function initBoFormSignalementAdresse() {
 
 function initBoFormSignalementLogement() {
   const boFormSignalementLogement = document?.querySelector('#bo-form-signalement-logement');
-  const natureLogementInputs = boFormSignalementLogement?.querySelectorAll(
-    '#signalement_draft_logement_natureLogement input'
-  );
-  natureLogementInputs.forEach((natureLogementInput) => {
-    natureLogementInput.addEventListener('click', () => {
-      refreshFromNatureLogement();
-    });
-  });
-  refreshFromNatureLogement();
-
-  function refreshFromNatureLogement() {
-    let natureLogementValue = '';
-    natureLogementInputs.forEach((natureLogementInput) => {
-      if (natureLogementInput.checked) {
-        natureLogementValue = natureLogementInput.value;
-      }
-    });
-
-    refreshElementEnable(
-      'enable',
-      'logement',
-      '#signalement_draft_logement_natureLogementAutre',
-      natureLogementValue === 'autre'
-    );
-    refreshElementEnable(
-      'enable',
-      'logement',
-      '#signalement_draft_logement_appartementEtage',
-      natureLogementValue === 'appartement'
-    );
-    refreshElementEnable(
-      'enable',
-      'logement',
-      '#signalement_draft_logement_appartementAvecFenetres',
-      natureLogementValue === 'appartement'
-    );
-  }
-
   const compositionLogementInputs = boFormSignalementLogement?.querySelectorAll(
     '#signalement_draft_logement_pieceUnique input'
   );
