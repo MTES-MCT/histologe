@@ -31,7 +31,7 @@ when@prod:
         sentry_logs:
           type: service
           id: Sentry\SentryBundle\Monolog\LogsHandler
-          channels: [ "!event", "!doctrine", "!console" ]   # optionnel
+          channels: [ "!event", "!doctrine", "!console", "!request" ]
 
 
     services:
