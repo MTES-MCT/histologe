@@ -1,4 +1,4 @@
-{% if is_granted('AFFECTATION_SEE', signalement) %}
+{% if is_granted('SIGN_AFFECTATION_SEE', signalement) %}
     <div class="fr-grid-row">
         <div class="fr-col-9 fr-col-md-6">
             <h3 class="fr-h5">Partenaires affectés</h3>
@@ -12,7 +12,7 @@
                 >
                     Voir l'historique des affectations
                 </button>
-                 {% if is_granted('AFFECTATION_TOGGLE', signalement) %}
+                 {% if is_granted('SIGN_AFFECTATION_TOGGLE', signalement) %}
                     <button class="fr-btn fr-fi-add-line fr-btn--icon-left" data-fr-opened="false" aria-controls="fr-modal-affectation">
                         Affecter des partenaires
                     </button>

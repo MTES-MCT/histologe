@@ -109,7 +109,7 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('back_signalements_index');
         }
-        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
 
         $eventDispatcher->dispatch(
             new SignalementViewedEvent($signalement, $user),
@@ -126,7 +126,7 @@ class SignalementController extends AbstractController
         $refusSignalementForm = null;
         $isUniqueRtInCurrentPartner = false;
         $agentSelection = (new AgentSelection())->setSignalement($signalement)->setAgents([$user]);
-        if ($this->isGranted(SignalementVoter::VALIDATE, $signalement)) {
+        if ($this->isGranted(SignalementVoter::SIGN_VALIDATE, $signalement)) {
             if ($user->isTerritoryAdmin()) {
                 if (1 === count($userRepository->findActiveTerritoryAdminsInPartner($partner))) {
                     $isUniqueRtInCurrentPartner = true;
@@ -314,7 +314,7 @@ class SignalementController extends AbstractController
         $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
         })->first();
-        if (!$this->isGranted('SIGN_CLOSE', $signalement) && (!$affectation || !$this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation))) {
+        if (!$this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement) && (!$affectation || !$this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation))) {
             return $this->json(['code' => Response::HTTP_FORBIDDEN, 'message' => 'Vous n\'êtes pas autorisé à fermer ce signalement ou cette affectation.'], Response::HTTP_FORBIDDEN);
         }
 
@@ -381,7 +381,7 @@ class SignalementController extends AbstractController
         AffectationManager $affectationManager,
         NotificationRepository $notificationRepository,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_DELETE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_DELETE, $signalement);
         if ($this->isCsrfTokenValid(
             'signalement_delete_'.$signalement->getId(),
             (string) $request->getPayload()->get('_token')
@@ -413,7 +413,7 @@ class SignalementController extends AbstractController
         TagRepository $tagRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_CLOSED', $signalement)) {
+        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_CLOSED, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         if (
@@ -456,7 +456,7 @@ class SignalementController extends AbstractController
         Signalement $signalement,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
         $html = $this->renderView('back/signalement/view/photos-documents.html.twig', [

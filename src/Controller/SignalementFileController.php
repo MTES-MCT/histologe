@@ -10,6 +10,8 @@ use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
+use App\Security\Voter\FileVoter;
+use App\Security\Voter\SignalementFoVoter;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -34,7 +36,7 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) && false === !$this->isGranted('SIGN_USAGER_ADD_SUIVI', $signalement)) {
+        if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement) && false === !$this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         if (!$request->isXmlHttpRequest()) {
@@ -66,7 +68,7 @@ class SignalementFileController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) && false === !$this->isGranted('SIGN_USAGER_ADD_SUIVI', $signalement)) {
+        if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement) && false === !$this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         if (!$request->isXmlHttpRequest()) {
@@ -106,7 +108,7 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement) && false === !$this->isGranted('SIGN_USAGER_ADD_SUIVI', $signalement)) {
+        if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement) && false === !$this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -142,7 +144,7 @@ class SignalementFileController extends AbstractController
 
         $fileId = $request->get('file_id');
         $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
-        $this->denyAccessUnlessGranted('FRONT_FILE_DELETE', $file);
+        $this->denyAccessUnlessGranted(FileVoter::FILE_FRONT_DELETE, $file);
 
         if (null === $file) {
             $this->addFlash('error', 'Ce fichier n\'existe plus');
@@ -178,7 +180,7 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
         if (null === $signalementUser->getEmail()) {

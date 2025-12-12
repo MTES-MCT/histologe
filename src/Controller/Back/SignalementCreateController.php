@@ -21,6 +21,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
+use App\Security\Voter\SignalementVoter;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
@@ -82,7 +83,7 @@ class SignalementCreateController extends AbstractController
         /** @var Signalement $signalement */
         $signalement = $signalementManager->find($draftId);
 
-        $this->denyAccessUnlessGranted('SIGN_DELETE_DRAFT', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_DELETE_DRAFT, $signalement);
 
         if (
             $signalement
@@ -113,7 +114,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/brouillon/editer/{uuid:signalement}', name: 'back_signalement_edit_draft', methods: ['GET'])]
-    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function editSignalement(
         Signalement $signalement,
         SignalementDesordresProcessor $signalementDesordresProcessor,
@@ -148,7 +149,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/brouillon/{uuid:signalement}/liste-fichiers', name: 'back_signalement_create_file_list', methods: ['GET'])]
-    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function getSignalementFileList(
         Signalement $signalement,
         FileRepository $fileRepository,
@@ -168,7 +169,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-address/{uuid:signalement}', name: 'back_signalement_draft_form_address_edit', methods: ['POST'])]
-    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function editFormAddress(
         Signalement $signalement,
         Request $request,
@@ -264,7 +265,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-logement/{uuid:signalement}', name: 'back_signalement_draft_form_logement_edit', methods: ['POST'])]
-    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function editFormLogement(
         Signalement $signalement,
         Request $request,
@@ -295,7 +296,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-situation/{uuid:signalement}', name: 'back_signalement_draft_form_situation_edit', methods: ['POST'])]
-    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function editFormSituation(
         Signalement $signalement,
         Request $request,
@@ -326,7 +327,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-coordonnees/{uuid:signalement}', name: 'back_signalement_draft_form_coordonnees_edit', methods: ['POST'])]
-    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function editFormCoordonnees(
         Signalement $signalement,
         Request $request,
@@ -367,7 +368,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-desordres/{uuid:signalement}', name: 'back_signalement_draft_form_desordres_edit', methods: ['POST'])]
-    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function editFormDesordres(
         Signalement $signalement,
         Request $request,
@@ -408,7 +409,7 @@ class SignalementCreateController extends AbstractController
     }
 
     #[Route('/bo-form-validation/{uuid:signalement}', name: 'back_signalement_draft_form_validation', methods: ['GET', 'POST'])]
-    #[IsGranted('SIGN_EDIT_DRAFT', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function formValidation(
         Signalement $signalement,
         Request $request,

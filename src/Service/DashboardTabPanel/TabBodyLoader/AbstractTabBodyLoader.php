@@ -58,7 +58,7 @@ abstract class AbstractTabBodyLoader implements TabBodyLoaderInterface
 
     protected function ensureAccess(TabBody $tab): void
     {
-        if (!$this->security->isGranted(TabPanelVoter::VIEW_TAB_PANEL, $tab->getType())) {
+        if (!$this->security->isGranted(TabPanelVoter::TAB_PANEL_VIEW, $tab->getType())) {
             throw new AccessDeniedHttpException(sprintf('Accès interdit au panel "%s".', $tab->getType()));
         }
     }

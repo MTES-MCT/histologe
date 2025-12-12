@@ -17,11 +17,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class InterventionVoter extends Voter
 {
-    public const string EDIT_VISITE = 'INTERVENTION_EDIT_VISITE';
+    public const string INTERVENTION_EDIT_VISITE = 'INTERVENTION_EDIT_VISITE';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT_VISITE]) && ($subject instanceof Intervention);
+        return \in_array($attribute, [self::INTERVENTION_EDIT_VISITE]) && ($subject instanceof Intervention);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
@@ -35,7 +35,7 @@ class InterventionVoter extends Voter
         }
 
         return match ($attribute) {
-            self::EDIT_VISITE => self::canEditVisite($subject, $user),
+            self::INTERVENTION_EDIT_VISITE => self::canEditVisite($subject, $user),
             default => false,
         };
     }

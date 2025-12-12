@@ -28,7 +28,7 @@ class SignalementInjonctionController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $this->denyAccessUnlessGranted(InjonctionBailleurVoter::SEE);
+        $this->denyAccessUnlessGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE);
 
         $searchSignalementInjonction = new SearchSignalementInjonction($user);
         $form = $this->createForm(SearchSignalementInjonctionType::class, $searchSignalementInjonction);

@@ -31,6 +31,7 @@ use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Security\User\SignalementUser;
+use App\Security\Voter\SignalementFoVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\HtmlCleaner;
 use App\Service\ImageManipulationHandler;
@@ -440,7 +441,7 @@ class SignalementController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (SignalementStatus::ARCHIVED === $signalement->getStatut()) {
             $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
 
@@ -477,7 +478,7 @@ class SignalementController extends AbstractController
         SuiviCategoryMapper $suiviCategoryMapper,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -514,7 +515,7 @@ class SignalementController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
         if ($request->isMethod('POST')) {
             $token = (string) $request->request->get('_token');
@@ -542,7 +543,7 @@ class SignalementController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -577,7 +578,7 @@ class SignalementController extends AbstractController
         SuiviSeenMarker $suiviSeenMarker,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -590,7 +591,7 @@ class SignalementController extends AbstractController
 
         $formMessage = $this->createForm(MessageUsagerType::class);
         $formMessage->handleRequest($request);
-        if ($this->isGranted('SIGN_USAGER_ADD_SUIVI', $signalement) && $formMessage->isSubmitted() && $formMessage->isValid()) {
+        if ($this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement) && $formMessage->isSubmitted() && $formMessage->isValid()) {
             $description = HtmlCleaner::cleanFrontEndEntry($formMessage->get('description')->getData());
 
             $docs = $fileRepository->findTempForSignalementAndUserIndexedById($signalement, $signalementUser->getUser());
@@ -656,7 +657,7 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_COMPLETE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -725,7 +726,7 @@ class SignalementController extends AbstractController
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
@@ -736,7 +737,7 @@ class SignalementController extends AbstractController
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
 
         $form = null;
-        if ($this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
+        if ($this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
             $form = $this->createFormBuilder(null, ['allow_extra_fields' => true])->getForm();
             $form->handleRequest($request);
             if ($form->isSubmitted()) {
@@ -787,8 +788,8 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
+        if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -815,13 +816,13 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if ($signalement->getIsUsagerAbandonProcedure()) {
             $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté d\'arrêter la procédure.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
+        if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -884,13 +885,13 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (false === $signalement->getIsUsagerAbandonProcedure()) {
             $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté de poursuivre la procédure.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        if (!$this->isGranted('SIGN_USAGER_EDIT', $signalement)) {
+        if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
             $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -949,7 +950,7 @@ class SignalementController extends AbstractController
         LoggerInterface $logger,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_BASCULE_PROCEDURE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_BASCULE_PROCEDURE, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();

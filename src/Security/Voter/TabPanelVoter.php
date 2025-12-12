@@ -13,11 +13,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class TabPanelVoter extends Voter
 {
-    public const string VIEW_TAB_PANEL = 'VIEW_TAB_PANEL';
+    public const string TAB_PANEL_VIEW = 'TAB_PANEL_VIEW';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return self::VIEW_TAB_PANEL === $attribute && is_string($subject);
+        return self::TAB_PANEL_VIEW === $attribute && is_string($subject);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
