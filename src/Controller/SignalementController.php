@@ -1106,7 +1106,7 @@ class SignalementController extends AbstractController
         ]);
     }
 
-    private function redirectIfTiersNeedsToAcceptCgu(Signalement $signalement, string $userEmail): ?Response
+    private function redirectIfTiersNeedsToAcceptCgu(Signalement $signalement, ?string $userEmail): ?Response
     {
         if ($userEmail !== $signalement->getMailDeclarant()) {
             return null;
