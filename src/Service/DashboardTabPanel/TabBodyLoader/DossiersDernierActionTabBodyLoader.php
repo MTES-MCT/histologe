@@ -33,7 +33,7 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
                 'partenaires_non_notifiables' => $this->tabDataManager->countPartenairesNonNotifiables($this->tabQueryParameters),
                 'partenaires_interfaces' => $this->tabDataManager->countPartenairesInterfaces($this->tabQueryParameters),
             ];
-            if ($this->security->isGranted(InjonctionBailleurVoter::SEE_INJONCTION_BAILLEUR)) {
+            if ($this->security->isGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE)) {
                 $data['data_kpi']['injonctions'] = $this->tabDataManager->countInjonctions($this->tabQueryParameters);
             }
         }

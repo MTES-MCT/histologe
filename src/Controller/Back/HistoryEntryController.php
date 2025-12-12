@@ -23,7 +23,7 @@ class HistoryEntryController extends AbstractController
         if (
             !$signalement
             || !$this->isGranted(SignalementVoter::SIGN_VIEW, $signalement)
-            || !$this->isGranted(SignalementVoter::AFFECTATION_SEE, $signalement)
+            || !$this->isGranted(SignalementVoter::SIGN_AFFECTATION_SEE, $signalement)
         ) {
             return $this->json(['response' => 'error'], Response::HTTP_FORBIDDEN);
         }

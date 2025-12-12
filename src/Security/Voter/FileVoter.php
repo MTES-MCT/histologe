@@ -18,13 +18,13 @@ class FileVoter extends Voter
 {
     public const string FILE_DELETE = 'FILE_DELETE';
     public const string FILE_EDIT = 'FILE_EDIT';
-    public const string FRONT_FILE_DELETE = 'FRONT_FILE_DELETE';
+    public const string FILE_FRONT_DELETE = 'FILE_FRONT_DELETE';
     public const string FILE_EDIT_DOCUMENT = 'FILE_EDIT_DOCUMENT';
     public const string FILE_DELETE_DOCUMENT = 'FILE_DELETE_DOCUMENT';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::FILE_DELETE, self::FILE_EDIT, self::FRONT_FILE_DELETE, self::FILE_EDIT_DOCUMENT, self::FILE_DELETE_DOCUMENT])
+        return \in_array($attribute, [self::FILE_DELETE, self::FILE_EDIT, self::FILE_FRONT_DELETE, self::FILE_EDIT_DOCUMENT, self::FILE_DELETE_DOCUMENT])
             && $subject instanceof File;
     }
 
@@ -33,7 +33,7 @@ class FileVoter extends Voter
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        if (self::FRONT_FILE_DELETE === $attribute) {
+        if (self::FILE_FRONT_DELETE === $attribute) {
             return $this->canFrontDelete($subject);
         }
 
