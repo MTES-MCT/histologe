@@ -190,7 +190,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_bailleur_tel",
-          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
+          "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
@@ -563,7 +563,7 @@
         },
         {
           "type": "SignalementFormParagraph",
-          "label": "* Sous réserve de votre éligibilité à ce dispositif.",
+          "label": "* Sous réserve de votre éligibilité à ce dispositif. Vous en serez informés après la validation de votre signalement.",
           "slug": "injonction_bailleur_paragraph_7"
         },
         {
@@ -596,7 +596,7 @@
           "type": "SignalementFormPhonefield",
           "label": "Téléphone (facultatif)",
           "slug": "coordonnees_bailleur_tel",
-          "description": "Format attendu : Veuillez sélectionner votre pays pour obtenir l'indicatif téléphonique, puis saisir votre numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
+          "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
             "required": false
           },
