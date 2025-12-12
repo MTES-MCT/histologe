@@ -109,13 +109,14 @@ class AuthentificationSuccessListener
                     $exception->getMessage(),
                     $signalement->getId()
                 ));
-            } else {
-                /* @var User $user */
+            } elseif ($user instanceof User) {
                 $this->logger->error(\sprintf(
                     'Failed to create login history entry (%s) on user : %d',
                     $exception->getMessage(),
                     $user->getId()
                 ));
+            } else {
+                $this->logger->error('Failed unknown user type');
             }
         }
     }
