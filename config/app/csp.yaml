@@ -7,7 +7,8 @@ parameters:
       - "'unsafe-inline'"
       - "'unsafe-eval'"
       - "https://cdn.matomo.cloud/histologe.matomo.cloud/matomo.js" # todo: remove when matomo is migrated to dinum tracker
-      - "https://stats.beta.gouv.fr/matomo.js"
+      - "https://stats.beta.gouv.fr/matomo.js" # todo: remove when confirmed migration to dinum tracker
+      - "https://stats.beta.gouv.fr/js/container_udgEriWD.js"
       - "https://cdn.jsdelivr.net/gh/nelmio/NelmioApiDocBundle/public/swagger-ui/"
       - "https://cdn.jsdelivr.net/gh/nelmio/NelmioApiDocBundle/public/"
     style-src:
