@@ -461,7 +461,7 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $count = $signalementRepository->getActiveSignalementsForUser($user, true);
         $affectations = $affectationRepository->findBy(['partner' => $user->getPartners()->first(), 'statut' => AffectationStatus::ACCEPTED]);
-        
+
         $this->assertEquals(\count($affectations), $count);
     }
 
@@ -482,13 +482,13 @@ class SignalementRepositoryTest extends KernelTestCase
         $suivis = $suiviRepository->findBy(['createdBy' => $user]);
         $signaleementsIds = [];
         foreach ($suivis as $suivi) {
-            if($suivi->getSignalement()->getStatut() === SignalementStatus::ACTIVE) {
+            if (SignalementStatus::ACTIVE === $suivi->getSignalement()->getStatut()) {
                 $signaleementsIds[$suivi->getSignalement()->getId()] = $suivi->getSignalement()->getId();
             }
         }
         $affectation = $affectationRepository->findBy(['statut' => AffectationStatus::ACCEPTED, 'answeredBy' => $user]);
         foreach ($affectation as $aff) {
-            if($aff->getSignalement()->getStatut() === SignalementStatus::ACTIVE) {
+            if (SignalementStatus::ACTIVE === $aff->getSignalement()->getStatut()) {
                 $signaleementsIds[$aff->getSignalement()->getId()] = $aff->getSignalement()->getId();
             }
         }
@@ -513,13 +513,13 @@ class SignalementRepositoryTest extends KernelTestCase
         $suivis = $suiviRepository->findBy(['createdBy' => $user]);
         $signaleementsIds = [];
         foreach ($suivis as $suivi) {
-            if($suivi->getSignalement()->getStatut() === SignalementStatus::ACTIVE) {
+            if (SignalementStatus::ACTIVE === $suivi->getSignalement()->getStatut()) {
                 $signaleementsIds[$suivi->getSignalement()->getId()] = $suivi->getSignalement()->getId();
             }
         }
         $affectation = $affectationRepository->findBy(['statut' => AffectationStatus::ACCEPTED, 'answeredBy' => $user]);
         foreach ($affectation as $aff) {
-            if($aff->getSignalement()->getStatut() === SignalementStatus::ACTIVE) {
+            if (SignalementStatus::ACTIVE === $aff->getSignalement()->getStatut()) {
                 $signaleementsIds[$aff->getSignalement()->getId()] = $aff->getSignalement()->getId();
             }
         }
