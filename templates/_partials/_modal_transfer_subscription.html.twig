@@ -23,11 +23,11 @@
                         </div>
                         {{ form_errors(transferSubscriptionForm) }}
                         <div class="fr-select-group agent-transfer-container">
-                            {{ form_label(transferSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]'}}) }}
+                            {{ form_label(transferSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agent_selection[agents]'}}) }}
                             <div class="fr-grid-row">
                                 {% for agent in transferSubscriptionForm.agents %}
                                     <div class="fr-checkbox-group fr-col-6">
-                                        {{ form_row(agent) }}
+                                        {{ form_row(agent, {'id': 'transfer_subscription_' ~ agent.vars.value}) }}
                                     </div>
                                 {% endfor %}
                             </div>
