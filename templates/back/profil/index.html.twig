@@ -200,6 +200,9 @@
                             Vous êtes abonné(e) à <strong>{{nbSubsOnActiveSignalements}}</strong> de ces signalements.
                         </li>
                     </ul>
+                    {% if not is_granted('ROLE_ADMIN_TERRITORY') %}
+                        ⚠️ Nous pouvons uniquement supprimer les abonnements aux dossiers auxquels au moins un autre agent de votre partenaire est abonné.
+                    {% endif %}
                 </div>
                 <ul class="fr-btns-group fr-btns-group--equisized fr-btns-group--inline fr-mt-2w">
                     <a class="fr-btn fr-btn--secondary"

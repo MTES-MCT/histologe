@@ -26,7 +26,7 @@ affectations:
     signalement: 2022-6
     partner: "partenaire-13-01@signal-logement.fr"
     statut: "EN_COURS"
-    answered_by: "admin-territoire-13-01@signal-logement.fr"
+    answered_by: "admin-partenaire-13-01@signal-logement.fr"
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     territory: "Bouches-du-Rhône"
   -
@@ -217,7 +217,7 @@ affectations:
     signalement: 2023-20
     partner: "partenaire-13-01@signal-logement.fr"
     statut: "EN_COURS"
-    answered_by: "admin-01@signal-logement.fr"
+    answered_by: "admin-partenaire-13-01@signal-logement.fr"
     affected_by: "admin-01@signal-logement.fr"
     territory: "Bouches-du-Rhône"
     created_at: '-15 days'

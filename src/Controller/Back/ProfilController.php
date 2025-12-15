@@ -381,7 +381,7 @@ class ProfilController extends AbstractController
         if (!$this->isCsrfTokenValid('subscriptions_changes', (string) $request->query->get('_token'))) {
             $this->addFlash('error', 'Une erreur est survenue lors de la modification de vos abonnements');
 
-            return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_profil');
         }
         /** @var User $user */
         $user = $this->getUser();
@@ -417,6 +417,6 @@ class ProfilController extends AbstractController
         $entityManager->flush();
         $this->addFlash('success', 'Vos abonnements ont bien été mis à jour.');
 
-        return $this->redirectToRoute('back_profil', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_profil');
     }
 }

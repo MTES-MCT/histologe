@@ -153,3 +153,10 @@ suivis:
   signalement: "00000000-0000-0000-2025-000000000012"
   type: 1
   category: "INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE"
+- 
+  created_by: admin-partenaire-13-01@signal-logement.fr
+  description: "Un suivi pour abonner l'utilisateur."
+  is_public: 0
+  signalement: "00000000-0000-0000-2023-000000000026"
+  type: 1
+  category: "INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE"

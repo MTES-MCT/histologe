@@ -2,12 +2,17 @@
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabDossier;
@@ -402,6 +407,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $params->queryCommune = 'Marseille';
 
         $results = $signalementRepository->findSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
+        $this->assertIsArray($results);
         foreach ($results as $row) {
             $this->assertStringContainsStringIgnoringCase('Marseille', $row['adresse']);
         }
@@ -426,5 +432,98 @@ class SignalementRepositoryTest extends KernelTestCase
         $loginBailleur = 'XXXX-XXXX-XXXX-XXXX';
         $signalement = $signalementRepository->findOneForLoginBailleur($referenceInjonction, $loginBailleur);
         $this->assertNull($signalement);
+    }
+
+    public function testGetActiveSignalementsForUserRT(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+
+        $count = $signalementRepository->getActiveSignalementsForUser($user, true);
+        $expected = \count($signalementRepository->findBy(['territory' => 13, 'statut' => SignalementStatus::ACTIVE]));
+        $this->assertEquals($expected, $count);
+    }
+
+    public function testGetActiveSignalementsForUserAgent(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var AffectationRepository $affectationRepository */
+        $affectationRepository = $this->entityManager->getRepository(Affectation::class);
+
+        $user = $userRepository->findOneBy(['email' => 'admin-partenaire-13-01@signal-logement.fr']);
+
+        $count = $signalementRepository->getActiveSignalementsForUser($user, true);
+        $affectations = $affectationRepository->findBy(['partner' => $user->getPartners()->first(), 'statut' => AffectationStatus::ACCEPTED]);
+        
+        $this->assertEquals(\count($affectations), $count);
+    }
+
+    public function testGetActiveSignalementsWithInteractionsForUserRT(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var SuiviRepository $suiviRepository */
+        $suiviRepository = $this->entityManager->getRepository(Suivi::class);
+        /** @var AffectationRepository $affectationRepository */
+        $affectationRepository = $this->entityManager->getRepository(Affectation::class);
+
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+
+        $count = $signalementRepository->getActiveSignalementsWithInteractionsForUser($user, true);
+        $suivis = $suiviRepository->findBy(['createdBy' => $user]);
+        $signaleementsIds = [];
+        foreach ($suivis as $suivi) {
+            if($suivi->getSignalement()->getStatut() === SignalementStatus::ACTIVE) {
+                $signaleementsIds[$suivi->getSignalement()->getId()] = $suivi->getSignalement()->getId();
+            }
+        }
+        $affectation = $affectationRepository->findBy(['statut' => AffectationStatus::ACCEPTED, 'answeredBy' => $user]);
+        foreach ($affectation as $aff) {
+            if($aff->getSignalement()->getStatut() === SignalementStatus::ACTIVE) {
+                $signaleementsIds[$aff->getSignalement()->getId()] = $aff->getSignalement()->getId();
+            }
+        }
+
+        $this->assertEquals(\count($signaleementsIds), $count);
+    }
+
+    public function testGetActiveSignalementsWithInteractionsForUserAgent(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var SuiviRepository $suiviRepository */
+        $suiviRepository = $this->entityManager->getRepository(Suivi::class);
+        /** @var AffectationRepository $affectationRepository */
+        $affectationRepository = $this->entityManager->getRepository(Affectation::class);
+
+        $user = $userRepository->findOneBy(['email' => 'admin-partenaire-13-01@signal-logement.fr']);
+
+        $count = $signalementRepository->getActiveSignalementsWithInteractionsForUser($user, true);
+        $suivis = $suiviRepository->findBy(['createdBy' => $user]);
+        $signaleementsIds = [];
+        foreach ($suivis as $suivi) {
+            if($suivi->getSignalement()->getStatut() === SignalementStatus::ACTIVE) {
+                $signaleementsIds[$suivi->getSignalement()->getId()] = $suivi->getSignalement()->getId();
+            }
+        }
+        $affectation = $affectationRepository->findBy(['statut' => AffectationStatus::ACCEPTED, 'answeredBy' => $user]);
+        foreach ($affectation as $aff) {
+            if($aff->getSignalement()->getStatut() === SignalementStatus::ACTIVE) {
+                $signaleementsIds[$aff->getSignalement()->getId()] = $aff->getSignalement()->getId();
+            }
+        }
+
+        $this->assertEquals(\count($signaleementsIds), $count);
     }
 }

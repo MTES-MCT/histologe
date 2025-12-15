@@ -2497,7 +2497,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->where('s.statut = :statut')
             ->setParameter('statut', SignalementStatus::ACTIVE);
 
-        if ($user->isTerritoryAdmin()) {
+        if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
             $qb->andWhere('s.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         } else {
