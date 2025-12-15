@@ -246,7 +246,7 @@ export default defineComponent({
       this.mailSentForDraftThisSession = true
 
       if (isSave) {
-        requests.saveSignalementDraft(this.sendMailContinueFromDraft)
+        requests.saveSignalementDraft(this.sendMailContinueFromDraft, true)
       }
     },
     sendMailContinueFromDraft (requestResponse: any) {
