@@ -20,7 +20,7 @@
                             <div class="fr-grid-row">
                                 {% for agent in agentsSubscriptionForm.agents %}
                                     <div class="fr-checkbox-group fr-col-6">
-                                        {{ form_row(agent) }}
+                                        {{ form_row(agent, {'id': 'agents_subscription_' ~ agent.vars.value}) }}
                                     </div>
                                 {% endfor %}
                             </div>
