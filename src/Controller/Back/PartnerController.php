@@ -26,6 +26,8 @@ use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\PartnerVoter;
+use App\Security\Voter\UserVoter;
 use App\Service\EmailAlertChecker;
 use App\Service\ListFilters\SearchPartner;
 use App\Service\Mailer\NotificationMail;
@@ -112,7 +114,7 @@ class PartnerController extends AbstractController
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
         EmailAlertChecker $emailAlertChecker,
     ): Response {
-        $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
             $this->addFlash('error', 'Ce partenaire est archivé.');
 
@@ -152,7 +154,7 @@ class PartnerController extends AbstractController
         WorkflowInterface $interventionPlanningStateMachine,
         InterventionManager $interventionManager,
     ): Response {
-        $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
             return $this->redirect($this->generateUrl('back_partner_index', [
                 'page' => 1,
@@ -227,7 +229,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         PartnerManager $partnerManager,
     ): Response {
-        $this->denyAccessUnlessGranted('PARTNER_EDIT', $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
             return $this->redirect($this->generateUrl('back_partner_index', ['page' => 1, 'territory' => $partner->getTerritory()->getId()]));
         }
@@ -266,7 +268,7 @@ class PartnerController extends AbstractController
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */
         $partner = $partnerManager->find($partnerId);
-        $this->denyAccessUnlessGranted('PARTNER_DELETE', $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_DELETE, $partner);
         if (
             $partner
             && $this->isCsrfTokenValid('partner_delete', (string) $request->request->get('_token'))
@@ -360,7 +362,7 @@ class PartnerController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
     ): JsonResponse|RedirectResponse {
-        $this->denyAccessUnlessGranted('USER_CREATE', $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
         $userTmp = new User();
         $userPartner = (new UserPartner())->setUser($userTmp)->setPartner($partner);
         $userTmp->addUserPartner($userPartner);
@@ -403,7 +405,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         UserManager $userManager,
     ): JsonResponse|RedirectResponse {
-        $this->denyAccessUnlessGranted('USER_CREATE', $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
         $user = new User();
         $userPartner = (new UserPartner())->setUser($user)->setPartner($partner);
         $user->addUserPartner($userPartner);
@@ -459,7 +461,7 @@ class PartnerController extends AbstractController
         Request $request,
         UserManager $userManager,
     ): JsonResponse|RedirectResponse {
-        $this->denyAccessUnlessGranted('USER_EDIT', $user);
+        $this->denyAccessUnlessGranted(UserVoter::USER_EDIT, $user);
         $originalEmail = $user->getEmail();
         $editUserRoute = $this->generateUrl('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $user->getId(), 'from' => $request->query->get('from')]);
         $formDisabled = false;
@@ -512,7 +514,7 @@ class PartnerController extends AbstractController
 
             return $this->redirectToRoute('back_partner_index', [], Response::HTTP_SEE_OTHER);
         }
-        $this->denyAccessUnlessGranted('USER_TRANSFER', $user);
+        $this->denyAccessUnlessGranted(UserVoter::USER_TRANSFER, $user);
         if (!$this->isGranted('ROLE_ADMIN')) {
             $partnersAuthorized = $partnerRepository->findAllList($fromPartner->getTerritory());
             if (!isset($partnersAuthorized[$toPartner->getId()])) {
@@ -551,7 +553,7 @@ class PartnerController extends AbstractController
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId()], Response::HTTP_SEE_OTHER);
         }
 
-        $this->denyAccessUnlessGranted('USER_DELETE', $user);
+        $this->denyAccessUnlessGranted(UserVoter::USER_DELETE, $user);
         if (UserStatus::ARCHIVE === $user->getStatut()) {
             $this->addFlash('error', 'Cet utilisateur est déjà supprimé.');
 
@@ -602,7 +604,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         UserRepository $userRepository,
     ): Response {
-        $this->denyAccessUnlessGranted('USER_CREATE', $partner);
+        $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
         $user = new User();
         $user->setIsMailingActive(true);
         $user->addUserPartner((new UserPartner())->setUser($user)->setPartner($partner));

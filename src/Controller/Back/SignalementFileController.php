@@ -13,6 +13,8 @@ use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
+use App\Security\Voter\FileVoter;
+use App\Security\Voter\SignalementVoter;
 use App\Service\ImageManipulationHandler;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
@@ -34,7 +36,7 @@ class SignalementFileController extends AbstractController
         Signalement $signalement,
         MessageBusInterface $messageBus,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VIEW', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
         /** @var User $user */
         $user = $this->getUser();
 
@@ -66,7 +68,7 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
     ): Response {
-        if (!$this->isGranted('SIGN_EDIT_DRAFT', $signalement) && !$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_INJONCTION', $signalement)) {
+        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
@@ -103,7 +105,7 @@ class SignalementFileController extends AbstractController
         SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
-        if (!$this->isGranted('SIGN_EDIT_DRAFT', $signalement) && !$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_INJONCTION', $signalement)) {
+        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         /** @var FileRepository $fileRepository */
@@ -167,7 +169,7 @@ class SignalementFileController extends AbstractController
     ): Response {
         $fileId = $request->get('file_id');
         $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
-        $this->denyAccessUnlessGranted('FILE_DELETE', $file);
+        $this->denyAccessUnlessGranted(FileVoter::FILE_DELETE, $file);
         $fragment = in_array($request->get('hash_src'), ['activite', 'situation']) ? $request->get('hash_src') : 'documents';
         if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->get('_token'))) {
             $message = 'Token CSRF invalide, veuillez recharger la page';
@@ -220,7 +222,7 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('FILE_DELETE', $file);
+        $this->denyAccessUnlessGranted(FileVoter::FILE_DELETE, $file);
         if (!$file->isIsWaitingSuivi()) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
         }
@@ -256,7 +258,7 @@ class SignalementFileController extends AbstractController
 
             return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
         }
-        $this->denyAccessUnlessGranted('FILE_EDIT', $file);
+        $this->denyAccessUnlessGranted(FileVoter::FILE_EDIT, $file);
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
         $documentType = DocumentType::tryFrom($request->get('documentType'));
         if (DocumentType::PHOTO_VISITE === $file->getDocumentType()) {
@@ -307,7 +309,7 @@ class SignalementFileController extends AbstractController
         Request $request,
         ImageManipulationHandler $imageManipulationHandler,
     ): Response {
-        if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_INJONCTION', $signalement)) {
+        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         $rotate = (int) $request->get('rotate', 0);

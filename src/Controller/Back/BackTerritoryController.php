@@ -113,7 +113,7 @@ class BackTerritoryController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted(TerritoryVoter::GET_DOCUMENT, $territory);
+        $this->denyAccessUnlessGranted(TerritoryVoter::TERRITORY_GET_DOCUMENT, $territory);
 
         if ($territory->getIsGrilleVisiteDisabled()) {
             throw $this->createNotFoundException();
@@ -141,7 +141,7 @@ class BackTerritoryController extends AbstractController
         Territory $territory,
         BailleurRepository $bailleurRepository,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted(TerritoryVoter::GET_BAILLEURS_LIST, $territory);
+        $this->denyAccessUnlessGranted(TerritoryVoter::TERRITORY_GET_BAILLEURS_LIST, $territory);
         /** @var User $user */
         $user = $this->getUser();
         $bailleurs = $bailleurRepository->findBailleursByTerritory($user, $territory);

@@ -70,7 +70,7 @@
 									data-id={{ photo.id }} 
 									title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
 								></a>
-								{% if is_granted('FRONT_FILE_DELETE', photo) and is_granted('SIGN_USAGER_EDIT', signalement) %}
+								{% if is_granted('FILE_FRONT_DELETE', photo) and is_granted('SIGN_USAGER_EDIT', signalement) %}
 									<button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
 										id="file_delete_{{ photo.id }}" 
 										title="Supprimer la photo {{ photo.filename }}"
@@ -118,7 +118,7 @@
 										Afficher
 									</a>
 								{% endif %}
-								{% if is_granted('FRONT_FILE_DELETE', doc) %}
+								{% if is_granted('FILE_FRONT_DELETE', doc) %}
 									<button class="fr-btn fr-btn--sm fr-btn--icon-left fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
 										id="file_delete_{{ doc.id }}" 
 										title="Supprimer le document {{ doc.filename }}"

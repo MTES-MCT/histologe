@@ -16,15 +16,15 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class FileVoter extends Voter
 {
-    public const string DELETE = 'FILE_DELETE';
-    public const string EDIT = 'FILE_EDIT';
-    public const string FRONT_DELETE = 'FRONT_FILE_DELETE';
-    public const string EDIT_DOCUMENT = 'FILE_EDIT_DOCUMENT';
-    public const string DELETE_DOCUMENT = 'FILE_DELETE_DOCUMENT';
+    public const string FILE_DELETE = 'FILE_DELETE';
+    public const string FILE_EDIT = 'FILE_EDIT';
+    public const string FILE_FRONT_DELETE = 'FILE_FRONT_DELETE';
+    public const string FILE_EDIT_DOCUMENT = 'FILE_EDIT_DOCUMENT';
+    public const string FILE_DELETE_DOCUMENT = 'FILE_DELETE_DOCUMENT';
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::DELETE, self::EDIT, self::FRONT_DELETE, self::EDIT_DOCUMENT, self::DELETE_DOCUMENT])
+        return \in_array($attribute, [self::FILE_DELETE, self::FILE_EDIT, self::FILE_FRONT_DELETE, self::FILE_EDIT_DOCUMENT, self::FILE_DELETE_DOCUMENT])
             && $subject instanceof File;
     }
 
@@ -33,7 +33,7 @@ class FileVoter extends Voter
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        if (self::FRONT_DELETE === $attribute) {
+        if (self::FILE_FRONT_DELETE === $attribute) {
             return $this->canFrontDelete($subject);
         }
 
@@ -46,10 +46,10 @@ class FileVoter extends Voter
         }
 
         return match ($attribute) {
-            self::DELETE => $this->canDelete($subject, $user),
-            self::EDIT => $this->canEdit($subject, $user),
-            self::EDIT_DOCUMENT => $this->canEditDocument($subject, $user),
-            self::DELETE_DOCUMENT => $this->canDeleteDocument($subject, $user),
+            self::FILE_DELETE => $this->canDelete($subject, $user),
+            self::FILE_EDIT => $this->canEdit($subject, $user),
+            self::FILE_EDIT_DOCUMENT => $this->canEditDocument($subject, $user),
+            self::FILE_DELETE_DOCUMENT => $this->canDeleteDocument($subject, $user),
             default => false,
         };
     }

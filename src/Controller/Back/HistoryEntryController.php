@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Manager\HistoryEntryManager;
 use App\Repository\SignalementRepository;
+use App\Security\Voter\SignalementVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +22,8 @@ class HistoryEntryController extends AbstractController
         $signalement = $signalementRepository->find($request->get('id'));
         if (
             !$signalement
-            || !$this->isGranted('SIGN_VIEW', $signalement)
-            || !$this->isGranted('AFFECTATION_SEE', $signalement)
+            || !$this->isGranted(SignalementVoter::SIGN_VIEW, $signalement)
+            || !$this->isGranted(SignalementVoter::SIGN_AFFECTATION_SEE, $signalement)
         ) {
             return $this->json(['response' => 'error'], Response::HTTP_FORBIDDEN);
         }

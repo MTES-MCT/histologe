@@ -14,9 +14,9 @@ use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
  */
 class UserVoter extends Voter
 {
-    public const string EDIT = 'USER_EDIT';
-    public const string TRANSFER = 'USER_TRANSFER';
-    public const string DELETE = 'USER_DELETE';
+    public const string USER_EDIT = 'USER_EDIT';
+    public const string USER_TRANSFER = 'USER_TRANSFER';
+    public const string USER_DELETE = 'USER_DELETE';
 
     public function __construct(
         private readonly Security $security,
@@ -26,7 +26,7 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::TRANSFER, self::DELETE])
+        return \in_array($attribute, [self::USER_EDIT, self::USER_TRANSFER, self::USER_DELETE])
             && $subject instanceof User;
     }
 
@@ -43,7 +43,7 @@ class UserVoter extends Voter
             return false;
         }
         if ($subject->getAnonymizedAt()) {
-            $vote?->addReason('L’utilisateur a été anonymisé.');
+            $vote?->addReason('L\'utilisateur a été anonymisé.');
 
             return false;
         }
@@ -62,9 +62,9 @@ class UserVoter extends Voter
         }
 
         return match ($attribute) {
-            self::EDIT => $this->canEdit($subject, $user),
-            self::TRANSFER => $this->canTransfer($subject, $user),
-            self::DELETE => $this->canDelete($subject, $user),
+            self::USER_EDIT => $this->canEdit($subject, $user),
+            self::USER_TRANSFER => $this->canTransfer($subject, $user),
+            self::USER_DELETE => $this->canDelete($subject, $user),
             default => false,
         };
     }

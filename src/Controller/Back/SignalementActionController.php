@@ -22,6 +22,8 @@ use App\Repository\AffectationRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Security\Voter\SignalementVoter;
+use App\Security\Voter\SuiviVoter;
 use App\Service\FormHelper;
 use App\Service\Gouv\Rnb\RnbService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,7 +57,7 @@ class SignalementActionController extends AbstractController
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         SuiviManager $suiviManager,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         /** @var User $user */
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
@@ -102,7 +104,7 @@ class SignalementActionController extends AbstractController
         SuiviManager $suiviManager,
         UserRepository $userRepository,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         /** @var User $user */
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
@@ -143,7 +145,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         SuiviManager $suiviManager,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_VALIDATE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
         $refusSignalementRoute = $this->generateUrl('back_signalement_deny', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
@@ -186,7 +188,7 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/suivi/add', name: 'back_signalement_add_suivi', methods: 'POST')]
-    #[IsGranted('CREATE_SUIVI', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_CREATE_SUIVI, subject: 'signalement')]
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,
@@ -245,7 +247,7 @@ class SignalementActionController extends AbstractController
         ManagerRegistry $doctrine,
     ): RedirectResponse {
         $suivi = $suiviRepository->findOneBy(['id' => $request->get('suivi')]);
-        $this->denyAccessUnlessGranted('DELETE_SUIVI', $suivi);
+        $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_DELETE, $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->get('_token'))) {
             $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
             if ($suivi->getCreatedAt() > $limit && $this->editionSuiviEnable) {
@@ -273,7 +275,7 @@ class SignalementActionController extends AbstractController
         Suivi $suivi,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('EDIT_SUIVI', $suivi);
+        $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_EDIT, $suivi);
         $suivi->setSuiviTransformerService(null);
         $form = $this->createForm(AddSuiviType::class, $suivi, ['action' => $this->generateUrl('back_signalement_edit_suivi', ['suivi' => $suivi->getId()])]);
 
@@ -362,7 +364,7 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/switch', name: 'back_signalement_switch_value', methods: 'POST')]
-    #[IsGranted('SIGN_EDIT_ACTIVE', subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function switchValue(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): RedirectResponse|JsonResponse
     {
         if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), (string) $request->get('_token'))) {
@@ -391,7 +393,7 @@ class SignalementActionController extends AbstractController
         RnbService $rnbService,
         SignalementManager $signalementManager,
     ): RedirectResponse {
-        if (!$this->isGranted('SIGN_EDIT_ACTIVE', $signalement) && !$this->isGranted('SIGN_EDIT_NEED_VALIDATION', $signalement)) {
+        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_NEED_VALIDATION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         $rnbId = $request->get('rnbId');
@@ -427,7 +429,7 @@ class SignalementActionController extends AbstractController
         EntityManagerInterface $entityManager,
         Request $request,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         /** @var User $user */
         $user = $this->getUser();
         $subscription = $signalementSubscriptionRepository->findOneBy(['signalement' => $signalement, 'user' => $user]);
@@ -460,7 +462,7 @@ class SignalementActionController extends AbstractController
         UserSignalementSubscriptionManager $signalementSubscriptionManager,
         Request $request,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('subscribe', $token)) {
             $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
@@ -489,7 +491,7 @@ class SignalementActionController extends AbstractController
         AffectationRepository $affectationRepository,
         Request $request,
     ): Response {
-        $this->denyAccessUnlessGranted('SIGN_SUBSCRIBE', $signalement);
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents abonnés au dossier et vous ne recevrez plus les mises à jour du dossier.';
 
         /** @var User $user */

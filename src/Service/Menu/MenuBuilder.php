@@ -32,7 +32,7 @@ readonly class MenuBuilder
         }
         $signalementsSubMenu = (new MenuItem(label: 'Signalements', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Liste', route: 'back_signalements_index', routeParameters: $listRouteParameters, roleGranted: User::ROLE_USER));
-        if ($this->currentRoute->isGranted(InjonctionBailleurVoter::SEE)) {
+        if ($this->currentRoute->isGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE)) {
             $signalementsSubMenu->addChild(new MenuItem(label: 'Signalements en cours d\'injonction', route: 'back_injonction_signalement_index', roleGranted: User::ROLE_USER));
         }
         $signalementsSubMenu

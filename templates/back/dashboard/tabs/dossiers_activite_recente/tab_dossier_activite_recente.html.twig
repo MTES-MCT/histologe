@@ -5,7 +5,7 @@
      tabindex="0">
     {% include 'back/dashboard/tabs/dossiers_activite_recente/_header_dossier_activite_recente.html.twig' %}
 
-    {% if is_granted('VIEW_TAB_PANEL', 'dossiers-activite-recente') %}
+    {% if is_granted('TAB_PANEL_VIEW', 'dossiers-activite-recente') %}
     <div id="dossiers-activite-recente" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-activite-recente'}) }}">
         Chargement...
     </div>

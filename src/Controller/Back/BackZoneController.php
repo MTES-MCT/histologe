@@ -102,7 +102,7 @@ class BackZoneController extends AbstractController
     #[Route('/editer/{zone}', name: 'back_territory_management_zone_edit', methods: ['GET', 'POST'])]
     public function edit(Zone $zone, Request $request, EntityManagerInterface $em, CsvParser $csvParser): Response
     {
-        $this->denyAccessUnlessGranted(ZoneVoter::MANAGE, $zone);
+        $this->denyAccessUnlessGranted(ZoneVoter::ZONE_MANAGE, $zone);
 
         /** @var Form $form */
         $form = $this->createForm(ZoneType::class, $zone);
@@ -130,7 +130,7 @@ class BackZoneController extends AbstractController
     #[Route('/{zone}', name: 'back_territory_management_zone_show', methods: ['GET'])]
     public function show(Zone $zone, ZoneRepository $zoneRepository): Response
     {
-        $this->denyAccessUnlessGranted(ZoneVoter::MANAGE, $zone);
+        $this->denyAccessUnlessGranted(ZoneVoter::ZONE_MANAGE, $zone);
 
         $signalements = $zoneRepository->findSignalementsByZone($zone);
 
@@ -143,7 +143,7 @@ class BackZoneController extends AbstractController
     #[Route('/supprimer/{zone}', name: 'back_zone_delete', methods: ['GET'])]
     public function delete(Zone $zone, Request $request, EntityManagerInterface $em): RedirectResponse
     {
-        $this->denyAccessUnlessGranted(ZoneVoter::MANAGE, $zone);
+        $this->denyAccessUnlessGranted(ZoneVoter::ZONE_MANAGE, $zone);
         if (!$this->isCsrfTokenValid('zone_delete', $request->query->get('_token'))) {
             $this->addFlash('error', 'Le token CSRF est invalide.');
 

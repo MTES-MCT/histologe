@@ -230,7 +230,7 @@
                 <th scope="col">Notif. e-mails</th>
                 <th scope="col">Statut</th>
                 <th scope="col">Rôle</th>
-                {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                {% if is_granted('PARTNER_ASSIGN_PERMISSION_AFFECTATION', partner) %}
                 <th scope="col">Droits d'affectation</th>
                 {% endif %}
                 <th scope="col">Problème d'adresse e-mail</th>
@@ -270,7 +270,7 @@
                             <td>
                                 {{ user.roleLabel() }}
                             </td>
-                            {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                            {% if is_granted('PARTNER_ASSIGN_PERMISSION_AFFECTATION', partner) %}
                             <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
                             {% endif %}
                             <td>

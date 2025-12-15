@@ -150,7 +150,7 @@ class AdminTerritoryFilesController extends AbstractController
     public function edit(
         File $file,
     ): Response {
-        $this->denyAccessUnlessGranted(FileVoter::EDIT_DOCUMENT, $file);
+        $this->denyAccessUnlessGranted(FileVoter::FILE_EDIT_DOCUMENT, $file);
         $form = $this->createForm(TerritoryFileType::class, $file, [
             'action' => $this->generateUrl('back_territory_management_document_edit_ajax', ['file' => $file->getId()]),
         ]);
@@ -171,7 +171,7 @@ class AdminTerritoryFilesController extends AbstractController
         LoggerInterface $logger,
         ImageManipulationHandler $imageManipulationHandler,
     ): JsonResponse {
-        $this->denyAccessUnlessGranted(FileVoter::EDIT_DOCUMENT, $file);
+        $this->denyAccessUnlessGranted(FileVoter::FILE_EDIT_DOCUMENT, $file);
 
         /** @var Form $form */
         $form = $this->createForm(TerritoryFileType::class, $file, [
@@ -218,7 +218,7 @@ class AdminTerritoryFilesController extends AbstractController
         Request $request,
         UploadHandlerService $uploadHandlerService,
     ): RedirectResponse {
-        $this->denyAccessUnlessGranted(FileVoter::DELETE_DOCUMENT, $file);
+        $this->denyAccessUnlessGranted(FileVoter::FILE_DELETE_DOCUMENT, $file);
         if (!$this->isCsrfTokenValid('document_delete', $request->query->get('_token'))) {
             $this->addFlash('error', 'Le token CSRF est invalide.');
         } else {

@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Security\Voter\PartnerVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -116,7 +117,7 @@ class UserPartnerType extends AbstractType
                 'help' => 'Choisissez si ce compte va recevoir un e-mail à chaque nouveauté sur ses signalements ou un e-mail récapitulatif quotidien.',
             ]);
         }
-        if (1 === $user->getUserPartners()->count() && $this->security->isGranted('ASSIGN_PERMISSION_AFFECTATION', $user->getPartners()->first())) {
+        if (1 === $user->getUserPartners()->count() && $this->security->isGranted(PartnerVoter::PARTNER_ASSIGN_PERMISSION_AFFECTATION, $user->getPartners()->first())) {
             $builder->add('hasPermissionAffectation', CheckboxType::class, [
                 'label' => 'Cet utilisateur peut affecter d\'autres partenaires à ses signalements',
                 'required' => false,

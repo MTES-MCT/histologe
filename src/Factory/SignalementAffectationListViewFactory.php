@@ -5,6 +5,7 @@ namespace App\Factory;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\User;
+use App\Security\Voter\SignalementVoter;
 use App\Service\Signalement\SignalementAffectationHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -23,7 +24,7 @@ class SignalementAffectationListViewFactory
     public function createInstanceFrom(User $user, array $data): SignalementAffectationListView
     {
         $signalement = SignalementAffectationHelper::getSignalementFromDataForVoter($data);
-        $canDeleteSignalement = $this->security->isGranted('SIGN_DELETE', $signalement);
+        $canDeleteSignalement = $this->security->isGranted(SignalementVoter::SIGN_DELETE, $signalement);
 
         list($status, $affectations) = SignalementAffectationHelper::getStatusAndAffectationFrom($user, $data);
 
