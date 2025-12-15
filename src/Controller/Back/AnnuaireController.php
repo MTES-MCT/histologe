@@ -22,12 +22,7 @@ class AnnuaireController extends AbstractController
         private readonly UserPartnerRepository $userPartnerRepository,
         #[Autowire(param: 'standard_max_list_pagination')]
         private readonly int $maxListPagination,
-        #[Autowire(env: 'FEATURE_ANNUAIRE')]
-        bool $featureAnnuaire,
     ) {
-        if (!$featureAnnuaire) {
-            throw $this->createNotFoundException();
-        }
     }
 
     #[Route('/', name: 'back_annuaire_index', methods: ['GET'])]

@@ -64,16 +64,6 @@ class QualificationStatusService implements RuntimeExtensionInterface
         return QualificationStatus::NDE_CHECK;
     }
 
-    public function canSeenNDEEditZone(?SignalementQualification $signalementQualification): bool
-    {
-        // supprimer la fonction avec le feature flipping FEATURE_NEW_DOCUMENT_SPACE
-        if (empty($signalementQualification)) {
-            return false;
-        }
-
-        return QualificationStatus::NDE_AVEREE == $signalementQualification->getStatus() || QualificationStatus::NDE_CHECK == $signalementQualification->getStatus() || QualificationStatus::NDE_OK == $signalementQualification->getStatus();
-    }
-
     /**
      * @return array<string>
      */
