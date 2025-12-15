@@ -42,12 +42,13 @@ class UserProfilInfoType extends AbstractType
             ])
             ->add('fonction', null, [
                 'label' => 'Fonction (facultatif)',
-                'help' => 'Renseignez ici votre fonction au sein de votre organisation.',
+                'help' => 'Renseignez ici votre fonction au sein de votre organisation. 50 caractères maximum.',
                 'required' => false,
             ])
             ->add('phone', null, [
                 'label' => 'Téléphone professionnel (facultatif)',
                 'required' => false,
+                'help' => 'Format attendu : (+33) 1 22 33 44 55',
             ]);
     }
 
