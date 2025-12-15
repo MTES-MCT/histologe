@@ -63,7 +63,6 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(route: 'back_territory_management_zone_edit'))
         ;
 
-        $territoryFilesSubMenu = null;
         $mesOutilsSubMenu = null;
         $mesOutilsSubMenu = (new MenuItem(label: 'Mes outils', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
@@ -103,9 +102,6 @@ readonly class MenuBuilder
             ->addChild($adminToolsSubItem)
             ->addChild($superAdminToolsSubItem)
         ;
-        if (null !== $territoryFilesSubMenu) {
-            $menu->addChild($territoryFilesSubMenu);
-        }
         if (null !== $mesOutilsSubMenu) {
             $menu->addChild($mesOutilsSubMenu);
         }
