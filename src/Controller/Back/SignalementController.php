@@ -334,7 +334,7 @@ class SignalementController extends AbstractController
         }
 
         if (!empty($entity)) {
-            $this->addFlash('success', sprintf('Signalement #%s fermé avec succès !', $reference));
+            $this->addFlash('success', ['title' => 'Dossier fermé', 'message' => sprintf('Le dossier #%s a bien été fermé.', $reference)]);
         }
         $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
 
@@ -387,43 +387,46 @@ class SignalementController extends AbstractController
         Request $request,
         TagRepository $tagRepository,
         EntityManagerInterface $entityManager,
-    ): Response {
+    ): JsonResponse {
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_CLOSED, $signalement)) {
             throw $this->createAccessDeniedException();
         }
-        if (
-            $this->isCsrfTokenValid('signalement_save_tags', (string) $request->request->get('_token'))
-        ) {
-            $tagIds = $request->request->get('tag-ids');
-            $tagList = explode(',', (string) $tagIds);
-            foreach ($signalement->getTags() as $existingTag) {
-                if (!\in_array($existingTag->getId(), $tagList)) {
-                    $signalement->removeTag($existingTag);
+        if (!$this->isCsrfTokenValid('signalement_save_tags', (string) $request->request->get('_token'))) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        $tagIds = $request->request->get('tag-ids');
+        $tagList = explode(',', (string) $tagIds);
+        foreach ($signalement->getTags() as $existingTag) {
+            if (!\in_array($existingTag->getId(), $tagList)) {
+                $signalement->removeTag($existingTag);
+            }
+        }
+        if (!empty($tagIds)) {
+            foreach ($tagList as $tagId) {
+                $tag = $tagRepository->findBy([
+                    'id' => $tagId,
+                    'territory' => $signalement->getTerritory(),
+                    'isArchive' => 0,
+                ]);
+                if (!empty($tag)) {
+                    $signalement->addTag($tag[0]);
                 }
             }
-            if (!empty($tagIds)) {
-                foreach ($tagList as $tagId) {
-                    $tag = $tagRepository->findBy([
-                        'id' => $tagId,
-                        'territory' => $signalement->getTerritory(),
-                        'isArchive' => 0,
-                    ]);
-                    if (!empty($tag)) {
-                        $signalement->addTag($tag[0]);
-                    }
-                }
-            }
-
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Les étiquettes ont bien été enregistrées.');
-        } else {
-            $this->addFlash('error', 'Erreur lors de la modification des étiquettes !');
         }
 
-        return $this->redirect($this->generateUrl('back_signalement_view', [
-            'uuid' => $signalement->getUuid(),
-        ]));
+        $entityManager->flush();
+
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les étiquettes ont bien été modifiées.'];
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-tags-container',
+                'content' => $this->renderView('back/signalement/view/header/_tags.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/list-all-photo-situation', name: 'back_signalement_list_all_photo_situation')]

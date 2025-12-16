@@ -131,7 +131,7 @@
                         {% elseif not is_granted('AFFECTATION_CANCEL_REFUSED', affectation) %}
                             <li>
                                 <a href="{{ path('back_signalement_subscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('subscribe') }}"
-                                    class="fr-nav__link fr-btn--icon-left fr-icon-eye-line">
+                                    class="fr-nav__link fr-btn--icon-left fr-icon-eye-line simple-ajax-link">
                                     Rejoindre le dossier
                                 </a>
                             </li>

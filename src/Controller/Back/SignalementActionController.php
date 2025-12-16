@@ -487,7 +487,7 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('subscribe', $token)) {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
@@ -500,7 +500,7 @@ class SignalementActionController extends AbstractController
 
         $msg = 'Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
         Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.';
-        $this->addFlash('success', $msg);
+        $this->addFlash('success', ['title' => 'Abonnement au dossier', 'message' => $msg]);
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
@@ -515,6 +515,7 @@ class SignalementActionController extends AbstractController
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents abonnés au dossier et vous ne recevrez plus les mises à jour du dossier.';
+        $successMsgTitle = 'Dossier quitté';
 
         /** @var User $user */
         $user = $this->getUser();
@@ -561,7 +562,7 @@ class SignalementActionController extends AbstractController
                         $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
                         $signalementSubscriptionManager->flush();
                     }
-                    $this->addFlash('success', $successMsg);
+                    $this->addFlash('success', ['title' => $successMsgTitle, 'message' => $successMsg]);
 
                     $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -578,14 +579,14 @@ class SignalementActionController extends AbstractController
 
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez réessayer.');
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
 
         $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
 
-        $this->addFlash('success', $successMsg);
+        $this->addFlash('success', ['title' => $successMsgTitle, 'message' => $successMsg]);
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }

@@ -90,13 +90,13 @@ class SignalementCreateController extends AbstractController
             && $this->isCsrfTokenValid('draft_delete', (string) $request->request->get('_token'))
         ) {
             $signalement->setStatut(SignalementStatus::DRAFT_ARCHIVED);
-            $entityManager->flush();
-            $this->addFlash('success', 'Le brouillon a bien été supprimé !');
+            // $entityManager->flush();
+            $this->addFlash('success', ['title' => 'Brouillon supprimé', 'message' => 'Le brouillon a bien été supprimé.']);
 
             return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
         }
 
-        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+        $this->addFlash('error', ['title' => 'Erreur de suppression', 'message' => 'Une erreur est survenue lors de la suppression, veuillez réessayer.']);
 
         return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
     }
@@ -247,7 +247,7 @@ class SignalementCreateController extends AbstractController
                 $this->signalementManager->save($signalement);
                 $entityManager->commit();
                 if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                    $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                    $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
                     $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
                 } else {
                     $url = $isCreation ? $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'logement'], UrlGeneratorInterface::ABSOLUTE_URL) : '';
@@ -279,7 +279,7 @@ class SignalementCreateController extends AbstractController
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $url = '';
@@ -310,7 +310,7 @@ class SignalementCreateController extends AbstractController
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $url = '';
@@ -351,7 +351,7 @@ class SignalementCreateController extends AbstractController
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $url = '';
@@ -384,7 +384,7 @@ class SignalementCreateController extends AbstractController
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', 'Le brouillon est bien enregistré, n\'oubliez pas de le terminer !');
+                $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $url = '';
@@ -479,7 +479,7 @@ class SignalementCreateController extends AbstractController
                     }
                 }
                 $autoAssigner->assign($signalement, subscribeTerritoryAdmins: $subscribeTerritoryAdmins);
-                $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis par l\'auto-affectation');
+                $this->addFlash('success', ['title' => 'Signalement validé', 'message' => 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis par l\'auto-affectation']);
                 $hasAssignable = $user->getPartners()->exists(function ($key, $partner) use ($assignablePartners) {
                     return in_array($partner, $assignablePartners, true);
                 });
@@ -504,7 +504,7 @@ class SignalementCreateController extends AbstractController
                     partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                     createSubscription: false
                 );
-                $this->addFlash('success', 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis.');
+                $this->addFlash('success', ['title' => 'Signalement validé', 'message' => 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis.']);
             } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
                 foreach ($agentSelection->getAgents() as $agent) { // @phpstan-ignore-line
                     $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user);
@@ -515,12 +515,18 @@ class SignalementCreateController extends AbstractController
                     partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                     createSubscription: false
                 );
-                $this->addFlash('success', 'Le signalement a bien été créé et validé. Vous n\'avez pas défini de partenaires à affecter, rendez-vous dans le signalement pour en affecter !');
+                $this->addFlash('success', [
+                    'title' => 'Signalement ajouté',
+                    'message' => 'Le signalement a bien été créé et validé. Vous n\'avez pas défini de partenaires à affecter, rendez-vous dans le signalement pour en affecter !',
+                ]);
             } else {
                 $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
                 $notificationAndMailSender->sendNewSignalement($signalement);
 
-                $this->addFlash('success', 'Le signalement a bien été créé. Il doit être validé par les responsables de territoire. Si ce signalement est affecté à votre partenaire, il sera visible dans la liste des signalements.');
+                $this->addFlash('success', [
+                    'title' => 'Signalement ajouté',
+                    'message' => 'Le signalement a bien été créé. Il doit être validé par les responsables de territoire. Si ce signalement est affecté à votre partenaire, il sera visible dans la liste des signalements.',
+                ]);
                 $route = 'back_signalement_drafts';
                 $params = [];
             }

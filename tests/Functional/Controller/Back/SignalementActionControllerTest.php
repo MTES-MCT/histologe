@@ -502,8 +502,12 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
-        $this->assertEquals('Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
-        Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.', $flashBag->get('success')[0]);
+        $flashMsg = [
+            'title' => 'Abonnement au dossier',
+            'message' => 'Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
+        Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.',
+        ];
+        $this->assertEquals($flashMsg, $flashBag->get('success')[0]);
 
         $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
         $this->assertNotNull($sub);
@@ -640,7 +644,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('error'));
-        $this->assertEquals('Le jeton CSRF est invalide. Veuillez réessayer.', $flashBag->get('error')[0]);
+        $this->assertEquals('Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.', $flashBag->get('error')[0]);
 
         $sub = $this->userSignalementSubscriptionRepository->findOneBy([
             'user' => $user,
