@@ -134,7 +134,7 @@ class SignalementActionController extends AbstractController
                 $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
             }
         } else {
-            $this->addFlash('error', 'Une erreur est survenue, veuilez réessayer.');
+            $this->addFlash('error', 'Une erreur est survenue, veuillez réessayer.');
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -431,6 +431,11 @@ class SignalementActionController extends AbstractController
                 'content' => $this->renderView('back/signalement/view/header/_address.html.twig', [
                     'signalement' => $signalement,
                     'signalementsOnSameAddress' => $signalementsOnSameAddress,
+                    'routeForListOfSignalementOnAddress' => $this->generateUrl('back_signalements_index', [
+                        'isImported' => 'oui',
+                        'searchTerms' => trim($signalement->getAdresseOccupant()),
+                        'communes[]' => $signalement->getCpOccupant(),
+                    ]),
                 ]),
             ],
         ];

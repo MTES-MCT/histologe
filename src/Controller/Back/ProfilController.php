@@ -204,7 +204,7 @@ class ProfilController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
-        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'Une erreur est survenue lors de la suppression, veuilez réessayer.'];
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'Une erreur est survenue lors de la suppression, veuillez réessayer.'];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }

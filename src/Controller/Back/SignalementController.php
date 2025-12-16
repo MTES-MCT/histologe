@@ -184,12 +184,6 @@ class SignalementController extends AbstractController
         }
 
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
-
-        $canEditSignalement = $this->isGranted('ROLE_ADMIN');
-        if (!$canEditSignalement && SignalementStatus::ACTIVE === $signalement->getStatut()) {
-            $canEditSignalement = $this->isGranted('ROLE_ADMIN_TERRITORY') || $isAffectationAccepted;
-        }
-
         [$signalementQualificationNDE, $signalementQualificationNDECriticites] = $signalementQualificationNdeService->getSignalementQualificationNdeAndCriticites($signalement);
 
         $partners = $signalementManager->findAffectablePartners(
