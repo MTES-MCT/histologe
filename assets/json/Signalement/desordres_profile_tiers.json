@@ -1863,6 +1863,86 @@
       "body": [
         {
           "type": "SignalementFormCheckbox",
+          "label": "{{dictionaryStore::desordres_logement_humidite_tout}}",
+          "slug": "desordres_logement_humidite_tout",
+          "validate": {
+            "required": false
+          },
+          "accessibility": {
+            "focus": true
+          }
+        },
+        {
+          "type": "SignalementFormSubscreen",
+          "label": "",
+          "slug": "desordres_logement_humidite_tout_details",
+          "customCss": "signalement-form-subscreen-under-checkbox",
+          "conditional": {
+            "show": "formStore.data.desordres_logement_humidite_tout === 1"
+          },
+          "components": {
+            "body": [
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "{{dictionaryStore::desordres_logement_humidite_tout_details_fuite}}",
+                "slug": "desordres_logement_humidite_tout_details_fuite",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  }
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer s'il y a eu une fuite ou un dégât des eaux dans le logement."
+                }
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Les dégâts des eaux sont généralement pris en charge par les assurances. Pour savoir comment faire un constat auprès de votre assurance, rendez-vous sur <a href='https://www.service-public.fr/particuliers/vosdroits/F1352' target='_blank' rel='noopener' title='Le site du Service Public - Ouvre une nouvelle fenêtre'>le site du Service Public</a>.",
+                "slug": "desordres_logement_humidite_tout_details_fuite_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_tout_details_fuite ===  'oui'"
+                }
+              },
+              {
+                "type": "SignalementFormOnlyChoice",
+                "label": "{{dictionaryStore::desordres_logement_humidite_tout_details_machine}}",
+                "slug": "desordres_logement_humidite_tout_details_machine",
+                "values": [
+                  {
+                    "label": "Oui",
+                    "value": "oui"
+                  },
+                  {
+                    "label": "Non",
+                    "value": "non"
+                  },
+                  {
+                    "label": "Je ne sais pas",
+                    "value": "nsp"
+                  }
+                ],
+                "validate": {
+                  "message": "Veuillez indiquer s'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans le logement."
+                }
+              },
+              {
+                "type": "SignalementFormInfo",
+                "label": "Ces machines produisent de la vapeur d'eau qui crée de la moisissure si la pièce n'est pas bien aérée ! Il est important d'aérer la pièce et de nettoyer la moisissure dès qu'elle apparaît.",
+                "slug": "desordres_logement_humidite_tout_details_machine_info",
+                "conditional": {
+                  "show": "formStore.data.desordres_logement_humidite_tout_details_machine ===  'oui' || formStore.data.desordres_logement_humidite_tout_details_machine ===  'nsp'"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SignalementFormCheckbox",
           "label": "{{dictionaryStore::desordres_logement_humidite_piece_a_vivre}}",
           "slug": "desordres_logement_humidite_piece_a_vivre",
           "validate": {

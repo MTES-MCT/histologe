@@ -349,6 +349,13 @@ desordre_critere:
     slug_categorie: "desordres_logement_humidite"
     label_categorie: "Humidité et moisissure"
     zone_categorie: "LOGEMENT"
+    slug_critere: "desordres_logement_humidite_tout"
+    label_critere: "Le logement est humide et a des traces de moisissures"
+  -
+    desordre_categorie_label: "Aération / humidité"
+    slug_categorie: "desordres_logement_humidite"
+    label_categorie: "Humidité et moisissure"
+    zone_categorie: "LOGEMENT"
     slug_critere: "desordres_logement_humidite_piece_a_vivre"
     label_critere: "Le logement est humide et a des traces de moisissures"
   -

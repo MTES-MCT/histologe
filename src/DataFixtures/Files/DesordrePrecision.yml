@@ -753,6 +753,14 @@ desordre_precision:
     desordre_precision_slug: "desordres_logement_chauffage_details_chauffage_dangereux"
     is_suroccupation: 0
   -
+    desordre_critere_slug: "desordres_logement_humidite_tout" 
+    coef: 1
+    is_danger: 0
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : oui</span>" 
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_tout_details_machine_oui"
+    is_suroccupation: 0
+  -
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 1
     is_danger: 0
@@ -775,6 +783,14 @@ desordre_precision:
     label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_machine_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_slug: "desordres_logement_humidite_tout" 
+    coef: 2
+    is_danger: 0
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : non</span>" 
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_tout_details_machine_non"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
@@ -801,6 +817,14 @@ desordre_precision:
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_machine_non"
     is_suroccupation: 0
   -
+    desordre_critere_slug: "desordres_logement_humidite_tout" 
+    coef: 2
+    is_danger: 0
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Machine à laver, sèche-linge ou lave vaisselle : ne sait pas</span>" 
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_tout_details_machine_nsp"
+    is_suroccupation: 0
+  -
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 2
     is_danger: 0
@@ -825,11 +849,19 @@ desordre_precision:
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_machine_nsp"
     is_suroccupation: 0
   -
-    desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
+    desordre_critere_slug: "desordres_logement_humidite_tout" 
     coef: 5
     is_danger: 1
-    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : oui</span>" 
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD', 'MISE_EN_SECURITE_PERIL']
+    desordre_precision_slug: "desordres_logement_humidite_tout_details_moisissure_apres_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
+    coef: 5
+    is_danger: 0
+    label: "<span>Dans : <b>Une ou des pièces à vivre (salon, chambres)</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : oui</span>" 
+    qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage_oui"
     is_suroccupation: 0
   -
@@ -847,6 +879,14 @@ desordre_precision:
     label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : oui</span>" 
     qualification: ['NON_DECENCE', 'RSD']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_slug: "desordres_logement_humidite_tout" 
+    coef: 2
+    is_danger: 0
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : non</span>" 
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_tout_details_moisissure_apres_nettoyage_non"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
@@ -873,6 +913,14 @@ desordre_precision:
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_non"
     is_suroccupation: 0
   -
+    desordre_critere_slug: "desordres_logement_humidite_tout" 
+    coef: 2
+    is_danger: 0
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Moisissure revient après nettoyage : ne sait pas ou n'a pas nettoyé</span>" 
+    qualification: ['NON_DECENCE', 'RSD']
+    desordre_precision_slug: "desordres_logement_humidite_tout_details_moisissure_apres_nettoyage_nsp"
+    is_suroccupation: 0
+  -
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 2
     is_danger: 0
@@ -897,6 +945,14 @@ desordre_precision:
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage_nsp"
     is_suroccupation: 0
   -
+    desordre_critere_slug: "desordres_logement_humidite_tout" 
+    coef: 0
+    is_danger: 0
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : oui</span>" 
+    qualification: ['ASSURANTIEL']
+    desordre_precision_slug: "desordres_logement_humidite_tout_details_fuite_oui"
+    is_suroccupation: 0
+  -
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
     coef: 0
     is_danger: 0
@@ -919,6 +975,14 @@ desordre_precision:
     label: "<span>Dans : <b>La salle de bain, salle d'eau et / ou les toilettes</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : oui</span>" 
     qualification: ['ASSURANTIEL']
     desordre_precision_slug: "desordres_logement_humidite_salle_de_bain_details_fuite_oui"
+    is_suroccupation: 0
+  -
+    desordre_critere_slug: "desordres_logement_humidite_tout" 
+    coef: 0
+    is_danger: 0
+    label: "<span>Dans : <b>Tout le logement</b></span><br><span class='fr-border--left'>Fuite ou dégat des eaux : non</span>" 
+    qualification: []
+    desordre_precision_slug: "desordres_logement_humidite_tout_details_fuite_non"
     is_suroccupation: 0
   -
     desordre_critere_slug: "desordres_logement_humidite_piece_a_vivre" 
