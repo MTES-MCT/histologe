@@ -23,7 +23,7 @@ class UserNotificationEmailType extends AbstractType
                 'Tous les e-mails' => false,
             ],
             'expanded' => true,
-            'label' => false,
+            'label' => 'Notifications e-mails',
             'required' => false,
             'placeholder' => false,
             'data' => $user->getIsMailingActive() ? $user->getIsMailingSummary() : null,

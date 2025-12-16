@@ -19,7 +19,10 @@
                         <form action="{{ path('back_profil_edit_email') }}" name="profil_edit_email"
                             id="profil_edit_email_form" method="POST">
                             <div id="fr-modal-profil-edit-email-email-input" class="fr-input-group fr-col-12 fr-pl-0 fr-pl-md-0 fr-mt-2v">
-                                <label for="profil_edit_email_email" class="fr-label">Adresse e-mail</label>
+                                <label for="profil_edit_email_email" class="fr-label">
+                                    Adresse e-mail
+                                    <span class="fr-hint-text">Format attendu : nom@domaine.fr</span>
+                                </label>
                                 <input type="text" id="profil_edit_email_email" name="profil_edit_email[email]"
                                     class="fr-input" value={{ app.user.email }} maxlength="255">
                             </div>  
