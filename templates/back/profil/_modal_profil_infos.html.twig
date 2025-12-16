@@ -6,7 +6,7 @@
                     <div class="fr-modal__header">
                        <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-profil-edit-infos">Fermer</button>
                     </div>
-                    <div class="fr-modal__content">
+                    <div class="fr-modal__content fr-mb-0">
                         <h1 id="fr-profil-edit-infos-title" class="fr-modal__title">
                             Modifier mes infos
                         </h1>   
@@ -14,7 +14,7 @@
                         {{ form_start(formProfilInfo, {'attr': {'id': 'user_profil_info'}}) }}
                         {{ form_errors(formProfilInfo) }}
                         <div class="fr-display-inline-flex fr-align-items-center fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-display-flex-column fr-align-items-center fr-col-12 fr-col-md-4">
+                            <div class="fr-display-flex-column fr-align-items-center fr-col-12 fr-col-md-5">
                                 {{ user_avatar_or_placeholder(app.user, 124, false) }}
                                 {% if app.user.avatarFilename %}
                                     <br>
@@ -22,7 +22,7 @@
                                     class="fr-link fr-fi-delete-line fr-link--icon-left">Supprimer l'avatar</a>
                                 {% endif %}
                             </div>
-                            <div class="fr-col-12 fr-col-md-8">
+                            <div class="fr-col-12 fr-col-md-7">
                                 {{ form_row(formProfilInfo.avatar) }}
                             </div>
                         </div>
@@ -34,9 +34,8 @@
                         </div>
                          {{ form_end(formProfilInfo) }}
                          
-                    </div>
-                    <div class="fr-modal__footer">
-                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                    
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left fr-mt-4w">
                             <li>
                                 <button class="fr-btn fr-icon-check-line" form="user_profil_info" id="profil_edit_infos_form_submit" type="submit">
                                     Valider
