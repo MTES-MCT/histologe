@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[AppAssert\IsTerritoryActive]
+#[AppAssert\PostalCodeInseeCoherence]
 #[AppAssert\ValueLessThanOtherValue(
     property: 'compositionLogementNombreEnfants',
     otherProperty: 'compositionLogementNombrePersonnes',
