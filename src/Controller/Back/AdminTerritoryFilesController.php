@@ -37,13 +37,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminTerritoryFilesController extends AbstractController
 {
     public function __construct(
-        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
-        private readonly bool $featureNewDocumentSpace,
         private readonly MessageBusInterface $messageBus,
     ) {
-        if (!$this->featureNewDocumentSpace) {
-            throw $this->createNotFoundException();
-        }
     }
 
     #[Route('/', name: 'back_territory_management_document', methods: ['GET'])]

@@ -48,13 +48,11 @@ parameters:
     send_error_email_token: '%env(SEND_ERROR_EMAIL_TOKEN)%'
     proconnect_scheme_protocol: '%env(resolve:PROCONNECT_SCHEME_PROTOCOL)%'
     proconnect_domain: '%env(resolve:PROCONNECT_DOMAIN)%'
-    feature_new_document_space: '%env(bool:FEATURE_NEW_DOCUMENT_SPACE)%'
     feature_api_creation_signalement: '%env(default::FEATURE_API_CREATION_SIGNALEMENT)%'
     feature_api_doc_pattern_fallback: '^' #todo remove when feature_api_creation_signalement is removed
     feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
     feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'
     tab_data_kpi_cache_expired_after: '%env(int:TAB_DATA_KPI_CACHE_EXPIRED_AFTER)%'
-    feature_annuaire: '%env(bool:FEATURE_ANNUAIRE)%'
 
 services:
     # default configuration for services in *this* file

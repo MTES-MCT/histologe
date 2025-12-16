@@ -24,13 +24,11 @@ env:
   PLATFORM_NAME: 'Signal Logement'
   MAIL_TEST_ENABLE: 0
   MAIL_TEST_EMAIL: 'mailcatcher@signal-logement.fr'
-  FEATURE_NEW_DOCUMENT_SPACE: 1
   FEATURE_INJONCTION_BAILLEUR: 1
   INJONCTION_PERIOD_THRESHOLD: '3 weeks'
   FEATURE_INJONCTION_BAILLEUR_DEPTS: '["30","34"]'
   EDITION_SUIVI_ENABLE: 1
   DELAY_SUIVI_EDITABLE_IN_MINUTES: 20
-  FEATURE_ANNUAIRE: 1
 jobs:
   code-quality:
     name: Signal-logement (PHP ${{ matrix.php-versions }})

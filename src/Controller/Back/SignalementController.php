@@ -52,7 +52,6 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,8 +93,6 @@ class SignalementController extends AbstractController
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
         UrlGeneratorInterface $urlGenerator,
-        #[Autowire(env: 'FEATURE_NEW_DOCUMENT_SPACE')]
-        bool $featureNewDocumentSpace,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -238,16 +235,12 @@ class SignalementController extends AbstractController
 
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
         $linkToVisitGrid = false;
-        if ($featureNewDocumentSpace) {
-            $existingVisitGrid = $fileRepository->findOneBy([
-                'territory' => $signalement->getTerritory(),
-                'documentType' => DocumentType::GRILLE_DE_VISITE,
-            ]);
-            if ($existingVisitGrid) {
-                $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
-            }
-        } elseif (!$signalement->getTerritory()->getIsGrilleVisiteDisabled()) {
-            $linkToVisitGrid = $this->generateUrl('back_territory_grille_visite', ['territory' => $signalement->getTerritory()->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $existingVisitGrid = $fileRepository->findOneBy([
+            'territory' => $signalement->getTerritory(),
+            'documentType' => DocumentType::GRILLE_DE_VISITE,
+        ]);
+        if ($existingVisitGrid) {
+            $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);

@@ -10,7 +10,6 @@ use App\Entity\Suivi;
 use App\Service\EmailAlertChecker;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
-use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Service\UserAvatar;
@@ -176,8 +175,6 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
-            // supprimer la fonction avec le feature flipping FEATURE_NEW_DOCUMENT_SPACE
-            new TwigFunction('can_see_nde_edit_zone', [QualificationStatusService::class, 'canSeenNDEEditZone']),
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),
