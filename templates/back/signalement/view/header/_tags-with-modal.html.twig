@@ -1,0 +1,96 @@
+{% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
+    <div data-ajax-form>
+        <dialog aria-labelledby="fr-modal-title-modal-etiquettes" id="fr-modal-etiquettes" class="fr-modal">
+            <div class="fr-container fr-container--fluid fr-container-md">
+                <div class="fr-grid-row fr-grid-row--center">
+                    <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                            <div class="fr-modal__header">
+                                <button class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="fr-modal-etiquettes">Fermer</button>
+                            </div>
+                            <div class="fr-modal__content">
+                                <h1 id="fr-modal-title-modal-etiquettes" class="fr-modal__title">
+                                    Gérer les étiquettes du signalement
+                                </h1>
+                                <p>
+                                    Sélectionnez les étiquettes à attribuer au signalement en cliquant dessus.
+                                    <br>
+                                    Une fois sélectionnées, elles apparaîtront dans la colonne "Etiquettes sélectionnées".
+                                </p>
+                                <div class="fr-grid-row fr-grid-row--gutters search-and-select-badges-container">
+                                    <div class="fr-col-6">
+                                        <h2 class="fr-h5">Sélectionner les étiquettes</h2>
+                                        <p>
+                                            Recherchez les étiquettes à attribuer au signalement puis cliquez dessus.
+                                        </p>
+                                        <div class="fr-search-bar" role="search">
+                                            <label class="fr-label" for="etiquette-filter-input">
+                                                Recherche
+                                            </label>
+                                            <input class="fr-input search-and-select-badges-search-input" placeholder="Rechercher" type="search" id="etiquette-filter-input" name="etiquette-filter-input">
+                                            <button class="fr-btn" title="Rechercher">
+                                                Rechercher
+                                            </button>
+                                        </div>
+                                        <div class="fr-my-3v">
+                                            {% for tag in tags %}
+                                                <span
+                                                    class="fr-badge fr-m-1v search-and-select-badge-add search-and-select-badge-add-{{ tag.id }} {% if tag in signalement.tags %}fr-hidden disabled{% endif %}"
+                                                    data-badge-id="{{ tag.id }}" data-badge-label="{{ tag.label }}"
+                                                    >{{ tag.label }} <span class="fr-icon-add-line" aria-hidden="true"></span></span>
+                                            {% else %}
+                                                <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs">
+                                                    <small>Aucune étiquette n'existe sur votre territoire.</small>
+                                                </em>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="fr-col-6">
+                                        <h2 class="fr-h5">Etiquettes sélectionnées</h2>
+                                        <p>
+                                            Cliquez sur une étiquette pour la retirer du signalement.
+                                        </p>
+                                        <div class="search-and-select-badges-selected fr-my-3v">
+                                            {% for tag in signalement.tags %}
+                                                <span
+                                                    class="fr-badge fr-badge--blue-ecume fr-m-1v search-and-select-badge-remove"
+                                                    data-badge-id="{{ tag.id }}"
+                                                    >{{ tag.label }} <span class="fr-icon-close-line" aria-hidden="true"></span></span>
+                                            {% else %}
+                                                <em class="search-and-select-badges-no-selection fr-text-default--warning fr-fi-close-line fr-icon--xs">
+                                                    <small>Aucune étiquette attribuée à ce signalement.</small>
+                                                </em>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <form method="POST" action="{{ path('back_signalement_save_tags', {uuid: signalement.uuid}) }}" id="form-signalement-save-tags" data-submit-type="formData">
+                                        <input type="hidden" class="search-and-select-badges-input" name="tag-ids" value="{% for tag in signalement.tags %}{{ tag.id }},{% endfor %}"> 
+                                        <input type="hidden" name="_token" value="{{ csrf_token('signalement_save_tags') }}">
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="fr-modal__footer">
+                                <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                    <li>
+                                        <button class="fr-btn fr-icon-check-line" form="form-signalement-save-tags" type="submit">
+                                            Valider
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="fr-btn fr-btn--secondary fr-icon-close-line" type="button" aria-controls="fr-modal-etiquettes">
+                                            Annuler
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
+    <div id="signalement-tags-container">
+        {% include 'back/signalement/view/header/_tags.html.twig' %}
+    </div>
+{% endif %}
