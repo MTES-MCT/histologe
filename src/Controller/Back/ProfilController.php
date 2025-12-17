@@ -390,24 +390,26 @@ class ProfilController extends AbstractController
         if ('unsubscribe' === $request->query->get('action')) {
             /** @var Signalement[] $activeSignalementsWithInteractions */
             $activeSignalementsWithInteractions = $signalementRepository->getActiveSignalementsWithInteractionsForUser(user: $user);
+            $lastUserOnSignalements = [];
             foreach ($activeSignalements as $signalement) {
                 if (!in_array($signalement, $activeSignalementsWithInteractions)) {
                     $toDelete = $userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
                     if (!$toDelete) {
                         continue; // pas d'abonnement à supprimer
                     }
-                    if ($user->isSuperAdmin()) {
-                        $entityManager->remove($toDelete);
-                        continue; // les super admins peuvent se désabonner de tout
-                    }
                     $partner = $user->getPartnerInTerritory($signalement->getTerritory());
                     $affectation = $affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $partner, 'statut' => AffectationStatus::ACCEPTED]);
                     $subsForPartner = $userSignalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
                     if ($affectation && 1 === count($subsForPartner)) {
+                        $lastUserOnSignalements[$signalement->getId()] = $signalement->getReference();
                         continue; // ne pas permettre de se désabonner si le partenaire est affecté et que l'utilisateur est le seul abonné pour ce partenaire
                     }
                     $entityManager->remove($toDelete);
                 }
+            }
+            if (count($lastUserOnSignalements) > 0) {
+                $msg = 'Vous ne pouvez pas vous désabonner des signalements suivants car vous êtes le dernier utilisateur abonné pour votre partenaire : '.implode(', ', $lastUserOnSignalements);
+                $this->addFlash('error', $msg);
             }
         } else {
             foreach ($activeSignalements as $signalement) {
