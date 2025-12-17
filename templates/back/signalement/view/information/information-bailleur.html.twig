@@ -1,6 +1,4 @@
-{% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-    {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
-{% endif %}
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
 <div class="fr-grid-row">
     <div class="fr-col-12 fr-col-md-8">
         <h4 class="fr-h6">Informations sur le bailleur</h4>
@@ -59,9 +57,9 @@
         <strong>Bénéficiaire RSA :</strong>
         {% if signalement.informationComplementaire %}
             {% if signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa}}
             {% endif %}
@@ -71,9 +69,9 @@
         <strong>Bénéficiaire FSL :</strong>
         {% if signalement.informationComplementaire %}
             {% if signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl}}
             {% endif %}

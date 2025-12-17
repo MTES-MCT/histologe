@@ -5,14 +5,14 @@
 {{ form_start(formProfilInfo, {'attr': {'id': 'user_profil_info'}}) }}
 {{ form_errors(formProfilInfo) }}
 <div class="fr-display-inline-flex fr-align-items-center fr-grid-row fr-grid-row--gutters">
-    <div class="fr-display-flex-column fr-align-items-center fr-col-12 fr-col-md-4">
+    <div class="fr-display-flex-column fr-align-items-center fr-col-12 fr-col-md-5">
         {{ user_avatar_or_placeholder(app.user, 124, false) }}
         {% if app.user.avatarFilename %}
             <br>
             <a href="{{ path('back_profil_delete_avatar') }}" class="fr-link fr-fi-delete-line fr-link--icon-left simple-ajax-link">Supprimer l'avatar</a>
         {% endif %}
     </div>
-    <div class="fr-col-12 fr-col-md-8">
+    <div class="fr-col-12 fr-col-md-7">
         {{ form_row(formProfilInfo.avatar) }}
     </div>
 </div>

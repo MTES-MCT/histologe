@@ -35,7 +35,7 @@ class SignalementFileController extends AbstractController
     public function generatePdfSignalement(
         Signalement $signalement,
         MessageBusInterface $messageBus,
-    ): Response {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
         /** @var User $user */
         $user = $this->getUser();
@@ -47,15 +47,13 @@ class SignalementFileController extends AbstractController
 
         $messageBus->dispatch($message);
 
-        $this->addFlash(
-            'success',
-            \sprintf(
-                'L\'export pdf vous sera envoyé par e-mail à l\'adresse suivante : %s. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
-                $user->getEmail()
-            )
+        $message = \sprintf(
+            'L\'export PDF a bien été envoyé par e-mail à l\'adresse suivante : %s. N\'oubliez pas de consulter vos courriers indésirables (spam) !',
+            $user->getEmail()
         );
+        $flashMessages[] = ['type' => 'success', 'title' => 'Export envoyé', 'message' => $message];
 
-        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 
     /**
@@ -153,9 +151,9 @@ class SignalementFileController extends AbstractController
         $entityManager->flush();
 
         if (SignalementStatus::DRAFT !== $signalement->getStatut()) {
-            $this->addFlash('success', 'Les documents ont bien été ajoutés.');
+            $this->addFlash('success', ['title' => 'Documents ajoutés', 'message' => 'Les documents ont bien été ajoutés.']);
             if ($subscriptionCreated) {
-                $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                $this->addFlash('success', ['title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
             }
         }
 
@@ -178,7 +176,7 @@ class SignalementFileController extends AbstractController
         $this->denyAccessUnlessGranted(FileVoter::FILE_DELETE, $file);
         $fragment = in_array($request->get('hash_src'), ['activite', 'situation']) ? $request->get('hash_src') : 'documents';
         if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->get('_token'))) {
-            $message = 'Token CSRF invalide, veuillez recharger la page';
+            $message = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
             if ('1' === $request->get('is_draft')) {
                 return $this->json(['message' => $message], Response::HTTP_BAD_REQUEST);
             }
@@ -192,7 +190,7 @@ class SignalementFileController extends AbstractController
             if ('1' === $request->get('is_draft')) {
                 return $this->json(['message' => $message], Response::HTTP_BAD_REQUEST);
             }
-            $this->addFlash('error', $message);
+            $this->addFlash('error', ['title' => 'Erreur de suppression', 'message' => $message]);
         }
         $subscriptionCreated = false;
         if (!$this->isGranted('ROLE_ADMIN')
@@ -214,9 +212,9 @@ class SignalementFileController extends AbstractController
         if ('1' === $request->get('is_draft')) {
             return $this->json(['success' => true]);
         }
-        $this->addFlash('success', 'Le document a bien été supprimé.');
+        $this->addFlash('success', ['title' => 'Document supprimé', 'message' => 'Le document a bien été supprimé.']);
         if ($subscriptionCreated) {
-            $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+            $this->addFlash('success', ['title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
         }
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => $fragment]));
@@ -302,7 +300,7 @@ class SignalementFileController extends AbstractController
         $entityManager->flush();
 
         if ('edit' === $request->get('from')) {
-            $this->addFlash('success', 'Le document a bien été modifié.');
+            $this->addFlash('success', ['title' => 'Document modifié', 'message' => 'Le document a bien été modifié.']);
         }
 
         return $this->json(['response' => 'success']);
@@ -325,13 +323,13 @@ class SignalementFileController extends AbstractController
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
         }
         if (!$this->isCsrfTokenValid('save_file_rotation', (string) $request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide, merci de réessayer.');
+            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
 
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
         }
         $angle = $rotate * 90 * -1;
         $imageManipulationHandler->rotate($file, $angle);
-        $this->addFlash('success', 'La photo a bien été modifiée.');
+        $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La photo a bien été modifiée.']);
 
         return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
     }

@@ -1,10 +1,3 @@
-{% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-    {% if not signalement.isNotOccupant and not signalement.mailDeclarant %}
-        {% include 'back/signalement/view/edit-modals/edit-invite-tiers.html.twig' %}
-    {% else %}
-        {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
-    {% endif %}
-{% endif %}
 <div class="fr-grid-row">
     <div class="fr-col-12 fr-col-md-8">
         <h4 class="fr-h6">Coordonnées du tiers déclarant</h4>

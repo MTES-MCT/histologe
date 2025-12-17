@@ -1,6 +1,4 @@
-{% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-    {% include 'back/signalement/view/edit-modals/edit-situation-foyer.html.twig' %}
-{% endif %}
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
 <div class="fr-grid-row">
     <div class="fr-col-12 fr-col-md-8">
         <h4 class="fr-h6">Situation du foyer</h4>
@@ -17,26 +15,26 @@
         {% if signalement.isLogementSocial is null %}
             Ne sait pas
         {% elseif signalement.isLogementSocial %}
-            {{ static_picto_yes|raw }}
+            {{ picto.picto_yes() }}
         {% else %}
-            {{ static_picto_no|raw }}
+            {{ picto.picto_no() }}
         {% endif %}
     </div>
     <div class="fr-col-12">
         <strong>Demande logement social / relogement / mutation :</strong>
         {% if signalement.isRelogement is same as true %}
-            {{ static_picto_yes|raw }}
+            {{ picto.picto_yes() }}
         {% elseif signalement.isRelogement is same as false %}
-            {{ static_picto_no|raw }}
+            {{ picto.picto_no() }}
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">
         <strong>Allocataire :</strong>
         {% if signalement.isAllocataire in [null, ''] %}
         {% elseif signalement.isAllocataire in ['oui', '1'] %}
-                {{ static_picto_yes|raw }}
+            {{ picto.picto_yes() }}
         {% elseif signalement.isAllocataire in ['non', '0'] %}
-                {{ static_picto_no|raw }}
+            {{ picto.picto_no() }}
         {% elseif signalement.isAllocataire %}
             <p class="fr-badge fr-badge--info fr-badge--no-icon">{{ signalement.isAllocataire }}</p>
         {% endif %}
@@ -65,9 +63,9 @@
         <strong>Souhaite quitter le logement :</strong>
         {% if signalement.situationFoyer %}
             {% if signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.situationFoyer.travailleurSocialQuitteLogement(false)}}
             {% endif %}
@@ -84,9 +82,9 @@
             {% endif %}
         {% endif %}
         {% if travailleurSocialPreavisDepart is same as 'oui' %}
-            {{ static_picto_yes|raw }}
+            {{ picto.picto_yes() }}
         {% elseif travailleurSocialPreavisDepart is same as 'non' %}
-            {{ static_picto_no|raw }}
+            {{ picto.picto_no() }}
         {% elseif travailleurSocialPreavisDepart is same as 'nsp' %}
             Ne sait pas
         {% endif %}
@@ -96,9 +94,9 @@
         <strong>Accompagnement par un ou une travailleuse sociale :</strong>
         {% if signalement.situationFoyer %}
             {% if signalement.situationFoyer.travailleurSocialAccompagnement is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.situationFoyer.travailleurSocialAccompagnement is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.situationFoyer.travailleurSocialAccompagnement(false)}}
             {% endif %}
@@ -114,9 +112,9 @@
         <strong>Bénéficiaire RSA :</strong>
         {% if signalement.informationComplementaire %}
             {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa}}
             {% endif %}
@@ -126,9 +124,9 @@
         <strong>Bénéficiaire FSL :</strong>
         {% if signalement.informationComplementaire %}
             {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl}}
             {% endif %}
