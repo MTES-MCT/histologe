@@ -115,7 +115,7 @@ class SecurityController extends AbstractController
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$signalement) {
-            $this->addFlash('error', 'Le lien utilisé est invalide, vérifiez votre saisie.');
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Le lien utilisé est invalide, vérifiez votre saisie.']);
 
             return $this->render('front/flash-messages.html.twig');
         }
