@@ -197,7 +197,15 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->request('POST', $route, [
             '_token' => $csrfToken,
         ]);
-        $this->assertResponseStatusCodeSame(302);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'La permission API a bien été supprimée.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
         /** @var UserApiPermissionRepository $userApiPermissionRepository */
         $userApiPermissionRepository = static::getContainer()->get(UserApiPermissionRepository::class);
         $userApiPermissions = $userApiPermissionRepository->findBy(['user' => $userApi]);

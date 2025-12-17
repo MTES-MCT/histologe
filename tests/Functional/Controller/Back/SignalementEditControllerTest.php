@@ -136,7 +136,12 @@ class SignalementEditControllerTest extends WebTestCase
         $payload['_token'] = '1234';
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
-        $this->assertResponseStatusCodeSame(401);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     /**
