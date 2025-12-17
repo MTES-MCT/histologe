@@ -48,12 +48,9 @@ if (searchFilesForm) {
     if (e.target.closest('.open-modal-document-delete')) {
       const button = e.target.closest('.open-modal-document-delete');
       
-      document.getElementById('fr-modal-document-delete-document-title').textContent =
-        button.dataset.title;
-      document.getElementById('fr-modal-document-delete-document-territoire').textContent =
-        button.dataset.territoire;
-      document.getElementById('fr-modal-document-delete-document-title-reminder').textContent =
-        button.dataset.title;
+      document.getElementById('fr-modal-document-delete-document-title').textContent = button.dataset.title;
+      document.getElementById('fr-modal-document-delete-document-territoire').textContent = button.dataset.territoire;
+      document.getElementById('fr-modal-document-delete-document-title-reminder').textContent = button.dataset.title;
       document.getElementById('fr-modal-document-delete-form').action = button.dataset.url;
     }
   });

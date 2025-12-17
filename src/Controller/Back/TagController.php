@@ -77,10 +77,8 @@ class TagController extends AbstractController
 
     #[Route('/', name: 'back_territory_management_tags_index', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
-    public function index(
-        Request $request,
-        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
-    ): Response {
+    public function index(Request $request): Response
+    {
         [$form, $searchTag, $paginatedTags] = $this->handleSearch($request);
 
         $addForm = $this->createForm(AddTagType::class, null, ['action' => $this->generateUrl('back_tags_add')]);
@@ -90,7 +88,7 @@ class TagController extends AbstractController
             'addForm' => $addForm,
             'searchTag' => $searchTag,
             'tags' => $paginatedTags,
-            'pages' => (int) ceil($paginatedTags->count() / $maxListPagination),
+            'pages' => (int) ceil($paginatedTags->count() / $this->maxListPagination),
         ]);
     }
 
