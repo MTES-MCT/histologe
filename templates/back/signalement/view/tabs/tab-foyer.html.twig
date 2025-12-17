@@ -1,17 +1,23 @@
 <h2 class="fr-h4">Informations du foyer</h2>
 
-<div data-ajax-form>
-{% include 'back/signalement/view/information/information-tiers.html.twig' %}
+<div id="signalement-information-tiers-container">
+    {% include 'back/signalement/view/information/information-tiers.html.twig' %}
+</div>
 
 <hr class="fr-mt-3w fr-hr">
 
-{% include 'back/signalement/view/information/information-foyer.html.twig' %}
+<div id="signalement-information-foyer-container">
+    {% include 'back/signalement/view/information/information-foyer.html.twig' %}
+</div>
 
 <hr class="fr-mt-3w fr-hr">
 
-{% include 'back/signalement/view/information/information-situation-foyer.html.twig' %}
+<div id="signalement-information-situation-foyer-container">
+    {% include 'back/signalement/view/information/information-situation-foyer.html.twig' %}
+</div>
 
 <hr class="fr-mt-3w fr-hr">
 
-{% include 'back/signalement/view/information/information-logement.html.twig' %}
+<div id="signalement-information-logement-container">
+    {% include 'back/signalement/view/information/information-logement.html.twig' %}
 </div>

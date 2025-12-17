@@ -68,7 +68,7 @@
                 {% if is_granted('SIGN_VIEW', signalement) %}
                     <li>
                         <a href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"
-                            class="fr-nav__link fr-btn--icon-left fr-icon-file-download-line"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-file-download-line simple-ajax-link"
                             title="Télécharger le PDF">
                             Télécharger le PDF
                         </a>

@@ -1,8 +1,5 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% set static_picto_yes = '<p class="fr-badge fr-badge--success">Oui</p>' %}
-{% set static_picto_no = '<p class="fr-badge fr-badge--error">Non</p>' %}
-
 {% block notice %}
     {% if signalement.createdBy and signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
         {% if signalement.createdBy and 'ROLE_API_USER' in signalement.createdBy.roles %}
@@ -31,6 +28,35 @@
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
         <div data-ajax-form>
             {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
+        </div>
+        {% if not signalement.isNotOccupant and not signalement.mailDeclarant %}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/edit-modals/edit-invite-tiers.html.twig' %}
+            </div>
+        {% endif %}
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
+        </div>
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-coordonnees-foyer.html.twig' %}
+        </div>
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-coordonnees-bailleur.html.twig' %}
+        </div>
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-coordonnees-agence.html.twig' %}
+        </div>
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-informations-logement.html.twig' %}
+        </div>
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-composition-logement.html.twig' %}
+        </div>
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-situation-foyer.html.twig' %}
+        </div>
+        <div data-ajax-form>
+            {% include 'back/signalement/view/edit-modals/edit-procedure-demarches.html.twig' %}
         </div>
     {% endif %}
     {% if signalementsOnSameAddress|length > 0 %}

@@ -1,6 +1,4 @@
-{% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-    {% include 'back/signalement/view/edit-modals/edit-procedure-demarches.html.twig' %}
-{% endif %}
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
 <div class="fr-grid-row">
     <div class="fr-col-12 fr-col-md-8">
         <h4 class="fr-h6">Procédure et démarches</h4>
@@ -16,9 +14,9 @@
         <strong>Bailleur averti :</strong>
         {% if signalement.isProprioAverti is null %}
         {% elseif signalement.isProprioAverti %}
-            {{ static_picto_yes|raw }}
+            {{ picto.picto_yes() }}
         {% else %}
-            {{ static_picto_no|raw }}
+            {{ picto.picto_no() }}
         {% endif %}
     </div>
     <div class="fr-col-12">
@@ -54,9 +52,9 @@
         <strong>Contact assurance :</strong>
         {% if signalement.informationProcedure %}
             {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.informationProcedure.infoProcedureAssuranceContactee(false)}}
             {% endif %}
@@ -74,9 +72,9 @@
         {% if signalement.informationProcedure %}
             {# Careful : reversed regarding the question in the form #}
             {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% else %}
                 {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
             {% endif %}

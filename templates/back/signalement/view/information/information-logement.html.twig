@@ -1,6 +1,4 @@
-{% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-    {% include 'back/signalement/view/edit-modals/edit-informations-logement.html.twig' %}
-{% endif %}
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
 <div class="fr-grid-row">
     <div class="fr-col-12 fr-col-md-8">
         <h4 class="fr-h6">Informations sur le logement</h4>
@@ -34,17 +32,17 @@
         <strong>Enfants -6 ans :</strong>
         {% if signalement.typeCompositionLogement %}
             {% if signalement.typeCompositionLogement.compositionLogementEnfants is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.typeCompositionLogement.compositionLogementEnfants}}
             {% endif %}
         {% else %}
             {% if signalement.nbEnfantsM6 > 0 %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% else %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% endif %}
         {% endif %}
     </div>
@@ -64,9 +62,9 @@
         <strong>Bail :</strong>
         {% if signalement.typeCompositionLogement %}
             {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.typeCompositionLogement.bailDpeBail(false)}}
             {% endif %}
@@ -75,9 +73,9 @@
     <div class="fr-col-12 fr-col-md-6">
         <strong>Logement vacant :</strong>
         {% if signalement.isLogementVacant is same as true %}
-            {{ static_picto_yes|raw }}
+            {{ picto.picto_yes() }}
         {% elseif signalement.isLogementVacant is same as false %}
-            {{ static_picto_no|raw }}
+            {{ picto.picto_no() }}
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">
@@ -92,9 +90,9 @@
         <strong>Etat des lieux :</strong>
         {% if signalement.typeCompositionLogement %}
             {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
             {% endif %}
@@ -104,9 +102,9 @@
         <strong>DPE :</strong>
         {% if signalement.typeCompositionLogement %}
             {% if signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.typeCompositionLogement.bailDpeDpe(false)}}
             {% endif %}
@@ -125,9 +123,9 @@
         <strong>Paiement loyers à jour :</strong>
         {% if signalement.informationComplementaire %}
             {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'oui' %}
-                {{ static_picto_yes|raw }}
+                {{ picto.picto_yes() }}
             {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'non' %}
-                {{ static_picto_no|raw }}
+                {{ picto.picto_no() }}
             {% else %}
                 {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes}}
             {% endif %}

@@ -19,7 +19,6 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
-use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
@@ -27,6 +26,7 @@ use App\Security\Voter\SignalementVoter;
 use App\Security\Voter\SuiviVoter;
 use App\Service\FormHelper;
 use App\Service\Gouv\Rnb\RnbService;
+use App\Service\HtmlTargetContentsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -397,7 +397,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         RnbService $rnbService,
         SignalementManager $signalementManager,
-        SignalementRepository $signalementRepository,
+        HtmlTargetContentsService $htmlTargetContentsService,
     ): JsonResponse {
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_NEED_VALIDATION, $signalement)) {
             throw $this->createAccessDeniedException();
@@ -424,21 +424,7 @@ class SignalementActionController extends AbstractController
         $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
         $signalementManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Le bâtiment a bien été mis à jour.'];
-        $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(signalement: $signalement, exclusiveStatus: [], excludedStatus: SignalementStatus::excludedStatuses());
-        $htmlTargetContents = [
-            [
-                'target' => '#header-address',
-                'content' => $this->renderView('back/signalement/view/header/_address.html.twig', [
-                    'signalement' => $signalement,
-                    'signalementsOnSameAddress' => $signalementsOnSameAddress,
-                    'routeForListOfSignalementOnAddress' => $this->generateUrl('back_signalements_index', [
-                        'isImported' => 'oui',
-                        'searchTerms' => trim($signalement->getAdresseOccupant()),
-                        'communes[]' => $signalement->getCpOccupant(),
-                    ]),
-                ]),
-            ],
-        ];
+        $htmlTargetContents = $htmlTargetContentsService->getHtmlTargetContentsForSignalementAddress($signalement);
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
