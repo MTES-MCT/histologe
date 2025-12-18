@@ -27,6 +27,7 @@ framework:
             App\Messenger\Message\UserExportMessage: async_priority_high
             App\Messenger\Message\InactiveUserExportMessage: async_priority_high
             App\Messenger\Message\PdfExportMessage: async_priority_high
+            App\Messenger\Message\GenerateFileZipMessage: async_priority_high
             App\Messenger\Message\SuiviSummariesMessage: async_priority_high
             App\Messenger\Message\SignalementDraftProcessMessage: async_priority_high
             App\Messenger\Message\FileDuplicationMessage: async_priority_high

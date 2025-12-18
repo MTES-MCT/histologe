@@ -50,7 +50,7 @@ enum NotificationMailerType
     case TYPE_ERROR_SIGNALEMENT;
     case TYPE_CRON;
     case TYPE_PDF_EXPORT;
-    case TYPE_LIST_EXPORT;
+    case TYPE_DOWNLOAD_EXPORT;
     case TYPE_USER_EXPORT;
     case TYPE_INACTIVE_USER_EXPORT;
     case TYPE_SUIVI_SUMMARIES_EXPORT;
