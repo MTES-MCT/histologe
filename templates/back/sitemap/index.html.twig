@@ -3,79 +3,52 @@
 {% block title %}Plan du site (back-office){% endblock %}
 
 {% block content %}
+    {% macro render_menu(item, security) %}
+        {% if item.isVisible(security) %}
+            {% set hasLink = item.route or item.externalLink %}
+
+            {% if item.label and hasLink %}
+                <li>
+                    {% if item.externalLink %}
+                        <a href="{{ item.externalLink }}" target="_blank" rel="noopener">
+                            {{ item.label }}
+                        </a>
+                    {% else %}
+                        <a href="{{ path(item.route, item.routeParameters) }}">
+                            {{ item.label }}
+                        </a>
+                    {% endif %}
+                </li>
+            {% elseif item.label %}
+                <h2 class="fr-mt-6v">{{ item.label }}</h2>
+            {% endif %}
+
+            {% set children = item.getVisibleChildren(security) %}
+            {% if children is not empty %}
+                <ul>
+                    {% for child in children %}
+                        {{ _self.render_menu(child, security) }}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    {% endmacro %}
+
+
+    {% import _self as macros %}
+
     <div class="fr-container fr-py-16v">
         <div class="fr-grid-row">
             <div class="fr-col-12 fr-col-md-8">
-                <h1>Plan du site (back-office)</h1>
-                <section class="fr-py-6v">
-                    <h2>Tableau de bord</h2>
-                    <ul>
-                        <li><a href="{{ path('back_dashboard') }}">Accueil</a></li>
-                        <li><a href="{{ path('back_notifications_list') }}">Notifications</a></li>
-                        <li><a href="{{ path('back_profil') }}">Profil</a></li>
-                    </ul>
-                </section>
-                <section class="fr-py-6v">
-                    <h2>Signalements</h2>
-                    <ul>
-                        <li><a href="{{ path('back_signalements_index') }}">Liste</a></li>
-                        {% if is_granted('INJONCTION_BAILLEUR_SEE') %}
-                        <li><a href="{{ path('back_injonction_signalement_index') }}">Signalements en cours d'injonction</a></li>
-                        {% endif %}
-                        <li><a href="{{ path('back_signalement_drafts') }}">Mes brouillons</a></li>
-                        <li><a href="{{ path('back_signalement_create') }}">Créer un signalement</a></li>
-                    </ul>
-                </section>
-                <section class="fr-py-6v">
-                    <h2>Données chiffrées</h2>
-                    <ul>
-                        <li><a href="{{ path('back_cartographie') }}">Cartographie</a></li>
-                        <li><a href="{{ path('back_statistiques') }}">Statistiques</a></li>
-                        <li><a href="{{ path('back_indicateur_pnlhi') }}">Indicateurs PNLHI</a></li>
-                    </ul>
-                </section>
-                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                <section class="fr-py-6v">
-                    <h2>Outils Admin</h2>
-                    <ul>
-                        <li><a href="{{ path('back_partner_index') }}">Partenaires</a></li>
-                        <li><a href="{{ path('back_user_index') }}">Utilisateurs</a></li>
-                        <li>
-                            <a href="{{ path('back_territory_management_index') }}">Gérer mon territoire</a>
-                            <ul>
-                                <li><a href="{{ path('back_territory_management_tags_index') }}">Etiquettes</a></li>
-                                <li><a href="{{ path('back_territory_management_document') }}">Documents types</a></li>
-                                <li><a href="{{ path('back_territory_management_zone_index') }}">Zones du territoire</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </section>
-                {% endif %}
-                <section class="fr-py-6v">
-                    <h2>Mes outils</h2>
-                    <ul>
-                        <li><a href="{{ path('back_territory_files_index') }}">Espace documentaire</a></li>
-                        <li><a href="{{ path('back_annuaire_index') }}">Annuaire des agents</a></li>
-                        <li><a href="https://documentation.signal-logement.beta.gouv.fr" target="_blank" rel="noopener">Documentation</a></li>
-                    </ul>
-                </section>
-                {% if is_granted('ROLE_ADMIN') %}
-                <section class="fr-py-6v">
-                    <h2>Outils SA</h2>
-                    <ul>
-                        <li><a href="{{ path('back_archived_partner_index') }}">Partenaires archivés</a></li>
-                        <li><a href="{{ path('back_archived_users_index') }}">Comptes archivés</a></li>
-                        <li><a href="{{ path('back_archived_signalements_index') }}">Signalement archivés</a></li>
-                        <li><a href="{{ path('back_auto_affectation_rule_index') }}">Règles d'auto-affectation</a></li>
-                        <li><a href="{{ path('back_api_user_index') }}">Permissions utilisateurs API</a></li>
-                        <li><a href="{{ path('back_suivi_summaries_index') }}">Résumés de suivis</a></li>
-                        <li><a href="{{ path('back_bailleur_index') }}">Bailleurs</a></li>
-                        <li><a href="{{ path('back_tools_rial') }}">Outil RIAL par BAN ID</a></li>
-                        <li><a href="{{ path('back_interconnexion_index') }}">Connexions SI externes</a></li>
-                        <li><a href="{{ path('back_affectation_without_subscription_index') }}">Affectations sans prise en charge</a></li>
-                    </ul>
-                </section>
-                {% endif %}
+                <h1>Plan du site (espace pro)</h1>
+
+                <ul>
+                    <li><a href="{{ path('back_notifications_list') }}">Notifications</a></li>
+                    <li><a href="{{ path('back_profil') }}">Profil</a></li>
+                    {% for item in menu.children %}
+                        {{ macros.render_menu(item, security) }}
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
