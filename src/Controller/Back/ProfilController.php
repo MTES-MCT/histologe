@@ -383,6 +383,7 @@ class ProfilController extends AbstractController
 
             return $this->redirectToRoute('back_profil');
         }
+        $sendFlashSuccess = false;
         /** @var User $user */
         $user = $this->getUser();
         /** @var Signalement[] $activeSignalements */
@@ -405,6 +406,7 @@ class ProfilController extends AbstractController
                         continue; // ne pas permettre de se désabonner si le partenaire est affecté et que l'utilisateur est le seul abonné pour ce partenaire
                     }
                     $entityManager->remove($toDelete);
+                    $sendFlashSuccess = true;
                 }
             }
             if (count($lastUserOnSignalements) > 0) {
@@ -414,10 +416,13 @@ class ProfilController extends AbstractController
         } else {
             foreach ($activeSignalements as $signalement) {
                 $userSignalementSubscriptionManager->createOrGet(userToSubscribe: $user, signalement: $signalement, createdBy: $user);
+                $sendFlashSuccess = true;
             }
         }
         $entityManager->flush();
-        $this->addFlash('success', 'Vos abonnements ont bien été mis à jour.');
+        if ($sendFlashSuccess) {
+            $this->addFlash('success', 'Vos abonnements ont bien été mis à jour.');
+        }
 
         return $this->redirectToRoute('back_profil');
     }
