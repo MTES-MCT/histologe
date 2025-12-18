@@ -24,7 +24,6 @@ class UserAccountController extends AbstractController
     #[Route(
         '/activation',
         name: 'login_activation',
-        defaults: ['show_sitemap' => true]
     )]
     public function requestLoginLink(
         NotificationMailerRegistry $notificationMailerRegistry,
@@ -68,7 +67,6 @@ class UserAccountController extends AbstractController
     #[Route(
         '/mot-de-pass-perdu',
         name: 'login_mdp_perdu',
-        defaults: ['show_sitemap' => true]
     )]
     public function requestNewPass(
         UserRepository $userRepository,

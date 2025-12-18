@@ -90,7 +90,6 @@ class SecurityController extends AbstractController
     #[Route(
         '/connexion',
         name: 'app_login',
-        defaults: ['show_sitemap' => true]
     )]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {

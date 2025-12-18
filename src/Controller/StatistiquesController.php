@@ -44,7 +44,6 @@ class StatistiquesController extends AbstractController
     #[Route(
         '/stats',
         name: 'front_statistiques',
-        defaults: ['show_sitemap' => true]
     )]
     public function statistiques(): Response
     {

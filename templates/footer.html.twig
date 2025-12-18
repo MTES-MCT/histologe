@@ -41,7 +41,7 @@
                 <li class="fr-footer__bottom-item">
                     <a href="{{ sites_faciles_url }}cgu/" class="fr-footer__bottom-link" target="_self">CGU</a>
                 </li>
-                {% if app.user %}
+                {% if app.user and '/bo/' in path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
                 <li class="fr-footer__bottom-item">
                     <a href="{{ path('back_plan_du_site') }}" class="fr-footer__bottom-link" target="_self">Plan du site</a>
                 </li>

@@ -29,7 +29,6 @@ class HomepageController extends AbstractController
     #[Route(
         '/',
         name: 'home',
-        defaults: ['show_sitemap' => true]
     )]
     public function index(
         #[Autowire(param: 'kernel.environment')]
