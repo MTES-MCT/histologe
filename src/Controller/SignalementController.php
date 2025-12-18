@@ -106,6 +106,7 @@ class SignalementController extends AbstractController
         SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
+        LoggerInterface $logger,
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -126,6 +127,7 @@ class SignalementController extends AbstractController
                 ),
             ]);
         }
+        $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
 
         return $this->json($errors);
     }
@@ -137,6 +139,7 @@ class SignalementController extends AbstractController
         ValidatorInterface $validator,
         SignalementDuplicateChecker $signalementDuplicateChecker,
         SignalementDraftManager $signalementDraftManager,
+        LoggerInterface $logger,
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -174,6 +177,7 @@ class SignalementController extends AbstractController
 
             return $this->json($result);
         }
+        $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
 
         return $this->json($errors);
     }
@@ -185,6 +189,7 @@ class SignalementController extends AbstractController
         SignalementDraftManager $signalementDraftManager,
         ValidatorInterface $validator,
         SignalementDraft $signalementDraft,
+        LoggerInterface $logger,
     ): JsonResponse {
         if (SignalementDraftStatus::ARCHIVE === $signalementDraft->getStatus()) {
             throw $this->createNotFoundException();
@@ -209,6 +214,7 @@ class SignalementController extends AbstractController
 
             return $this->json($result);
         }
+        $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
 
         return $this->json($errors);
     }

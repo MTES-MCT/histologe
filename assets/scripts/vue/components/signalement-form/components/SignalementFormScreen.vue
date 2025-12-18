@@ -133,7 +133,7 @@ export default defineComponent({
       } else if (type === 'archive') {
         requests.archiveDraft(this.gotoHomepage)
       } else if (type.includes('goto')) {
-        await this.showScreenBySlug(param, param2, type.includes('save'), type.includes('checkloc'))
+        await this.showScreenBySlug(param, param2, type.includes('save'), type.includes('checkloc'), type.includes('checkonly'))
       } else if (type.includes('resolve')) {
         this.navigateToDisorderScreen(param, param2, type.includes('save'))
       } else if (type.includes('finish')) {
@@ -196,11 +196,11 @@ export default defineComponent({
       }
       return false
     },
-    async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean, isCheckLocation:boolean) {
+    async showScreenBySlug (slug: string, slugButton:string, isSaveAndCheck:boolean, isCheckLocation:boolean, isCheckOnly:boolean = false) {
       formStore.data.errorMessage = ''
       formStore.validationErrors = {}
 
-      if (isSaveAndCheck || isCheckLocation) {
+      if (isSaveAndCheck || isCheckLocation || isCheckOnly) {
         if (this.validateAndFocusFirstError()) {
           return
         }
