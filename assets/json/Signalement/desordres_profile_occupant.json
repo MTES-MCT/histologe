@@ -1948,6 +1948,9 @@
           "validate": {
             "required": false
           },
+          "conditional": {
+            "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'" 
+          },
           "accessibility": {
             "focus": true
           }
@@ -1958,7 +1961,7 @@
           "slug": "desordres_logement_humidite_piece_a_vivre_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_logement_humidite_piece_a_vivre === 1"
+            "show": "formStore.data.desordres_logement_humidite_piece_a_vivre === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           },
           "components": {
             "body": [
@@ -2052,7 +2055,7 @@
           "label": "{{dictionaryStore::desordres_logement_humidite_cuisine}}",
           "slug": "desordres_logement_humidite_cuisine",
           "conditional": {
-            "show": "formStore.data.type_logement_commodites_cuisine === 'oui'"
+            "show": "formStore.data.type_logement_commodites_cuisine === 'oui' && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           },
           "validate": {
             "required": false
@@ -2064,7 +2067,7 @@
           "slug": "desordres_logement_humidite_cuisine_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_logement_humidite_cuisine === 1"
+            "show": "formStore.data.desordres_logement_humidite_cuisine === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           },
           "components": {
             "body": [
@@ -2158,7 +2161,7 @@
           "label": "{{dictionaryStore::desordres_logement_humidite_salle_de_bain}}",
           "slug": "desordres_logement_humidite_salle_de_bain",
           "conditional": {
-            "show": "formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui'"
+            "show": "(formStore.data.type_logement_commodites_salle_de_bain === 'oui' || formStore.data.type_logement_commodites_wc === 'oui') && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           },
           "validate": {
             "required": false
@@ -2170,7 +2173,7 @@
           "slug": "desordres_logement_humidite_salle_de_bain_details",
           "customCss": "signalement-form-subscreen-under-checkbox",
           "conditional": {
-            "show": "formStore.data.desordres_logement_humidite_salle_de_bain === 1"
+            "show": "formStore.data.desordres_logement_humidite_salle_de_bain === 1 && formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
           },
           "components": {
             "body": [
