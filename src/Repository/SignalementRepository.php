@@ -1659,7 +1659,16 @@ class SignalementRepository extends ServiceEntityRepository
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NOT NULL THEN 1 ELSE 0 END), 0)',
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_active AND a.id IS NULL THEN 1 ELSE 0 END), 0)',
             $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_wait THEN 1 ELSE 0 END), 0)' : 0,
-            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_accepted AND uss.id IS NULL THEN 1 ELSE 0 END), 0)' : 0,
+            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_accepted AND NOT EXISTS(
+                        SELECT 1 FROM '.UserSignalementSubscription::class.' uss
+                        WHERE uss.signalement = s
+                        AND EXISTS(
+                            SELECT 1 FROM '.User::class.' u2
+                            JOIN u2.userPartners up2
+                            WHERE uss.user = u2
+                            AND up2.partner IN (:partners)
+                        )
+                    ) THEN 1 ELSE 0 END), 0)' : 0,
         );
 
         $qb = $this
@@ -1678,11 +1687,9 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
-            $subquery = 'SELECT u FROM '.User::class.' u JOIN u.userPartners up JOIN up.partner p WHERE p IN (:partners)';
             $qb->setParameter('partners', $user->getPartners())
                 ->setParameter('affectation_wait', AffectationStatus::WAIT)
-                ->setParameter('affectation_accepted', AffectationStatus::ACCEPTED)
-                ->leftJoin('s.userSignalementSubscriptions', 'uss', 'WITH', 'uss.user IN ('.$subquery.')');
+                ->setParameter('affectation_accepted', AffectationStatus::ACCEPTED);
         }
 
         return $qb->getQuery()->getSingleResult();
@@ -1876,7 +1883,7 @@ class SignalementRepository extends ServiceEntityRepository
                     SELECT 1 FROM signalement si2
                     WHERE si2.id = s.signalement_id
                       AND si2.statut = 'ACTIVE'
-                      AND (:territory_id IS NULL OR si2.territory_id = :territory_id)
+                      AND (:territories_ids IS NULL OR si2.territory_id IN (:territories_ids))
                   )
                 GROUP BY s.signalement_id
                 HAVING COUNT(*) >= 3
@@ -1893,7 +1900,7 @@ class SignalementRepository extends ServiceEntityRepository
                     SELECT 1 FROM signalement si3
                     WHERE si3.id = s.signalement_id
                       AND si3.statut = 'ACTIVE'
-                      AND (:territory_id IS NULL OR si3.territory_id = :territory_id)
+                      AND (:territories_ids IS NULL OR si3.territory_id IN (:territories_ids))
                   )
                 GROUP BY s.signalement_id
             ) last_usager_suivi ON last_usager_suivi.signalement_id = si.id
@@ -1906,7 +1913,7 @@ class SignalementRepository extends ServiceEntityRepository
                       AND s2.type = 2
                       AND s2.created_at > relances_usager.first_relance_at
                 )
-                AND (:territory_id IS NULL OR si.territory_id = :territory_id)
+                AND (:territories_ids IS NULL OR si.territory_id IN (:territories_ids))
         SQL;
     }
 
@@ -1941,7 +1948,14 @@ class SignalementRepository extends ServiceEntityRepository
             $sql .= ' ORDER BY relances_usager.nb_relances DESC, relances_usager.first_relance_at DESC LIMIT 5';
         }
 
-        $rows = $conn->executeQuery($sql, ['territory_id' => $tabQueryParameters->territoireId])->fetchAllAssociative();
+        if (null === $tabQueryParameters->territoireId) {
+            $rows = $conn->executeQuery($sql, ['territories_ids' => null])->fetchAllAssociative();
+        } else {
+            $rows = $conn->executeQuery($sql,
+                ['territories_ids' => [$tabQueryParameters->territoireId]],
+                ['territories_ids' => ArrayParameterType::INTEGER]
+            )->fetchAllAssociative();
+        }
 
         return array_map(/**
          * @throws \DateMalformedStringException
@@ -1966,19 +1980,40 @@ class SignalementRepository extends ServiceEntityRepository
 
         $sql = 'SELECT COUNT(*) FROM (SELECT relances_usager.signalement_id '.$this->getBaseSignalementsAvecRelancesSansReponseSql().') AS signalements_count';
 
-        return (int) $conn->executeQuery($sql, ['territory_id' => $tabQueryParameters->territoireId])->fetchOne();
+        if (null === $tabQueryParameters->territoireId) {
+            return (int) $conn->executeQuery($sql, ['territories_ids' => null])->fetchOne();
+        }
+
+        return (int) $conn->executeQuery($sql,
+            ['territories_ids' => [$tabQueryParameters->territoireId]],
+            ['territories_ids' => ArrayParameterType::INTEGER]
+        )->fetchOne();
     }
 
     /**
      * @return int[]
      */
-    public function getSignalementsIdAvecRelancesSansReponse(): array
+    public function getSignalementsIdAvecRelancesSansReponse(User $user): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = 'SELECT si.id '.$this->getBaseSignalementsAvecRelancesSansReponseSql();
 
-        return array_map('intval', $conn->executeQuery($sql, ['territory_id' => null])->fetchFirstColumn());
+        $territoriesIds = [];
+        if (!$user->isSuperAdmin()) {
+            foreach ($user->getPartnersTerritories() as $territory) {
+                $territoriesIds[] = $territory->getId();
+            }
+        }
+
+        if (empty($territoriesIds)) {
+            return array_map('intval', $conn->executeQuery($sql, ['territories_ids' => null])->fetchFirstColumn());
+        }
+
+        return array_map('intval', $conn->executeQuery($sql,
+            ['territories_ids' => $territoriesIds],
+            ['territories_ids' => ArrayParameterType::INTEGER]
+        )->fetchFirstColumn());
     }
 
     public function countAllDossiersAferme(User $user, ?TabQueryParameters $params): CountAfermer
@@ -2001,7 +2036,7 @@ class SignalementRepository extends ServiceEntityRepository
         /** @var SuiviRepository $suiviRepository */
         $suiviRepository = $this->_em->getRepository(Suivi::class);
         $excludedIds = array_merge(
-            $this->getSignalementsIdAvecRelancesSansReponse(),
+            $this->getSignalementsIdAvecRelancesSansReponse($user),
             $suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, $params)
         );
         $categories = [

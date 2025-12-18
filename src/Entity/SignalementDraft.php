@@ -14,6 +14,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SignalementDraftRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
+#[ORM\Index(columns: ['uuid'], name: 'idx_signalement_draft_uuid')]
 class SignalementDraft
 {
     use TimestampableTrait;
