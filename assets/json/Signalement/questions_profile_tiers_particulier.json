@@ -193,7 +193,7 @@
                 "label": "Finir plus tard",
                 "slug": "coordonnees_occupant_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -322,7 +322,7 @@
                 "label": "Finir plus tard",
                 "slug": "coordonnees_bailleur_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -490,7 +490,7 @@
                 "label": "Finir plus tard",
                 "slug": "info_procedure_bail_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -703,7 +703,7 @@
                 "label": "Finir plus tard",
                 "slug": "zone_concernee_zone_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -750,7 +750,7 @@
                 "label": "Finir plus tard",
                 "slug": "ecran_intermediaire_type_composition_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -914,7 +914,7 @@
                 "label": "Finir plus tard",
                 "slug": "type_logement_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1003,7 +1003,7 @@
                 "label": "Finir plus tard",
                 "slug": "composition_logement_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1248,7 +1248,7 @@
                 "label": "Finir plus tard",
                 "slug": "type_logement_commodites_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1342,7 +1342,7 @@
                 "label": "Finir plus tard",
                 "slug": "composition_logement_personnes_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1589,7 +1589,7 @@
                 "label": "Finir plus tard",
                 "slug": "bail_dpe_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1634,7 +1634,7 @@
                 "label": "Finir plus tard",
                 "slug": "ecran_intermediaire_situation_occupant_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1762,7 +1762,7 @@
                 "label": "Finir plus tard",
                 "slug": "logement_social_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1888,7 +1888,7 @@
                 "label": "Finir plus tard",
                 "slug": "travailleur_social_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1934,7 +1934,7 @@
                 "label": "Finir plus tard",
                 "slug": "ecran_intermediaire_procedure_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2035,7 +2035,7 @@
                 "label": "Finir plus tard",
                 "slug": "info_procedure_assurance_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2121,7 +2121,7 @@
                 "label": "Finir plus tard",
                 "slug": "utilisation_service_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2287,7 +2287,7 @@
                 "label": "Finir plus tard",
                 "slug": "informations_complementaires_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",

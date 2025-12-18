@@ -525,8 +525,6 @@ class SignalementDraftRequest
     /** @var array<mixed> */
     private ?array $categorieDisorders = null;
 
-    private ?bool $saveWithoutValidation = null;
-
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context): void
     {
@@ -1949,18 +1947,6 @@ class SignalementDraftRequest
     public function setZoneConcerneeConstatationDesordres(?string $zoneConcerneeConstatationDesordres): self
     {
         $this->zoneConcerneeConstatationDesordres = $zoneConcerneeConstatationDesordres;
-
-        return $this;
-    }
-
-    public function getSaveWithoutValidation(): ?bool
-    {
-        return $this->saveWithoutValidation;
-    }
-
-    public function setSaveWithoutValidation(?bool $saveWithoutValidation): self
-    {
-        $this->saveWithoutValidation = $saveWithoutValidation;
 
         return $this;
     }

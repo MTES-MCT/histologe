@@ -60,7 +60,7 @@
                 "label": "Finir plus tard",
                 "slug": "ecran_intermediaire_les_desordres_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -331,7 +331,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_proprete_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -413,7 +413,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_eau_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -506,7 +506,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_isolation_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -583,7 +583,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_maintenance_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -712,7 +712,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_nuisibles_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -957,7 +957,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_securite_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1023,7 +1023,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_incendie_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1139,7 +1139,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_accessibilite_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1205,7 +1205,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_batiment_bruit_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1518,7 +1518,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_eau_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1651,7 +1651,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_aeration_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -1834,7 +1834,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_chauffage_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2129,7 +2129,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_humidite_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2325,7 +2325,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_securite_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2463,7 +2463,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_electricite_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2706,7 +2706,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_nuisibles_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -2790,7 +2790,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_bruit_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -3031,7 +3031,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_lumiere_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -3089,7 +3089,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_logement_proprete_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",
@@ -3195,7 +3195,7 @@
                 "label": "Finir plus tard",
                 "slug": "desordres_precisions_finish_later",
                 "customCss": "fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline",
-                "action": "finish.save:/"
+                "action": "finish:/"
               },
               {
                 "type": "SignalementFormButton",

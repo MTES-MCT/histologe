@@ -75,7 +75,6 @@ const formStore: FormStore = reactive({
     lienSuivi: '',
     signalementStatus: '',
     errorMessage: '',
-    saveWithoutValidation: false,
   },
   props: {
     ajaxurl: '',

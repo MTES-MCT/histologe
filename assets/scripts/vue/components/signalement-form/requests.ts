@@ -90,8 +90,7 @@ export const requests = {
     requests.doRequestGet(url, functionReturn)
   },
 
-  saveSignalementDraft (functionReturn: Function, saveWithoutValidation = false) {
-    formStore.data.saveWithoutValidation = saveWithoutValidation
+  saveSignalementDraft (functionReturn: Function) {
     // on n'enregistre rien si on est sur la page signalement_concerne car on a peut-être changé de profil et on n'a plus l'email-décclarant   
     if (formStore.data.uuidSignalementDraft !== '' && formStore.currentScreen != null && formStore.currentScreen.slug !== 'signalement_concerne') {
       // TODO : il y a sûrement plus élégant à faire pour construire l'url (cf controlleur et twig)

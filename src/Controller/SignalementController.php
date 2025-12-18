@@ -113,14 +113,11 @@ class SignalementController extends AbstractController
             SignalementDraftRequest::class,
             'json'
         );
-        $errors = new ConstraintViolationList();
-        if (!$signalementDraftRequest->getSaveWithoutValidation()) {
-            $errors = $validator->validate(
-                $signalementDraftRequest,
-                null,
-                ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
-            );
-        }
+        $errors = $validator->validate(
+            $signalementDraftRequest,
+            null,
+            ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())]
+        );
         if (0 === $errors->count()) {
             return $this->json([
                 'uuid' => $signalementDraftManager->create(
@@ -199,14 +196,11 @@ class SignalementController extends AbstractController
             'json'
         );
 
-        $errors = new ConstraintViolationList();
-        if (!$signalementDraftRequest->getSaveWithoutValidation()) {
-            $groupValidation = ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())];
-            if ('validation_signalement' === $signalementDraftRequest->getCurrentStep()) {
-                $groupValidation[] = 'PUT_'.strtoupper($signalementDraftRequest->getProfil());
-            }
-            $errors = $validator->validate($signalementDraftRequest, null, $groupValidation);
+        $groupValidation = ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())];
+        if ('validation_signalement' === $signalementDraftRequest->getCurrentStep()) {
+            $groupValidation[] = 'PUT_'.strtoupper($signalementDraftRequest->getProfil());
         }
+        $errors = $validator->validate($signalementDraftRequest, null, $groupValidation);
 
         if (0 === $errors->count()) {
             $result = $signalementDraftManager->update(
