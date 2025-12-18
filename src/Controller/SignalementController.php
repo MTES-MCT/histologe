@@ -195,13 +195,11 @@ class SignalementController extends AbstractController
             SignalementDraftRequest::class,
             'json'
         );
-
         $groupValidation = ['Default', 'POST_'.strtoupper($signalementDraftRequest->getProfil())];
         if ('validation_signalement' === $signalementDraftRequest->getCurrentStep()) {
             $groupValidation[] = 'PUT_'.strtoupper($signalementDraftRequest->getProfil());
         }
         $errors = $validator->validate($signalementDraftRequest, null, $groupValidation);
-
         if (0 === $errors->count()) {
             $result = $signalementDraftManager->update(
                 $signalementDraft,

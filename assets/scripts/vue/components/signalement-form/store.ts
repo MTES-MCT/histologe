@@ -74,7 +74,7 @@ const formStore: FormStore = reactive({
     signalementReference: '',
     lienSuivi: '',
     signalementStatus: '',
-    errorMessage: '',
+    errorMessage: ''
   },
   props: {
     ajaxurl: '',
