@@ -11,22 +11,21 @@
     <section class="fr-background--white" :style="'block'">
       <div class="fr-grid-row fr-p-3w fr-pb-6w' fr-container-sml">
         <div class="fr-col-12">
-          <div class="fr-grid-row fr-grid-row--middle fr-mb-2w title-row">
-            <div class="fr-col">
+          <div class="fr-grid-row fr-grid-row--top fr-mb-2w">
+            <div class="fr-col-12 fr-col-lg-8">
               <h1 class="fr-h2">Liste des signalements</h1>
             </div>
-            <div class="fr-col-auto actions-row fr-grid-row fr-grid-row--middle">
-              <div class="fr-col-auto fr-mr-1w">
+            <div class="fr-col-12 fr-col-lg-4 fr-grid-row">
+              <div class="fr-col-auto">
                 <button
                   data-fr-opened="false"
                   aria-controls="modal-edit-search"
-                  class="fr-btn fr-btn--secondary fr-icon-settings-5-line"
+                  class="fr-btn fr-btn--secondary fr-icon-settings-5-line fr-mr-1w"
                   :disabled="sharedState.savedSearches.length === 0"
                 ></button>
               </div>
               <div class="fr-col">
                 <HistoSelect
-                  class="saved-search-select"
                   :key="sharedState.savedSearchSelectKey"
                   id="filter-save-search"
                   v-model="sharedState.selectedSavedSearchId"
@@ -229,21 +228,4 @@ export default defineComponent({
 #histo-app-signalement-view .fr-container--fluid {
   overflow: visible;
 }
-
-@media (max-width: 48em) {
-  .title-row {
-    flex-wrap: wrap;
-  }
-
-  .actions-row {
-    width: 100%;
-    margin-top: 0.75rem;
-  }
-
-  .saved-search-select {
-    width: 100%;
-    margin-left: 0 !important;
-  }
-}
-
 </style>
