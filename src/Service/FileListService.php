@@ -24,7 +24,7 @@ class FileListService
 
         // 1. Documents de la situation (ex "Documents du dossier")
         $situationFiles = $signalement->getFiles()->filter(function (File $file) {
-            return !$file->getIsSuspicious() && ($file->isSituation() || null === $file->getDocumentType());
+            return $file->isSituation() || null === $file->getDocumentType();
         });
         $situationFilesSorted = $situationFiles->toArray();
         usort($situationFilesSorted, function (File $a, File $b) {
@@ -34,7 +34,7 @@ class FileListService
 
         // 2. Documents liés à la procédure
         $procedureFiles = $signalement->getFiles()->filter(function (File $file) {
-            return !$file->getIsSuspicious() && $file->isProcedure();
+            return $file->isProcedure();
         });
         if (!$procedureFiles->isEmpty()) {
             $procedureFilesSorted = $procedureFiles->toArray();

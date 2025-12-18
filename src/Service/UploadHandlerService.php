@@ -312,6 +312,35 @@ class UploadHandlerService
     }
 
     /**
+     * @return resource|null
+     */
+    public function openReadStream(string $filename)
+    {
+        try {
+            $variantNames = ImageManipulationHandler::getVariantNames($filename);
+            $resizedFilename = $variantNames[ImageManipulationHandler::SUFFIX_RESIZE] ?? null;
+
+            if ($resizedFilename && $this->fileStorage->fileExists($resizedFilename)) {
+                $filename = $resizedFilename;
+            }
+
+            $stream = $this->fileStorage->readStream($filename);
+
+            return \is_resource($stream) ? $stream : null;
+        } catch (\Throwable $exception) {
+            $this->logger->error(
+                'Unable to open read stream from storage.',
+                [
+                    'filename' => $filename,
+                    'exception' => $exception,
+                ]
+            );
+
+            return null;
+        }
+    }
+
+    /**
      * @throws FilesystemException
      */
     public function createTmpFileFromBucket(string $from, string $to): void

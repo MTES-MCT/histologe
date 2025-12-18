@@ -2,6 +2,7 @@ import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper
 import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/file_delete';
 import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file';
 import { initTinyMCE } from '../../services/form/form_helper';
+import { initZipSelectionPhotos } from './zip_selection_photos';
 
 if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   window.onscroll = function () {
@@ -37,6 +38,15 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
             openPhotoAlbumAddEventListeners();
             btnSignalementFileEditAddEventListeners();
             btnSignalementFileDeleteAddEventListeners();
+
+            const zipSelectionButton = document.getElementById('btn-enter-zip-selection');
+            if (zipSelectionButton) {
+              zipSelectionButton.disabled = false;
+              zipSelectionButton.classList.remove('disabled');
+              zipSelectionButton.removeAttribute('aria-disabled');
+              zipSelectionButton.title = 'Choisir les photos à télécharger au format zip';
+            }
+            initZipSelectionPhotos();
           });
         });
       }

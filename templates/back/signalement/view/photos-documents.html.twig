@@ -4,7 +4,12 @@
             <h3 class="fr-h5">{{ zonetitle }}</h3>
         </div>
         <div class="fr-col-3 fr-col-md-6 fr-text--right">
-            {% if (is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_CLOSED', signalement) or is_granted('SIGN_EDIT_INJONCTION', signalement)) and filesFilter is not same as 'visite' %}
+            {% if (is_granted('SIGN_EDIT_ACTIVE', signalement)
+                or is_granted('SIGN_EDIT_CLOSED', signalement)
+                or is_granted('SIGN_EDIT_INJONCTION', signalement))
+                and filesFilter is not same as 'visite'
+            %}
+            {% if filesFilter is same as 'procédure' %}
                 <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
                     <li>
                         <button
@@ -16,7 +21,10 @@
                             Ajouter des documents sur la {{filesFilter}}
                         </button>
                     </li>
-                </ul>  
+                </ul>
+                {% elseif filesFilter is same as 'situation' and (context is same as 'documents-situation' or context is same as 'allphotosituation') %}
+                    {% include'back/signalement/view/_menu_actions_photo_situation.html.twig' %}
+                {% endif %}
             {% endif %}
         </div>
         {% if filesFilter is same as 'situation' %}
@@ -33,6 +41,37 @@
                 <br>
                 Vous pouvez supprimer uniquement les documents que vous avez ajoutés.
             </p>
+        {% endif %}
+        {% if  filesFilter is same as 'situation' and (context is same as 'documents-situation' or context is same as 'allphotosituation') %}
+            <div class="fr-col-12">
+                <div id="zip-selection-bar" class="zip-selection-bar fr-display-flex-row fr-justify-content-right fr-mb-2w">
+                    <strong><span id="zip-selection-count">0</span> photos sélectionnées</strong>
+                    <form method="post"
+                          action="{{ path('back_signalement_generate_zip_selection', {uuid: signalement.uuid}) }}"
+                          class="zip-selection-bar__form">
+                        <input type="hidden" name="_token" value="{{ csrf_token('zip_selection_' ~ signalement.uuid) }}">
+                        <div id="zip-selection-hidden-fields"></div>
+                        <div class="zip-selection-bar__actions">
+                            <button
+                                    type="button"
+                                    id="zip-selection-cancel"
+                                    class="fr-btn fr-btn--secondary fr-icon-close-line fr-btn--icon-left"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                    type="submit"
+                                    id="zip-selection-submit"
+                                    class="fr-btn fr-icon-download-line fr-btn--icon-left"
+                                    aria-disabled="true"
+                                    disabled
+                            >
+                                Télécharger la sélection
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         {% endif %}
     </div>
 {% endif %}
@@ -63,15 +102,33 @@
                     </div>
                 {% elseif listAllPhotos is not defined and filesFilter is same as 'situation' and nbPhotos > 12 and loop.index > 12 %}
                 {% else %}
-                    <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item">
+                    <div class="fr-col-6 fr-col-md-2 fr-rounded signalement-file-item zip-parent-position-relative " data-file-id="{{ photo.id }}">
                         <span class="fr-tooltip fr-placement" id="tooltip_photodoc_{{ photo.id }}_{{context}}" role="tooltip">
                             {% include '_partials/_tooltip_photo_template.html.twig' %}
                         </span>
-                        <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover" 
+                        <div class="fr-px-5w fr-py-8w fr-rounded fr-border fr-text--center part-infos-hover zip-photo-tile"
                             aria-describedby="tooltip_photodoc_{{ photo.id }}_{{context}}"
                             style="background: url('{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}')no-repeat center center/cover"
                             >
-                            <button 
+
+                            {% if  filesFilter is same as 'situation' and (context is same as 'documents-situation' or context is same as 'allphotosituation') %}
+                                <div class="fr-checkbox-group zip-child-position-absolute">
+
+                                    <label class="fr-label fr-label--sm zip-select-label zip-select-action custom-checkbox" for="zip-select-{{ photo.id }}">
+                                        <span class="fr-sr-only">Sélectionner la photo</span>
+                                        <input
+                                                type="checkbox"
+                                                class="zip-select-input "
+                                                id="zip-select-{{ photo.id }}"
+                                                value="{{ photo.id }}"
+                                                name="zip-select[]"
+                                        >
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            {% endif %}
+
+                            <button
                                 class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
                                 data-id={{ photo.id }} 
                                 title="Voir la photo {{ photo.filename }}"
