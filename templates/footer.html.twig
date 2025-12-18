@@ -41,11 +41,13 @@
                 <li class="fr-footer__bottom-item">
                     <a href="{{ sites_faciles_url }}cgu/" class="fr-footer__bottom-link" target="_self">CGU</a>
                 </li>
-                {% if app.user and '/bo/' in path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
                 <li class="fr-footer__bottom-item">
+                    {% if app.user and '/bo/' in path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
                     <a href="{{ path('back_plan_du_site') }}" class="fr-footer__bottom-link" target="_self">Plan du site</a>
+                    {% else %}
+                    <a href="https://signal-logement.beta.gouv.fr/plan-du-site/" class="fr-footer__bottom-link" target="_self">Plan du site</a>
+                    {% endif %}
                 </li>
-                {% endif %}
                 <li class="fr-footer__bottom-item">
                     <a href="https://github.com/MTES-MCT/histologe" class="fr-footer__bottom-link" target="_self">Code source</a>
                 </li>
