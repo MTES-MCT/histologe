@@ -11,30 +11,33 @@
     <section class="fr-background--white" :style="'block'">
       <div class="fr-grid-row fr-p-3w fr-pb-6w' fr-container-sml">
         <div class="fr-col-12">
-          <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
-            <div class="fr-col">
+          <div class="fr-grid-row fr-grid-row--top fr-mb-2w">
+            <div class="fr-col-12 fr-col-lg-8">
               <h1 class="fr-h2">Liste des signalements</h1>
             </div>
-            <div class="fr-col fr-grid-row fr-grid-row--right fr-grid-row--middle fr-gap-2v">
-              <button
-                data-fr-opened="false"
-                aria-controls="modal-edit-search"
-                class="fr-btn fr-btn--secondary fr-icon-settings-5-line"
-                :disabled="sharedState.savedSearches.length === 0"
-              ></button>
-              <HistoSelect
-                class="fr-ml-2v"
-                :key="sharedState.savedSearchSelectKey"
-                id="filter-save-search"
-                v-model="sharedState.selectedSavedSearchId"
-                @update:modelValue="applySavedSearch"
-                title="Mes recherches sauvegardées"
-                :option-items="sharedState.savedSearches"
-                :placeholder="sharedState.savedSearches.length > 0 
-                  ? 'Mes recherches sauvegardées' 
-                  : 'Aucune recherche sauvegardée'"
-                ref="savedSearchSelect"
-              />
+            <div class="fr-col-12 fr-col-lg-4 fr-grid-row">
+              <div class="fr-col-auto">
+                <button
+                  data-fr-opened="false"
+                  aria-controls="modal-edit-search"
+                  class="fr-btn fr-btn--secondary fr-icon-settings-5-line fr-mr-1w"
+                  :disabled="sharedState.savedSearches.length === 0"
+                ></button>
+              </div>
+              <div class="fr-col">
+                <HistoSelect
+                  :key="sharedState.savedSearchSelectKey"
+                  id="filter-save-search"
+                  v-model="sharedState.selectedSavedSearchId"
+                  @update:modelValue="applySavedSearch"
+                  title="Mes recherches sauvegardées"
+                  :option-items="sharedState.savedSearches"
+                  :placeholder="sharedState.savedSearches.length > 0 
+                    ? 'Mes recherches sauvegardées' 
+                    : 'Aucune recherche sauvegardée'"
+                  ref="savedSearchSelect"
+                />
+              </div>
             </div>
           </div>
           <div class="fr-container--fluid" role="search">
