@@ -137,7 +137,7 @@ export default defineComponent({
       } else if (type.includes('resolve')) {
         this.navigateToDisorderScreen(param, param2, type.includes('save'))
       } else if (type.includes('finish')) {
-        this.finishLater(type.includes('save'), param2)
+        this.finishLater(param2)
       }
     },
     showComponentBySlug (slug:string, slugButton:string) {
@@ -230,32 +230,15 @@ export default defineComponent({
         this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
       }
     },
-    finishLater (isSaveAndCheck:boolean, slugButton:string) {
+    finishLater (slugButton:string) {
       this.formStore.lastButtonClicked = slugButton
       if (this.mailSentForDraftThisSession) {
         return
       }
       formStore.validationErrors = {}
 
-      if (isSaveAndCheck) {
-        if (this.validateAndFocusFirstError()) {
-          this.formStore.lastButtonClicked = ''
-          return
-        }
-      }
       this.mailSentForDraftThisSession = true
-      requests.saveSignalementDraft(this.sendMailContinueFromDraft)
-    },
-    sendMailContinueFromDraft (requestResponse: any) {
-      formStore.data.errorMessage = ''
-      if (requestResponse && requestResponse.uuid) {
-        requests.sendMailContinueFromDraft(this.redirectToDraftMailScreen)
-      } else if (requestResponse && requestResponse.success === false) {
-          for (const index in requestResponse.violations) {
-            formStore.data.errorMessage += requestResponse.violations[index].title + '\n'
-          }
-        this.formStore.lastButtonClicked = ''
-      }
+      requests.sendMailContinueFromDraft(this.redirectToDraftMailScreen)
     },
     redirectToDraftMailScreen (requestResponse: any) {
       formStore.data.errorMessage = ''
