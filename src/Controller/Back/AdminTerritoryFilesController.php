@@ -109,14 +109,6 @@ class AdminTerritoryFilesController extends AbstractController
         $form = $this->createForm(TerritoryFileType::class, $file, ['action' => $this->generateUrl('back_territory_management_document_add_ajax')]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $description = $form->get('description')->getData();
-            // In a special case, mb_strlen can return a smaller length than strlen, so we check both, or the database field limit can be exceeded
-            if ($description && (mb_strlen($description) > 255 || strlen($description) > 255)) {
-                $errorMsg = 'La description ne doit pas dépasser 255 caractères';
-
-                return $this->json(['response' => $errorMsg, 'errors' => ['description' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
-            }
-
             /** @var UploadedFile $uploadedFile */
             $uploadedFile = $form->get('file')->getData();
 
@@ -184,13 +176,6 @@ class AdminTerritoryFilesController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $flush = true;
-            $description = $form->get('description')->getData();
-            // In a special case, mb_strlen can return a smaller length than strlen, so we check both, or the database field limit can be exceeded
-            if ($description && (mb_strlen($description) > 255 || strlen($description) > 255)) {
-                $errorMsg = 'La description ne doit pas dépasser 255 caractères';
-
-                return $this->json(['response' => $errorMsg, 'errors' => ['description' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
-            }
 
             if (!empty($form->get('file')->getData())) {
                 $flush = false;
