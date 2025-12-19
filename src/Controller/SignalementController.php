@@ -73,7 +73,6 @@ class SignalementController extends AbstractController
     #[Route(
         '/signalement',
         name: 'front_signalement',
-        defaults: ['show_sitemap' => true]
     )]
     public function index(
         Request $request,

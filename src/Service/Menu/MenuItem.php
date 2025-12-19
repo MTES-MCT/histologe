@@ -2,6 +2,8 @@
 
 namespace App\Service\Menu;
 
+use Symfony\Bundle\SecurityBundle\Security;
+
 class MenuItem
 {
     /** @var array<self> */
@@ -83,5 +85,33 @@ class MenuItem
     public function getBaseRoute(): string
     {
         return str_replace(['_index', '_new', '_view', '_edit', '_reactiver'], '', $this->route);
+    }
+
+    public function isVisible(Security $security): bool
+    {
+        if (!$this->featureEnable) {
+            return false;
+        }
+
+        if ($this->roleGranted && !$security->isGranted($this->roleGranted)) {
+            return false;
+        }
+
+        if ($this->roleNotGranted && $security->isGranted($this->roleNotGranted)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array<self>
+     */
+    public function getVisibleChildren(Security $security): array
+    {
+        return array_values(array_filter(
+            $this->children,
+            fn (self $child) => $child->isVisible($security)
+        ));
     }
 }
