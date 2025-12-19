@@ -172,40 +172,43 @@
         </div>
     </section>
     <hr>
-    {% if not is_granted('ROLE_ADMIN') %}
-        <section class="fr-px-5v fr-my-5v">
-            <div class="fr-grid-row fr-grid-row--middle">  
-                <div class="fr-col-12">
-                    <h2>Modifier mes abonnements</h2>
-                </div>
-                <div class="fr-col-12">
-                    {% set isMultiPartner = app.user.partners|length > 1 %}
-                    <div class="fr-alert fr-alert--info fr-alert--sm">
-                        <h3 class="fr-alert__title">Etat des lieux</h3>
-                        <ul>
-                            <li>
-                                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                                    Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur votre territoire.
+    <section class="fr-px-5v fr-my-5v">
+        <div class="fr-grid-row fr-grid-row--middle">  
+            <div class="fr-col-12">
+                <h2>Modifier mes abonnements</h2>
+            </div>
+            <div class="fr-col-12">
+                {% set isMultiPartner = app.user.partners|length > 1 %}
+                <div class="fr-alert fr-alert--info fr-alert--sm">
+                    <h3 class="fr-alert__title">Etat des lieux</h3>
+                    <ul>
+                        <li>
+                            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                                Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur votre territoire.
+                            {% else %}
+                                {% if isMultiPartner %}
+                                    Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur vos partenaires.
                                 {% else %}
-                                    {% if isMultiPartner %}
-                                        Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur vos partenaires.
-                                    {% else %}
-                                        Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur votre partenaire.
-                                    {% endif %}
+                                    Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur votre partenaire.
                                 {% endif %}
-                            </li>
-                            <li>
-                                Vous avez agi sur <strong>{{nbActiveSignalementsWithInteractions}}</strong> de ces signalements.
-                            </li>
-                            <li>
-                                Vous êtes abonné(e) à <strong>{{nbSubsOnActiveSignalements}}</strong> de ces signalements.
-                            </li>
-                        </ul>
-                        {% if not is_granted('ROLE_ADMIN_TERRITORY') %}
-                            ⚠️ Nous pouvons uniquement supprimer les abonnements aux dossiers auxquels au moins un autre agent de votre partenaire est abonné.
-                        {% endif %}
-                    </div>
-                    <ul class="fr-btns-group fr-btns-group--equisized fr-btns-group--inline fr-mt-2w">
+                            {% endif %}
+                        </li>
+                        <li>
+                            Vous avez agi sur <strong>{{nbActiveSignalementsWithInteractions}}</strong> de ces signalements.
+                        </li>
+                        <li>
+                            Vous êtes abonné(e) à <strong>{{nbSubsOnActiveSignalements}}</strong> de ces signalements.
+                        </li>
+                        <li>
+                            Vous êtes abonné(e) à <strong>{{nbSubsOnSignalementsWithoutInteractions}}</strong> signalements sur lesquels vous n'avez eu aucune interaction.
+                        </li>
+                    </ul>
+                    {% if not is_granted('ROLE_ADMIN_TERRITORY') %}
+                        ⚠️ Nous pouvons uniquement supprimer les abonnements aux dossiers auxquels au moins un autre agent de votre partenaire est abonné.
+                    {% endif %}
+                </div>
+                <ul class="fr-btns-group fr-btns-group--equisized fr-btns-group--inline fr-mt-2w">
+                    {% if not is_granted('ROLE_ADMIN') %}
                         <a class="fr-btn fr-btn--secondary"
                         {% if nbSubsOnActiveSignalements == nbActiveSignalements %}
                             aria-disabled="true"
@@ -215,21 +218,21 @@
                         >
                             M'abonner à tous les signalements actifs
                         </a>
-                        <a class="fr-btn fr-btn--secondary" 
-                            {% if nbSubsOnActiveSignalements == nbActiveSignalementsWithInteractions %}
-                                aria-disabled="true"
-                            {% else %}
-                                href="{{ path('profil_subscriptions_changes') }}?action=unsubscribe&_token={{ csrf_token('subscriptions_changes') }}" 
-                            {% endif %}
-                        >
-                            Me désabonner des signalements sans interaction de ma part
-                        </a>
-                    </ul>
-                </div>
+                    {% endif %}
+                    <a class="fr-btn fr-btn--secondary" 
+                        {% if nbSubsOnSignalementsWithoutInteractions == 0 %}
+                            aria-disabled="true"
+                        {% else %}
+                            href="{{ path('profil_subscriptions_changes') }}?action=unsubscribe&_token={{ csrf_token('subscriptions_changes') }}" 
+                        {% endif %}
+                    >
+                        Me désabonner des signalements sans interaction de ma part
+                    </a>
+                </ul>
             </div>
-        </section>
-        <hr>
-    {% endif %}
+        </div>
+    </section>
+    <hr>
     <section class="fr-px-5v fr-my-5v">
         <dialog aria-labelledby="fr-modal-cgu-bo-title" id="fr-modal-profil-cgu-bo" class="fr-modal">
             <div class="fr-container fr-container--fluid fr-container-md">

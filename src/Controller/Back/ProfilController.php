@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use App\Form\UserNotificationEmailType;
 use App\Form\UserProfilInfoType;
 use App\Manager\UserManager;
@@ -61,6 +62,7 @@ class ProfilController extends AbstractController
         $nbActiveSignalements = $signalementRepository->getActiveSignalementsForUser(user: $user, count: true);
         $nbActiveSignalementsWithInteractions = $signalementRepository->getActiveSignalementsWithInteractionsForUser(user: $user, count: true);
         $nbSubsOnActiveSignalements = $userSignalementSubscriptionRepository->countSubscriptionsOnActiveSignalementsForUser($user);
+        $nbSubsOnSignalementsWithoutInteractions = $userSignalementSubscriptionRepository->getSubscriptionsOnSignalementsWithoutInteractionsForUser(user: $user, count: true);
 
         return $this->render('back/profil/index.html.twig', [
             'activeTerritoryAdminsByTerritory' => $activeTerritoryAdminsByTerritory,
@@ -69,6 +71,7 @@ class ProfilController extends AbstractController
             'nbActiveSignalements' => $nbActiveSignalements,
             'nbActiveSignalementsWithInteractions' => $nbActiveSignalementsWithInteractions,
             'nbSubsOnActiveSignalements' => $nbSubsOnActiveSignalements,
+            'nbSubsOnSignalementsWithoutInteractions' => $nbSubsOnSignalementsWithoutInteractions,
         ]);
     }
 
@@ -386,34 +389,30 @@ class ProfilController extends AbstractController
         $sendFlashSuccess = false;
         /** @var User $user */
         $user = $this->getUser();
-        /** @var Signalement[] $activeSignalements */
-        $activeSignalements = $signalementRepository->getActiveSignalementsForUser($user);
         if ('unsubscribe' === $request->query->get('action')) {
-            /** @var Signalement[] $activeSignalementsWithInteractions */
-            $activeSignalementsWithInteractions = $signalementRepository->getActiveSignalementsWithInteractionsForUser(user: $user);
+            /** @var UserSignalementSubscription[] $subsOnInactiveSignalements */
+            $subsOnInactiveSignalements = $userSignalementSubscriptionRepository->getSubscriptionsOnSignalementsWithoutInteractionsForUser(user: $user);
             $lastUserOnSignalements = [];
-            foreach ($activeSignalements as $signalement) {
-                if (!in_array($signalement, $activeSignalementsWithInteractions)) {
-                    $toDelete = $userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
-                    if (!$toDelete) {
-                        continue; // pas d'abonnement à supprimer
-                    }
-                    $partner = $user->getPartnerInTerritory($signalement->getTerritory());
-                    $affectation = $affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $partner, 'statut' => AffectationStatus::ACCEPTED]);
-                    $subsForPartner = $userSignalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
+            foreach ($subsOnInactiveSignalements as $sub) {
+                if (!$user->isSuperAdmin()) { // les SA peuvent toujours se désabonner
+                    $partner = $user->getPartnerInTerritory($sub->getSignalement()->getTerritory());
+                    $affectation = $affectationRepository->findOneBy(['signalement' => $sub->getSignalement(), 'partner' => $partner, 'statut' => AffectationStatus::ACCEPTED]);
+                    $subsForPartner = $userSignalementSubscriptionRepository->findForSignalementAndPartner($sub->getSignalement(), $partner);
                     if ($affectation && 1 === count($subsForPartner)) {
-                        $lastUserOnSignalements[$signalement->getId()] = $signalement->getReference();
+                        $lastUserOnSignalements[$sub->getSignalement()->getId()] = $sub->getSignalement()->getReference();
                         continue; // ne pas permettre de se désabonner si le partenaire est affecté et que l'utilisateur est le seul abonné pour ce partenaire
                     }
-                    $entityManager->remove($toDelete);
-                    $sendFlashSuccess = true;
                 }
+                $entityManager->remove($sub);
+                $sendFlashSuccess = true;
             }
             if (count($lastUserOnSignalements) > 0) {
                 $msg = 'Vous ne pouvez pas vous désabonner des signalements suivants car vous êtes le dernier utilisateur abonné pour votre partenaire : '.implode(', ', $lastUserOnSignalements);
                 $this->addFlash('error', $msg);
             }
         } else {
+            /** @var Signalement[] $activeSignalements */
+            $activeSignalements = $signalementRepository->getActiveSignalementsForUser($user);
             foreach ($activeSignalements as $signalement) {
                 $userSignalementSubscriptionManager->createOrGet(userToSubscribe: $user, signalement: $signalement, createdBy: $user);
                 $sendFlashSuccess = true;
