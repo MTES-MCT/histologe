@@ -195,6 +195,7 @@ services:
 
     App\Service\Signalement\DesordreTraitement\DesordreLogementHumidite:
         tags:
+            - { name: 'desordre_traitement', key: 'desordres_logement_humidite_tout' }
             - { name: 'desordre_traitement', key: 'desordres_logement_humidite_piece_a_vivre' }
             - { name: 'desordre_traitement', key: 'desordres_logement_humidite_cuisine' }
             - { name: 'desordre_traitement', key: 'desordres_logement_humidite_salle_de_bain' }

@@ -149,6 +149,8 @@ class SignalementDraftDesordresType extends AbstractType
                             return 'Le logement est humide et a des traces de moisissures dans la salle de bain';
                         } elseif ('desordres_logement_humidite_piece_a_vivre' === $critere->getSlugCritere()) {
                             return 'Le logement est humide et a des traces de moisissures dans une pièce à vivre';
+                        } elseif ('desordres_logement_humidite_tout' === $critere->getSlugCritere()) {
+                            return 'Le logement est humide et a des traces de moisissures dans tout le logement';
                         }
 
                         return $critere->getLabelCritere();

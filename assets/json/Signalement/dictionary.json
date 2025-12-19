@@ -162,6 +162,30 @@
     }
   },
   "desordres_logement_chauffage_details_dpe_conso_vide": { "default": "Le DPE est vide" },
+  "desordres_logement_humidite_tout": {
+    "default": "Tout le logement",
+    "disorderOverview": {
+      "default": "Humidité ou moisissure dans tout le logement"
+    }
+  },
+  "desordres_logement_humidite_tout_details_fuite": {
+    "default": "Est-ce qu'il y a eu une fuite ou un dégât des eaux dans le logement ?",
+    "disorderOverview": {
+      "default": "Fuite ou dégat des eaux : {{dictionaryStore::formStore.data.desordres_logement_humidite_tout_details_fuite}}"
+    }
+  },
+  "desordres_logement_humidite_tout_details_machine": {
+    "default": "Est-ce qu'il y a une machine à laver, un sèche-linge ou un lave vaisselle dans le logement ?",
+    "disorderOverview": {
+      "default": "Machine à laver, sèche-linge ou lave vaisselle : {{dictionaryStore::formStore.data.desordres_logement_humidite_tout_details_machine}}"
+    }
+  },
+  "desordres_logement_humidite_tout_details_moisissure_apres_nettoyage": {
+    "default": "La moisissure revient-elle après nettoyage ?",
+    "disorderOverview": {
+      "default": "Moisissure revient après nettoyage : {{dictionaryStore::formStore.data.desordres_logement_humidite_tout_details_moisissure_apres_nettoyage}}"
+    }
+  },
   "desordres_logement_humidite_piece_a_vivre": {
     "default": "Une ou des pièces à vivre",
     "disorderOverview": {
