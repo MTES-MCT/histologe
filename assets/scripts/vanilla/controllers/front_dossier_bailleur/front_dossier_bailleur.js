@@ -19,8 +19,23 @@ if (reponseInjonctionBailleurDescription) {
   });
 
   function toggleBailleurDescription(value) {
-    if (value === 'REPONSE_OUI_AVEC_AIDE' || value === 'REPONSE_NON') {
+    if (value) {
       descriptionContainer.classList.remove('fr-hidden');
+      const label = descriptionContainer.querySelector('.fr-label');
+      var textNode = '';
+      switch (value) {
+      case 'REPONSE_OUI':
+        textNode = document.createTextNode(label.getAttribute('data-label-oui'));
+        break;
+      case 'REPONSE_OUI_AVEC_AIDE':
+        textNode = document.createTextNode(label.getAttribute('data-label-oui-avec-aide'));
+        break;
+      case 'REPONSE_NON':
+        textNode = document.createTextNode(label.getAttribute('data-label-non'));
+        break;
+      }
+      label.replaceChild(textNode, label.firstChild);
+
     } else {
       descriptionContainer.classList.add('fr-hidden');
     }
