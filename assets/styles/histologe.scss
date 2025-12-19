@@ -982,6 +982,10 @@ ul + p {
     height: auto;
 }
 
+.fr-tile__title {
+    word-break: break-word;
+}
+
 #dashboard {
     .fr-card__content {
         padding: 0 2rem 0 2rem;

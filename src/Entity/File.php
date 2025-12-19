@@ -129,8 +129,8 @@ class File implements EntityHistoryInterface
     #[ORM\Column]
     private ?bool $isVariantsGenerated = null;
 
-    #[ORM\Column(type: 'text', length: 250, nullable: true)]
-    #[Assert\Length(max: 250)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255, maxMessage: 'La description ne doit pas dépasser {{ limit }} caractères')]
     private ?string $description = null;
 
     #[ORM\Column]
