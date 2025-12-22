@@ -46,6 +46,11 @@ class ReponseInjonctionBailleurType extends AbstractType
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Commentaire',
+                'label_attr' => [
+                    'data-label-oui' => 'Souhaitez-vous apporter des précisions sur la situation ? (facultatif)',
+                    'data-label-oui-avec-aide' => 'Précisez votre situation et l\'aide attendue',
+                    'data-label-non' => 'Précisez la raison de votre refus',
+                ],
                 'help' => 'Dix (10) caractères minimum',
                 'attr' => [
                     'rows' => 5,
