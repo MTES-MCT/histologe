@@ -107,7 +107,7 @@ readonly class QueryBuilderFactory
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
 
         if (!empty($options['relanceUsagerSansReponse'])) {
-            $signalementIds = $signalementRepository->getSignalementsIdAvecRelancesSansReponse();
+            $signalementIds = $signalementRepository->getSignalementsIdAvecRelancesSansReponse($user);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
