@@ -1983,7 +1983,8 @@
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
           },
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 255
           }
         },
         {
