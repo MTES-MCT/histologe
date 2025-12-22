@@ -42,10 +42,10 @@
                     <a href="{{ sites_faciles_url }}cgu/" class="fr-footer__bottom-link" target="_self">CGU</a>
                 </li>
                 <li class="fr-footer__bottom-item">
-                    {% if app.user and '/bo/' in path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
-                    <a href="{{ path('back_plan_du_site') }}" class="fr-footer__bottom-link" target="_self">Plan du site</a>
+                    {% if app.user and app.request.attributes.get('_route') and '/bo/' in path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+                        <a href="{{ path('back_plan_du_site') }}" class="fr-footer__bottom-link" target="_self">Plan du site</a>
                     {% else %}
-                    <a href="https://signal-logement.beta.gouv.fr/plan-du-site/" class="fr-footer__bottom-link" target="_self">Plan du site</a>
+                        <a href="https://signal-logement.beta.gouv.fr/plan-du-site/" class="fr-footer__bottom-link" target="_self">Plan du site</a>
                     {% endif %}
                 </li>
                 <li class="fr-footer__bottom-item">
