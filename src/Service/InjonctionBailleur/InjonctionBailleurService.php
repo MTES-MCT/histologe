@@ -46,7 +46,9 @@ class InjonctionBailleurService
                 $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI;
                 $this->suiviManager->createSuivi(signalement: $signalement, description: $contenu, type: Suivi::TYPE_AUTO, category: $category, isPublic: true);
-                $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
+                if (!empty($description)) {
+                    $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
+                }
                 break;
             case ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE:
                 $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés.';
