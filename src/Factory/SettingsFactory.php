@@ -50,6 +50,7 @@ class SettingsFactory
     {
         // If a territory is selected, only return its communes and zips
         if (!empty($territory)) {
+            $suggestionsCommuneZipCode = [];
             $communes = $territory->getCommunes();
             foreach ($communes as $commune) {
                 $suggestionsCommuneZipCode[] = $commune->getNom();
