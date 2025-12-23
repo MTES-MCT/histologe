@@ -3,10 +3,12 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Dto\ReponseInjonctionBailleur;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Repository\FileRepository;
 use App\Security\User\SignalementBailleur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -48,6 +50,11 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client->submit($form);
 
         $this->assertEmailCount(1);
+
+        /** @var FileRepository $fileRepository */
+        $fileRepository = self::getContainer()->get(FileRepository::class);
+        $file = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
+        $this->assertNotNull($file);
 
         $this->assertResponseRedirects($urlDossierBailleur);
         $client->followRedirect();
@@ -95,6 +102,11 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         $this->assertEmailCount(1);
 
+        /** @var FileRepository $fileRepository */
+        $fileRepository = self::getContainer()->get(FileRepository::class);
+        $file = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
+        $this->assertNotNull($file);
+
         $this->assertResponseRedirects($urlDossierBailleur);
         $client->followRedirect();
         $crawler = $client->getCrawler();
@@ -140,6 +152,11 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client->submit($form);
 
         $this->assertEmailCount(1);
+
+        /** @var FileRepository $fileRepository */
+        $fileRepository = self::getContainer()->get(FileRepository::class);
+        $file = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
+        $this->assertNull($file);
 
         $this->assertResponseRedirects($urlDossierBailleur);
         $client->followRedirect();
