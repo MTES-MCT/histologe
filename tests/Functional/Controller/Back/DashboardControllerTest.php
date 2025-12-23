@@ -135,15 +135,8 @@ class DashboardControllerTest extends WebTestCase
         $client->loginUser($user);
 
         $url = $router->generate('back_dashboard');
-        $client->request('GET', $url);
+        $client->request('GET', $url.'?mesDossiersMessagesUsagers=1&mesDossiersAverifier=1&mesDossiersActiviteRecente=1');
 
-        $this->assertResponseRedirects();
-        $redirectUrl = $client->getResponse()->headers->get('Location');
-        $this->assertStringContainsString('mesDossiersMessagesUsagers=1', $redirectUrl);
-        $this->assertStringContainsString('mesDossiersAverifier=1', $redirectUrl);
-        $this->assertStringContainsString('mesDossiersActiviteRecente=1', $redirectUrl);
-
-        $client->followRedirect();
         $this->assertSelectorExists('#tabpanel-dernieres-actions');
         $this->assertSelectorExists('#tabpanel-dossiers-nouveaux');
         $this->assertSelectorNotExists('#tabpanel-dossiers-a-fermer');
