@@ -9,17 +9,21 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Manager\AffectationManager;
+use App\Manager\FileManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
+use App\Service\InjonctionBailleur\EngagementTravauxBailleurGenerator;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class InjonctionBailleurServiceTest extends KernelTestCase
 {
@@ -32,6 +36,10 @@ class InjonctionBailleurServiceTest extends KernelTestCase
     private PartnerRepository $partnerRepository;
     private ReferenceGenerator $referenceGenerator;
     private InjonctionBailleurService $service;
+    private EngagementTravauxBailleurGenerator $engagementTravauxBailleurGenerator;
+    private ParameterBagInterface $parameterBag;
+    private UploadHandlerService $uploadHandlerService;
+    private FileManager $fileManager;
 
     protected function setUp(): void
     {
@@ -48,6 +56,10 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
         $this->referenceGenerator = self::getContainer()->get(ReferenceGenerator::class);
+        $this->engagementTravauxBailleurGenerator = self::getContainer()->get(EngagementTravauxBailleurGenerator::class);
+        $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
+        $this->uploadHandlerService = self::getContainer()->get(UploadHandlerService::class);
+        $this->fileManager = self::getContainer()->get(FileManager::class);
 
         $this->service = new InjonctionBailleurService(
             $this->suiviManager,
@@ -57,7 +69,11 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             $this->userManager,
             $this->signalementManager,
             $this->partnerRepository,
-            $this->referenceGenerator
+            $this->referenceGenerator,
+            $this->engagementTravauxBailleurGenerator,
+            $this->parameterBag,
+            $this->uploadHandlerService,
+            $this->fileManager,
         );
     }
 
