@@ -27,63 +27,70 @@
     </dialog>
         
     <main class="fr-container fr-py-5w" id="content">
-        <section class="fr-grid-row fr-grid-row--center">
-            <header class="fr-callout bg-light fr-col-12">
-                <p class="fr-callout__title">Connexion</p>
-                <p class="fr-callout__text fr-mb-5v">
-                    Entrez vos identifiants et cliquez sur connexion.
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6 fr-background-alt--blue-france fr-p-4w fr-radius--lg">
+                <h1 class="fr-text--center fr-mb-6v">Connexion à {{ platform.name }}</h1>
+                {% include 'security/_form_pro_connect.html.twig' %}
+                <h2 class="fr-col-12 fr-mb-4v">Se connecter avec son compte</h2>
+                <p class="fr-mb-5v">
+                    Entrez vos identifiants et cliquez sur connexion.<br>
+                    Tous les champs sont obligatoires.
                 </p>
-                <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france disabled-link"> Vous pouvez également
-                    <a {% if maintenance is defined and not maintenance.enable %}href="{{ path('login_activation') }}"{% endif %}>activer votre compte</a> ou
-                    <a {% if maintenance is defined and not maintenance.enable %}href="{{ path('login_mdp_perdu') }}"{% endif %}>récupérer votre mot de passe</a> si nécessaire</em>
-            </header>
-
-            {% include 'security/_form_pro_connect.html.twig' %}
-            <form class="needs-validation fr-mt-5v fr-col-md-6" name="login-form" method="POST" novalidate="">
-                {% if error %}
-                    <div role="alert" class="fr-alert fr-alert--error fr-alert--sm fr-mb-5w">
-                        <p class="fr-alert__title">Connexion impossible</p>
-                        <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+                <form class="needs-validation fr-mt-5v fr-col-12" name="login-form" method="POST" novalidate="">
+                    {% if error %}
+                        <div role="alert" class="fr-alert fr-alert--error fr-alert--sm fr-mb-5w">
+                            <p class="fr-alert__title">Connexion impossible</p>
+                            <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+                        </div>
+                    {% endif %}
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="login-email">
+                            Courriel
+                            <span class="fr-hint-text">Adresse utilisée lors de la création de votre compte. Format attendu : nom@domaine.fr</span>
+                        </label>
+                        <input class="fr-input" aria-describedby="login-email-error-desc-error" type="email"
+                            id="login-email" name="email" required>
                     </div>
-                {% endif %}
-                <div class="fr-input-group">
-                    <label class="fr-label" for="login-email">
-                        Courriel
-                        <span class="fr-hint-text">Adresse utilisée lors de la création de votre compte</span>
-                    </label>
-                    <input class="fr-input" aria-describedby="login-email-error-desc-error" type="email"
-                           id="login-email" name="email" required>
-                </div>
-                <div class="fr-input-group fr-grid-row fr-grid-row--middle">
-                    <label class="fr-label fr-col-12" for="login-password">
-                        Mot de passe
-                        <span class="fr-hint-text">Mot de passe défini à la création de votre compte</span>
-                    </label>
-                    <input class="fr-input fr-col-11" aria-describedby="login-password-error-desc-error" type="password"
-                           id="login-password" name="password" required>
-                    <button class="fr-btn fr-fi-eye-off-fill fr-col-1 fr-mt-2v fr-password-toggle"
-                        type="button" title="Afficher/Cacher le mot de passe"></button>
-                </div>
-                <div class="fr-checkbox-group">
-                    <p>
+                    <div class="fr-input-group fr-grid-row fr-grid-row--middle">
+                        <label class="fr-label fr-col-12" for="login-password">
+                            Mot de passe
+                            <span class="fr-hint-text">Mot de passe défini à la création de votre compte</span>
+                        </label>
+                        <input class="fr-input fr-col-11" aria-describedby="login-password-error-desc-error" type="password"
+                            id="login-password" name="password" required>
+                        <button class="fr-btn fr-fi-eye-off-fill fr-col-1 fr-mt-2v fr-password-toggle"
+                            type="button" title="Afficher/Cacher le mot de passe"></button>
+                    </div>
+                    <div class="fr-checkbox-group fr-mb-1v">
                         <input name="_remember_me" id="_remember_me" type="checkbox" >
                         <label class="fr-label" for="_remember_me">
                             Garder ma session ouverte pendant 1 mois.
                         </label>
+                    </div>
+                    <p class="fr-text--sm fr-mt-3w">
+                        En utilisant {{ platform.name }}, vous acceptez les <button class="fr-link" type="button" data-fr-opened="false" aria-controls="fr-modal-cgu-bo">conditions d'utilisation</button> de la plateforme.
                     </p>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <ul class="fr-btns-group fr-mt-5v">
+                        <li>
+                            <button class="fr-btn fr-btn--lg fr-btn--primary">
+                                Se connecter
+                            </button>
+                        </li>
+                    </ul>
+                </form>
+
+                <div class="fr-col-12 fr-text--center">
+                    <hr class="fr-hr">
+                    <h2>Vous n'avez pas activé votre compte ?</h2>
+                        <a class="fr-link" {% if maintenance is defined and not maintenance.enable %}href="{{ path('login_activation') }}"{% endif %}>Activer mon compte</a>
                 </div>
-                <div class="fr-grid-row fr-grid-row--middle">
-                    <p class="fr-text--sm">
-                        En utilisant Signal Logement, vous acceptez les <button class="fr-link" type="button" data-fr-opened="false" aria-controls="fr-modal-cgu-bo">conditions d'utilisation</button> de la plateforme.
-                    <p>
+                <div class="fr-col-12 fr-text--center fr-mt-3w">
+                    <hr class="fr-hr">
+                    <h2>Vous avez perdu votre mot de passe ?</h2>
+                        <a class="fr-link" {% if maintenance is defined and not maintenance.enable %}href="{{ path('login_mdp_perdu') }}"{% endif %}>Réinitialiser mon mot de passe</a>
                 </div>
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                <div class="fr-form-group">
-                    <button class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right">
-                        Connexion
-                    </button>
-                </div>
-            </form>
-        </section>
+            </div>
+        </div>
     </main>
 {% endblock %}
