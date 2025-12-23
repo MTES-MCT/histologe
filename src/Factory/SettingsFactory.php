@@ -30,7 +30,7 @@ class SettingsFactory
             user: $user,
             territories: $filterOptionData['territories'],
             partners: $filterOptionData['partners'],
-            communes: $this->getCommunesAndZipCodes($filterOptionData),
+            communes: $this->getCommunesAndZipCodes($filterOptionData, $territory),
             epcis: $filterOptionData['epcis'],
             tags: $filterOptionData['tags'],
             zones: $filterOptionData['zones'],
@@ -46,8 +46,22 @@ class SettingsFactory
      *
      * @return array<int, string>
      */
-    private function getCommunesAndZipCodes(array $filterOptionData): array
+    private function getCommunesAndZipCodes(array $filterOptionData, ?Territory $territory = null): array
     {
+        // If a territory is selected, only return its communes and zips
+        if (!empty($territory)) {
+            $suggestionsCommuneZipCode = [];
+            $communes = $territory->getCommunes();
+            foreach ($communes as $commune) {
+                $suggestionsCommuneZipCode[] = $commune->getNom();
+                $suggestionsCommuneZipCode[] = $commune->getCodePostal();
+            }
+            $suggestionsCommuneZipCode = array_unique($suggestionsCommuneZipCode);
+
+            return $suggestionsCommuneZipCode;
+        }
+
+        // Otherwise, return all available communes and zips from existing signalements
         $suggestionsCommuneZipCode = [...$filterOptionData['cities'], ...$filterOptionData['zipcodes']];
 
         $suggestionsCommuneZipCode = array_map(

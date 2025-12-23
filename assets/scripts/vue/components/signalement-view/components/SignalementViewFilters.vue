@@ -568,6 +568,9 @@ export default defineComponent({
       if (this.sharedState.input.filters.showWithoutAffectationOnly === 'oui') {
         this.deactiveWithoutAffectationsOnly()
       }
+      if (key === 'territoire') {
+        this.$emit('changeTerritory', '')
+      }
 
       delete (this.sharedState.input.filters as any)[key]
       if (typeof this.onChange === 'function') {
