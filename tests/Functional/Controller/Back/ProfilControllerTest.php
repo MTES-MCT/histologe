@@ -753,4 +753,58 @@ class ProfilControllerTest extends WebTestCase
         $this->assertFalse($user->getIsMailingSummary());
         $this->assertTrue($user->getIsMailingActive());
     }
+
+    public function testSubscribeAndUnsubscribeRT(): void
+    {
+        $this->user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-02@signal-logement.fr']);
+        $this->client->loginUser($this->user);
+
+        // subscribe on all active signalement in territory
+        $token = $this->generateCsrfToken($this->client, 'subscriptions_changes');
+        $route = $this->router->generate('profil_subscriptions_changes').'?_token='.$token;
+        $this->client->request('GET', $route);
+
+        $this->assertResponseRedirects($this->router->generate('back_profil'));
+        $this->assertEquals(21, $this->user->getUserSignalementSubscriptions()->count());
+
+        // unsubscribe on all signalement in territory
+        $route .= '&action=unsubscribe';
+        $this->client->request('GET', $route);
+        $this->assertResponseRedirects($this->router->generate('back_profil'));
+        $this->user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-02@signal-logement.fr']);
+        $this->assertEquals(0, $this->user->getUserSignalementSubscriptions()->count());
+    }
+
+    public function testUnsubscribeAndSubscribeAgent(): void
+    {
+        $this->user = $this->userRepository->findOneBy(['email' => 'user-partenaire-30@signal-logement.fr']);
+        $this->client->loginUser($this->user);
+
+        // unsubscribe on all active signalement without interractions
+        $token = $this->generateCsrfToken($this->client, 'subscriptions_changes');
+        $route = $this->router->generate('profil_subscriptions_changes').'?_token='.$token;
+        $this->client->request('GET', $route.'&action=unsubscribe');
+
+        $this->assertResponseRedirects($this->router->generate('back_profil'));
+        $this->assertEquals(0, $this->user->getUserSignalementSubscriptions()->count());
+
+        // subscribe on all signalement for my partner
+        $this->client->request('GET', $route);
+        $this->assertResponseRedirects($this->router->generate('back_profil'));
+        $this->user = $this->userRepository->findOneBy(['email' => 'user-partenaire-30@signal-logement.fr']);
+        $this->assertEquals(1, $this->user->getUserSignalementSubscriptions()->count());
+    }
+
+    public function testUnsubscribeAgentWhenNoOtherSubscription(): void
+    {
+        $this->user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
+        $this->client->loginUser($this->user);
+
+        $token = $this->generateCsrfToken($this->client, 'subscriptions_changes');
+        $route = $this->router->generate('profil_subscriptions_changes').'?_token='.$token.'&action=unsubscribe';
+        $this->client->request('GET', $route);
+
+        $this->assertResponseRedirects($this->router->generate('back_profil'));
+        $this->assertEquals(4, $this->user->getUserSignalementSubscriptions()->count());
+    }
 }

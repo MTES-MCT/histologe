@@ -2520,4 +2520,67 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function getActiveSignalementsForUser(User $user, ?bool $count = false): array|int
+    {
+        $qb = $this->createQueryBuilder('s');
+        if ($count) {
+            $qb->select('COUNT(s.id)');
+        } else {
+            $qb->select('s');
+        }
+        $qb->where('s.statut = :statut')
+            ->setParameter('statut', SignalementStatus::ACTIVE);
+
+        if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
+            $qb->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
+        } else {
+            $qb->innerJoin('s.affectations', 'a')
+                ->andWhere('a.statut = :affectationStatut')
+                ->andWhere('a.partner IN (:partners)')
+                ->setParameter('affectationStatut', AffectationStatus::ACCEPTED)
+                ->setParameter('partners', $user->getPartners());
+        }
+
+        if ($count) {
+            return (int) $qb->getQuery()->getSingleScalarResult();
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function getActiveSignalementsWithInteractionsForUser(User $user, ?bool $count = false): array|int
+    {
+        $qb = $this->createQueryBuilder('s');
+        if ($count) {
+            $qb->select('COUNT(DISTINCT s.id)');
+        } else {
+            $qb->select('DISTINCT s');
+        }
+        $qb
+            ->leftJoin('s.suivis', 'su', Join::WITH, 'su.createdBy = :user')
+            ->leftJoin('s.affectations', 'aff', Join::WITH, 'aff.answeredBy = :user AND aff.partner IN (:partners)')
+            ->where('s.statut = :statut')
+            ->andWhere('su.id IS NOT NULL OR aff.id IS NOT NULL')
+            ->setParameter('statut', SignalementStatus::ACTIVE)
+            ->setParameter('user', $user)
+            ->setParameter('partners', $user->getPartners());
+
+        if ($user->isTerritoryAdmin()) {
+            $qb->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
+        } else {
+            $qb->innerJoin('s.affectations', 'a')
+                ->andWhere('a.statut = :affectationStatut')
+                ->andWhere('a.partner IN (:partners)')
+                ->setParameter('affectationStatut', AffectationStatus::ACCEPTED);
+        }
+
+        if ($count) {
+            return (int) $qb->getQuery()->getSingleScalarResult();
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

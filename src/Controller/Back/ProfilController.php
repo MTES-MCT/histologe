@@ -2,12 +2,19 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\AffectationStatus;
+use App\Entity\Signalement;
 use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use App\Form\UserNotificationEmailType;
 use App\Form\UserProfilInfoType;
 use App\Manager\UserManager;
+use App\Manager\UserSignalementSubscriptionManager;
+use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\FormHelper;
 use App\Service\ImageManipulationHandler;
 use App\Service\Mailer\NotificationMail;
@@ -37,6 +44,8 @@ class ProfilController extends AbstractController
     #[Route('/', name: 'back_profil', methods: ['GET', 'POST'])]
     public function index(
         UserRepository $userRepository,
+        SignalementRepository $signalementRepository,
+        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
     ): Response {
         $activeTerritoryAdminsByTerritory = [];
         /** @var User $user */
@@ -50,10 +59,19 @@ class ProfilController extends AbstractController
         $formProfilInfo = $this->createForm(UserProfilInfoType::class, $user, ['action' => $this->generateUrl('back_profil_edit_infos')]);
         $notificationEmailForm = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
 
+        $nbActiveSignalements = $signalementRepository->getActiveSignalementsForUser(user: $user, count: true);
+        $nbActiveSignalementsWithInteractions = $signalementRepository->getActiveSignalementsWithInteractionsForUser(user: $user, count: true);
+        $nbSubsOnActiveSignalements = $userSignalementSubscriptionRepository->countSubscriptionsOnActiveSignalementsForUser($user);
+        $nbSubsOnSignalementsWithoutInteractions = $userSignalementSubscriptionRepository->getSubscriptionsOnSignalementsWithoutInteractionsForUser(user: $user, count: true);
+
         return $this->render('back/profil/index.html.twig', [
             'activeTerritoryAdminsByTerritory' => $activeTerritoryAdminsByTerritory,
             'formProfilInfo' => $formProfilInfo,
             'notificationEmailForm' => $notificationEmailForm,
+            'nbActiveSignalements' => $nbActiveSignalements,
+            'nbActiveSignalementsWithInteractions' => $nbActiveSignalementsWithInteractions,
+            'nbSubsOnActiveSignalements' => $nbSubsOnActiveSignalements,
+            'nbSubsOnSignalementsWithoutInteractions' => $nbSubsOnSignalementsWithoutInteractions,
         ]);
     }
 
@@ -352,5 +370,59 @@ class ProfilController extends AbstractController
         }
 
         return $this->json(['status' => 'success']);
+    }
+
+    #[Route('/subscriptions-changes', name: 'profil_subscriptions_changes', methods: ['GET'])]
+    public function subscriptionsChanges(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SignalementRepository $signalementRepository,
+        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        AffectationRepository $affectationRepository,
+        UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+    ): Response {
+        if (!$this->isCsrfTokenValid('subscriptions_changes', (string) $request->query->get('_token'))) {
+            $this->addFlash('error', 'Une erreur est survenue lors de la modification de vos abonnements');
+
+            return $this->redirectToRoute('back_profil');
+        }
+        $sendFlashSuccess = false;
+        /** @var User $user */
+        $user = $this->getUser();
+        if ('unsubscribe' === $request->query->get('action')) {
+            /** @var UserSignalementSubscription[] $subsOnInactiveSignalements */
+            $subsOnInactiveSignalements = $userSignalementSubscriptionRepository->getSubscriptionsOnSignalementsWithoutInteractionsForUser(user: $user);
+            $lastUserOnSignalements = [];
+            foreach ($subsOnInactiveSignalements as $sub) {
+                if (!$user->isSuperAdmin()) { // les SA peuvent toujours se désabonner
+                    $partner = $user->getPartnerInTerritory($sub->getSignalement()->getTerritory());
+                    $affectation = $affectationRepository->findOneBy(['signalement' => $sub->getSignalement(), 'partner' => $partner, 'statut' => AffectationStatus::ACCEPTED]);
+                    $subsForPartner = $userSignalementSubscriptionRepository->findForSignalementAndPartner($sub->getSignalement(), $partner);
+                    if ($affectation && 1 === count($subsForPartner)) {
+                        $lastUserOnSignalements[$sub->getSignalement()->getId()] = $sub->getSignalement()->getReference();
+                        continue; // ne pas permettre de se désabonner si le partenaire est affecté et que l'utilisateur est le seul abonné pour ce partenaire
+                    }
+                }
+                $entityManager->remove($sub);
+                $sendFlashSuccess = true;
+            }
+            if (count($lastUserOnSignalements) > 0) {
+                $msg = 'Vous ne pouvez pas vous désabonner des signalements suivants car vous êtes le dernier utilisateur abonné pour votre partenaire : '.implode(', ', $lastUserOnSignalements);
+                $this->addFlash('error', $msg);
+            }
+        } else {
+            /** @var Signalement[] $activeSignalements */
+            $activeSignalements = $signalementRepository->getActiveSignalementsForUser($user);
+            foreach ($activeSignalements as $signalement) {
+                $userSignalementSubscriptionManager->createOrGet(userToSubscribe: $user, signalement: $signalement, createdBy: $user);
+                $sendFlashSuccess = true;
+            }
+        }
+        $entityManager->flush();
+        if ($sendFlashSuccess) {
+            $this->addFlash('success', 'Vos abonnements ont bien été mis à jour.');
+        }
+
+        return $this->redirectToRoute('back_profil');
     }
 }
