@@ -124,4 +124,31 @@ class DashboardControllerTest extends WebTestCase
         $this->assertSelectorExists('#tabpanel-dossiers-a-verifier');
         $this->assertSelectorExists('#tabpanel-dossiers-activite-recente');
     }
+
+    public function testIndexDisplayTabPartnerMultiTerritory(): void
+    {
+        $client = static::createClient();
+        $router = self::getContainer()->get('router');
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
+        $client->loginUser($user);
+
+        $url = $router->generate('back_dashboard');
+        $client->request('GET', $url);
+
+        $this->assertResponseRedirects();
+        $redirectUrl = $client->getResponse()->headers->get('Location');
+        $this->assertStringContainsString('mesDossiersMessagesUsagers=1', $redirectUrl);
+        $this->assertStringContainsString('mesDossiersAverifier=1', $redirectUrl);
+        $this->assertStringContainsString('mesDossiersActiviteRecente=1', $redirectUrl);
+
+        $client->followRedirect();
+        $this->assertSelectorExists('#tabpanel-dernieres-actions');
+        $this->assertSelectorExists('#tabpanel-dossiers-nouveaux');
+        $this->assertSelectorNotExists('#tabpanel-dossiers-a-fermer');
+        $this->assertSelectorExists('#tabpanel-dossiers-messages-usagers');
+        $this->assertSelectorExists('#tabpanel-dossiers-a-verifier');
+        $this->assertSelectorExists('#tabpanel-dossiers-activite-recente');
+    }
 }
