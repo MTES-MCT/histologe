@@ -5,11 +5,13 @@ namespace App\Service\InjonctionBailleur;
 use App\Dto\ReponseInjonctionBailleur;
 use App\Dto\StopProcedure;
 use App\Entity\Affectation;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\AffectationManager;
+use App\Manager\FileManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
@@ -17,7 +19,9 @@ use App\Repository\PartnerRepository;
 use App\Service\HtmlCleaner;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class InjonctionBailleurService
 {
@@ -33,6 +37,10 @@ class InjonctionBailleurService
         private readonly SignalementManager $signalementManager,
         private readonly PartnerRepository $partnerRepository,
         private readonly ReferenceGenerator $referenceGenerator,
+        private readonly EngagementTravauxBailleurGenerator $engagementTravauxBailleurGenerator,
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly UploadHandlerService $uploadHandlerService,
+        private readonly FileManager $fileManager,
     ) {
     }
 
@@ -49,12 +57,14 @@ class InjonctionBailleurService
                 if (!empty($description)) {
                     $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 }
+                $this->saveEngagementTravauxBailleurPdf($signalement);
                 break;
             case ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE:
                 $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE;
                 $this->suiviManager->createSuivi(signalement: $signalement, description: $contenu, type: Suivi::TYPE_AUTO, category: $category, isPublic: true);
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
+                $this->saveEngagementTravauxBailleurPdf($signalement);
                 $this->assignHelpingPartners($signalement);
                 break;
             case ReponseInjonctionBailleur::REPONSE_NON:
@@ -67,6 +77,18 @@ class InjonctionBailleurService
                 $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
                 break;
         }
+    }
+
+    private function saveEngagementTravauxBailleurPdf(Signalement $signalement): void
+    {
+        $pdfContent = $this->engagementTravauxBailleurGenerator->generate($signalement);
+        $filename = 'engagement-travaux-'.$signalement->getUuid().'.pdf';
+        $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
+        file_put_contents($tmpFilepath, $pdfContent);
+
+        $filename = $this->uploadHandlerService->uploadFromFilename($filename);
+
+        $this->fileManager->createOrUpdate(filename: $filename, title: 'Engagement travaux', signalement: $signalement, flush: true, documentType: DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR);
     }
 
     private function createInjonctionBailleurCommentaireSuivi(Signalement $signalement, string $description): void
