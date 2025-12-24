@@ -41,7 +41,7 @@ class ProConnectController extends AbstractController
                 'exception' => $exception,
             ]);
 
-            $this->addFlash('error', 'Une erreur est survenue lors de la connexion à ProConnect');
+            $this->addFlash('error', 'Une erreur est survenue lors de la connexion à ProConnect, veuillez réessayer.');
 
             return $this->redirectToRoute('app_login');
         }
@@ -71,12 +71,12 @@ class ProConnectController extends AbstractController
                     'main'
                 );
 
-                $this->addFlash('success', 'Connexion réussie depuis votre compte ProConnect !');
+                $this->addFlash('success', ['title' => 'Connexion effectuée', 'message' => 'La connexion depuis votre compte ProConnect a bien été effectuée.']);
 
                 return $this->redirectToRoute('back_dashboard');
             }
 
-            $this->addFlash('warning',
+            $this->addFlash('error',
                 'L\'adresse e-mail liée à votre compte ProConnect ne correspond à aucun compte sur la plateforme '.$this->getParameter('platform_name').'.'
                         .' Merci de contacter votre responsable de territoire.');
             $this->logger->warning('Tentative de connexion ProConnect refusée : aucun utilisateur actif trouvé.', [

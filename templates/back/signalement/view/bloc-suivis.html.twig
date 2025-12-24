@@ -1,0 +1,25 @@
+<hr class="fr-mt-3w">
+
+<div id="suivis" class="fr-grid-row">
+    <div class="fr-col-9 fr-col-md-6">
+        <h3 class="fr-h5">Suivis</h3>
+        <div class="fr-toggle fr-mb-3v">
+            <input type="checkbox" id="toggle-hide-technical" name="toggle-hide-technical">
+            <label class="fr-toggle__label" for="toggle-hide-technical">Cacher les suivis automatiques</label>
+        </div>
+    </div>
+    {% if is_granted('SIGN_CREATE_SUIVI', signalement) %}
+        <div data-ajax-form>
+            {% include '_partials/signalement/add_suivi.html.twig' %}
+        </div>
+        <div class="fr-col-3 fr-col-md-6 fr-text--right">
+            <button class="fr-btn fr-btn--icon-left fr-icon-quote-line" data-fr-opened="false"
+                    aria-controls="fr-modal-add-suivi">
+                Ajouter un suivi
+            </button>
+        </div>
+    {% endif %}
+</div>
+<div id="list-suivis">
+    {% include 'back/signalement/view/suivis.html.twig' %}
+</div>

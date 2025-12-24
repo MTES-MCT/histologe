@@ -1,0 +1,32 @@
+<div class="fr-grid-row fr-grid-row--middle">  
+    <div class="fr-col-12 fr-col-md-8 fr-text--left">
+        <h2>Notifications e-mails</h2>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        <button class="fr-button fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-settings-5-line"
+            title="Paramétrer les notifications e-mail"
+            data-fr-opened="false" 
+            aria-controls="fr-modal-profil-notification-email"
+            >
+            Paramétrer les notifications
+        </button>
+    </div>
+</div>
+<div>
+    Vos préférences en matière d'e-mails :
+    <br>
+    Activité sur {{ platform.name }} : 
+    <strong>
+        {% if app.user.isMailingActive %}
+            {{ app.user.isMailingSummary ? 'Récapitulatif quotidien' : 'Tous les e-mails' }}
+        {% else %}
+            Aucun
+        {% endif %}
+    </strong>
+    <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-2w">
+        <p>
+            Quel que soit votre paramétrage, vous recevrez toujours les e-mails relatifs à la sécurité de votre compte 
+            (changement d'adresse e-mail, réinitialisation du mot de passe, mises à jour des CGU…)
+        </p>
+    </div>
+</div>

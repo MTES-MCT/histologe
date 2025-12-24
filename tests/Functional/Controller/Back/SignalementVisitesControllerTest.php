@@ -68,7 +68,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
-        $this->assertEquals('La date de visite a bien été définie.', $successMessages[0]);
+        $this->assertEquals(['title' => 'Visite ajoutée', 'message' => 'La date de visite a bien été définie.'], $successMessages[0]);
 
         $this->client->followRedirect();
         $crawler = $this->client->getCrawler();
@@ -106,7 +106,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
-        $this->assertEquals('La date de visite a bien été définie.', $successMessages[0]);
+        $this->assertEquals(['title' => 'Visite ajoutée', 'message' => 'La date de visite a bien été définie.'], $successMessages[0]);
     }
 
     public function testAddPastVisite(): void
@@ -140,7 +140,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
-        $this->assertEquals('Les informations de la visite ont bien été renseignées.', $successMessages[0]);
+        $this->assertEquals(['title' => 'Visite ajoutée', 'message' => 'Les informations de la visite ont bien été enregistrées.'], $successMessages[0]);
     }
 
     public function testAddPastVisiteNotDone(): void

@@ -121,7 +121,7 @@ class UserAccountController extends AbstractController
         string $token,
     ): RedirectResponse|Response {
         if (false === $activationTokenGenerator->validateToken($user, $token)) {
-            $this->addFlash('error', 'Votre lien est invalide ou expiré');
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Le lien est invalide ou expiré.']);
 
             return $this->redirectToRoute('app_login');
         }
@@ -149,8 +149,8 @@ class UserAccountController extends AbstractController
                 return $this->render('security/reset_password_new.html.twig', ['user' => $user]);
             }
             $user = $userManager->resetPassword($user, $request->get('password'));
-            $message = $user->isApiUser() ? 'Votre compte est maintenant activé vous pouvez utiliser l\'API' : 'Votre compte est maintenant activé, vous pouvez vous connecter';
-            $this->addFlash('success', $message);
+            $message = $user->isApiUser() ? 'Votre compte a bien été activé, vous pouvez utiliser l\'API.' : 'Votre compte a bien été activé, vous pouvez vous connecter.';
+            $this->addFlash('success', ['title' => 'Compte activé', 'message' => $message]);
             $request->request->remove('password');
 
             return $this->redirectToRoute('app_login');

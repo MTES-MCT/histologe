@@ -49,9 +49,11 @@ class ProfilControllerTest extends WebTestCase
     public function testIndex(): void
     {
         $route = $this->router->generate('back_profil');
-        $this->client->request('GET', $route);
+        $crawler = $this->client->request('GET', $route);
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Mon profil');
+
+        $h1Elements = $crawler->filter('h1');
+        $this->assertStringContainsString('Mon profil', $h1Elements->eq(4)->text());
     }
 
     public function testEditInfosSuccess(): void
@@ -155,14 +157,8 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $this->assertJson((string) json_encode([
-            'errors' => [
-                'user_profil_info[avatar]' => [
-                    'errors' => ['Le fichier est infecté'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Le fichier est infecté', $response['errors']['user_profil_info[avatar]']['errors'][0]);
     }
 
     public function testEditInfosWithAvatarBadFormat(): void
@@ -192,14 +188,8 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $this->assertJson((string) json_encode([
-            'errors' => [
-                'user_profil_info[avatar]' => [
-                    'errors' => ['Veuillez télécharger une image valide (JPEG, PNG ou GIF)'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Veuillez télécharger une image valide (JPEG, PNG ou GIF)', $response['errors']['user_profil_info[avatar]']['errors'][0]);
     }
 
     public function testEditInfosInvalidCsrfToken(): void
@@ -236,17 +226,8 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-
-        $this->assertJson((string) json_encode([
-            'errors' => [
-                'profil_edit_infos[prenom]' => [
-                    'errors' => ['Le prénom ne peut pas être vide'],
-                ],
-                'profil_edit_infos[nom]' => [
-                    'errors' => ['Le nom ne peut pas être vide'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Merci de saisir un prénom.', $response['errors']['user_profil_info[prenom]']['errors'][0]);
     }
 
     public function testDeleteAvatarSuccess(): void
@@ -265,11 +246,15 @@ class ProfilControllerTest extends WebTestCase
             '_token' => $csrfToken,
         ]);
 
-        $this->assertResponseRedirects($this->router->generate('back_profil'));
-        $this->client->followRedirect();
-
-        $this->assertSelectorExists('.fr-alert--success p');
-        $this->assertSelectorTextContains('.fr-alert--success p', 'L\'avatar a bien été supprimé.');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'L\'avatar a bien été supprimé.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
 
         $this->assertNull($this->user->getAvatarFilename());
     }
@@ -282,12 +267,12 @@ class ProfilControllerTest extends WebTestCase
         $this->client->request('POST', $route, [
             '_token' => $csrfToken,
         ]);
-
-        $this->assertResponseRedirects($this->router->generate('back_profil'));
-        $this->client->followRedirect();
-
-        $this->assertSelectorExists('.fr-alert--error p');
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Une erreur est survenue lors de la suppression...');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'Une erreur est survenue lors de la suppression, veuillez réessayer.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testEditEmailStep1Success(): void
@@ -316,14 +301,8 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_BAD_REQUEST,
-            'errors' => [
-                'profil_edit_email[email]' => [
-                    'errors' => ['Veuillez saisir une adresse email au format adresse@email.fr.'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Veuillez saisir une adresse e-mail au format adresse@email.fr.', $response['errors']['profil_edit_email[email]']['errors'][0]);
         $this->assertEmailCount(0);
     }
 
@@ -338,14 +317,16 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[email]' => [
                     'errors' => ['Ce champ est obligatoire.'],
                 ],
             ],
-        ]));
+        ];
+        $this->assertEquals($expectedJson, $response);
         $this->assertEmailCount(0);
     }
 
@@ -360,14 +341,8 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_BAD_REQUEST,
-            'errors' => [
-                'profil_edit_email[email]' => [
-                    'errors' => ['Veuillez saisir une adresse e-mail différente de l\'actuelle'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Veuillez saisir une adresse e-mail différente de l\'actuelle', $response['errors']['profil_edit_email[email]']['errors'][1]);
         $this->assertEmailCount(0);
     }
 
@@ -382,14 +357,16 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[email]' => [
                     'errors' => ['Un utilisateur existe déjà avec cette adresse e-mail.'],
                 ],
             ],
-        ]));
+        ];
+        $this->assertEquals($expectedJson, $response);
         $this->assertEmailCount(0);
     }
 
@@ -404,14 +381,16 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[email]' => [
                     'errors' => ['Un partenaire existe déjà avec cette adresse e-mail.'],
                 ],
             ],
-        ]));
+        ];
+        $this->assertEquals($expectedJson, $response);
         $this->assertEmailCount(0);
     }
 
@@ -422,14 +401,11 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil_edit_email');
         $this->user->setEmailAuthCode('123456');
         $this->user->setTempEmail('new-email@example.com');
-        $response = $this->client->request('POST', $route, [
+        $this->client->request('POST', $route, [
             '_token' => $csrfToken,
             'profil_edit_email[code]' => '123456',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_OK,
-        ]));
     }
 
     public function testEditEmailStep2InvalidCode(): void
@@ -443,14 +419,8 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[code]' => 'wrong_code',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_BAD_REQUEST,
-            'errors' => [
-                'profil_edit_email[code]' => [
-                    'errors' => ['Le code est incorrect.'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Le code est incorrect.', $response['errors']['profil_edit_email[code]']['errors'][1]);
     }
 
     public function testEditEmailStep2EmptyCode(): void
@@ -464,14 +434,8 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[code]' => '',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_BAD_REQUEST,
-            'errors' => [
-                'profil_edit_email[code]' => [
-                    'errors' => ['Le code est obligatoire.'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Le code est obligatoire.', $response['errors']['profil_edit_email[code]']['errors'][1]);
     }
 
     public function testEditEmailStep2NoTempEmail(): void
@@ -486,14 +450,8 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[code]' => '123456',
         ]);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_BAD_REQUEST,
-            'errors' => [
-                'profil_edit_email[code]' => [
-                    'errors' => ['Il n\'y a pas d\'adresse e-mail enregistrée à modifier'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Il n\'y a pas d\'adresse e-mail enregistrée à modifier', $response['errors']['profil_edit_email[code]']['errors'][1]);
     }
 
     public function testEditEmailStep2EmailExistingUser(): void
@@ -509,14 +467,16 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[code]' => [
                     'errors' => ['Un utilisateur existe déjà avec cette adresse e-mail.'],
                 ],
             ],
-        ]));
+        ];
+        $this->assertEquals($expectedJson, $response);
         $this->assertEmailCount(0);
     }
 
@@ -533,14 +493,16 @@ class ProfilControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'profil_edit_email[code]' => [
                     'errors' => ['Un partenaire existe déjà avec cette adresse e-mail.'],
                 ],
             ],
-        ]));
+        ];
+        $this->assertEquals($expectedJson, $response);
         $this->assertEmailCount(0);
     }
 
@@ -555,11 +517,12 @@ class ProfilControllerTest extends WebTestCase
             'profil_edit_email[email]' => 'new-email@example.com',
             'profil_edit_email[code]' => '123456',
         ]);
-        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_UNAUTHORIZED,
-            'message' => 'Une erreur s\'est produite. Veuillez actualiser la page.',
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'Une erreur s\'est produite. Veuillez actualiser la page.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testEditPasswordSuccess(): void
@@ -596,14 +559,16 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'password-repeat' => [
                     'errors' => ['Les mots de passes renseignés doivent être identiques.'],
                 ],
             ],
-        ]));
+        ];
+        $this->assertEquals($expectedJson, $response);
     }
 
     public function testEditPasswordEmpty(): void
@@ -620,14 +585,8 @@ class ProfilControllerTest extends WebTestCase
 
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_BAD_REQUEST,
-            'errors' => [
-                'password' => [
-                    'errors' => ['Ce champ est obligatoire.'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Ce champ est obligatoire.', $response['errors']['password']['errors'][0]);
     }
 
     public function testEditPasswordBadFormat(): void
@@ -643,14 +602,8 @@ class ProfilControllerTest extends WebTestCase
         ]);
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_BAD_REQUEST,
-            'errors' => [
-                'password' => [
-                    'errors' => ['Le mot de passe doit contenir au moins 12 caractères.Le mot de passe doit contenir au moins une lettre majuscule.Le mot de passe doit contenir au moins un chiffre.Le mot de passe doit contenir au moins un caractère spécial.'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Le mot de passe doit contenir au moins 12 caractères.', $response['errors']['password']['errors'][0]);
     }
 
     public function testEditPasswordEqualToEmail(): void
@@ -666,14 +619,8 @@ class ProfilControllerTest extends WebTestCase
         ]);
         $this->assertEmailCount(0);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_BAD_REQUEST,
-            'errors' => [
-                'password' => [
-                    'errors' => ['Le mot de passe ne doit pas être votre e-mail.'],
-                ],
-            ],
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertEquals('Le mot de passe ne doit pas être votre e-mail.', $response['errors']['password']['errors'][0]);
     }
 
     public function testEditPasswordBadToken(): void
@@ -688,16 +635,17 @@ class ProfilControllerTest extends WebTestCase
             'password-repeat' => 'NewPassword!123',
         ]);
         $this->assertEmailCount(0);
-        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
-        $this->assertJson((string) json_encode([
-            'code' => Response::HTTP_UNAUTHORIZED,
-            'message' => 'Une erreur s\'est produite. Veuillez actualiser la page.',
-        ]));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'Une erreur s\'est produite. Veuillez actualiser la page.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testEditPasswordBadCurrentPassword(): void
     {
-        $csrfToken = $this->generateCsrfToken($this->client, 'wrong_token');
+        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_password');
 
         $route = $this->router->generate('back_profil_edit_password');
         $this->client->request('POST', $route, [
@@ -707,15 +655,17 @@ class ProfilControllerTest extends WebTestCase
             'password-repeat' => 'NewPassword!123',
         ]);
         $this->assertEmailCount(0);
-        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
-        $this->assertJson((string) json_encode([
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'password-current' => [
                     'errors' => ['Le mot de passe ne correspond pas à celui enregistré.'],
                 ],
             ],
-        ]));
+        ];
+        $this->assertEquals($expectedJson, $response);
     }
 
     public function testEditNotificationEmailError(): void
@@ -725,14 +675,16 @@ class ProfilControllerTest extends WebTestCase
         $form = $crawler->filter('#notification_email_form')->form();
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertJson((string) json_encode([
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
                 'isMailingSummary' => [
                     'errors' => ['Merci de choisir une option de notification.'],
                 ],
             ],
-        ]));
+        ];
+        $this->assertEquals($expectedJson, $response);
     }
 
     public function testEditNotificationEmailSuccess(): void
