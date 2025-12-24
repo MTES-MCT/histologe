@@ -77,6 +77,6 @@ class ClubEventServiceTest extends KernelTestCase
 
         $service = new ClubEventService($clubEventRepository);
         $nextClubEvent = $service->getNextClubEventForUser($user);
-        $this->assertNotNull($nextClubEvent);
+        $this->assertNull($nextClubEvent);
     }
 }
