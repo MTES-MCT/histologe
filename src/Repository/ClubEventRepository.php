@@ -7,14 +7,17 @@ use App\Service\ListFilters\SearchClubEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Clock\ClockInterface;
 
 /**
  * @extends ServiceEntityRepository<ClubEvent>
  */
 class ClubEventRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly ClockInterface $clock,
+    ) {
         parent::__construct($registry, ClubEvent::class);
     }
 
@@ -25,7 +28,7 @@ class ClubEventRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('c')
             ->andWhere('c.dateEvent >= :now')
-            ->setParameter('now', new \DateTimeImmutable('today')->setTime(0, 0, 0))
+            ->setParameter('now', $this->clock->now()->setTime(0, 0, 0))
             ->orderBy('c.dateEvent', 'ASC');
 
         return $qb->getQuery()->getResult();
