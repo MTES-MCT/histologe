@@ -1,0 +1,116 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Configuration des événements clubs{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Evénements',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-8 fr-text--left">
+                    <h1>Liste des événements</h1>
+                </div>
+                <div class="fr-col-4 fr-text--right">
+                    <a href="{{ path('back_config_club_event_add') }}" class="fr-btn fr-btn--icon-left fr-icon-add-line" title="Ajouter un événement">Ajouter un événement</a>
+                </div>
+            </div>
+        </header>
+    </section>
+    {{ form_start(form) }}
+
+    <section class="fr-container--fluid overflow-visible">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.isInFuture) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.queryName) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.partnerType) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.partnerCompetence) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                <a href="{{ path('back_config_club_event_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-my-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(clubEvents|length, 'événement trouvé', 'événements trouvés') }}</h2>
+    </section>
+
+    <section class="fr-col-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+    {{ form_end(form) }}
+
+    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+        {% set tableHead %}
+            <th scope="col">ID évènement</th>
+            <th scope="col">Nom et lien</th>
+            <th scope="col">Date</th>
+            <th scope="col">Rôles</th>
+            <th scope="col">Types de partenaire</th>
+            <th scope="col">Compétences partenaire</th>
+            <th scope="col" class="fr-text--right">Actions</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for event in clubEvents %}
+                <tr>
+                    <td>{{event.id}}</td>
+                    <td>
+                        {{event.name}}
+                        <br>
+                        <small><a href="{{ event.url }}" target="_blank">{{ event.url }}</a></small>
+                    </td>
+                    <td>{{event.dateEvent|date('d/m/Y H:i')}}</td>
+                    <td>
+                        {% for role in event.userRoles %}
+                            <span class="fr-badge fr-badge--info fr-mr-1v">{{ role }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for type in event.partnerTypes %}
+                            <span class="fr-badge fr-badge--info fr-mr-1v">{{ type.label }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for competence in event.partnerCompetences %}
+                            <span class="fr-badge fr-badge--info fr-mr-1v">{{ competence.label }}</span>
+                        {% endfor %}
+                    </td>
+                    <td class="fr-cell--right fr-ws-nowrap">
+                        <a href="{{path('back_club_event_edit', {id: event.id})}}" class="fr-btn fr-icon-edit-line" title="Editer l'événement {{event.name}}">
+                            Editer l'événement {{ event.name }}
+                        </a>
+                        <a href="{{path('back_club_event_copy', {id: event.id})}}" class="fr-btn fr-icon-add-circle-fill" title="Dupliquer l'événement {{event.name}}">
+                            Dupliquer l'événement {{ event.name }}
+                        </a>
+                        <a href="{{path('back_config_club_event_delete', {id: event.id})}}?_token={{ csrf_token('club_event_delete') }}" class="fr-btn fr-btn--secondary fr-icon-delete-line"  title="Supprimer l'événement {{event.name}}">
+                            Supprimer l'événement {{ event.name }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des événements', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchClubEvent.page, 'back_config_club_event_index', searchClubEvent.urlParams) }}
+        </div>
+
+    </section>
+{% endblock %}
