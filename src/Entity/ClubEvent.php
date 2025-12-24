@@ -106,9 +106,12 @@ class ClubEvent implements EntityHistoryInterface
      */
     public function getPartnerTypes(): array
     {
+        /** @var array<PartnerType|string> $partnerTypes */
+        $partnerTypes = $this->partnerTypes;
+
         return array_filter(array_map(
-            fn ($value) => $value instanceof PartnerType ? $value : PartnerType::tryFrom($value),
-            $this->partnerTypes
+            fn (PartnerType|string $value): ?PartnerType => $value instanceof PartnerType ? $value : PartnerType::tryFrom($value),
+            $partnerTypes
         ));
     }
 
@@ -127,9 +130,12 @@ class ClubEvent implements EntityHistoryInterface
      */
     public function getPartnerCompetences(): array
     {
+        /** @var array<Qualification|string> $partnerCompetences */
+        $partnerCompetences = $this->partnerCompetences;
+
         return array_filter(array_map(
-            fn ($value) => $value instanceof Qualification ? $value : Qualification::tryFrom($value),
-            $this->partnerCompetences
+            fn (Qualification|string $value): ?Qualification => $value instanceof Qualification ? $value : Qualification::tryFrom($value),
+            $partnerCompetences
         ));
     }
 

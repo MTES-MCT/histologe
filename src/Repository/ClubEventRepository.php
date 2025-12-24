@@ -50,10 +50,10 @@ class ClubEventRepository extends ServiceEntityRepository
 
         if (true === $searchClubEvent->getIsInFuture()) {
             $qb->andWhere('c.dateEvent >= :now')
-               ->setParameter('now', new \DateTimeImmutable('today')->setTime(0, 0, 0));
+               ->setParameter('now', (new \DateTimeImmutable('today'))->setTime(0, 0, 0));
         } elseif (false === $searchClubEvent->getIsInFuture()) {
             $qb->andWhere('c.dateEvent < :now')
-               ->setParameter('now', new \DateTimeImmutable('today')->setTime(0, 0, 0));
+               ->setParameter('now', (new \DateTimeImmutable('today'))->setTime(0, 0, 0));
         }
 
         if ($searchClubEvent->getQueryName()) {

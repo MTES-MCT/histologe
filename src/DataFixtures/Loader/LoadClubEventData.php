@@ -4,7 +4,6 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\ClubEvent;
 use App\Entity\Enum\PartnerType;
-use App\Repository\TerritoryRepository;
 use App\Service\TimezoneProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -13,11 +12,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadClubEventData extends Fixture implements OrderedFixtureInterface
 {
-    public function __construct(
-        private TerritoryRepository $territoryRepository,
-    ) {
-    }
-
     public function load(ObjectManager $manager): void
     {
         $clubEvents = Yaml::parseFile(__DIR__.'/../Files/ClubEvent.yml');
