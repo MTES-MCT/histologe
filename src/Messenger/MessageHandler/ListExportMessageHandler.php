@@ -74,6 +74,7 @@ readonly class ListExportMessageHandler
                                 'filename' => $filename,
                                 'file_uuid' => $file->getUuid(),
                                 'message' => 'Un export de la liste des signalements est disponible.',
+                                'button_text' => 'Afficher l\'export',
                             ]
                         )
                     );

@@ -15,7 +15,7 @@ class DownloadExportMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_DOWNLOAD_EXPORT;
     protected ?string $mailerSubject = null;
-    protected ?string $mailerButtonText = 'Afficher l\'export';
+    protected ?string $mailerButtonText = null;
     protected ?string $mailerTemplate = 'download_export';
 
     public function __construct(
@@ -36,6 +36,7 @@ class DownloadExportMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $this->mailerSubject = $notificationMail->getParams()['message'];
+        $this->mailerButtonText = $notificationMail->getParams()['button_text'];
         $url = $this->generateLink('show_file', ['uuid' => $notificationMail->getParams()['file_uuid']]);
         $expiration = (new \DateTime())->modify('+1 month');
 

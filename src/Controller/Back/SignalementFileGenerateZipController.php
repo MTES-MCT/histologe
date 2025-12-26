@@ -17,6 +17,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[Route('/bo')]
 class SignalementFileGenerateZipController extends AbstractController
 {
     private const string TAB_DOCUMENT = '#documents';

@@ -9,20 +9,22 @@
                 or is_granted('SIGN_EDIT_INJONCTION', signalement))
                 and filesFilter is not same as 'visite'
             %}
-            {% if filesFilter is same as 'procédure' %}
-                <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
-                    <li>
-                        <button
-                        class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn"
-                        data-fr-opened="false"
-                        aria-controls="fr-modal-upload-files"
-                        data-file-filter={{filesFilter}}
-                        >
-                            Ajouter des documents sur la {{filesFilter}}
-                        </button>
-                    </li>
-                </ul>
-                {% elseif filesFilter is same as 'situation' and (context is same as 'documents-situation' or context is same as 'allphotosituation') %}
+                {% if filesFilter is same as 'procédure' %}
+                    <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
+                        <li>
+                            <button
+                            class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn"
+                            data-fr-opened="false"
+                            aria-controls="fr-modal-upload-files"
+                            data-file-filter={{filesFilter}}
+                            >
+                                Ajouter des documents sur la {{filesFilter}}
+                            </button>
+                        </li>
+                    </ul>
+                {% elseif filesFilter is same as 'situation'
+                    and (context is same as 'documents-situation' or context is same as 'allphotosituation')
+                %}
                     {% include'back/signalement/view/_menu_actions_photo_situation.html.twig' %}
                 {% endif %}
             {% endif %}
@@ -42,7 +44,9 @@
                 Vous pouvez supprimer uniquement les documents que vous avez ajoutés.
             </p>
         {% endif %}
-        {% if  filesFilter is same as 'situation' and (context is same as 'documents-situation' or context is same as 'allphotosituation') %}
+        {% if  filesFilter is same as 'situation'
+            and (context is same as 'documents-situation' or context is same as 'allphotosituation')
+        %}
             <div class="fr-col-12">
                 <div id="zip-selection-bar" class="zip-selection-bar fr-display-flex-row fr-justify-content-right fr-mb-2w">
                     <strong><span id="zip-selection-count">0</span> photos sélectionnées</strong>
@@ -130,7 +134,7 @@
 
                             <button
                                 class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
-                                data-id={{ photo.id }} 
+                                data-id="{{ photo.id }}"
                                 title="Voir la photo {{ photo.filename }}"
                             ></button>
                             {% if is_granted('FILE_EDIT', photo) %}                   
@@ -139,8 +143,8 @@
                                     id="file_edit_{{ photo.id }}" 
                                     title="Editer la photo {{ photo.filename }}"
                                     aria-controls="fr-modal-edit-file"
-                                    data-fr-opened="false" 
-                                    data-filename="{{ photo.filename }}" 
+                                    data-fr-opened="false"
+                                    data-filename="{{ photo.filename }}"
                                     data-type="photo" 
                                     data-file-id="{{ photo.id}}" 
                                     data-signalement-uuid="{{ photo.signalement.uuid}}" 

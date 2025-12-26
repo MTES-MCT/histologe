@@ -73,6 +73,7 @@ final class GenerateFileZipMessageHandler
                         'filename' => $filename,
                         'file_uuid' => $file->getUuid(),
                         'message' => 'Vos photos sont prêtes à être téléchargées.',
+                        'button_text' => 'Télécharger l\'export',
                     ]
                 )
             );
@@ -94,6 +95,10 @@ final class GenerateFileZipMessageHandler
     private function getFiles(Signalement $signalement, array $fileIds): array
     {
         $files = $signalement->getFiles()->filter(function (File $file) use ($fileIds) {
+            if ($file->getIsSuspicious()) {
+                return false;
+            }
+
             return empty($fileIds)
                 ? $file->isSituationImage()
                 : in_array($file->getId(), $fileIds, true);

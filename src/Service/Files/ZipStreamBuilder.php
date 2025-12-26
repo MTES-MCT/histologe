@@ -11,7 +11,7 @@ use ZipStream\ZipStream;
 
 class ZipStreamBuilder
 {
-    private ?ZipStream $zip = null;
+    private ?ZipStream $zipStream = null;
     private mixed $outputStream = null;
     private ?string $zipPath = null;
     private int $countFile = 0;
@@ -21,7 +21,7 @@ class ZipStreamBuilder
         private readonly ParameterBagInterface $parameterBag,
         private readonly LoggerInterface $logger,
     ) {
-        $this->zip = null;
+        $this->zipStream = null;
     }
 
     /**
@@ -32,7 +32,7 @@ class ZipStreamBuilder
         $this->logger->info('Creating ZIP archive', [
             'zipBaseName' => $zipBaseName,
         ]);
-        if (null !== $this->zip) {
+        if (null !== $this->zipStream) {
             throw new \LogicException('ZIP archive is already initialized');
         }
 
@@ -49,7 +49,7 @@ class ZipStreamBuilder
             throw new \Exception('Unable to create temporary ZIP file.');
         }
 
-        $this->zip = new ZipStream(
+        $this->zipStream = new ZipStream(
             outputStream: $this->outputStream,
             sendHttpHeaders: false,
             outputName: $zipBaseName,
@@ -60,7 +60,7 @@ class ZipStreamBuilder
 
     public function add(File $file): self
     {
-        if (null === $this->zip || null === $this->outputStream || null === $this->zipPath) {
+        if (null === $this->zipStream || null === $this->outputStream || null === $this->zipPath) {
             throw new \LogicException('ZIP archive is not initialized. Call create() before add() or addMany()');
         }
 
@@ -72,10 +72,11 @@ class ZipStreamBuilder
         }
 
         try {
-            $this->zip->addFileFromStream($filename, $stream);
+            $this->zipStream->addFileFromStream($filename, $stream);
             ++$this->countFile;
             $this->logger->info('Added file to ZIP archive', ['filename' => $filename]);
         } catch (\Throwable $exception) {
+            $this->clear();
             $this->logger->error($exception->getMessage());
         } finally {
             fclose($stream);
@@ -102,28 +103,33 @@ class ZipStreamBuilder
      */
     public function close(): string
     {
-        if (null === $this->zip || null === $this->outputStream || null === $this->zipPath) {
+        if (null === $this->zipStream || null === $this->outputStream || null === $this->zipPath) {
             throw new \LogicException('ZIP archive is not initialized. Call create() before add() or addMany()');
         }
 
         if (0 === $this->countFile) {
+            $this->clear();
             throw new \Exception('ZIP archive is empty: no files were added.');
         }
 
-        $this->zip->finish();
+        $this->zipStream->finish();
 
         if (\is_resource($this->outputStream)) {
             fclose($this->outputStream);
         }
 
         $zipPath = $this->zipPath;
-
-        $this->zip = null;
-        $this->outputStream = null;
-        $this->zipPath = null;
-        $this->countFile = 0;
+        $this->clear();
         $this->logger->info('ZIP archive created', ['zipPath' => $zipPath]);
 
         return $zipPath;
+    }
+
+    private function clear(): void
+    {
+        $this->zipStream = null;
+        $this->outputStream = null;
+        $this->zipPath = null;
+        $this->countFile = 0;
     }
 }

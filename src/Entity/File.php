@@ -371,12 +371,12 @@ class File implements EntityHistoryInterface
 
     public function isSituation(): bool
     {
-        return !$this->getIsSuspicious() && \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList());
+        return \array_key_exists($this->documentType->value, DocumentType::getOrderedSituationList());
     }
 
     public function isProcedure(): bool
     {
-        return !$this->getIsSuspicious() && \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList());
+        return \array_key_exists($this->documentType->value, DocumentType::getOrderedProcedureList());
     }
 
     public function isSituationImage(): bool
