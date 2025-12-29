@@ -42,7 +42,7 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $this->assertNull($user->getLastLoginAt(), 'lastLoginAt doit être null avant connexion');
         $this->client->request('GET', '/connexion');
 
-        $this->client->submitForm('Connexion', [
+        $this->client->submitForm('Se connecter', [
             'email' => self::USER_ADMIN_TERRITORY_13,
             'password' => 'signallogement',
         ]);
