@@ -40,7 +40,7 @@ class UserAccountControllerTest extends WebTestCase
 
         $client->request('GET', '/connexion');
 
-        $client->submitForm('Connexion', [
+        $client->submitForm('Se connecter', [
             'email' => 'user-01-01@signal-logement.fr',
             'password' => 'signallogement',
         ]);
@@ -54,7 +54,7 @@ class UserAccountControllerTest extends WebTestCase
 
         $client->request('GET', '/connexion');
 
-        $client->submitForm('Connexion', [
+        $client->submitForm('Se connecter', [
             'email' => 'api-02@signal-logement.fr',
             'password' => 'signallogement',
         ]);
