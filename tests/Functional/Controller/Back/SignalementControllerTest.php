@@ -113,6 +113,12 @@ class SignalementControllerTest extends WebTestCase
             'button.fr-nav__link.fr-fi-lock-fill',
             'Rouvrir pour tous',
         ];
+        yield 'SA - Injonction' => [
+            'admin-01@signal-logement.fr',
+            '00000000-0000-0000-2025-000000000011',
+            'a.fr-nav__link.fr-btn--icon-left.fr-icon-send-plane-line',
+            'Envoyer le mail au bailleur',
+        ];
 
         yield '13 - RT - Nouveau' => [
             'admin-territoire-13-01@signal-logement.fr',
@@ -546,5 +552,34 @@ class SignalementControllerTest extends WebTestCase
 
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']);
         $this->assertCount(2, $signalement->getTags());
+    }
+
+    public function testSendMailBailleur(): void
+    {
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+        $uuid = $signalement->getUuid();
+
+        $client->request(
+            'GET',
+            '/bo/signalements/'.$uuid.'/send-mail-injonction-bailleur',
+            [],
+            [],
+            ['Content-Type' => 'application/json'],
+        );
+
+        $this->assertEquals(Response::HTTP_FOUND, $client->getResponse()->getStatusCode());
+        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $this->assertEmailCount(1);
+        $this->assertEmailSubjectContains($this->getMailerMessages()[0], 'Manquements aux réglementations concernant un de vos logements');
     }
 }

@@ -465,7 +465,7 @@ class SignalementController extends AbstractController
         return $this->json(['html' => $html]);
     }
 
-    #[Route('/{uuid:signalement}/send_mail_injonction_bailleur', name: 'send_mail_injonction_bailleur')]
+    #[Route('/{uuid:signalement}/send-mail-injonction-bailleur', name: 'send_mail_injonction_bailleur')]
     public function sendMailInjonctionBailleur(
         Signalement $signalement,
         NotificationAndMailSender $notificationAndMailSender,
