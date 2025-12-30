@@ -179,33 +179,27 @@
             </div>
             <div class="fr-col-12">
                 {% set isMultiPartner = app.user.partners|length > 1 %}
-                <div class="fr-alert fr-alert--info fr-alert--sm">
-                    <h3 class="fr-alert__title">Etat des lieux</h3>
+                <div>
+                    <h3>Etat des lieux</h3>
+                    {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                        Il y a <strong>{{nbActiveSignalements}}</strong> dossiers en cours dans votre territoire.
+                    {% else %}
+                        {% if isMultiPartner %}
+                            Il y a <strong>{{nbActiveSignalements}}</strong> dossiers en cours dans vos partenaires.
+                        {% else %}
+                            Il y a <strong>{{nbActiveSignalements}}</strong> dossiers en cours dans votre partenaire.
+                        {% endif %}
+                    {% endif %}
+                    Parmi eux :
                     <ul>
                         <li>
-                            {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-                                Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur votre territoire.
-                            {% else %}
-                                {% if isMultiPartner %}
-                                    Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur vos partenaires.
-                                {% else %}
-                                    Il existe <strong>{{nbActiveSignalements}}</strong> signalements actifs sur votre partenaire.
-                                {% endif %}
-                            {% endif %}
+                            Vous avez effectué une action sur <strong>{{nbActiveSignalementsWithInteractions}}</strong> dossiers.
                         </li>
                         <li>
-                            Vous avez agi sur <strong>{{nbActiveSignalementsWithInteractions}}</strong> de ces signalements.
-                        </li>
-                        <li>
-                            Vous êtes abonné(e) à <strong>{{nbSubsOnActiveSignalements}}</strong> de ces signalements.
-                        </li>
-                        <li>
-                            Vous êtes abonné(e) à <strong>{{nbSubsOnSignalementsWithoutInteractions}}</strong> signalements sur lesquels vous n'avez eu aucune interaction.
+                            Vous êtes abonné(e) à <strong>{{nbSubsOnActiveSignalements}}</strong> dossiers.
                         </li>
                     </ul>
-                    {% if not is_granted('ROLE_ADMIN_TERRITORY') %}
-                        ⚠️ Nous pouvons uniquement supprimer les abonnements aux dossiers auxquels au moins un autre agent de votre partenaire est abonné.
-                    {% endif %}
+                    Choisissez vos préférences d'abonnement en cliquant sur l'un des boutons ci-dessous.
                 </div>
                 <ul class="fr-btns-group fr-btns-group--equisized fr-btns-group--inline fr-mt-2w">
                     {% if not is_granted('ROLE_ADMIN') %}
@@ -216,7 +210,7 @@
                             href="{{ path('profil_subscriptions_changes') }}?_token={{ csrf_token('subscriptions_changes') }}"
                         {% endif %}
                         >
-                            M'abonner à tous les signalements actifs
+                            Tous les dossiers de mon partenaire
                         </a>
                     {% endif %}
                     <a class="fr-btn fr-btn--secondary" 
@@ -226,9 +220,14 @@
                             href="{{ path('profil_subscriptions_changes') }}?action=unsubscribe&_token={{ csrf_token('subscriptions_changes') }}" 
                         {% endif %}
                     >
-                        Me désabonner des signalements sans interaction de ma part
+                        Dossiers sur lesquels j'ai effectué une action uniquement
                     </a>
                 </ul>
+                {% if not is_granted('ROLE_ADMIN_TERRITORY') %}
+                    <div class="fr-alert fr-alert--warning fr-alert--sm">
+                        Nous ne pouvons pas vous désabonner des dossiers auxquels vous êtes le seul agent abonné de votre partenaire.
+                    </div>
+                {% endif %}
             </div>
         </div>
     </section>
