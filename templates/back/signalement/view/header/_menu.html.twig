@@ -84,6 +84,18 @@
                             Envoyer le lien de suivi
                         </button>
                     </li>
+                    {% if 
+                        signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR and 
+                        signalement.mailProprio is not null and
+                        signalement.suiviReponseBailleur is null %}
+                        <li>
+                            <a href="{{ path('send_mail_injonction_bailleur',{uuid:signalement.uuid}) }}"
+                                class="fr-nav__link fr-btn--icon-left fr-icon-send-plane-line"
+                                title="Envoyer le mail au bailleur">
+                                Envoyer le mail au bailleur
+                            </a>
+                        </li>
+                    {% endif %}
                 {% endif %}
                 {% if is_granted('SIGN_SUBSCRIBE', signalement) %}
                     {% if isUserSubscribed %}

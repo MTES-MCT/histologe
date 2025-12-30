@@ -30,6 +30,7 @@ class SignalementVoter extends Voter
     public const string SIGN_EDIT_NEED_VALIDATION = 'SIGN_EDIT_NEED_VALIDATION';
     public const string SIGN_DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
     public const string SIGN_VIEW = 'SIGN_VIEW';
+    public const string SIGN_SEND_MAIL_BAILLEUR = 'SIGN_SEND_MAIL_BAILLEUR';
     public const string SIGN_SUBSCRIBE = 'SIGN_SUBSCRIBE';
     public const string SIGN_ADD_VISITE = 'SIGN_ADD_VISITE';
     public const string SIGN_EDIT_NDE = 'SIGN_EDIT_NDE';
@@ -53,6 +54,7 @@ class SignalementVoter extends Voter
                 self::SIGN_EDIT_DRAFT,
                 self::SIGN_EDIT_NEED_VALIDATION,
                 self::SIGN_VIEW,
+                self::SIGN_SEND_MAIL_BAILLEUR,
                 self::SIGN_SUBSCRIBE,
                 self::SIGN_DELETE,
                 self::SIGN_VALIDATE,
@@ -102,6 +104,7 @@ class SignalementVoter extends Voter
             self::SIGN_EDIT_INJONCTION => $this->canEditInjonction($subject, $user),
             self::SIGN_EDIT_NEED_VALIDATION => $this->canEditNeedValidation($subject, $user),
             self::SIGN_VIEW => $this->canView($subject, $user),
+            self::SIGN_SEND_MAIL_BAILLEUR => $this->canSendMailBailleur($subject, $user),
             self::SIGN_SUBSCRIBE => $this->canSubscribe($subject, $user),
             self::SIGN_EDIT_DRAFT, self::SIGN_DELETE_DRAFT => $this->canEditDraft($subject, $user),
             self::SIGN_CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
@@ -178,6 +181,15 @@ class SignalementVoter extends Voter
     private function canEditInjonction(Signalement $signalement, User $user): bool
     {
         return $this->canEditStatus($signalement, $user, SignalementStatus::INJONCTION_BAILLEUR);
+    }
+
+    private function canSendMailBailleur(Signalement $signalement, User $user): bool
+    {
+        return
+            $this->security->isGranted('ROLE_ADMIN')
+            && $this->canEditStatus($signalement, $user, SignalementStatus::INJONCTION_BAILLEUR)
+            && null !== $signalement->getMailProprio()
+            && null === $signalement->getSuiviReponseBailleur();
     }
 
     private function canEditClosed(Signalement $signalement, User $user): bool
