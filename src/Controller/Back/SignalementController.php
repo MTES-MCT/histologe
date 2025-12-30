@@ -45,6 +45,7 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
+use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SuiviSeenMarker;
@@ -462,5 +463,24 @@ class SignalementController extends AbstractController
         ]);
 
         return $this->json(['html' => $html]);
+    }
+
+    #[Route('/{uuid:signalement}/send-mail-injonction-bailleur', name: 'send_mail_injonction_bailleur')]
+    public function sendMailInjonctionBailleur(
+        Signalement $signalement,
+        NotificationAndMailSender $notificationAndMailSender,
+    ): Response {
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SEND_MAIL_BAILLEUR, $signalement);
+
+        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            $notificationAndMailSender->sendNewSignalementInjonction($signalement);
+        }
+
+        $this->addFlash(
+            'success',
+            'Le mail au bailleur a bien été envoyé.',
+        );
+
+        return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
     }
 }
