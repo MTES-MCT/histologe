@@ -10,7 +10,8 @@ window.addEventListener('load', () => {
     {
       log: false,
       checkOrigin: false,
-      heightCalculationMethod: 'max'
+      heightCalculationMethod: 'max',
+      warningTimeout: 0,
     },
     iframe
   );
