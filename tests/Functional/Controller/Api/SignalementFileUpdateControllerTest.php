@@ -8,6 +8,7 @@ use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementFileUpdateControllerTest extends WebTestCase
@@ -85,7 +86,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
@@ -105,7 +106,7 @@ class SignalementFileUpdateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 

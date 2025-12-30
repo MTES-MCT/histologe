@@ -88,7 +88,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         }
         $this->patchAffectation($affectation?->getUuid(), $payload);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
-        $this->assertEquals($httpCodeStatus, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame($httpCodeStatus);
         $this->assertStringContainsString($errorMessage, $response['message']);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }

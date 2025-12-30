@@ -17,6 +17,7 @@ use App\Service\Gouv\Rnb\RnbService;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementActionControllerTest extends WebTestCase
@@ -149,7 +150,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertStringContainsString('Le message doit contenir au moins 10 caract\u00e8res.', (string) $this->client->getResponse()->getContent());
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     public function testAddSuiviSignalementSuccess(): void
@@ -223,7 +224,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertStringContainsString('Le contenu du suivi doit contenir au moins 10 caract\u00e8res.', (string) $this->client->getResponse()->getContent());
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     public function testDeleteSuiviLogical(): void

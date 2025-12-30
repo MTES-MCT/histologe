@@ -10,6 +10,7 @@ use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class SuiviCreateControllerTest extends WebTestCase
@@ -68,7 +69,7 @@ class SuiviCreateControllerTest extends WebTestCase
             /** @var Suivi $suiviCreated */
             $suiviCreated = $signalement->getSuivis()->last();
 
-            $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+            $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
             $this->assertTrue($suiviCreated->isWaitingNotification());
             $this->assertEquals($notifyUsager, $suiviCreated->getIsPublic());
             $this->assertEmailCount(0);
@@ -77,7 +78,7 @@ class SuiviCreateControllerTest extends WebTestCase
             $links = $crawler->filter('a.fr-link');
             $this->assertCount(2, $links, 'Il doit y avoir exactement 2 liens dans le contenu HTML.');
         } else {
-            $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+            $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
         }
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
@@ -100,7 +101,7 @@ class SuiviCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         $content = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertStringContainsString('Access Denied', $content['message']);
         $this->assertStringContainsString($errorMessage, $content['message']);

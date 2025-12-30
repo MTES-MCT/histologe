@@ -11,6 +11,7 @@ use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementCreateControllerTest extends WebTestCase
@@ -44,7 +45,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $signalementUuid = json_decode((string) $this->client->getResponse()->getContent(), true)['uuid'];
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $this->assertNotNull($signalement);
@@ -189,7 +190,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $signalementUuuid = json_decode((string) $this->client->getResponse()->getContent(), true)['uuid'];
         $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
         $this->assertNotNull($signalement);
@@ -239,7 +240,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
         $this->assertStringStartsWith('Un signalement existe déjà à cette adresse', $response['errors'][0]['message']);
@@ -260,7 +261,7 @@ class SignalementCreateControllerTest extends WebTestCase
             server: ['CONTENT_TYPE' => 'application/json'],
             content: (string) json_encode($payload)
         );
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
         $this->assertStringStartsWith('Vous n\'avez pas le droit de créer un signalement sur le territoire', $response['errors'][0]['message']);
@@ -281,7 +282,7 @@ class SignalementCreateControllerTest extends WebTestCase
             server: ['CONTENT_TYPE' => 'application/json'],
             content: (string) json_encode($payload)
         );
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertStringStartsWith('Le partenaire n\'existe pas', $response['message']);
 
@@ -309,7 +310,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(5, $response['errors']);
         $errors = (string) json_encode($response['errors']);
@@ -339,7 +340,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
         $errors = (string) json_encode($response['errors']);
@@ -366,7 +367,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
         $errors = (string) json_encode($response['errors']);
@@ -393,7 +394,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(1, $response['errors']);
         $errors = (string) json_encode($response['errors']);
@@ -427,7 +428,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(2, $response['errors']);
         $errors = (string) json_encode($response['errors']);
@@ -472,7 +473,7 @@ class SignalementCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertCount(3, $response['errors']);
         $errors = (string) json_encode($response['errors']);

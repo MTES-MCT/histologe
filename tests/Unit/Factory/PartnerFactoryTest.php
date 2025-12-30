@@ -20,9 +20,7 @@ class PartnerFactoryTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        /* @var ParameterBagInterface parameterBag */
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        /* @var ValidatorInterface validator */
         $this->validator = static::getContainer()->get(ValidatorInterface::class);
     }
 

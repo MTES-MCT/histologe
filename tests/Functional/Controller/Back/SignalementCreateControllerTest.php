@@ -29,7 +29,6 @@ class SignalementCreateControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        /* @var UserRepository $userRepository */
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);

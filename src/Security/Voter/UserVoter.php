@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -17,6 +18,7 @@ class UserVoter extends Voter
     public const string USER_EDIT = 'USER_EDIT';
     public const string USER_TRANSFER = 'USER_TRANSFER';
     public const string USER_DELETE = 'USER_DELETE';
+    public const string USER_DISABLE = 'USER_DISABLE';
 
     public function __construct(
         private readonly Security $security,
@@ -26,7 +28,7 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::USER_EDIT, self::USER_TRANSFER, self::USER_DELETE])
+        return \in_array($attribute, [self::USER_EDIT, self::USER_TRANSFER, self::USER_DELETE, self::USER_DISABLE])
             && $subject instanceof User;
     }
 
@@ -53,7 +55,7 @@ class UserVoter extends Voter
             return false;
         }
 
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_ADMIN') && self::USER_DISABLE !== $attribute) {
             return true;
         } elseif ($subject->isSuperAdmin()) {
             $vote?->addReason('Action non autorisée sur un super administrateur.');
@@ -65,6 +67,7 @@ class UserVoter extends Voter
             self::USER_EDIT => $this->canEdit($subject, $user),
             self::USER_TRANSFER => $this->canTransfer($subject, $user),
             self::USER_DELETE => $this->canDelete($subject, $user),
+            self::USER_DISABLE => $this->canDisable($subject),
             default => false,
         };
     }
@@ -103,5 +106,10 @@ class UserVoter extends Voter
     private function canTransfer(User $subject, User $user): bool
     {
         return $this->canFullManage($subject, $user);
+    }
+
+    private function canDisable(User $subject): bool
+    {
+        return $this->security->isGranted('ROLE_ADMIN') && UserStatus::ACTIVE === $subject->getStatut();
     }
 }

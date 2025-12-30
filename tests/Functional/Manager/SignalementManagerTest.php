@@ -78,7 +78,6 @@ class SignalementManagerTest extends WebTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
-        /* @var QualificationStatusService $qualificationStatusService */
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
             SignalementAffectationListViewFactory::class

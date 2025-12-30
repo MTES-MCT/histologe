@@ -19,16 +19,12 @@ class UserFactoryTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        /* @var ValidatorInterface validator */
         $this->validator = static::getContainer()->get(ValidatorInterface::class);
-        /* @var PartnerManager partnerManager */
         $this->partnerManager = static::getContainer()->get(PartnerManager::class);
     }
 
     public function testCreateUserInstance(): void
     {
-        $partner = new Partner();
-
         $user = (new UserFactory())->createInstanceFrom(
             roleLabel: 'Agent',
             firstname: 'John',

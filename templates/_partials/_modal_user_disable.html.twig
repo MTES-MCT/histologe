@@ -1,0 +1,49 @@
+<dialog aria-labelledby="fr-user-disable-title" id="fr-modal-user-disable" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-modal__body">
+                    <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-user-disable">Fermer</button>
+                    </div>
+                    <div class="fr-modal__content">
+                        <h1 id="fr-user-disable-title" class="fr-modal__title">
+                            Désactiver <span id="fr-modal-user-disable_username"></span>
+                        </h1>
+                        <form action="{{ path('back_user_disable') }}" name="user_disable"
+                              id="user_disable_form" method="POST">
+                            <div class="fr-select-group">
+                                Vous êtes sur le point de désactiver l'utilisateur <b><span id="fr-modal-user-disable_username"></span></b>. <br>
+                                Son statut passera à INACTIVE, et son mot de passe sera réinitialisé à NULL.<br>
+                                Une fois désactivé, l'utilisateur ne pourra plus se connecter à la plateforme ni accéder aux dossiers. <br>
+                                Il devra réactiver son compte et recréer un mot de passe pour pouvoir se reconnecter.
+                            </div>
+                            <div class="fr-alert fr-alert--info">
+                                <p>Voulez-vous vraiment désactiver l'utilisateur ?</p>
+                            </div>
+                            <input type="hidden" name="user_disable[user]" id="fr-modal-user-disable_userid">
+                            <input type="hidden" name="_token" value="{{ csrf_token('user_disable') }}">
+                        </form>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            <li>
+                                <button class="fr-btn fr-icon-check-line" form="user_disable_form"
+                                        id="user_disable_form_submit">
+                                    Désactiver
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button"
+                                        class="fr-btn fr-btn--secondary fr-icon-close-line"
+                                        aria-controls="fr-modal-user-disable">
+                                    Annuler
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>

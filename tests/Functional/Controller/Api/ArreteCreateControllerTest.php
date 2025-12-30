@@ -10,6 +10,7 @@ use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class ArreteCreateControllerTest extends WebTestCase
@@ -73,7 +74,7 @@ class ArreteCreateControllerTest extends WebTestCase
         ]);
         $this->assertCount(3, $notifs);
         $this->assertEmailCount(1);
-        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
@@ -101,7 +102,7 @@ class ArreteCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
@@ -125,7 +126,7 @@ class ArreteCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode(), (string) $this->client->getResponse()->getContent());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN, (string) $this->client->getResponse()->getContent());
         $content = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertStringContainsString('Access Denied', $content['message']);
         $this->assertStringContainsString($errorMessage, $content['message']);

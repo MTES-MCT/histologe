@@ -102,7 +102,7 @@ class BackTagControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertEquals($codeResponse, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame($codeResponse);
         if (Response::HTTP_OK === $codeResponse) {
             $tag = $tagRepository->findOneBy(['label' => 'Moisissure', 'isArchive' => 0, 'territory' => '13']);
             $this->assertNotNull($tag);
@@ -133,7 +133,7 @@ class BackTagControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertEquals($codeResponse, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame($codeResponse);
         if (Response::HTTP_OK === $codeResponse) {
             $tag = $tagRepository->find($tagId);
             $this->assertEquals('Urgent MAJ', $tag->getLabel());

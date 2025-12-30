@@ -2,11 +2,14 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Form\SearchUserType;
+use App\Manager\UserManager;
 use App\Messenger\Message\InactiveUserExportMessage;
 use App\Messenger\Message\UserExportMessage;
 use App\Repository\UserRepository;
+use App\Security\Voter\UserVoter;
 use App\Service\EmailAlertChecker;
 use App\Service\ListFilters\SearchUser;
 use App\Service\UserExportLoader;
@@ -125,6 +128,34 @@ class UserController extends AbstractController
             'nbResults' => \count($users),
             'columns' => UserExportLoader::getColumnForUser($user),
         ]);
+    }
+
+    #[Route('/desactiver', name: 'back_user_disable', methods: ['POST'])]
+    public function disableUser(
+        Request $request,
+        UserManager $userManager,
+    ): Response {
+        $data = $request->get('user_disable');
+        if (!$this->isCsrfTokenValid('user_disable', (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
+
+            return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+        /** @var User $user */
+        $user = $userManager->find($data['user']);
+        if (!$user) {
+            $this->addFlash('error', 'Utilisateur introuvable.');
+
+            return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+        $this->denyAccessUnlessGranted(UserVoter::USER_DISABLE, $user);
+
+        $user->setStatut(UserStatus::INACTIVE);
+        $user->setPassword(null);
+        $userManager->save($user);
+        $this->addFlash('success', 'L\'utilisateur a bien été désactivé.');
+
+        return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
     /**
