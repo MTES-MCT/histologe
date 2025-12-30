@@ -1608,6 +1608,7 @@
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
           },
           "validate": {
+            "maxLength": 255,
             "message": "Veuillez renseigner la réponse de l'assurance."
           }
         },

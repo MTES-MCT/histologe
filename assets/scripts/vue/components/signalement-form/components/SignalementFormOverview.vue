@@ -180,7 +180,7 @@
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
-              @click="handleEdit('info_procedure')"
+              @click="handleEdit('info_procedure_assurance')"
               class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line"
               aria-label="Editer la procédure">Editer</button>
           </div>

@@ -17,10 +17,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/bo/statistiques/indicateurs-pnlhi')]
+#[Route('/bo/statistiques-beta')]
 class MetabaseController extends AbstractController
 {
-    #[Route('/', name: 'back_indicateur_pnlhi', methods: ['GET'])]
+    #[Route('/', name: 'back_beta_statistiques', methods: ['GET'])]
     public function index(
         Request $request,
         DashboardUrlGenerator $dashboardUrlGenerator,
