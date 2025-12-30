@@ -4,9 +4,9 @@ namespace App\Service\Metabase;
 
 enum DashboardKey: int
 {
-    public const int DASHBOARD_BO_DEFAULT_TAB = 22;
+    public const int DASHBOARD_BO_DEFAULT_TAB = 23;
 
-    case DASHBOARD_BO = 97;
+    case DASHBOARD_BO = 104;
 
     public function label(): string
     {
