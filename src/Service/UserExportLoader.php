@@ -44,7 +44,7 @@ readonly class UserExportLoader
             foreach ($headers as $key => $unused) {
                 $territories = '';
                 foreach ($user->getPartnersTerritories() as $territory) {
-                    $territories .= $territory->getZip().' - '.$territory->getName().', ';
+                    $territories .= $territory->getZipAndName().', ';
                 }
                 $territories = substr($territories, 0, -2);
                 $partners = '';

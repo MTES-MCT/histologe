@@ -83,7 +83,7 @@ class SearchTag
             $filters['Recherche'] = $this->queryTag;
         }
         if ($this->territory && $this->user->isSuperAdmin()) {
-            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
+            $filters['Territoire'] = $this->territory->getZipAndName();
         }
 
         return $filters;

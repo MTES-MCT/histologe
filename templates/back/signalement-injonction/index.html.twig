@@ -92,7 +92,7 @@
                 {% endif %}
                 <tr>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <td>{{ signalement.territory ? signalement.territory.zip ~ ' - ' ~ signalement.territory.name : 'aucun' }}</td>
+                        <td>{{ signalement.territory ? signalement.territory.zipAndName : 'aucun' }}</td>
                     {% endif %}
                     <td>{{ signalement.reference }}</td>
                     <td>{{ signalement.createdAt.format('d/m/Y') }}</td>

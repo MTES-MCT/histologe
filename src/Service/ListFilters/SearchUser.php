@@ -162,7 +162,7 @@ class SearchUser
             $filters['Recherche'] = $this->queryUser;
         }
         if ($this->territory && $this->user->isSuperAdmin()) {
-            $filters['Territoire'] = $this->territory->getZip().' - '.$this->territory->getName();
+            $filters['Territoire'] = $this->territory->getZipAndName();
         }
         if ($this->partners->count()) {
             $label = '';

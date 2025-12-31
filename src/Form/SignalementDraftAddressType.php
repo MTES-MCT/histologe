@@ -61,7 +61,7 @@ class SignalementDraftAddressType extends AbstractType
             }
             $choicesTerritories = [];
             foreach ($territories as $territoryItem) {
-                $choicesTerritories[$territoryItem->getZip().' - '.$territoryItem->getName()] = $territoryItem->getZip().'|'.$territoryItem->getName();
+                $choicesTerritories[$territoryItem->getZipAndName()] = $territoryItem->getZip().'|'.$territoryItem->getName();
             }
             $builder->add('filterSearchAddressTerritory', ChoiceType::class, [
                 'mapped' => false,

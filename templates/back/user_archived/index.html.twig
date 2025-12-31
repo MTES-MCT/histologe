@@ -84,7 +84,7 @@
                         {% else %}
                             {% for partner in user.partners %}
                                 {% if partner.territory %}
-                                    {{ partner.territory.zip ~ ' - ' ~ partner.territory.name }}
+                                    {{ partner.territory.zipAndName }}
                                 {% else %}
                                     aucun
                                 {% endif %}

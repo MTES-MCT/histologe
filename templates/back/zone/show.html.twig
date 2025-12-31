@@ -27,7 +27,7 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <div class="fr-col-12">
                         <b>Territoire :</b>
-                        {{ zone.territory.zip }} - {{ zone.territory.name }}
+                        {{ zone.territory.zipAndName }}
                     </div>
                 {% endif %}
                 <div class="fr-col-12">

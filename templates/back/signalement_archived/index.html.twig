@@ -67,7 +67,7 @@
                         <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
                         class="fr-ws-nowrap">{{ signalement.reference }}</a>
                     </td>
-                    <td>{{ signalement.territory.zip}} - {{ signalement.territory.name}} </td>
+                    <td>{{ signalement.territory.zipAndName}}</td>
                     <td>{{ signalement.createdAt|date('d/m/Y') }}</td>
                     <td>
                         {{ signalement.nomOccupant|upper }}<br>{{ signalement.prenomOccupant|capitalize }}

@@ -72,7 +72,7 @@ class AnnuaireController extends AbstractController
             $activeWorksheet->setCellValue('E'.$row, $user->getFonction());
             if ($isMultiTerritory) {
                 $territory = $partner->getTerritory();
-                $territoryName = $territory ? $territory->getZip().' - '.$territory->getName() : '';
+                $territoryName = $territory ? $territory->getZipAndName() : '';
                 $activeWorksheet->setCellValue('F'.$row, $territoryName);
             }
             ++$row;
