@@ -10,7 +10,10 @@ window.addEventListener('load', () => {
     {
       log: false,
       checkOrigin: false,
-      heightCalculationMethod: 'max'
+      heightCalculationMethod: 'max',
+      // Disable iframe-resizer warning about slow iframe responses to avoid noisy production logs.
+      // Metabase embeds can legitimately take longer to respond; this is intentional, not to hide real issues.
+      warningTimeout: 0,
     },
     iframe
   );
