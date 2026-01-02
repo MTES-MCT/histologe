@@ -11,7 +11,7 @@ test('dashboard tabs for admin', async ({page, context}) => {
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('admin-01@signal-logement.fr');
   await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).click();
   await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('signallogement');
-  await page.getByRole('button', { name: 'Connexion' }).click();
+  await page.getByRole('button', { name: 'Se connecter' }).click();
 
   // Attendre la navigation après connexion
   await page.waitForURL('**/bo/**', { timeout: 10000 });
@@ -46,7 +46,7 @@ test('dashboard tabs for RT', async ({page, context}) => {
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('admin-territoire-13-01@signal-logement.fr');
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).press('Tab');
   await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('signallogement');
-  await page.getByRole('button', { name: 'Connexion' }).click();
+  await page.getByRole('button', { name: 'Se connecter' }).click();
 
   // Attendre la navigation après connexion
   await page.waitForURL('**/bo/**', { timeout: 10000 });
@@ -78,7 +78,7 @@ test('dashboard tabs for Agent', async ({page, context}) => {
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).fill('user-13-01@signal-logement.fr');
   await page.getByRole('textbox', { name: 'Courriel Adresse utilisée' }).press('Tab');
   await page.getByRole('textbox', { name: 'Mot de passe Mot de passe dé' }).fill('signallogement');
-  await page.getByRole('button', { name: 'Connexion' }).click();
+  await page.getByRole('button', { name: 'Se connecter' }).click();
 
   // Attendre la navigation après connexion
   await page.waitForURL('**/bo/**', { timeout: 10000 });
