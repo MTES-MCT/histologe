@@ -37,7 +37,7 @@
                                                     {% set currentPermissionDescription %}
                                                     <ul>
                                                         {% if permission.territory is not null %}
-                                                            <li><strong>Territoire :</strong> {{ permission.territory.zip ~ ' - ' ~ permission.territory.name }}</li>
+                                                            <li><strong>Territoire :</strong> {{ permission.territory.zipAndName }}</li>
                                                         {% endif %}
                                                         {% if permission.partner is not null %}
                                                             <li><strong>Partenaire :</strong> <a href="{{ path('back_partner_view', {id: permission.partner.id}) }}">{{ permission.partner.nom }}</a></li>

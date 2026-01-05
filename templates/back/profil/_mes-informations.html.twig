@@ -37,11 +37,11 @@
         {% for partner in app.user.partners %}
             <div class="fr-col-12 fr-col-md-6">
                 <p>
-                    <strong>Territoire : {{ partner.territory.zip }} - {{ partner.territory.name }}</strong>
+                    <strong>Territoire : {{ partner.territory.zipAndName }}</strong>
                     <br>
                     J'ai un compte {{ app.user.roleLabel }} dans le partenaire {{ partner.nom }}.
                     <br>
-                    Responsable(s) du territoire {{ partner.territory.zip }} - {{ partner.territory.name }} :
+                    Responsable(s) du territoire {{ partner.territory.zipAndName }} :
                 </p>
                 <ul>
                     {% for userAdmin in activeTerritoryAdminsByTerritory[partner.territory.id] %}

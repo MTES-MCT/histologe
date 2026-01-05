@@ -25,7 +25,7 @@
             </td>
             <td>
                 {% if item.territory %}
-                    {{ item.territory.zip }} - {{ item.territory.name }}
+                    {{ item.territory.zipAndName }}
                 {% endif %}
             </td>
             <td>{{ item.type.label }}</td>
