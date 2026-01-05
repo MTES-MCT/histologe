@@ -119,6 +119,21 @@ pre {
     }
 }
 
+.fr-btn--block {
+    width: 100%;
+}
+
+@media (min-width: 48em) {
+    .fr-text--md-right {
+        text-align: right;
+    }
+
+    .fr-btn--md-inline {
+        display: inline-flex;
+        width: auto;
+    }
+}
+
 .button-group-full-size {
     width: 100%;
     

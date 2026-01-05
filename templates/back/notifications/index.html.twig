@@ -3,27 +3,27 @@
 {% block title %} Administration - Nouveauté(s) {% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-p-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Notifications',
             'level2Link': '',
             'level2Label': '',
         } %}
     </section>
-    <section class="fr-grid-row fr-grid-row--middle fr-p-5v ">
-        <div class="fr-col-6">
+    <section class="fr-grid-row fr-grid-row--middle fr-p-4v ">
+        <div class="fr-col-12 fr-col-md-6">
             <h1 class="fr-h2 fr-mb-0">Notification(s)</h1>
         </div>
-        <div class="fr-col-6 fr-text--right">
+        <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
             <div id="notification-selected-buttons" class="fr-hidden">
                 <span id="notification-selected-buttons-count"></span> sélectionnée(s) :
                 <form method="POST" action="{{ path('back_notifications_list_read', searchNotification.urlParams) }}">
-                    <button type="submit" class="fr-btn fr-fi-check-line fr-btn--icon-left">Marquer comme lue(s)</button>
+                    <button type="submit" class="fr-btn fr-fi-check-line fr-btn--icon-left fr-btn--block fr-btn--md-inline">Marquer comme lue(s)</button>
                     <input type="hidden" name="selected_notifications" value="">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token('mark_as_read_'~app.user.id) }}">
                 </form>
                 <form method="POST" action="{{ path('back_notifications_list_delete', searchNotification.urlParams) }}">
-                    <button type="submit" class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left">Supprimer</button>
+                    <button type="submit" class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left fr-btn--block fr-btn--md-inline">Supprimer</button>
                     <input type="hidden" name="selected_notifications" value="">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_notifications_'~app.user.id) }}">
                 </form>
@@ -31,25 +31,25 @@
             <div id="notification-all-buttons">
                 {% set routeParams = {mark_as_read: csrf_token('mark_as_read_'~app.user.id)}|merge(searchNotification.urlParams) %}
                 <a href="{{ path('back_notifications_list_read', routeParams) }}"
-                class="fr-btn fr-fi-check-line fr-btn--icon-left">Marquer comme lus (tous)</a>
+                class="fr-btn fr-fi-check-line fr-btn--icon-left fr-btn--block fr-btn--md-inline">Marquer comme lus (tous)</a>
                 {% set routeParams = {delete_all_notifications: csrf_token('delete_all_notifications_'~app.user.id)}|merge(searchNotification.urlParams) %}
                 <a href="{{ path('back_notifications_list_delete', routeParams) }}"
-                class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left">Vider</a>
+                class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left fr-btn--block fr-btn--md-inline">Vider</a>
             </div>
         </div>
     </section>
 
-    <section class="fr-col-12 fr-px-5v">
+    <section class="fr-col-12 fr-px-4v">
         <h2 class="fr-h6 fr-mb-0" id="desc-table">{{ count_notification(app.user) }} nouveau(x) suivi(s)</h2>
     </section>
     
     {{ form_start(form) }}
-    <section class="fr-col-4 fr-p-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             <th scope="col"></th>
             <th scope="col">Signalement</th>

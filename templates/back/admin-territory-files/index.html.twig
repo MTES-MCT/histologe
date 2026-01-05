@@ -3,7 +3,7 @@
 {% block title %}Documents types{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-p-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -15,17 +15,17 @@
         } %}
 
         <header>
-            <div class="fr-grid-row">
-                <div class="fr-col-8 fr-text--left">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-8 fr-text--left">
                     <h1 class="fr-mb-0">Documents types</h1>
                     <p>
                         Vous pouvez ajouter des documents types pour vos partenaires et choisir pour quel(s) type(s) de partenaires vous les affichez.
                     </p>
                 </div>
-                <div class="fr-col-4 fr-text--right">
+                <div class="fr-col-12 fr-col-md-4 fr-text--md-right">
                     <a
                         href="{{ path('back_territory_management_document_add') }}"
-                        class="fr-btn fr-btn--icon-left fr-icon-add-line"
+                        class="fr-btn fr-btn--icon-left fr-icon-add-line fr-btn--block fr-btn--md-inline"
                         title="Ajouter un document"
                         >Ajouter un document</a>
                 </div>
@@ -55,17 +55,17 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-5v">
+    <section class="fr-col-12 fr-py-4v">
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(files|length, 'document trouvé', 'documents trouvés') }}</h2>
     </section>
     
-    <section class="fr-col-3 fr-pt-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             <th scope="col" class="number">ID</th>
             <th scope="col">Document</th>

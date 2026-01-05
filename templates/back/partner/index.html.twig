@@ -4,7 +4,7 @@
 
 {% block content %}
     {% include '_partials/_modal_partner_delete.html.twig' %}
-    <section class="fr-p-5v">
+    <section class="fr-p-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -30,16 +30,21 @@
         {% endif %}
 
         <header>
-            <div class="fr-grid-row">
-                <div class="fr-col-6 fr-text--left">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-6">
                     <h1 class="fr-h1 fr-mb-0">Partenaires</h1>
                 </div>
-                <div class="fr-col-6 fr-text--right">
-                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-circle-line" href="{{ path('back_partner_new') }}"
-                        >Ajouter un partenaire</a>
+                <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
+                    <a
+                        class="fr-btn fr-btn--success fr-btn--icon-left fr-fi-add-circle-line fr-btn--block fr-btn--md-inline"
+                        href="{{ path('back_partner_new') }}"
+                    >
+                        Ajouter un partenaire
+                    </a>
                 </div>
             </div>
         </header>
+
     </section>
 
     {{ form_start(form) }}
@@ -70,17 +75,17 @@
             </div>
     </section>
 
-    <section class="fr-col-12 fr-py-5v">
+    <section class="fr-col-12 fr-py-4v">
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(partners|length, 'partenaire trouvé', 'partenaires trouvés') }}</h2>
     </section>
     
-    <section class="fr-col-3 fr-pt-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             <th scope="col" class="number">Id</th>
             {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
