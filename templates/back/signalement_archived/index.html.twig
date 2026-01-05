@@ -75,17 +75,7 @@
                     <td>{{ signalement.villeOccupant|upper }} <br><small>[{{ signalement.adresseOccupant }}]</small></td>
                     <td>
                         {% for affectation in signalement.affectations %}
-                            {% set classe = '' %}
-                            {% if affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
-                                {% set classe = 'fr-badge fr-badge--info' %}
-                            {% elseif affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
-                                {% set classe = 'fr-badge fr-badge--success' %}
-                            {% elseif affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
-                                {% set classe = 'fr-badge fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line' %}
-                            {% elseif affectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
-                                {% set classe = 'fr-badge fr-fi-close-circle-fill' %}
-                            {% endif %}
-                            <small class="{{ classe }} fr-ws-nowrap fr-badge--sm fr-my-1v fr-text--bold fr-display-block fr-limit-chars"><span
+                            <small class="fr-badge fr-ws-nowrap fr-badge--sm fr-my-1v fr-text--bold fr-display-block fr-limit-chars"><span
                                 > {{ affectation.partner.nom }}</span></small>
                         {% else %}
                             Aucune
