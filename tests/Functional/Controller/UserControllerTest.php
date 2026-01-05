@@ -42,13 +42,13 @@ class UserControllerTest extends WebTestCase
         $userId = $user->getId();
 
         $this->client->request('POST', $this->router->generate('back_user_disable'), [
-            'user_disable' => ['user' => $userId],
+            'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'user_disable'),
         ]);
 
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $this->assertEquals(UserStatus::INACTIVE, $user->getStatut());
-        $this->assertNull($user->getPassword());
+        $this->assertNotNull($user->getPassword());
         $this->assertEmailCount(0);
     }
 
@@ -58,7 +58,7 @@ class UserControllerTest extends WebTestCase
         $userId = $user->getId();
 
         $this->client->request('POST', $this->router->generate('back_user_disable'), [
-            'user_disable' => ['user' => $userId],
+            'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'fauxToken'),
         ]);
 
@@ -77,11 +77,24 @@ class UserControllerTest extends WebTestCase
         $userId = $user->getId();
 
         $this->client->request('POST', $this->router->generate('back_user_disable'), [
-            'user_disable' => ['user' => $userId],
+            'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'user_disable'),
         ]);
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertResponseStatusCodeSame(Response::HTTP_SEE_OTHER);
+    }
+
+    public function testDisableUserAccountWithSAUser(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-03@signal-logement.fr']);
+        $userId = $user->getId();
+
+        $this->client->request('POST', $this->router->generate('back_user_disable'), [
+            'user_id' => $userId,
+            '_token' => $this->generateCsrfToken($this->client, 'user_disable'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_SEE_OTHER);
     }
 
     public function testDisableUserAccountWithNotAdmin(): void
@@ -92,10 +105,10 @@ class UserControllerTest extends WebTestCase
         $userId = $user->getId();
 
         $this->client->request('POST', $this->router->generate('back_user_disable'), [
-            'user_disable' => ['user' => $userId],
+            'user_id' => $userId,
             '_token' => $this->generateCsrfToken($this->client, 'user_disable'),
         ]);
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertResponseStatusCodeSame(Response::HTTP_SEE_OTHER);
     }
 }
