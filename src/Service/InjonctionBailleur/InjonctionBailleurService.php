@@ -82,7 +82,7 @@ class InjonctionBailleurService
     private function saveEngagementTravauxBailleurPdf(Signalement $signalement): void
     {
         $pdfContent = $this->engagementTravauxBailleurGenerator->generate($signalement);
-        $filename = 'engagement-travaux-'.$signalement->getUuid().'.pdf';
+        $filename = 'engagement-travaux-'.$signalement->getReferenceInjonction().'.pdf';
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
         file_put_contents($tmpFilepath, $pdfContent);
 

@@ -147,7 +147,7 @@ class SuiviBailleurController extends AbstractController
         if ($pdf) {
             $file = $imageVariantProvider->getFileVariant($pdf->getFilename());
 
-            return (new BinaryFileResponse($file))->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, 'engagement-travaux.pdf');
+            return (new BinaryFileResponse($file))->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE);
         }
 
         if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
@@ -157,7 +157,7 @@ class SuiviBailleurController extends AbstractController
 
         $response = new Response($pdfContent);
         $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline; filename="engagement-travaux.pdf"');
+        $response->headers->set('Content-Disposition', 'inline; filename="engagement-travaux.'.$signalement->getReferenceInjonction().'.pdf"');
 
         return $response;
     }
