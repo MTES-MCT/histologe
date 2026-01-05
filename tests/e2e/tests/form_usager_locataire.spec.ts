@@ -51,6 +51,9 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('textbox', { name: 'Quand avez-vous prévenu votre' }).press('Tab');
     await page.getByRole('textbox', { name: 'Quelle a été la réponse de' }).fill('Demain c\'est loin');
     await page.getByRole('button', { name: 'Suivant' }).click();
+    await page.getByRole('heading', { name: 'Bénéficiez d’une démarche acc' }).click();
+    await page.getByText('Non', { exact: true }).click();
+    await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Le bâtiment (et / ou parties').click();
     await page.locator('#zone_concernee_debut_desordres-select').selectOption('less_1_month');
     await page.getByRole('button', { name: 'Suivant' }).click();
