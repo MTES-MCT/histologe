@@ -63,10 +63,7 @@
             {% for index,signalement in signalements %}
                 <tr class="{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}fr-background-contrast--orange-terre-battue{% endif %} signalement-row"
                     data-score="{{ signalement.score }}">
-                    <td>
-                        <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
-                        class="fr-ws-nowrap">{{ signalement.reference }}</a>
-                    </td>
+                    <td>{{ signalement.reference }}</td>
                     <td>{{ signalement.territory.zipAndName}}</td>
                     <td>{{ signalement.createdAt|date('d/m/Y') }}</td>
                     <td>
@@ -109,10 +106,15 @@
                         {% endif %}
                     </td>
                     <td class="fr-text--right fr-ws-nowrap">
+                        <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
+                            class="fr-btn fr-fi-arrow-right-line fr-btn--sm"
+                            title="Voir le signalement #{{ signalement.reference }}"
+                            ></a>
                         <button data-reactive="{{ path('back_archived_signalements_reactiver',{uuid:signalement.uuid}) }}"
                             data-token="{{ csrf_token('signalement_reactive_'~signalement.id) }}"
-                            class="fr-btn fr-icon-flashlight-fill fr-btn--sm signalement-row-reactive">
-                        </button>
+                            class="fr-btn fr-icon-flashlight-fill fr-btn--sm signalement-row-reactive"
+                            title="Réactiver le signalement #{{ signalement.reference }}"
+                            ></button>
                     </td>
                 </tr>
             {% endfor %}

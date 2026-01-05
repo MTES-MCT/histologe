@@ -104,13 +104,16 @@
                                                             {{ currentPermissionDescription|raw }}
                                                         </td>
                                                         <td class="fr-cell--right">
-                                                            <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_api_user_permission_edit', {'id': permission.id}) }}" title="Modifier la permission"></a>
+                                                            <a href="{{ path('back_api_user_permission_edit', {'id': permission.id}) }}"
+                                                                class="fr-btn fr-btn--sm fr-fi-edit-line"
+                                                                title="Modifier la permission {{ permission.id }}"
+                                                                ></a>
                                                             <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line btn-delete-user-api-permission"
-                                                                title="Supprimer la permission" 
+                                                                title="Supprimer la permission {{ permission.id }}" 
                                                                 aria-controls="fr-modal-user-api-permission-delete" data-fr-opened="false" 
                                                                 data-url="{{ path('back_api_user_permission_delete', {'id': permission.id}) }}"
-                                                                data-description="{{ currentPermissionDescription|e('html_attr') }}">
-                                                            </button>
+                                                                data-description="{{ currentPermissionDescription|e('html_attr') }}"
+                                                                ></button>
                                                         </td>
                                                     </tr>
                                                 {% endfor %}
@@ -122,7 +125,9 @@
                         {% endif %}
                     </td>
                     <td class="fr-cell--right">
-                        <a class="fr-btn fr-btn--success fr-btn--sm fr-fi-add-circle-line" href="{{ path('back_api_user_permission_create', {'id': user.id}) }}" title="Ajouter une permission"></a>
+                        <a class="fr-btn fr-btn--success fr-btn--sm fr-fi-add-circle-line" href="{{ path('back_api_user_permission_create', {'id': user.id}) }}"
+                            title="Ajouter une permission pour {{ user.email }}"
+                            ></a>
                     </td>
                 </tr>
             {% endfor %}
