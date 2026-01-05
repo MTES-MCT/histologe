@@ -1832,7 +1832,7 @@ final class App
 namespace Symfony\Component\Routing\Loader\Configurator;
 
 /**
- * This class provides array-shapes for configuring the routes of an application.
+ * This class provides array-shapes for configuring the routes of an application
  *
  * Example:
  *
