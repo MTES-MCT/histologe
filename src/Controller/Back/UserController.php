@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -134,26 +135,32 @@ class UserController extends AbstractController
     public function disableUser(
         Request $request,
         UserManager $userManager,
+        UserPasswordHasherInterface $passwordHasher,
     ): Response {
-        $data = $request->get('user_disable');
+        /** @var string $userId */
+        $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('user_disable', (string) $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
         }
         /** @var User $user */
-        $user = $userManager->find($data['user']);
+        $user = $userManager->find($userId);
         if (!$user) {
             $this->addFlash('error', 'Utilisateur introuvable.');
 
             return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
         }
-        $this->denyAccessUnlessGranted(UserVoter::USER_DISABLE, $user);
+        if (!$this->isGranted(UserVoter::USER_DISABLE, $user)) {
+            $this->addFlash('error', 'Action non autorisée sur un super administrateur.');
+
+            return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
+        }
 
         $user->setStatut(UserStatus::INACTIVE);
-        $user->setPassword(null);
+        $user->setPassword($passwordHasher->hashPassword($user, bin2hex(random_bytes(32))));
         $userManager->save($user);
-        $this->addFlash('success', 'L\'utilisateur a bien été désactivé.');
+        $this->addFlash('success', 'L\'utilisateur '.$user->getNomComplet(true).' a bien été désactivé.');
 
         return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
     }

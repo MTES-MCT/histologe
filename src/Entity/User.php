@@ -290,7 +290,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->password;
     }
 
-    public function setPassword(?string $password): static
+    public function setPassword(string $password): static
     {
         $this->password = $password;
 
