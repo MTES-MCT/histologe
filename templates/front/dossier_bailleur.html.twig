@@ -33,6 +33,10 @@
 							<br>
 							<span class="info">
 								{{ signalement.getAddressCompleteOccupant() }}
+								{% if signalement.complementAdresseOccupant %}
+									<br>
+									{{signalement.complementAdresseOccupant}}
+								{% endif %}
 							</span>
 						</div>
 					</div>
@@ -189,17 +193,6 @@
 				{% if signalement.telProprioSecondaire %}
 					<br>
 					{{ signalement.telProprioSecondaireDecoded|phone }}
-				{% endif %}
-
-				<div class="fr-mb-1w fr-mt-2w">
-					<strong>Adresse du logement</strong>
-				</div>
-				{{ signalement.adresseOccupant }}
-				{{ signalement.cpOccupant }}
-				{{ signalement.villeOccupant }}
-				{% if signalement.complementAdresseOccupant %}
-					<br>
-					{{signalement.complementAdresseOccupant}}
 				{% endif %}
 			</div>
 
