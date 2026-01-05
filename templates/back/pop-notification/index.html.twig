@@ -17,7 +17,7 @@
                             Votre compte a été ajouté :
                             <ul class="fr-mb-2v fr-mt-0">
                                 {% for partner in addedPartners %}
-                                <li>au partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zip}} - {{partner.territory.name}}</strong></li>
+                                <li>au partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zipAndName}}</strong></li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
@@ -25,7 +25,7 @@
                             Votre compte a été retiré :
                             <ul class="fr-mb-2v fr-mt-0">
                                 {% for partner in removedPartners %}
-                                <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zip}} - {{partner.territory.name}}</strong></li>
+                                <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zipAndName}}</strong></li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
@@ -34,7 +34,7 @@
                         1. Vous avez accès aux signalements :
                         <ul class="fr-mb-2v fr-mt-0 fr-ml-2v">
                             {% for partner in user.partners %}
-                            <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zip}} - {{partner.territory.name}}</strong></li>
+                            <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zipAndName}}</strong></li>
                             {% endfor %}
                         </ul>
                         {% set nb = 2 %}
@@ -42,7 +42,7 @@
                             {{nb}}. Vous n'avez plus accès aux signalements :
                             <ul class="fr-mb-2v fr-mt-0 fr-ml-2v">
                                 {% for partner in removedPartners %}
-                                <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zip}} - {{partner.territory.name}}</strong></li>
+                                <li>du partenaire <strong>{{partner.nom}}</strong> du territoire <strong>{{partner.territory.zipAndName}}</strong></li>
                                 {% endfor %}
                             </ul>
                             {% set nb = nb + 1 %}

@@ -117,7 +117,7 @@ class SearchPartner
             $filters['Recherche'] = $this->queryPartner;
         }
         if ($this->territoire && $this->user->isSuperAdmin()) {
-            $filters['Territoire'] = $this->territoire->getZip().' - '.$this->territoire->getName();
+            $filters['Territoire'] = $this->territoire->getZipAndName();
         }
         if (null !== $this->partnerType) {
             $filters['Type de partenaire'] = $this->partnerType->label();

@@ -103,7 +103,7 @@
                 <tr class="partner-row">
                     <td>{{ partner.id }}</td>
                     {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
-                        <td>{{ partner.territory ? partner.territory.zip ~ ' - ' ~ partner.territory.name : 'aucun' }}</td>
+                        <td>{{ partner.territory ? partner.territory.zipAndName : 'aucun' }}</td>
                     {% endif %}
                     <td>{{ partner.nom }}</td>
                     <td>{{ partner.type ? partner.type.label : (partner.isCommune ? 'Commune':'N/A') }}</td>

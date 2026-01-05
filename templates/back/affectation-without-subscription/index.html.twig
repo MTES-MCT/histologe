@@ -69,7 +69,7 @@
                         {% endif %}
                     </td>
                     <td><a href="{{ path('back_partner_view', {id: affectation.partner.id}) }}">{{ affectation.partner.nom }}</a></td>
-                    <td>{{affectation.signalement.territory.zip}} - {{affectation.signalement.territory.name}}</td>
+                    <td>{{affectation.signalement.territory.zipAndName}}</td>
                     <td>{{ affectation.createdAt|date('d/m/Y H:i') }}</td>
                 </tr>
             {% endfor %}

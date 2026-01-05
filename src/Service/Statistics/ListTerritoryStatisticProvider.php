@@ -25,7 +25,7 @@ class ListTerritoryStatisticProvider
         }
         /** @var Territory $territory */
         foreach ($territories as $territory) {
-            $data[$territory->getId()] = $territory->getZip().' - '.$territory->getName();
+            $data[$territory->getId()] = $territory->getZipAndName();
         }
 
         return $data;

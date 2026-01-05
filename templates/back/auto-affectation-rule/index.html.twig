@@ -62,7 +62,7 @@
         {% set tableBody %}
             {% for autoaffectationrule in autoAffectationRules %}
                 <tr class="autoaffectationrule-row">
-                    <td>{{ autoaffectationrule.territory.zip}} - {{ autoaffectationrule.territory.name}}</td>
+                    <td>{{ autoaffectationrule.territory.zipAndName}}</td>
                     <td>
                         {% if autoaffectationrule.status is same as constant('App\\Entity\\AutoAffectationRule::STATUS_ACTIVE') %}
                             {% set classe = 'fr-badge--green-emeraude' %}

@@ -63,7 +63,7 @@
                     <td>{{ bailleur.name }}</td>
                     <td>
                         {% for bailleurTerritory in bailleur.bailleurTerritories %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--success">{{bailleurTerritory.territory.zip}} {{bailleurTerritory.territory.name}}</span>
+                            <span class="fr-badge fr-badge--no-icon fr-badge--success">{{bailleurTerritory.territory.zipAndName}}</span>
                         {% endfor %}
                     </td>
                     <td class="fr-text--right fr-ws-nowrap">

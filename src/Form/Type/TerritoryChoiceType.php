@@ -21,7 +21,7 @@ class TerritoryChoiceType extends AbstractType
     {
         $resolver->setDefaults([
             'class' => Territory::class,
-            'choice_label' => fn (Territory $territory) => $territory->getZip().' - '.$territory->getName(),
+            'choice_label' => fn (Territory $territory) => $territory->getZipAndName(),
             'placeholder' => 'Tous les territoires',
             'required' => false,
             'label' => 'Territoire',

@@ -72,7 +72,7 @@
                                 <h3 class="fr-h4 fr-mb-1v">{{ userPartner.user.nomComplet }}</h3>
                                 <strong>{{ userPartner.partner.nom }}</strong>
                                 {% if isMultiTerritory and userPartner.partner.territory %}
-                                    ({{ userPartner.partner.territory.zip }} - {{ userPartner.partner.territory.name }})
+                                    ({{ userPartner.partner.territory.zipAndName }})
                                 {% endif %}
                                 <br>
                                 Fonction : {{ userPartner.user.fonction ? userPartner.user.fonction : '/' }}

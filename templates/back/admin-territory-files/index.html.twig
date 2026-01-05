@@ -88,7 +88,7 @@
                     {% if is_granted('ROLE_ADMIN') %}
                     <td>
                         {% if file.territory %}
-                            {{ file.territory.zip }} - {{ file.territory.name }}
+                            {{ file.territory.zipAndName }}
                         {% else %}
                             Tous
                         {% endif %}
