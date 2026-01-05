@@ -14,7 +14,7 @@ export function initZipSelectionPhotos() {
   const submitButton = document.getElementById('zip-selection-submit');
   const cancelButton = document.getElementById('zip-selection-cancel');
 
-  const photoItems = document.querySelectorAll('.signalement-file-item');
+  const photoItems = document.querySelectorAll('#tabpanel-documents-panel .container-situation .signalement-file-item');
 
   let selectionMode = false;
 
