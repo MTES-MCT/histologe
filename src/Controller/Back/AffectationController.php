@@ -70,9 +70,9 @@ class AffectationController extends AbstractController
         Signalement $signalement,
         TagAwareCacheInterface $cache,
     ): RedirectResponse|JsonResponse {
-        if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $unnotifiedPartners = [];
-            $data = $request->get('signalement-affectation');
+            $data = $request->get('signalement-affectation'); // TODO : deprecated, $request->request->get cannot get array format
             if (isset($data['partners'])) {
                 /** @var User $user */
                 $user = $this->getUser();
@@ -139,14 +139,14 @@ class AffectationController extends AbstractController
         Signalement $signalement,
         AffectationRepository $affectationRepository,
     ): RedirectResponse|JsonResponse {
-        $idAffectation = $request->get('affectation');
+        $idAffectation = $request->request->get('affectation');
         $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
         if (!$affectation || $affectation->getSignalement()->getId() !== $signalement->getId()) {
             $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Affectation introuvable.'];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
         }
-        if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), (string) $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_remove_partner_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $partnersIdToRemove = [];
             $partnersIdToRemove[] = $affectation->getPartner()->getId();
             $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
@@ -169,7 +169,7 @@ class AffectationController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted(AffectationVoter::AFFECTATION_REINIT, $affectation);
         $message = 'Une erreur est survenue lors de la réinitialisation de l\'affectation.';
-        if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), (string) $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('reinit_affectation_'.$affectation->getSignalement()->getUuid(), (string) $request->request->get('_token'))) {
             /** @var User $user */
             $user = $this->getUser();
             $this->affectationManager->removeAffectationAndSubscriptions($affectation);
@@ -231,7 +231,7 @@ class AffectationController extends AbstractController
 
             return $this->json(['redirect' => true, 'url' => $url]);
         }
-        if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), (string) $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_affectation_response_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $this->affectationManager->updateAffectation(
                 affectation: $affectation,
                 user: $user,

@@ -181,7 +181,7 @@ class VisiteUploadDocumentsController extends AbstractController
         Request $request,
         ?Intervention $intervention = null,
     ): JsonResponse {
-        $typeDocumentVisite = $request->get('typeDocumentVisite');
+        $typeDocumentVisite = $request->request->get('typeDocumentVisite');
         if (null === $intervention) {
             return $this->json([
                 'message' => 'Intervention introuvable.',

@@ -356,8 +356,8 @@ class SignalementController extends AbstractController
         PostalCodeHomeChecker $postalCodeHomeChecker,
         CommuneRepository $communeRepository,
     ): JsonResponse {
-        $postalCode = $request->get('cp');
-        $inseeCode = $request->get('insee');
+        $postalCode = $request->query->get('cp');
+        $inseeCode = $request->query->get('insee');
         if (empty($postalCode)) {
             return $this->json([
                 'success' => false,
@@ -393,7 +393,7 @@ class SignalementController extends AbstractController
             }
         }
 
-        $platformName = $request->get('platform_name');
+        $platformName = $request->query->get('platform_name');
         $messageClosed = '<p>
         Nous ne pouvons malheureusement pas traiter votre demande.<br>
         Le service'.$platformName.'n\'est pas encore ouvert dans votre commune...
@@ -462,7 +462,7 @@ class SignalementController extends AbstractController
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
-        $suiviAuto = $request->get('suiviAuto');
+        $suiviAuto = $request->query->get('suiviAuto');
         // TODO : route à supprimer quelques semaines/mois après la suppression du feature flipping featureSuiviAction (aout 2025)
         // pour ne pas avoir des liens cassés dans les anciens mails
         if (Suivi::ARRET_PROCEDURE == $suiviAuto) {

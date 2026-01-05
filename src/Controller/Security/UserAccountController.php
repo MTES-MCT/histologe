@@ -129,14 +129,14 @@ class UserAccountController extends AbstractController
             $security->logout(false);
         }
         if ($request->isMethod('POST')
-            && $this->isCsrfTokenValid('create_password_'.$user->getUuid(), $request->get('_csrf_token'))
+            && $this->isCsrfTokenValid('create_password_'.$user->getUuid(), $request->request->get('_csrf_token'))
         ) {
-            if ($request->get('password') !== $request->get('password-repeat')) {
+            if ($request->request->get('password') !== $request->request->get('password-repeat')) {
                 $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
 
                 return $this->render('security/reset_password_new.html.twig', ['user' => $user]);
             }
-            $user->setPassword($request->get('password'));
+            $user->setPassword($request->request->get('password'));
             $errors = $validator->validate($user, null, ['password']);
             if (\count($errors) > 0) {
                 $errorMessage = '<ul>';
@@ -148,7 +148,7 @@ class UserAccountController extends AbstractController
 
                 return $this->render('security/reset_password_new.html.twig', ['user' => $user]);
             }
-            $user = $userManager->resetPassword($user, $request->get('password'));
+            $user = $userManager->resetPassword($user, $request->request->get('password'));
             $message = $user->isApiUser() ? 'Votre compte a bien été activé, vous pouvez utiliser l\'API.' : 'Votre compte a bien été activé, vous pouvez vous connecter.';
             $this->addFlash('success', ['title' => 'Compte activé', 'message' => $message]);
             $request->request->remove('password');

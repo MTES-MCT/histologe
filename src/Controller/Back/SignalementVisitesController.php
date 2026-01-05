@@ -35,7 +35,7 @@ class SignalementVisitesController extends AbstractController
 
     private function getSecurityRedirect(Signalement $signalement, Request $request, string $tokenName): ?Response
     {
-        if (!$this->isCsrfTokenValid($tokenName, (string) $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid($tokenName, (string) $request->request->get('_token'))) {
             $this->addFlash('error', "Erreur de sécurisation de l'envoi de données.");
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -93,7 +93,7 @@ class SignalementVisitesController extends AbstractController
 
         $fileName = $this->getUploadedFile($request, 'visite-add', $uploadHandler, $filenameGenerator);
 
-        $requestAddData = $request->get('visite-add');
+        $requestAddData = $request->request->get('visite-add');
         $idPartner = 'extern' === $requestAddData['partner'] ? null : $requestAddData['partner'];
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestAddData['intervention'] ?? null,
@@ -148,7 +148,7 @@ class SignalementVisitesController extends AbstractController
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
     ): Response {
-        $requestData = $request->get('visite-cancel');
+        $requestData = $request->request->get('visite-cancel');
 
         $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention'], 'signalement' => $signalement]);
         if (!$intervention) {
@@ -203,7 +203,7 @@ class SignalementVisitesController extends AbstractController
         ValidatorInterface $validator,
         TimezoneProvider $timezoneProvider,
     ): Response {
-        $requestRescheduleData = $request->get('visite-reschedule');
+        $requestRescheduleData = $request->request->get('visite-reschedule');
 
         $intervention = $interventionRepository->findOneBy(['id' => $requestRescheduleData['intervention'], 'signalement' => $signalement]);
         if (!$intervention) {
@@ -281,7 +281,7 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandler,
         FilenameGenerator $filenameGenerator,
     ): Response {
-        $requestData = $request->get('visite-confirm');
+        $requestData = $request->request->get('visite-confirm');
 
         $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention'], 'signalement' => $signalement]);
         if (!$intervention) {
@@ -336,7 +336,7 @@ class SignalementVisitesController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
     ): Response {
-        $requestData = $request->get('visite-edit');
+        $requestData = $request->request->get('visite-edit');
 
         $intervention = !empty($requestData['intervention'])
             ? $interventionRepository->findOneBy(['id' => $requestData['intervention'], 'signalement' => $signalement])
@@ -398,7 +398,7 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandlerService,
     ): Response {
         $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
-        if (!$this->isCsrfTokenValid('delete_rapport', (string) $request->get('_token')) || !$intervention->getRapportDeVisite()) {
+        if (!$this->isCsrfTokenValid('delete_rapport', (string) $request->request->get('_token')) || !$intervention->getRapportDeVisite()) {
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]);
         }
         $file = $intervention->getRapportDeVisite();

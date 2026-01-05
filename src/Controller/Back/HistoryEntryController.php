@@ -19,7 +19,7 @@ class HistoryEntryController extends AbstractController
         HistoryEntryManager $historyEntryManager,
         SignalementRepository $signalementRepository,
     ): Response {
-        $signalement = $signalementRepository->find($request->get('id'));
+        $signalement = $signalementRepository->find($request->query->get('id'));
         if (
             !$signalement
             || !$this->isGranted(SignalementVoter::SIGN_VIEW, $signalement)

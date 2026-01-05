@@ -173,7 +173,7 @@ class SecurityController extends AbstractController
     ): Response {
         $request = Request::createFromGlobals();
         if (
-            !$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->get('t'))
+            !$this->isCsrfTokenValid('suivi_signalement_ext_file_view', $request->query->get('t'))
             && !$this->isGranted(SignalementVoter::SIGN_VIEW, $signalement)
         ) {
             throw $this->createAccessDeniedException();

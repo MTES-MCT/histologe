@@ -73,11 +73,11 @@ class SignalementFileController extends AbstractController
             && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
-        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
+        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
         $documentType = DocumentType::AUTRE;
-        if ($request->get('documentType') && $request->get('documentType') === DocumentType::AUTRE_PROCEDURE->name) {
+        if ($request->request->get('documentType') && $request->request->get('documentType') === DocumentType::AUTRE_PROCEDURE->name) {
             $documentType = DocumentType::AUTRE_PROCEDURE;
         }
         $fileList = $signalementFileProcessor->process($files, $documentType);
@@ -172,11 +172,11 @@ class SignalementFileController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         SuiviManager $suiviManager,
     ): Response {
-        $fileId = $request->get('file_id');
+        $fileId = $request->request->get('file_id');
         $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
         $this->denyAccessUnlessGranted(FileVoter::FILE_DELETE, $file);
-        $fragment = in_array($request->get('hash_src'), ['activite', 'situation']) ? $request->get('hash_src') : 'documents';
-        if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->get('_token'))) {
+        $fragment = in_array($request->request->get('hash_src'), ['activite', 'situation']) ? $request->request->get('hash_src') : 'documents';
+        if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $message = MessageHelper::ERROR_MESSAGE_CSRF;
             if ('1' === $request->get('is_draft')) {
                 return $this->json(['message' => $message], Response::HTTP_BAD_REQUEST);
@@ -188,7 +188,7 @@ class SignalementFileController extends AbstractController
         $filename = $file->getFilename();
         if (!$uploadHandlerService->deleteFile($file)) {
             $message = 'Le fichier n\'a pas été supprimé';
-            if ('1' === $request->get('is_draft')) {
+            if ('1' === $request->request->get('is_draft')) {
                 return $this->json(['message' => $message], Response::HTTP_BAD_REQUEST);
             }
             $this->addFlash('error', ['title' => 'Erreur de suppression', 'message' => $message]);
@@ -210,7 +210,7 @@ class SignalementFileController extends AbstractController
                 subscriptionCreated: $subscriptionCreated,
             );
         }
-        if ('1' === $request->get('is_draft')) {
+        if ('1' === $request->request->get('is_draft')) {
             return $this->json(['success' => true]);
         }
         $this->addFlash('success', ['title' => 'Document supprimé', 'message' => 'Le document a bien été supprimé.']);
@@ -252,12 +252,12 @@ class SignalementFileController extends AbstractController
         InterventionRepository $interventionRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
-        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), (string) $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $errorMsg = 'Token CSRF invalide, veuillez recharger la page';
 
             return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
         }
-        $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement]);
+        $file = $fileRepository->findOneBy(['id' => $request->request->get('file_id'), 'signalement' => $signalement]);
         if (null === $file || ($file->getIntervention() && DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType())) {
             $errorMsg = 'Document introuvable';
 
@@ -265,12 +265,12 @@ class SignalementFileController extends AbstractController
         }
         $this->denyAccessUnlessGranted(FileVoter::FILE_EDIT, $file);
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
-        $documentType = DocumentType::tryFrom($request->get('documentType'));
+        $documentType = DocumentType::tryFrom($request->request->get('documentType'));
         if (DocumentType::PHOTO_VISITE === $file->getDocumentType()) {
             // un document typé PHOTO_VISITE ne peut pas changer de type
-        } elseif ($request->get('documentType') && isset($infoDesordres['criteres'][$request->get('documentType')])) {
+        } elseif ($request->request->get('documentType') && isset($infoDesordres['criteres'][$request->request->get('documentType')])) {
             $file->setDocumentType(DocumentType::PHOTO_SITUATION);
-            $file->setDesordreSlug($request->get('documentType'));
+            $file->setDesordreSlug($request->request->get('documentType'));
         } elseif (null === $documentType) {
             $errorMsg = 'Type de document invalide';
 
@@ -279,14 +279,14 @@ class SignalementFileController extends AbstractController
             $file->setDocumentType($documentType);
             $file->setDesordreSlug(null);
         }
-        $interventionId = $request->get('interventionId');
+        $interventionId = $request->request->get('interventionId');
         if (null !== $interventionId && DocumentType::PHOTO_VISITE === $documentType) {
             $intervention = $interventionRepository->find($interventionId);
             if ($intervention?->getSignalement() === $file->getSignalement()) {
                 $file->setIntervention($intervention);
             }
         }
-        $description = $request->get('description');
+        $description = $request->request->get('description');
         if ($file->isTypeImage()) {
             if ($description && mb_strlen($description) > 255) {
                 $errorMsg = 'La description ne doit pas dépasser 255 caractères';
@@ -300,7 +300,7 @@ class SignalementFileController extends AbstractController
         $entityManager->persist($file);
         $entityManager->flush();
 
-        if ('edit' === $request->get('from')) {
+        if ('edit' === $request->request->get('from')) {
             $this->addFlash('success', ['title' => 'Document modifié', 'message' => 'Le document a bien été modifié.']);
         }
 
@@ -319,11 +319,11 @@ class SignalementFileController extends AbstractController
             && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
-        $rotate = (int) $request->get('rotate', 0);
+        $rotate = (int) $request->request->get('rotate', 0);
         if (!$rotate) {
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
         }
-        if (!$this->isCsrfTokenValid('save_file_rotation', (string) $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('save_file_rotation', (string) $request->request->get('_token'))) {
             $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));

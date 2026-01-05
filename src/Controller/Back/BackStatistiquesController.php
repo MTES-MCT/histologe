@@ -108,18 +108,18 @@ class BackStatistiquesController extends AbstractController
      */
     private function createFilters(Request $request, ?Territory $territory, ArrayCollection $partners): StatisticsFilters
     {
-        $communes = json_decode($request->get('communes'));
-        $epcis = json_decode($request->get('epcis'));
-        $statut = $request->get('statut');
-        $strEtiquettes = json_decode($request->get('etiquettes') ?? '[]');
+        $communes = json_decode($request->query->get('communes'));
+        $epcis = json_decode($request->query->get('epcis'));
+        $statut = $request->query->get('statut');
+        $strEtiquettes = json_decode($request->query->get('etiquettes') ?? '[]');
         $etiquettes = array_map(fn ($value): int => $value * 1, $strEtiquettes);
-        $type = $request->get('type');
-        $dateStartInput = $request->get('dateStart');
+        $type = $request->query->get('type');
+        $dateStartInput = $request->query->get('dateStart');
         $dateStart = (null !== $dateStartInput) ? new \DateTime($dateStartInput) : null;
-        $dateEndInput = $request->get('dateEnd');
+        $dateEndInput = $request->query->get('dateEnd');
         $dateEnd = (null !== $dateEndInput) ? new \DateTime($dateEndInput) : null;
-        $hasCountRefused = '1' == $request->get('countRefused');
-        $hasCountArchived = '1' == $request->get('countArchived');
+        $hasCountRefused = '1' == $request->query->get('countRefused');
+        $hasCountArchived = '1' == $request->query->get('countArchived');
 
         return new StatisticsFilters(
             $communes,
@@ -161,7 +161,7 @@ class BackStatistiquesController extends AbstractController
             return $partner->getTerritory();
         }
         $authorizedTerritories = $user->getPartnersTerritories();
-        $territoryId = $request->get('territoire');
+        $territoryId = $request->query->get('territoire');
         if (!$territoryId || 'all' === $territoryId) {
             return null;
         }

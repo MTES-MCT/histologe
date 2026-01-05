@@ -53,8 +53,8 @@ class ExportSignalementController extends AbstractController
         SearchFilter $searchFilter,
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
     ): RedirectResponse {
-        $selectedColumns = $request->get('cols') ?? [];
-        $format = $request->get('file-format');
+        $selectedColumns = $request->request->get('cols') ?? [];
+        $format = $request->request->get('file-format');
         $request->getSession()->set('selectedCols', $selectedColumns);
 
         if (!in_array($format, ['csv', 'xlsx'])) {

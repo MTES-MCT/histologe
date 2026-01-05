@@ -45,7 +45,7 @@ class SignalementFileController extends AbstractController
         }
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
-        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
+        if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
             return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
         $fileList = $signalementFileProcessor->process($files);
@@ -75,18 +75,18 @@ class SignalementFileController extends AbstractController
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['response' => 'Requête incorrecte'], Response::HTTP_BAD_REQUEST);
         }
-        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), (string) $request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             return $this->json(['response' => 'Token CSRF invalide, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
         }
-        $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
+        $file = $fileRepository->findOneBy(['id' => $request->request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
         if (null === $file) {
             return $this->json(['response' => 'Document introuvable'], Response::HTTP_BAD_REQUEST);
         }
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
-        $documentType = DocumentType::tryFrom($request->get('documentType'));
-        if ($request->get('documentType') && isset($infoDesordres['criteres'][$request->get('documentType')])) {
+        $documentType = DocumentType::tryFrom($request->request->get('documentType'));
+        if ($request->request->get('documentType') && isset($infoDesordres['criteres'][$request->request->get('documentType')])) {
             $file->setDocumentType(DocumentType::PHOTO_SITUATION);
-            $file->setDesordreSlug($request->get('documentType'));
+            $file->setDesordreSlug($request->request->get('documentType'));
         } elseif (null === $documentType || !isset(DocumentType::getOrderedSituationList()[$documentType->name])) {
             return $this->json(['response' => 'Type de document invalide'], Response::HTTP_BAD_REQUEST);
         } else {
@@ -113,7 +113,7 @@ class SignalementFileController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $file = $fileRepository->findOneBy(['id' => $request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
+        $file = $fileRepository->findOneBy(['id' => $request->request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
         if (!$file) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
         }
@@ -123,7 +123,7 @@ class SignalementFileController extends AbstractController
         $entityManager->remove($file);
         $entityManager->flush();
 
-        return $this->json(['success' => true, 'fileId' => $request->get('file_id')]);
+        return $this->json(['success' => true, 'fileId' => $request->request->get('file_id')]);
     }
 
     /**
@@ -143,13 +143,13 @@ class SignalementFileController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
 
-        $fileId = $request->get('file_id');
+        $fileId = $request->request->get('file_id');
         $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
         $this->denyAccessUnlessGranted(FileVoter::FILE_FRONT_DELETE, $file);
 
         if (null === $file) {
             $this->addFlash('error', 'Ce fichier n\'existe plus');
-        } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->get('_token'))) {
+        } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $filename = $file->getFilename();
             if ($uploadHandlerService->deleteFile($file)) {
                 $description = $file->isTypeDocument() ? 'Document supprimé ' : 'Photo supprimée ';

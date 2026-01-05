@@ -545,7 +545,7 @@ class PartnerController extends AbstractController
     #[Route('/{id}/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
     public function transferUser(Request $request, Partner $fromPartner, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): JsonResponse
     {
-        $data = $request->get('user_transfer');
+        $data = $request->request->get('user_transfer');
         if (!$this->isCsrfTokenValid('partner_user_transfer', (string) $request->request->get('_token'))) {
             $this->addFlash('error', '');
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];

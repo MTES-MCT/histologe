@@ -115,7 +115,7 @@ class SignalementActionController extends AbstractController
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
-        if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), (string) $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_validation_response_'.$signalement->getId(), (string) $request->query->get('_token'))) {
             $signalement->setValidatedAt(new \DateTimeImmutable());
             $signalement->setStatut(SignalementStatus::ACTIVE);
             $subscriptionCreated = false;
@@ -249,9 +249,9 @@ class SignalementActionController extends AbstractController
         SuiviRepository $suiviRepository,
         ManagerRegistry $doctrine,
     ): JsonResponse {
-        $suivi = $suiviRepository->findOneBy(['id' => $request->get('suivi')]);
+        $suivi = $suiviRepository->findOneBy(['id' => $request->request->get('suivi')]);
         $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_DELETE, $suivi);
-        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
             if ($suivi->getCreatedAt() > $limit && $this->editionSuiviEnable) {
                 $doctrine->getManager()->remove($suivi);
@@ -326,7 +326,7 @@ class SignalementActionController extends AbstractController
     ): RedirectResponse|JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), (string) $request->get('_token')) && $response = $request->get('signalement-action')) {
+        if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), (string) $request->query->get('_token')) && $response = $request->query->get('signalement-action')) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
                 $affectationRepository->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
@@ -355,7 +355,7 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
-                isPublic: '1' === $request->get('publicSuivi'),
+                isPublic: '1' === $request->query->get('publicSuivi'),
                 subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', ['title' => 'Réouverture enregistrée',  'Le dossier a bien été rouvert.']);
@@ -373,8 +373,8 @@ class SignalementActionController extends AbstractController
     #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function switchValue(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): RedirectResponse|JsonResponse
     {
-        if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), (string) $request->get('_token'))) {
-            $value = $request->get('value');
+        if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), (string) $request->request->get('_token'))) {
+            $value = $request->request->get('value');
 
             $tag = $entityManager->getRepository(Tag::class)->find((int) $value);
             if ($signalement->getTags()->contains($tag)) {
@@ -403,8 +403,8 @@ class SignalementActionController extends AbstractController
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_NEED_VALIDATION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
-        $rnbId = $request->get('rnbId');
-        $token = $request->get('_token');
+        $rnbId = $request->request->get('rnbId');
+        $token = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
@@ -472,7 +472,7 @@ class SignalementActionController extends AbstractController
         Request $request,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
-        $token = $request->get('_token');
+        $token = $request->query->get('_token');
         if (!$this->isCsrfTokenValid('subscribe', $token)) {
             $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 
@@ -517,7 +517,7 @@ class SignalementActionController extends AbstractController
                 // If partner and affectation exist, check if user is alone in partner for this signalement to avoid unsubscription
                 $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
                 if (\count($subscriptionsInMyPartner) < 2 && !$user->isAloneInPartner($partner)) {
-                    if (null === $request->get('agents_selection')) {
+                    if (null === $request->request->get('agents_selection')) {
                         $this->addFlash('error', 'Vous êtes le seul agent de votre partenaire sur ce dossier. Si vous souhaitez quitter le dossier, vous devez d\'abord transférer le dossier à un autre agent de votre partenaire.');
 
                         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -564,7 +564,7 @@ class SignalementActionController extends AbstractController
             }
         }
 
-        $token = $request->get('_token');
+        $token = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
             $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 
