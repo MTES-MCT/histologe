@@ -92,15 +92,18 @@
                         {% endfor %}
                     </td>
                     <td class="fr-cell--right fr-ws-nowrap">
-                        <a href="{{path('back_club_event_edit', {id: event.id})}}" class="fr-btn fr-icon-edit-line" title="Editer l'événement {{event.name}}">
+                        <a href="{{path('back_config_club_event_edit', {id: event.id})}}" class="fr-btn fr-icon-edit-line" title="Editer l'événement {{event.name}}">
                             Editer l'événement {{ event.name }}
                         </a>
-                        <a href="{{path('back_club_event_copy', {id: event.id})}}" class="fr-btn fr-icon-add-circle-fill" title="Dupliquer l'événement {{event.name}}">
+                        <a href="{{path('back_config_club_event_copy', {id: event.id})}}" class="fr-btn fr-icon-add-circle-fill" title="Dupliquer l'événement {{event.name}}">
                             Dupliquer l'événement {{ event.name }}
                         </a>
-                        <a href="{{path('back_config_club_event_delete', {id: event.id})}}?_token={{ csrf_token('club_event_delete') }}" class="fr-btn fr-btn--secondary fr-icon-delete-line"  title="Supprimer l'événement {{event.name}}">
-                            Supprimer l'événement {{ event.name }}
-                        </a>
+                        <form method="post" class="fr-display-inline-flex" action="{{path('back_config_club_event_delete', {id: event.id})}}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('club_event_delete') }}">
+                            <button type="submit" class="fr-btn fr-btn--secondary fr-icon-delete-line"  title="Supprimer l'événement {{event.name}}">
+                                Supprimer l'événement {{ event.name }}
+                            </button>
+                        </form>
                     </td>
                 </tr>
             {% endfor %}

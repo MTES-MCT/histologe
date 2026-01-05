@@ -5,17 +5,26 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\User;
+use App\Service\ClubEventService;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoader\DossiersDernierActionTabBodyLoader;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class DossiersDernierActionTabBodyLoaderTest extends TestCase
+class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
 {
+    private ClubEventService $clubEventService;
+
+    protected function setUp(): void
+    {
+        $kernel = self::bootKernel();
+        $this->clubEventService = self::getContainer()->get(ClubEventService::class);
+    }
+
     public function testLoadFillsTabBodyWithExpectedData(): void
     {
         /** @var User&MockObject $user */
@@ -65,7 +74,7 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
             ->with($tabQueryParameters)
             ->willReturn($expectedInterconnexion);
 
-        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager);
+        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventService);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
             tabQueryParameters: $tabQueryParameters
@@ -104,7 +113,7 @@ class DossiersDernierActionTabBodyLoaderTest extends TestCase
             ->with($tabQueryParameters)
             ->willReturn($expectedData);
 
-        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager);
+        $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventService);
         $tabBody = new TabBody(
             type: TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS,
             tabQueryParameters: $tabQueryParameters

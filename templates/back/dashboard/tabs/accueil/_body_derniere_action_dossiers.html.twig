@@ -65,13 +65,13 @@
                         } %}
                     {% endif %}
                 {% endif %}
-                {% if nextClubEvent %}
+                {% if items.nextClubEvent %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {
                         icon_path: 'img/picto-dsfr/calendar.svg',
-                        title: nextClubEvent.name,
+                        title: items.nextClubEvent.name,
                         badge_class: 'fr-badge--purple-glycine',
-                        badge_label: nextClubEvent.dateEvent|date('d/m/Y H:i'),
-                        link: nextClubEvent.url,
+                        badge_label: items.nextClubEvent.dateEvent|date('d/m/Y H:i'),
+                        link: items.nextClubEvent.url,
                         blank: true
                     } %}
                 {% else %}

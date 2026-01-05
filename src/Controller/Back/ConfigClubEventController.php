@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/bo/config-club-event')]
+#[Route('/bo/config-club-utilisateur')]
 #[IsGranted('ROLE_ADMIN')]
 final class ConfigClubEventController extends AbstractController
 {
@@ -47,7 +47,7 @@ final class ConfigClubEventController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/add', name: 'back_config_club_event_add', methods: ['GET', 'POST'])]
+    #[Route(path: '/ajouter', name: 'back_config_club_event_add', methods: ['GET', 'POST'])]
     public function add(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -70,8 +70,7 @@ final class ConfigClubEventController extends AbstractController
         ]);
     }
 
-    #[Route('/editer/{id}', name: 'back_club_event_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/editer/{id}', name: 'back_config_club_event_edit', methods: ['GET', 'POST'])]
     public function edit(
         ClubEvent $clubEvent,
         Request $request,
@@ -92,14 +91,14 @@ final class ConfigClubEventController extends AbstractController
         ]);
     }
 
-    #[Route('/supprimer/{id}', name: 'back_config_club_event_delete', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/supprimer/{id}', name: 'back_config_club_event_delete', methods: ['POST'])]
     public function delete(
         ClubEvent $clubEvent,
         Request $request,
         EntityManagerInterface $entityManager,
     ): RedirectResponse {
-        if (!$this->isCsrfTokenValid('club_event_delete', $request->query->get('_token'))) {
+        $token = (string) $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('club_event_delete', $token)) {
             $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
 
             return $this->redirectToRoute('back_config_club_event_index');
@@ -113,8 +112,7 @@ final class ConfigClubEventController extends AbstractController
         return $this->redirectToRoute('back_config_club_event_index');
     }
 
-    #[Route('/copier/{id}', name: 'back_club_event_copy', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/copier/{id}', name: 'back_config_club_event_copy', methods: ['GET'])]
     public function copy(
         ClubEvent $clubEvent,
     ): Response {

@@ -42,7 +42,7 @@ class ClubEventType extends AbstractType
                     return null;
                 }
 
-                return (clone $date)->setTimezone($timezoneProvider->getDateTimezone());
+                return $date->setTimezone($timezoneProvider->getDateTimezone());
             },
             'setter' => function (ClubEvent $clubEvent, ?\DateTimeInterface $date) use ($timezoneProvider): void {
                 if (null === $date) {

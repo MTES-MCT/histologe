@@ -49,7 +49,7 @@ class SearchClubEventType extends AbstractType
             'choice_label' => function ($choice) {
                 return $choice->label();
             },
-            'placeholder' => 'Toute les compétences',
+            'placeholder' => 'Toutes les compétences',
             'required' => false,
             'label' => 'Compétence du partenaire',
         ]);

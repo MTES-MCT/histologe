@@ -7,7 +7,6 @@ namespace App\Controller\Back;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
-use App\Service\ClubEventService;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyLoaderCollection;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -28,7 +27,6 @@ class DashboardTabPanelController extends AbstractController
         string $tabBodyType,
         TabBodyLoaderCollection $tabBodyLoaderCollection,
         #[MapQueryString] TabQueryParameters $tabQueryParameter,
-        ClubEventService $clubEventService,
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -41,7 +39,6 @@ class DashboardTabPanelController extends AbstractController
             'items' => $tab->getData(),
             'count' => $tab->getCount(),
             'filters' => $tab->getFilters(),
-            'nextClubEvent' => $clubEventService->getNextClubEventForUser($user),
         ]);
     }
 

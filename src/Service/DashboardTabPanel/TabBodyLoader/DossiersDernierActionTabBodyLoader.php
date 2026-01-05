@@ -4,6 +4,7 @@ namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
 use App\Entity\User;
 use App\Security\Voter\InjonctionBailleurVoter;
+use App\Service\ClubEventService;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
@@ -13,8 +14,11 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
 {
     protected ?string $tabBodyType = TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS;
 
-    public function __construct(private readonly Security $security, private readonly TabDataManager $tabDataManager)
-    {
+    public function __construct(
+        private readonly Security $security,
+        private readonly TabDataManager $tabDataManager,
+        private readonly ClubEventService $clubEventService,
+    ) {
         parent::__construct($this->security);
     }
 
@@ -41,6 +45,7 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
             $data['data_interconnexion'] = $this->tabDataManager->getInterconnexions($this->tabQueryParameters);
         }
         $data['territory_id'] = $this->tabQueryParameters ? $this->tabQueryParameters->territoireId : null;
+        $data['nextClubEvent'] = $this->clubEventService->getNextClubEventForUser($user);
 
         $tabBody->setData($data);
         $tabBody->setTemplate('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig');
