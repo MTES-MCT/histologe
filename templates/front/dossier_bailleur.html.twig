@@ -21,38 +21,55 @@
 			<div class="signalement-card fr-mb-3w">
 				<div class="fr-grid-row fr-grid-row--gutters">
 					<div class="fr-col-12 fr-col-md-6">
-						Déclarant
-						<br>
-						<span class="info">
-							{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
-						</span>
-					</div>
-					<div class="fr-col-12 fr-col-md-6">
-						Référence du dossier
-						<br>
-						<span class="info">#{{ signalement.referenceInjonction }}</span>
-					</div>
-					<div class="fr-col-12 fr-col-md-6">
-						Votre réponse
-						<br>
-						<span class="info">
-							{{suiviReponse ? suiviReponse.category.labelReponseBailleur : 'Aucune'}}
-						</span>
-					</div>
-					<div class="fr-col-12 fr-col-md-6">
-						{% if suiviReponse %}
-							Réponse donnée le
+						<div class="fr-mb-1w">
+							Déclarant
 							<br>
 							<span class="info">
-								{{ suiviReponse.createdAt|date('d/m/Y') }}
+								{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
 							</span>
-						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
-							Réponse attendue d'ici le
+						</div>
+						<div class="fr-mb-1w">
+							Adresse du logement
 							<br>
 							<span class="info">
-								{{ dateLimit|date('d/m/Y') }}
+								{{ signalement.getAddressCompleteOccupant() }}
+								{% if signalement.complementAdresseOccupant %}
+									<br>
+									{{signalement.complementAdresseOccupant}}
+								{% endif %}
 							</span>
-						{% endif %}
+						</div>
+					</div>
+					<div class="fr-col-12 fr-col-md-6">
+						<div class="fr-mb-1w">
+							Référence du dossier
+							<br>
+							<span class="info">#{{ signalement.referenceInjonction }}</span>
+						</div>
+						
+						<div class="fr-mb-1w">
+							Votre réponse
+							<br>
+							<span class="info">
+								{{suiviReponse ? suiviReponse.category.labelReponseBailleur : 'Aucune'}}
+							</span>
+						</div>
+						
+						<div class="fr-mb-1w">
+							{% if suiviReponse %}
+								Réponse donnée le
+								<br>
+								<span class="info">
+									{{ suiviReponse.createdAt|date('d/m/Y') }}
+								</span>
+							{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+								Réponse attendue d'ici le
+								<br>
+								<span class="info">
+									{{ dateLimit|date('d/m/Y') }}
+								</span>
+							{% endif %}
+						</div>
 					</div>
 				</div>	
 			</div>
@@ -176,17 +193,6 @@
 				{% if signalement.telProprioSecondaire %}
 					<br>
 					{{ signalement.telProprioSecondaireDecoded|phone }}
-				{% endif %}
-
-				<div class="fr-mb-1w fr-mt-2w">
-					<strong>Adresse du logement</strong>
-				</div>
-				{{ signalement.adresseOccupant }}
-				{{ signalement.cpOccupant }}
-				{{ signalement.villeOccupant }}
-				{% if signalement.complementAdresseOccupant %}
-					<br>
-					{{signalement.complementAdresseOccupant}}
 				{% endif %}
 			</div>
 
