@@ -55,12 +55,13 @@
             <th scope="col">Partenaire</th>
             <th scope="col">Territoires</th>
             <th scope="col">Date de création</th>
+            <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
         
         {% set tableBody %}
             {% for affectation in affectations %}
                 <tr class="signalement-row">
-                    <td><a href="{{ path('back_signalement_view', {uuid: affectation.signalement.uuid}) }}">{{ affectation.signalement.reference }}</a></td>
+                    <td>{{ affectation.signalement.reference }}</td>
                     <td>
                         {% if affectation.signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
                             <span class="fr-badge fr-badge--success fr-badge--no-icon">{{ affectation.signalement.statut.label }}</span>
@@ -68,9 +69,20 @@
                             <span class="fr-badge fr-badge--error fr-badge--no-icon">{{ affectation.signalement.statut.label }}</span>
                         {% endif %}
                     </td>
-                    <td><a href="{{ path('back_partner_view', {id: affectation.partner.id}) }}">{{ affectation.partner.nom }}</a></td>
+                    <td>{{ affectation.partner.nom }}</td>
                     <td>{{affectation.signalement.territory.zipAndName}}</td>
                     <td>{{ affectation.createdAt|date('d/m/Y H:i') }}</td>
+                    <td class="fr-text--right fr-ws-nowrap">
+                        <a href="{{ path('back_signalement_view', {uuid: affectation.signalement.uuid}) }}"
+                            class="fr-btn fr-fi-eye-line fr-btn--sm"
+                            title="Voir le signalement #{{ affectation.signalement.reference }}"
+                            ></a>
+                        
+                        <a href="{{ path('back_partner_view', {id: affectation.partner.id}) }}"
+                            class="fr-btn fr-icon-group-line fr-btn--sm"
+                            title="Voir le partenaire {{ affectation.partner.nom }}"
+                            >{{ affectation.partner.nom }}</a>
+                    </td>
                 </tr>
             {% endfor %}
         {% endset %}

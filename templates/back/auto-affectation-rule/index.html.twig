@@ -112,14 +112,20 @@
                         {% endif %}
                     </td>
                     <td class="fr-text--right">
-                        <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_auto_affectation_rule_edit', {'id': autoaffectationrule.id}) }}"></a>
+                        <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_auto_affectation_rule_edit', {'id': autoaffectationrule.id}) }}"
+                            title="Éditer la règle {{autoaffectationrule.id }} sur {{ autoaffectationrule.territory}}"
+                            ></a>
                         {% if autoaffectationrule.status is same as constant('App\\Entity\\AutoAffectationRule::STATUS_ACTIVE') %}
                             <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line fr-mt-3v btn-delete-autoaffectationrule"
-                            id="autoaffectationrule_delete_{{ autoaffectationrule.id }}" aria-controls="fr-modal-autoaffectationrule-delete"
-                            data-fr-opened="false" data-autoaffectationrule-id="{{ autoaffectationrule.id }}" data-autoaffectationrule-description="{{ autoaffectationrule.description }}"></button>
+                                id="autoaffectationrule_delete_{{ autoaffectationrule.id }}" aria-controls="fr-modal-autoaffectationrule-delete"
+                                data-fr-opened="false" data-autoaffectationrule-id="{{ autoaffectationrule.id }}" data-autoaffectationrule-description="{{ autoaffectationrule.description }}"
+                                title="Désactiver la règle {{autoaffectationrule.id }} sur {{ autoaffectationrule.territory}}"
+                                ></button>
                         {% else %}
                             <a href="{{ path('back_auto_affectation_rule_reactive', {'id': autoaffectationrule.id}) }}"
-                                class="fr-btn fr-icon-flashlight-fill fr-btn--sm fr-mt-3v" title="Réactiver la règle {{autoaffectationrule.id}}"></a>
+                                class="fr-btn fr-icon-flashlight-fill fr-btn--sm fr-mt-3v" title="Réactiver la règle {{autoaffectationrule.id}}"
+                                title="Réactiver la règle {{autoaffectationrule.id }} sur {{ autoaffectationrule.territory}}"
+                                ></a>
                         {% endif %}
                     </td>
                 </tr>

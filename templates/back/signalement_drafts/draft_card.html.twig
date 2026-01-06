@@ -22,10 +22,18 @@
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--right">
                     <div class="fr-display-inline-flex">
-                        <a href="#" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-delete-line fr-mx-1w" id="drafts_delete_{{ signalement.id }}" aria-controls="fr-modal-draft-delete-{{ signalement.id }}" data-fr-opened="false" data-draftdate="{{ signalement.createdAt|date('d/m/Y') }}" data-draftid="{{ signalement.id }}">
+                        <a href="#" 
+                            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-delete-line fr-mx-1w"
+                            id="drafts_delete_{{ signalement.id }}"
+                            title="Supprimer le brouillon du {{ signalement.createdAt|date('d/m/Y') }}"
+                            aria-controls="fr-modal-draft-delete-{{ signalement.id }}" data-fr-opened="false" data-draftdate="{{ signalement.createdAt|date('d/m/Y') }}" data-draftid="{{ signalement.id }}"
+                            >
                             Supprimer le brouillon
                         </a>
-                        <a href="{{ path('back_signalement_edit_draft', { 'uuid': signalement.uuid }) }}" class="fr-btn fr-btn--icon-right fr-icon-arrow-right-line fr-mx-1w">
+                        <a href="{{ path('back_signalement_edit_draft', { 'uuid': signalement.uuid }) }}"
+                            class="fr-btn fr-btn--icon-right fr-icon-arrow-right-line fr-mx-1w"
+                            title="Terminer le brouillon de signalement du {{ signalement.createdAt|date('d/m/Y') }}"
+                            >
                             Terminer le signalement
                         </a>
                     </div>

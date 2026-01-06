@@ -154,12 +154,12 @@
                     </td>
                     <td class="fr-text--right">
                         {% if user.getPartners|length %}
-                            <a href="#" class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
+                            <button class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
                                 aria-controls="fr-modal-user-edit"
                                 data-fr-opened="false"
                                 data-refresh-url="{{ path('back_partner_user_edit',{partner:user.partners.first.id, user:user.id}) }}?from=users"
-                                >
-                            </a>
+                                title="Editer l'utilisateur {{ user.nomComplet(true) }}"
+                                ></button>
                         {% endif %}
                     </td>
                 </tr>

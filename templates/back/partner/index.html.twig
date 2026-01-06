@@ -150,10 +150,14 @@
                     </td>
                     <td class="fr-text--right fr-ws-nowrap">
                         <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
-                        class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>
-                        <a href="#" class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm btn-delete-partner"
+                            class="fr-btn fr-fi-arrow-right-line fr-btn--sm"
+                            title="Voir le partenaire {{ partner.nom }}"
+                            ></a>
+                        <button class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm btn-delete-partner"
                             id="partners_delete_{{ partner.id }}" aria-controls="fr-modal-partner-delete"
-                            data-fr-opened="false" data-partnername="{{ partner.nom }}" data-partnerid="{{ partner.id }}"></a>
+                            title="Supprimer le partenaire {{ partner.nom }}"
+                            data-fr-opened="false" data-partnername="{{ partner.nom }}" data-partnerid="{{ partner.id }}"
+                            ></button>
                     </td>
                 </tr>
             {% else %}
