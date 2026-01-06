@@ -17,8 +17,10 @@ if (document?.querySelector('.fr-breadcrumb.can-fix')) {
 
 document.addEventListener('click', (e) => {
   if (e.target.closest('.open-modal-reinit-affectation')) {
-    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent = e.target.dataset.partnerNom;
-    document.querySelector('form#fr-modal-reinit-affectation-form').action = e.target.dataset.action;
+    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent =
+      e.target.dataset.partnerNom;
+    document.querySelector('form#fr-modal-reinit-affectation-form').action =
+      e.target.dataset.action;
   }
 });
 
@@ -424,12 +426,12 @@ document.addEventListener('click', (event) => {
   }
   const url = btn.dataset.url;
   document.querySelector('#fr-modal-edit-suivi button[type="submit"]').disabled = true;
-  document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = 'Chargement en cours...';
+  document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML =
+    'Chargement en cours...';
   fetch(url).then((response) => {
     if (response.ok) {
       response.json().then((response) => {
-        document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML =
-          response.content;
+        document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = response.content;
         tinymce.remove('#add_suivi_description');
         initTinyMCE('#add_suivi_description');
         window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));

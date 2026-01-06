@@ -3,7 +3,10 @@ const toggle = document?.querySelector('#toggle-hide-technical');
 let expanded = false;
 export function applyFilter() {
   const allSuivis = document?.querySelectorAll('.suivi-item');
-  const items = Array.from(allSuivis).map(item => ({el: item, isAuto: item.classList.contains('suivi-auto')}));
+  const items = Array.from(allSuivis).map((item) => ({
+    el: item,
+    isAuto: item.classList.contains('suivi-auto'),
+  }));
   const btnDisplayAll = document?.querySelector('#btn-display-all-suivis');
   const hideAuto = toggle?.checked === true;
   let shown = 0;

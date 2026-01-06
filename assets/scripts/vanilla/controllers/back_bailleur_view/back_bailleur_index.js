@@ -10,7 +10,8 @@ if (searchTerritoryForm) {
     const button = e.target.closest('.open-modal-bailleur-delete');
     if (!button) return;
 
-    document.getElementById('fr-modal-bailleur-delete-bailleur-name').textContent = button.dataset.name;
+    document.getElementById('fr-modal-bailleur-delete-bailleur-name').textContent =
+      button.dataset.name;
     document.getElementById('bailleur_delete_form').action = button.dataset.url;
   });
   updateLocalStorageWithFormParams('search-bailleur-form');

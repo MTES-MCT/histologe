@@ -84,7 +84,7 @@ formBtn?.addEventListener('click', () => {
     fetch(url, options)
       .then((response) => {
         if (response.ok) {
-          jsonResponseHandler(response)
+          jsonResponseHandler(response);
         }
       })
       .catch((error) => {

@@ -8,8 +8,11 @@ import {
 document.addEventListener('click', (evt) => {
   const target = evt.target.closest('.btn-delete-autoaffectationrule');
   if (target) {
-    document.querySelector('.fr-modal-autoaffectationrule-delete-description').textContent = target.getAttribute('data-autoaffectationrule-description');
-    document.querySelector('#fr-modal-autoaffectationrule-delete-id').value = target.getAttribute('data-autoaffectationrule-id');
+    document.querySelector('.fr-modal-autoaffectationrule-delete-description').textContent =
+      target.getAttribute('data-autoaffectationrule-description');
+    document.querySelector('#fr-modal-autoaffectationrule-delete-id').value = target.getAttribute(
+      'data-autoaffectationrule-id'
+    );
   }
 });
 

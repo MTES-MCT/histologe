@@ -1,40 +1,40 @@
-import { applyFilter } from "../../controllers/back_signalement_view/toggle-suivi-auto";
+import { applyFilter } from '../../controllers/back_signalement_view/toggle-suivi-auto';
 
 const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
 export function jsonResponseHandler(response) {
-    response.json().then((response) => {
-        jsonResponseProcess(response);
-    });
+  response.json().then((response) => {
+    jsonResponseProcess(response);
+  });
 }
 
 export function jsonResponseProcess(response) {
   if (response.redirect) {
     window.location.href = response.url;
     window.location.reload();
-  } else if(response.stayOnPage){
-    if(response.flashMessages){
+  } else if (response.stayOnPage) {
+    if (response.flashMessages) {
       response.flashMessages.forEach((flashMessage) => {
         addFlashMessage(flashMessage);
       });
     }
-    if(response.htmlTargetContents){
+    if (response.htmlTargetContents) {
       response.htmlTargetContents.forEach((htmlTargetContent) => {
         const targetElement = document.querySelector(htmlTargetContent.target);
-        if(targetElement){
+        if (targetElement) {
           targetElement.innerHTML = htmlTargetContent.content;
         }
       });
     }
-    if(response.closeModal){
+    if (response.closeModal) {
       const openModalElement = document.querySelector('.fr-modal--opened');
-      if(openModalElement){
+      if (openModalElement) {
         dsfr(openModalElement).modal.conceal();
       }
     }
-    if(response.functions){
+    if (response.functions) {
       response.functions.forEach((fn) => {
-        switch(fn.name){
+        switch (fn.name) {
           case 'applyFilter':
             applyFilter();
             break;
@@ -48,10 +48,10 @@ export function jsonResponseProcess(response) {
 }
 
 export function addFlashMessage(flashMessage) {
-    const divElement = document.createElement('div');
-    divElement.classList.add('fr-notice', `fr-notice--${flashMessage.type}`);
-    divElement.setAttribute('role', 'alert');
-    divElement.innerHTML = `
+  const divElement = document.createElement('div');
+  divElement.classList.add('fr-notice', `fr-notice--${flashMessage.type}`);
+  divElement.setAttribute('role', 'alert');
+  divElement.innerHTML = `
       <div class="fr-container">
           <div class="fr-notice__body">
               <p>
@@ -62,7 +62,7 @@ export function addFlashMessage(flashMessage) {
           </div>
       </div>
     `;
-    flashMessagesContainer.appendChild(divElement);
+  flashMessagesContainer.appendChild(divElement);
 }
 
 function sanitizeMessage(message) {
@@ -70,9 +70,9 @@ function sanitizeMessage(message) {
   const div = document.createElement('div');
   div.textContent = message;
   let sanitized = div.innerHTML;
-  
+
   // Réautorise uniquement les balises <br> et <br/>
   sanitized = sanitized.replace(/&lt;br\s*\/?&gt;/gi, '<br>');
-  
+
   return sanitized;
 }

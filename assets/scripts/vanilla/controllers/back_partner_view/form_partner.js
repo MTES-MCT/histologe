@@ -1,15 +1,10 @@
-import {loadWindowWithLocalStorage, updateLocalStorageWithPaginationParams, updateLocalStorageOnEvent} from '../../services/ui/list_filter_helper';
+import {
+  loadWindowWithLocalStorage,
+  updateLocalStorageWithPaginationParams,
+  updateLocalStorageOnEvent,
+} from '../../services/ui/list_filter_helper';
 import { jsonResponseProcess } from '../../services/component/component_json_response_handler';
 
-function histoUpdateSubmitButton(elementName, elementLabel) {
-  const button = document.querySelector(elementName);
-  if (!button) {
-    console.error(`histoUpdateSubmitButton: élément introuvable pour le sélecteur "${elementName}"`);
-    return;
-  }
-  document.querySelector(elementName).innerHTML = elementLabel;
-  document.querySelector(elementName).disabled = true;
-}
 function histoUpdateFieldsVisibility() {
   const partnerType = document.getElementById('partner_type');
   partnerType.value = partnerType.value.toUpperCase();
@@ -97,7 +92,8 @@ document.addEventListener('click', (evt) => {
   const target = evt.target.closest('.btn-transfer-partner-user');
   if (!target) return;
 
-  document.querySelector('#fr-modal-user-transfer_username').textContent = target.getAttribute('data-username');
+  document.querySelector('#fr-modal-user-transfer_username').textContent =
+    target.getAttribute('data-username');
   histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', target);
 });
 
@@ -106,7 +102,7 @@ document.addEventListener('click', (evt) => {
   if (!target) return;
 
   document.querySelectorAll('.fr-modal-user-delete_username').forEach((userItem) => {
-      userItem.textContent = target.getAttribute('data-username');
+    userItem.textContent = target.getAttribute('data-username');
   });
   document.querySelectorAll('.fr-modal-user-delete_useremail').forEach((userItem) => {
     userItem.textContent = target.getAttribute('data-useremail');
@@ -188,12 +184,12 @@ document.addEventListener('click', (evt) => {
   if (!target) return;
 
   const refreshUrl = target.dataset.refreshUrl;
-    document.querySelector('#fr-modal-user-edit button[type="submit"]').disabled = true;
-    document.querySelector('#fr-modal-user-edit-title').innerHTML = 'Chargement en cours...';
-    document.querySelector('#fr-modal-user-edit-form-container').innerHTML = 'Chargement en cours...';
-    fetch(refreshUrl).then((response) => {
-      updateModaleFromResponse(response, '#fr-modal-user-edit', addEventListenerOnFormUser);
-    });
+  document.querySelector('#fr-modal-user-edit button[type="submit"]').disabled = true;
+  document.querySelector('#fr-modal-user-edit-title').innerHTML = 'Chargement en cours...';
+  document.querySelector('#fr-modal-user-edit-form-container').innerHTML = 'Chargement en cours...';
+  fetch(refreshUrl).then((response) => {
+    updateModaleFromResponse(response, '#fr-modal-user-edit', addEventListenerOnFormUser);
+  });
 });
 
 const modalPartnerUserCreate = document?.querySelector('#fr-modal-user-create');
@@ -236,7 +232,8 @@ function updateModaleFromResponse(response, modalSelector, callback = null) {
       if (response.title && response.content) {
         document.querySelector(modalSelector + '-title').innerHTML = response.title;
         document.querySelector(modalSelector + '-form-container').innerHTML = response.content;
-        document.querySelector(modalSelector + ' button[type="submit"]').innerHTML = response.submitLabel ? response.submitLabel : 'Valider';
+        document.querySelector(modalSelector + ' button[type="submit"]').innerHTML =
+          response.submitLabel ? response.submitLabel : 'Valider';
         attachSubmitFormModal(modalSelector, callback);
         if (typeof callback === 'function') {
           callback();
@@ -245,8 +242,8 @@ function updateModaleFromResponse(response, modalSelector, callback = null) {
           return;
         }
         document.querySelector(modalSelector + ' button[type="submit"]').disabled = false;
-      }else {
-        jsonResponseProcess(response)
+      } else {
+        jsonResponseProcess(response);
       }
     });
   } else {

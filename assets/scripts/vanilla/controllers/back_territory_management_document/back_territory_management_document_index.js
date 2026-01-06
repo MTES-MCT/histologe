@@ -28,7 +28,7 @@ if (searchFilesForm) {
   document.addEventListener('click', (e) => {
     if (e.target.closest('.open-modal-document-view')) {
       const button = e.target.closest('.open-modal-document-view');
-      
+
       document.getElementById('fr-modal-document-view-document-created-at').textContent =
         button.dataset.createdat;
       document.getElementById('fr-modal-document-view-document-created-by').textContent =
@@ -47,10 +47,13 @@ if (searchFilesForm) {
   document.addEventListener('click', (e) => {
     if (e.target.closest('.open-modal-document-delete')) {
       const button = e.target.closest('.open-modal-document-delete');
-      
-      document.getElementById('fr-modal-document-delete-document-title').textContent = button.dataset.title;
-      document.getElementById('fr-modal-document-delete-document-territoire').textContent = button.dataset.territoire;
-      document.getElementById('fr-modal-document-delete-document-title-reminder').textContent = button.dataset.title;
+
+      document.getElementById('fr-modal-document-delete-document-title').textContent =
+        button.dataset.title;
+      document.getElementById('fr-modal-document-delete-document-territoire').textContent =
+        button.dataset.territoire;
+      document.getElementById('fr-modal-document-delete-document-title-reminder').textContent =
+        button.dataset.title;
       document.getElementById('fr-modal-document-delete-form').action = button.dataset.url;
     }
   });

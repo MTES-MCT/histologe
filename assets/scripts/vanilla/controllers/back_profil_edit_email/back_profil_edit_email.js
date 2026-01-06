@@ -28,7 +28,11 @@ function showStepOne() {
   modalCodeInput.classList.add('fr-hidden');
   modalEditEmailTitle.innerText = 'Modifier mon adresse e-mail';
   modalSubmitElement.disabled = false;
-  modalSubmitElement.classList.remove('fr-btn--loading','fr-btn--icon-left','fr-icon-refresh-line');
+  modalSubmitElement.classList.remove(
+    'fr-btn--loading',
+    'fr-btn--icon-left',
+    'fr-icon-refresh-line'
+  );
 }
 
 function showStepTwo() {
@@ -39,7 +43,11 @@ function showStepTwo() {
   modalCodeInput.classList.remove('fr-hidden');
   modalEditEmailTitle.innerText = 'Confirmer mon adresse e-mail';
   modalSubmitElement.disabled = false;
-  modalSubmitElement.classList.remove('fr-btn--loading','fr-btn--icon-left','fr-icon-refresh-line');
+  modalSubmitElement.classList.remove(
+    'fr-btn--loading',
+    'fr-btn--icon-left',
+    'fr-icon-refresh-line'
+  );
 }
 
 async function submitEditEmail(formElement) {
@@ -98,7 +106,11 @@ async function submitEditEmail(formElement) {
         }
       }
       modalSubmitElement.disabled = false;
-      modalSubmitElement.classList.remove('fr-btn--loading','fr-btn--icon-left','fr-icon-refresh-line');
+      modalSubmitElement.classList.remove(
+        'fr-btn--loading',
+        'fr-btn--icon-left',
+        'fr-icon-refresh-line'
+      );
     } else {
       const responseData = await response.json();
       alert(responseData.message);

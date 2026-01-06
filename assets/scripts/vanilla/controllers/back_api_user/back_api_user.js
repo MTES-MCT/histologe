@@ -2,7 +2,8 @@ document.addEventListener('click', (event) => {
   const btn = event.target.closest('.btn-delete-user-api-permission');
   if (btn) {
     document.querySelector('#user_api_permission_delete_form').action = btn.dataset.url;
-    document.querySelector('#fr-modal-user-api-permission-delete-description').innerHTML = btn.dataset.description;
+    document.querySelector('#fr-modal-user-api-permission-delete-description').innerHTML =
+      btn.dataset.description;
   }
 });
 
