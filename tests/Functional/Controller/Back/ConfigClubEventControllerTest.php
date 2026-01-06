@@ -29,6 +29,27 @@ class ConfigClubEventControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2', '6 événements trouvés');
     }
 
+    public function testIndexForUnauthorizedUser(): void
+    {
+        $client = static::createClient();
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-territoire-30@signal-logement.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $route = $router->generate('back_config_club_event_index');
+        $client->request('GET', $route);
+
+        $this->assertResponseStatusCodeSame(403);
+        $response = $client->getResponse();
+        $contentType = $response->headers->get('Content-Type');
+        $this->assertStringContainsString('text/html', $contentType);
+        $this->assertStringContainsString('Access Denied. The user doesn\'t have ROLE_ADMIN.', (string) $response->getContent());
+    }
+
     public function testEdit(): void
     {
         $client = static::createClient();
