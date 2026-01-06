@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Service\MessageHelper;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Tests\SessionHelper;
 use Faker\Factory;
@@ -516,7 +517,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertArrayHasKey('stayOnPage', $response);
         $this->assertArrayHasKey('flashMessages', $response);
         $this->assertTrue($response['stayOnPage']);
-        $msgFlash = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+        $msgFlash = MessageHelper::ERROR_MESSAGE_CSRF;
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
@@ -621,7 +622,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertArrayHasKey('stayOnPage', $response);
         $this->assertArrayHasKey('flashMessages', $response);
         $this->assertTrue($response['stayOnPage']);
-        $msgFlash = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+        $msgFlash = MessageHelper::ERROR_MESSAGE_CSRF;
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 

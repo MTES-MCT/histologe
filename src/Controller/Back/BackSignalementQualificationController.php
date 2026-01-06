@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Manager\SignalementManager;
 use App\Security\Voter\SignalementVoter;
+use App\Service\MessageHelper;
 use App\Service\Signalement\SignalementQualificationNde;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,7 +44,7 @@ class BackSignalementQualificationController extends AbstractController
                 $qualificationNDERequest
             );
         } else {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }

@@ -8,6 +8,7 @@ use App\Form\SearchBailleurType;
 use App\Repository\BailleurRepository;
 use App\Service\FormHelper;
 use App\Service\ListFilters\SearchBailleur;
+use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -88,7 +89,7 @@ class BackBailleurController extends AbstractController
         EntityManagerInterface $em,
     ): JsonResponse {
         if (!$this->isCsrfTokenValid('bailleur_delete', $request->query->get('_token'))) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }

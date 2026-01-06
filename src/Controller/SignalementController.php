@@ -39,6 +39,7 @@ use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\MessageHelper;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\PostalCodeHomeChecker;
@@ -534,7 +535,7 @@ class SignalementController extends AbstractController
         if ($request->isMethod('POST')) {
             $token = (string) $request->request->get('_token');
             if (!$this->isCsrfTokenValid('suivi_signalement_tiers_cgu_accept'.$signalement->getCodeSuivi(), $token)) {
-                $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+                $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
             } elseif (!$request->request->get('accept')) {
                 $this->addFlash('error', 'Vous devez accepter les CGU pour accéder au dossier.');
             } else {

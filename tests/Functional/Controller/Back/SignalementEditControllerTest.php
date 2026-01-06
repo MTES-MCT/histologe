@@ -7,6 +7,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\Gouv\Ban\Response\Address;
+use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -140,7 +141,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertArrayHasKey('stayOnPage', $response);
         $this->assertArrayHasKey('flashMessages', $response);
         $this->assertTrue($response['stayOnPage']);
-        $msgFlash = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+        $msgFlash = MessageHelper::ERROR_MESSAGE_CSRF;
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 

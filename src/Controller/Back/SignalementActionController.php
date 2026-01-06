@@ -27,6 +27,7 @@ use App\Security\Voter\SuiviVoter;
 use App\Service\FormHelper;
 use App\Service\Gouv\Rnb\RnbService;
 use App\Service\HtmlTargetContentsService;
+use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -267,7 +268,7 @@ class SignalementActionController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
         }
-        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
@@ -405,7 +406,7 @@ class SignalementActionController extends AbstractController
         $rnbId = $request->get('rnbId');
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
@@ -473,7 +474,7 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('subscribe', $token)) {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+            $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
@@ -565,7 +566,7 @@ class SignalementActionController extends AbstractController
 
         $token = $request->get('_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+            $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }

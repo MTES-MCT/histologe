@@ -6,17 +6,12 @@ histoNotificationsContainer?.addEventListener('change', (event) => {
     return;
   }
 
-  const idNotification = element.getAttribute('data-notification-id');
-  if (element.checked) {
-    if (!histoNotificationSelected.includes(idNotification)) {
-      histoNotificationSelected.push(idNotification);
-    }
-  } else {
-    const indexNotification = histoNotificationSelected.indexOf(idNotification);
-    if (indexNotification > -1) {
-      histoNotificationSelected.splice(indexNotification, 1);
-    }
-  }
+  histoNotificationSelected.length = 0;
+  document.querySelectorAll('.check-notification:checked').forEach((checkedElement) => {
+    const checkedIdNotification = checkedElement.getAttribute('data-notification-id');
+    histoNotificationSelected.push(checkedIdNotification);
+  });
+
   histoRefreshNotificationButtons();
 });
 

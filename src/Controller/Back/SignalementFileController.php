@@ -16,6 +16,7 @@ use App\Repository\InterventionRepository;
 use App\Security\Voter\FileVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\ImageManipulationHandler;
+use App\Service\MessageHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -176,7 +177,7 @@ class SignalementFileController extends AbstractController
         $this->denyAccessUnlessGranted(FileVoter::FILE_DELETE, $file);
         $fragment = in_array($request->get('hash_src'), ['activite', 'situation']) ? $request->get('hash_src') : 'documents';
         if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->get('_token'))) {
-            $message = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+            $message = MessageHelper::ERROR_MESSAGE_CSRF;
             if ('1' === $request->get('is_draft')) {
                 return $this->json(['message' => $message], Response::HTTP_BAD_REQUEST);
             }
@@ -323,7 +324,7 @@ class SignalementFileController extends AbstractController
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
         }
         if (!$this->isCsrfTokenValid('save_file_rotation', (string) $request->get('_token'))) {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+            $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
         }

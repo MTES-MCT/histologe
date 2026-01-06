@@ -20,6 +20,7 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
+use App\Service\MessageHelper;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -126,7 +127,7 @@ class AffectationController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
-        $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+        $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
     }
@@ -156,7 +157,7 @@ class AffectationController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
 
-        $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+        $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
     }
@@ -179,7 +180,7 @@ class AffectationController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
-        $message = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+        $message = MessageHelper::ERROR_MESSAGE_CSRF;
 
         $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => $message];
 

@@ -12,6 +12,7 @@ use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Service\FormHelper;
 use App\Service\ListFilters\SearchUser;
+use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -138,7 +139,7 @@ final class UserApiPermissionController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
-        $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+        $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
         $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Une erreur est survenue lors de la suppression, veuillez réessayer.'];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);

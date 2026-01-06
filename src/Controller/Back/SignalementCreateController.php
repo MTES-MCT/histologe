@@ -42,6 +42,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/signalement')]
 class SignalementCreateController extends AbstractController
 {
+    private const SUCCESS_MESSAGE_TITLE_DRAFT_SAVED = 'Brouillon enregistré';
+    private const SUCCESS_MESSAGE_DRAFT_SAVED = 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !';
+
     public function __construct(
         private readonly SignalementBoManager $signalementBoManager,
         private readonly SignalementManager $signalementManager,
@@ -247,7 +250,7 @@ class SignalementCreateController extends AbstractController
                 $this->signalementManager->save($signalement);
                 $entityManager->commit();
                 if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                    $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
+                    $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                     $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
                 } else {
                     $url = $isCreation ? $this->generateUrl('back_signalement_edit_draft', ['uuid' => $signalement->getUuid(), '_fragment' => 'logement'], UrlGeneratorInterface::ABSOLUTE_URL) : '';
@@ -279,7 +282,7 @@ class SignalementCreateController extends AbstractController
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
+                $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $url = '';
@@ -310,7 +313,7 @@ class SignalementCreateController extends AbstractController
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
+                $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $url = '';
@@ -351,7 +354,7 @@ class SignalementCreateController extends AbstractController
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
+                $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $url = '';
@@ -384,7 +387,7 @@ class SignalementCreateController extends AbstractController
             $this->signalementManager->save($signalement);
             $entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
-                $this->addFlash('success', ['title' => 'Brouillon enregistré', 'message' => 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !']);
+                $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
             } else {
                 $url = '';

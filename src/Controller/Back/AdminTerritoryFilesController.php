@@ -13,6 +13,7 @@ use App\Security\Voter\FileVoter;
 use App\Service\FormHelper;
 use App\Service\ImageManipulationHandler;
 use App\Service\ListFilters\SearchTerritoryFiles;
+use App\Service\MessageHelper;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -228,7 +229,7 @@ class AdminTerritoryFilesController extends AbstractController
         $closeModal = false;
         $htmlTargetContents = [];
         if (!$this->isCsrfTokenValid('document_delete', $request->query->get('_token'))) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
         } else {
             $uploadHandlerService->deleteFile($file);
             $closeModal = true;

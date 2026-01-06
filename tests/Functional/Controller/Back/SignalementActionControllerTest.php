@@ -14,6 +14,7 @@ use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Gouv\Rnb\Response\RnbBuilding;
 use App\Service\Gouv\Rnb\RnbService;
+use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -644,7 +645,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('error'));
-        $this->assertEquals('Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.', $flashBag->get('error')[0]);
+        $this->assertEquals(MessageHelper::ERROR_MESSAGE_CSRF, $flashBag->get('error')[0]);
 
         $sub = $this->userSignalementSubscriptionRepository->findOneBy([
             'user' => $user,

@@ -6,8 +6,8 @@
     <th scope="col">Notif. e-mails</th>
     <th scope="col">Statut</th>
     <th scope="col">Rôle</th>
-    {% if is_granted('ASSIGN_PERMISSION_AFFECTATION', partner) %}
-    <th scope="col">Droits d'affectation</th>
+    {% if is_granted('PARTNER_ASSIGN_PERMISSION_AFFECTATION', partner) %}
+        <th scope="col">Droits d'affectation</th>
     {% endif %}
     <th scope="col">Problème d'adresse e-mail</th>
     <th scope="col" class="fr-text--right">Actions</th>
@@ -42,12 +42,13 @@
                         {% set classe = 'fr-badge--blue-ecume' %}
                         {% set label = 'ARCHIVE' %}
                     {% endif %}
-                    <span class="fr-badge {{ classe }} fr-mb-1v">{{ label }}</span></td>
+                    <span class="fr-badge {{ classe }} fr-mb-1v">{{ label }}</span>
+                </td>
                 <td>
                     {{ user.roleLabel() }}
                 </td>
                 {% if is_granted('PARTNER_ASSIGN_PERMISSION_AFFECTATION', partner) %}
-                <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
+                    <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
                 {% endif %}
                 <td>
                     {% if user.email and emailsWithAlert[user.email]|default(false) %}

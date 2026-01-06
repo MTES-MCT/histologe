@@ -42,6 +42,7 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
+use App\Service\MessageHelper;
 use App\Service\NotificationAndMailSender;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
@@ -392,7 +393,7 @@ class SignalementController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         if (!$this->isCsrfTokenValid('signalement_save_tags', (string) $request->request->get('_token'))) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }

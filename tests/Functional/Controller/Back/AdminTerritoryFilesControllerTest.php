@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Entity\Enum\DocumentType;
 use App\Repository\FileRepository;
 use App\Repository\UserRepository;
+use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -146,7 +147,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $this->assertArrayHasKey('htmlTargetContents', $response);
         $this->assertTrue($response['stayOnPage']);
         $this->assertFalse($response['closeModal']);
-        $msgFlash = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.';
+        $msgFlash = MessageHelper::ERROR_MESSAGE_CSRF;
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 }

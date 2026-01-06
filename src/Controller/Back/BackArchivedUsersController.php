@@ -101,7 +101,7 @@ class BackArchivedUsersController extends AbstractController
             $entityManager->persist($userPartner);
 
             $entityManager->flush();
-            $this->addFlash('success', ['title' => 'Compte réactivé', 'message' => 'Le compte a bien été réactivé']);
+            $this->addFlash('success', ['title' => 'Compte réactivé', 'message' => 'Le compte a bien été réactivé.']);
 
             $notificationMailerRegistry->send(
                 new NotificationMail(

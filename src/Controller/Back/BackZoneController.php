@@ -11,6 +11,7 @@ use App\Security\Voter\ZoneVoter;
 use App\Service\FormHelper;
 use App\Service\Import\CsvParser;
 use App\Service\ListFilters\SearchZone;
+use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -163,7 +164,7 @@ class BackZoneController extends AbstractController
     {
         $this->denyAccessUnlessGranted(ZoneVoter::ZONE_MANAGE, $zone);
         if (!$this->isCsrfTokenValid('zone_delete', $request->query->get('_token'))) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }

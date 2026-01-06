@@ -8,6 +8,7 @@ use App\Form\SearchAutoAffectationRuleType;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Service\FormHelper;
 use App\Service\ListFilters\SearchAutoAffectationRule;
+use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -85,7 +86,7 @@ class AutoAffectationRuleController extends AbstractController
         $ruleId = $request->request->get('autoaffectationrule_id');
         $flashMessages = [];
         if (!$this->isCsrfTokenValid('autoaffectationrule_delete', (string) $request->request->get('_token'))) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'];
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
         }

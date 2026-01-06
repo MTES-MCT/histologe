@@ -12,6 +12,7 @@ use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\FileVoter;
 use App\Security\Voter\SignalementFoVoter;
+use App\Service\MessageHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -168,7 +169,7 @@ class SignalementFileController extends AbstractController
                 $this->addFlash('error', ['title' => 'Erreur de suppression', 'message' => 'Le fichier n\'a pas été supprimé.']);
             }
         } else {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+            $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
         }
 
         return $this->redirectToRoute('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
