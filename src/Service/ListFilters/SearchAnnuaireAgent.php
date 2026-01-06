@@ -11,7 +11,9 @@ use Doctrine\Common\Collections\Collection;
 
 class SearchAnnuaireAgent
 {
-    use SearchQueryTrait;
+    use SearchQueryTrait {
+        getUrlParams as getUrlParamsBase;
+    }
     private User $user;
     private ?string $queryUser = null;
     private ?Territory $territory = null;
@@ -77,5 +79,42 @@ class SearchAnnuaireAgent
     public function setOrderType(?string $orderType): void
     {
         $this->orderType = $orderType;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getUrlParams(): array
+    {
+        $params = $this->getUrlParamsBase();
+        if (isset($params['territory']) && !$this->getUser()->isSuperAdmin()) {
+            unset($params['territory']);
+        }
+
+        return $params;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getFiltersToText(): array
+    {
+        $filters = [];
+        if ($this->queryUser) {
+            $filters['Recherche'] = $this->queryUser;
+        }
+        if ($this->territory && $this->user->isSuperAdmin()) {
+            $filters['Territoire'] = $this->territory->getZipAndName();
+        }
+        if ($this->partners->count()) {
+            $label = '';
+            foreach ($this->partners as $partner) {
+                $label .= $partner->getNom().', ';
+            }
+            $label = substr($label, 0, -2);
+            $filters['Partenaires'] = $label;
+        }
+
+        return $filters;
     }
 }
