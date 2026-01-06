@@ -14,11 +14,11 @@
 
         <header>
             <div class="fr-grid-row">
-                <div class="fr-col-8 fr-text--left">
+                <div class="fr-col-12 fr-col-lg-8 fr-text--left">
                     <h1>Liste des événements</h1>
                 </div>
-                <div class="fr-col-4 fr-text--right">
-                    <a href="{{ path('back_config_club_event_add') }}" class="fr-btn fr-btn--icon-left fr-icon-add-line" title="Ajouter un événement">Ajouter un événement</a>
+                <div class="fr-col-12 fr-col-lg-4 fr-text--md-right">
+                    <a href="{{ path('back_config_club_event_add') }}" class="fr-btn fr-btn--icon-left fr-icon-add-line fr-btn--block fr-btn--md-inline" title="Ajouter un événement">Ajouter un événement</a>
                 </div>
             </div>
         </header>
@@ -50,7 +50,7 @@
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(clubEvents|length, 'événement trouvé', 'événements trouvés') }}</h2>
     </section>
 
-    <section class="fr-col-3 fr-pt-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
     {{ form_end(form) }}
