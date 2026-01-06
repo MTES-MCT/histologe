@@ -4,21 +4,27 @@ namespace App\Controller;
 
 use App\Dto\ReponseInjonctionBailleur;
 use App\Dto\StopProcedure;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Form\CoordonneesBailleurType;
 use App\Form\ReponseInjonctionBailleurType;
 use App\Form\StopProcedureType;
+use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Security\User\SignalementBailleur;
+use App\Service\Files\ImageVariantProvider;
+use App\Service\InjonctionBailleur\EngagementTravauxBailleurGenerator;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/dossier-bailleur')]
@@ -32,6 +38,7 @@ class SuiviBailleurController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         InjonctionBailleurService $injonctionBailleurService,
         EntityManagerInterface $entityManager,
+        FileRepository $fileRepository,
         LoggerInterface $logger,
     ): Response {
         /**
@@ -44,6 +51,7 @@ class SuiviBailleurController extends AbstractController
         $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
         $suiviBasculeProcedure = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR]);
 
+        $engagementTravauxPdf = null;
         $form = null;
         $formStopProcedure = null;
         if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
@@ -61,6 +69,7 @@ class SuiviBailleurController extends AbstractController
                     }
                 }
                 if (in_array($suiviReponse->getCategory(), [SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI, SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE], true)) {
+                    $engagementTravauxPdf = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
                     $stopProcedure = new StopProcedure();
                     $stopProcedure->setSignalement($signalement);
 
@@ -118,6 +127,38 @@ class SuiviBailleurController extends AbstractController
             'dateLimit' => $dateLimit,
             'form' => $form,
             'formStopProcedure' => $formStopProcedure,
+            'engagementTravauxPdf' => $engagementTravauxPdf,
         ]);
+    }
+
+    #[Route('/engagement-travaux', name: 'front_engagement_travaux_bailleur', methods: ['GET'])]
+    public function engagementTravauxBailleur(
+        SignalementRepository $signalementRepository,
+        FileRepository $fileRepository,
+        ImageVariantProvider $imageVariantProvider,
+        EngagementTravauxBailleurGenerator $engagementTravauxBailleurGenerator,
+    ): Response {
+        /**
+         * @var SignalementBailleur $user
+         */
+        $user = $this->getUser();
+        $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+        $pdf = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
+        if ($pdf) {
+            $file = $imageVariantProvider->getFileVariant($pdf->getFilename());
+
+            return (new BinaryFileResponse($file))->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE);
+        }
+
+        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+            throw $this->createNotFoundException();
+        }
+        $pdfContent = $engagementTravauxBailleurGenerator->generate($signalement);
+
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="engagement-travaux-'.$signalement->getReferenceInjonction().'.pdf"');
+
+        return $response;
     }
 }

@@ -1,0 +1,70 @@
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <div>
+        {{signalement.nomProprio}}{% if signalement.prenomProprio %}{{ signalement.prenomProprio }}{% endif %}
+        {% if signalement.adresseProprio %}
+            <br>
+            {{ signalement.adresseProprio }}
+        {% endif %}
+        {% if signalement.codePostalProprio %}
+            {{ signalement.codePostalProprio }}
+        {% endif %}
+        {% if signalement.villeProprio %}
+            {{ signalement.villeProprio }}
+        {% endif %}
+        {% if signalement.telProprio %}
+            <br>
+            {{ signalement.telProprioDecoded|phone }}
+        {% endif %}
+        {% if signalement.mailProprio %}
+            <br>
+            {{ signalement.mailProprio }}
+        {% endif %}
+    </div>      
+    <div style="text-align: right;">       
+        {{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
+        <br>
+        {{ signalement.adresseOccupant }} {{ signalement.cpOccupant }} {{ signalement.villeOccupant }}
+        {% if signalement.complementAdresseOccupant %}
+            <br>
+            {{signalement.complementAdresseOccupant}}
+        {% endif %}
+        <br>
+        le {{ "now"|date("d/m/Y") }}
+    </div>
+    <div style="margin-top: 50px;">
+        <strong>Objet : Engagement à réaliser des travaux de mise en conformité</strong>
+    </div>
+    <div style="margin-top: 50px;">
+        Madame, Monsieur,
+        <br><br>
+        Locataire du logement situé 
+        <strong>
+            {{ signalement.adresseOccupant }} {{ signalement.cpOccupant }} {{ signalement.villeOccupant }}
+            {% if signalement.complementAdresseOccupant %}
+                {{signalement.complementAdresseOccupant}}
+            {% endif %}
+        </strong>
+        {% if signalement.informationProcedure.infoProcedureBailDate %}
+            , en vertu du bail signé le 
+            <strong>{{ signalement.informationProcedure.infoProcedureBailDate  }}</strong>, 
+        {% endif %}
+        vous m’avez signalé des manquements relatifs aux dispositions en vigueur notamment, les articles L. 1331-22 et suivants du code de la santé publique, 
+        L. 511-22 du code de la construction et de l'habitation, ou encore le décret n°2002-120 du 30 janvier 2002 relatif aux caractéristiques du logement décent 
+        pris pour l'application de l'article 187 de la loi n° 2000-1208 du 13 décembre 2000 relative à la solidarité et au renouvellement urbains.
+        <br><br>
+        Par la présente, je m’engage à réaliser les travaux de mise aux normes du logement, en conformité avec les dispositions des articles sus-mentionnés. 
+        <br><br>
+        Je prends également bonne note, d’une part, de l’appui juridique et financier que peut m’apporter l’Agence départementale d’information sur le logement (ADIL) et, 
+        d’autre part, de la possibilité d’être accompagné dans les travaux par le réseau France Rénov’.
+        <br><br>
+        Dans un délai de <strong>3 semaines</strong>, je vous ferai parvenir les éléments descriptifs des travaux, ainsi que la date du début des travaux et leur durée prévisionnelle. 
+        À l’issue des travaux, je m’engage à vous fournir tous les éléments en ma possession permettant de démontrer la réalisation desdits travaux .
+        <br><br>
+        Veuillez recevoir l’expression de mes sincères salutations.
+    </div>
+    <div style="margin-top: 50px;">
+        Signature électronique par : 
+        <strong>{{signalement.nomProprio}}{% if signalement.prenomProprio %} {{ signalement.prenomProprio }}{% endif %}</strong>
+        le <strong>{{ "now"|date("d/m/Y") }}</strong>
+    </div>
+</div>

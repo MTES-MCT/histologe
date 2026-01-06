@@ -31,6 +31,7 @@ enum DocumentType: string
     case COMM_INFORMATION_AUX_USAGERS = 'COMM_INFORMATION_AUX_USAGERS';
     case ANNUAIRE = 'ANNUAIRE';
     case AUTRE = 'AUTRE';
+    case ENGAGEMENT_TRAVAUX_BAILLEUR = 'ENGAGEMENT_TRAVAUX_BAILLEUR';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -59,6 +60,7 @@ enum DocumentType: string
             self::COMM_INFORMATION_AUX_USAGERS->name => 'Comm / information aux usagers',
             self::ANNUAIRE->name => 'Annuaire',
             self::AUTRE->name => 'Autre',
+            self::ENGAGEMENT_TRAVAUX_BAILLEUR->name => 'Engagement travaux bailleur',
         ];
     }
 
@@ -96,6 +98,7 @@ enum DocumentType: string
             self::BAILLEUR_DEVIS_POUR_TRAVAUX->name => self::BAILLEUR_DEVIS_POUR_TRAVAUX->label(),
             self::FACTURE->name => self::FACTURE->label(),
             self::BAILLEUR_REPONSE_BAILLEUR->name => self::BAILLEUR_REPONSE_BAILLEUR->label(),
+            self::ENGAGEMENT_TRAVAUX_BAILLEUR->name => self::ENGAGEMENT_TRAVAUX_BAILLEUR->label(),
             self::PHOTO_VISITE->name => self::PHOTO_VISITE->label(),
             self::AUTRE_PROCEDURE->name => self::AUTRE_PROCEDURE->label(),
         ];
