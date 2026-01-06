@@ -157,7 +157,7 @@ class SuiviBailleurController extends AbstractController
 
         $response = new Response($pdfContent);
         $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline; filename="engagement-travaux.'.$signalement->getReferenceInjonction().'.pdf"');
+        $response->headers->set('Content-Disposition', 'inline; filename="engagement-travaux-'.$signalement->getReferenceInjonction().'.pdf"');
 
         return $response;
     }
