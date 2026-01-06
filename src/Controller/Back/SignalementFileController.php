@@ -68,7 +68,10 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
     ): Response {
-        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
+        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_EDIT_CLOSED, $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
@@ -105,7 +108,10 @@ class SignalementFileController extends AbstractController
         SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
     ): JsonResponse {
-        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
+        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_EDIT_CLOSED, $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         /** @var FileRepository $fileRepository */
@@ -309,7 +315,9 @@ class SignalementFileController extends AbstractController
         Request $request,
         ImageManipulationHandler $imageManipulationHandler,
     ): Response {
-        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
+        if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_EDIT_CLOSED, $signalement)
+            && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
         $rotate = (int) $request->get('rotate', 0);
