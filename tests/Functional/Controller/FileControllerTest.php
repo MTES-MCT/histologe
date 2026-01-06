@@ -20,11 +20,8 @@ class FileControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        /* @var RouterInterface $router */
         $this->router = self::getContainer()->get(RouterInterface::class);
-        /* @var FileRepository $fileRepository */
         $this->fileRepository = static::getContainer()->get(FileRepository::class);
-        /* @var UrlSignerInterface $urlSigner */
         $this->urlSigner = static::getContainer()->get(UrlSignerInterface::class);
     }
 
@@ -36,7 +33,7 @@ class FileControllerTest extends WebTestCase
 
         $this->client->request('GET', $url);
 
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testShowUnsigned(): void
@@ -46,6 +43,6 @@ class FileControllerTest extends WebTestCase
 
         $this->client->request('GET', $url);
 
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 }

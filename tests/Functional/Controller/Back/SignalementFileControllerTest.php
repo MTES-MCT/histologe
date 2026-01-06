@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementFileControllerTest extends WebTestCase
@@ -36,7 +37,6 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($this->user);
-        /* @var Signalement $signalement */
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
     }
 
@@ -83,12 +83,12 @@ class SignalementFileControllerTest extends WebTestCase
         $route = $this->router->generate('back_signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
 
         $redirectUrl = $this->client->getResponse()->headers->get('Location');
         /** @var Crawler $crawler */
         $crawler = $this->client->request('GET', $redirectUrl);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertStringContainsString(
             'L\'export pdf vous sera envoyé par e-mail',
             $crawler->filter('.fr-alert')->text()

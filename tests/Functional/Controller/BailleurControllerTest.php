@@ -15,7 +15,6 @@ class BailleurControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        /* @var RouterInterface $router */
         $this->router = self::getContainer()->get(RouterInterface::class);
     }
 

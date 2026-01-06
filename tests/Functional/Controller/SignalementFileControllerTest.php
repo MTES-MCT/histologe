@@ -16,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementFileControllerTest extends WebTestCase
@@ -32,10 +33,8 @@ class SignalementFileControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        /* @var Signalement $signalement */
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
         $this->signalementUser = $this->getSignalementUser($this->signalement);
-        /* @var RouterInterface $router */
         $this->router = self::getContainer()->get(RouterInterface::class);
     }
 
@@ -98,7 +97,7 @@ class SignalementFileControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testDeleteFileAccessDeniedSignalement(): void
@@ -143,7 +142,7 @@ class SignalementFileControllerTest extends WebTestCase
             'file_id' => $file->getId(),
         ]);
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
@@ -152,7 +151,7 @@ class SignalementFileControllerTest extends WebTestCase
 
         $redirectUrl = $this->client->getResponse()->headers->get('Location');
         $this->client->request('GET', $redirectUrl);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testGeneratePdfSignalement(): void
@@ -170,12 +169,12 @@ class SignalementFileControllerTest extends WebTestCase
             $route,
         );
 
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
 
         $redirectUrl = $this->client->getResponse()->headers->get('Location');
         /** @var Crawler $crawler */
         $crawler = $this->client->request('GET', $redirectUrl);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertStringContainsString(
             'Le signalement au format PDF vous sera envoyé par e-mail à',
             $crawler->filter('.fr-alert')->text()

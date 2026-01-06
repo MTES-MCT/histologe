@@ -137,7 +137,7 @@ class SignalementFileUploadControllerTest extends WebTestCase
     public function testFileUploadWithBadRequest(string $uuid, int $codeHttpStatus): void
     {
         $this->postRequest($uuid, '', []);
-        $this->assertEquals($codeHttpStatus, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame($codeHttpStatus);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 

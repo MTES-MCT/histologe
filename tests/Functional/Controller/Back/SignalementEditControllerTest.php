@@ -25,11 +25,8 @@ class SignalementEditControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        /* @var UserRepository $userRepository */
         $this->userRepository = static::getContainer()->get(UserRepository::class);
-        /* @var SignalementRepository $signalementRepository */
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        /* @var RouterInterface $router */
         $this->router = static::getContainer()->get(RouterInterface::class);
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -139,7 +136,7 @@ class SignalementEditControllerTest extends WebTestCase
         $payload['_token'] = '1234';
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
-        $this->assertResponseStatusCodeSame(401, (string) $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(401);
     }
 
     /**
@@ -157,7 +154,7 @@ class SignalementEditControllerTest extends WebTestCase
         $payload['_token'] = $this->getCsrfToken($token, $this->signalement->getId());
         $payload[key($payload)] = str_repeat('x', 5000);
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
-        $this->assertResponseStatusCodeSame(400, (string) $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(400);
     }
 
     /**

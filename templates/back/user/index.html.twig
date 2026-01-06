@@ -4,6 +4,7 @@
 
 {% block content %}
     {% include '_partials/_modal_user_edit.html.twig' %}
+    {% include '_partials/_modal_user_disable.html.twig' %}
     <section class="fr-p-5v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
@@ -152,14 +153,24 @@
                             Non
                         {% endif %}
                     </td>
-                    <td class="fr-text--right">
+                    <td class="fr-text--right fr-ws-nowrap">
                         {% if user.getPartners|length %}
-                            <button class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
+                            <button class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user fr-btn--sm"
                                 aria-controls="fr-modal-user-edit"
                                 data-fr-opened="false"
                                 data-refresh-url="{{ path('back_partner_user_edit',{partner:user.partners.first.id, user:user.id}) }}?from=users"
                                 title="Editer l'utilisateur {{ user.nomComplet(true) }}"
                                 ></button>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') and user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE %}
+                            <button 
+                                class="fr-btn fr-icon-rotate-lock-line fr-btn--sm btn-disable-user"
+                                aria-controls="fr-modal-user-disable"
+                                data-fr-opened="false"
+                                data-username="{{ user.nomComplet(true) }}"
+                                data-userid="{{ user.id }}"
+                                title="Désactiver l'utilisateur {{ user.prenom }} {{ user.nom }}">
+                            </button>
                         {% endif %}
                     </td>
                 </tr>

@@ -9,6 +9,7 @@ use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class VisiteCreateControllerTest extends WebTestCase
@@ -63,7 +64,7 @@ class VisiteCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->assertEmailCount($nbMailSent);
 
         if ('visite_confirmed' === $type) {
@@ -107,7 +108,7 @@ class VisiteCreateControllerTest extends WebTestCase
             $this->fail('No intervention found for the signalement');
         }
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $message = json_decode((string) $this->client->getResponse()->getContent(), true)['message'];
         $this->assertStringContainsString($intervention->getUuid(), $message);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -139,7 +140,7 @@ class VisiteCreateControllerTest extends WebTestCase
             $this->fail('No intervention found for the signalement');
         }
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $message = json_decode((string) $this->client->getResponse()->getContent(), true)['message'];
         $this->assertStringContainsString($intervention->getUuid(), $message);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -168,7 +169,7 @@ class VisiteCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $errors = json_decode((string) $this->client->getResponse()->getContent(), true)['errors'];
         $this->assertStringContainsString($errorMessage, $errors[0]['message']);
         $errors = array_map(function ($error) { return $error['property']; }, $errors);
@@ -195,7 +196,7 @@ class VisiteCreateControllerTest extends WebTestCase
             content: (string) json_encode($payload)
         );
 
-        $this->assertEquals(403, $this->client->getResponse()->getStatusCode(), (string) $this->client->getResponse()->getContent());
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN, (string) $this->client->getResponse()->getContent());
         $content = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertStringContainsString('Access Denied', $content['message']);
         $this->assertStringContainsString($errorMessage, $content['message']);
