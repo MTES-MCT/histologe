@@ -28,7 +28,9 @@ function histoRefreshNotificationButtons() {
       'Marquer comme lue(s) (tous)';
     document.querySelector('#delete-notifications-btn').textContent = 'Vider';
   }
-  document.querySelectorAll('#notification-selected-buttons input[name=selected_notifications]')?.forEach((element) => {
+  document
+    .querySelectorAll('#notification-selected-buttons input[name=selected_notifications]')
+    ?.forEach((element) => {
       element.value = histoNotificationSelected.join(',');
-  });
+    });
 }

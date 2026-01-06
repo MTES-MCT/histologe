@@ -51,29 +51,29 @@ export function jsonResponseProcess(response) {
   if (response.redirect) {
     window.location.href = response.url;
     window.location.reload();
-  } else if(response.stayOnPage){
-    if(response.flashMessages){
+  } else if (response.stayOnPage) {
+    if (response.flashMessages) {
       response.flashMessages.forEach((flashMessage) => {
         addFlashMessage(flashMessage);
       });
     }
-    if(response.htmlTargetContents){
+    if (response.htmlTargetContents) {
       response.htmlTargetContents.forEach((htmlTargetContent) => {
         const targetElement = document.querySelector(htmlTargetContent.target);
-        if(targetElement){
+        if (targetElement) {
           targetElement.innerHTML = htmlTargetContent.content;
         }
       });
     }
-    if(response.closeModal){
+    if (response.closeModal) {
       const openModalElement = document.querySelector('.fr-modal--opened');
-      if(openModalElement){
+      if (openModalElement) {
         dsfr(openModalElement).modal.conceal();
       }
     }
-    if(response.functions){
+    if (response.functions) {
       response.functions.forEach((fn) => {
-        switch(fn.name){
+        switch (fn.name) {
           case 'applyFilter':
             applyFilter();
             break;
