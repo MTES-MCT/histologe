@@ -74,6 +74,7 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Comptes archivés', route: 'back_archived_users_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Signalement archivés', route: 'back_archived_signalements_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Règles d\'auto-affectation', route: 'back_auto_affectation_rule_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Événements', route: 'back_config_club_event_index', routeParameters: ['isInFuture' => 1], roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Permissions utilisateurs API', route: 'back_api_user_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN));
         $superAdminToolsSubItem

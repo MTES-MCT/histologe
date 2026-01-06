@@ -4,10 +4,9 @@
     { class: 'fr-col-md-2', title: 'Action depuis' }
 ] %}
 
-{% set firstColumnClass = is_granted('ROLE_ADMIN_TERRITORY') ? 'fr-col-md-8 fr-pr-10v' : 'fr-col-md-12' %}
 <section class="fr-mb-5v">
     <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="{{ firstColumnClass }}">
+        <div class="fr-col-md-8 fr-pr-10v">
             <h1 class="fr-mb-3v fr-text-label--blue-france tab-panel-title-with-calendar-icon">Vos dernières actions</h1>
             <hr class="hr--blue-france">
             <div class="fr-container--fluid">
@@ -42,14 +41,16 @@
                 {% endfor %}
             </div>
         </div>
-        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
-            <div class="fr-col-12 fr-col-md-4">
-                {% if is_granted('ROLE_ADMIN') %}
-                    <h2 class="fr-mb-8v">Administrer les territoires</h2>
-                {% else %}
-                    <h2 class="fr-mb-8v">Administrer mon territoire</h2>
-                {% endif %}
-                <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-4">
+            {% if is_granted('ROLE_ADMIN') %}
+                <h2 class="fr-mb-8v">Administrer les territoires</h2>
+            {% elseif is_granted('ROLE_ADMIN_TERRITORY') %}
+                <h2 class="fr-mb-8v">Administrer mon territoire</h2>
+            {% else %}
+                <h2 class="fr-mb-8v">Informations</h2>
+            {% endif %}
+            <div class="fr-grid-row fr-grid-row--gutters">
+                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                     {% set linkInjonction = {} %}
                     {% if is_granted('ROLE_ADMIN') %}
                         {% set linkInjonction = linkInjonction|merge({ territoire: items.territory_id }) %}
@@ -63,6 +64,23 @@
                             link: path('back_injonction_signalement_index', linkInjonction)
                         } %}
                     {% endif %}
+                {% endif %}
+                {% if items.nextClubEvent %}
+                    {% include 'back/dashboard/components/_tuile.html.twig' with {
+                        icon_path: 'img/picto-dsfr/calendar.svg',
+                        title: items.nextClubEvent.name,
+                        badge_class: 'fr-badge--purple-glycine',
+                        badge_label: items.nextClubEvent.dateEvent|date('d/m/Y H:i'),
+                        link: items.nextClubEvent.url,
+                        blank: true
+                    } %}
+                {% else %}
+                    {% include 'back/dashboard/components/_tuile.html.twig' with {
+                        icon_path: 'img/picto-dsfr/calendar.svg', 
+                        title: 'Aucun évènement à venir',
+                    } %}
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {
                         icon_path: 'img/picto-dsfr/warning.svg',
                         title: 'Comptes bientôt archivés',
@@ -104,35 +122,35 @@
                         badge_label: singular_or_plural(items.data_kpi.partenaires_interfaces, ' Partenaire', 'Partenaires'),
                         link: path('back_partner_index', linkSIParams)
                     } %}
-                </div>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <h2>Connexion SI externes</h2>
-                    {% if items.data_interconnexion.LastSyncAt %}
-                        {% set classNotice = items.data_interconnexion.hasErrorsLastDay ? 'warning' : 'info' %}
-                        <div class="fr-notice fr-notice--{{ classNotice }}">
-                            <div class="fr-px-2v">
-                                <div class="fr-notice__body">
-                                    <span class="fr-notice__title">
-                                        {{ items.data_interconnexion.hasErrorsLastDay
-                                        ? 'Une erreur de synchronisation a été détectée le ' ~ items.data_interconnexion.firstErrorLastDayAt|date('d/m/Y H:i')
-                                        : 'Aucune erreur détectée ces dernières 24 heures.' }}
-                                    </span>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="fr-mt-2v">
-                            <p>Dernière synchronisation le {{ items.data_interconnexion.LastSyncAt|date('d/m/Y H:i')  }}</p>
-                            <p class="fr-text--right"><a href="{{ path('back_interconnexion_index', { territory: items.territory_id }) }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">Voir l'historique</a></p>
-                        </div>
-                    {% else %}
-                        <div class="fr-mt-2v">
-                            <p>Pas de synchronisation trouvée depuis 1 an</p>
-                            <p class="fr-text--right"><a href="{{ path('back_interconnexion_index', { territory: items.territory_id }) }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">Voir l'historique</a></p>
-                        </div>
-                    {% endif %}
                 {% endif %}
             </div>
-        {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <h2>Connexion SI externes</h2>
+                {% if items.data_interconnexion.LastSyncAt %}
+                    {% set classNotice = items.data_interconnexion.hasErrorsLastDay ? 'warning' : 'info' %}
+                    <div class="fr-notice fr-notice--{{ classNotice }}">
+                        <div class="fr-px-2v">
+                            <div class="fr-notice__body">
+                                <span class="fr-notice__title">
+                                    {{ items.data_interconnexion.hasErrorsLastDay
+                                    ? 'Une erreur de synchronisation a été détectée le ' ~ items.data_interconnexion.firstErrorLastDayAt|date('d/m/Y H:i')
+                                    : 'Aucune erreur détectée ces dernières 24 heures.' }}
+                                </span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-mt-2v">
+                        <p>Dernière synchronisation le {{ items.data_interconnexion.LastSyncAt|date('d/m/Y H:i')  }}</p>
+                        <p class="fr-text--right"><a href="{{ path('back_interconnexion_index', { territory: items.territory_id }) }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">Voir l'historique</a></p>
+                    </div>
+                {% else %}
+                    <div class="fr-mt-2v">
+                        <p>Pas de synchronisation trouvée depuis 1 an</p>
+                        <p class="fr-text--right"><a href="{{ path('back_interconnexion_index', { territory: items.territory_id }) }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line">Voir l'historique</a></p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
     </div>
 </section>

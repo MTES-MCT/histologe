@@ -1,18 +1,20 @@
 {% set icon_path = icon_path|default('img/picto-dsfr/cuisine.svg') %}
 {% set title = title|default('Titre par défaut') %}
-{% set badge_class = badge_class|default('fr-badge--info') %}
-{% set badge_label = badge_label|default('LABEL') %}
 
 <div class="fr-tile fr-tile--sm fr-tile--horizontal fr-enlarge-link fr-mb-3w fr-w-100">
     <div class="fr-tile__body">
         <div class="fr-tile__content">
-            <div class="fr-tile__start">
-                <p class="fr-badge fr-badge--sm fr-badge--no-icon {{ badge_class }}">{{ badge_label|upper }}</p>
-            </div>
+            {% if badge_class is defined and badge_label is defined %}
+                <div class="fr-tile__start">
+                    <p class="fr-badge fr-badge--sm fr-badge--no-icon {{ badge_class }}">{{ badge_label|upper }}</p>
+                </div>
+            {% endif %}
             <h3 class="fr-tile__title">
-                <a href="{{ link }}">
-                    {{ title }}
-                </a>
+                {% if link is defined %}
+                    <a href="{{ link }}" {% if blank is defined and blank %}target="_blank" {% endif %}>{{ title }}</a>
+                {% else %}
+                    <a aria-disabled="true" role="link">{{ title }}</a>
+                {% endif %}
             </h3>
         </div>
     </div>
