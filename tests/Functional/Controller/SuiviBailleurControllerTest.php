@@ -42,7 +42,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'login_bailleur');
         $crawler = $client->request('GET', $urlDossierBailleur);
 
-        $this->assertStringContainsString('Aucune', $crawler->filter('.signalement-card .info')->eq(2)->text());
+        $this->assertStringContainsString('Aucune', $crawler->filter('.signalement-card .info')->eq(3)->text());
 
         $form = $crawler->filter('form[name="reponse_injonction_bailleur"]')->form();
         $form['reponse_injonction_bailleur[reponse]'] = ReponseInjonctionBailleur::REPONSE_OUI;
@@ -61,7 +61,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $crawler = $client->getCrawler();
 
         $this->assertStringContainsString('Votre réponse a été enregistrée avec succès.', $crawler->filter('.fr-alert.fr-alert--success')->text());
-        $this->assertStringContainsString('Oui', $crawler->filter('.signalement-card .info')->eq(2)->text());
+        $this->assertStringContainsString('Oui', $crawler->filter('.signalement-card .info')->eq(3)->text());
         $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(3)->text());
 
         $signalement = $entityManager->getRepository(Suivi::class)->findBy([
@@ -112,7 +112,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $crawler = $client->getCrawler();
 
         $this->assertStringContainsString('Votre réponse a été enregistrée avec succès.', $crawler->filter('.fr-alert.fr-alert--success')->text());
-        $this->assertStringContainsString('Oui avec aide', $crawler->filter('.signalement-card .info')->eq(2)->text());
+        $this->assertStringContainsString('Oui avec aide', $crawler->filter('.signalement-card .info')->eq(3)->text());
         $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(3)->text());
         $this->assertStringContainsString('Coordonnées manquantes', $crawler->filter('h2')->eq(4)->text());
 
@@ -144,7 +144,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'login_bailleur');
         $crawler = $client->request('GET', $urlDossierBailleur);
 
-        $this->assertStringContainsString('INJ-2363', $crawler->filter('.signalement-card .info')->eq(1)->text());
+        $this->assertStringContainsString('INJ-2363', $crawler->filter('.signalement-card .info')->eq(2)->text());
 
         $form = $crawler->filter('form[name="reponse_injonction_bailleur"]')->form();
         $form['reponse_injonction_bailleur[reponse]'] = ReponseInjonctionBailleur::REPONSE_NON;
@@ -163,7 +163,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $crawler = $client->getCrawler();
 
         $this->assertStringContainsString('Votre réponse a été enregistrée avec succès.', $crawler->filter('.fr-alert.fr-alert--success')->text());
-        $this->assertStringContainsString('Non', $crawler->filter('.signalement-card .info')->eq(2)->text());
+        $this->assertStringContainsString('Non', $crawler->filter('.signalement-card .info')->eq(3)->text());
 
         $suivi = $entityManager->getRepository(Suivi::class)->findBy([
             'signalement' => $signalement->getId(),
