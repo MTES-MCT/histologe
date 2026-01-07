@@ -3,7 +3,7 @@
 {% block title %}Etiquettes du territoire{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-p-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -16,7 +16,7 @@
 
         <header>
             <div class="fr-grid-row">
-                <div class="fr-col-8 fr-text--left">
+                <div class="fr-col-12 fr-col-md-8 fr-text--left">
                     <h1>Gérer les étiquettes du territoire</h1>
                     <p>
                         Les étiquettes peuvent être créées, éditées et supprimées par les responsables territoire uniquement.
@@ -25,8 +25,8 @@
                         filtrer la liste des signalements.
                     </p>
                 </div>
-                <div class="fr-col-4 fr-text--right">
-                    <button class="fr-btn fr-btn--icon-left fr-icon-add-line"
+                <div class="fr-col-12 fr-col-md-4 fr-text--md-right">
+                    <button class="fr-btn fr-btn--icon-left fr-icon-add-line fr-btn--block fr-btn--md-inline"
                         title="Ajouter une étiquette"
                         data-fr-opened="false" aria-controls="fr-modal-etiquette-add"
                         >Ajouter une étiquette</button>
@@ -53,11 +53,11 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-5v">
+    <section class="fr-col-12 fr-py-4v">
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(tags|length, 'étiquette trouvée', 'étiquettes trouvées') }}</h2>
     </section>
     
-    <section class="fr-col-3 fr-pt-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
 
@@ -178,7 +178,7 @@
         </dialog>
     {% endfor %}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             <th scope="col" class="number">ID</th>
             <th scope="col">Etiquette</th>

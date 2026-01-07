@@ -3,7 +3,7 @@
 {% block title %}Signalements en cours d'injonction{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-p-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Liste des signalements en cours d\'injonction',
             'level2Link': '',
@@ -53,17 +53,17 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-5v">
+    <section class="fr-col-12 fr-py-4v">
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement trouvé', 'signalements trouvés') }}</h2>
     </section>
     
-    <section class="fr-col-3 fr-pt-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             {% if is_granted('ROLE_ADMIN') %}
                 <th scope="col">Territoire</th>

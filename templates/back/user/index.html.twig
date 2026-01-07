@@ -67,21 +67,21 @@
         <div class="fr-col-12 fr-col-md-6">
             <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'utilisateur trouvé', 'utilisateurs trouvés') }}</h2>
         </div>
-        <div class="fr-col-12 fr-col-md-6 fr-text--right">
+        <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
             <a 
                 href="{% if users|length > 0 %}{{path('back_user_export', searchUser.urlParams)}}{% else %}#{% endif %}" 
-                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if users|length == 0 %}fr-label--disabled{% endif %}"
+                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if users|length == 0 %}fr-label--disabled{% endif %} fr-btn--block fr-btn--md-inline"
             > Exporter les résultats </a>
         </div>
     </section>
     
-    <section class="fr-col-3 fr-pt-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                 <th scope="col">Territoire</th>

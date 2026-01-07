@@ -4,7 +4,7 @@
 
 {% block content %}
     {% include '_partials/_modal_user_edit.html.twig' %}
-    <section class="fr-p-5v">
+    <section class="fr-p-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -29,15 +29,15 @@
         <div class="fr-col-12 fr-col-md-6">
             <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'utilisateur trouvé', 'utilisateurs trouvés') }}</h2>
         </div>
-        <div class="fr-col-12 fr-col-md-6 fr-text--right">
+        <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
             <a 
                 href="{% if users|length > 0 %}{{path('back_user_export_inactive_accounts')}}{% else %}#{% endif %}" 
-                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if users|length == 0 %}fr-label--disabled{% endif %}"
+                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if users|length == 0 %}fr-label--disabled{% endif %} fr-btn--block fr-btn--md-inline"
             > Exporter les résultats </a>
         </div>
     </section>
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                 <th scope="col">Territoire</th>

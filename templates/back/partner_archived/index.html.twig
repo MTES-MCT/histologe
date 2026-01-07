@@ -13,7 +13,7 @@
         } %}
         <header>
             <div class="fr-grid-row">
-                <div class="fr-col-6 fr-text--left">
+                <div class="fr-col-12 fr-text--left">
                     <h1 class="fr-h1 fr-mb-0">Partenaires archivés</h1>
                 </div>
             </div>
@@ -43,13 +43,13 @@
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(archivedPartners|length, 'partenaire archivé ou sans territoire trouvé', 'partenaires archivés ou sans territoire trouvés') }}</h2>
     </section>
     
-    <section class="fr-col-3 fr-pt-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             <th scope="col">Territoire</th>
             <th scope="col">Nom</th>

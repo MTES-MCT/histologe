@@ -3,7 +3,7 @@
 {% block title %}Signalements archivés{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-p-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -13,7 +13,7 @@
         } %}
         <header>
             <div class="fr-grid-row">
-                <div class="fr-col-6 fr-text--left">
+                <div class="fr-col-12 fr-text--left">
                     <h1 class="fr-mb-0">Signalements archivés</h1>
                 </div>
             </div>
@@ -37,17 +37,17 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-5v">
+    <section class="fr-col-12 fr-py-4v">
         <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement archivé trouvé', 'signalements archivés trouvés') }}</h2>
     </section>
     
-    <section class="fr-col-3 fr-pt-0">
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}
     </section>
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
             <th scope="col">#Ref.</th>
             <th scope="col">Territoire</th>
