@@ -28,6 +28,7 @@ use App\Service\FormHelper;
 use App\Service\Gouv\Rnb\RnbService;
 use App\Service\HtmlTargetContentsService;
 use App\Service\MessageHelper;
+use App\Service\RequestDataExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -403,8 +404,9 @@ class SignalementActionController extends AbstractController
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_NEED_VALIDATION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
-        $rnbId = $request->request->get('rnbId');
-        $token = $request->request->get('_token');
+        $requestData = $request->request->all();
+        $rnbId = RequestDataExtractor::getString($requestData, 'rnbId');
+        $token = RequestDataExtractor::getString($requestData, '_token');
         if (!$this->isCsrfTokenValid('signalement_set_rnb_'.$signalement->getUuid(), $token)) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
@@ -564,7 +566,8 @@ class SignalementActionController extends AbstractController
             }
         }
 
-        $token = $request->request->get('_token');
+        $requestData = $request->request->all();
+        $token = RequestDataExtractor::getString($requestData, '_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
             $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 

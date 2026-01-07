@@ -13,6 +13,7 @@ use App\Security\User\SignalementUser;
 use App\Security\Voter\FileVoter;
 use App\Security\Voter\SignalementFoVoter;
 use App\Service\MessageHelper;
+use App\Service\RequestDataExtractor;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -83,10 +84,13 @@ class SignalementFileController extends AbstractController
             return $this->json(['response' => 'Document introuvable'], Response::HTTP_BAD_REQUEST);
         }
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
-        $documentType = DocumentType::tryFrom($request->request->get('documentType'));
-        if ($request->request->get('documentType') && isset($infoDesordres['criteres'][$request->request->get('documentType')])) {
+
+        $requestData = $request->request->all();
+        $documentTypeData = RequestDataExtractor::getString($requestData, 'documentType');
+        $documentType = DocumentType::tryFrom($documentTypeData);
+        if ($documentTypeData && isset($infoDesordres['criteres'][$documentTypeData])) {
             $file->setDocumentType(DocumentType::PHOTO_SITUATION);
-            $file->setDesordreSlug($request->request->get('documentType'));
+            $file->setDesordreSlug($documentTypeData);
         } elseif (null === $documentType || !isset(DocumentType::getOrderedSituationList()[$documentType->name])) {
             return $this->json(['response' => 'Type de document invalide'], Response::HTTP_BAD_REQUEST);
         } else {

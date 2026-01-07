@@ -8,6 +8,7 @@ use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
+use App\Service\RequestDataExtractor;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,7 +45,8 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $codeSuivi = $request->request->get('code');
+        $requestData = $request->request->all();
+        $codeSuivi = RequestDataExtractor::getString($requestData, 'code');
 
         $signalement = $this->signalementRepository->findOneByCodeForPublic($codeSuivi);
         if (!$signalement) {

@@ -72,7 +72,8 @@ class AffectationController extends AbstractController
     ): RedirectResponse|JsonResponse {
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $unnotifiedPartners = [];
-            $data = $request->get('signalement-affectation'); // TODO : deprecated, $request->request->get cannot get array format
+            $requestData = $request->request->all();
+            $data = $requestData['signalement-affectation'] ?? null;
             if (isset($data['partners'])) {
                 /** @var User $user */
                 $user = $this->getUser();

@@ -14,6 +14,7 @@ use App\Event\InterventionEditedEvent;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\VisiteFactory;
 use App\Security\Voter\Api\ApiInterventionVoter;
+use App\Service\RequestDataExtractor;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -181,7 +182,6 @@ class VisiteUploadDocumentsController extends AbstractController
         Request $request,
         ?Intervention $intervention = null,
     ): JsonResponse {
-        $typeDocumentVisite = $request->get('typeDocumentVisite'); // TODO : deprecated, $request->request->get cannot get array format
         if (null === $intervention) {
             return $this->json([
                 'message' => 'Intervention introuvable.',
@@ -190,6 +190,9 @@ class VisiteUploadDocumentsController extends AbstractController
             );
         }
         $this->denyAccessUnlessGranted(ApiInterventionVoter::API_INTERVENTION_UPDATE, $intervention, SecurityApiExceptionListener::ACCESS_DENIED);
+
+        $requestData = $request->request->all();
+        $typeDocumentVisite = RequestDataExtractor::getString($requestData, 'typeDocumentVisite');
 
         $errorMessage = null;
         if (!$this->canAddDocument($typeDocumentVisite, $intervention, $errorMessage)) {

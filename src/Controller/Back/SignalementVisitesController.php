@@ -17,6 +17,7 @@ use App\Repository\InterventionRepository;
 use App\Security\Voter\InterventionVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\Files\FilenameGenerator;
+use App\Service\RequestDataExtractor;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -93,7 +94,8 @@ class SignalementVisitesController extends AbstractController
 
         $fileName = $this->getUploadedFile($request, 'visite-add', $uploadHandler, $filenameGenerator);
 
-        $requestAddData = $request->request->get('visite-add');
+        $requestData = $request->request->all();
+        $requestAddData = RequestDataExtractor::getArray($requestData, 'visite-add');
         $idPartner = 'extern' === $requestAddData['partner'] ? null : $requestAddData['partner'];
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestAddData['intervention'] ?? null,
@@ -148,9 +150,10 @@ class SignalementVisitesController extends AbstractController
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
     ): Response {
-        $requestData = $request->request->get('visite-cancel');
+        $requestData = $request->request->all();
+        $requestCancelData = RequestDataExtractor::getArray($requestData, 'visite-cancel');
 
-        $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention'], 'signalement' => $signalement]);
+        $intervention = $interventionRepository->findOneBy(['id' => $requestCancelData['intervention'], 'signalement' => $signalement]);
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
 
@@ -167,15 +170,15 @@ class SignalementVisitesController extends AbstractController
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
-            'signalement_cancel_visit_'.$requestData['intervention']
+            'signalement_cancel_visit_'.$requestCancelData['intervention']
         );
         if ($errorRedirect) {
             return $errorRedirect;
         }
 
         $visiteRequest = new VisiteRequest(
-            idIntervention: $requestData['intervention'],
-            details: $requestData['details'],
+            idIntervention: $requestCancelData['intervention'],
+            details: $requestCancelData['details'],
         );
         /** @var User $user */
         $user = $this->getUser();
@@ -203,7 +206,8 @@ class SignalementVisitesController extends AbstractController
         ValidatorInterface $validator,
         TimezoneProvider $timezoneProvider,
     ): Response {
-        $requestRescheduleData = $request->request->get('visite-reschedule');
+        $requestData = $request->request->all();
+        $requestRescheduleData = RequestDataExtractor::getArray($requestData, 'visite-reschedule');
 
         $intervention = $interventionRepository->findOneBy(['id' => $requestRescheduleData['intervention'], 'signalement' => $signalement]);
         if (!$intervention) {
@@ -281,9 +285,10 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandler,
         FilenameGenerator $filenameGenerator,
     ): Response {
-        $requestData = $request->request->get('visite-confirm');
+        $requestData = $request->request->all();
+        $requestConfirmData = RequestDataExtractor::getArray($requestData, 'visite-confirm');
 
-        $intervention = $interventionRepository->findOneBy(['id' => $requestData['intervention'], 'signalement' => $signalement]);
+        $intervention = $interventionRepository->findOneBy(['id' => $requestConfirmData['intervention'], 'signalement' => $signalement]);
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
 
@@ -294,7 +299,7 @@ class SignalementVisitesController extends AbstractController
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
-            'signalement_confirm_visit_'.$requestData['intervention']
+            'signalement_confirm_visit_'.$requestConfirmData['intervention']
         );
         if ($errorRedirect) {
             return $errorRedirect;
@@ -303,12 +308,12 @@ class SignalementVisitesController extends AbstractController
         $fileName = $this->getUploadedFile($request, 'visite-confirm', $uploadHandler, $filenameGenerator);
 
         $visiteRequest = new VisiteRequest(
-            idIntervention: $requestData['intervention'],
-            details: $requestData['details'],
-            concludeProcedure: $requestData['concludeProcedure'] ?? null,
-            isVisiteDone: $requestData['visiteDone'],
-            isOccupantPresent: $requestData['occupantPresent'],
-            isProprietairePresent: $requestData['proprietairePresent'],
+            idIntervention: $requestConfirmData['intervention'],
+            details: $requestConfirmData['details'],
+            concludeProcedure: $requestConfirmData['concludeProcedure'] ?? null,
+            isVisiteDone: $requestConfirmData['visiteDone'],
+            isOccupantPresent: $requestConfirmData['occupantPresent'],
+            isProprietairePresent: $requestConfirmData['proprietairePresent'],
             document: $fileName,
         );
         /** @var User $user */
@@ -336,10 +341,11 @@ class SignalementVisitesController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
     ): Response {
-        $requestData = $request->request->get('visite-edit');
+        $requestData = $request->request->all();
+        $requestEditData = RequestDataExtractor::getArray($requestData, 'visite-edit');
 
-        $intervention = !empty($requestData['intervention'])
-            ? $interventionRepository->findOneBy(['id' => $requestData['intervention'], 'signalement' => $signalement])
+        $intervention = !empty($requestEditData['intervention'])
+            ? $interventionRepository->findOneBy(['id' => $requestEditData['intervention'], 'signalement' => $signalement])
             : null;
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
@@ -351,7 +357,7 @@ class SignalementVisitesController extends AbstractController
         $errorRedirect = $this->getSecurityRedirect(
             $signalement,
             $request,
-            'signalement_edit_visit_'.$requestData['intervention']
+            'signalement_edit_visit_'.$requestEditData['intervention']
         );
         if ($errorRedirect) {
             return $errorRedirect;
@@ -359,15 +365,14 @@ class SignalementVisitesController extends AbstractController
 
         $fileName = $this->getUploadedFile($request, 'visite-edit', $uploadHandler, $filenameGenerator);
 
-        if (!isset($requestData['notifyUsager'])) {
-            $requestData['notifyUsager'] = $intervention->getNotifyUsager();
+        if (!isset($requestEditData['notifyUsager'])) {
+            $requestEditData['notifyUsager'] = $intervention->getNotifyUsager();
         }
-        $requestData['notifyUsager'] = $requestData['notifyUsager'] ?? false;
         $visiteRequest = new VisiteRequest(
-            idIntervention: $requestData['intervention'],
-            details: $requestData['details'],
-            concludeProcedure: $requestData['concludeProcedure'] ?? [],
-            isUsagerNotified: $requestData['notifyUsager'] ?? false,
+            idIntervention: $requestEditData['intervention'],
+            details: $requestEditData['details'],
+            concludeProcedure: $requestEditData['concludeProcedure'] ?? [],
+            isUsagerNotified: $requestEditData['notifyUsager'] ?? false,
             document: $fileName,
         );
         /** @var User $user */

@@ -17,6 +17,7 @@ use App\Security\Voter\FileVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\ImageManipulationHandler;
 use App\Service\MessageHelper;
+use App\Service\RequestDataExtractor;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -252,12 +253,15 @@ class SignalementFileController extends AbstractController
         InterventionRepository $interventionRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
-        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), (string) $request->request->get('_token'))) {
+        $requestData = $request->request->all();
+        $token = RequestDataExtractor::getString($requestData, '_token');
+        if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $token)) {
             $errorMsg = 'Token CSRF invalide, veuillez recharger la page';
 
             return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
         }
-        $file = $fileRepository->findOneBy(['id' => $request->request->get('file_id'), 'signalement' => $signalement]);
+        $fileId = RequestDataExtractor::getString($requestData, 'file_id');
+        $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
         if (null === $file || ($file->getIntervention() && DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType())) {
             $errorMsg = 'Document introuvable';
 
@@ -265,12 +269,13 @@ class SignalementFileController extends AbstractController
         }
         $this->denyAccessUnlessGranted(FileVoter::FILE_EDIT, $file);
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
-        $documentType = DocumentType::tryFrom($request->request->get('documentType'));
+        $documentTypeData = RequestDataExtractor::getString($requestData, 'documentType');
+        $documentType = DocumentType::tryFrom($documentTypeData);
         if (DocumentType::PHOTO_VISITE === $file->getDocumentType()) {
             // un document typé PHOTO_VISITE ne peut pas changer de type
-        } elseif ($request->request->get('documentType') && isset($infoDesordres['criteres'][$request->request->get('documentType')])) {
+        } elseif ($documentTypeData && isset($infoDesordres['criteres'][$documentTypeData])) {
             $file->setDocumentType(DocumentType::PHOTO_SITUATION);
-            $file->setDesordreSlug($request->request->get('documentType'));
+            $file->setDesordreSlug($documentTypeData);
         } elseif (null === $documentType) {
             $errorMsg = 'Type de document invalide';
 
@@ -279,14 +284,14 @@ class SignalementFileController extends AbstractController
             $file->setDocumentType($documentType);
             $file->setDesordreSlug(null);
         }
-        $interventionId = $request->request->get('interventionId');
+        $interventionId = RequestDataExtractor::getString($requestData, 'interventionId');
         if (null !== $interventionId && DocumentType::PHOTO_VISITE === $documentType) {
             $intervention = $interventionRepository->find($interventionId);
             if ($intervention?->getSignalement() === $file->getSignalement()) {
                 $file->setIntervention($intervention);
             }
         }
-        $description = $request->request->get('description');
+        $description = RequestDataExtractor::getString($requestData, 'description');
         if ($file->isTypeImage()) {
             if ($description && mb_strlen($description) > 255) {
                 $errorMsg = 'La description ne doit pas dépasser 255 caractères';
