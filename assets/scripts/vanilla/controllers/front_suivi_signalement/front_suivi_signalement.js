@@ -172,7 +172,7 @@ if (modalUploadFiles) {
           addHtmlFile(file, response);
         } else {
           div.querySelector('.file-error').innerHTML =
-            '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>';
+            '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">' + response.response + '</span></p></div></div></div>';
           btnDeleteTmpFile.classList.remove('fr-hidden');
         }
       }
@@ -222,7 +222,7 @@ if (modalUploadFiles) {
               deleteFileLink.style.display = '';
               div.insertAdjacentHTML(
                 'beforeend',
-                '<div class="fr-col-12 file-error"><div class="fr-alert fr-alert--error fr-alert--sm">Une erreur est survenue lors de la suppression du fichier.</div></div>'
+                '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Une erreur est survenue lors de la suppression du fichier.</span></p></div></div></div>'
               );
             }
           })
@@ -231,7 +231,7 @@ if (modalUploadFiles) {
             div.querySelectorAll('.file-error').forEach((errorEl) => errorEl.remove());
             div.insertAdjacentHTML(
               'beforeend',
-              '<div class="fr-col-12 file-error"><div class="fr-alert fr-alert--error fr-alert--sm">Une erreur est survenue lors de la suppression du fichier.</div></div>'
+              '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Une erreur est survenue lors de la suppression du fichier.</span></p></div></div></div>'
             );
           });
       });
@@ -286,7 +286,7 @@ if (modalUploadFiles) {
             parent.querySelector('.file-error').innerHTML = '';
           } else {
             parent.querySelector('.file-error').innerHTML =
-              '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>';
+              '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">' + response.response + '</span></p></div></div></div>';
           }
         }
       };
