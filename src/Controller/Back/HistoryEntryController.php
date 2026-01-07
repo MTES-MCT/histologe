@@ -15,11 +15,11 @@ class HistoryEntryController extends AbstractController
 {
     #[Route('/signalement/{id}/affectations', name: 'history_affectation', methods: ['GET'])]
     public function listHistoryAffectation(
-        Request $request,
+        string $id = '',
         HistoryEntryManager $historyEntryManager,
         SignalementRepository $signalementRepository,
     ): Response {
-        $signalement = $signalementRepository->find($request->query->get('id'));
+        $signalement = $signalementRepository->find($id);
         if (
             !$signalement
             || !$this->isGranted(SignalementVoter::SIGN_VIEW, $signalement)
