@@ -156,7 +156,7 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
           btnDeleteTmpFile.classList.remove('fr-hidden', 'delete-html');
         } else {
           div.querySelector('.file-error').innerHTML =
-            '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>';
+            '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">' + response.response + '</span></p></div></div></div>';
           btnDeleteTmpFile.classList.remove('fr-hidden');
         }
       }
@@ -226,7 +226,7 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
             parent.querySelector('.file-error').innerHTML = '';
           } else {
             parent.querySelector('.file-error').innerHTML =
-              '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>';
+            '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">' + response.response + '</span></p></div></div></div>';
           }
         }
       };
@@ -271,7 +271,7 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
         const parent = divFileItem;
         if (this.status !== 200) {
           parent.querySelector('.file-error').innerHTML =
-            '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>';
+            '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">' + response.response + '</span></p></div></div></div>';
         } else {
           parent.querySelector('.file-error').innerHTML = '';
         }
