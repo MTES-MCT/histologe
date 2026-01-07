@@ -6,7 +6,6 @@ use App\Manager\HistoryEntryManager;
 use App\Repository\SignalementRepository;
 use App\Security\Voter\SignalementVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -15,7 +14,7 @@ class HistoryEntryController extends AbstractController
 {
     #[Route('/signalement/{id}/affectations', name: 'history_affectation', methods: ['GET'])]
     public function listHistoryAffectation(
-        string $id = '',
+        string $id,
         HistoryEntryManager $historyEntryManager,
         SignalementRepository $signalementRepository,
     ): Response {
