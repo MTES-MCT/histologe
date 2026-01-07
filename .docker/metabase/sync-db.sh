@@ -2,7 +2,7 @@
 
 set -eu
 
-IMAGE_VERSION="1.0.0"
+IMAGE_VERSION="1.0.1"
 
 log() {
   level="$1"
@@ -21,6 +21,8 @@ log INFO "Starting Scalingo job"
 log INFO "App: ${SCALINGO_APP}"
 log INFO "Remote command: sh /app/scripts/sync-db.sh"
 
+log INFO "Version installée : $(scalingo --version)"
+
 # LOCAL MODE
 if [ "${METABASE_SYNC_LOCAL_MODE:-0}" = "1" ]; then
   log WARN "Running in LOCAL MODE"
@@ -30,4 +32,4 @@ fi
 
 # PROD MODE
 log INFO "Executing remote sync-db script on Scalingo"
-exec scalingo -a "$SCALINGO_APP" run -d -- sh -c "sh /app/scripts/sync-db.sh"
+exec scalingo -a "$SCALINGO_APP" run -d -- sh /app/scripts/sync-db.sh

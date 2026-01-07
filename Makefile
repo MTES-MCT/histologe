@@ -288,27 +288,27 @@ scalingo-job-build: ## Build Scalingo sync job container
 	@echo "\n\033[31m/!\ ATTENTION : Vérifiez bien le dernier tag distant avant de pousser /!\ \033[0m"
 	@echo "\033[33mTags actuellement présents sur le registry distant https://console.scaleway.com/registry \033[0m"
 	@echo "\n\033[35m🚀 RELEASE : Pour pousser l'image, exécutez :"
-	@echo "   make scalingo-job-release METABASE_SYNC_IMAGE_VERSION=999.999\033[0m"
+	@echo "   make scalingo-job-release IMAGE_VERSION=999.999\033[0m"
 
 scalingo-job-run: ## Run Scalingo sync job locally
 	@echo "\033[33mRunning Scalingo job locally...\033[0m"
 	docker run --rm \
 		-e SCALINGO_API_TOKEN=$(METABASE_SYNC_SCALINGO_API_TOKEN) \
 		-e METABASE_SYNC_SCALINGO_APP=$(METABASE_SYNC_SCALINGO_APP) \
-		-e METABASE_SYNC_LOCAL_MODE=1 \
+		-e METABASE_SYNC_LOCAL_MODE=0 \
 		$(METABASE_SYNC_IMAGE_NAME):local
 
-scalingo-job-tag: ## Tag the local image with a version for Scaleway registry - make scalingo-job-tag METABASE_SYNC_IMAGE_VERSION=1.0.x
-	@echo "Tagging image $(METABASE_SYNC_IMAGE_LOCAL) as $(METABASE_SYNC_IMAGE_VERSION)"
+scalingo-job-tag: ## Tag the local image with a version for Scaleway registry - make scalingo-job-tag IMAGE_VERSION=1.0.x
+	@echo "Tagging image $(METABASE_SYNC_IMAGE_LOCAL) as $(IMAGE_VERSION)"
 	docker tag $(METABASE_SYNC_IMAGE_LOCAL) \
-		$(METABASE_SYNC_SCW_REGISTRY)/$(METABASE_SYNC_SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(METABASE_SYNC_IMAGE_VERSION)
+		$(METABASE_SYNC_SCW_REGISTRY)/$(METABASE_SYNC_SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(IMAGE_VERSION)
 
-scalingo-job-push: ## Push the versioned image to Scaleway registry - make scalingo-job-push METABASE_SYNC_IMAGE_VERSION=1.0.x
-	@echo "Pushing image version $(METABASE_SYNC_IMAGE_VERSION) to Scaleway registry"
+scalingo-job-push: ## Push the versioned image to Scaleway registry - make scalingo-job-push IMAGE_VERSION=1.0.x
+	@echo "Pushing image version $(IMAGE_VERSION) to Scaleway registry"
 	docker push \
-		$(METABASE_SYNC_SCW_REGISTRY)/$(METABASE_SYNC_SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(METABASE_SYNC_IMAGE_VERSION)
+		$(METABASE_SYNC_SCW_REGISTRY)/$(METABASE_SYNC_SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(IMAGE_VERSION)
 
-scalingo-job-release: scalingo-job-tag scalingo-job-push ## Tag and push image to Scaleway - make scalingo-job-release METABASE_SYNC_IMAGE_VERSION=1.0.x
+scalingo-job-release: scalingo-job-tag scalingo-job-push ## Tag and push image to Scaleway - make scalingo-job-release IMAGE_VERSION=1.0.x
 
 .tools-destroy:
 	@echo "\033[33mRemoving tools containers ...\033[0m"
