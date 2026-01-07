@@ -45,8 +45,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $requestData = $request->request->all();
-        $codeSuivi = RequestDataExtractor::getString($requestData, 'code');
+        $codeSuivi = $request->attributes->get('code');
 
         $signalement = $this->signalementRepository->findOneByCodeForPublic($codeSuivi);
         if (!$signalement) {
