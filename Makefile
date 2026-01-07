@@ -10,6 +10,13 @@ PHPUNIT       = ./vendor/bin/phpunit
 SYMFONY       = php bin/console
 NPX           = npx
 NPM           = npm
+METABASE_SYNC_LOCAL_MODE = 1
+METABASE_SYNC_IMAGE_NAME     = scalingo-sync-silo-metabase
+METABASE_SYNC_SCALINGO_APP = histologe-preprod
+METABASE_SYNC_IMAGE_LOCAL    = $(METABASE_SYNC_IMAGE_NAME):local
+METABASE_SYNC_SCALINGO_JOB_DOCKERFILE = .docker/metabase/Dockerfile
+METABASE_SYNC_SCW_REGISTRY   = rg.fr-par.scw.cloud
+METABASE_SYNC_SCW_NAMESPACE  = signal-logement
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -266,6 +273,42 @@ scalingo-update-cli: ## Install/Update Scalingo CLI
 
 run-concurrency-request: ## Run concurrency request based postman collection ex: make run-concurrency-request nb=5 envName=local|demo
 	@bash -l -c 'node ./tools/newman/run_concurrency_request.js nb=$(nb) envName=$(envName)'
+
+## Sync metabase
+scalingo-job-build: ## Build Scalingo sync job container
+	@echo "\033[33mBuilding Scalingo job image...\033[0m"
+	docker build \
+		-f $(METABASE_SYNC_SCALINGO_JOB_DOCKERFILE) \
+		-t $(METABASE_SYNC_IMAGE_NAME):local \
+		.
+	@echo "\033[32m✅ Image built: $(METABASE_SYNC_IMAGE_NAME):local\033[0m"
+	@echo "\n\033[36m💡 Vous pouvez tester l'image localement en exécutant : make scalingo-job-run\033[0m"
+	@echo "\033[33m⚠️  Note : Assurez-vous d'avoir ajouté la variable d'envionnement export SCALINGO_API_TOKEN=xxxxxxxxxxxxxx"
+	@echo "   Pour générez un token API : https://dashboard.scalingo.com/account/tokens\033[0m"
+	@echo "\n\033[31m/!\ ATTENTION : Vérifiez bien le dernier tag distant avant de pousser /!\ \033[0m"
+	@echo "\033[33mTags actuellement présents sur le registry distant https://console.scaleway.com/registry \033[0m"
+	@echo "\n\033[35m🚀 RELEASE : Pour pousser l'image, exécutez :"
+	@echo "   make scalingo-job-release METABASE_SYNC_IMAGE_VERSION=999.999\033[0m"
+
+scalingo-job-run: ## Run Scalingo sync job locally
+	@echo "\033[33mRunning Scalingo job locally...\033[0m"
+	docker run --rm \
+		-e SCALINGO_API_TOKEN=$(METABASE_SYNC_SCALINGO_API_TOKEN) \
+		-e METABASE_SYNC_SCALINGO_APP=$(METABASE_SYNC_SCALINGO_APP) \
+		-e METABASE_SYNC_LOCAL_MODE=1 \
+		$(METABASE_SYNC_IMAGE_NAME):local
+
+scalingo-job-tag: ## Tag the local image with a version for Scaleway registry - make scalingo-job-tag METABASE_SYNC_IMAGE_VERSION=1.0.x
+	@echo "Tagging image $(METABASE_SYNC_IMAGE_LOCAL) as $(METABASE_SYNC_IMAGE_VERSION)"
+	docker tag $(METABASE_SYNC_IMAGE_LOCAL) \
+		$(METABASE_SYNC_SCW_REGISTRY)/$(METABASE_SYNC_SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(METABASE_SYNC_IMAGE_VERSION)
+
+scalingo-job-push: ## Push the versioned image to Scaleway registry - make scalingo-job-push METABASE_SYNC_IMAGE_VERSION=1.0.x
+	@echo "Pushing image version $(METABASE_SYNC_IMAGE_VERSION) to Scaleway registry"
+	docker push \
+		$(METABASE_SYNC_SCW_REGISTRY)/$(METABASE_SYNC_SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(METABASE_SYNC_IMAGE_VERSION)
+
+scalingo-job-release: scalingo-job-tag scalingo-job-push ## Tag and push image to Scaleway - make scalingo-job-release METABASE_SYNC_IMAGE_VERSION=1.0.x
 
 .tools-destroy:
 	@echo "\033[33mRemoving tools containers ...\033[0m"
