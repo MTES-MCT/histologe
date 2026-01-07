@@ -8,7 +8,6 @@ use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
-use App\Service\RequestDataExtractor;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
