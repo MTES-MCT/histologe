@@ -41,21 +41,60 @@ function initSearchCheckboxWidgets() {
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '')
           .toLowerCase();
-        checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((checkbox) => {
-          if (
-            checkbox.classList.contains('optgroup__element') ||
-            checkbox
-              .querySelector('label')
-              .textContent.normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .toLowerCase()
-              .includes(value)
-          ) {
-            checkbox.style.display = '';
-          } else {
-            checkbox.style.display = 'none';
+
+        let mainGroup = null;
+        let mainGroupHasMatch = false;
+
+        let subGroup = null;
+        let subGroupHasMatch = false;
+
+        checkboxesContainer.querySelectorAll('.fr-fieldset__element').forEach((el) => {
+          const label = el.querySelector('label');
+          const isMainGroup = el.classList.contains('optgroup__element');
+
+          // Main title
+          if (isMainGroup) {
+            if (mainGroup) {
+              mainGroup.style.display = mainGroupHasMatch ? '' : 'none';
+            }
+            mainGroup = el;
+            mainGroupHasMatch = false;
+            subGroup = null;
+            return;
+          }
+
+          // Subtitle
+          if (!label) {
+            if (subGroup) {
+              subGroup.style.display = subGroupHasMatch ? '' : 'none';
+            }
+            subGroup = el;
+            subGroupHasMatch = false;
+            return;
+          }
+
+          // option
+          const text = label.textContent
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+
+          const match = text.includes(value);
+          el.style.display = match ? '' : 'none';
+
+          if (match) {
+            mainGroupHasMatch = true;
+            subGroupHasMatch = true;
           }
         });
+
+        // close last groups
+        if (subGroup) {
+          subGroup.style.display = subGroupHasMatch ? '' : 'none';
+        }
+        if (mainGroup) {
+          mainGroup.style.display = mainGroupHasMatch ? '' : 'none';
+        }
       });
       // hide choices on click outside and on close button
       document.addEventListener('click', function (event) {
@@ -66,7 +105,7 @@ function initSearchCheckboxWidgets() {
       element.addEventListener('click', function (event) {
         event.stopPropagation();
       });
-      closeBtn.addEventListener('click', function (event) {
+      closeBtn.addEventListener('click', function () {
         searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
       });
       // reorder on uncheck

@@ -9,7 +9,9 @@ document.addEventListener('click', (e) => {
   if (!targetSelector) return;
 
   /** @type {NodeListOf<HTMLInputElement>} */
-  const checkboxes = Array.from(target.querySelectorAll('input[type="checkbox"]')).filter((cb) => !cb.disabled);
+  const checkboxes = Array.from(target.querySelectorAll('input[type="checkbox"]')).filter(
+    (cb) => !cb.disabled
+  );
   const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
 
   checkboxes.forEach((cb) => {

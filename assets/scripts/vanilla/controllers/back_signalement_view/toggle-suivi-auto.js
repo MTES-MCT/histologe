@@ -1,7 +1,7 @@
 const allSuivis = document?.querySelectorAll('.suivi-item');
-const items = Array.from(allSuivis).map(item => ({
+const items = Array.from(allSuivis).map((item) => ({
   el: item,
-  isAuto: item.classList.contains('suivi-auto')
+  isAuto: item.classList.contains('suivi-auto'),
 }));
 const btnDisplayAll = document?.querySelector('#btn-display-all-suivis');
 const toggleWrapper = document?.querySelector('#toggle-hide-technical')?.closest('.fr-toggle');
@@ -46,7 +46,6 @@ function applyFilter() {
     btnDisplayAll.classList.add('fr-hidden');
   }
 }
-
 
 applyFilter();
 

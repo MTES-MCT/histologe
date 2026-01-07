@@ -422,7 +422,7 @@ if (submitModalDuplicateAddresses) {
       fetch(form.action, {
         method: 'POST',
         body: formData,
-      }).then((response) => {
+      }).then(() => {
         window.location.href = urlToRedirect;
       });
     } else {
