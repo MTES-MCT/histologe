@@ -279,12 +279,16 @@
 				enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION,
 				enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE
 			] %}
-				{% if suiviBasculeProcedure is not empty %}					
-					<div class="fr-alert fr-alert--info">
-						<p>
-							Votre demande a bien été prise en compte, le dossier a été transféré aux partenaires compétents qui reviendront vers vous si besoin.
-						</p>
-					</div>		
+				{% if suiviBasculeProcedure is not empty %}		
+					<div class="fr-notice fr-notice--info">
+						<div class="fr-container">
+							<div class="fr-notice__body">
+								<p>
+									<span class="fr-notice__desc">Votre demande a bien été prise en compte, le dossier a été transféré aux partenaires compétents qui reviendront vers vous si besoin.</span>
+								</p>
+							</div>
+						</div>
+					</div>
 				{% else %}
 					<p class="fr-text--center"><strong>Le signalement est à présent en procédure administrative.</strong></p>
 				{% endif %}		

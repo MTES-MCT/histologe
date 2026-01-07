@@ -57,7 +57,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
         $this->assertResponseRedirects('/connexion-bailleur');
         $client->followRedirect();
-        $this->assertSelectorExists('.fr-alert.fr-alert--error');
+        $this->assertSelectorExists('.fr-notice.fr-notice--alert');
     }
 
     public function testFOLoginOnOccupantWithoutEmail(): void
