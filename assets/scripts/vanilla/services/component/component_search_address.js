@@ -207,18 +207,10 @@ export function initComponentAdress(id) {
     return;
   }
   const addressInputParent = addressInput.parentElement.parentElement.parentElement;
-  const manualAddressSwitcher = addressInputParent?.querySelector(
-    '.manual-address-switcher'
-  );
-  const manualAddressContainer = addressInputParent?.querySelector(
-    '.manual-address-container'
-  );
-  const manualAddressAddress = addressInputParent?.querySelector(
-    '.manual-address-input'
-  );
-  const manualAddressInputs = addressInputParent?.querySelectorAll(
-    '.manual-address'
-  );
+  const manualAddressSwitcher = addressInputParent?.querySelector('.manual-address-switcher');
+  const manualAddressContainer = addressInputParent?.querySelector('.manual-address-container');
+  const manualAddressAddress = addressInputParent?.querySelector('.manual-address-input');
+  const manualAddressInputs = addressInputParent?.querySelectorAll('.manual-address');
   const hasManualAddressValues = Array.from(manualAddressInputs).some(
     (input) => input.value !== ''
   );
