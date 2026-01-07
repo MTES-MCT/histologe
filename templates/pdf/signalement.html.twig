@@ -673,7 +673,7 @@
     <section>
         <div class="page">
         {% set sortedPhotos = signalement.files
-            |filter(photo => photo.isTypeImage)
+            |filter(photo => photo.isTypeImage and (photo.isSuspicious is not same as(true)))
             |sort((a, b) =>
                 (a.documentType.name == 'PHOTO_VISITE' ? 1 : 0) <=> (b.documentType.name == 'PHOTO_VISITE' ? 1 : 0)
                 ?: (a.createdAt <=> b.createdAt)
