@@ -14,7 +14,6 @@ use App\Event\InterventionEditedEvent;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Factory\Api\VisiteFactory;
 use App\Security\Voter\Api\ApiInterventionVoter;
-use App\Service\RequestDataExtractor;
 use App\Service\Signalement\SignalementFileProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -181,6 +180,7 @@ class VisiteUploadDocumentsController extends AbstractController
     public function __invoke(
         Request $request,
         ?Intervention $intervention = null,
+        string $typeDocumentVisite = '',
     ): JsonResponse {
         if (null === $intervention) {
             return $this->json([
@@ -190,9 +190,6 @@ class VisiteUploadDocumentsController extends AbstractController
             );
         }
         $this->denyAccessUnlessGranted(ApiInterventionVoter::API_INTERVENTION_UPDATE, $intervention, SecurityApiExceptionListener::ACCESS_DENIED);
-
-        $requestData = $request->request->all();
-        $typeDocumentVisite = RequestDataExtractor::getString($requestData, 'typeDocumentVisite');
 
         $errorMessage = null;
         if (!$this->canAddDocument($typeDocumentVisite, $intervention, $errorMessage)) {
