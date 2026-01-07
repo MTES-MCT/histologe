@@ -28,18 +28,18 @@ if (reponseInjonctionBailleurDescription) {
       const label = descriptionContainer.querySelector('.fr-label');
       var textNode = '';
       switch (value) {
-          case 'REPONSE_OUI':
-            textNode = document.createTextNode(label.getAttribute('data-label-oui'));
+        case 'REPONSE_OUI':
+          textNode = document.createTextNode(label.getAttribute('data-label-oui'));
           reponseInjonctionBailleurEngagementTravaux.classList.remove('fr-hidden');
-            break;
-          case 'REPONSE_OUI_AVEC_AIDE':
-            textNode = document.createTextNode(label.getAttribute('data-label-oui-avec-aide'));
+          break;
+        case 'REPONSE_OUI_AVEC_AIDE':
+          textNode = document.createTextNode(label.getAttribute('data-label-oui-avec-aide'));
           reponseInjonctionBailleurEngagementTravaux.classList.remove('fr-hidden');
-            break;
-          case 'REPONSE_NON':
-            textNode = document.createTextNode(label.getAttribute('data-label-non'));
+          break;
+        case 'REPONSE_NON':
+          textNode = document.createTextNode(label.getAttribute('data-label-non'));
           reponseInjonctionBailleurEngagementTravaux.classList.add('fr-hidden');
-            break;
+          break;
       }
       label.replaceChild(textNode, label.firstChild);
     } else {
