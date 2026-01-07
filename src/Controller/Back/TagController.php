@@ -173,7 +173,6 @@ class TagController extends AbstractController
             $tag->setIsArchive(true);
             $entityManager->flush();
             $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
-            $this->addFlash('success', 'L\'étiquette a bien été supprimée.');
 
             $flashMessages[] = ['type' => 'success', 'title' => 'Étiquette supprimée', 'message' => 'L\'étiquette a bien été supprimée.'];
             $htmlTargetContents = $this->getHtmlTargetContentsForTagsList($request);
