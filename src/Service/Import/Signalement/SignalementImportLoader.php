@@ -124,7 +124,7 @@ class SignalementImportLoader
                         $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
                     }
                 }
-                $this->signalementManager->persist($signalement);
+                $this->signalementManager->save($signalement);
 
                 $signalement = $this->loadTags($signalement, $territory, $dataMapped);
                 foreach (self::SITUATIONS as $situation) {
@@ -224,9 +224,10 @@ class SignalementImportLoader
                 }
 
                 $affectation = $this->affectationManager->createAffectationFrom(
-                    $signalement,
-                    $partner,
-                    $partner->getUsers()->isEmpty() ? null : $partner->getUsers()->first(),
+                    signalement: $signalement,
+                    partner: $partner,
+                    user: $partner->getUsers()->isEmpty() ? null : $partner->getUsers()->first(),
+                    dispatchEvent: false
                 );
                 if ($affectation instanceof Affectation) {
                     $affectation
