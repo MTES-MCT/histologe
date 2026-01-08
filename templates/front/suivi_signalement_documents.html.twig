@@ -40,8 +40,14 @@
 				</ul>
 				{{ form(form, { 'attr': {'id': 'uploaded-file-form', 'class': 'fr-hidden', } } ) }}
 			{% else %}
-				<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-					<p>Vous ne pouvez plus envoyer de documents.</p>
+				<div class="fr-notice fr-notice--alert">
+					<div class="fr-container">
+						<div class="fr-notice__body">
+							<p>
+								<span class="fr-notice__title">Vous ne pouvez plus envoyer de documents.</span>
+							</p>
+						</div>
+					</div>
 				</div>
 			{% endif %}
 		</div>

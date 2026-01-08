@@ -14,7 +14,9 @@ export function initZipSelectionPhotos() {
   const submitButton = document.getElementById('zip-selection-submit');
   const cancelButton = document.getElementById('zip-selection-cancel');
 
-  const photoItems = document.querySelectorAll('#tabpanel-documents-panel .container-situation .signalement-file-item');
+  const photoItems = document.querySelectorAll(
+    '#tabpanel-documents-panel .container-situation .signalement-file-item'
+  );
 
   let selectionMode = false;
 
@@ -49,7 +51,9 @@ export function initZipSelectionPhotos() {
   };
 
   const updateCount = () => {
-    countElement.textContent = hiddenFields.querySelectorAll('input[name="fileIds[]"]').length.toString();
+    countElement.textContent = hiddenFields
+      .querySelectorAll('input[name="fileIds[]"]')
+      .length.toString();
   };
 
   const clearHiddenFields = () => {

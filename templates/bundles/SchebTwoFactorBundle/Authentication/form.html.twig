@@ -10,8 +10,14 @@
                 <h1>Authentification à deux facteurs</h1>
                 {# Authentication errors #}
                 {% if authenticationError %}
-                    <div class="fr-alert fr-alert--error fr-alert--sm fr-mb-3w">
-                        <p>{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</p>
+                    <div class="fr-notice fr-notice--alert">
+                        <div class="fr-container">
+                            <div class="fr-notice__body">
+                                <p>
+                                    <span class="fr-notice__title">{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</span>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 {% endif %}
 

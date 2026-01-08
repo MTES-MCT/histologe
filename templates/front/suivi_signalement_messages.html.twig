@@ -61,26 +61,28 @@
 					</li>
 				</ul>
 			{% else %}
+				{% set errorMessage = null %}
 				{% if signalement.statut.name == 'REFUSED' %}
-					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-						<p>Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.</p>
-					</div>
+					{% set errorMessage = 'Votre signalement a été refusé, vous ne pouvez plus envoyer de messages.' %}
 				{% elseif signalement.statut.name == 'CLOSED' and signalement.hasSuiviUsagerPostCloture %}
-					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-						<p>Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.</p>
-					</div>
+					{% set errorMessage = 'Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.' %}
 				{% elseif signalement.statut.name == 'CLOSED' and date(signalement.closedAt) < date('-30days') %}
-					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-						<p>Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>
-					</div>
+					{% set errorMessage = 'Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.' %}
 				{% elseif signalement.statut.name == 'ARCHIVED' %}
-					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-						<p>Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>
-					</div>
+					{% set errorMessage = 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.' %}
 				{% else %}
-					<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
-						<p>Vous ne pouvez plus envoyer de messages.</p>
-					</div>
+					{% set errorMessage = 'Vous ne pouvez plus envoyer de messages.' %}
+				{% endif %}
+				{% if errorMessage is not same as null %}
+                    <div class="fr-notice fr-notice--alert">
+                        <div class="fr-container">
+                            <div class="fr-notice__body">
+								<p>
+									<span class="fr-notice__title">{{ errorMessage }}</span>
+								</p>
+                            </div>
+                        </div>
+                    </div>					
 				{% endif %}
 				{% if signalement.motifRefus and signalement.motifRefus.name == 'DOUBLON' %}
 					<div class="fr-mb-1w">
