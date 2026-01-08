@@ -43,8 +43,8 @@ class SignalementFileGenerateZipControllerTest extends WebTestCase
         $this->assertResponseRedirects($expectedRedirectRoute);
         $this->client->followRedirect();
 
-        $this->assertSelectorExists('.fr-alert--success');
-        $this->assertSelectorTextContains('.fr-alert--success', 'Les photos ont bien été envoyées');
+        $this->assertSelectorExists('.fr-notice--success');
+        $this->assertSelectorTextContains('.fr-notice--success', 'Les photos ont bien été envoyées');
     }
 
     public function testGenerateZipSelectionSuccess(): void
@@ -62,6 +62,6 @@ class SignalementFileGenerateZipControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/signalements/'.$this->signalement->getUuid().'#documents');
         $this->client->followRedirect();
 
-        $this->assertSelectorExists('.fr-alert--success');
+        $this->assertSelectorExists('.fr-notice--success');
     }
 }
