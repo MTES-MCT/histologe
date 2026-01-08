@@ -60,6 +60,19 @@ class EsaboraSISHMock extends AbstractEsaboraMock
             self::SISH_ETAT_DOSSIER_SAS,
             WireMock::matchingJsonPath(
                 self::MATCH_JSON_PATH,
+                WireMock::equalTo('00000000-0000-0000-2023-000000000013')
+            ),
+            'ws_etat_dossier_sas/etat_rejete.json',
+            self::BASE_PATH,
+            self::RESOURCES_DIR,
+        );
+
+        self::createSearchDossierMock(
+            $wiremock,
+            'doSearch',
+            self::SISH_ETAT_DOSSIER_SAS,
+            WireMock::matchingJsonPath(
+                self::MATCH_JSON_PATH,
                 WireMock::equalTo(self::SIGNALEMENT_SUBCRIBED_SISH_SCHS)
             ),
             'ws_etat_dossier_sas/etat_termine.json',
