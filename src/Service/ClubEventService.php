@@ -21,6 +21,11 @@ class ClubEventService
             if ($user->isSuperAdmin()) {
                 return $clubEvent;
             }
+            // Les RT ont accès à tous les évènements correspondant à leur rôle
+            if ($user->isTerritoryAdmin() && $this->isRoleMatch($clubEvent, $user)) {
+                return $clubEvent;
+            }
+            // Les autres utilisateurs doivent correspondre aux critères de rôle, type et compétence
             if ($this->isRoleMatch($clubEvent, $user) && $this->isPartnerTypeMatch($clubEvent, $user) && $this->isPartnerCompetenceMatch($clubEvent, $user)) {
                 return $clubEvent;
             }
