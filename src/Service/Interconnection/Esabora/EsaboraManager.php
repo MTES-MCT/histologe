@@ -139,9 +139,11 @@ class EsaboraManager
                         partner: $affectation->getPartner(),
                         dispatchAffectationAnsweredEvent: false
                     );
+                    $note = '<i>NOTE : vous pourrez,si besoin, renvoyer ce signalement après mise à jour dans les 24 heures</i>';
                     $description = \sprintf(
-                        'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s',
-                        $dossierResponse->getSasCauseRefus()
+                        'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s<br>%s',
+                        $dossierResponse->getSasCauseRefus(),
+                        $note
                     );
                 }
                 break;
