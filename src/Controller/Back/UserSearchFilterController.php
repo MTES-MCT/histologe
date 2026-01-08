@@ -7,6 +7,7 @@ use App\Dto\Request\UserSearchFilterRequest;
 use App\Entity\User;
 use App\Entity\UserSearchFilter;
 use App\Repository\UserSearchFilterRepository;
+use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -157,7 +158,7 @@ class UserSearchFilterController extends AbstractController
         ], Response::HTTP_BAD_REQUEST);
     }
 
-    private function jsonForbidden(string $msg = 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.'): JsonResponse
+    private function jsonForbidden(string $msg = MessageHelper::ERROR_MESSAGE_CSRF): JsonResponse
     {
         return new JsonResponse(['status' => Response::HTTP_FORBIDDEN, 'message' => $msg], Response::HTTP_FORBIDDEN);
     }

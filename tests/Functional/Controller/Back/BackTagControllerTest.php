@@ -55,8 +55,17 @@ class BackTagControllerTest extends WebTestCase
         $tag = $tagRepository->findOneBy(['label' => 'Commission du 12/08', 'isArchive' => 0]);
         $this->assertNull($tag);
 
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('#desc-table', '5 étiquettes');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'L\'étiquette a bien été supprimée.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+        $total = $tagRepository->count(['isArchive' => 0]);
+        $this->assertEquals(5, $total);
     }
 
     public function testDeleteNewTagFailed(): void
@@ -75,8 +84,14 @@ class BackTagControllerTest extends WebTestCase
         $tag = $tagRepository->findOneBy(['label' => 'Commission du 12/08', 'isArchive' => 0]);
         $this->assertNotNull($tag);
 
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('#desc-table', '6 étiquettes');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'Une erreur est survenue lors de la suppression, veuillez réessayer.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+        $total = $tagRepository->count(['isArchive' => 0]);
+        $this->assertEquals(6, $total);
     }
 
     /**

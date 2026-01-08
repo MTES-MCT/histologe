@@ -10,10 +10,15 @@ use App\Form\UserApiPermissionType;
 use App\Form\UserApiType;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
+use App\Service\FormHelper;
 use App\Service\ListFilters\SearchUser;
+use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -24,29 +29,43 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 final class UserApiPermissionController extends AbstractController
 {
-    #[Route('/', name: 'back_api_user_index')]
-    public function index(
-        UserRepository $userRepository,
-        Request $request,
-        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
-    ): Response {
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        #[Autowire(param: 'standard_max_list_pagination')]
+        private readonly int $maxListPagination,
+    ) {
+    }
+
+    /**
+     * @return array{FormInterface, SearchUser, Paginator<User>}
+     */
+    private function handleSearch(Request $request, bool $fromSearchParams = false): array
+    {
         /** @var User $user */
         $user = $this->getUser();
         $searchUser = new SearchUser($user);
         $form = $this->createForm(SearchUserType::class, $searchUser, ['show_all_fields' => false]);
-        $form->handleRequest($request);
-
+        FormHelper::handleFormSubmitFromRequestOrSearchParams($form, $request, $fromSearchParams);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchUser = new SearchUser($user);
         }
 
-        $paginatedUsers = $userRepository->findUsersApiPaginator($searchUser, $maxListPagination);
+        /** @var Paginator<User> $paginatedUsers */
+        $paginatedUsers = $this->userRepository->findUsersApiPaginator($searchUser, $this->maxListPagination);
+
+        return [$form, $searchUser, $paginatedUsers];
+    }
+
+    #[Route('/', name: 'back_api_user_index')]
+    public function index(Request $request): Response
+    {
+        [$form, $searchUser, $paginatedUsers] = $this->handleSearch($request);
 
         return $this->render('back/user_api_permission/index.html.twig', [
             'form' => $form,
             'users' => $paginatedUsers,
             'searchUser' => $searchUser,
-            'pages' => (int) ceil($paginatedUsers->count() / $maxListPagination),
+            'pages' => (int) ceil($paginatedUsers->count() / $this->maxListPagination),
         ]);
     }
 
@@ -65,7 +84,7 @@ final class UserApiPermissionController extends AbstractController
             $entityManager->persist($userApiPermission);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Permission API créée avec succès.');
+            $this->addFlash('success', ['title' => 'Permission API ajoutée', 'message' => 'La permission API a bien été créée.']);
 
             return $this->redirectToRoute('back_api_user_index');
         }
@@ -84,7 +103,7 @@ final class UserApiPermissionController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'Permission API modifiée avec succès.');
+            $this->addFlash('success', ['title' => 'Permission API modifiée', 'message' => 'La permission API a bien été modifiée.']);
 
             return $this->redirectToRoute('back_api_user_index');
         }
@@ -96,17 +115,34 @@ final class UserApiPermissionController extends AbstractController
     }
 
     #[Route(path: '/permission/{id}/delete', name: 'back_api_user_permission_delete', methods: ['POST'])]
-    public function delete(UserApiPermission $userApiPermission, Request $request, EntityManagerInterface $entityManager): Response
+    public function delete(UserApiPermission $userApiPermission, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         if ($this->isCsrfTokenValid('user_api_permission_delete', (string) $request->request->get('_token'))) {
             $entityManager->remove($userApiPermission);
             $entityManager->flush();
-            $this->addFlash('success', 'Permission API supprimée avec succès.');
-        } else {
-            $this->addFlash('error', 'Token CSRF invalide, veuillez réessayer.');
-        }
+            $flashMessages[] = ['type' => 'success', 'title' => 'Succès', 'message' => 'La permission API a bien été supprimée.'];
+            [, $searchUser, $paginatedUsers] = $this->handleSearch($request, true);
+            $htmlTargetContents = [
+                [
+                    'target' => '#title-list-results',
+                    'content' => $this->renderView('back/user_api_permission/_title-list-results.html.twig', ['users' => $paginatedUsers]),
+                ],
+                [
+                    'target' => '#table-list-results',
+                    'content' => $this->renderView('back/user_api_permission/_table-list-results.html.twig', [
+                        'users' => $paginatedUsers,
+                        'searchUser' => $searchUser,
+                        'pages' => (int) ceil($paginatedUsers->count() / $this->maxListPagination),
+                    ]),
+                ],
+            ];
 
-        return $this->redirectToRoute('back_api_user_index');
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+        }
+        $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Une erreur est survenue lors de la suppression, veuillez réessayer.'];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 
     #[Route(path: '/add', name: 'back_api_user_add', methods: ['GET', 'POST'])]
@@ -131,7 +167,7 @@ final class UserApiPermissionController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Utilisateur "'.$user->getEmail().'" créé avec succès avec le mot de passe "'.$password.'".');
+            $this->addFlash('success', ['title' => 'Utilisateur ajouté', 'message' => 'L\'utilisateur "'.$user->getEmail().'" et son mot de passe "'.$password.'" ont bien été créés.']);
 
             return $this->redirectToRoute('back_api_user_index');
         }

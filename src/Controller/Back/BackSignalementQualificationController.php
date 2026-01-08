@@ -7,9 +7,10 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Manager\SignalementManager;
 use App\Security\Voter\SignalementVoter;
+use App\Service\MessageHelper;
+use App\Service\Signalement\SignalementQualificationNde;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -28,7 +29,8 @@ class BackSignalementQualificationController extends AbstractController
         SignalementQualification $signalementQualification,
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
-    ): RedirectResponse|JsonResponse {
+        SignalementQualificationNde $signalementQualificationNdeService,
+    ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_EDIT_NDE, $signalement);
         $decodedRequest = json_decode($request->getContent());
         if ($this->isCsrfTokenValid('signalement_edit_nde_'.$signalement->getId(), $decodedRequest->_token)) {
@@ -42,9 +44,20 @@ class BackSignalementQualificationController extends AbstractController
                 $qualificationNDERequest
             );
         } else {
-            $this->addFlash('error', "Une erreur est survenu lors de l'édition");
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }
 
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les modifications ont bien été enregistrées.'];
+        [$signalementQualificationNDE, $signalementQualificationNDECriticites] = $signalementQualificationNdeService->getSignalementQualificationNdeAndCriticites($signalement);
+        $nde = $this->renderView('back/signalement/view/nde.html.twig', [
+            'signalement' => $signalement,
+            'signalementQualificationNDE' => $signalementQualificationNDE,
+            'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
+        ]);
+        $htmlTargetContents = [['target' => '#signalement-bo-nde-container', 'content' => $nde]];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 }

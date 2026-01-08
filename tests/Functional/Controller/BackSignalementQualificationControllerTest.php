@@ -81,7 +81,12 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $this->assertEquals($consommationEnergie, $signalementQualification->getDetails()['consommation_energie']);
         $this->assertEquals($qualificationStatus, $signalementQualification->getStatus());
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'Les modifications ont bien été enregistrées.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function provideDataNDE(): \Generator

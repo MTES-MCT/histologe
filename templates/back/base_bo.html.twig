@@ -9,22 +9,13 @@
         {% if display_staging_notice %}
             {% include 'back/staging_notice.html.twig' %}
         {% endif %}
+        {% include "flash-messages.html.twig" %}
+        <div id="flash-messages-live-container"></div>
 
         <div class="{{ app.request.get('_route') in ['back_cartographie', 'back_signalements_index', 'back_dashboard'] ? 'fr-container-fluid' : container_class }}">
             <div class="fr-grid-row">
                 <div class="fr-col-12" id="content">
-                    {% for label, messages in app.flashes %}
-                        {% for message in messages %}
-                            <div role="alert" class="fr-alert fr-alert--{{ label }} fr-alert--sm">
-                                {% if label is same as('error error-raw') or label is same as('success success-raw') %}
-                                    <p>{{ message|raw }}</p>
-                                {% else %}
-                                    <p>{{ message }}</p>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    {% endfor %}
-                {% block content %}{% endblock %}
+                    {% block content %}{% endblock %}
                 </div>
             </div>
         </div>

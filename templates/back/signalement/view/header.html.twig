@@ -15,14 +15,16 @@
         </div>
         <div class="fr-col-12 fr-col-md-7">
             {% include 'back/signalement/view/header/_menu.html.twig' %}
-            {% include 'back/signalement/view/header/_title.html.twig' %}
-            {% include 'back/signalement/view/header/_address.html.twig' %}
+            {% include 'back/signalement/view/header/_title-with-status.html.twig' %}
+            <div id="header-address">
+                {% include 'back/signalement/view/header/_address.html.twig' %}
+            </div>
             {% include 'back/signalement/view/header/_infos-creation.html.twig' %}
         </div>
         <div class="fr-col-12 fr-col-md-5">
             {% include 'back/signalement/view/header/_esabora_alert.html.twig' %}
             {% include 'back/signalement/view/header/_badges.html.twig' %}
-            {% include 'back/signalement/view/header/_tags.html.twig' %}
+            {% include 'back/signalement/view/header/_tags-with-modal.html.twig' %}
         </div>
     </div>
 </header>

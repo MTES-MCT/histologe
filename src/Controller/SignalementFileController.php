@@ -12,6 +12,7 @@ use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\FileVoter;
 use App\Security\Voter\SignalementFoVoter;
+use App\Service\MessageHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -161,13 +162,14 @@ class SignalementFileController extends AbstractController
                     category: SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
                     user: $signalementUser->getUser(),
                 );
+                $title = $file->isTypeDocument() ? 'Document supprimé' : 'Photo supprimée';
                 $message = $file->isTypeDocument() ? 'Le document a bien été supprimé.' : 'La photo a bien été supprimée.';
-                $this->addFlash('success', $message);
+                $this->addFlash('success', ['title' => $title, 'message' => $message]);
             } else {
-                $this->addFlash('error', 'Le fichier n\'a pas été supprimé.');
+                $this->addFlash('error', ['title' => 'Erreur de suppression', 'message' => 'Le fichier n\'a pas été supprimé.']);
             }
         } else {
-            $this->addFlash('error', 'Token CSRF invalide, veuillez recharger la page');
+            $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
         }
 
         return $this->redirectToRoute('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
@@ -184,7 +186,7 @@ class SignalementFileController extends AbstractController
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
         if (null === $signalementUser->getEmail()) {
-            $this->addFlash('error', 'Il n\'y a pas d\'adresse e-mail à laquelle vous envoyer le signalement au format PDF.');
+            $this->addFlash('error', ['title' => 'Problème d\'adresse e-mail', 'message' => 'Il n\'y a pas d\'adresse e-mail à laquelle vous envoyer le signalement au format PDF.']);
         } else {
             $usagerEmail = $signalementUser->getEmail();
 
@@ -197,10 +199,10 @@ class SignalementFileController extends AbstractController
 
             $this->addFlash(
                 'success',
-                \sprintf(
-                    'Le signalement au format PDF vous sera envoyé par e-mail à l\'adresse suivante : %s. L\'envoi peut prendre plusieurs minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
+                ['title' => 'Dossier envoyé', 'message' => \sprintf(
+                    'Le dossier au format PDF a bien été envoyé par e-mail à l\'adresse suivante : %s. L\'envoi peut prendre plusieurs minutes. N\'oubliez pas de consulter vos courriers indésirables (spam) !',
                     $usagerEmail
-                )
+                )]
             );
         }
 

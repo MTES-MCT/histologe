@@ -10,8 +10,7 @@
                         <h1 id="fr-user-delete-title" class="fr-modal__title">
                             Suppression du compte de <span class="fr-modal-user-delete_username"></span> 
                         </h1>   
-                        <form action="{{ path('back_partner_user_delete', {id:partner.id}) }}" name="user_delete"
-                              id="user_delete_form" method="POST">
+                        <form action="{{ path('back_partner_user_delete', {id:partner.id}) }}" name="user_delete" id="user_delete_form" method="POST" data-submit-type="formData">
                             <div class="fr-select-group">
                                 Vous êtes sur le point de supprimer le compte utilisateur de <span class="fr-modal-user-delete_username"></span> (<span class="fr-modal-user-delete_useremail"></span>). Une fois le compte supprimé :
                                 <ul class="fr-list">
@@ -29,8 +28,7 @@
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <li>
-                                <button class="fr-btn fr-icon-check-line" form="user_delete_form"
-                                        id="user_delete_form_submit">
+                                <button class="fr-btn fr-icon-check-line" form="user_delete_form" id="user_delete_form_submit" type="submit">
                                     Oui, supprimer
                                 </button>
                             </li>

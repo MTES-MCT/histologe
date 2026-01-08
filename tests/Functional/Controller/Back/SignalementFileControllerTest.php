@@ -11,9 +11,7 @@ use App\Tests\SessionHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementFileControllerTest extends WebTestCase
@@ -83,16 +81,12 @@ class SignalementFileControllerTest extends WebTestCase
         $route = $this->router->generate('back_signalement_gen_pdf', ['uuid' => $signalement->getUuid()]);
         $this->client->request('GET', $route);
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-
-        $redirectUrl = $this->client->getResponse()->headers->get('Location');
-        /** @var Crawler $crawler */
-        $crawler = $this->client->request('GET', $redirectUrl);
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertStringContainsString(
-            'L\'export pdf vous sera envoyé par e-mail',
-            $crawler->filter('.fr-alert')->text()
-        );
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'L\'export PDF a bien été envoyé par e-mail à l\'adresse suivante : admin-01@signal-logement.fr. N\'oubliez pas de consulter vos courriers indésirables (spam) !';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testAddFileSignalementNotDeny(): void
@@ -142,7 +136,7 @@ class SignalementFileControllerTest extends WebTestCase
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
-        $this->assertEquals('Le document a bien été modifié.', $successMessages[0]);
+        $this->assertEquals(['title' => 'Document modifié', 'message' => 'Le document a bien été modifié.'], $successMessages[0]);
     }
 
     public function testEditFileSignalementError(): void

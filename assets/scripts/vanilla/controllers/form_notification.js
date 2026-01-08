@@ -1,31 +1,32 @@
-const histoNotificationCheckboxes = document.querySelectorAll('.check-notification');
 const histoNotificationSelected = [];
+const histoNotificationsContainer = document.querySelector('#table-list-results');
+histoNotificationsContainer?.addEventListener('change', (event) => {
+  const element = event.target;
+  if (!element.classList.contains('check-notification')) {
+    return;
+  }
 
-histoNotificationCheckboxes?.forEach((element) => {
-  element.addEventListener('change', () => {
-    const idNotification = element.getAttribute('data-notification-id');
-    if (element.checked) {
-      histoNotificationSelected.push(idNotification);
-    } else {
-      const indexNotification = histoNotificationSelected.indexOf(idNotification);
-      if (indexNotification > -1) {
-        histoNotificationSelected.splice(indexNotification, 1);
-      }
-    }
-    histoRefreshNotificationButtons();
+  histoNotificationSelected.length = 0;
+  document.querySelectorAll('.check-notification:checked').forEach((checkedElement) => {
+    const checkedIdNotification = checkedElement.getAttribute('data-notification-id');
+    histoNotificationSelected.push(checkedIdNotification);
   });
+
+  histoRefreshNotificationButtons();
 });
 
 function histoRefreshNotificationButtons() {
   const countNotificationsSelected = histoNotificationSelected.length;
   if (countNotificationsSelected > 0) {
-    document.querySelector('#notification-selected-buttons')?.classList.remove('fr-hidden');
-    document.querySelector('#notification-all-buttons')?.classList.add('fr-hidden');
     document.querySelector('#notification-selected-buttons-count').textContent =
-      countNotificationsSelected;
+      countNotificationsSelected + ' sélectionnée(s) :';
+    document.querySelector('#mark-as-read-notifications-btn').textContent = 'Marquer comme lue(s)';
+    document.querySelector('#delete-notifications-btn').textContent = 'Supprimer';
   } else {
-    document.querySelector('#notification-selected-buttons')?.classList.add('fr-hidden');
-    document.querySelector('#notification-all-buttons')?.classList.remove('fr-hidden');
+    document.querySelector('#notification-selected-buttons-count').textContent = '';
+    document.querySelector('#mark-as-read-notifications-btn').textContent =
+      'Marquer comme lue(s) (tous)';
+    document.querySelector('#delete-notifications-btn').textContent = 'Vider';
   }
   document
     .querySelectorAll('#notification-selected-buttons input[name=selected_notifications]')

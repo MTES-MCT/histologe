@@ -1,4 +1,8 @@
 import * as Sentry from '@sentry/browser';
+import {
+  jsonResponseHandler,
+  addFlashMessage,
+} from '../../services/component/component_json_response_handler';
 
 const modalElements = document.querySelectorAll('[data-ajax-form] dialog');
 
@@ -37,6 +41,9 @@ async function submitPayload(formElement) {
   let response;
   try {
     const formData = new FormData(formElement);
+    const submitElement = document.querySelector(
+      '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
+    );
 
     if (
       formElement.enctype === 'multipart/form-data' ||
@@ -60,23 +67,21 @@ async function submitPayload(formElement) {
       });
     }
     if (response.redirected && response.url.endsWith('/connexion')) {
-      alert('Votre session a expiré. Veuillez vous reconnecter en rechargeant la page.');
+      addFlashMessage({
+        type: 'alert',
+        title: 'Erreur',
+        message: 'Votre session a expiré. Veuillez vous reconnecter en rechargeant la page.',
+      });
     } else if (response.redirected) {
       window.location.href = response.url;
     } else if (response.ok) {
-      response.json().then((response) => {
-        if (response.redirect) {
-          window.location.href = response.url;
-        }
-      });
-      location.reload();
-      window.scrollTo(0, 0);
+      jsonResponseHandler(response);
+      setTimeout(() => {
+        resetSubmitButton(submitElement);
+      }, 500);
     } else if (response.status === 400) {
       const responseData = await response.json();
       const errors = responseData.errors;
-      const submitElement = document.querySelector(
-        '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
-      );
       let firstErrorElement = true;
       for (const property in errors) {
         const inputElements = document.querySelectorAll(
@@ -120,11 +125,13 @@ async function submitPayload(formElement) {
           firstErrorElement = false;
         }
       }
-      submitElement.disabled = false;
-      submitElement.classList.remove('fr-btn--loading', 'fr-icon-refresh-line');
-      if (!submitElement.classList.contains('fr-icon-check-line')) {
-        submitElement.classList.remove('fr-btn--icon-left');
-      }
+      resetSubmitButton(submitElement);
+    } else if (response.status === 403) {
+      addFlashMessage({
+        type: 'alert',
+        title: 'Erreur',
+        message: "Vous n'avez pas les permissions nécessaires pour effectuer cette action.",
+      });
     } else {
       const responseData = await response.json();
       alert(responseData.message);
@@ -139,3 +146,77 @@ const containerElements = document.querySelectorAll(
   '[data-ajax-form] dialog, [data-ajax-form] .single-ajax-form-container'
 );
 containerElements.forEach((containerElement) => handleSubmitForm(containerElement));
+
+function resetSubmitButton(submitElement) {
+  if (submitElement) {
+    submitElement.disabled = false;
+    submitElement.classList.remove('fr-btn--loading', 'fr-icon-refresh-line');
+    if (!submitElement.classList.contains('fr-icon-check-line')) {
+      submitElement.classList.remove('fr-btn--icon-left');
+    }
+  }
+}
+
+//gère la suppression des affectations et des suivis
+document.addEventListener('click', (event) => {
+  const actionBtn = event.target.closest('[data-delete]');
+
+  if (!actionBtn) return;
+
+  event.preventDefault();
+
+  if (confirm('Voulez-vous vraiment supprimer cet élément ?')) {
+    const formData = new FormData();
+    formData.append('_token', actionBtn.getAttribute('data-token'));
+    fetch(actionBtn.getAttribute('data-delete'), {
+      method: 'POST',
+      body: formData,
+    }).then((r) => {
+      if (r.ok) {
+        jsonResponseHandler(r);
+      }
+    });
+  }
+});
+
+document.addEventListener('click', (event) => {
+  const link = event.target.closest('.simple-ajax-link');
+
+  if (!link) return;
+
+  event.preventDefault();
+  fetch(link.href, { method: 'GET' }).then((response) => {
+    if (response.ok) {
+      jsonResponseHandler(response);
+    }
+  });
+});
+
+document.addEventListener('submit', (event) => {
+  const formElement = event.target.closest('.simple-ajax-form');
+
+  if (!formElement) return;
+
+  event.preventDefault();
+
+  const submitElement = formElement.querySelector('[type="submit"]');
+  submitElement.disabled = true;
+
+  const formData = new FormData(formElement);
+
+  fetch(formElement.action, {
+    method: 'POST',
+    body: formData,
+  }).then((response) => {
+    if (response.redirected && response.url.endsWith('/connexion')) {
+      addFlashMessage({
+        type: 'alert',
+        title: 'Erreur',
+        message: 'Votre session a expiré. Veuillez vous reconnecter en rechargeant la page.',
+      });
+    } else if (response.ok) {
+      jsonResponseHandler(response);
+    }
+    submitElement.disabled = false;
+  });
+});

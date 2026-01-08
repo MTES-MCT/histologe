@@ -350,10 +350,15 @@ class AffectationControllerTest extends WebTestCase
             '_token' => $token,
         ]);
         $this->assertEmailCount(1);
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
-        $this->assertTrue($flashBag->has('success success-raw'));
-        $successMessages = $flashBag->get('success success-raw');
-        $this->assertEquals('Les affectations ont bien été effectuées.<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : Partenaire 13-09 Non Notifiable', $successMessages[0]);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les affectations ont bien été effectuées.<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : Partenaire 13-09 Non Notifiable';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testToggleAffectationWithRoleUserPartner(): void
@@ -419,8 +424,9 @@ class AffectationControllerTest extends WebTestCase
             '_token' => $token,
         ]);
 
-        // Test that status success but nothing changed in affectations
-        $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertEquals('success', $response['flashMessages'][0]['type']);
         $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, true);
         $this->assertEquals(1, \count($affectablePartners['affected']));
         $this->assertEquals(0, \count($affectablePartners['not_affected']));
@@ -451,7 +457,9 @@ class AffectationControllerTest extends WebTestCase
             'affectation' => $affectation->getId(),
             '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
         ]);
-        $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertEquals('success', $response['flashMessages'][0]['type']);
 
         $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, true);
         $this->assertEquals(0, \count($affectablePartners['affected']));
@@ -472,7 +480,9 @@ class AffectationControllerTest extends WebTestCase
             ],
             '_token' => $token,
         ]);
-        $this->assertSame('{"status":"success"}', $this->client->getResponse()->getContent());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertEquals('success', $response['flashMessages'][0]['type']);
     }
 
     public function testRemoveAffectation(): void
@@ -496,7 +506,9 @@ class AffectationControllerTest extends WebTestCase
             'affectation' => $affectation->getId(),
             '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
         ]);
-        $this->assertSame('{"status":"success"}', (string) $this->client->getResponse()->getContent());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertEquals('success', $response['flashMessages'][0]['type']);
     }
 
     public function testRemoveAffectationFromOtherSignalement(): void
@@ -519,7 +531,8 @@ class AffectationControllerTest extends WebTestCase
             'affectation' => $affectation->getId(),
             '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
         ]);
-        $this->assertSame('{"status":"denied"}', (string) $this->client->getResponse()->getContent());
-        $this->assertResponseStatusCodeSame(403);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertEquals('alert', $response['flashMessages'][0]['type']);
     }
 }

@@ -1,0 +1,45 @@
+{% set tableHead %}
+    <th scope="col">ID</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Territoires</th>
+    <th scope="col">Actions</th>
+{% endset %}
+
+{% set tableBody %}
+    {% for bailleur in bailleurs %}
+        <tr class="signalement-row">
+            <td>{{ bailleur.id }}</td>
+            <td>{{ bailleur.name }}</td>
+            <td>
+                {% for bailleurTerritory in bailleur.bailleurTerritories %}
+                    <span class="fr-badge fr-badge--no-icon fr-badge--success">{{bailleurTerritory.territory.zipAndName}}</span>
+                {% endfor %}
+            </td>
+            <td class="fr-text--right fr-ws-nowrap">
+                <a href="{{path('back_bailleur_edit', {bailleur: bailleur.id})}}" class="fr-btn fr-icon-edit-line" title="Editer le bailleur {{bailleur.name}}">
+                    Editer le bailleur {{ bailleur.name }}
+                </a>
+                {% if not bailleur.signalements|length %}
+                    <button 
+                        class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-bailleur-delete" 
+                        title="Supprimer le bailleur {{bailleur.name}}" 
+                        data-fr-opened="false" 
+                        aria-controls="fr-modal-bailleur-delete"
+                        data-url="{{path('back_bailleur_delete', {bailleur: bailleur.id})}}?_token={{ csrf_token('bailleur_delete') }}"
+                        data-name="{{bailleur.name}}" >
+                        Supprimer le bailleur {{ bailleur.name }}
+                    </button>
+                {% else %}
+                    <button class="fr-btn fr-btn--secondary fr-icon-delete-line" title="Le bailleur est lié à de signalements" disabled>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endset %}
+
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des bailleurs', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+<div id="territory-pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center">
+    {% import '_partials/macros.html.twig' as macros %}
+    {{ macros.customPagination(pages, searchBailleur.page, 'back_bailleur_index', searchBailleur.urlParams) }}
+</div>

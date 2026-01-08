@@ -6,11 +6,11 @@ import {
 const searchZoneForm = document.getElementById('search-zone-form');
 
 if (searchZoneForm) {
-  document.querySelectorAll('.open-modal-zone-delete').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      document.getElementById('fr-modal-zone-delete-zone-name').textContent = e.target.dataset.name;
-      document.getElementById('fr-modal-zone-delete-btn-submit').href = e.target.dataset.url;
-    });
+  document.addEventListener('click', (e) => {
+    const button = e.target.closest('.open-modal-zone-delete');
+    if (!button) return;
+    document.getElementById('fr-modal-zone-delete-zone-name').textContent = button.dataset.name;
+    document.getElementById('zone_delete_form').action = button.dataset.url;
   });
   updateLocalStorageWithFormParams('search-zone-form');
 }

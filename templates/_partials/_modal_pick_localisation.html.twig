@@ -18,20 +18,16 @@
                         <div id="fr-modal-pick-localisation-message">Chargement en cours</div>
                         <div id="fr-modal-pick-localisation-map"></div>
                     </div>
+                    <form action="{{ path('back_signalement_set_rnb', {'uuid': signalement.uuid}) }}" method="POST" id="fr-modal-pick-localisation-form" data-submit-type="formData">
+                        <input type="hidden" name="rnbId" id="fr-modal-pick-localisation-rnb-id">
+                        <input type="hidden" name="_token" value="{{ csrf_token('signalement_set_rnb_'~signalement.uuid) }}">
+                    </form>
                     <div class="fr-modal__footer">
                         <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
                             <li>
-                                <form action="{{ path('back_signalement_set_rnb', {'uuid': signalement.uuid}) }}" method="POST">
-                                    <input type="hidden" name="rnbId" id="fr-modal-pick-localisation-rnb-id">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_set_rnb_'~signalement.uuid) }}">
-                                    <button 
-                                        class="fr-btn fr-icon-check-line" 
-                                        id="fr-modal-pick-localisation-submit" 
-                                        disabled
-                                    >
-                                        Valider
-                                    </button>
-                                </form>
+                                <button class="fr-btn fr-icon-check-line" id="fr-modal-pick-localisation-submit" disabled type="submit" form="fr-modal-pick-localisation-form">
+                                    Valider
+                                </button>
                             </li>
                             <li>
                                 <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-pick-localisation">

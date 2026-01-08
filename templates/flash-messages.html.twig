@@ -1,0 +1,35 @@
+{% if app.session.flashbag.peekAll()|length > 0 %}
+    <div class="{{ container_class }}">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            {% if label in ['error', 'error error-raw'] %}
+                {% set noticeType = 'alert' %}
+            {% else %}
+                {% set noticeType = label %}
+            {% endif %}
+            {% if message is iterable %}
+                {% set messageTitle = message.title %}
+                {% set messageContent = message.message %}
+            {% else %}
+                {% if label in ['error', 'error error-raw'] %}
+                    {% set messageTitle = 'Erreur' %}
+                {% else %}
+                    {% set messageTitle = label %}
+                {% endif %}
+                {% set messageContent = message %}
+            {% endif %}
+            <div role="alert" class="fr-notice fr-notice--{{ noticeType }}">
+                <div class="fr-container">
+                    <div class="fr-notice__body">
+                        <p>
+                            <span class="fr-notice__title">{{ messageTitle }}</span>
+                            <span class="fr-notice__desc">{% if label ends with '-raw' %}{{ messageContent|raw }}{% else %}{{ messageContent }}{% endif %}</span>
+                        </p>
+                        <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    </div>
+{% endif %}

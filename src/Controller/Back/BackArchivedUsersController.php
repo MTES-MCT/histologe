@@ -17,8 +17,6 @@ use App\Service\Mailer\NotificationMailerType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -77,16 +75,14 @@ class BackArchivedUsersController extends AbstractController
         $untaggedEmail = explode(User::SUFFIXE_ARCHIVED, $user->getEmail())[0];
         $userExist = $userRepository->findOneByEmailExcepted($untaggedEmail, $user);
         if ($userExist) {
-            $this->addFlash('error', 'Un utilisateur existe déjà avec cette adresse e-mail. '
-            .$userExist->getNomComplet().' ( id '.$userExist->getId().' ) avec le rôle '
-            .$userExist->getRoleLabel());
+            $message = 'Un utilisateur existe déjà avec cette adresse e-mail. '.$userExist->getNomComplet().' ( id '.$userExist->getId().' ) avec le rôle '.$userExist->getRoleLabel();
+            $this->addFlash('error', ['title' => 'Adresse e-mail existante', 'message' => $message]);
         }
 
         $partnerExist = $partnerRepository->findOneBy(['email' => $untaggedEmail]);
         if ($partnerExist) {
-            $this->addFlash('error', 'Un partenaire existe déjà avec cette adresse e-mail. '
-            .$partnerExist->getNom().' ( id '.$partnerExist->getId().' ) dans le territoire '
-            .$partnerExist->getTerritory()->getName());
+            $message = 'Un partenaire existe déjà avec cette adresse e-mail. '.$partnerExist->getNom().' ( id '.$partnerExist->getId().' ) dans le territoire '.$partnerExist->getTerritory()->getName();
+            $this->addFlash('error', ['title' => 'Adresse e-mail existante', 'message' => $message]);
         }
 
         if (!$userExist && !$partnerExist && $form->isSubmitted() && $form->isValid()) {
@@ -105,7 +101,7 @@ class BackArchivedUsersController extends AbstractController
             $entityManager->persist($userPartner);
 
             $entityManager->flush();
-            $this->addFlash('success', 'Réactivation du compte effectuée.');
+            $this->addFlash('success', ['title' => 'Compte réactivé', 'message' => 'Le compte a bien été réactivé.']);
 
             $notificationMailerRegistry->send(
                 new NotificationMail(
@@ -118,21 +114,11 @@ class BackArchivedUsersController extends AbstractController
             return $this->redirectToRoute('back_archived_users_index');
         }
 
-        $this->displayErrors($form);
-
         return $this->render('back/user_archived/edit.html.twig', [
             'user' => $user,
             'territories' => $territoryRepository->findAllList(),
             'partners' => $partnerRepository->findAllList(null),
             'form' => $form,
         ]);
-    }
-
-    private function displayErrors(FormInterface $form): void
-    {
-        /** @var FormError $error */
-        foreach ($form->getErrors(true) as $error) {
-            $this->addFlash('error', $error->getMessage());
-        }
     }
 }

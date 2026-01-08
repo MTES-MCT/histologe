@@ -543,12 +543,15 @@ class SignalementControllerTest extends WebTestCase
             ]
         );
 
-        $client->followRedirect();
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains(
-            '.fr-alert--success',
-            'Les étiquettes ont bien été enregistrées.'
-        );
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les étiquettes ont bien été modifiées.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
 
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']);
         $this->assertCount(2, $signalement->getTags());

@@ -1,0 +1,57 @@
+{% set tableHead %}
+    <th scope="col" class="number">ID</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Partenaires</th>
+    <th scope="col">Partenaires exclus</th>
+    <th scope="col">Territoire</th>
+    <th scope="col">Type</th>
+    <th scope="col" class="fr-text--right">Actions</th>
+{% endset %}
+
+{% set tableBody %}
+    {% for item in zones %}
+        <tr class="signalement-row">
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>
+                {% for partner in item.partners %}
+                    <span class="fr-badge fr-badge--success fr-badge--no-icon">{{ partner.nom }}</span>
+                {% endfor %}
+            </td>
+            <td>
+                {% for partner in item.excludedPartners %}
+                    <span class="fr-badge fr-badge--error fr-badge--no-icon">{{ partner.nom }}</span>
+                {% endfor %}
+            </td>
+            <td>
+                {% if item.territory %}
+                    {{ item.territory.zipAndName }}
+                {% endif %}
+            </td>
+            <td>{{ item.type.label }}</td>
+            <td class="fr-text--right fr-ws-nowrap">
+                <a href="{{path('back_territory_management_zone_show', {zone: item.id})}}" class="fr-btn fr-icon-arrow-right-line" title="Visualiser la zone {{item.name}}">
+                    Visualiser la zone {{ item.name }}
+                </a>
+                <a href="{{path('back_territory_management_zone_edit', {zone: item.id})}}" class="fr-btn fr-icon-edit-line" title="Editer la zone {{item.name}}">
+                    Editer la zone {{ item.name }}
+                </a>
+                <button 
+                    class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-zone-delete" 
+                    title="Supprimer la zone {{item.name}}" 
+                    data-fr-opened="false" 
+                    aria-controls="fr-modal-zone-delete"
+                    data-url="{{path('back_zone_delete', {zone: item.id})}}?_token={{ csrf_token('zone_delete') }}"
+                    data-name="{{item.name}}" >
+                    Supprimer la zone {{ item.name }}</button>
+            </td>
+        </tr>
+    {% endfor %}
+{% endset %}
+
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des zones', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+    {% import '_partials/macros.html.twig' as macros %}
+    {{ macros.customPagination(pages, searchZone.page, 'back_territory_management_zone_index', searchZone.urlParams) }}
+</div>

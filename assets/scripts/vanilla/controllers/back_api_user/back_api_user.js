@@ -1,9 +1,10 @@
-document.querySelectorAll('.btn-delete-user-api-permission').forEach((btn) => {
-  btn.addEventListener('click', () => {
+document.addEventListener('click', (event) => {
+  const btn = event.target.closest('.btn-delete-user-api-permission');
+  if (btn) {
     document.querySelector('#user_api_permission_delete_form').action = btn.dataset.url;
     document.querySelector('#fr-modal-user-api-permission-delete-description').innerHTML =
       btn.dataset.description;
-  });
+  }
 });
 
 const partnerSelect = document.querySelector('#user_api_permission_partner');

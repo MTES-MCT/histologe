@@ -212,6 +212,10 @@ legend.required::after, label.required::after {
     display: inline;
 }
 
+.fr-display-inline-block {
+    display: inline-block;
+}
+
 .fr-display-flex-column {
     display: flex;
     flex-direction: column;
@@ -1126,6 +1130,33 @@ ul.fr-toggle__list.fr-toggle__list--inline {
             margin-right: 0.5rem;
         }
     }
+}
+
+#flash-messages-live-container{
+    position: fixed;
+    right: 2%;
+    top: 2%;
+    z-index: 9999;
+    max-width: 350px;
+
+    .fr-notice {
+        margin-bottom: 1.5rem;
+    }
+}
+
+.fr-notice.fr-notice--success{
+    background-color: var(--background-contrast-success);
+    color: var(--text-default-success);
+}
+.fr-notice--success .fr-notice__title::before {
+  content: "";
+}
+.fr-notice--success .fr-notice__title:not([class^="fr-icon-"]):not([class*=" fr-icon-"]):not([class^="fr-fi-"]):not([class*=" fr-fi-"])::before {
+  -webkit-mask-image: url("~@gouvfr/dsfr/dist/icons/system/checkbox-fill.svg");
+  mask-image: url("~@gouvfr/dsfr/dist/icons/system/checkbox-fill.svg");
+}
+.fr-notice--success .fr-btn--close:hover {
+    background-color: var(--background-contrast-success-hover);
 }
 
 .zip-parent-position-relative {

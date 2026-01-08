@@ -1,0 +1,103 @@
+<section class="fr-col-12 fr-p-5v">
+    <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(autoAffectationRules|length, 'règle d\'auto-affectation trouvée', 'règles d\'auto-affectation trouvées') }}</h2>
+</section>
+
+<section class="fr-col-12 fr-pt-0 fr-px-5v">
+    {% set tableHead %}
+        <th scope="col">Territoire</th>
+        <th scope="col">Statut</th>
+        <th scope="col">Type de partenaire</th>
+        <th scope="col">Profil déclarant</th>
+        <th scope="col">Parc</th>
+        <th scope="col">Allocataire</th>
+        <th scope="col">Code insee inclus</th>
+        <th scope="col">Code insee exclus</th>
+        <th scope="col">Id partenaires exclus</th>
+        <th scope="col">Procédures suspectées</th>
+        <th scope="col" class="fr-text--right">Actions</th>
+    {% endset %}
+
+    {% set tableBody %}
+        {% for autoaffectationrule in autoAffectationRules %}
+            <tr class="autoaffectationrule-row">
+                <td>{{ autoaffectationrule.territory.zipAndName }}</td>
+                <td>
+                    {% if autoaffectationrule.status is same as constant('App\\Entity\\AutoAffectationRule::STATUS_ACTIVE') %}
+                        {% set classe = 'fr-badge--green-emeraude' %}
+                    {% else %}
+                        {% set classe = 'fr-badge--blue-ecume' %}
+                    {% endif %}
+                    <span class="fr-badge {{ classe }} fr-mb-1v">{{ autoaffectationrule.status  }}</span></td>
+                </td>
+                <td>{{ autoaffectationrule.partnerType.label }}</td>
+                <td>{{ autoaffectationrule.profileDeclarant }}</td>
+                <td>{{ autoaffectationrule.parc }}</td>
+                <td>{{ autoaffectationrule.allocataire }}</td>
+                <td>
+                    {% if autoaffectationrule.inseeToInclude %}
+                        {% for insee in autoaffectationrule.inseeToInclude|split(',') %}
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
+                        {% endfor %}
+                    {% else %}
+                        /
+                    {% endif %}
+                </td>
+                <td>
+                    {% if autoaffectationrule.inseeToExclude %}
+                        {% for insee in autoaffectationrule.inseeToExclude %}
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
+                        {% endfor %}
+                    {% else %}
+                        /
+                    {% endif %}
+                </td>
+                <td>
+                    {% if autoaffectationrule.partnerToExclude %}
+                        {% for idPartner in autoaffectationrule.partnerToExclude %}
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idPartner }}</div>
+                        {% endfor %}
+                    {% else %}
+                        /
+                    {% endif %}
+                </td>
+                <td>
+                    {% if autoaffectationrule.proceduresSuspectees %}
+                        {% for proc in autoaffectationrule.proceduresSuspectees %}
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ proc.label() }}</div>
+                        {% endfor %}
+                    {% else %}
+                        /
+                    {% endif %}
+                </td>
+                <td class="fr-text--right">
+                    <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_auto_affectation_rule_edit', {'id': autoaffectationrule.id}) }}"></a>
+                    {% if autoaffectationrule.status is same as constant('App\\Entity\\AutoAffectationRule::STATUS_ACTIVE') %}
+                        <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line fr-mt-3v btn-delete-autoaffectationrule"
+                        id="autoaffectationrule_delete_{{ autoaffectationrule.id }}" aria-controls="fr-modal-autoaffectationrule-delete"
+                        data-fr-opened="false" data-autoaffectationrule-id="{{ autoaffectationrule.id }}" data-autoaffectationrule-description="{{ autoaffectationrule.description }}"></button>
+                    {% else %}
+                        <form action="{{ path('back_auto_affectation_rule_reactive', {'id': autoaffectationrule.id}) }}" method="POST" class="simple-ajax-form" >
+                            <input type="hidden" name="search_params" value="{{ app.request.query.all|url_encode }}">
+                            <button 
+                                class="fr-btn fr-icon-flashlight-fill fr-btn--sm fr-mt-3v" 
+                                title="Réactiver la règle {{autoaffectationrule.id}}"
+                                type="submit">
+                            </button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">Aucune règle d'auto-affectation trouvée</td>
+            </tr>
+        {% endfor %}
+    {% endset %}
+
+    {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des règles d\'auto-affectation', 'tableHead': tableHead, 'tableBody': tableBody } %}
+
+    <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="autoaffectation-rule-pagination">
+        {% import '_partials/macros.html.twig' as macros %}
+        {{ macros.customPagination(pages, searchAutoAffectationRule.page, 'back_auto_affectation_rule_index', searchAutoAffectationRule.urlParams) }}
+    </div>
+</section>

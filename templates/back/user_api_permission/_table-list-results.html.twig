@@ -1,0 +1,81 @@
+{% set tableHead %}
+    <th scope="col">E-mail</th>
+    <th scope="col">Statut du compte</th>
+    <th scope="col">Dernière connexion</th>
+    <th>Permissions</th>
+    <th scope="col" class="fr-text--right">Actions</th>
+{% endset %}
+
+{% set tableBody %}
+    {% for user in users %}
+        <tr class="signalement-row">
+            <td>
+                {{ user.email }}
+            </td>
+            <td>
+                {% if user.statut is same as enum('App\\Entity\\Enum\\UserStatus').INACTIVE %}
+                    <span class="fr-badge fr-badge--no-icon fr-badge--error">Non activé</span>
+                {% elseif user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE %}
+                    <span class="fr-badge fr-badge--no-icon fr-badge--success">Activé</span>
+                {% else %}
+                    {{ user.statut.label }}
+                {% endif %}
+            </td>
+            <td>
+                {{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-' }}
+            </td>
+            <td>
+                {% if user.userApiPermissions|length %}
+                    <div class="fr-table fr-table--sm fr-m-0">
+                        <div class="fr-table__wrapper">
+                            <div class="fr-table__container">
+                                <div class="fr-table__content">
+                                    <table>
+                                        {% for permission in user.userApiPermissions %}
+                                            <tr>
+                                                <td>
+                                                    {% set currentPermissionDescription %}
+                                                    <ul>
+                                                        {% if permission.territory is not null %}
+                                                            <li><strong>Territoire :</strong> {{ permission.territory.zipAndName }}</li>
+                                                        {% endif %}
+                                                        {% if permission.partner is not null %}
+                                                            <li><strong>Partenaire :</strong> <a href="{{ path('back_partner_view', {id: permission.partner.id}) }}">{{ permission.partner.nom }}</a></li>
+                                                        {% endif %}
+                                                        {% if permission.partnerType is not null %}
+                                                            <li><strong>Type de partenaire :</strong> {{ permission.partnerType.label()}}</li>
+                                                        {% endif %}
+                                                    </ul>
+                                                    {% endset %}
+                                                    {{ currentPermissionDescription|raw }}
+                                                </td>
+                                                <td class="fr-cell--right">
+                                                    <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_api_user_permission_edit', {'id': permission.id}) }}" title="Modifier la permission"></a>
+                                                    <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line btn-delete-user-api-permission"
+                                                        title="Supprimer la permission" 
+                                                        aria-controls="fr-modal-user-api-permission-delete" data-fr-opened="false" 
+                                                        data-url="{{ path('back_api_user_permission_delete', {'id': permission.id}) }}"
+                                                        data-description="{{ currentPermissionDescription|e('html_attr') }}">
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                {% endif %}
+            </td>
+            <td class="fr-cell--right">
+                <a class="fr-btn fr-btn--success fr-btn--sm fr-fi-add-circle-line" href="{{ path('back_api_user_permission_create', {'id': user.id}) }}" title="Ajouter une permission"></a>
+            </td>
+        </tr>
+    {% endfor %}
+{% endset %}
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des utilisateurs API', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+    {% import '_partials/macros.html.twig' as macros %}
+    {{ macros.customPagination(pages, searchUser.page, 'back_api_user_index', searchUser.urlParams) }}
+</div>

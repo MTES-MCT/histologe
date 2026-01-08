@@ -14,6 +14,7 @@ use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Gouv\Rnb\Response\RnbBuilding;
 use App\Service\Gouv\Rnb\RnbService;
+use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -63,7 +64,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
+        $this->assertSelectorTextContains('.fr-notice--success p', 'Le signalement a bien été accepté.');
 
         $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
@@ -87,7 +88,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--error p', 'Vous devez sélectionner les responsables de territoire à abonner au dossier.');
+        $this->assertSelectorTextContains('.fr-notice--alert', 'Vous devez sélectionner les responsables de territoire à abonner au dossier.');
     }
 
     public function testValidationResponseAcceptSignalementSuccessWithChoiceRT(): void
@@ -113,9 +114,15 @@ class SignalementActionControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->client->followRedirect();
-        $this->assertSelectorTextContains('.fr-alert--success p', 'Signalement accepté avec succès !');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirect', $response);
+        $this->assertArrayHasKey('url', $response);
+        $this->assertTrue($response['redirect']);
+        $this->assertEquals('/bo/signalements/'.$signalement->getUuid(), $response['url']);
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $successMessages = $flashBag->get('success');
+        $this->assertEquals(['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.'], $successMessages[0]);
 
         $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
@@ -253,7 +260,15 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertNotNull($suivi->getDeletedBy());
         $this->assertNotEquals($description, $suivi->getDescription());
         $this->assertStringContainsString(Suivi::DESCRIPTION_DELETED, $suivi->getDescription());
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertArrayHasKey('functions', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertEquals([['name' => 'applyFilter']], $response['functions']);
+        $msgFlash = 'Le suivi a été supprimé.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testDeleteSuiviPhysical(): void
@@ -278,8 +293,15 @@ class SignalementActionControllerTest extends WebTestCase
         );
 
         $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
-        $this->assertNull($suivi);
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid().'#suivis');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertArrayHasKey('functions', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertEquals([['name' => 'applyFilter']], $response['functions']);
+        $msgFlash = 'Le suivi a été supprimé.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testEditSuiviSuccess(): void
@@ -440,7 +462,22 @@ class SignalementActionControllerTest extends WebTestCase
         } else {
             $this->assertNull($signalement->getRnbIdOccupant());
         }
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        if ($isGeolocUpdated) {
+            $this->assertArrayHasKey('stayOnPage', $response);
+            $this->assertArrayHasKey('flashMessages', $response);
+            $this->assertArrayHasKey('closeModal', $response);
+            $this->assertArrayHasKey('htmlTargetContents', $response);
+            $this->assertTrue($response['stayOnPage']);
+            $msgFlash = 'Le bâtiment a bien été mis à jour.';
+            $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+        } else {
+            $this->assertArrayHasKey('stayOnPage', $response);
+            $this->assertArrayHasKey('flashMessages', $response);
+            $this->assertTrue($response['stayOnPage']);
+            $msgFlash = 'Le signalement a déjà une géolocalisation.';
+            $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+        }
     }
 
     public function provideSignalementToSetRnbId(): \Generator
@@ -466,8 +503,12 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('success'));
-        $this->assertEquals('Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
-        Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.', $flashBag->get('success')[0]);
+        $flashMsg = [
+            'title' => 'Abonnement au dossier',
+            'message' => 'Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
+        Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.',
+        ];
+        $this->assertEquals($flashMsg, $flashBag->get('success')[0]);
 
         $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
         $this->assertNotNull($sub);
@@ -604,7 +645,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
         $this->assertTrue($flashBag->has('error'));
-        $this->assertEquals('Le jeton CSRF est invalide. Veuillez réessayer.', $flashBag->get('error')[0]);
+        $this->assertEquals(MessageHelper::ERROR_MESSAGE_CSRF, $flashBag->get('error')[0]);
 
         $sub = $this->userSignalementSubscriptionRepository->findOneBy([
             'user' => $user,

@@ -18,9 +18,11 @@ use App\Manager\SignalementManager;
 use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
+use App\Service\HtmlTargetContentsService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\MessageHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,38 +46,39 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        HtmlTargetContentsService $htmlTargetContentsService,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $token)) {
-            /** @var AdresseOccupantRequest $adresseOccupantRequest */
-            $adresseOccupantRequest = $serializer->deserialize(
-                json_encode($payload),
-                AdresseOccupantRequest::class,
-                'json'
-            );
+        if (!$this->isCsrfTokenValid('signalement_edit_address_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            $errorMessage = FormHelper::getErrorsFromRequest($validator, $adresseOccupantRequest);
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'L\'adresse du logement a bien été modifiée.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        /** @var AdresseOccupantRequest $adresseOccupantRequest */
+        $adresseOccupantRequest = $serializer->deserialize(
+            json_encode($payload),
+            AdresseOccupantRequest::class,
+            'json'
+        );
 
-        return $this->json($response, $response['code']);
+        $errorMessage = FormHelper::getErrorsFromRequest($validator, $adresseOccupantRequest);
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'adresse du logement a bien été modifiée.'];
+        if ($subscriptionCreated) {
+            $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = $htmlTargetContentsService->getHtmlTargetContentsForSignalementAddress($signalement);
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-tiers', name: 'back_signalement_edit_coordonnees_tiers', methods: 'POST')]
@@ -94,38 +97,39 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_coordonnees_tiers_'.$signalement->getId(),
-            $token
-        )) {
-            /** @var CoordonneesTiersRequest $coordonneesTiersRequest */
-            $coordonneesTiersRequest = $serializer->deserialize(
-                json_encode($request->getPayload()->all()),
-                CoordonneesTiersRequest::class,
-                'json'
-            );
+        if (!$this->isCsrfTokenValid('signalement_edit_coordonnees_tiers_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            $errorMessage = FormHelper::getErrorsFromRequest($validator, $coordonneesTiersRequest);
-
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'Les coordonnées du tiers déclarant ont bien été modifiées.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        /** @var CoordonneesTiersRequest $coordonneesTiersRequest */
+        $coordonneesTiersRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            CoordonneesTiersRequest::class,
+            'json'
+        );
 
-        return $this->json($response, $response['code']);
+        $errorMessage = FormHelper::getErrorsFromRequest($validator, $coordonneesTiersRequest);
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du tiers déclarant ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-tiers-container',
+                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/edit-invite-tiers', name: 'back_signalement_edit_invite_tiers', methods: 'POST')]
@@ -195,42 +199,47 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_coordonnees_foyer_'.$signalement->getId(),
-            $token
-        )) {
-            /** @var CoordonneesFoyerRequest $coordonneesFoyerRequest */
-            $coordonneesFoyerRequest = $serializer->deserialize(
-                json_encode($payload),
-                CoordonneesFoyerRequest::class,
-                'json'
-            );
+        if (!$this->isCsrfTokenValid('signalement_edit_coordonnees_foyer_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
-            $errorMessage = FormHelper::getErrorsFromRequest($validator, $coordonneesFoyerRequest, $validationGroups);
-
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'Les coordonnées du foyer ont bien été modifiées.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        /** @var CoordonneesFoyerRequest $coordonneesFoyerRequest */
+        $coordonneesFoyerRequest = $serializer->deserialize(
+            json_encode($payload),
+            CoordonneesFoyerRequest::class,
+            'json'
+        );
 
-        return $this->json($response, $response['code']);
+        $validationGroups = ['Default'];
+        if ($signalement->getProfileDeclarant()) {
+            $validationGroups[] = $signalement->getProfileDeclarant()->value;
+        }
+        $errorMessage = FormHelper::getErrorsFromRequest($validator, $coordonneesFoyerRequest, $validationGroups);
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du foyer ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-title-container',
+                'content' => $this->renderView('back/signalement/view/header/_title.html.twig', ['signalement' => $signalement]),
+            ],
+            [
+                'target' => '#signalement-information-foyer-container',
+                'content' => $this->renderView('back/signalement/view/information/information-foyer.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-bailleur', name: 'back_signalement_edit_coordonnees_bailleur', methods: 'POST')]
@@ -245,45 +254,46 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_coordonnees_bailleur_'.$signalement->getId(),
-            $token
-        )) {
-            /** @var CoordonneesBailleurRequest $coordonneesBailleurRequest */
-            $coordonneesBailleurRequest = $serializer->deserialize(
-                json_encode($request->getPayload()->all()),
-                CoordonneesBailleurRequest::class,
-                'json'
-            );
-            $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
-            $errorMessage = FormHelper::getErrorsFromRequest(
-                $validator,
-                $coordonneesBailleurRequest,
-                $validationGroups
-            );
+        if (!$this->isCsrfTokenValid('signalement_edit_coordonnees_bailleur_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'Les coordonnées du bailleur ont bien été modifiées.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        /** @var CoordonneesBailleurRequest $coordonneesBailleurRequest */
+        $coordonneesBailleurRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            CoordonneesBailleurRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        if ($signalement->getProfileDeclarant()) {
+            $validationGroups[] = $signalement->getProfileDeclarant()->value;
+        }
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $coordonneesBailleurRequest,
+            $validationGroups
+        );
 
-        return $this->json($response, $response['code']);
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du bailleur ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-bailleur-container',
+                'content' => $this->renderView('back/signalement/view/information/information-bailleur.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-agence', name: 'back_signalement_edit_coordonnees_agence', methods: 'POST')]
@@ -298,45 +308,47 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_coordonnees_agence_'.$signalement->getId(),
-            $token
-        )) {
-            /** @var CoordonneesAgenceRequest $coordonneesAgenceRequest */
-            $coordonneesAgenceRequest = $serializer->deserialize(
-                json_encode($request->getPayload()->all()),
-                CoordonneesAgenceRequest::class,
-                'json'
-            );
-            $validationGroups = ['Default'];
-            if ($signalement->getProfileDeclarant()) {
-                $validationGroups[] = $signalement->getProfileDeclarant()->value;
-            }
-            $errorMessage = FormHelper::getErrorsFromRequest(
-                $validator,
-                $coordonneesAgenceRequest,
-                $validationGroups
-            );
+        if (!$this->isCsrfTokenValid('signalement_edit_coordonnees_agence_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromCoordonneesAgenceRequest($signalement, $coordonneesAgenceRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'Les coordonnées de l\'agence ont bien été modifiées.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
-        return $this->json($response, $response['code']);
+        /** @var CoordonneesAgenceRequest $coordonneesAgenceRequest */
+        $coordonneesAgenceRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            CoordonneesAgenceRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        if ($signalement->getProfileDeclarant()) {
+            $validationGroups[] = $signalement->getProfileDeclarant()->value;
+        }
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $coordonneesAgenceRequest,
+            $validationGroups
+        );
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromCoordonneesAgenceRequest($signalement, $coordonneesAgenceRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées de l\'agence ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-agence-container',
+                'content' => $this->renderView('back/signalement/view/information/information-agence.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/edit-informations-logement', name: 'back_signalement_edit_informations_logement', methods: 'POST')]
@@ -351,44 +363,45 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_informations_logement_'.$signalement->getId(),
-            $token
-        )) {
-            /** @var InformationsLogementRequest $informationsLogementRequest */
-            $informationsLogementRequest = $serializer->deserialize(
-                json_encode($request->getPayload()->all()),
-                InformationsLogementRequest::class,
-                'json'
-            );
-            $validationGroups = ['Default'];
-            $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
+        if (!$this->isCsrfTokenValid('signalement_edit_informations_logement_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            $errorMessage = FormHelper::getErrorsFromRequest(
-                $validator,
-                $informationsLogementRequest,
-                $validationGroups
-            );
-
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'Les informations du logement ont bien été modifiées.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        /** @var InformationsLogementRequest $informationsLogementRequest */
+        $informationsLogementRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            InformationsLogementRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
 
-        return $this->json($response, $response['code']);
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $informationsLogementRequest,
+            $validationGroups
+        );
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les informations du logement ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-logement-container',
+                'content' => $this->renderView('back/signalement/view/information/information-logement.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/edit-composition-logement', name: 'back_signalement_edit_composition_logement', methods: 'POST')]
@@ -403,44 +416,45 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_composition_logement_'.$signalement->getId(),
-            $token
-        )) {
-            /** @var CompositionLogementRequest $compositionLogementRequest */
-            $compositionLogementRequest = $serializer->deserialize(
-                json_encode($request->getPayload()->all()),
-                CompositionLogementRequest::class,
-                'json'
-            );
+        if (!$this->isCsrfTokenValid('signalement_edit_composition_logement_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            $validationGroups = ['Default'];
-            $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
-
-            $errorMessage = FormHelper::getErrorsFromRequest(
-                $validator,
-                $compositionLogementRequest,
-                $validationGroups
-            );
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'La description du logement a bien été modifiée.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        /** @var CompositionLogementRequest $compositionLogementRequest */
+        $compositionLogementRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            CompositionLogementRequest::class,
+            'json'
+        );
 
-        return $this->json($response, $response['code']);
+        $validationGroups = ['Default'];
+        $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
+
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $compositionLogementRequest,
+            $validationGroups
+        );
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'La description du logement a bien été modifiée.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-composition-container',
+                'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     /**
@@ -458,41 +472,42 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_situation_foyer_'.$signalement->getId(),
-            $token
-        )) {
-            /** @var SituationFoyerRequest $situationFoyerRequest */
-            $situationFoyerRequest = $serializer->deserialize(
-                json_encode($request->getPayload()->all()),
-                SituationFoyerRequest::class,
-                'json'
-            );
+        if (!$this->isCsrfTokenValid('signalement_edit_situation_foyer_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            $validationGroups = ['Default'];
-            $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
-
-            $errorMessage = FormHelper::getErrorsFromRequest($validator, $situationFoyerRequest, $validationGroups);
-
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'La situation du foyer a bien été modifiée.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        /** @var SituationFoyerRequest $situationFoyerRequest */
+        $situationFoyerRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            SituationFoyerRequest::class,
+            'json'
+        );
 
-        return $this->json($response, $response['code']);
+        $validationGroups = ['Default'];
+        $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
+
+        $errorMessage = FormHelper::getErrorsFromRequest($validator, $situationFoyerRequest, $validationGroups);
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'La situation du foyer a bien été modifiée.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-situation-foyer-container',
+                'content' => $this->renderView('back/signalement/view/information/information-situation-foyer.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/edit-procedure-demarches', name: 'back_signalement_edit_procedure_demarches', methods: 'POST')]
@@ -507,39 +522,40 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_procedure_demarches_'.$signalement->getId(),
-            $token
-        )) {
-            /** @var ProcedureDemarchesRequest $procedureDemarchesRequest */
-            $procedureDemarchesRequest = $serializer->deserialize(
-                json_encode($request->getPayload()->all()),
-                ProcedureDemarchesRequest::class,
-                'json'
-            );
-            $validationGroups = ['Default'];
-            $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
+        if (!$this->isCsrfTokenValid('signalement_edit_procedure_demarches_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            $errorMessage = FormHelper::getErrorsFromRequest($validator, $procedureDemarchesRequest, $validationGroups);
-
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'Les procédures et démarches ont bien été modifiées.');
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        /** @var ProcedureDemarchesRequest $procedureDemarchesRequest */
+        $procedureDemarchesRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            ProcedureDemarchesRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
 
-        return $this->json($response, $response['code']);
+        $errorMessage = FormHelper::getErrorsFromRequest($validator, $procedureDemarchesRequest, $validationGroups);
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les procédures et démarches ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-procedure-container',
+                'content' => $this->renderView('back/signalement/view/information/information-procedure.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 }

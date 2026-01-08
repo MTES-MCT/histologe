@@ -6,7 +6,9 @@ import {
 import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
 import { initComponentAdress } from '../../services/component/component_search_address';
 attacheAutocompleteAddressEvents();
-initComponentAdress('#coordonnees_bailleur_adresseCompleteProprio');
+if (document.querySelector('#coordonnees_bailleur_adresseCompleteProprio')) {
+  initComponentAdress('#coordonnees_bailleur_adresseCompleteProprio');
+}
 
 const fieldsetVisitorType = document?.querySelector('#fieldset-visitor-type');
 if (fieldsetVisitorType) {

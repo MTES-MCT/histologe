@@ -1,0 +1,6 @@
+<a class="fr-btn"
+    href="{{ path('back_profil') }}"
+    target="_self">
+    <span class="fr-mr-2v">{{ user_avatar_or_placeholder(app.user, 18) }}</span>
+    {{ app.user.prenom ~' '~app.user.nom[:1]|capitalize~'.' }}
+</a>

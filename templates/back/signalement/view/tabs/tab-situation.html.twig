@@ -1,3 +1,4 @@
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
 <h2 class="fr-h4">Évaluation de la situation</h2>
 
 {% include 'back/signalement/view/criticite-qualifications.html.twig' %}
@@ -17,9 +18,9 @@
                 <div class="fr-col-12 fr-col-md-6">
                     <strong>Le tiers a vu les désordres :</strong>
                     {% if signalement.hasSeenDesordres %}
-                        {{ static_picto_yes|raw }}
+                        {{ picto.picto_yes() }}
                     {% else %}
-                        {{ static_picto_no|raw }}
+                        {{ picto.picto_no() }}
                     {% endif %}
                 </div>
             {% endif %}
@@ -36,26 +37,33 @@
 
 <hr class="fr-mt-3w">
 
-<div data-ajax-form>
+<div id="signalement-information-composition-container">
     {% include 'back/signalement/view/information/information-composition.html.twig' %}
 </div>
 
-{% include 'back/signalement/view/nde.html.twig' %}
+<div id="signalement-bo-nde-container">
+    {% include 'back/signalement/view/nde.html.twig' %}
+</div>
 
 <hr class="fr-mt-3w fr-hr">
 
-<div data-ajax-form>
+
 {% if not signalement.profileDeclarant or 
     (signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT and
     signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR) %}
-{% include 'back/signalement/view/information/information-bailleur.html.twig' %}
+    <div id="signalement-information-bailleur-container">
+        {% include 'back/signalement/view/information/information-bailleur.html.twig' %}
+    </div>
+    <hr class="fr-mt-3w fr-hr">
 
-<hr class="fr-mt-3w fr-hr">
 {% endif %}
 
-{% include 'back/signalement/view/information/information-agence.html.twig' %}
+<div id="signalement-information-agence-container">
+    {% include 'back/signalement/view/information/information-agence.html.twig' %}
+</div>
 
 <hr class="fr-mt-3w fr-hr">
 
-{% include 'back/signalement/view/information/information-procedure.html.twig' %}
+<div id="signalement-information-procedure-container">
+    {% include 'back/signalement/view/information/information-procedure.html.twig' %}
 </div>

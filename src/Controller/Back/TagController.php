@@ -14,8 +14,10 @@ use App\Service\FormHelper;
 use App\Service\ListFilters\SearchTag;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,22 +28,58 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 #[Route('/bo/gerer-territoire/etiquettes')]
 class TagController extends AbstractController
 {
-    #[Route('/', name: 'back_territory_management_tags_index', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN_TERRITORY')]
-    public function index(
-        Request $request,
-        TagRepository $tagRepository,
-        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
-    ): Response {
+    public function __construct(
+        private readonly TagRepository $tagRepository,
+        #[Autowire(param: 'standard_max_list_pagination')]
+        private readonly int $maxListPagination,
+    ) {
+    }
+
+    /**
+     * @return array{FormInterface, SearchTag, Paginator<Tag>}
+     */
+    private function handleSearch(Request $request, bool $fromSearchParams = false): array
+    {
         /** @var User $user */
         $user = $this->getUser();
         $searchTag = new SearchTag($user);
         $form = $this->createForm(SearchTagType::class, $searchTag);
-        $form->handleRequest($request);
+        FormHelper::handleFormSubmitFromRequestOrSearchParams($form, $request, $fromSearchParams);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchTag = new SearchTag($user);
         }
-        $paginatedTags = $tagRepository->findFilteredPaginated($searchTag, $maxListPagination);
+
+        /** @var Paginator $paginatedFiles */
+        $paginatedFiles = $this->tagRepository->findFilteredPaginated($searchTag, $this->maxListPagination);
+
+        return [$form, $searchTag, $paginatedFiles];
+    }
+
+    private function getHtmlTargetContentsForTagsList(Request $request): array
+    {
+        [, $searchTag, $paginatedTags] = $this->handleSearch($request, true);
+
+        return [
+            [
+                'target' => '#title-list-results',
+                'content' => $this->renderView('back/tags/_title-list-results.html.twig', ['tags' => $paginatedTags]),
+            ],
+            [
+                'target' => '#table-list-results',
+                'content' => $this->renderView('back/tags/_table-list-results.html.twig', [
+                    'searchTag' => $searchTag,
+                    'tags' => $paginatedTags,
+                    'pages' => (int) ceil($paginatedTags->count() / $this->maxListPagination),
+                ]),
+            ],
+        ];
+    }
+
+    #[Route('/', name: 'back_territory_management_tags_index', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN_TERRITORY')]
+    public function index(Request $request): Response
+    {
+        [$form, $searchTag, $paginatedTags] = $this->handleSearch($request);
 
         $addForm = $this->createForm(AddTagType::class, null, ['action' => $this->generateUrl('back_tags_add')]);
 
@@ -50,7 +88,7 @@ class TagController extends AbstractController
             'addForm' => $addForm,
             'searchTag' => $searchTag,
             'tags' => $paginatedTags,
-            'pages' => (int) ceil($paginatedTags->count() / $maxListPagination),
+            'pages' => (int) ceil($paginatedTags->count() / $this->maxListPagination),
         ]);
     }
 
@@ -76,7 +114,7 @@ class TagController extends AbstractController
             $entityManager->flush();
             $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
 
-            $this->addFlash('success', 'L\'étiquette a bien été ajoutée.');
+            $this->addFlash('success', ['title' => 'Étiquette ajoutée', 'message' => 'L\'étiquette a bien été ajoutée.']);
         }
         if ($form->isSubmitted() && !$form->isValid()) {
             $errors = FormHelper::getErrorsFromForm($form);
@@ -97,12 +135,14 @@ class TagController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted(TagVoter::TAG_EDIT, $tag);
         $form = $this->createForm(EditTagType::class, $tag);
-
-        $form->submit($request->getPayload()->all());
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
             $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
-            $this->addFlash('success', 'L\'étiquette a bien été éditée.');
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'étiquette a bien été éditée.'];
+            $htmlTargetContents = $this->getHtmlTargetContentsForTagsList($request);
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
         if ($form->isSubmitted() && !$form->isValid()) {
             $errors = FormHelper::getErrorsFromForm($form);
@@ -111,7 +151,9 @@ class TagController extends AbstractController
             return $this->json($response, $response['code']);
         }
 
-        return $this->json(['code' => Response::HTTP_OK]);
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Une erreur est survenue lors de l\'édition de l\'étiquette.'];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 
     #[Route('/supprimer', name: 'back_tags_delete', methods: 'POST')]
@@ -127,20 +169,20 @@ class TagController extends AbstractController
         $tag = $tagManager->find($tagId);
         $this->denyAccessUnlessGranted(TagVoter::TAG_DELETE, $tag);
 
-        if (
-            $tag
-            && $this->isCsrfTokenValid('tag_delete', (string) $request->request->get('_token'))
-        ) {
+        if ($tag && $this->isCsrfTokenValid('tag_delete', (string) $request->request->get('_token'))) {
             $tag->setIsArchive(true);
             $entityManager->flush();
             $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$tag->getTerritory()->getZip()]);
-            $this->addFlash('success', 'L\'étiquette a bien été supprimée.');
 
-            return $this->redirectToRoute('back_territory_management_tags_index', [], Response::HTTP_SEE_OTHER);
+            $flashMessages[] = ['type' => 'success', 'title' => 'Étiquette supprimée', 'message' => 'L\'étiquette a bien été supprimée.'];
+            $htmlTargetContents = $this->getHtmlTargetContentsForTagsList($request);
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
 
-        $this->addFlash('error', 'Une erreur est survenue lors de la suppression...');
+        $this->addFlash('error', 'Une erreur est survenue lors de la suppression, veuillez réessayer.');
+        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Une erreur est survenue lors de la suppression, veuillez réessayer.'];
 
-        return $this->redirectToRoute('back_territory_management_tags_index', [], Response::HTTP_SEE_OTHER);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 }

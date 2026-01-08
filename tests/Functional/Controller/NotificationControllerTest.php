@@ -23,7 +23,7 @@ class NotificationControllerTest extends WebTestCase
     /**
      * @dataProvider provideAllNotificationOptions
      */
-    public function testAllNotifications(string $route, string $tokenName, string $tokenId): void
+    public function testAllNotifications(string $route, string $tokenName, string $tokenId, string $msgFlash): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -33,12 +33,13 @@ class NotificationControllerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
-        $route = $generatorUrl->generate($route, [
-            $tokenName => $this->generateCsrfToken($client, $tokenId),
-        ]);
+        $route = $generatorUrl->generate($route);
 
-        $client->request('GET', $route);
-        $this->assertResponseRedirects('/bo/notifications');
+        $client->request('POST', $route, [$tokenName => $this->generateCsrfToken($client, $tokenId)]);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function provideAllNotificationOptions(): \Generator
@@ -49,20 +50,22 @@ class NotificationControllerTest extends WebTestCase
 
         yield 'Mark as read' => [
             'back_notifications_list_read',
-            'mark_as_read',
+            'csrf_token',
             'mark_as_read_'.$user->getId(),
+            'Toutes les notifications ont bien été marquées comme lues.',
         ];
         yield 'Delete' => [
             'back_notifications_list_delete',
-            'delete_all_notifications',
-            'delete_all_notifications_'.$user->getId(),
+            'csrf_token',
+            'delete_notifications_'.$user->getId(),
+            'Toutes les notifications ont bien été supprimées.',
         ];
     }
 
     /**
      * @dataProvider provideSelectedNotificationOptions
      */
-    public function testSelectedNotifications(string $route, string $tokenId, string $filter): void
+    public function testSelectedNotifications(string $route, string $tokenId, string $filter, string $msgFlash): void
     {
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -74,14 +77,17 @@ class NotificationControllerTest extends WebTestCase
         $client->loginUser($user);
 
         $notificationsId = $this->getSelectedNotifications($user);
+        $route = $generatorUrl->generate($route);
 
-        $route = $generatorUrl->generate($route, [
+        $client->request('POST', $route, [
             'csrf_token' => $this->generateCsrfToken($client, $tokenId),
             'selected_notifications' => $notificationsId,
+            'search_params' => $filter,
         ]);
-
-        $client->request('GET', $route.'&'.$filter);
-        $this->assertResponseRedirects('/bo/notifications?'.$filter);
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function provideSelectedNotificationOptions(): \Generator
@@ -94,11 +100,13 @@ class NotificationControllerTest extends WebTestCase
             'back_notifications_list_read',
             'mark_as_read_'.$user->getId(),
             'orderType=s.createdAt-ASC',
+            'Les notifications sélectionnées ont bien été marquées comme lues.',
         ];
         yield 'Delete' => [
             'back_notifications_list_delete',
             'delete_notifications_'.$user->getId(),
             'orderType=si.villeOccupant-ASC&page=2',
+            'Les notifications sélectionnées ont bien été supprimées.',
         ];
     }
 

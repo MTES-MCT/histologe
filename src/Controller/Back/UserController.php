@@ -62,18 +62,16 @@ class UserController extends AbstractController
             /** @var string $format */
             $format = $request->request->get('file-format');
             if (!in_array($format, ['csv', 'xlsx'])) {
-                $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');
+                $this->addFlash('error', 'Veuillez sélectionner un format pour l\'export.');
 
                 return $this->redirectToRoute('back_user_export', $searchUser->getUrlParams());
             }
             $messageBus->dispatch(new UserExportMessage($searchUser, $format));
-            $this->addFlash(
-                'success',
-                \sprintf(
-                    'L\'export vous sera envoyé par e-mail à l\'adresse suivante : %s. Il arrivera d\'ici quelques minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !',
-                    $searchUser->getUser()->getEmail()
-                )
+            $messageSuccess = \sprintf(
+                "L'export a bien été envoyé par e-mail à l'adresse suivante : %s. Il arrivera d'ici quelques minutes. N'oubliez pas de consulter vos courriers indésirables (spam) !",
+                $user->getEmail()
             );
+            $this->addFlash('success', ['title' => 'Export envoyé', 'message' => $messageSuccess]);
 
             return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams());
         }
@@ -112,15 +110,16 @@ class UserController extends AbstractController
             /** @var string $format */
             $format = $request->request->get('file-format');
             if (!in_array($format, ['csv', 'xlsx'])) {
-                $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');
+                $this->addFlash('error', 'Veuillez sélectionner un format pour l\'export.');
 
                 return $this->redirectToRoute('back_user_export_inactive_accounts');
             }
             $messageBus->dispatch(new InactiveUserExportMessage($user->getId(), $format));
-            $this->addFlash(
-                'success',
-                'L\'export vous sera envoyé par e-mail. Il arrivera d\'ici quelques minutes. N\'oubliez pas de regarder vos courriers indésirables (spam) !'
+            $messageSuccess = \sprintf(
+                "L'export a bien été envoyé par e-mail à l'adresse suivante : %s. Il arrivera d'ici quelques minutes. N'oubliez pas de consulter vos courriers indésirables (spam) !",
+                $user->getEmail()
             );
+            $this->addFlash('success', ['title' => 'Export envoyé', 'message' => $messageSuccess]);
 
             return $this->redirectToRoute('back_user_inactive_accounts');
         }

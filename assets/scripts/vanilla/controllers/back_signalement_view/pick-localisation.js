@@ -6,21 +6,23 @@ const modalPickLocalisation = document.getElementById('fr-modal-pick-localisatio
 const modalPickLocalisationMessage = document.getElementById('fr-modal-pick-localisation-message');
 
 if (modalLocalisation) {
+  let map;
   modalLocalisation.addEventListener('dsfr.disclose', () => {
-    if (modalLocalisation.dataset.loaded == 'false') {
-      modalLocalisation.dataset.loaded = 'true';
-      const map = L.map('fr-modal-localisation-map');
+    if (!map) {
+      map = L.map('fr-modal-localisation-map');
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
-      let lat = modalLocalisation.dataset.lat;
-      let lng = modalLocalisation.dataset.lng;
-      map.setView([lat, lng], 18);
-      L.marker([lat, lng]).addTo(map);
     }
+    let btn = document.getElementById('fr-modal-localisation-btn');
+    let lat = btn.dataset.lat;
+    let lng = btn.dataset.lng;
+    map.setView([lat, lng], 18);
+    L.marker([lat, lng]).addTo(map);
   });
-} else if (modalPickLocalisation) {
+}
+if (modalPickLocalisation) {
   const map = L.map('fr-modal-pick-localisation-map');
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,

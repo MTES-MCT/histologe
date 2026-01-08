@@ -25,33 +25,37 @@ if (searchFilesForm) {
     });
   });
 
-  document.querySelectorAll('.open-modal-document-view').forEach((button) => {
-    button.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.open-modal-document-view')) {
+      const button = e.target.closest('.open-modal-document-view');
+
       document.getElementById('fr-modal-document-view-document-created-at').textContent =
-        e.target.dataset.createdat;
+        button.dataset.createdat;
       document.getElementById('fr-modal-document-view-document-created-by').textContent =
-        e.target.dataset.createdby;
+        button.dataset.createdby;
       document.getElementById('fr-modal-document-view-document-title').textContent =
-        e.target.dataset.title;
+        button.dataset.title;
       document.getElementById('fr-modal-document-view-document-description').innerText =
-        e.target.dataset.description;
+        button.dataset.description;
       document.getElementById('fr-modal-document-view-document-partner-type').innerHTML =
-        e.target.dataset.partnertype;
+        button.dataset.partnertype;
       document.getElementById('fr-modal-document-view-document-partner-competence').innerHTML =
-        e.target.dataset.partnercompetence;
-      document.getElementById('fr-modal-document-edit-btn-submit').href = e.target.dataset.url;
-    });
+        button.dataset.partnercompetence;
+      document.getElementById('fr-modal-document-edit-btn-submit').href = button.dataset.url;
+    }
   });
-  document.querySelectorAll('.open-modal-document-delete').forEach((button) => {
-    button.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.open-modal-document-delete')) {
+      const button = e.target.closest('.open-modal-document-delete');
+
       document.getElementById('fr-modal-document-delete-document-title').textContent =
-        e.target.dataset.title;
+        button.dataset.title;
       document.getElementById('fr-modal-document-delete-document-territoire').textContent =
-        e.target.dataset.territoire;
+        button.dataset.territoire;
       document.getElementById('fr-modal-document-delete-document-title-reminder').textContent =
-        e.target.dataset.title;
-      document.getElementById('fr-modal-document-delete-btn-submit').href = e.target.dataset.url;
-    });
+        button.dataset.title;
+      document.getElementById('fr-modal-document-delete-form').action = button.dataset.url;
+    }
   });
   updateLocalStorageWithFormParams('search-territory-files-type-form');
 }

@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use App\Service\MessageHelper;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Tests\SessionHelper;
 use Faker\Factory;
@@ -128,7 +129,7 @@ class PartnerControllerTest extends WebTestCase
                 'partner[type]' => $partner->getType()->value,
             ]
         );
-        $this->assertSelectorNotExists('.fr-alert--error', 'E-mail de contact manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
+        $this->assertSelectorNotExists('.fr-notice--alert', 'E-mail de contact manquant: Il faut obligatoirement qu\'un compte utilisateur accepte de recevoir les e-mails.');
     }
 
     public function testDeletePartner(): void
@@ -148,7 +149,16 @@ class PartnerControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partenaires/');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Le partenaire a bien été supprimé.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+
         $this->assertTrue($partner->getIsArchive());
         $this->assertStringStartsWith($mailBeforArchive.User::SUFFIXE_ARCHIVED, $partner->getEmail());
         foreach ($partnerUsers as $user) {
@@ -324,10 +334,15 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/json');
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
-        if ('redirect' === $expected) {
-            $this->assertArrayHasKey('redirect', $response);
-            $this->assertArrayHasKey('url', $response);
-            $this->assertStringEndsWith('/bo/partenaires/'.$partner->getId().'/voir#agents', $response['url']);
+        if ('success' === $expected) {
+            $this->assertArrayHasKey('stayOnPage', $response);
+            $this->assertArrayHasKey('flashMessages', $response);
+            $this->assertArrayHasKey('closeModal', $response);
+            $this->assertArrayHasKey('htmlTargetContents', $response);
+            $this->assertTrue($response['stayOnPage']);
+            $this->assertTrue($response['closeModal']);
+            $msgFlash = 'L\'utilisateur a bien été modifié.';
+            $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
             $this->assertEmailCount($nbEmailSent);
         } else {
             $this->assertArrayHasKey('content', $response);
@@ -342,8 +357,8 @@ class PartnerControllerTest extends WebTestCase
         yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.', 0];
         yield 'User email already' => ['user-44-02@signal-logement.fr', 'Un utilisateur existe déjà avec cette adresse e-mail.', 0];
 
-        yield 'Original email' => ['user-13-01@signal-logement.fr', 'redirect', 0];
-        yield 'Changed email' => ['new.email@test.com', 'redirect', 1];
+        yield 'Original email' => ['user-13-01@signal-logement.fr', 'success', 0];
+        yield 'Changed email' => ['new.email@test.com', 'success', 1];
     }
 
     public function testEditAnonymizedUser(): void
@@ -423,9 +438,14 @@ class PartnerControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/json');
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('redirect', $response);
-        $this->assertArrayHasKey('url', $response);
-        $this->assertStringEndsWith('/bo/partenaires/'.$partner->getId().'/voir#agents', $response['url']);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'L\'utilisateur a bien été modifié.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testTransferUserAccountWithUserNotAllowed(): void
@@ -493,7 +513,12 @@ class PartnerControllerTest extends WebTestCase
             $this->fail('No partner found for the user');
         }
         $this->assertEquals($userOldPartner, $partner->getId());
-        $this->assertResponseRedirects('/bo/partenaires/');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = MessageHelper::ERROR_MESSAGE_CSRF;
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testTransferLastNotifiedUser(): void
@@ -511,8 +536,15 @@ class PartnerControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$toPartner->getId().'/voir#agents');
-        $this->client->followRedirect();
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'L\'utilisateur a bien été transféré.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testDeleteUserAccount(): void
@@ -585,7 +617,13 @@ class PartnerControllerTest extends WebTestCase
 
         $this->assertNotEquals(UserStatus::ARCHIVE, $user->getStatut());
         $this->assertStringNotContainsString(User::SUFFIXE_ARCHIVED, $user->getEmail());
-        $this->assertResponseRedirects('/bo/partenaires/');
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = MessageHelper::ERROR_MESSAGE_CSRF;
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testDeleteLastNotifiedUserAccount(): void
@@ -598,7 +636,14 @@ class PartnerControllerTest extends WebTestCase
             '_token' => $this->generateCsrfToken($this->client, 'partner_user_delete'),
         ]);
 
-        $this->assertResponseRedirects('/bo/partenaires/'.$partner->getId().'/voir');
-        $this->client->followRedirect();
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'L\'utilisateur a bien été supprimé.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 }

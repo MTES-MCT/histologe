@@ -1,9 +1,11 @@
+import { jsonResponseHandler } from '../services/component/component_json_response_handler';
+
 const formBtn = document.querySelector('#signalement-edit-nde-form-submit');
 
 formBtn?.addEventListener('click', () => {
   // Check fields
   let postForm = true;
-  if (!document.querySelector('#signalement-edit-nde-date-entree')) {
+  if (!document.querySelector('#signalement-edit-nde-date-entree').value) {
     document.querySelector('#signalement-edit-nde-date-entree-error').classList.remove('fr-hidden');
     postForm = false;
   } else {
@@ -82,8 +84,7 @@ formBtn?.addEventListener('click', () => {
     fetch(url, options)
       .then((response) => {
         if (response.ok) {
-          window.location.reload();
-          window.scrollTo(0, 0);
+          jsonResponseHandler(response);
         }
       })
       .catch((error) => {

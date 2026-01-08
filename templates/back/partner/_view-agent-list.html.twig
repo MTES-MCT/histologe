@@ -1,0 +1,89 @@
+{% set tableHead %}
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Fonction</th>
+    <th scope="col">Courriel</th>
+    <th scope="col">Notif. e-mails</th>
+    <th scope="col">Statut</th>
+    <th scope="col">Rôle</th>
+    {% if is_granted('PARTNER_ASSIGN_PERMISSION_AFFECTATION', partner) %}
+        <th scope="col">Droits d'affectation</th>
+    {% endif %}
+    <th scope="col">Problème d'adresse e-mail</th>
+    <th scope="col" class="fr-text--right">Actions</th>
+{% endset %}
+
+{% set tableBody %}
+    {% for user in partner.users|filter(user => user.id is not null) %}
+        {% if is_granted('ROLE_ADMIN') or 'ROLE_API_USER' not in user.roles %}
+            <tr class="user-row">
+                <td>{{ user.nom }}</td>
+                <td>{{ user.prenom }}</td>
+                <td>{{ user.fonction }}</td>
+                <td>{{ user.email }}<br>
+                    Dernière connexion : {{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}
+                </td>
+                <td>
+                    <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">
+                        {% if user.isMailingActive %}
+                            {{ user.isMailingSummary ? 'Récap' : 'Oui' }}
+                        {% else %}
+                            Non
+                        {% endif %}
+                    </span>
+                </td>
+                <td>{% if user.statut is same as enum('App\\Entity\\Enum\\UserStatus').INACTIVE %}
+                        {% set classe = 'fr-badge--orange-terre-battue' %}
+                        {% set label = 'INACTIF' %}
+                    {% elseif user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE %}
+                        {% set classe = 'fr-badge--green-emeraude' %}
+                        {% set label = 'ACTIF' %}
+                    {% elseif user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ARCHIVE %}
+                        {% set classe = 'fr-badge--blue-ecume' %}
+                        {% set label = 'ARCHIVE' %}
+                    {% endif %}
+                    <span class="fr-badge {{ classe }} fr-mb-1v">{{ label }}</span>
+                </td>
+                <td>
+                    {{ user.roleLabel() }}
+                </td>
+                {% if is_granted('PARTNER_ASSIGN_PERMISSION_AFFECTATION', partner) %}
+                    <td>{{ user.isSuperAdmin() or user.isTerritoryAdmin() or user.hasPermissionAffectation() ? 'Oui' : 'Non' }}</td>
+                {% endif %}
+                <td>
+                    {% if user.email and emailsWithAlert[user.email]|default(false) %}
+                        <span class="fr-badge fr-badge--warning fr-badge--sm">OUI</span>
+                    {% else %}
+                        Non
+                    {% endif %}
+                </td>
+                <td class="fr-text--right">
+                    {% if is_granted('USER_EDIT', user) %}
+                        <button class="fr-btn fr-fi-edit-line fr-mt-3v btn-edit-partner-user"
+                            aria-controls="fr-modal-user-edit"
+                            data-fr-opened="false"
+                            data-refresh-url="{{ path('back_partner_user_edit',{partner:partner.id, user:user.id}) }}?from=partner"
+                            >
+                        </button>
+                    {% endif %}
+                    {% if is_granted('USER_TRANSFER', user) and app.request.get('_route') is not same as('back_partner_new') %}
+                        <button class="fr-btn fr-btn--orange fr-fi-upload-2-fill fr-mt-3v btn-transfer-partner-user"
+                        id="partner_users_transfer_{{ user.id }}" aria-controls="fr-modal-user-transfer"
+                        data-fr-opened="false" data-username="{{ user.nomComplet(true) }}" data-userid="{{ user.id }}"></button>
+                    {% endif %}
+                    {% if is_granted('USER_DELETE', user) and app.request.get('_route') is not same as('back_partner_new') %}
+                        <button class="fr-btn fr-btn--danger fr-fi-delete-line fr-mt-3v btn-delete-partner-user"
+                        id="partner_users_delete_{{ user.id }}" aria-controls="fr-modal-user-delete"
+                        data-fr-opened="false" data-username="{{ user.nomComplet(true) }}" data-userid="{{ user.id }}" data-useremail="{{ user.email }}"></button>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+    {% else %}
+        <tr>
+            <td colspan="3">Aucun agent trouvé</td>
+        </tr>
+    {% endfor %}
+{% endset %}
+
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des utilisateurs du partenaire', 'tableDescId': 'desc-table', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}

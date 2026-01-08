@@ -13,6 +13,7 @@ use App\Security\Voter\FileVoter;
 use App\Service\FormHelper;
 use App\Service\ImageManipulationHandler;
 use App\Service\ListFilters\SearchTerritoryFiles;
+use App\Service\MessageHelper;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,10 +23,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -38,20 +39,22 @@ class AdminTerritoryFilesController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus,
+        #[Autowire(param: 'standard_max_list_pagination')]
+        private readonly int $maxListPagination,
+        private readonly FileRepository $fileRepository,
     ) {
     }
 
-    #[Route('/', name: 'back_territory_management_document', methods: ['GET'])]
-    public function index(
-        Request $request,
-        FileRepository $fileRepository,
-        #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
-    ): Response {
+    /**
+     * @return array{FormInterface, SearchTerritoryFiles, Paginator<File>}
+     */
+    private function handleSearch(Request $request, bool $fromSearchParams = false): array
+    {
         /** @var User $user */
         $user = $this->getUser();
         $searchTerritoryFiles = new SearchTerritoryFiles($user);
         $form = $this->createForm(SearchTerritoryFilesType::class, $searchTerritoryFiles);
-        $form->handleRequest($request);
+        FormHelper::handleFormSubmitFromRequestOrSearchParams($form, $request, $fromSearchParams);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchTerritoryFiles = new SearchTerritoryFiles($user);
         }
@@ -61,13 +64,21 @@ class AdminTerritoryFilesController extends AbstractController
             $territories = $user->getPartnersTerritories();
         }
         /** @var Paginator $paginatedFiles */
-        $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination);
+        $paginatedFiles = $this->fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $this->maxListPagination);
+
+        return [$form, $searchTerritoryFiles, $paginatedFiles];
+    }
+
+    #[Route('/', name: 'back_territory_management_document', methods: ['GET'])]
+    public function index(Request $request): Response
+    {
+        [$form, $searchTerritoryFiles, $paginatedFiles] = $this->handleSearch($request);
 
         return $this->render('back/admin-territory-files/index.html.twig', [
             'form' => $form,
             'searchTerritoryFiles' => $searchTerritoryFiles,
             'files' => $paginatedFiles,
-            'pages' => (int) ceil($paginatedFiles->count() / $maxListPagination),
+            'pages' => (int) ceil($paginatedFiles->count() / $this->maxListPagination),
         ]);
     }
 
@@ -128,7 +139,7 @@ class AdminTerritoryFilesController extends AbstractController
                     }
                 }
 
-                $this->addFlash('success', $successMessage);
+                $this->addFlash('success', ['title' => 'Document ajouté', 'message' => $successMessage]);
 
                 $url = $this->generateUrl('back_territory_management_document');
 
@@ -194,7 +205,7 @@ class AdminTerritoryFilesController extends AbstractController
             if ($flush) {
                 $file->setDescription($file->getDescription());
                 $em->flush();
-                $this->addFlash('success', 'Le document a bien été modifié.');
+                $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le document a bien été modifié.']);
 
                 $url = $this->generateUrl('back_territory_management_document');
 
@@ -207,21 +218,38 @@ class AdminTerritoryFilesController extends AbstractController
         return $this->json($response, $response['code']);
     }
 
-    #[Route('/supprimer/{file}', name: 'back_territory_management_document_delete_ajax', methods: ['GET'])]
+    #[Route('/supprimer/{file}', name: 'back_territory_management_document_delete_ajax', methods: ['POST'])]
     public function deleteAjax(
         File $file,
         Request $request,
         UploadHandlerService $uploadHandlerService,
-    ): RedirectResponse {
+    ): JsonResponse {
         $this->denyAccessUnlessGranted(FileVoter::FILE_DELETE_DOCUMENT, $file);
+        $flashMessages = [];
+        $closeModal = false;
+        $htmlTargetContents = [];
         if (!$this->isCsrfTokenValid('document_delete', $request->query->get('_token'))) {
-            $this->addFlash('error', 'Le token CSRF est invalide.');
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
         } else {
             $uploadHandlerService->deleteFile($file);
-            $this->addFlash('success', 'Le fichier a bien été supprimé.');
+            $closeModal = true;
+            $flashMessages[] = ['type' => 'success', 'title' => 'Document supprimé', 'message' => 'Le document a bien été supprimé.'];
+            [, $searchTerritoryFiles, $paginatedFiles] = $this->handleSearch($request, true);
+            $tableListResult = $this->renderView('back/admin-territory-files/_table-list-results.html.twig', [
+                'searchTerritoryFiles' => $searchTerritoryFiles,
+                'files' => $paginatedFiles,
+                'pages' => (int) ceil($paginatedFiles->count() / $this->maxListPagination),
+            ]);
+            $titleListResult = $this->renderView('back/admin-territory-files/_title-list-results.html.twig', [
+                'files' => $paginatedFiles,
+            ]);
+            $htmlTargetContents = [
+                ['target' => '#table-list-results', 'content' => $tableListResult],
+                ['target' => '#title-list-results', 'content' => $titleListResult],
+            ];
         }
 
-        return $this->redirectToRoute('back_territory_management_document');
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => $closeModal, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     private function uploadFile(

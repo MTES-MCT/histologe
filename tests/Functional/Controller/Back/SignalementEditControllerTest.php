@@ -7,6 +7,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\Gouv\Ban\Response\Address;
+use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -136,7 +137,12 @@ class SignalementEditControllerTest extends WebTestCase
         $payload['_token'] = '1234';
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
-        $this->assertResponseStatusCodeSame(401);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = MessageHelper::ERROR_MESSAGE_CSRF;
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     /**

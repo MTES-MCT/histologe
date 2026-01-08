@@ -84,7 +84,7 @@ class UserAccountControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains(
-            '.fr-alert.fr-alert--error.fr-alert--sm',
+            '.fr-notice.fr-notice--alert',
             'Les mots de passe ne correspondent pas.'
         );
     }
@@ -112,7 +112,7 @@ class UserAccountControllerTest extends WebTestCase
         ]);
 
         $this->assertSelectorTextContains(
-            '.fr-alert.fr-alert--error.fr-alert--sm',
+            '.fr-notice.fr-notice--alert',
             $expectedResult
         );
     }

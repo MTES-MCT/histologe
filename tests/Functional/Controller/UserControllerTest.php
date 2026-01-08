@@ -68,7 +68,7 @@ class UserControllerTest extends WebTestCase
         $this->assertEmailCount(0);
         $this->assertResponseRedirects();
         $this->client->followRedirect();
-        $this->assertSelectorExists('.fr-alert--error');
+        $this->assertSelectorExists('.fr-notice--alert');
     }
 
     public function testDisableUserAccountWithInactiveUser(): void

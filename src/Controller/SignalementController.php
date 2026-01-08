@@ -39,6 +39,7 @@ use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\MessageHelper;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\PostalCodeHomeChecker;
@@ -54,7 +55,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -274,9 +274,16 @@ class SignalementController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         Signalement $signalement,
         Request $request,
-    ): JsonResponse|RedirectResponse {
+    ): JsonResponse {
         if ($request->isMethod('POST')) {
-            $profil = $request->get('profil');
+            $manageFlashMessages = false;
+            if ('application/json' === $request->headers->get('Content-Type')) {
+                $data = $request->getPayload()->all();
+                $profil = $data['profil'] ?? null;
+                $manageFlashMessages = true;
+            } else {
+                $profil = $request->request->get('profil');
+            }
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_SIGNALEMENT_LIEN_SUIVI_TO_USAGER,
@@ -287,14 +294,17 @@ class SignalementController extends AbstractController
                 )
             );
 
-            if ($request->get('preferedResponse') && 'redirection' === $request->get('preferedResponse')) {
+            if ($manageFlashMessages) {
+                $flashMessages = [];
+                $closeModal = false;
                 if ($success) {
-                    $this->addFlash('success', 'Le lien de suivi a été envoyé par e-mail.');
+                    $flashMessages[] = ['type' => 'success', 'title' => 'Lien de suivi envoyé', 'message' => 'Le lien de suivi a été envoyé par e-mail.'];
+                    $closeModal = true;
                 } else {
-                    $this->addFlash('error', 'Le lien de suivi n\'a pas pu être envoyé par e-mail.');
+                    $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le lien de suivi n\'a pas pu être envoyé par e-mail.'];
                 }
 
-                return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()]));
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => $closeModal]);
             }
 
             if ($success) {
@@ -525,7 +535,7 @@ class SignalementController extends AbstractController
         if ($request->isMethod('POST')) {
             $token = (string) $request->request->get('_token');
             if (!$this->isCsrfTokenValid('suivi_signalement_tiers_cgu_accept'.$signalement->getCodeSuivi(), $token)) {
-                $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+                $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
             } elseif (!$request->request->get('accept')) {
                 $this->addFlash('error', 'Vous devez accepter les CGU pour accéder au dossier.');
             } else {
@@ -626,9 +636,9 @@ class SignalementController extends AbstractController
             );
 
             $messageRetour = SignalementStatus::CLOSED === $signalement->getStatut() ?
-            'Nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
+            'Votre message a bien été envoyé, nos services vont prendre connaissance de votre message. Votre dossier est clôturé, vous ne pouvez désormais plus envoyer de message.' :
             'Votre message a bien été envoyé, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
-            $this->addFlash('success', $messageRetour);
+            $this->addFlash('success', ['title' => 'Message envoyé', 'message' => $messageRetour]);
 
             return $this->redirectToRoute('front_suivi_signalement_messages', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -771,7 +781,7 @@ class SignalementController extends AbstractController
                             isPublic: true,
                             files: $filesToAttach
                         );
-                        $this->addFlash('success', 'Vos documents ont bien été enregistrés.');
+                        $this->addFlash('success', ['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.']);
                     }
 
                     return $this->redirectToRoute('front_suivi_signalement_documents', ['code' => $signalement->getCodeSuivi()]);
@@ -795,7 +805,7 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
-            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -823,12 +833,12 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if ($signalement->getIsUsagerAbandonProcedure()) {
-            $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté d\'arrêter la procédure.');
+            $this->addFlash('error', ['title' => 'Demande déjà enregistrée', 'message' => 'L\'administration a déjà été informée de votre volonté d\'arrêter la procédure.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
-            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -870,7 +880,7 @@ class SignalementController extends AbstractController
             );
 
             $signalementManager->save($signalement);
-            $this->addFlash('success', 'Votre demande d\'arrêt de procédure a bien été prise en compte. Elle sera examinée par l\'administration.');
+            $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => 'Votre demande d\'arrêt de procédure a bien été prise en compte. Elle sera examinée par l\'administration.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -892,12 +902,12 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (false === $signalement->getIsUsagerAbandonProcedure()) {
-            $this->addFlash('error', 'L\'administration a déjà été informée de votre volonté de poursuivre la procédure.');
+            $this->addFlash('error', ['title' => 'Demande déjà enregistrée', 'message' => 'L\'administration a déjà été informée de votre volonté de poursuivre la procédure.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
-            $this->addFlash('error', 'Vous n\'avez pas les droits pour effectuer cette action.');
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -931,7 +941,7 @@ class SignalementController extends AbstractController
             );
 
             $signalementManager->save($signalement);
-            $this->addFlash('success', 'Votre demande de poursuivre la procédure a bien été prise en compte. Elle a été transmise à l\'administration.');
+            $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => 'Votre demande de poursuivre la procédure a bien été prise en compte. Elle a été transmise à l\'administration.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
