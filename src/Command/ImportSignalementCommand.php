@@ -99,6 +99,13 @@ class ImportSignalementCommand extends Command
             }
             $io->warning($msg);
         }
+        if (\count($metadata['desordres_not_found'])) {
+            $msg = [];
+            foreach ($metadata['desordres_not_found'] as $desordreNotFound => $nbSignalement) {
+                $msg[] = \sprintf('Desordre "%s" not found on %s signalement(s)', $desordreNotFound, $nbSignalement);
+            }
+            $io->warning($msg);
+        }
         $io->success(\sprintf('%s signalement(s) have been imported', $metadata['count_signalement']));
 
         return Command::SUCCESS;

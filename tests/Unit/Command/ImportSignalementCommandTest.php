@@ -54,6 +54,7 @@ class ImportSignalementCommandTest extends KernelTestCase
                 'partners_not_found' => [],
                 'motif_cloture_not_found' => [],
                 'files_not_found' => [],
+                'desordres_not_found' => [],
             ]);
 
         $csvParser = $this->createMock(CsvParser::class);

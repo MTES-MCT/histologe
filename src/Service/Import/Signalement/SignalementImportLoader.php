@@ -57,6 +57,7 @@ class SignalementImportLoader
      *   partners_not_found: array<string, int>,
      *   motif_cloture_not_found: array<string, int>,
      *   files_not_found: array<string, string>,
+     *   desordres_not_found: array<string, int>,
      * }
      */
     private array $metadata = [
@@ -64,6 +65,7 @@ class SignalementImportLoader
         'partners_not_found' => [],
         'motif_cloture_not_found' => [],
         'files_not_found' => [],
+        'desordres_not_found' => [],
     ];
 
     private ?User $userSystem = null;
@@ -154,7 +156,7 @@ class SignalementImportLoader
                 }
                 if ($dataMapped['motifCloture'] && !MotifCloture::tryFrom($dataMapped['motifCloture'])) {
                     if (!isset($this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']])) {
-                        $this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']] = 1;
+                        $this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']] = 0;
                     }
                     ++$this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']];
                 }
@@ -173,6 +175,7 @@ class SignalementImportLoader
      *   partners_not_found: array<string, int>,
      *   motif_cloture_not_found: array<string, int>,
      *   files_not_found: array<string, string>,
+     *   desordres_not_found: array<string, int>,
      * }
      */
     public function getMetadata(): array
@@ -217,7 +220,7 @@ class SignalementImportLoader
                 ]);
                 if (!$partner) {
                     if (!isset($this->metadata['partners_not_found'][$partnerNameCleaned])) {
-                        $this->metadata['partners_not_found'][$partnerNameCleaned] = 1;
+                        $this->metadata['partners_not_found'][$partnerNameCleaned] = 0;
                     }
                     ++$this->metadata['partners_not_found'][$partnerNameCleaned];
                     continue;
@@ -264,9 +267,10 @@ class SignalementImportLoader
             foreach ($dataMapped[$situation] as $critereLabel => $etat) {
                 /** @var CritereRepository $critereRepository */
                 $critereRepository = $this->entityManager->getRepository(Critere::class);
+                $critereLabel = trim($critereLabel);
 
                 /** @var Critere $critere */
-                $critere = $critereRepository->findByLabel(trim($critereLabel));
+                $critere = $critereRepository->findByLabel($critereLabel);
                 try {
                     if (null !== $critere) {
                         /** @var Criticite $criticite */
@@ -276,14 +280,19 @@ class SignalementImportLoader
                     } else {
                         /** @var CriticiteRepository $criticiteRepository */
                         $criticiteRepository = $this->entityManager->getRepository(Criticite::class);
-                        $criticites = $criticiteRepository->findByLabel(trim($critereLabel));
+                        $criticites = $criticiteRepository->findByLabel($critereLabel);
                         $criticite = !empty($criticites) ? $criticites[0] : null;
                         $critere = $criticite?->getCritere();
                     }
 
                     if (null !== $criticite) {
-                        $signalement
-                            ->addCriticite($criticite);
+                        $signalement->addCriticite($criticite);
+                    } else {
+                        if (!isset($this->metadata['desordres_not_found'][$critereLabel])) {
+                            $this->metadata['desordres_not_found'][$critereLabel] = 0;
+                        }
+                        ++$this->metadata['desordres_not_found'][$critereLabel];
+                        continue;
                     }
                 } catch (\Throwable $exception) {
                     $this->logger->error($critereLabel.' - '.$exception->getMessage());
