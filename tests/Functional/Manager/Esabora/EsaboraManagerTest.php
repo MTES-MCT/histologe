@@ -125,6 +125,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->htmlSanitizerInterface,
             $this->workflow,
             $this->userSignalementSubscriptionManager,
+            true,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -244,6 +245,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->htmlSanitizerInterface,
             $this->workflow,
             $this->userSignalementSubscriptionManager,
+            true,
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
@@ -296,6 +298,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->htmlSanitizerInterface,
             $this->workflow,
             $this->userSignalementSubscriptionManager,
+            true,
         );
 
         $dossierVisite = $this->getDossierVisiteSISHCollectionResponse()->getCollection()[0];

@@ -66,6 +66,8 @@ class EsaboraManager
         #[Autowire(service: 'state_machine.intervention_planning')]
         private readonly WorkflowInterface $workflow,
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        #[Autowire(env: 'FEATURE_SISH_REPUSH_MESSAGE')]
+        private readonly bool $featureSishRepushMessage,
     ) {
         $this->adminUser = $this->userManager->getSystemUser();
     }
@@ -139,10 +141,19 @@ class EsaboraManager
                         partner: $affectation->getPartner(),
                         dispatchAffectationAnsweredEvent: false
                     );
-                    $description = \sprintf(
-                        'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s',
-                        $dossierResponse->getSasCauseRefus()
-                    );
+                    if ($this->featureSishRepushMessage) {
+                        $note = '<i>NOTE : vous pourrez,si besoin, renvoyer ce signalement après mise à jour dans les 24 heures</i>';
+                        $description = \sprintf(
+                            'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s<br>%s',
+                            $dossierResponse->getSasCauseRefus(),
+                            $note
+                        );
+                    } else {
+                        $description = \sprintf(
+                            'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s',
+                            $dossierResponse->getSasCauseRefus()
+                        );
+                    }
                 }
                 break;
         }

@@ -248,6 +248,15 @@ affectations:
     motif_cloture: ""
     territory: "Bouches-du-Rhône"
   -
+    signalement: 2023-13
+    partner: "partenaire-13-06@signal-logement.fr"
+    statut: "NOUVEAU"
+    answered_by: ""
+    affected_by: "admin-territoire-13-01@signal-logement.fr"
+    motif_cloture: ""
+    territory: "Bouches-du-Rhône"
+    is_synchronized: true
+  -
     signalement: 2023-14
     partner: "partenaire-13-05@signal-logement.fr"
     statut: "EN_COURS"
