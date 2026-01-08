@@ -53,8 +53,8 @@ class AutoAffectationRule implements EntityHistoryInterface
     #[AppAssert\ValidProfileDeclarant()]
     private ?string $profileDeclarant = null;
 
-    #[ORM\Column(length: 255, options: ['comment' => 'Value possible empty or an array of code insee'])]
-    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 500, options: ['comment' => 'Value possible empty or an array of code insee'])]
+    #[Assert\Length(max: 500)]
     #[AppAssert\InseeToInclude()]
     private string $inseeToInclude;
 
