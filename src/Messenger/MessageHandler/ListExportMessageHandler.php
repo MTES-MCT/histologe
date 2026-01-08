@@ -68,11 +68,13 @@ readonly class ListExportMessageHandler
 
                     $this->notificationMailerRegistry->send(
                         new NotificationMail(
-                            type: NotificationMailerType::TYPE_LIST_EXPORT,
+                            type: NotificationMailerType::TYPE_DOWNLOAD_EXPORT,
                             to: $user->getEmail(),
                             params: [
                                 'filename' => $filename,
                                 'file_uuid' => $file->getUuid(),
+                                'message' => 'Un export de la liste des signalements est disponible.',
+                                'button_text' => 'Afficher l\'export',
                             ]
                         )
                     );

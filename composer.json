@@ -21,6 +21,7 @@
         "lcobucci/jwt": "^5.5",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-bundle": "^3.0",
+        "maennchen/zipstream-php": "^3.2",
         "nelmio/api-doc-bundle": "^4.32",
         "nelmio/cors-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.3",

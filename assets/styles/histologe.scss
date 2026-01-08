@@ -217,6 +217,15 @@ legend.required::after, label.required::after {
     flex-direction: column;
 }
 
+.fr-display-flex-row {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+.fr-justify-content-right {
+    justify-content: flex-end !important;
+}
+
 .fr-display-none {
     display: none;
 }
@@ -1116,5 +1125,82 @@ ul.fr-toggle__list.fr-toggle__list--inline {
         .fr-toggle label::before {
             margin-right: 0.5rem;
         }
+    }
+}
+
+.zip-parent-position-relative {
+    position: relative;
+}
+
+.zip-child-position-absolute {
+    display: none;
+    position: absolute;
+    top: 1.2rem;
+    right: 1rem;
+    z-index: 2;
+
+    &--visible {
+        display: block;
+    }
+}
+
+.zip-selection-bar {
+    display: none !important;
+    text-align: right;
+
+    &--visible {
+        display: block !important;
+    }
+
+    &__form {
+        display: inline-block;
+        margin-left: 12px;
+    }
+}
+
+.zip-photo-item--selected .zip-photo-tile,
+.zip-photo-item--selected .part-infos-hover {
+    outline: 3px solid var(--border-action-high-blue-france, #000091);
+    outline-offset: 2px;
+}
+
+.zip-selection-bar button:disabled {
+    pointer-events: none;
+}
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+
+    input {
+        position: absolute;
+        opacity: 0;
+
+        &:checked + .checkmark {
+            background: var(--background-action-high-blue-france);
+            box-shadow: inset 0 0 0 1px var(--border-action-high-blue-france);
+            color: var(--text-action-high-blue-france);
+
+            &::after {
+                content: "";
+                display: block;
+                width: 9px;
+                height: 15px;
+                border: solid white;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+                margin: 3px auto;
+            }
+        }
+    }
+
+    .checkmark {
+        width: 30px;
+        height: 30px;
+        border: 1px solid var(--border-action-high-blue-france);
+        background: #ffffff;
+        border-radius: 4px;
     }
 }

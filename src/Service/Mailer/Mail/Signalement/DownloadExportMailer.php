@@ -11,12 +11,12 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignalementListExportMailer extends AbstractNotificationMailer
+class DownloadExportMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_LIST_EXPORT;
-    protected ?string $mailerSubject = 'Votre export de la liste des signalements';
-    protected ?string $mailerButtonText = 'Afficher l\'export';
-    protected ?string $mailerTemplate = 'signalement_list_export';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_DOWNLOAD_EXPORT;
+    protected ?string $mailerSubject = null;
+    protected ?string $mailerButtonText = null;
+    protected ?string $mailerTemplate = 'download_export';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -30,9 +30,13 @@ class SignalementListExportMailer extends AbstractNotificationMailer
 
     /**
      * @return array<mixed>
+     *
+     * @throws \DateMalformedStringException
      */
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
+        $this->mailerSubject = $notificationMail->getParams()['message'];
+        $this->mailerButtonText = $notificationMail->getParams()['button_text'];
         $url = $this->generateLink('show_file', ['uuid' => $notificationMail->getParams()['file_uuid']]);
         $expiration = (new \DateTime())->modify('+1 month');
 

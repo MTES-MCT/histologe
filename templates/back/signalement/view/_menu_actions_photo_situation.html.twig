@@ -1,0 +1,60 @@
+{% set nbPhotosSituation = signalement.getSortedPhotos('situation')|length %}
+{% set canSelectPhotos = nbPhotosSituation <= 12 %}
+<nav role="navigation" class="fr-translate menu-actions-signalement fr-nav fr-mb-3v">
+    <div class="fr-nav__item fr-display-flex-row fr-justify-content-right">
+        <button
+                aria-controls="actions-signalement-menu"
+                aria-expanded="false"
+                type="button"
+                class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-settings-5-line"
+        >
+            Actions
+        </button>
+        <div
+                class="fr-collapse fr-translate__menu fr-menu"
+                id="actions-signalement-menu"
+        >
+            <ul class="fr-menu__list">
+                <li>
+                    <button
+                            type="button"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-file-add-line open-modal-upload-files-btn"
+                            data-fr-opened="false"
+                            data-file-filter="situation"
+                            aria-controls="fr-modal-upload-files"
+                    >
+                        Ajouter des documents sur la situation
+                    </button>
+                </li>
+                <li>
+                    <a href="{{ path('back_signalement_generate_zip', {uuid: signalement.uuid}) }}"
+                       class="fr-nav__link fr-btn--icon-left fr-icon-file-download-line {{ nbPhotosSituation == 0 ? 'disabled' : '' }}"
+                       title="Télécharger toutes les photos au format zip"
+                    >
+                        Télécharger toutes les photos (.zip)
+                    </a>
+                </li>
+                <li>
+                    <button
+                            type="button"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-line
+                            {{ nbPhotosSituation == 0 or not canSelectPhotos ? 'disabled' : '' }}"
+                            {{ nbPhotosSituation == 0 or not canSelectPhotos ? 'aria-disabled="true"' : '' }}
+                            {{ nbPhotosSituation == 0 or not canSelectPhotos? 'disabled' : '' }}
+                            id="btn-enter-zip-selection"
+                            title="{{ not canSelectPhotos
+                            ? 'Pour sélectionner des photos, affichez d’abord l’ensemble des photos.'
+                            : 'Choisir les photos à télécharger au format zip' }}"
+                    >
+                        {% if not canSelectPhotos %}
+                            <span class="fr-sr-only">
+                                La sélection est désactivée tant que toutes les photos ne sont pas affichées.
+                            </span>
+                        {% endif %}
+                        Choisir les photos à télécharger (.zip)
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

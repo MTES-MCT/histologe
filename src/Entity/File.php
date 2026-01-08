@@ -197,7 +197,7 @@ class File implements EntityHistoryInterface
         return $this->uploadedBy;
     }
 
-    public function setUploadedBy(?User $uploadedBy): self
+    public function setUploadedBy(?User $uploadedBy): static
     {
         $this->uploadedBy = $uploadedBy;
 
@@ -224,7 +224,7 @@ class File implements EntityHistoryInterface
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): self
+    public function setSignalement(?Signalement $signalement): static
     {
         $this->signalement = $signalement;
 
@@ -243,7 +243,7 @@ class File implements EntityHistoryInterface
         return $this->filename;
     }
 
-    public function setFilename(?string $filename): self
+    public function setFilename(?string $filename): static
     {
         $this->filename = $filename;
 
@@ -255,7 +255,7 @@ class File implements EntityHistoryInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
@@ -267,7 +267,7 @@ class File implements EntityHistoryInterface
         return $this->extension;
     }
 
-    public function setExtension(?string $extension): self
+    public function setExtension(?string $extension): static
     {
         $this->extension = $extension;
 
@@ -279,7 +279,7 @@ class File implements EntityHistoryInterface
         return $this->intervention;
     }
 
-    public function setIntervention(?Intervention $intervention): self
+    public function setIntervention(?Intervention $intervention): static
     {
         $this->intervention = $intervention;
 
@@ -291,7 +291,7 @@ class File implements EntityHistoryInterface
         return $this->size;
     }
 
-    public function setSize(?string $size): self
+    public function setSize(?string $size): static
     {
         $this->size = $size;
 
@@ -303,7 +303,7 @@ class File implements EntityHistoryInterface
         return $this->documentType;
     }
 
-    public function setDocumentType(?DocumentType $documentType): self
+    public function setDocumentType(?DocumentType $documentType): static
     {
         $this->documentType = $documentType;
 
@@ -315,7 +315,7 @@ class File implements EntityHistoryInterface
         return $this->desordreSlug;
     }
 
-    public function setDesordreSlug(?string $desordreSlug): self
+    public function setDesordreSlug(?string $desordreSlug): static
     {
         $this->desordreSlug = $desordreSlug;
 
@@ -327,7 +327,7 @@ class File implements EntityHistoryInterface
         return $this->isVariantsGenerated;
     }
 
-    public function setIsVariantsGenerated(bool $isVariantsGenerated): self
+    public function setIsVariantsGenerated(bool $isVariantsGenerated): static
     {
         $this->isVariantsGenerated = $isVariantsGenerated;
 
@@ -339,7 +339,7 @@ class File implements EntityHistoryInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(?string $description): static
     {
         $description = null !== $description ? trim($description) : null;
         $this->description = $description ?: null;
@@ -352,7 +352,7 @@ class File implements EntityHistoryInterface
         return $this->isWaitingSuivi;
     }
 
-    public function setIsWaitingSuivi(bool $isWaitingSuivi): self
+    public function setIsWaitingSuivi(bool $isWaitingSuivi): static
     {
         $this->isWaitingSuivi = $isWaitingSuivi;
 
@@ -389,16 +389,31 @@ class File implements EntityHistoryInterface
         return $this->isTypeImage() && $this->isProcedure() && null === $this->intervention;
     }
 
+    /**
+     * @noinspection PhpUnused
+     *
+     * @used-by templates/back/signalement/view/photos-documents.html.twig
+     */
     public function isSituationDocument(): bool
     {
         return $this->isTypeDocument() && $this->isSituation() && null === $this->intervention;
     }
 
+    /**
+     * @noinspection PhpUnused
+     *
+     * @used-by templates/back/signalement/view/photos-documents.html.twig
+     */
     public function isProcedureDocument(): bool
     {
         return $this->isTypeDocument() && $this->isProcedure() && null === $this->intervention;
     }
 
+    /**
+     * @noinspection PhpUnused
+     *
+     * @used-by templates/back/territory-files/index.html.twig
+     */
     public function isImageExtension(): bool
     {
         return in_array($this->getExtension(), self::IMAGE_EXTENSION);
@@ -409,7 +424,7 @@ class File implements EntityHistoryInterface
         return $this->isTemp;
     }
 
-    public function setIsTemp(?bool $isTemp): self
+    public function setIsTemp(?bool $isTemp): static
     {
         $this->isTemp = $isTemp;
 
@@ -427,7 +442,7 @@ class File implements EntityHistoryInterface
     }
 
     /** @param array<mixed> $data */
-    public function setSynchroData(array $data, string $key): self
+    public function setSynchroData(array $data, string $key): static
     {
         $this->synchroData[$key] = $data;
 
@@ -475,7 +490,7 @@ class File implements EntityHistoryInterface
         return $this->isSuspicious;
     }
 
-    public function setIsSuspicious(?bool $isSuspicious): self
+    public function setIsSuspicious(?bool $isSuspicious): static
     {
         $this->isSuspicious = $isSuspicious;
 
@@ -517,7 +532,7 @@ class File implements EntityHistoryInterface
     /**
      * @param Qualification[]|null $partner_competence
      */
-    public function setPartnerCompetence(?array $partner_competence): self
+    public function setPartnerCompetence(?array $partner_competence): static
     {
         $this->partner_competence = $partner_competence;
 
@@ -535,7 +550,7 @@ class File implements EntityHistoryInterface
     /**
      * @param PartnerType[]|null $partner_type
      */
-    public function setPartnerType(?array $partner_type): self
+    public function setPartnerType(?array $partner_type): static
     {
         $this->partner_type = $partner_type;
 
