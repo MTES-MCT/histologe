@@ -14,7 +14,7 @@ METABASE_SYNC_LOCAL_MODE = 1
 METABASE_SYNC_IMAGE_NAME     = scalingo-sync-silo-metabase
 METABASE_SYNC_SCALINGO_APP = histologe-preprod
 METABASE_SYNC_IMAGE_LOCAL    = $(METABASE_SYNC_IMAGE_NAME):local
-METABASE_SYNC_SCALINGO_JOB_DOCKERFILE = .docker/metabase/Dockerfile
+METABASE_SYNC_SCALINGO_JOB_DOCKERFILE = .docker/scalingo-job/Dockerfile
 METABASE_SYNC_SCW_REGISTRY   = rg.fr-par.scw.cloud
 METABASE_SYNC_SCW_NAMESPACE  = signal-logement
 

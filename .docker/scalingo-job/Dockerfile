@@ -14,7 +14,7 @@ RUN mkdir -p /tmp
 
 RUN curl -fsSL https://cli-dl.scalingo.com/install.sh | bash && scalingo --version
 
-COPY .docker/metabase/sync-db.sh /sync-db.sh
+COPY .docker/scalingo-job/sync-db.sh /sync-db.sh
 
 RUN chmod +x /sync-db.sh
 
