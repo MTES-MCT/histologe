@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\Affectation;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -19,6 +20,12 @@ class SecurityApiExceptionListener
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
+        $request = $event->getRequest();
+
+        if (!$this->isApiRoute($request)) {
+            return;
+        }
+
         if ($this->supports($exception)) {
             $previous = $exception->getPrevious();
             $affectation = null;
@@ -63,5 +70,15 @@ class SecurityApiExceptionListener
                 || self::ACCESS_DENIED_PARTNER_NOT_FOUND === $exception->getMessage()
                 || self::TRANSITION_STATUT_DENIED === $exception->getMessage()
             );
+    }
+
+    private function isApiRoute(Request $request): bool
+    {
+        $pathInfo = $request->getPathInfo();
+        if (str_starts_with($pathInfo, '/api/')) {
+            return true;
+        }
+
+        return false;
     }
 }

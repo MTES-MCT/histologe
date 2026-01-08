@@ -331,7 +331,6 @@ class SignalementActionControllerTest extends WebTestCase
                 ],
             ]
         );
-        $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -355,7 +354,6 @@ class SignalementActionControllerTest extends WebTestCase
                 ],
             ]
         );
-        $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertResponseStatusCodeSame(403);
     }
 
