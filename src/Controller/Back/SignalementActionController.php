@@ -453,7 +453,7 @@ class SignalementActionController extends AbstractController
                 $signalementSubscriptionManager->createOrGet($agent, $signalement, $user);
             }
             $entityManager->flush();
-            $this->addFlash('success', 'Les agents ont bien été abonnés au dossier.');
+            $this->addFlash('success', ['title' => 'Abonnement au dossier', 'message' => 'Les agents ont bien été abonnés au dossier.']);
 
             return $this->json(['redirect' => true, 'url' => $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()])]);
         }
