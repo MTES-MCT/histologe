@@ -248,7 +248,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            $route,
+            $route.'?suivi='.$suivi->getId(),
             [
                 'suivi' => $suivi->getId(),
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_suivi_'.$signalement->getId()),
@@ -285,9 +285,8 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            $route,
+            $route.'?suivi='.$suivi->getId(),
             [
-                'suivi' => $suivi->getId(),
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_suivi_'.$signalement->getId()),
             ]
         );
