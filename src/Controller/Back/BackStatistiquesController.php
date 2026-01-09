@@ -109,7 +109,11 @@ class BackStatistiquesController extends AbstractController
      */
     private function createFilters(Request $request, ?Territory $territory, ArrayCollection $partners): StatisticsFilters
     {
-        $requestData = $request->request->all();
+        if (Request::METHOD_POST === $request->getMethod()) {
+            $requestData = $request->request->all();
+        } else {
+            $requestData = $request->query->all();
+        }
         $communes = json_decode(RequestDataExtractor::getString($requestData, 'communes'));
         $epcis = json_decode(RequestDataExtractor::getString($requestData, 'epcis'));
         $statut = RequestDataExtractor::getString($requestData, 'statut');
@@ -163,7 +167,11 @@ class BackStatistiquesController extends AbstractController
             return $partner->getTerritory();
         }
         $authorizedTerritories = $user->getPartnersTerritories();
-        $territoryId = $request->request->get('territoire');
+        if (Request::METHOD_POST === $request->getMethod()) {
+            $territoryId = $request->request->get('territoire');
+        } else {
+            $territoryId = $request->query->get('territoire');
+        }
         if (!$territoryId || 'all' === $territoryId) {
             return null;
         }
