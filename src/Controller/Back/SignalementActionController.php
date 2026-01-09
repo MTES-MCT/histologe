@@ -250,7 +250,7 @@ class SignalementActionController extends AbstractController
         SuiviRepository $suiviRepository,
         ManagerRegistry $doctrine,
     ): JsonResponse {
-        $suivi = $suiviRepository->findOneBy(['id' => $request->request->get('suivi')]);
+        $suivi = $suiviRepository->findOneBy(['id' => $request->query->get('suivi')]);
         $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_DELETE, $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
@@ -327,7 +327,9 @@ class SignalementActionController extends AbstractController
     ): RedirectResponse|JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), (string) $request->query->get('_token')) && $response = $request->query->get('signalement-action')) {
+        $requestData = $request->query->all();
+        $response = RequestDataExtractor::getArray($requestData, 'signalement-action');
+        if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), (string) $request->query->get('_token')) && !empty($response)) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
                 $affectationRepository->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
@@ -359,7 +361,7 @@ class SignalementActionController extends AbstractController
                 isPublic: '1' === $request->query->get('publicSuivi'),
                 subscriptionCreated: $subscriptionCreated,
             );
-            $this->addFlash('success', ['title' => 'Réouverture enregistrée',  'Le dossier a bien été rouvert.']);
+            $this->addFlash('success', ['title' => 'Réouverture enregistrée', 'message' => 'Le dossier a bien été rouvert.']);
             if ($subscriptionCreated) {
                 $this->addFlash('success', ['title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
             }

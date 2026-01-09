@@ -108,18 +108,18 @@ class BackStatistiquesController extends AbstractController
      */
     private function createFilters(Request $request, ?Territory $territory, ArrayCollection $partners): StatisticsFilters
     {
-        $communes = json_decode($request->query->get('communes'));
-        $epcis = json_decode($request->query->get('epcis'));
-        $statut = $request->query->get('statut');
-        $strEtiquettes = json_decode($request->query->get('etiquettes') ?? '[]');
+        $communes = json_decode($request->request->get('communes'));
+        $epcis = json_decode($request->request->get('epcis'));
+        $statut = $request->request->get('statut');
+        $strEtiquettes = json_decode($request->request->get('etiquettes') ?? '[]');
         $etiquettes = array_map(fn ($value): int => $value * 1, $strEtiquettes);
-        $type = $request->query->get('type');
-        $dateStartInput = $request->query->get('dateStart');
+        $type = $request->request->get('type');
+        $dateStartInput = $request->request->get('dateStart');
         $dateStart = (null !== $dateStartInput) ? new \DateTime($dateStartInput) : null;
-        $dateEndInput = $request->query->get('dateEnd');
+        $dateEndInput = $request->request->get('dateEnd');
         $dateEnd = (null !== $dateEndInput) ? new \DateTime($dateEndInput) : null;
-        $hasCountRefused = '1' == $request->query->get('countRefused');
-        $hasCountArchived = '1' == $request->query->get('countArchived');
+        $hasCountRefused = '1' == $request->request->get('countRefused');
+        $hasCountArchived = '1' == $request->request->get('countArchived');
 
         return new StatisticsFilters(
             $communes,
@@ -161,7 +161,7 @@ class BackStatistiquesController extends AbstractController
             return $partner->getTerritory();
         }
         $authorizedTerritories = $user->getPartnersTerritories();
-        $territoryId = $request->query->get('territoire');
+        $territoryId = $request->request->get('territoire');
         if (!$territoryId || 'all' === $territoryId) {
             return null;
         }
