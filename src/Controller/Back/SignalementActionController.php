@@ -510,6 +510,12 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
+        if ($request->isMethod('POST')) {
+            $requestData = $request->request->all();
+        } else {
+            $requestData = $request->query->all();
+        }
+
         // If no partner in territory, no point in blocking unsubscription
         if ($partner) {
             $affectation = $affectationRepository->findOneBy(['partner' => $partner, 'signalement' => $signalement]);
@@ -519,7 +525,8 @@ class SignalementActionController extends AbstractController
                 // If partner and affectation exist, check if user is alone in partner for this signalement to avoid unsubscription
                 $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
                 if (\count($subscriptionsInMyPartner) < 2 && !$user->isAloneInPartner($partner)) {
-                    if (null === $request->request->get('agents_selection')) {
+                    $agentSelection = RequestDataExtractor::getArray($requestData, 'agents_selection');
+                    if ([] === $agentSelection) {
                         $this->addFlash('error', 'Vous êtes le seul agent de votre partenaire sur ce dossier. Si vous souhaitez quitter le dossier, vous devez d\'abord transférer le dossier à un autre agent de votre partenaire.');
 
                         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
@@ -566,7 +573,6 @@ class SignalementActionController extends AbstractController
             }
         }
 
-        $requestData = $request->request->all();
         $token = RequestDataExtractor::getString($requestData, '_token');
         if (!$this->isCsrfTokenValid('unsubscribe', $token)) {
             $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
