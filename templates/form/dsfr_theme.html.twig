@@ -98,7 +98,7 @@
 {% endblock form_label_content %}
 
 {% block form_help %}
-    {% if help is not empty %}
+    {% if help is defined and help is not empty %}
         {% set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' fr-hint-text')|trim})%}
         <{{ element|default('span') }} id="{{ id }}_help"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
             {{ block('form_help_content') }}

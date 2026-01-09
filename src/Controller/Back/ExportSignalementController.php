@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Factory\SignalementSearchQueryFactory;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
+use App\Service\RequestDataExtractor;
 use App\Service\Signalement\Export\SignalementExportFiltersDisplay;
 use App\Service\Signalement\Export\SignalementExportSelectableColumns;
 use App\Service\Signalement\SearchFilter;
@@ -53,8 +54,9 @@ class ExportSignalementController extends AbstractController
         SearchFilter $searchFilter,
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
     ): RedirectResponse {
-        $selectedColumns = $request->get('cols') ?? [];
-        $format = $request->get('file-format');
+        $requestData = $request->request->all();
+        $format = RequestDataExtractor::getString($requestData, 'file-format');
+        $selectedColumns = RequestDataExtractor::getArray($requestData, 'cols');
         $request->getSession()->set('selectedCols', $selectedColumns);
 
         if (!in_array($format, ['csv', 'xlsx'])) {
