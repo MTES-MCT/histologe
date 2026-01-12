@@ -7,7 +7,7 @@
 class ResponsiveArray {
     constructor() {
         this.tables = [];
-        this.breakpoint = 768; // md breakpoint
+        this.breakpoint = 1248; // Custom breakpoint for responsive cards
         this.init();
     }
 
@@ -32,10 +32,12 @@ class ResponsiveArray {
         const headers = [];
         const headerCells = table.querySelectorAll('thead th');
 
-        headerCells.forEach(th => {
+        headerCells.forEach((th, index) => {
+            const label = th.textContent.trim();
             headers.push({
-                label: th.textContent.trim(),
-                isTitle: th.dataset.responsiveTitle === '1'
+                label: label,
+                isTitle: th.dataset.responsiveTitle === '1',
+                isFullWidth: label.toLowerCase() === 'actions'
             });
         });
 
@@ -113,6 +115,11 @@ class ResponsiveArray {
                     cell.appendChild(label);
                     cell.appendChild(content);
                     cell.classList.add('responsive-cell');
+
+                    // Mark full-width cells (like Actions)
+                    if (tableData.headers[index].isFullWidth) {
+                        cell.classList.add('responsive-cell-full-width');
+                    }
                 }
             });
 
@@ -137,7 +144,7 @@ class ResponsiveArray {
             cells.forEach(cell => {
                 if (cell.dataset.originalContent) {
                     cell.innerHTML = cell.dataset.originalContent;
-                    cell.classList.remove('responsive-cell', 'responsive-cell-title');
+                    cell.classList.remove('responsive-cell', 'responsive-cell-title', 'responsive-cell-full-width');
                 }
             });
 

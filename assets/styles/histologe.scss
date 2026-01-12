@@ -1237,7 +1237,7 @@ ul.fr-toggle__list.fr-toggle__list--inline {
 }
 
 // Responsive array - Transform tables into cards on mobile
-@media (max-width: 767px) {
+@media (max-width: 1247px) {
     table.responsive-cards-mode {
         thead {
             display: none;
@@ -1248,7 +1248,6 @@ ul.fr-toggle__list.fr-toggle__list--inline {
         }
 
         tr.responsive-card {
-            display: block;
             margin-bottom: 1rem;
             border: none;
             padding: 1rem;
@@ -1256,12 +1255,10 @@ ul.fr-toggle__list.fr-toggle__list--inline {
         }
 
         td.responsive-cell {
-            display: block;
             padding: 0;
             padding-bottom: 0.5rem;
             border: none;
             text-align: left !important;
-            border-bottom: 0px;
             background-image: none;
 
             .responsive-cell-label {
@@ -1277,9 +1274,10 @@ ul.fr-toggle__list.fr-toggle__list--inline {
 
             &.responsive-cell-title {
                 padding-top: 0;
-                padding-bottom: 0.5rem;
+                padding-bottom: 1rem;
                 margin-bottom: 0.5rem;
                 border-bottom: 2px solid var(--border-default-grey);
+                grid-column: 1 / -1;
 
                 .responsive-card-title {
                     font-size: 1.125rem;
@@ -1287,6 +1285,40 @@ ul.fr-toggle__list.fr-toggle__list--inline {
                     color: var(--text-title-grey);
                 }
             }
+
+            &.responsive-cell-full-width {
+                grid-column: 1 / -1;
+            }
+        }
+    }
+
+    // 1 column for < 576px (mobile)
+    @media (max-width: 575px) {
+        table.responsive-cards-mode tr.responsive-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        table.responsive-cards-mode td.responsive-cell {
+            display: block;
+        }
+    }
+
+    // 2 columns: 576px to 991px
+    @media (min-width: 576px) and (max-width: 991px) {
+        table.responsive-cards-mode tr.responsive-card {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0 1rem;
+        }
+    }
+
+    // 3 columns: 992px to 1247px
+    @media (min-width: 992px) and (max-width: 1247px) {
+        table.responsive-cards-mode tr.responsive-card {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0 1rem;
         }
     }
 }
