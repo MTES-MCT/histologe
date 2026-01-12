@@ -1235,3 +1235,58 @@ ul.fr-toggle__list.fr-toggle__list--inline {
         border-radius: 4px;
     }
 }
+
+// Responsive array - Transform tables into cards on mobile
+@media (max-width: 767px) {
+    table.responsive-cards-mode {
+        thead {
+            display: none;
+        }
+
+        tbody {
+            display: block;
+        }
+
+        tr.responsive-card {
+            display: block;
+            margin-bottom: 1rem;
+            border: none;
+            padding: 1rem;
+            background: white;
+        }
+
+        td.responsive-cell {
+            display: block;
+            padding: 0;
+            padding-bottom: 0.5rem;
+            border: none;
+            text-align: left !important;
+            border-bottom: 0px;
+            background-image: none;
+
+            .responsive-cell-label {
+                font-weight: bold;
+                color: var(--text-label-grey);
+                font-size: 0.875rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .responsive-cell-content {
+                color: var(--text-default-grey);
+            }
+
+            &.responsive-cell-title {
+                padding-top: 0;
+                padding-bottom: 0.5rem;
+                margin-bottom: 0.5rem;
+                border-bottom: 2px solid var(--border-default-grey);
+
+                .responsive-card-title {
+                    font-size: 1.125rem;
+                    font-weight: bold;
+                    color: var(--text-title-grey);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,170 @@
+/**
+ * Responsive Array - Transform tables into card lists on small screens
+ *
+ * Usage: Add the class 'fr-table--responsive-array' to the table element
+ */
+
+class ResponsiveArray {
+    constructor() {
+        this.tables = [];
+        this.breakpoint = 768; // md breakpoint
+        this.init();
+    }
+
+    init() {
+        // Find all tables with the responsive class
+        const responsiveTables = document.querySelectorAll('table.fr-table--responsive-array');
+
+        responsiveTables.forEach(table => {
+            this.tables.push({
+                element: table,
+                headers: this.extractHeaders(table),
+                initialized: false
+            });
+        });
+
+        // Setup responsive behavior
+        this.handleResize();
+        window.addEventListener('resize', this.debounce(() => this.handleResize(), 150));
+    }
+
+    extractHeaders(table) {
+        const headers = [];
+        const headerCells = table.querySelectorAll('thead th');
+
+        headerCells.forEach(th => {
+            headers.push({
+                label: th.textContent.trim(),
+                isTitle: th.dataset.responsiveTitle === '1'
+            });
+        });
+
+        return headers;
+    }
+
+    handleResize() {
+        const isMobile = window.innerWidth < this.breakpoint;
+
+        this.tables.forEach(tableData => {
+            if (isMobile) {
+                this.transformToCards(tableData);
+            } else {
+                this.restoreTable(tableData);
+            }
+        });
+    }
+
+    transformToCards(tableData) {
+        if (tableData.initialized && tableData.element.classList.contains('responsive-cards-mode')) {
+            return; // Already in card mode
+        }
+
+        const tbody = tableData.element.querySelector('tbody');
+        const rows = tbody.querySelectorAll('tr');
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            let titleCellIndex = -1;
+
+            // Find which cell should be the title
+            tableData.headers.forEach((header, index) => {
+                if (header.isTitle) {
+                    titleCellIndex = index;
+                }
+            });
+
+            // Store original content for all cells first
+            cells.forEach((cell, index) => {
+                if (!cell.dataset.originalContent) {
+                    cell.dataset.originalContent = cell.innerHTML;
+                }
+            });
+
+            // Process title cell first if found and move it to the beginning
+            if (titleCellIndex !== -1 && cells[titleCellIndex]) {
+                const cell = cells[titleCellIndex];
+
+                // Create title element
+                const title = document.createElement('div');
+                title.className = 'responsive-card-title';
+                title.innerHTML = cell.dataset.originalContent;
+
+                cell.innerHTML = '';
+                cell.appendChild(title);
+                cell.classList.add('responsive-cell', 'responsive-cell-title');
+
+                // Move to first position
+                row.insertBefore(cell, row.firstChild);
+            }
+
+            // Process all other cells
+            cells.forEach((cell, index) => {
+                if (index !== titleCellIndex && tableData.headers[index]) {
+                    // Add header label before content
+                    const label = document.createElement('div');
+                    label.className = 'responsive-cell-label';
+                    label.textContent = tableData.headers[index].label;
+
+                    const content = document.createElement('div');
+                    content.className = 'responsive-cell-content';
+                    content.innerHTML = cell.dataset.originalContent;
+
+                    cell.innerHTML = '';
+                    cell.appendChild(label);
+                    cell.appendChild(content);
+                    cell.classList.add('responsive-cell');
+                }
+            });
+
+            row.classList.add('responsive-card');
+        });
+
+        tableData.element.classList.add('responsive-cards-mode');
+        tableData.initialized = true;
+    }
+
+    restoreTable(tableData) {
+        if (!tableData.element.classList.contains('responsive-cards-mode')) {
+            return; // Already in table mode
+        }
+
+        const tbody = tableData.element.querySelector('tbody');
+        const rows = tbody.querySelectorAll('tr');
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+
+            cells.forEach(cell => {
+                if (cell.dataset.originalContent) {
+                    cell.innerHTML = cell.dataset.originalContent;
+                    cell.classList.remove('responsive-cell', 'responsive-cell-title');
+                }
+            });
+
+            row.classList.remove('responsive-card');
+        });
+
+        tableData.element.classList.remove('responsive-cards-mode');
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        new ResponsiveArray();
+    });
+} else {
+    new ResponsiveArray();
+}

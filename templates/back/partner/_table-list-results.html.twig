@@ -3,7 +3,7 @@
     {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
         <th scope="col">Territoire</th>
     {% endif %}
-    <th scope="col">Nom</th>
+    <th scope="col" data-responsive-title="1">Nom</th>
     <th scope="col">Type</th>
     <th scope="col">Compétences</th>
     <th scope="col">Codes INSEE</th>
@@ -80,7 +80,7 @@
     {% endfor %}
 {% endset %}
 
-{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true, 'responsive': true } %}
 
 <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="partner-pagination">
     {% import '_partials/macros.html.twig' as macros %}
