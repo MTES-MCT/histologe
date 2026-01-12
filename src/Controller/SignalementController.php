@@ -719,8 +719,9 @@ class SignalementController extends AbstractController
                 isPublic: true,
             );
 
-            $messageRetour = 'Votre dossier a bien été complété, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !';
-            $this->addFlash('success', $messageRetour);
+            $this->addFlash('success', ['title' => 'Dossier complété',
+                'message' => 'Votre dossier a bien été complété, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !',
+            ]);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -1005,7 +1006,9 @@ class SignalementController extends AbstractController
             }
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);
 
-            $this->addFlash('success', 'Votre demande a bien été prise en compte. Votre signalement a été transmis à l\'administration.');
+            $this->addFlash('success', ['title' => 'Signalement transmis',
+                'message' => 'Votre demande a bien été prise en compte. Votre signalement a été transmis à l\'administration.',
+            ]);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -1064,7 +1067,9 @@ class SignalementController extends AbstractController
         $signalement->setIsProprioAverti(true);
         $signalementManager->save($signalement);
 
-        $this->addFlash('success', 'Votre modification a bien été prise en compte.');
+        $this->addFlash('success', ['title' => 'Bailleur prévenu',
+            'message' => 'Votre modification a bien été prise en compte.',
+        ]);
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
@@ -1111,7 +1116,9 @@ class SignalementController extends AbstractController
                 )
             );
 
-            $this->addFlash('success', 'L\'invitation a été transmise à la personne qui pourra suivre votre dossier.');
+            $this->addFlash('success', ['title' => 'Invitation transmise',
+                'message' => 'L\'invitation a été transmise à la personne qui pourra suivre votre dossier.',
+            ]);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }

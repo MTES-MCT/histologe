@@ -449,7 +449,9 @@ class ProfilController extends AbstractController
         }
         $entityManager->flush();
         if ($sendFlashSuccess) {
-            $this->addFlash('success', 'Vos abonnements ont bien été mis à jour.');
+            $this->addFlash('success', ['title' => 'Abonnements mis à jour',
+                'message' => 'Vos abonnements ont bien été mis à jour.',
+            ]);
         }
 
         return $this->redirectToRoute('back_profil');

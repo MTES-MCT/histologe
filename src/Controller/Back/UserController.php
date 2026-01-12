@@ -159,7 +159,9 @@ class UserController extends AbstractController
         $user->setStatut(UserStatus::INACTIVE);
         $user->setPassword($passwordHasher->hashPassword($user, bin2hex(random_bytes(32))));
         $userManager->save($user);
-        $this->addFlash('success', 'L\'utilisateur '.$user->getNomComplet(true).' a bien été désactivé.');
+        $this->addFlash('success', ['title' => 'Compte désactivé',
+            'message' => 'L\'utilisateur '.$user->getNomComplet(true).' a bien été désactivé.',
+        ]);
 
         return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
     }

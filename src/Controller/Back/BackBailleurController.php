@@ -71,7 +71,7 @@ class BackBailleurController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            $this->addFlash('success', message: ['title' => 'Modifications enregistrées', 'message' => 'Le bailleur a bien été modifié.']);
+            $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le bailleur a bien été modifié.']);
 
             return $this->redirectToRoute('back_bailleur_edit', ['bailleur' => $bailleur->getId()]);
         }

@@ -60,7 +60,9 @@ final class ConfigClubEventController extends AbstractController
             $entityManager->persist($clubEvent);
             $entityManager->flush();
 
-            $this->addFlash('success', 'L\'événement a bien été ajouté.');
+            $this->addFlash('success', ['title' => 'Nouvel événement',
+                'message' => 'L\'événement a bien été ajouté.',
+            ]);
 
             return $this->redirectToRoute('back_config_club_event_index');
         }
@@ -80,7 +82,9 @@ final class ConfigClubEventController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'L\'événement a bien été modifié.');
+            $this->addFlash('success', ['title' => 'Evénement modifié',
+                'message' => 'L\'événement a bien été modifié.',
+            ]);
 
             return $this->redirectToRoute('back_config_club_event_index');
         }
@@ -107,7 +111,9 @@ final class ConfigClubEventController extends AbstractController
         $dateEvent = $clubEvent->getDateEvent();
         $entityManager->remove($clubEvent);
         $entityManager->flush();
-        $this->addFlash('success', 'L\'événement "'.$name.'" du '.$dateEvent->format('d/m/Y H:i').' a bien été supprimé.');
+        $this->addFlash('success', ['title' => 'Evénement supprimé',
+            'message' => 'L\'événement "'.$name.'" du '.$dateEvent->format('d/m/Y H:i').' a bien été supprimé.',
+        ]);
 
         return $this->redirectToRoute('back_config_club_event_index');
     }

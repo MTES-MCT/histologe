@@ -63,7 +63,9 @@ class SuiviBailleurController extends AbstractController
                     $form->handleRequest($request);
                     if ($form->isSubmitted() && $form->isValid()) {
                         $entityManager->flush();
-                        $this->addFlash('success', 'Vos coordonnées ont été enregistrées avec succès.');
+                        $this->addFlash('success', ['title' => 'Coordonnées enregistrées',
+                            'message' => 'Vos coordonnées ont été enregistrées avec succès.',
+                        ]);
 
                         return $this->redirectToRoute('front_dossier_bailleur');
                     }
@@ -83,7 +85,9 @@ class SuiviBailleurController extends AbstractController
                         try {
                             $injonctionBailleurService->handleStopProcedure($stopProcedure);
                             $entityManager->commit();
-                            $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
+                            $this->addFlash('success', ['title' => 'Réponse enregistrée',
+                                'message' => 'Votre réponse a été enregistrée avec succès.',
+                            ]);
                         } catch (\Exception $e) {
                             $logger->critical($e->getMessage());
                             $entityManager->rollback();
@@ -105,7 +109,9 @@ class SuiviBailleurController extends AbstractController
                     try {
                         $injonctionBailleurService->handleResponse($reponseInjonctionBailleur);
                         $entityManager->commit();
-                        $this->addFlash('success', 'Votre réponse a été enregistrée avec succès.');
+                        $this->addFlash('success', ['title' => 'Réponse enregistrée',
+                            'message' => 'Votre réponse a été enregistrée avec succès.',
+                        ]);
                     } catch (\Exception $e) {
                         $logger->critical($e->getMessage());
                         $entityManager->rollback();
