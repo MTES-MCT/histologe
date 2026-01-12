@@ -140,7 +140,7 @@ class AffectationController extends AbstractController
         Signalement $signalement,
         AffectationRepository $affectationRepository,
     ): RedirectResponse|JsonResponse {
-        $idAffectation = $request->request->get('affectation');
+        $idAffectation = $request->query->get('affectation');
         $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
         if (!$affectation || $affectation->getSignalement()->getId() !== $signalement->getId()) {
             $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Affectation introuvable.'];

@@ -869,7 +869,7 @@ class SignalementRepository extends ServiceEntityRepository
         if ($filters->getCommunes()) {
             $communes = [];
             foreach ($filters->getCommunes() as $city) {
-                $communes[] = $filters->getCommunes();
+                $communes[] = $city;
                 if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city])) {
                     $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city]);
                 }

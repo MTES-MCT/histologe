@@ -250,7 +250,6 @@ class SignalementActionControllerTest extends WebTestCase
             'POST',
             $route.'?suivi='.$suivi->getId(),
             [
-                'suivi' => $suivi->getId(),
                 '_token' => $this->generateCsrfToken($this->client, 'signalement_delete_suivi_'.$signalement->getId()),
             ]
         );
@@ -376,54 +375,6 @@ class SignalementActionControllerTest extends WebTestCase
             ]
         );
         $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testSwitchValue(): void
-    {
-        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000010']);
-
-        $route = $this->router->generate('back_signalement_switch_value', ['uuid' => $signalement->getUuid()]);
-        $this->client->request('GET', $route);
-
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'value' => 1,
-                '_token' => $this->generateCsrfToken($this->client, 'KO'),
-            ]
-        );
-        $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertEquals('{"response":"error"}', (string) $this->client->getResponse()->getContent());
-
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'value' => 1,
-                '_token' => $this->generateCsrfToken($this->client, 'signalement_switch_value_'.$signalement->getUuid()),
-            ]
-        );
-        $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertEquals('{"response":"success"}', (string) $this->client->getResponse()->getContent());
-
-        $this->client->request(
-            'POST',
-            $route,
-            [
-                'value' => 3,
-                '_token' => $this->generateCsrfToken($this->client, 'signalement_switch_value_'.$signalement->getUuid()),
-            ]
-        );
-
-        $tag = $signalement->getTags()->first();
-        if (!$tag) {
-            $this->fail('No tag found for the signalement');
-        }
-        $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertEquals('{"response":"success"}', (string) $this->client->getResponse()->getContent());
-        $this->assertEquals(1, $signalement->getTags()->count());
-        $this->assertEquals(3, $tag->getId());
     }
 
     /**

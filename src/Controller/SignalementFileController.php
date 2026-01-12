@@ -117,7 +117,7 @@ class SignalementFileController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $file = $fileRepository->findOneBy(['id' => $request->request->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
+        $file = $fileRepository->findOneBy(['id' => $request->query->get('file_id'), 'signalement' => $signalement, 'isTemp' => true]);
         if (!$file) {
             return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
         }
@@ -127,7 +127,7 @@ class SignalementFileController extends AbstractController
         $entityManager->remove($file);
         $entityManager->flush();
 
-        return $this->json(['success' => true, 'fileId' => $request->request->get('file_id')]);
+        return $this->json(['success' => true, 'fileId' => $request->query->get('file_id')]);
     }
 
     /**

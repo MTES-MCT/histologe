@@ -10,7 +10,6 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\SuiviFile;
-use App\Entity\Tag;
 use App\Entity\User;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
@@ -370,29 +369,6 @@ class SignalementActionController extends AbstractController
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
-    }
-
-    #[Route('/{uuid:signalement}/switch', name: 'back_signalement_switch_value', methods: 'POST')]
-    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
-    public function switchValue(Signalement $signalement, Request $request, EntityManagerInterface $entityManager): RedirectResponse|JsonResponse
-    {
-        if ($this->isCsrfTokenValid('signalement_switch_value_'.$signalement->getUuid(), (string) $request->request->get('_token'))) {
-            $value = $request->request->get('value');
-
-            $tag = $entityManager->getRepository(Tag::class)->find((int) $value);
-            if ($signalement->getTags()->contains($tag)) {
-                $signalement->removeTag($tag);
-            } else {
-                $signalement->addTag($tag);
-            }
-
-            $entityManager->persist($signalement);
-            $entityManager->flush();
-
-            return $this->json(['response' => 'success']);
-        }
-
-        return $this->json(['response' => 'error'], 400);
     }
 
     #[Route('/{uuid:signalement}/set-rnb', name: 'back_signalement_set_rnb', methods: 'POST')]

@@ -179,7 +179,7 @@ class SignalementFileController extends AbstractController
         $fragment = in_array($request->request->get('hash_src'), ['activite', 'situation']) ? $request->request->get('hash_src') : 'documents';
         if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $message = MessageHelper::ERROR_MESSAGE_CSRF;
-            if ('1' === $request->get('is_draft')) {
+            if ('1' === $request->request->get('is_draft')) {
                 return $this->json(['message' => $message], Response::HTTP_BAD_REQUEST);
             }
             $this->addFlash('error', $message);
