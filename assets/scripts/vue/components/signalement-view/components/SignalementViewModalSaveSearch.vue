@@ -131,7 +131,7 @@ export default defineComponent({
     handleSearchSaved (requestResponse: any) {
       const message = requestResponse.data?.message || 'Erreur inconnue'
       const isSuccess = requestResponse.status === 200
-      const className = isSuccess ? 'fr-notice--info' : 'fr-notice--alert'
+      const className = isSuccess ? 'fr-notice--success' : 'fr-notice--alert'
 
       if (isSuccess && requestResponse.data?.data?.savedSearch) {
         const saved = requestResponse.data.data.savedSearch

@@ -80,7 +80,7 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
       return true;
     }
     const notice = document.createElement('div');
-    notice.classList.add('fr-notice', 'fr-notice--alert');
+    notice.classList.add('fr-notice', 'fr-notice--alert', 'fr-mb-5v');
 
     const container = document.createElement('div');
     container.classList.add('fr-container');

@@ -1,5 +1,6 @@
 import { initSearchAndSelectBadges } from '../../services/component/component_search_and_select_badges';
 import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
+import { addFlashMessage } from '../../services/component/component_json_response_handler';
 
 let boFormSignalementCurrentTabIsDirty = false;
 let boFormNeedRefreshValidationTab = true;
@@ -119,20 +120,23 @@ function saveCurrentTab(event) {
             modaleDuplicateOpenLink.textContent = response.labelBtnDuplicates;
             dsfr(modaleDuplicate).modal.disclose();
           } else {
-            const errorAlertStr =
-              '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__desc">Merci de corriger les champs où des erreurs sont signalées.</span></p></div></div></div>';
-            document.querySelector('#tabpanel-' + currentTabName + '-panel').innerHTML =
-              errorAlertStr +
-              document.querySelector('#tabpanel-' + currentTabName + '-panel').innerHTML;
+            addFlashMessage({
+              type: 'alert',
+              title: 'Erreur',
+              message: 'Merci de corriger les champs où des erreurs sont signalées.',
+            });
           }
           attacheAutocompleteAddressEvents();
         }
         initBoFormSignalementSubmit(currentTabName);
       });
     } else {
-      const errorHtml =
-        '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__desc">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</span></p></div></div></div>';
-      document.querySelector('#tabpanel-' + currentTabName + '-panel').innerHTML = errorHtml;
+      addFlashMessage({
+        type: 'alert',
+        title: 'Erreur',
+        message:
+          'Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.',
+      });
     }
   });
 }

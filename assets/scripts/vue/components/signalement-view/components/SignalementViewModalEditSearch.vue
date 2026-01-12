@@ -149,7 +149,7 @@ export default defineComponent({
       this.messageEditConfirmation = requestResponse.data.message
       this.classNameEditConfirmation =
           requestResponse.status === 200
-            ? 'fr-notice--info'
+            ? 'fr-notice--success'
             : 'fr-notice--alert'
       if (requestResponse.status === 200) {
         const item = this.sharedState.savedSearches.find(s => s.Id === id)
@@ -168,7 +168,7 @@ export default defineComponent({
       this.messageEditConfirmation = requestResponse.data.message
       this.classNameEditConfirmation =
           requestResponse.status === 200
-            ? 'fr-notice--info'
+            ? 'fr-notice--success'
             : 'fr-notice--alert'
       if (requestResponse.status === 200) {
         const updatedSearches = this.sharedState.savedSearches.filter(s => s.Id !== id);

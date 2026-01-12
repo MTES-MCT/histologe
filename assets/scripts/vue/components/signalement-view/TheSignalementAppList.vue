@@ -201,7 +201,7 @@ export default defineComponent({
             : 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
       this.classNameDeleteConfirmation =
           requestResponse.data.status === 200
-            ? 'fr-notice--info'
+            ? 'fr-notice--success'
             : 'fr-notice--alert'
 
       buildUrl(this, initElements.dataset.ajaxurl)
