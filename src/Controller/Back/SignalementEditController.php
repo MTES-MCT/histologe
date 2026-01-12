@@ -73,7 +73,6 @@ class SignalementEditController extends AbstractController
         $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'adresse du logement a bien été modifiée.'];
         if ($subscriptionCreated) {
-            $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
         $htmlTargetContents = $htmlTargetContentsService->getHtmlTargetContentsForSignalementAddress($signalement);
@@ -169,9 +168,13 @@ class SignalementEditController extends AbstractController
                 );
 
                 $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', 'Le tiers aidant a bien été invité.');
+                $this->addFlash('success', ['title' => 'Invitation sur le dossier',
+                    'message' => 'Le tiers aidant a bien été invité.',
+                ]);
                 if ($subscriptionCreated) {
-                    $this->addFlash('success', User::MSG_SUBSCRIPTION_CREATED);
+                    $this->addFlash('success', ['title' => 'Abonnement au dossier',
+                        'message' => User::MSG_SUBSCRIPTION_CREATED,
+                    ]);
                 }
             } else {
                 $response = ['code' => Response::HTTP_BAD_REQUEST];

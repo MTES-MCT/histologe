@@ -160,7 +160,9 @@ class AutoAffectationRuleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($autoAffectationRule);
             $entityManager->flush();
-            $this->addFlash('success', 'La règle a bien été créée.');
+            $this->addFlash('success', ['title' => 'Nouvelle auto-affectation',
+                'message' => 'La règle a bien été créée.',
+            ]);
 
             return $this->redirectToRoute('back_auto_affectation_rule_index', [], Response::HTTP_SEE_OTHER);
         }

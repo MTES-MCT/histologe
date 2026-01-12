@@ -518,16 +518,14 @@ class SignalementCreateController extends AbstractController
                     partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                     createSubscription: false
                 );
-                $this->addFlash('success', [
-                    'title' => 'Signalement ajouté',
+                $this->addFlash('success', ['title' => 'Signalement ajouté',
                     'message' => 'Le signalement a bien été créé et validé. Vous n\'avez pas défini de partenaires à affecter, rendez-vous dans le signalement pour en affecter !',
                 ]);
             } else {
                 $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
                 $notificationAndMailSender->sendNewSignalement($signalement);
 
-                $this->addFlash('success', [
-                    'title' => 'Signalement ajouté',
+                $this->addFlash('success', ['title' => 'Signalement ajouté',
                     'message' => 'Le signalement a bien été créé. Il doit être validé par les responsables de territoire. Si ce signalement est affecté à votre partenaire, il sera visible dans la liste des signalements.',
                 ]);
                 $route = 'back_signalement_drafts';
