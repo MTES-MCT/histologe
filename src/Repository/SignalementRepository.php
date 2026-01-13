@@ -2518,7 +2518,7 @@ class SignalementRepository extends ServiceEntityRepository
      *
      * @throws \Exception
      */
-    public function findInjonctionBeforePeriodWithoutAnswer(string $period): array
+    public function findInjonctionBeforeDateWithoutAnswer(\DateTimeImmutable $beforeDate): array
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.statut = :statut')
@@ -2540,7 +2540,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
 
         $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
-            ->setParameter('date', (new \DateTimeImmutable())->modify('-'.$period))
+            ->setParameter('date', $beforeDate)
             ->orderBy('s.createdAt', 'DESC');
 
         return $qb->getQuery()->getResult();

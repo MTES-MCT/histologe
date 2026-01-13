@@ -11,6 +11,7 @@ use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,6 +37,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
         private readonly InjonctionBailleurService $injonctionBailleurService,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
+        private readonly ClockInterface $clock,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -47,7 +49,8 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $signalements = $this->signalementRepository->findInjonctionBeforePeriodWithoutAnswer($this->periodThreshold);
+        $beforeDate = $this->clock->now()->modify('-'.$this->periodThreshold);
+        $signalements = $this->signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
         foreach ($signalements as $signalement) {
             $this->entityManager->beginTransaction();
             try {

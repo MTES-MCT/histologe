@@ -22,6 +22,8 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class SignalementRepositoryTest extends KernelTestCase
@@ -527,20 +529,21 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertEquals(\count($signaleementsIds), $count);
     }
 
-    public function testFindInjonctionBeforePeriodWithoutAnswer(): void
+    public function testFindInjonctionBeforeDateWithoutAnswer(): void
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
-        $signalements = $signalementRepository->findInjonctionBeforePeriodWithoutAnswer('3 weeks');
+        $beforeDate = new \DateTimeImmutable('-3 weeks');
+        $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
         $this->assertCount(0, $signalements);
 
-        $referenceInjonction = '2363';
-        $signalement = $signalementRepository->findOneBy(['referenceInjonction' => $referenceInjonction]);
-        $signalement->setCreatedAt(new \DateTimeImmutable('-2 months'));
-        $this->entityManager->flush();
+        $container = self::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
 
-        $signalements = $signalementRepository->findInjonctionBeforePeriodWithoutAnswer('3 weeks');
+        $beforeDate = $mockClock->now()->modify('-3 weeks');
+        $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
         $this->assertCount(1, $signalements);
     }
 }
