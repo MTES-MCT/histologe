@@ -75,10 +75,13 @@ class ResponsiveArray {
                 }
             });
 
-            // Store original content for all cells first
+            // Store original content and index for all cells first
             cells.forEach((cell, index) => {
                 if (!cell.dataset.originalContent) {
                     cell.dataset.originalContent = cell.innerHTML;
+                }
+                if (!cell.dataset.originalIndex) {
+                    cell.dataset.originalIndex = index.toString();
                 }
             });
 
@@ -139,13 +142,26 @@ class ResponsiveArray {
         const rows = tbody.querySelectorAll('tr');
 
         rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
+            const cells = Array.from(row.querySelectorAll('td'));
 
+            // Restore content for all cells
             cells.forEach(cell => {
                 if (cell.dataset.originalContent) {
                     cell.innerHTML = cell.dataset.originalContent;
                     cell.classList.remove('responsive-cell', 'responsive-cell-title', 'responsive-cell-full-width');
                 }
+            });
+
+            // Sort cells back to their original positions
+            cells.sort((a, b) => {
+                const indexA = parseInt(a.dataset.originalIndex || '0');
+                const indexB = parseInt(b.dataset.originalIndex || '0');
+                return indexA - indexB;
+            });
+
+            // Re-append cells in the correct order
+            cells.forEach(cell => {
+                row.appendChild(cell);
             });
 
             row.classList.remove('responsive-card');
