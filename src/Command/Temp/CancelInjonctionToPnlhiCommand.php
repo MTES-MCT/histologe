@@ -78,7 +78,7 @@ class CancelInjonctionToPnlhiCommand extends Command
                 $signalement->getUuid(),
                 $signalement->getReference(),
                 $signalement->getTerritory()->getName(),
-                $signalement->getStatut(),
+                $signalement->getStatut()->value,
             ];
         }
         $io->table(['UUID', 'Référence', 'Territoire', 'Statut actuel'], $rows);
