@@ -10,6 +10,9 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
 use App\Manager\UserSignalementSubscriptionManager;
+use App\Repository\CritereRepository;
+use App\Repository\CriticiteRepository;
+use App\Repository\PartnerRepository;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\Import\Signalement\SignalementImportMapper;
 use App\Service\Signalement\CriticiteCalculator;
@@ -42,6 +45,9 @@ class SignalementImportLoaderTest extends KernelTestCase
     private MockObject&FilesystemOperator $filesystemOperator;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
+    private CritereRepository $critereRepository;
+    private CriticiteRepository $criticiteRepository;
+    private PartnerRepository $partnerRepository;
 
     protected function setUp(): void
     {
@@ -57,6 +63,9 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
         $this->fileManager = self::getContainer()->get(FileManager::class);
         $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $this->critereRepository = self::getContainer()->get(CritereRepository::class);
+        $this->criticiteRepository = self::getContainer()->get(CriticiteRepository::class);
+        $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
         /** @var ManagerRegistry $doctrine */
         $doctrine = $kernel->getContainer()->get('doctrine');
 
@@ -88,7 +97,10 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->fileManager,
             $this->filesystemOperator,
             $this->htmlSanitizerInterface,
-            $this->userSignalementSubscriptionManager
+            $this->userSignalementSubscriptionManager,
+            $this->critereRepository,
+            $this->criticiteRepository,
+            $this->partnerRepository,
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);

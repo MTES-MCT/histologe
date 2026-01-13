@@ -3,7 +3,6 @@
 namespace App\Service\Import\Signalement;
 
 use App\Entity\Affectation;
-use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
@@ -11,7 +10,6 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -24,6 +22,7 @@ use App\Manager\TagManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\PartnerRepository;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -69,6 +68,9 @@ class SignalementImportLoader
     ];
 
     private ?User $userSystem = null;
+    private array $indexedCriteres = [];
+    private array $indexedCriticites = [];
+    private array $indexedPartners = [];
 
     public function __construct(
         private SignalementImportMapper $signalementImportMapper,
@@ -86,6 +88,9 @@ class SignalementImportLoader
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private HtmlSanitizerInterface $htmlSanitizer,
         private UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        private readonly CritereRepository $critereRepository,
+        private readonly CriticiteRepository $criticiteRepository,
+        private readonly PartnerRepository $partnerRepository,
     ) {
     }
 
@@ -99,67 +104,86 @@ class SignalementImportLoader
     public function load(Territory $territory, array $data, array $headers, ?OutputInterface $output = null): void
     {
         $countSignalement = 0;
+        $this->userSystem = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         if ($output) {
-            $progressBar = new ProgressBar($output);
-            $progressBar->start(\count($data));
+            $output->writeln('Vérification des données à importer.');
         }
 
-        $this->userSystem = $this->entityManager->getRepository(User::class)->findOneBy(
-            [
-                'email' => $this->parameterBag->get('user_system_email'), ]
-        );
-
+        $dataMappedOk = [];
         foreach ($data as $item) {
-            $dataMapped = $this->signalementImportMapper->map($headers, $item);
-            if (!empty($dataMapped)) {
-                ++$countSignalement;
-                if ($output) {
-                    $progressBar->advance();
+            $dataMappedToCheck = $this->signalementImportMapper->map($headers, $item);
+            if (empty($dataMappedToCheck)) {
+                continue;
+            }
+            foreach (self::SITUATIONS as $situation) {
+                $this->loadSignalementSituation($dataMappedToCheck, $situation);
+            }
+            $this->loadAffectation($territory, $dataMappedToCheck);
+            $this->loadFiles($dataMappedToCheck['photos']);
+            $this->loadFiles($dataMappedToCheck['documents']);
+            if ($dataMappedToCheck['motifCloture'] && !MotifCloture::tryFrom($dataMappedToCheck['motifCloture'])) {
+                if (!isset($this->metadata['motif_cloture_not_found'][$dataMappedToCheck['motifCloture']])) {
+                    $this->metadata['motif_cloture_not_found'][$dataMappedToCheck['motifCloture']] = 0;
                 }
-                $signalement = $this->signalementManager->createOrUpdateFromArrayForImport($territory, $dataMapped);
-                if (!$signalement->getProfileDeclarant()) {
-                    if (!$signalement->getIsNotOccupant()) {
-                        $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
-                    } elseif (OccupantLink::PRO->name == mb_strtoupper($signalement->getLienDeclarantOccupant())) {
-                        $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
-                    } else {
-                        $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
-                    }
-                }
-                $this->signalementManager->save($signalement);
+                ++$this->metadata['motif_cloture_not_found'][$dataMappedToCheck['motifCloture']];
+            }
+            $dataMappedOk[] = $dataMappedToCheck;
+        }
 
-                $signalement = $this->loadTags($signalement, $territory, $dataMapped);
-                foreach (self::SITUATIONS as $situation) {
-                    $signalement = $this->loadSignalementSituation($signalement, $dataMapped, $situation);
-                }
+        if ($this->hasErrors()) {
+            $this->logger->info('Des erreurs ont été détectées, l\'import est annulé.');
 
-                $signalement->setScore($this->criticiteCalculator->calculate($signalement));
-                $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+            return;
+        }
 
-                $affectationCollection = $this->loadAffectation($signalement, $territory, $dataMapped);
-                foreach ($affectationCollection as $affectation) {
-                    $signalement->addAffectation($affectation);
-                }
+        if ($output) {
+            $output->writeln('Aucune erreur détectée, lancement de l\'import.');
+            $progressBar = new ProgressBar($output);
+            $progressBar->start(\count($dataMappedOk));
+        }
 
-                $suiviCollection = $this->loadSuivi($signalement, $dataMapped);
-                foreach ($suiviCollection as $suivi) {
-                    $signalement->addSuivi($suivi);
+        foreach ($dataMappedOk as $dataMapped) {
+            ++$countSignalement;
+            $signalement = $this->signalementManager->createOrUpdateFromArrayForImport($territory, $dataMapped);
+            if (!$signalement->getProfileDeclarant()) {
+                if (!$signalement->getIsNotOccupant()) {
+                    $signalement->setProfileDeclarant(ProfileDeclarant::LOCATAIRE);
+                } elseif (OccupantLink::PRO->name == mb_strtoupper($signalement->getLienDeclarantOccupant())) {
+                    $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
+                } else {
+                    $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
                 }
+            }
+            $this->signalementManager->save($signalement);
 
-                $this->loadFiles($signalement, $dataMapped['photos']);
-                $this->loadFiles($signalement, $dataMapped['documents']);
+            $this->loadTags($signalement, $territory, $dataMapped);
+            foreach (self::SITUATIONS as $situation) {
+                $this->loadSignalementSituation($dataMapped, $situation, $signalement);
+            }
 
-                $this->metadata['count_signalement'] = $countSignalement;
-                if (0 === $countSignalement % self::FLUSH_COUNT) {
-                    $this->logger->info(\sprintf('in progress - %s signalements saved', $countSignalement));
-                    $this->signalementManager->flush();
-                }
-                if ($dataMapped['motifCloture'] && !MotifCloture::tryFrom($dataMapped['motifCloture'])) {
-                    if (!isset($this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']])) {
-                        $this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']] = 0;
-                    }
-                    ++$this->metadata['motif_cloture_not_found'][$dataMapped['motifCloture']];
-                }
+            $signalement->setScore($this->criticiteCalculator->calculate($signalement));
+            $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+
+            $affectationCollection = $this->loadAffectation($territory, $dataMapped, $signalement);
+            foreach ($affectationCollection as $affectation) {
+                $signalement->addAffectation($affectation);
+            }
+
+            $suiviCollection = $this->loadSuivi($signalement, $dataMapped);
+            foreach ($suiviCollection as $suivi) {
+                $signalement->addSuivi($suivi);
+            }
+
+            $this->loadFiles($dataMapped['photos'], signalement: $signalement);
+            $this->loadFiles($dataMapped['documents'], signalement: $signalement);
+
+            $this->metadata['count_signalement'] = $countSignalement;
+            if (0 === $countSignalement % self::FLUSH_COUNT) {
+                $this->logger->info(\sprintf('in progress - %s signalements saved', $countSignalement));
+                $this->signalementManager->flush();
+            }
+            if ($output) {
+                $progressBar->advance();
             }
         }
 
@@ -183,17 +207,23 @@ class SignalementImportLoader
         return $this->metadata;
     }
 
+    private function hasErrors(): bool
+    {
+        return \count($this->metadata['partners_not_found']) > 0
+            || \count($this->metadata['motif_cloture_not_found']) > 0
+            || \count($this->metadata['files_not_found']) > 0
+            || \count($this->metadata['desordres_not_found']) > 0;
+    }
+
     /**
      * @param array<string, mixed> $dataMapped
      */
-    private function loadTags(Signalement $signalement, Territory $territory, array $dataMapped): Signalement
+    private function loadTags(Signalement $signalement, Territory $territory, array $dataMapped): void
     {
         if (isset($dataMapped['tags']) && !empty($dataMapped['tags'])) {
             $tag = $this->tagManager->createOrGet($territory, $dataMapped['tags']);
             $signalement->addTag($tag);
         }
-
-        return $signalement;
     }
 
     /**
@@ -201,7 +231,7 @@ class SignalementImportLoader
      *
      * @return ArrayCollection<int, Affectation>
      */
-    private function loadAffectation(Signalement $signalement, Territory $territory, array $dataMapped): ArrayCollection
+    private function loadAffectation(Territory $territory, array $dataMapped, ?Signalement $signalement = null): ArrayCollection
     {
         $affectationCollection = new ArrayCollection();
         if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
@@ -214,15 +244,18 @@ class SignalementImportLoader
             }
             foreach ($partnersName as $partnerName) {
                 $partnerNameCleaned = mb_trim(preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', $partnerName)); // remove non printable chars
-                $partner = $this->entityManager->getRepository(Partner::class)->findOneBy([
-                    'nom' => $partnerNameCleaned,
-                    'territory' => $territory,
-                ]);
+                if (!array_key_exists($partnerNameCleaned, $this->indexedPartners)) {
+                    $this->indexedPartners[$partnerNameCleaned] = $this->partnerRepository->findOneBy(['nom' => $partnerNameCleaned, 'territory' => $territory]);
+                }
+                $partner = $this->indexedPartners[$partnerNameCleaned];
                 if (!$partner) {
                     if (!isset($this->metadata['partners_not_found'][$partnerNameCleaned])) {
                         $this->metadata['partners_not_found'][$partnerNameCleaned] = 0;
                     }
                     ++$this->metadata['partners_not_found'][$partnerNameCleaned];
+                    continue;
+                }
+                if (!$signalement) {
                     continue;
                 }
 
@@ -259,34 +292,34 @@ class SignalementImportLoader
      * @param array<string, mixed> $dataMapped
      */
     private function loadSignalementSituation(
-        Signalement $signalement,
         array $dataMapped,
         string $situation,
-    ): Signalement {
+        ?Signalement $signalement = null,
+    ): void {
         if (isset($dataMapped[$situation]) && !empty($dataMapped[$situation])) {
             foreach ($dataMapped[$situation] as $critereLabel => $etat) {
-                /** @var CritereRepository $critereRepository */
-                $critereRepository = $this->entityManager->getRepository(Critere::class);
                 $critereLabel = trim($critereLabel);
-
-                /** @var Critere $critere */
-                $critere = $critereRepository->findByLabel($critereLabel);
+                if (!array_key_exists($critereLabel, $this->indexedCriteres)) {
+                    /* @var Critere $critere */
+                    $this->indexedCriteres[$critereLabel] = $this->critereRepository->findByLabel($critereLabel);
+                }
                 try {
-                    if (null !== $critere) {
+                    if (null !== $this->indexedCriteres[$critereLabel]) {
                         /** @var Criticite $criticite */
-                        $criticite = $critere->getCriticites()->filter(function (Criticite $criticite) use ($etat) {
-                            return $criticite->getScore() === Criticite::ETAT_LABEL[trim($etat)];
+                        $criticite = $this->indexedCriteres[$critereLabel]->getCriticites()->filter(function (Criticite $c) use ($etat) {
+                            return $c->getScore() === Criticite::ETAT_LABEL[trim($etat)];
                         })->first();
                     } else {
-                        /** @var CriticiteRepository $criticiteRepository */
-                        $criticiteRepository = $this->entityManager->getRepository(Criticite::class);
-                        $criticites = $criticiteRepository->findByLabel($critereLabel);
-                        $criticite = !empty($criticites) ? $criticites[0] : null;
-                        $critere = $criticite?->getCritere();
+                        if (!array_key_exists($critereLabel, $this->indexedCriticites)) {
+                            $this->indexedCriticites[$critereLabel] = $this->criticiteRepository->findByLabel($critereLabel);
+                        }
+                        $criticite = !empty($this->indexedCriticites[$critereLabel]) ? $this->indexedCriticites[$critereLabel][0] : null;
                     }
 
                     if (null !== $criticite) {
-                        $signalement->addCriticite($criticite);
+                        if ($signalement) {
+                            $signalement->addCriticite($criticite);
+                        }
                     } else {
                         if (!isset($this->metadata['desordres_not_found'][$critereLabel])) {
                             $this->metadata['desordres_not_found'][$critereLabel] = 0;
@@ -299,8 +332,6 @@ class SignalementImportLoader
                 }
             }
         }
-
-        return $signalement;
     }
 
     /**
@@ -344,7 +375,7 @@ class SignalementImportLoader
         return $suiviCollection;
     }
 
-    private function loadFiles(Signalement $signalement, string $data): void
+    private function loadFiles(string $data, ?Signalement $signalement = null): void
     {
         if (empty($data)) {
             return;
@@ -358,6 +389,9 @@ class SignalementImportLoader
             }
             if (!$this->fileStorage->fileExists($filename)) {
                 $this->metadata['files_not_found'][$filename] = $filename;
+                continue;
+            }
+            if (!$signalement) {
                 continue;
             }
 
