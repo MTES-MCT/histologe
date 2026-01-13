@@ -526,4 +526,21 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $this->assertEquals(\count($signaleementsIds), $count);
     }
+
+    public function testFindInjonctionBeforePeriodWithoutAnswer(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $signalements = $signalementRepository->findInjonctionBeforePeriodWithoutAnswer('3 weeks');
+        $this->assertCount(0, $signalements);
+
+        $referenceInjonction = '2363';
+        $signalement = $signalementRepository->findOneBy(['referenceInjonction' => $referenceInjonction]);
+        $signalement->setCreatedAt(new \DateTimeImmutable('-2 months'));
+        $this->entityManager->flush();
+
+        $signalements = $signalementRepository->findInjonctionBeforePeriodWithoutAnswer('3 weeks');
+        $this->assertCount(1, $signalements);
+    }
 }

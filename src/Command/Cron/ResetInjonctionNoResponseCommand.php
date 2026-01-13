@@ -47,7 +47,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $signalements = $this->signalementRepository->findInjonctionBeforePeriod($this->periodThreshold);
+        $signalements = $this->signalementRepository->findInjonctionBeforePeriodWithoutAnswer($this->periodThreshold);
         foreach ($signalements as $signalement) {
             $this->entityManager->beginTransaction();
             try {
