@@ -16,8 +16,14 @@
                     <em class="fr-fi-information-line fr-text--light fr-text-label--blue-france">Vérifiez vos courriels à l'adresse {{ email }}</em>
                 
                     {% if is_alert %}
-                        <div class="fr-alert fr-alert--error fr-alert--sm">
-                            <p>{{ message }}</p>
+                        <div class="fr-notice fr-notice--alert">
+                            <div class="fr-container">
+                                <div class="fr-notice__body">
+                                    <p>
+                                        <span class="fr-notice__title">{{ message }}</span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     {% endif %}
                 </p>

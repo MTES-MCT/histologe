@@ -11,8 +11,14 @@
               <h1 id="modal-save-search-title" class="fr-modal__title">
                 Sauvegarder ma recherche
               </h1>
-              <div v-if="classNameSaveConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="classNameSaveConfirmation">
-                <p>{{ messageSaveConfirmation }}</p>
+              <div v-if="classNameSaveConfirmation.length > 0" class="fr-notice" :class="classNameSaveConfirmation">
+                <div class="fr-container">
+                  <div class="fr-notice__body">
+                    <p>
+                      <span class="fr-notice__title">{{ messageSaveConfirmation }}</span>
+                    </p>
+                  </div>
+                </div>
               </div>
               <strong>NB : vous pouvez sauvegarder 5 recherches favorites au maximum</strong>
               <div class="fr-my-4v">
@@ -125,7 +131,7 @@ export default defineComponent({
     handleSearchSaved (requestResponse: any) {
       const message = requestResponse.data?.message || 'Erreur inconnue'
       const isSuccess = requestResponse.status === 200
-      const className = isSuccess ? 'fr-alert--success' : 'fr-alert--error'
+      const className = isSuccess ? 'fr-notice--success' : 'fr-notice--alert'
 
       if (isSuccess && requestResponse.data?.data?.savedSearch) {
         const saved = requestResponse.data.data.savedSearch

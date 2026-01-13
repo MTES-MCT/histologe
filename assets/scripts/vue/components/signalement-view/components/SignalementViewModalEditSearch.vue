@@ -11,8 +11,14 @@
               <h1 id="modal-edit-search-title" class="fr-modal__title">
                 Mes recherches sauvegardées
               </h1>
-              <div v-if="classNameEditConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="classNameEditConfirmation">
-                <p>{{ messageEditConfirmation }}</p>
+              <div v-if="classNameEditConfirmation.length > 0" class="fr-notice" :class="classNameEditConfirmation">
+                <div class="fr-container">
+                  <div class="fr-notice__body">
+                    <p>
+                      <span class="fr-notice__title">{{ messageEditConfirmation }}</span>
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div v-if="sharedState.savedSearches.length === 0">
@@ -143,8 +149,8 @@ export default defineComponent({
       this.messageEditConfirmation = requestResponse.data.message
       this.classNameEditConfirmation =
           requestResponse.status === 200
-            ? 'fr-alert--success'
-            : 'fr-alert--error'
+            ? 'fr-notice--success'
+            : 'fr-notice--alert'
       if (requestResponse.status === 200) {
         const item = this.sharedState.savedSearches.find(s => s.Id === id)
         if (item) {
@@ -162,8 +168,8 @@ export default defineComponent({
       this.messageEditConfirmation = requestResponse.data.message
       this.classNameEditConfirmation =
           requestResponse.status === 200
-            ? 'fr-alert--success'
-            : 'fr-alert--error'
+            ? 'fr-notice--success'
+            : 'fr-notice--alert'
       if (requestResponse.status === 200) {
         const updatedSearches = this.sharedState.savedSearches.filter(s => s.Id !== id);
         const selectedId = this.sharedState.selectedSavedSearchId === id ? '' : this.sharedState.selectedSavedSearchId;

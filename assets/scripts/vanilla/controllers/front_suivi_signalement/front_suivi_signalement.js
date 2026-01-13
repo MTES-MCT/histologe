@@ -108,17 +108,33 @@ if (modalUploadFiles) {
     if (acceptedTypes.includes(file.type)) {
       return true;
     }
-    const div = document.createElement('div');
-    div.classList.add('fr-alert', 'fr-alert--error', 'fr-alert--sm');
-    const message = document.createTextNode(
+    const notice = document.createElement('div');
+    notice.classList.add('fr-notice', 'fr-notice--alert', 'fr-mb-5v');
+
+    const container = document.createElement('div');
+    container.classList.add('fr-container');
+
+    const body = document.createElement('div');
+    body.classList.add('fr-notice__body');
+
+    const p = document.createElement('p');
+
+    const span = document.createElement('span');
+    span.classList.add('fr-notice__desc');
+    span.textContent =
       "Impossible d'ajouter le fichier " +
-        file.name +
-        " car le format n'est pas pris en charge. Veuillez sélectionner un fichier au format " +
-        modalUploadFiles.dataset.acceptedExtensions +
-        '.'
-    );
-    div.appendChild(message);
-    listContainer.prepend(div);
+      file.name +
+      " car le format n'est pas pris en charge. Veuillez sélectionner un fichier au format " +
+      modalUploadFiles.dataset.acceptedExtensions +
+      '.';
+
+    p.appendChild(span);
+    body.appendChild(p);
+    container.appendChild(body);
+    notice.appendChild(container);
+
+    listContainer.prepend(notice);
+
     return false;
   }
 
@@ -172,7 +188,9 @@ if (modalUploadFiles) {
           addHtmlFile(file, response);
         } else {
           div.querySelector('.file-error').innerHTML =
-            '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>';
+            '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">' +
+            response.response +
+            '</span></p></div></div></div>';
           btnDeleteTmpFile.classList.remove('fr-hidden');
         }
       }
@@ -222,7 +240,7 @@ if (modalUploadFiles) {
               deleteFileLink.style.display = '';
               div.insertAdjacentHTML(
                 'beforeend',
-                '<div class="fr-col-12 file-error"><div class="fr-alert fr-alert--error fr-alert--sm">Une erreur est survenue lors de la suppression du fichier.</div></div>'
+                '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Une erreur est survenue lors de la suppression du fichier.</span></p></div></div></div>'
               );
             }
           })
@@ -231,7 +249,7 @@ if (modalUploadFiles) {
             div.querySelectorAll('.file-error').forEach((errorEl) => errorEl.remove());
             div.insertAdjacentHTML(
               'beforeend',
-              '<div class="fr-col-12 file-error"><div class="fr-alert fr-alert--error fr-alert--sm">Une erreur est survenue lors de la suppression du fichier.</div></div>'
+              '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Une erreur est survenue lors de la suppression du fichier.</span></p></div></div></div>'
             );
           });
       });
@@ -286,7 +304,9 @@ if (modalUploadFiles) {
             parent.querySelector('.file-error').innerHTML = '';
           } else {
             parent.querySelector('.file-error').innerHTML =
-              '<div class="fr-alert fr-alert--error fr-alert--sm">' + response.response + '</div>';
+              '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">' +
+              response.response +
+              '</span></p></div></div></div>';
           }
         }
       };

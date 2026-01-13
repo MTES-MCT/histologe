@@ -38,9 +38,15 @@
                 </p>
                 <form class="needs-validation fr-mt-5v fr-col-12" name="login-form" method="POST" novalidate="">
                     {% if error %}
-                        <div role="alert" class="fr-alert fr-alert--error fr-alert--sm fr-mb-5w">
-                            <p class="fr-alert__title">Connexion impossible</p>
-                            <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+                        <div class="fr-notice fr-notice--alert fr-mb-5v">
+                            <div class="fr-container">
+                                <div class="fr-notice__body">
+                                    <p>
+                                        <span class="fr-notice__title">Connexion impossible</span>
+                                        <span class="fr-notice__desc">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     {% endif %}
                     <div class="fr-input-group">

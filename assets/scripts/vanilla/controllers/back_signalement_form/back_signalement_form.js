@@ -1,5 +1,6 @@
 import { initSearchAndSelectBadges } from '../../services/component/component_search_and_select_badges';
 import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
+import { addFlashMessage } from '../../services/component/component_json_response_handler';
 
 let boFormSignalementCurrentTabIsDirty = false;
 let boFormNeedRefreshValidationTab = true;
@@ -45,7 +46,7 @@ function refreshValidationTab() {
       });
     } else {
       const errorHtml =
-        '<div class="fr-alert fr-alert--sm fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue, veuillez rafraichir la page.</p></div>';
+        '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Erreur</span><span class="fr-notice__desc">Une erreur s\'est produite. Veuillez actualiser la page.</span></p></div></div></div>';
       boFormValidationTab.innerHTML = errorHtml;
       boFormValidationTab.classList.remove('fr-tabs__panel--loading');
     }
@@ -119,20 +120,23 @@ function saveCurrentTab(event) {
             modaleDuplicateOpenLink.textContent = response.labelBtnDuplicates;
             dsfr(modaleDuplicate).modal.disclose();
           } else {
-            const errorAlertStr =
-              '<div class="fr-alert fr-alert--sm fr-alert--error fr-mb-2v" role="alert"><p class="fr-alert__title">Merci de corriger les champs où des erreurs sont signalées.</p></div>';
-            document.querySelector('#tabpanel-' + currentTabName + '-panel').innerHTML =
-              errorAlertStr +
-              document.querySelector('#tabpanel-' + currentTabName + '-panel').innerHTML;
+            addFlashMessage({
+              type: 'alert',
+              title: 'Erreur',
+              message: 'Merci de corriger les champs où des erreurs sont signalées.',
+            });
           }
           attacheAutocompleteAddressEvents();
         }
         initBoFormSignalementSubmit(currentTabName);
       });
     } else {
-      const errorHtml =
-        '<div class="fr-alert fr-alert--sm fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.</p></div>';
-      document.querySelector('#tabpanel-' + currentTabName + '-panel').innerHTML = errorHtml;
+      addFlashMessage({
+        type: 'alert',
+        title: 'Erreur',
+        message:
+          'Une erreur est survenue lors de la soumission du formulaire, veuillez rafraichir la page.',
+      });
     }
   });
 }
@@ -571,7 +575,7 @@ function initBoFormValidation() {
           });
         } else {
           const errorHtml =
-            '<div class="fr-alert fr-alert--sm fr-alert--error" role="alert"><p class="fr-alert__title">Une erreur est survenue, veuillez rafraichir la page.</p></div>';
+            '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__desc">Une erreur est survenue, veuillez rafraichir la page.</span></p></div></div></div>';
           boFormValidationTab.innerHTML = errorHtml;
           boFormValidationTab.classList.remove('fr-tabs__panel--saving');
         }

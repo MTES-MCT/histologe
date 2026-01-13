@@ -439,7 +439,7 @@ document.addEventListener('click', (event) => {
       });
     } else {
       const content =
-        '<div class="fr-alert fr-alert--error" role="alert"><p class="fr-alert__title">Erreur</p><p>Une erreur s\'est produite. Veuillez actualiser la page.</p></div>';
+        '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Erreur</span><span class="fr-notice__desc">Une erreur s\'est produite. Veuillez actualiser la page.</span></p></div></div></div>';
       document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = content;
     }
   });

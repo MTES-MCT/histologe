@@ -4,8 +4,14 @@
   <SignalementViewModalSaveSearch
     @savedSearchSuccess="onSearchSaved"
   />
-  <div v-if="classNameDeleteConfirmation.length > 0" class="fr-alert fr-alert--sm" :class="classNameDeleteConfirmation">
-    <p>{{ messageDeleteConfirmation }}</p>
+  <div v-if="classNameDeleteConfirmation.length > 0" class="fr-notice" :class="classNameDeleteConfirmation">
+    <div class="fr-container">
+      <div class="fr-notice__body">
+        <p>
+          <span class="fr-notice__title">{{ messageDeleteConfirmation }}</span>
+        </p>
+      </div>
+    </div>
   </div>
   <div id="histo-app-signalement-view">
     <section class="fr-background--white" :style="'block'">
@@ -195,8 +201,8 @@ export default defineComponent({
             : 'Une erreur s\'est produite lors de la suppression. Veuillez réessayer plus tard.'
       this.classNameDeleteConfirmation =
           requestResponse.data.status === 200
-            ? 'fr-alert--success'
-            : 'fr-alert--error'
+            ? 'fr-notice--success'
+            : 'fr-notice--alert'
 
       buildUrl(this, initElements.dataset.ajaxurl)
       requests.getSignalements(this.handleSignalements)

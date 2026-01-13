@@ -1,8 +1,14 @@
 <h2 class="fr-h4">Validation</h2>
 
 {% for error in errorMsgs %}
-    <div class="fr-alert fr-alert--sm fr-alert--error fr-mb-2v">
-        <p>{{ error }}</p>
+    <div class="fr-notice fr-notice--alert fr-mb-5v">
+        <div class="fr-container">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title">{{ error }}</span>
+                </p>
+            </div>
+        </div>
     </div>
 {% endfor %}
 <form id="bo-form-signalement-validation" method="post" action="{{ path('back_signalement_draft_form_validation', {uuid: signalement.uuid}) }}">
