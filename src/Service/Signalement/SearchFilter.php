@@ -18,6 +18,7 @@ use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\DashboardTabPanel\TabDossier;
+use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Utils\CommuneHelper;
 use App\Utils\ImportCommune;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -86,12 +87,17 @@ class SearchFilter
     public function applyFilters(QueryBuilder $qb, array $filters, User $user): QueryBuilder
     {
         if (!empty($filters['searchterms'])) {
-            if (preg_match('/([0-9]{4})-[0-9]{0,6}/', $filters['searchterms'])) {
+            if (preg_match('/^([0-9]{4})-[0-9]{1,6}$/', mb_trim($filters['searchterms']))) {
                 $qb->andWhere('s.reference = :searchterms');
-                $qb->setParameter('searchterms', $filters['searchterms']);
-            } elseif (preg_match('/([0-9]{5})/', $filters['searchterms'])) {
+                $qb->setParameter('searchterms', mb_trim($filters['searchterms']));
+            } elseif (preg_match('/^'.InjonctionBailleurService::REFERENCE_PREFIX.'[0-9]{4,}$/', mb_strtoupper(mb_trim($filters['searchterms'])))) {
+                $qb->andWhere('s.referenceInjonction = :searchterms');
+                $qb->setParameter('searchterms', str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', mb_strtoupper(mb_trim($filters['searchterms']))));
+            } elseif (InjonctionBailleurService::REFERENCE_PREFIX.'XXXX' === mb_strtoupper($filters['searchterms'])) { // top secret
+                $qb->andWhere('s.referenceInjonction IS NOT NULL');
+            } elseif (preg_match('/^([0-9]{5})$/', mb_trim($filters['searchterms']))) {
                 $qb->andWhere('s.cpOccupant = :searchterms');
-                $qb->setParameter('searchterms', $filters['searchterms']);
+                $qb->setParameter('searchterms', mb_trim($filters['searchterms']));
             } else {
                 $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
                 OR LOWER(s.prenomOccupant) LIKE :searchterms
@@ -99,7 +105,8 @@ class SearchFilter
                 OR LOWER(s.reference) LIKE :searchterms
                 OR LOWER(s.adresseOccupant) LIKE :searchterms
                 OR LOWER(s.villeOccupant) LIKE :searchterms
-                OR LOWER(s.nomProprio) LIKE :searchterms');
+                OR LOWER(s.nomProprio) LIKE :searchterms
+                OR LOWER(s.nomDeclarant) LIKE :searchterms');
                 $qb->setParameter('searchterms', '%'.mb_trim(strtolower($filters['searchterms'])).'%');
             }
         }
