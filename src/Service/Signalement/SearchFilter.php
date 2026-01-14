@@ -93,7 +93,7 @@ class SearchFilter
             } elseif (preg_match('/^'.InjonctionBailleurService::REFERENCE_PREFIX.'[0-9]{4,}$/', mb_strtoupper(mb_trim($filters['searchterms'])))) {
                 $qb->andWhere('s.referenceInjonction = :searchterms');
                 $qb->setParameter('searchterms', str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', mb_strtoupper(mb_trim($filters['searchterms']))));
-            } elseif ('INJ-XXXX' === mb_strtoupper($filters['searchterms'])) { // top secret
+            } elseif (InjonctionBailleurService::REFERENCE_PREFIX.'XXXX' === mb_strtoupper($filters['searchterms'])) { // top secret
                 $qb->andWhere('s.referenceInjonction IS NOT NULL');
             } elseif (preg_match('/^([0-9]{5})$/', mb_trim($filters['searchterms']))) {
                 $qb->andWhere('s.cpOccupant = :searchterms');
@@ -105,7 +105,8 @@ class SearchFilter
                 OR LOWER(s.reference) LIKE :searchterms
                 OR LOWER(s.adresseOccupant) LIKE :searchterms
                 OR LOWER(s.villeOccupant) LIKE :searchterms
-                OR LOWER(s.nomProprio) LIKE :searchterms');
+                OR LOWER(s.nomProprio) LIKE :searchterms
+                OR LOWER(s.nomDeclarant) LIKE :searchterms');
                 $qb->setParameter('searchterms', '%'.mb_trim(strtolower($filters['searchterms'])).'%');
             }
         }
