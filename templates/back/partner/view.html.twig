@@ -3,7 +3,7 @@
 {% block title %}Partenaire{% endblock %}
 
 {% block content %}
-    {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.get('_route') is not same as('back_partner_new') %}
+    {% if is_granted('ROLE_ADMIN_TERRITORY') and app.request.attributes.get('_route') is not same as('back_partner_new') %}
         <div data-ajax-form>
             {% include '_partials/_modal_user_transfer.html.twig' %}
         </div>

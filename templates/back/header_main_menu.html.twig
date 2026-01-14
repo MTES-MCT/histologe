@@ -7,7 +7,7 @@
                     <a class="fr-nav__link"
                        href="{{ path(item.route, item.routeParameters) }}"
                        target="_self"
-                       aria-current="{{app.request.get('_route') == item.route or  item.getBaseRoute() in app.request.get('_route') ? 'page' : 'false' }}"
+                       aria-current="{{app.request.attributes.get('_route') == item.route or  item.getBaseRoute() in app.request.attributes.get('_route') ? 'page' : 'false' }}"
                     > <span class="{{ item.icon }}"></span>  {{ item.label }}</a>
                 </li>
             {% else %}
@@ -16,7 +16,7 @@
                 {% if item.getChildren is not empty and is_granted(item.roleGranted) %}
                     {% set isCurrent = 'false' %}
                     {% for child in item.getChildren %}
-                        {% if not child.externalLink and (app.request.get('_route') == child.route or child.getBaseRoute() in app.request.get('_route')) %}
+                        {% if not child.externalLink and (app.request.attributes.get('_route') == child.route or child.getBaseRoute() in app.request.attributes.get('_route')) %}
                             {% set isCurrent = 'true' %}
                         {% endif %}
                     {% endfor %}
@@ -36,8 +36,8 @@
                                         </li>
                                     {% else %}
                                         <li>
-                                            {% set ariaCurrent = (child.route == app.request.get('_route') or child.getBaseRoute() in app.request.get('_route')) ? 'page' : 'false' %}
-                                            {% if ariaCurrent == 'page' and child.route == 'back_partner_view' and app.request.get('_route_params') != child.routeParameters %}
+                                            {% set ariaCurrent = (child.route == app.request.attributes.get('_route') or child.getBaseRoute() in app.request.attributes.get('_route')) ? 'page' : 'false' %}
+                                            {% if ariaCurrent == 'page' and child.route == 'back_partner_view' and app.request.attributes.get('_route_params') != child.routeParameters %}
                                                 {% set ariaCurrent = 'false' %}
                                             {% endif %}
                                             <a class="fr-nav__link"
