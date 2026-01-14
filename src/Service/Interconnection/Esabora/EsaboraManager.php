@@ -142,15 +142,15 @@ class EsaboraManager
                         dispatchAffectationAnsweredEvent: false
                     );
                     if ($this->featureSishRepushMessage) {
-                        $note = '<i>NOTE : vous pourrez,si besoin, renvoyer ce signalement après mise à jour dans les 24 heures</i>';
+                        $note = '<i>NOTE : vous pourrez, si besoin, renvoyer ce signalement après mise à jour dans les 24 heures</i>';
                         $description = \sprintf(
-                            'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s<br>%s',
+                            'refusé via '.$dossierResponse->getNameSI().' pour motif suivant : %s<br>%s',
                             $dossierResponse->getSasCauseRefus(),
                             $note
                         );
                     } else {
                         $description = \sprintf(
-                            'refusé via '.$dossierResponse->getNameSI().' pour motif suivant: %s',
+                            'refusé via '.$dossierResponse->getNameSI().' pour motif suivant : %s',
                             $dossierResponse->getSasCauseRefus()
                         );
                     }
