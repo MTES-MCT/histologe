@@ -188,7 +188,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_REJECTED->value.' SISH' => [
             '2022-2',
             '../../sish/ws_etat_dossier_sas/etat_rejete.json',
-            'refusé via '.EsaboraSISHService::NAME_SI.' pour motif suivant:',
+            'refusé via '.EsaboraSISHService::NAME_SI.' pour motif suivant :',
             AffectationStatus::REFUSED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
