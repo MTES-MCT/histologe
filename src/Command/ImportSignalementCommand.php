@@ -106,6 +106,11 @@ class ImportSignalementCommand extends Command
             }
             $io->warning($msg);
         }
+        if ($this->signalementImportLoader->hasErrors()) {
+            $io->error('Des erreurs ont été détectées, l\'import est annulé. Veuillez corriger les erreurs et relancer l\'import.');
+
+            return Command::FAILURE;
+        }
         $io->success(\sprintf('%s signalement(s) have been imported', $metadata['count_signalement']));
 
         return Command::SUCCESS;

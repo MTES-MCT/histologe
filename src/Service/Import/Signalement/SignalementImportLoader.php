@@ -207,7 +207,7 @@ class SignalementImportLoader
         return $this->metadata;
     }
 
-    private function hasErrors(): bool
+    public function hasErrors(): bool
     {
         return \count($this->metadata['partners_not_found']) > 0
             || \count($this->metadata['motif_cloture_not_found']) > 0
