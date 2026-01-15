@@ -57,7 +57,7 @@ class ResponsiveArray {
     }
 
     transformToCards(tableData) {
-        if (tableData.initialized && tableData.element.classList.contains('responsive-cards-mode')) {
+        if (tableData.element.classList.contains('responsive-cards-mode')) {
             return; // Already in card mode
         }
 
@@ -75,7 +75,7 @@ class ResponsiveArray {
                 }
             });
 
-            // Store original content and index for all cells first
+            // Store original content and index for all cells first (only once, never overwrite)
             cells.forEach((cell, index) => {
                 if (!cell.dataset.originalContent) {
                     cell.dataset.originalContent = cell.innerHTML;
@@ -146,7 +146,7 @@ class ResponsiveArray {
 
             // Restore content for all cells
             cells.forEach(cell => {
-                if (cell.dataset.originalContent) {
+                if (cell.dataset.originalContent !== undefined) {
                     cell.innerHTML = cell.dataset.originalContent;
                     cell.classList.remove('responsive-cell', 'responsive-cell-title', 'responsive-cell-full-width');
                 }
