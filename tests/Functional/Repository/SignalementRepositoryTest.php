@@ -295,7 +295,40 @@ class SignalementRepositoryTest extends KernelTestCase
             $this->assertNotNull($dossier->reference);
             $this->assertNotNull($dossier->adresse);
             $this->assertNotNull($dossier->depotAt);
-            $this->assertTrue(in_array($dossier->parc, ['PUBLIC', 'PRIVÉ']));
+            $this->assertEquals('', $dossier->depotBy);
+        }
+    }
+
+    public function testFindNewDossiersFromFormulairePro(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+
+        $tabQueryParameter = new TabQueryParameters(
+            createdFrom: TabDossier::CREATED_FROM_FORMULAIRE_PRO,
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+
+        $dossiers = $signalementRepository->findNewDossiersFrom(
+            signalementStatus: SignalementStatus::NEED_VALIDATION,
+            tabQueryParameters: $tabQueryParameter,
+        );
+
+        foreach ($dossiers as $dossier) {
+            $this->assertNotNull($dossier->uuid);
+            $this->assertNotNull($dossier->profilDeclarant);
+            $this->assertNotNull($dossier->nomDeclarant);
+            $this->assertNotNull($dossier->prenomDeclarant);
+            $this->assertNotNull($dossier->reference);
+            $this->assertNotNull($dossier->adresse);
+            $this->assertNotNull($dossier->depotAt);
+            $this->assertNotNull($dossier->depotBy);
         }
     }
 

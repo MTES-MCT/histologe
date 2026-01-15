@@ -83,7 +83,12 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   }
 
   if (key === 'createdFrom') {
-      return  `Signalement crée depuis le ${value.replace('-', ' ')}`
+    if( value === 'api' || value === 'import' ) {
+      return  `Signalement(s) créé(s) par l'${value}`
+    } else {
+      var re = /-/gi;
+      return  `Signalement(s) créé(s) depuis le ${value.replace(re, ' ')}`
+    }
   }
 
   if (key === 'usagerAbandonProcedure') {

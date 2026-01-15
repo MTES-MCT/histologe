@@ -384,6 +384,18 @@
           <template #label>Motif de clôture</template>
         </HistoSelect>
       </div>
+      <div v-if="sharedState.user.isAdmin" :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
+        <HistoSelect
+          id="filter-created-from"
+          v-model="sharedState.input.filters.createdFrom"
+          @update:modelValue="onChange(false)"
+          :option-items=createdFromList
+          title="Rechercher par provenance"
+          :placeholder="'Tous'"
+          >
+          <template #label>Provenance (SA)</template>
+        </HistoSelect>
+      </div>
     </div>
   </div>
 </template>
@@ -624,6 +636,7 @@ export default defineComponent({
         criticiteScoreMin: undefined,
         criticiteScoreMax: undefined,
         motifCloture: undefined,
+        createdFrom: undefined,
         relanceUsagerSansReponse: undefined
       }
       this.sharedState.currentTerritoryId = ''
@@ -673,7 +686,8 @@ export default defineComponent({
       natureParcList: store.state.natureParcList,
       allocataireList: store.state.allocataireList,
       enfantMoinsSixList: store.state.enfantMoinsSixList,
-      motifClotureList: store.state.motifClotureList
+      motifClotureList: store.state.motifClotureList,
+      createdFromList: store.state.createdFromList
     }
   }
 })
