@@ -41,10 +41,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         array $requestData,
         array $expectedUserData,
     ): void {
-        $code = $requestData['code'];
-        unset($requestData['code']);
-        $request = new Request([], $requestData);
-        $request->attributes->set('code', $code);
+        $request = new Request([], $requestData, ['code' => $requestData['code']]);
 
         $this->signalementRepository->method('findOneByCodeForPublic')->willReturn($signalement);
         $this->signalementUserProvider->method('getUsagerData')->willReturn($expectedUserData);
@@ -185,8 +182,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $this->expectException(CustomUserMessageAuthenticationException::class);
         $this->expectExceptionMessage('Code de suivi invalide');
 
-        $request = new Request();
-        $request->attributes->set('code', 'wrongcode');
+        $request = new Request([], [], ['code' => 'wrongcode']);
         $this->signalementRepository->method('findOneByCodeForPublic')->willReturn(null);
         $authenticator = new CodeSuiviLoginAuthenticator(
             $this->urlGenerator,
@@ -202,14 +198,17 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $this->expectExceptionMessage('Informations incorrectes');
 
         $signalement = $this->getSignalementLocataire();
-        $request = new Request([], [
-            'visitor-type' => 'occupant',
-            'login-first-letter-prenom' => 'X', // Mauvaise initiale
-            'login-first-letter-nom' => 'Y',     // Mauvaise initiale
-            'login-code-postal' => '13001',
-            '_csrf_token' => 'token123',
-        ]);
-        $request->attributes->set('code', '12345678');
+        $request = new Request(
+            [],
+            [
+                'visitor-type' => 'occupant',
+                'login-first-letter-prenom' => 'X', // Mauvaise initiale
+                'login-first-letter-nom' => 'Y',     // Mauvaise initiale
+                'login-code-postal' => '13001',
+                '_csrf_token' => 'token123',
+            ],
+            ['code' => '12345678']
+        );
 
         $this->signalementRepository->method('findOneByCodeForPublic')->willReturn($signalement);
 
@@ -227,13 +226,16 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $this->expectExceptionMessage('Merci de sélectionner si vous occupez le logement ou si vous avez fait la déclaration.');
         $signalement = $this->getSignalement(profileDeclarant: ProfileDeclarant::TIERS_PRO, nom: 'Martin', prenom: 'Luc', codePostal: '13001', codeSuivi: '12345678');
 
-        $request = new Request([], [
-            'login-first-letter-prenom' => 'L',
-            'login-first-letter-nom' => 'M',
-            'login-code-postal' => '13001',
-            '_csrf_token' => 'token123',
-        ]);
-        $request->attributes->set('code', '12345678');
+        $request = new Request(
+            [],
+            [
+                'login-first-letter-prenom' => 'L',
+                'login-first-letter-nom' => 'M',
+                'login-code-postal' => '13001',
+                '_csrf_token' => 'token123',
+            ],
+            ['code' => '12345678']
+        );
 
         $this->signalementRepository->method('findOneByCodeForPublic')->willReturn($signalement);
 
