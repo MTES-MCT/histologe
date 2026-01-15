@@ -40,8 +40,7 @@ class CartographieController extends AbstractController
             ];
         $signalements = $mapGeoDataQuery->getData(
             $user,
-            $filters,
-            (int) $request->query->get('offset')
+            $filters
         );
         $zoneAreas = [];
         if (!empty($filters['zones'])) {
