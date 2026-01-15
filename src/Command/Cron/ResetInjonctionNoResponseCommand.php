@@ -8,6 +8,9 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -38,6 +41,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly ClockInterface $clock,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -77,14 +81,27 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
         }
 
         $countSignalement = count($signalements);
+        $feedbackMsg = '';
         if (count($signalements) > 0) {
-            $io->success(\sprintf(
+            $feedbackMsg = \sprintf(
                 '%s signalements ont basculé de la procédure d\'injonction à la procédure classique.',
                 $countSignalement
-            ));
+            );
+            $io->success($feedbackMsg);
         } else {
-            $io->warning('Aucun signalement en injonction n’a expiré');
+            $feedbackMsg = 'Aucun signalement en injonction n’a expiré.';
+            $io->warning($feedbackMsg);
         }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: (string) $this->parameterBag->get('admin_email'),
+                message: $feedbackMsg,
+                cronLabel: 'bascule vers la procédure classique',
+                cronCount: null,
+            )
+        );
 
         return Command::SUCCESS;
     }

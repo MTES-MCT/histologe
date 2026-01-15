@@ -22,18 +22,21 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('1 signalements', $output);
-        $nbMails = 1;
+        $nbMails = 2;
         $this->assertEmailCount($nbMails);
         $expectedTags = [
             'Usager Nouveau Suivi Signalement',
         ];
 
+        $actualTags = [];
         for ($i = 0; $i < $nbMails; ++$i) {
             /** @var NotificationEmail $email */
             $email = $this->getMailerMessage($i);
-            $xTag = $email->getHeaders()->get('X-Tag')->getBody();
-            $this->assertNotEmpty($xTag, "La valeur de l'en-tête X-Tag est vide dans l'email $i");
-            $actualTags[] = $xTag;
+            $xTag = $email->getHeaders()->get('X-Tag');
+            if ($xTag) {
+                $this->assertNotEmpty($xTag->getBody(), "La valeur de l'en-tête X-Tag est vide dans l'email $i");
+                $actualTags[] = $xTag->getBody();
+            }
         }
 
         $this->assertEmpty(
@@ -70,7 +73,7 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('2 signalements', $output);
-        $nbMails = 5;
+        $nbMails = 6;
         $this->assertEmailCount($nbMails);
         $expectedTags = [
             'Usager Nouveau Suivi Signalement',
@@ -79,12 +82,15 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
             'Pro Nouvelle affectation',
         ];
 
+        $actualTags = [];
         for ($i = 0; $i < $nbMails; ++$i) {
             /** @var NotificationEmail $email */
             $email = $this->getMailerMessage($i);
-            $xTag = $email->getHeaders()->get('X-Tag')->getBody();
-            $this->assertNotEmpty($xTag, "La valeur de l'en-tête X-Tag est vide dans l'email $i");
-            $actualTags[] = $xTag;
+            $xTag = $email->getHeaders()->get('X-Tag');
+            if ($xTag) {
+                $this->assertNotEmpty($xTag->getBody(), "La valeur de l'en-tête X-Tag est vide dans l'email $i");
+                $actualTags[] = $xTag->getBody();
+            }
         }
 
         $this->assertEmpty(
