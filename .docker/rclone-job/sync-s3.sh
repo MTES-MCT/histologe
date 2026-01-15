@@ -2,7 +2,6 @@
 set -eu
 
 IMAGE_VERSION="1.0.0"
-HEALTHCHECK_OBJECT="__healthcheck__/ping.txt"
 
 log() {
   level="$1"
@@ -28,7 +27,7 @@ send_report() {
   stats_line_escaped="$(printf "%s" "${stats_line:-}" | sed 's/\\/\\\\/g; s/"/\\"/g')"
   message_escaped="$(printf "%s" "${message:-}" | sed 's/\\/\\\\/g; s/"/\\"/g')"
 
-  curl -fsS -X POST "${SIGNAL_LOGEMENT_PROD_URL}/send-email" \
+  curl -fsS -X POST "${SIGNAL_LOGEMENT_PROD_URL}/webhook/cron-report-mail" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
     -d "{\"title\":\"$TITLE\",\"timestamp\":\"$TIMESTAMP\",\"host\":\"$HOSTNAME\",\"message\":\"$message_escaped\",\"exit_code\":$rc,\"rclone_stats\":\"$stats_line_escaped\"}" \
@@ -67,24 +66,11 @@ export RCLONE_CONFIG_SCALEWAY_S3_PROVIDER="Other"
 export RCLONE_CONFIG_SCALEWAY_S3_REGION="fr-par"
 export RCLONE_CONFIG_SCALEWAY_S3_ENV_AUTH="false"
 
-if [ "${RCLONE_LOCAL_MODE:-0}" = "1" ]; then
-  log WARN "LOCAL MODE enabled: quick auth check with one object (no sync, no listing)"
-  log INFO "rclone: $(rclone version | head -n 1 || true)"
-
-  log INFO "Check source read: ${RCLONE_SRC}/${HEALTHCHECK_OBJECT}"
-  rclone cat "${RCLONE_SRC}/${HEALTHCHECK_OBJECT}" >/dev/null
-
-  log INFO "Check destination read: ${RCLONE_DST}/${HEALTHCHECK_OBJECT}"
-  rclone cat "${RCLONE_DST}/${HEALTHCHECK_OBJECT}" >/dev/null
-
-  log INFO "LOCAL MODE OK"
-  exit 0
-fi
-
 log INFO "Source: ${RCLONE_SRC}"
 log INFO "Destination: ${RCLONE_DST}"
 log INFO "Max duration: ${RCLONE_MAX_DURATION}"
 
+# Notifie si le script est interrompu (Ctrl+C ou Ctrl+Z, ... ou arrêt Docker)
 on_term() {
   # shellcheck disable=SC2317
   log WARN "Received termination signal"
