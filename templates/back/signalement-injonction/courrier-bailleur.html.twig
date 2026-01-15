@@ -44,7 +44,7 @@
     </div>
 
     <img src="{{ qrCode }}">
-    <p style="margin-bottom: 16px;">Vous disposez d’un <strong>délai de 3 semaines</strong> pour accéder à votre espace et vous positionner quant au signalement effectué par votre locataire. Passé ce délai, la procédure prévue par les articles sus mentionnés s’enclenchera.</p>
+    <p style="margin-bottom: 16px;">Votre réponse est attendue avant le <strong>{{ signalement.createdAt|date_modify('+3 weeks')|date('d/m/Y') }}</strong>, soit un délai de 3 semaines à compter de la date d'enregistrement du dossier, pour vous positionner quant au signalement effectué par votre locataire. Passé ce délai, la procédure prévue par les articles sus mentionnés s’enclenchera.</p>
     <p style="margin-bottom: 16px;">Dans tous les cas, le signalement est enregistré dans la base de données de la DGALN, de la direction de l'habitat, de l'urbanisme et des paysages (DHUP) ainsi que dans celles de la Direction Départementale des Territoires (DDT).</p>
     <br>
     <p>Nous restons à votre disposition pour tout renseignement complémentaire.</p>
