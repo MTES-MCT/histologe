@@ -338,14 +338,14 @@ ovh-scw-sync-run: ## Run rclone sync job locally in LOCAL MODE (quick check)
 		-e RCLONE_CONFIG_SCALEWAY_S3_ENDPOINT="$(OVH_SCW_SYNC_SCW_ENDPOINT)" \
 		$(OVH_SCW_SYNC_IMAGE_NAME):local
 
-ovh-scw-sync-release: ## Tag and push image to Scaleway registry - make ovh-scw-sync-release OVH_SCW_SYNC_IMAGE_VERSION=1.0.x
+ovh-scw-sync-release: ## Tag and push image to Scaleway registry - make ovh-scw-sync-release IMAGE_VERSION=1.0.x
 	@echo "\033[33mTagging & pushing rclone sync image...\033[0m"
-	@: "$${OVH_SCW_SYNC_IMAGE_VERSION:?Missing OVH_SCW_SYNC_IMAGE_VERSION (ex: 1.0.0)}"
+	@: "$${IMAGE_VERSION:?Missing IMAGE_VERSION (ex: 1.0.0)}"
 	docker tag $(OVH_SCW_SYNC_IMAGE_NAME):local \
-		$(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${OVH_SCW_SYNC_IMAGE_VERSION}
+		$(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${IMAGE_VERSION}
 	docker push \
-		$(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${OVH_SCW_SYNC_IMAGE_VERSION}
-	@echo "\033[32m✅ Pushed: $(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${OVH_SCW_SYNC_IMAGE_VERSION}\033[0m"
+		$(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${IMAGE_VERSION}
+	@echo "\033[32m✅ Pushed: $(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${IMAGE_VERSION}\033[0m"
 
 .tools-destroy:
 	@echo "\033[33mRemoving tools containers ...\033[0m"
