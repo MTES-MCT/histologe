@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Dto\Request\Signalement;
 
 use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\Enum\SignalementStatus;
+use App\Service\DashboardTabPanel\TabDossier;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -45,7 +46,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             usagerAbandonProcedure: true,
             sortBy: 'reference',
             direction: 'DESC',
-            createdFrom: 'formulaire-pro',
+            createdFrom: TabDossier::CREATED_FROM_FORMULAIRE_PRO,
             relanceUsagerSansReponse: 'oui',
             isMessagePostCloture: 'oui',
             isNouveauMessage: 'oui',
@@ -87,7 +88,7 @@ class SignalementSearchQueryTest extends KernelTestCase
             'isImported' => true,
             'isZonesDisplayed' => true,
             'usager_abandon_procedure' => true,
-            'createdFrom' => 'formulaire-pro',
+            'createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_PRO,
             'relanceUsagerSansReponse' => true,
             'isNouveauMessage' => true,
             'isMessagePostCloture' => true,

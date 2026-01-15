@@ -12,11 +12,6 @@ class TabQueryParameters
         #[Assert\Choice([
             TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
             TabDossier::CREATED_FROM_FORMULAIRE_PRO,
-            TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V1,
-            TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V2,
-            TabDossier::CREATED_FROM_FORMULAIRE_PRO_BO,
-            TabDossier::CREATED_FROM_API,
-            TabDossier::CREATED_FROM_IMPORT,
         ])]
         public ?string $createdFrom = null,
         /** @var array<int|string> */

@@ -1443,28 +1443,6 @@ class SignalementRepository extends ServiceEntityRepository
                 $qb->andWhere('s.createdBy IS NULL');
             } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
                 $qb->andWhere('s.createdBy IS NOT NULL');
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V1 === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.isImported = 0');
-                $qb->andWhere('s.createdBy IS NULL');
-                $qb->andWhere('s.createdFrom IS NULL');
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V2 === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.isImported = 0');
-                $qb->andWhere('s.createdBy IS NULL');
-                $qb->andWhere('s.createdFrom IS NOT NULL');
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO_BO === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.isImported = 0');
-                $qb->andWhere('s.createdBy IS NOT NULL');
-                $qb->leftJoin('s.createdBy', 'userCreatedBy');
-                $qb->andWhere('userCreatedBy.roles NOT LIKE :roleApi')
-                    ->setParameter('roleApi', '%'.User::ROLE_API_USER.'%');
-            } elseif (TabDossier::CREATED_FROM_API === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.isImported = 0');
-                $qb->andWhere('s.createdBy IS NOT NULL');
-                $qb->leftJoin('s.createdBy', 'userCreatedBy');
-                $qb->andWhere('userCreatedBy.roles LIKE :roleApi')
-                    ->setParameter('roleApi', '%'.User::ROLE_API_USER.'%');
-            } elseif (TabDossier::CREATED_FROM_IMPORT === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.isImported = 1');
             }
         }
 
