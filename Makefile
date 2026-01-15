@@ -15,8 +15,10 @@ METABASE_SYNC_IMAGE_NAME     = scalingo-sync-silo-metabase
 METABASE_SYNC_SCALINGO_APP = histologe-preprod
 METABASE_SYNC_IMAGE_LOCAL    = $(METABASE_SYNC_IMAGE_NAME):local
 METABASE_SYNC_SCALINGO_JOB_DOCKERFILE = .docker/scalingo-job/Dockerfile
-METABASE_SYNC_SCW_REGISTRY   = rg.fr-par.scw.cloud
-METABASE_SYNC_SCW_NAMESPACE  = signal-logement
+OVH_SCW_SYNC_DOCKERFILE=.docker/rclone-job/Dockerfile
+OVH_SCW_SYNC_IMAGE_NAME=rclone-sync-ovh-scaleway
+SCW_REGISTRY   = rg.fr-par.scw.cloud
+SCW_NAMESPACE  = signal-logement
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -274,7 +276,7 @@ scalingo-update-cli: ## Install/Update Scalingo CLI
 run-concurrency-request: ## Run concurrency request based postman collection ex: make run-concurrency-request nb=5 envName=local|demo
 	@bash -l -c 'node ./tools/newman/run_concurrency_request.js nb=$(nb) envName=$(envName)'
 
-## Sync metabase
+## Job sync metabase
 scalingo-job-build: ## Build Scalingo sync job container
 	@echo "\033[33mBuilding Scalingo job image...\033[0m"
 	docker build \
@@ -301,14 +303,50 @@ scalingo-job-run: ## Run Scalingo sync job locally
 scalingo-job-tag: ## Tag the local image with a version for Scaleway registry - make scalingo-job-tag IMAGE_VERSION=1.0.x
 	@echo "Tagging image $(METABASE_SYNC_IMAGE_LOCAL) as $(IMAGE_VERSION)"
 	docker tag $(METABASE_SYNC_IMAGE_LOCAL) \
-		$(METABASE_SYNC_SCW_REGISTRY)/$(METABASE_SYNC_SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(IMAGE_VERSION)
+		$(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(IMAGE_VERSION)
 
 scalingo-job-push: ## Push the versioned image to Scaleway registry - make scalingo-job-push IMAGE_VERSION=1.0.x
 	@echo "Pushing image version $(IMAGE_VERSION) to Scaleway registry"
 	docker push \
-		$(METABASE_SYNC_SCW_REGISTRY)/$(METABASE_SYNC_SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(IMAGE_VERSION)
+		$(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(METABASE_SYNC_IMAGE_NAME):$(IMAGE_VERSION)
 
 scalingo-job-release: scalingo-job-tag scalingo-job-push ## Tag and push image to Scaleway - make scalingo-job-release IMAGE_VERSION=1.0.x
+
+## Job sync s3
+ovh-scw-sync-build: ## Build rclone OVH -> Scaleway sync job image
+	@echo "\033[33mBuilding rclone sync job image...\033[0m"
+	docker build \
+		-f $(OVH_SCW_SYNC_DOCKERFILE) \
+		-t $(OVH_SCW_SYNC_IMAGE_NAME):local \
+		.
+	@echo "\033[32m✅ Image built: $(OVH_SCW_SYNC_IMAGE_NAME):local\033[0m"
+
+
+ovh-scw-sync-run: ## Run rclone sync job locally in LOCAL MODE (quick check)
+	@echo "\033[33mRunning rclone sync job locally (LOCAL MODE)...\033[0m"
+	docker run --rm --network=histologe_default \
+		-e RCLONE_LOCAL_MODE=0 \
+		-e RCLONE_MAX_DURATION="2m" \
+		-e SIGNAL_LOGEMENT_PROD_URL="$(SIGNAL_LOGEMENT_PROD_URL)" \
+		-e SEND_ERROR_EMAIL_TOKEN="$(SEND_ERROR_EMAIL_TOKEN)" \
+		-e RCLONE_SRC="$(OVH_SCW_SYNC_RCLONE_SRC)" \
+		-e RCLONE_DST="$(OVH_SCW_SYNC_RCLONE_DST)" \
+		-e RCLONE_CONFIG_OVH_S3_ACCESS_KEY_ID="$(OVH_SCW_SYNC_OVH_ACCESS_KEY_ID)" \
+		-e RCLONE_CONFIG_OVH_S3_SECRET_ACCESS_KEY="$(OVH_SCW_SYNC_OVH_SECRET_ACCESS_KEY)" \
+		-e RCLONE_CONFIG_OVH_S3_ENDPOINT="$(OVH_SCW_SYNC_OVH_ENDPOINT)" \
+		-e RCLONE_CONFIG_SCALEWAY_S3_ACCESS_KEY_ID="$(OVH_SCW_SYNC_SCW_ACCESS_KEY_ID)" \
+		-e RCLONE_CONFIG_SCALEWAY_S3_SECRET_ACCESS_KEY="$(OVH_SCW_SYNC_SCW_SECRET_ACCESS_KEY)" \
+		-e RCLONE_CONFIG_SCALEWAY_S3_ENDPOINT="$(OVH_SCW_SYNC_SCW_ENDPOINT)" \
+		$(OVH_SCW_SYNC_IMAGE_NAME):local
+
+ovh-scw-sync-release: ## Tag and push image to Scaleway registry - make ovh-scw-sync-release OVH_SCW_SYNC_IMAGE_VERSION=1.0.x
+	@echo "\033[33mTagging & pushing rclone sync image...\033[0m"
+	@: "$${OVH_SCW_SYNC_IMAGE_VERSION:?Missing OVH_SCW_SYNC_IMAGE_VERSION (ex: 1.0.0)}"
+	docker tag $(OVH_SCW_SYNC_IMAGE_NAME):local \
+		$(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${OVH_SCW_SYNC_IMAGE_VERSION}
+	docker push \
+		$(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${OVH_SCW_SYNC_IMAGE_VERSION}
+	@echo "\033[32m✅ Pushed: $(SCW_REGISTRY)/$(SCW_NAMESPACE)/$(OVH_SCW_SYNC_IMAGE_NAME):$${OVH_SCW_SYNC_IMAGE_VERSION}\033[0m"
 
 .tools-destroy:
 	@echo "\033[33mRemoving tools containers ...\033[0m"

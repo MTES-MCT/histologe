@@ -28,20 +28,24 @@ class SendEmailController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        if (!$data || !isset($data['title'], $data['timestamp'], $data['host'], $data['database'])) {
+        if (!$data || !isset($data['title'])) {
             return new JsonResponse(['error' => 'Invalid request'], 400);
         }
 
+        $timestamp = $data['timestamp'] ?? date('Y-m-d H:i:s');
+        $database = $data['database'] ?? 'N/A';
+        $host = $data['host'] ?? 'N/A';
+
         if (isset($data['error'])) {
             // Log de l'erreur
-            $logger->error("send-error-mail: {$data['title']} {$data['error']} (DB: {$data['database']}, Host: {$data['host']}, Time: {$data['timestamp']})");
+            $logger->error("send-error-mail: {$data['title']} {$data['error']} (DB: {$database}, Host: {$host}, Time: {$timestamp})");
 
-            $message = " erreur s'est produite.";
             $errorMessages = [];
-            $errorMessages[] = '📅 Date : '.($data['timestamp'] ?? 'N/A');
-            $errorMessages[] = '💾 Base : '.($data['database'] ?? 'N/A');
-            $errorMessages[] = '🔍 Hôte : '.($data['host'] ?? 'N/A');
-            $errorMessages[] = '❗ Erreur : '.($data['error'] ?? 'N/A');
+            $errorMessages[] = '📅 Date : '.$timestamp;
+            $errorMessages[] = '💾 Base : '.$database;
+            $errorMessages[] = '🔍 Hôte : '.$host;
+            $errorMessages[] = '❗ Erreur : '.$data['error'];
+
 
             $notificationMailerRegistry->send(
                 new NotificationMail(
@@ -50,7 +54,7 @@ class SendEmailController extends AbstractController
                     cronLabel: $data['title'],
                     params: [
                         'count_failed' => 1,
-                        'message_failed' => $message,
+                        'message_failed' => "Une erreur s'est produite lors de l'exécution du job.",
                         'error_messages' => $errorMessages,
                     ],
                 )
@@ -63,7 +67,7 @@ class SendEmailController extends AbstractController
                     cronLabel: $data['title'],
                     params: [
                         'count_success' => 1,
-                        'message_success' => $data['message']." (DB: {$data['database']}, Host: {$data['host']}, Time: {$data['timestamp']})",
+                        'message_success' => ($data['message'] ?? 'Succès')." (DB: {$database}, Host: {$host}, Time: {$timestamp})",
                     ],
                 )
             );
