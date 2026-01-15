@@ -132,7 +132,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->htmlSanitizer,
             $this->workflow,
-            $this->userSignalementSubscriptionManager
+            $this->userSignalementSubscriptionManager,
+            true,
         );
         $esaboraManager->createOrUpdateVisite($this->getAffectation(PartnerType::ARS), $dossierVisite);
     }
@@ -215,7 +216,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->htmlSanitizer,
             $this->workflow,
-            $this->userSignalementSubscriptionManager
+            $this->userSignalementSubscriptionManager,
+            true,
         );
     }
 
@@ -268,7 +270,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->htmlSanitizer,
             $this->workflow,
-            $this->userSignalementSubscriptionManager
+            $this->userSignalementSubscriptionManager,
+            true,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
@@ -329,7 +332,8 @@ class EsaboraManagerTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->htmlSanitizer,
             $this->workflow,
-            $this->userSignalementSubscriptionManager
+            $this->userSignalementSubscriptionManager,
+            true,
         );
 
         $reflector = new \ReflectionClass($esaboraManager);
