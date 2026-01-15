@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Webhook;
 
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-class SendEmailController extends AbstractController
+class CronReportingController extends AbstractController
 {
-    #[Route('/send-email', methods: ['POST'])]
+    #[Route('/webhook/cron-report-mail', name: 'app_webhook_cron_report_mail', methods: ['POST'])]
     public function handleSendEmail(
         Request $request,
         LoggerInterface $logger,
@@ -37,15 +37,19 @@ class SendEmailController extends AbstractController
         $host = $data['host'] ?? 'N/A';
 
         if (isset($data['error'])) {
-            // Log de l'erreur
-            $logger->error("send-error-mail: {$data['title']} {$data['error']} (DB: {$database}, Host: {$host}, Time: {$timestamp})");
+            $logger->error('Cron job error: {job_title}', [
+                'job_title' => $data['title'],
+                'error' => $data['error'],
+                'database' => $database,
+                'host' => $host,
+                'timestamp' => $timestamp,
+            ]);
 
             $errorMessages = [];
             $errorMessages[] = '📅 Date : '.$timestamp;
             $errorMessages[] = '💾 Base : '.$database;
             $errorMessages[] = '🔍 Hôte : '.$host;
             $errorMessages[] = '❗ Erreur : '.$data['error'];
-
 
             $notificationMailerRegistry->send(
                 new NotificationMail(
@@ -71,6 +75,13 @@ class SendEmailController extends AbstractController
                     ],
                 )
             );
+
+            $logger->info('Cron job success: {job_title}', [
+                'job_title' => $data['title'],
+                'database' => $database,
+                'host' => $host,
+                'timestamp' => $timestamp,
+            ]);
         }
 
         return new JsonResponse(['message' => 'Mail sent']);

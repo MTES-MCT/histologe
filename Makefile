@@ -325,8 +325,7 @@ ovh-scw-sync-build: ## Build rclone OVH -> Scaleway sync job image
 ovh-scw-sync-run: ## Run rclone sync job locally in LOCAL MODE (quick check)
 	@echo "\033[33mRunning rclone sync job locally (LOCAL MODE)...\033[0m"
 	docker run --rm --network=histologe_default \
-		-e RCLONE_LOCAL_MODE=0 \
-		-e RCLONE_MAX_DURATION="2m" \
+		-e RCLONE_MAX_DURATION="$(RCLONE_MAX_DURATION)" \
 		-e SIGNAL_LOGEMENT_PROD_URL="$(SIGNAL_LOGEMENT_PROD_URL)" \
 		-e SEND_ERROR_EMAIL_TOKEN="$(SEND_ERROR_EMAIL_TOKEN)" \
 		-e RCLONE_SRC="$(OVH_SCW_SYNC_RCLONE_SRC)" \
