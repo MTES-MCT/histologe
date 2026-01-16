@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export function initTinyMCE(selector) {
+  console.log('Init TinyMCE for selector:', selector);
   const editor = document.querySelector(selector);
   if (editor !== null) {
     tinymce.init({
@@ -39,4 +40,14 @@ export function initTinyMCE(selector) {
       height: 320,
     });
   }
+}
+
+export function reloadTinyMCE(selector, container = document) {
+  // Supprime toutes les instances existantes (évite les TinyMCE orphelins)
+  console.log('Reload TinyMCE in container:', container);
+  if (window.tinymce) {
+    tinymce.remove();
+  }
+
+  initTinyMCE(selector);
 }
