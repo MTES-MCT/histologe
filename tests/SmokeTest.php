@@ -92,12 +92,12 @@ class SmokeTest extends WebTestCase
         $routes = $router->getRouteCollection();
 
         /** @var Route $route */
-        foreach ($routes as $route) {
+        foreach ($routes as $routeName => $route) {
             if ([] === $route->getMethods()
                 || \count($route->getMethods()) >= 1 && \in_array('GET', $route->getMethods())
             ) {
                 $path = $route->getPath();
-                yield $path => [$path, 500];
+                yield $routeName => [$path, 500];
             }
         }
     }
