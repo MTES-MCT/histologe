@@ -1,4 +1,7 @@
 import { applyFilter } from '../../controllers/back_signalement_view/toggle-suivi-auto';
+import { reloadTinyMCE } from '../form/form_helper';
+import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
+import { histoCheckVisiteForms } from '../../controllers/form_visite.js';
 
 const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
@@ -9,6 +12,7 @@ export function jsonResponseHandler(response) {
 }
 
 export function jsonResponseProcess(response) {
+  console.log('JSON Response:', response);
   if (response.redirect) {
     const targetUrl = new URL(response.url, window.location.origin);
     const currentUrl = new URL(window.location.href);
@@ -42,11 +46,22 @@ export function jsonResponseProcess(response) {
         dsfr(openModalElement).modal.conceal();
       }
     }
+    console.log('Executing functions from JSON response:', response.functions);
     if (response.functions) {
       response.functions.forEach((fn) => {
+        console.log('Executing function:', fn.name, 'with arguments:', fn.args);
         switch (fn.name) {
           case 'applyFilter':
             applyFilter();
+            break;
+          case 'reloadTinyMCE':
+            reloadTinyMCE(fn.args[0]);
+            break;
+          case 'histoCheckVisiteForms':
+            histoCheckVisiteForms(fn.args[0]);
+            break;
+          case 'attachAjaxFormHandlers':
+            attachAjaxFormHandlers();
             break;
         }
       });

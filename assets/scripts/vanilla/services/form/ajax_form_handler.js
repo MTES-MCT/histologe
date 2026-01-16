@@ -25,8 +25,10 @@ function clearErrors() {
 
 function handleSubmitForm(containerElement) {
   containerElement.addEventListener('submit', (event) => {
+    console.log('AJAX form submit detected', containerElement);
     event.preventDefault();
     const formElement = event.target;
+    console.log(formElement);
     const submitElement = document.querySelector(
       '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
     );
@@ -38,6 +40,7 @@ function handleSubmitForm(containerElement) {
 }
 
 async function submitPayload(formElement) {
+  console.log('Submitting AJAX form:', formElement);
   let response;
   try {
     const formData = new FormData(formElement);
@@ -66,6 +69,7 @@ async function submitPayload(formElement) {
         },
       });
     }
+    console.log('AJAX form response received:', response);
     if (response.redirected && response.url.endsWith('/connexion')) {
       addFlashMessage({
         type: 'alert',
@@ -164,10 +168,14 @@ async function submitPayload(formElement) {
   }
 }
 
-const containerElements = document.querySelectorAll(
-  '[data-ajax-form] dialog, [data-ajax-form] .single-ajax-form-container'
-);
-containerElements.forEach((containerElement) => handleSubmitForm(containerElement));
+export function attachAjaxFormHandlers() {
+  const containerElements = document.querySelectorAll(
+    '[data-ajax-form] dialog, [data-ajax-form] .single-ajax-form-container'
+  );
+  console.log('Found AJAX form containers:', containerElements);
+  containerElements.forEach((containerElement) => handleSubmitForm(containerElement));
+}
+attachAjaxFormHandlers();
 
 function resetSubmitButton(submitElement) {
   if (submitElement) {
