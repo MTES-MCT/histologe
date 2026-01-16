@@ -103,10 +103,9 @@
                     <td>{{ signalement.getCountAffectationsByStatus(enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED) }} / {{ signalement.affectations|length }}</td>
                     <td>
                         <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-btn fr-fi-arrow-right-line fr-btn--sm" title="Voir le signalement {{ signalement.reference }}"></a>
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line fr-btn--sm" target="_blank" rel="noopener" title="Afficher le courrier (Ouvre une nouvelle fenêtre)">
-                            Courrier bailleur
-                        </a>
+                        {% if is_granted('SIGN_VIEW_INJONCTION_COURRIER', signalement) %}
+                            <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line fr-btn--sm" target="_blank" rel="noopener"
+                                title="Afficher le courrier (Ouvre une nouvelle fenêtre)"></a>
                         {% endif %}
                     </td>
                 </tr>

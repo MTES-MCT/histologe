@@ -2,12 +2,12 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\SearchSignalementInjonctionType;
 use App\Repository\SignalementRepository;
 use App\Security\Voter\InjonctionBailleurVoter;
+use App\Security\Voter\SignalementVoter;
 use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +15,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalement-injonction')]
 class SignalementInjonctionController extends AbstractController
@@ -48,14 +47,11 @@ class SignalementInjonctionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/courrier-bailleur', name: 'back_injonction_signalement_courrier_bailleur', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function courrierBailleur(
         Signalement $signalement,
         CourrierBailleurGenerator $courrierBailleurGenerator,
     ): Response {
-        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW_INJONCTION_COURRIER, $signalement);
 
         $pdfContent = $courrierBailleurGenerator->generate($signalement);
 

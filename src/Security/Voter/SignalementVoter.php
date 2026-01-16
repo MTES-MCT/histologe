@@ -30,6 +30,7 @@ class SignalementVoter extends Voter
     public const string SIGN_EDIT_NEED_VALIDATION = 'SIGN_EDIT_NEED_VALIDATION';
     public const string SIGN_DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
     public const string SIGN_VIEW = 'SIGN_VIEW';
+    public const string SIGN_VIEW_INJONCTION_COURRIER = 'SIGN_VIEW_INJONCTION_COURRIER';
     public const string SIGN_SEND_MAIL_BAILLEUR = 'SIGN_SEND_MAIL_BAILLEUR';
     public const string SIGN_SUBSCRIBE = 'SIGN_SUBSCRIBE';
     public const string SIGN_ADD_VISITE = 'SIGN_ADD_VISITE';
@@ -54,6 +55,7 @@ class SignalementVoter extends Voter
                 self::SIGN_EDIT_DRAFT,
                 self::SIGN_EDIT_NEED_VALIDATION,
                 self::SIGN_VIEW,
+                self::SIGN_VIEW_INJONCTION_COURRIER,
                 self::SIGN_SEND_MAIL_BAILLEUR,
                 self::SIGN_SUBSCRIBE,
                 self::SIGN_DELETE,
@@ -104,6 +106,7 @@ class SignalementVoter extends Voter
             self::SIGN_EDIT_INJONCTION => $this->canEditInjonction($subject, $user),
             self::SIGN_EDIT_NEED_VALIDATION => $this->canEditNeedValidation($subject, $user),
             self::SIGN_VIEW => $this->canView($subject, $user),
+            self::SIGN_VIEW_INJONCTION_COURRIER => $this->canViewInjonctionCourrier($subject, $user),
             self::SIGN_SEND_MAIL_BAILLEUR => $this->canSendMailBailleur($subject, $user),
             self::SIGN_SUBSCRIBE => $this->canSubscribe($subject, $user),
             self::SIGN_EDIT_DRAFT, self::SIGN_DELETE_DRAFT => $this->canEditDraft($subject, $user),
@@ -245,6 +248,21 @@ class SignalementVoter extends Voter
         return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId();
         })->count() > 0;
+    }
+
+    private function canViewInjonctionCourrier(Signalement $signalement, User $user): bool
+    {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+            return false;
+        }
+        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
+            return true;
+        }
+
+        return false;
     }
 
     private function canSubscribe(Signalement $signalement, User $user): bool
