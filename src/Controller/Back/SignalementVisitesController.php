@@ -3,6 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\VisiteRequest;
+use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -13,6 +14,7 @@ use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Manager\InterventionManager;
+use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
 use App\Security\Voter\InterventionVoter;
 use App\Security\Voter\SignalementVoter;
@@ -335,6 +337,7 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
+        AffectationRepository $affectationRepository,
     ): Response {
         $requestData = $request->get('visite-edit');
 
@@ -343,6 +346,8 @@ class SignalementVisitesController extends AbstractController
             : null;
         if (!$intervention) {
             $this->addFlash('error', "Cette visite n'existe pas.");
+            // TODO
+            // $flashMessages[] = ['type' => 'error', 'title' => 'Erreur', 'message' => 'Cette visite n\'existe pas.'];
 
             return $this->redirectToRoute('back_signalements_index');
         }
@@ -354,6 +359,8 @@ class SignalementVisitesController extends AbstractController
             'signalement_edit_visit_'.$requestData['intervention']
         );
         if ($errorRedirect) {
+            // TODO ???
+            // $flashMessages[] = ['type' => 'error', 'title' => 'Erreur', 'message' => 'Cette visite n\'existe pas.'];
             return $errorRedirect;
         }
 
@@ -375,8 +382,7 @@ class SignalementVisitesController extends AbstractController
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
         if ($interventionManager->editVisiteFromRequest($visiteRequest, $partner)) {
-            $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM]);
-
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
             $eventDispatcher->dispatch(new InterventionEditedEvent(
                 $intervention,
                 $user,
@@ -384,10 +390,23 @@ class SignalementVisitesController extends AbstractController
                 $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             ), InterventionEditedEvent::NAME);
         } else {
-            $this->addFlash('error', 'Erreur lors de la conclusion de la visite, veuillez réessayer.');
+            $flashMessages[] = ['type' => 'error', 'title' => 'Erreur', 'message' => 'Erreur lors de la conclusion de la visite, veuillez réessayer.'];
         }
+        $visites = $interventionRepository->getOrderedVisitesForSignalement($signalement);
+        $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
+        $htmlTargetContents = [['target' => '#list-visites', 'content' => $this->renderView('back/signalement/view/visites/visites-list.html.twig', ['signalement' => $signalement, 'visites' => $visites, 'partnersCanVisite' => $partnerVisite, 'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement)])]];
+        $functions = [
+            [
+                'name' => 'reloadTinyMCE',
+                'args' => ['textarea.editor'],
+            ],
+            [
+                'name' => 'attachAjaxFormHandlers',
+                'args' => [],
+            ],
+        ];
 
-        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
 
     #[Route('/visites/{intervention}/delete-rapport', name: 'back_signalement_visite_deleterapport')]
