@@ -112,11 +112,11 @@ class BackStatistiquesControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
         $client->request(
-            'GET',
+            'POST',
             $router->generate(
                 $route,
-                $params
-            )
+            ),
+            $params,
         );
 
         $response = json_decode((string) $client->getResponse()->getContent(), true);

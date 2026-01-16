@@ -7,6 +7,7 @@ use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
+use App\Service\RequestDataExtractor;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Service\Statistics\FilteredBackAnalyticsProvider;
 use App\Service\Statistics\GlobalBackAnalyticsProvider;
@@ -108,18 +109,19 @@ class BackStatistiquesController extends AbstractController
      */
     private function createFilters(Request $request, ?Territory $territory, ArrayCollection $partners): StatisticsFilters
     {
-        $communes = json_decode($request->get('communes'));
-        $epcis = json_decode($request->get('epcis'));
-        $statut = $request->get('statut');
-        $strEtiquettes = json_decode($request->get('etiquettes') ?? '[]');
+        $requestData = $request->request->all();
+        $communes = json_decode(RequestDataExtractor::getString($requestData, 'communes'));
+        $epcis = json_decode(RequestDataExtractor::getString($requestData, 'epcis'));
+        $statut = RequestDataExtractor::getString($requestData, 'statut');
+        $strEtiquettes = json_decode(RequestDataExtractor::getString($requestData, 'etiquettes') ?? '[]');
         $etiquettes = array_map(fn ($value): int => $value * 1, $strEtiquettes);
-        $type = $request->get('type');
-        $dateStartInput = $request->get('dateStart');
+        $type = RequestDataExtractor::getString($requestData, 'type');
+        $dateStartInput = RequestDataExtractor::getString($requestData, 'dateStart');
         $dateStart = (null !== $dateStartInput) ? new \DateTime($dateStartInput) : null;
-        $dateEndInput = $request->get('dateEnd');
+        $dateEndInput = RequestDataExtractor::getString($requestData, 'dateEnd');
         $dateEnd = (null !== $dateEndInput) ? new \DateTime($dateEndInput) : null;
-        $hasCountRefused = '1' == $request->get('countRefused');
-        $hasCountArchived = '1' == $request->get('countArchived');
+        $hasCountRefused = '1' == RequestDataExtractor::getString($requestData, 'countRefused');
+        $hasCountArchived = '1' == RequestDataExtractor::getString($requestData, 'countArchived');
 
         return new StatisticsFilters(
             $communes,
@@ -161,7 +163,7 @@ class BackStatistiquesController extends AbstractController
             return $partner->getTerritory();
         }
         $authorizedTerritories = $user->getPartnersTerritories();
-        $territoryId = $request->get('territoire');
+        $territoryId = $request->request->get('territoire');
         if (!$territoryId || 'all' === $territoryId) {
             return null;
         }

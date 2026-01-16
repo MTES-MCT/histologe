@@ -453,10 +453,12 @@ class AffectationControllerTest extends WebTestCase
         if (!$affectation) {
             $this->fail('No affectation found for the signalement');
         }
-        $this->client->request('POST', $routeAffectationResponse, [
-            'affectation' => $affectation->getId(),
-            '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
-        ]);
+        $this->client->request(
+            'POST',
+            $routeAffectationResponse.'?affectation='.$affectation->getId(),
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
+            ]);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('flashMessages', $response);
         $this->assertEquals('success', $response['flashMessages'][0]['type']);
@@ -502,10 +504,12 @@ class AffectationControllerTest extends WebTestCase
         if (!$affectation) {
             $this->fail('No affectation found for the signalement');
         }
-        $this->client->request('POST', $routeAffectationResponse, [
-            'affectation' => $affectation->getId(),
-            '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
-        ]);
+        $this->client->request(
+            'POST',
+            $routeAffectationResponse.'?affectation='.$affectation->getId(),
+            [
+                '_token' => $this->generateCsrfToken($this->client, 'signalement_remove_partner_'.$signalement->getId()),
+            ]);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('flashMessages', $response);
         $this->assertEquals('success', $response['flashMessages'][0]['type']);

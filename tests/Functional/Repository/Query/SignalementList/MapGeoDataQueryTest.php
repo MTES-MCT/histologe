@@ -24,7 +24,7 @@ class MapGeoDataQueryTest extends KernelTestCase
         $user = $userRepository->findOneBy(['email' => $email]);
         /** @var MapGeoDataQuery $mapGeoDataQuery */
         $mapGeoDataQuery = static::getContainer()->get(MapGeoDataQuery::class);
-        $signalements = $mapGeoDataQuery->getData($user, $options, 0);
+        $signalements = $mapGeoDataQuery->getData($user, $options);
         $this->assertCount($nbResult, $signalements);
     }
 

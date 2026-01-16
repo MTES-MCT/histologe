@@ -180,8 +180,8 @@ class VisiteUploadDocumentsController extends AbstractController
     public function __invoke(
         Request $request,
         ?Intervention $intervention = null,
+        string $typeDocumentVisite = '',
     ): JsonResponse {
-        $typeDocumentVisite = $request->get('typeDocumentVisite');
         if (null === $intervention) {
             return $this->json([
                 'message' => 'Intervention introuvable.',

@@ -21,7 +21,7 @@ class MapGeoDataQuery
      *
      * @throws Exception
      */
-    public function getData(User $user, array $options, int $offset): array
+    public function getData(User $user, array $options): array
     {
         $qb = $this->queryBuilderFactory->create($user, $options);
 
@@ -30,7 +30,6 @@ class MapGeoDataQuery
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
             ->andWhere('s.statut NOT IN (:signalement_status_list)')
             ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses())
-            ->setFirstResult($offset)
             ->setMaxResults(self::MARKERS_PAGE_SIZE);
 
         return $qb->getQuery()->getArrayResult();

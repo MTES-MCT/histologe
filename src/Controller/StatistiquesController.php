@@ -82,7 +82,7 @@ class StatistiquesController extends AbstractController
         $this->ajaxResult['signalement_per_territoire'] = $frontGlobalStatistics['signalement_per_territoire'];
 
         $territory = null;
-        $requestTerritory = $request->get('territoire');
+        $requestTerritory = $request->query->get('territoire');
         if ('' !== $requestTerritory && 'all' !== $requestTerritory) {
             $territory = $territoryRepository->findOneBy(['id' => $requestTerritory]);
         }
