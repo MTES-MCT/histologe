@@ -1,0 +1,43 @@
+{% extends 'service_secours/base.html.twig' %}
+
+{% block body %}
+    <main class="fr-container fr-mb-5w" id="content">
+        <section class="fr-grid-row fr-grid-row--center">
+            <div class="fr-mt-5v fr-col-md-12">
+                <h1>Bienvenue service secours</h1>
+
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    <div class="fr-col-12 fr-col-md-6">
+                        <fieldset role="group" aria-labelledby="declarant-infos-fieldset-legend">
+                            <legend class="fr-fieldset__legend" id="declarant-infos-fieldset-legend">Le déclarant</legend>
+                                {{ form_row(form.structureDeclarant) }}
+                                {{ form_row(form.mailDeclarant) }}
+                                {{ form_row(form.telDeclarant) }}
+                                {{ form_row(form.nomDeclarant) }}
+                                {{ form_row(form.prenomDeclarant) }}
+                                {{ form_row(form.dateVisite) }}
+                        </fieldset>
+                    </div>
+                    <div class="fr-col-12 fr-col-md-6">
+                        <fieldset role="group" aria-labelledby="bailleur-infos-fieldset-legend">
+                            <legend class="fr-fieldset__legend" id="bailleur-infos-fieldset-legend">Le propriétaire</legend>
+                                {{ form_row(form.nomBailleur) }}
+                                {{ form_row(form.prenomBailleur) }}
+                                {{ form_row(form.mailBailleur) }}
+                                {{ form_row(form.telBailleur) }}
+                                {{ form_row(form.isLogementSocial) }}
+                        </fieldset>
+                    </div>
+                    <div class="fr-col-12">
+                        {{ form_row(form.submit) }}
+                    </div>
+                </div>
+                {{ form_end(form) }}
+
+            </div>
+        </section>
+    </main>
+{% endblock %}

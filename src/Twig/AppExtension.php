@@ -185,7 +185,22 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('singular_or_plural', [$this, 'displaySingularOrPlural']),
             new TwigFunction('transform_suivi_description', [$this, 'transformSuiviDescription']),
             new TwigFunction('sign_url', [$this, 'signUrl']),
+            new TwigFunction('root_domain', [$this, 'extractRootDomain']),
         ];
+    }
+
+    public function extractRootDomain(string $host): string
+    {
+        // Retire le premier sous-domaine s'il est présent
+        $parts = explode('.', $host);
+
+        // Si c'est un domaine à un seul niveau (comme "localhost"), on le retourne tel quel
+        if (1 === count($parts)) {
+            return $host;
+        }
+
+        // Sinon on retire la première partie (le sous-domaine)
+        return implode('.', array_slice($parts, 1));
     }
 
     public function getAcceptedMimeTypes(?string $type = null): string
