@@ -60,8 +60,7 @@
             <th scope="col">Territoire</th>
             <th scope="col">Statut part.</th>
             <th scope="col">E-mail</th>
-            <th scope="col">Nom</th>
-            <th scope="col">Prénom</th>
+            <th scope="col" data-responsive-title="1">Nom</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
@@ -108,9 +107,8 @@
                             {% endfor %}
                         {% endif %}
                     </td>
-                    <td>{{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</ail td>
-                    <td>{{ user.nom}}</ail td>
-                    <td>{{ user.prenom}}</ail td>
+                    <td>{{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}</td>
+                    <td>{{ user.getNomComplet() }}</td>
                     <td class="fr-text--right">
                         <a href="{{ path('back_archived_users_reactiver', {'id': user.id}) }}"
                         class="fr-btn fr-icon-flashlight-fill fr-btn--sm" title="Réactiver le compte {{user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')}}"></a>

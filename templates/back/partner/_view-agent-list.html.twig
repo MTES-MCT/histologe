@@ -1,6 +1,5 @@
 {% set tableHead %}
-    <th scope="col">Nom</th>
-    <th scope="col">Prénom</th>
+    <th scope="col" data-responsive-title="1">Nom</th>
     <th scope="col">Fonction</th>
     <th scope="col">Courriel</th>
     <th scope="col">Notif. e-mails</th>
@@ -17,8 +16,7 @@
     {% for user in partner.users|filter(user => user.id is not null) %}
         {% if is_granted('ROLE_ADMIN') or 'ROLE_API_USER' not in user.roles %}
             <tr class="user-row">
-                <td>{{ user.nom }}</td>
-                <td>{{ user.prenom }}</td>
+                <td>{{ user.getNomComplet() }}</td>
                 <td>{{ user.fonction }}</td>
                 <td>{{ user.email }}<br>
                     Dernière connexion : {{ user.lastLoginAt ? user.lastLoginAt|date('d/m/Y') : '-'}}

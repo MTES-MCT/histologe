@@ -1235,3 +1235,91 @@ ul.fr-toggle__list.fr-toggle__list--inline {
         border-radius: 4px;
     }
 }
+
+// Responsive array - Transform tables into cards on mobile
+@media (max-width: 1247px) {
+    table.responsive-cards-mode {
+        thead {
+            display: none;
+        }
+
+        tbody {
+            display: block;
+        }
+
+        tr.responsive-card {
+            margin-bottom: 1rem;
+            border: none;
+            border-top: 4px solid var(--text-default-grey);
+            padding: 1rem;
+            background: white;
+        }
+
+        td.responsive-cell {
+            padding: 0;
+            padding-bottom: 0.5rem;
+            border: none;
+            text-align: left !important;
+            background-image: none;
+
+            .responsive-cell-label {
+                font-weight: bold;
+                color: var(--text-label-grey);
+                font-size: 0.875rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .responsive-cell-content {
+                color: var(--text-default-grey);
+            }
+
+            &.responsive-cell-title {
+                padding-top: 0;
+                padding-bottom: 1rem;
+                margin-bottom: 0.5rem;
+                border-bottom: 2px solid var(--border-default-grey);
+                grid-column: 1 / -1;
+
+                .responsive-card-title {
+                    font-size: 1.125rem;
+                    font-weight: bold;
+                    color: var(--text-title-grey);
+                }
+            }
+
+            &.responsive-cell-full-width {
+                grid-column: 1 / -1;
+            }
+        }
+    }
+
+    // 1 column for < 576px (mobile)
+    @media (max-width: 575px) {
+        table.responsive-cards-mode tr.responsive-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        table.responsive-cards-mode td.responsive-cell {
+            display: block;
+        }
+    }
+
+    // 2 columns: 576px to 991px
+    @media (min-width: 576px) and (max-width: 991px) {
+        table.responsive-cards-mode tr.responsive-card {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0 1rem;
+        }
+    }
+
+    // 3 columns: 992px to 1247px
+    @media (min-width: 992px) and (max-width: 1247px) {
+        table.responsive-cards-mode tr.responsive-card {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0 1rem;
+        }
+    }
+}

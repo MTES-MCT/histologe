@@ -86,7 +86,7 @@
             {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                 <th scope="col">Territoire</th>
             {% endif %}
-            <th scope="col">Utilisateur</th>
+            <th scope="col" data-responsive-title="1">Utilisateur</th>
             <th scope="col">E-mail</th>
             <th scope="col">Partenaire</th>
             <th scope="col">Type de partenaire</th>
