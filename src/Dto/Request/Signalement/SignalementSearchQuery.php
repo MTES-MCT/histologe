@@ -3,6 +3,7 @@
 namespace App\Dto\Request\Signalement;
 
 use App\Entity\Enum\SignalementStatus;
+use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\Signalement\SearchFilter;
 use App\Service\UrlHelper;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -112,7 +113,15 @@ class SignalementSearchQuery
             'autre',
         ], message: 'Motif de clôture invalide')]
         private readonly ?string $motifCloture = null,
-        #[Assert\Choice(['formulaire-usager', 'formulaire-pro'], message: 'Source de création invalide')]
+        #[Assert\Choice([
+            TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
+            TabDossier::CREATED_FROM_FORMULAIRE_PRO,
+            TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V1,
+            TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V2,
+            TabDossier::CREATED_FROM_FORMULAIRE_PRO_BO,
+            TabDossier::CREATED_FROM_API,
+            TabDossier::CREATED_FROM_IMPORT,
+        ], message: 'Source de création invalide')]
         private readonly ?string $createdFrom = null,
         #[Assert\Choice(['oui'], message: 'La valeur pour mes abonnements est invalide')]
         private readonly ?string $showMySignalementsOnly = null,

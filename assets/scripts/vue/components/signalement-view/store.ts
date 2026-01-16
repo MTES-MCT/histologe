@@ -55,6 +55,7 @@ export const store = {
         criticiteScoreMin: undefined,
         criticiteScoreMax: undefined,
         motifCloture: undefined,
+        createdFrom: undefined,
         relanceUsagerSansReponse: undefined as 'oui' | undefined
       }
     },
@@ -174,6 +175,15 @@ export const store = {
       { Id: 'travaux_faits_ou_en_cours', Text: 'Travaux faits ou en cours' },
       { Id: 'doublon', Text: 'Doublon' },
       { Id: 'autre', Text: 'Autre' }
+    ],
+    createdFromList: [
+      { Id: 'formulaire-usager', Text: 'Formulaire usager (v1, actuel et import)' },
+      { Id: 'formulaire-pro', Text: 'Formulaire pro (BO et api)' },
+      { Id: 'form-usager-v1', Text: 'Formulaire usager v1' },
+      { Id: 'form-usager-v2', Text: 'Formulaire usager actuel' },
+      { Id: 'form-pro-bo', Text: 'Formulaire pro BO' },
+      { Id: 'api', Text: 'API' },
+      { Id: 'import', Text: 'Import' }
     ],
     selectedSavedSearchId: undefined as string | undefined,
     savedSearchSelectKey: 0,

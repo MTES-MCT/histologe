@@ -9,7 +9,10 @@ class TabQueryParameters
     public function __construct(
         public ?int $territoireId = null,
         public ?string $communeCodePostal = null,
-        #[Assert\Choice([TabDossier::CREATED_FROM_FORMULAIRE_USAGER, TabDossier::CREATED_FROM_FORMULAIRE_PRO])]
+        #[Assert\Choice([
+            TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
+            TabDossier::CREATED_FROM_FORMULAIRE_PRO,
+        ])]
         public ?string $createdFrom = null,
         /** @var array<int|string> */
         public ?array $partenairesId = null,

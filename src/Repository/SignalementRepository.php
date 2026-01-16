@@ -1439,11 +1439,11 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($tabQueryParameters->createdFrom) {
-            $qb->andWhere(
-                TabDossier::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom
-                    ? 's.createdBy IS NULL'
-                    : 's.createdBy IS NOT NULL'
-            );
+            if (TabDossier::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.createdBy IS NULL');
+            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.createdBy IS NOT NULL');
+            }
         }
 
         if (!empty($tabQueryParameters->partenairesId)) {

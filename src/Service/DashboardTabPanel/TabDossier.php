@@ -7,8 +7,13 @@ use App\Entity\Enum\ProfileDeclarant;
 readonly class TabDossier
 {
     public const int MAX_ITEMS_LIST = 5;
-    public const string CREATED_FROM_FORMULAIRE_USAGER = 'formulaire-usager';
-    public const string CREATED_FROM_FORMULAIRE_PRO = 'formulaire-pro';
+    public const string CREATED_FROM_FORMULAIRE_USAGER = 'formulaire-usager'; // valeur tableau de bord
+    public const string CREATED_FROM_FORMULAIRE_PRO = 'formulaire-pro'; // valeur tableau de bord
+    public const string CREATED_FROM_FORMULAIRE_USAGER_V1 = 'form-usager-v1'; // valeur filtre liste
+    public const string CREATED_FROM_FORMULAIRE_USAGER_V2 = 'form-usager-v2'; // valeur filtre liste
+    public const string CREATED_FROM_FORMULAIRE_PRO_BO = 'form-pro-bo'; // valeur filtre liste
+    public const string CREATED_FROM_API = 'api'; // valeur filtre liste
+    public const string CREATED_FROM_IMPORT = 'import'; // valeur filtre liste
 
     public function __construct(
         public ?string $uuid = null,
