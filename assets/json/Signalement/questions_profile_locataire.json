@@ -568,7 +568,7 @@
         },
         {
           "type": "SignalementFormWarning",
-          "label": "Afin de vous aider dans cette démarche, merci de nous donner les informations les plus précises possibles sur votre bailleur. Veuillez au moins saisir son adresse postale ou son adresse électronique.",
+          "label": "Afin de vous aider dans cette démarche, merci de nous donner les informations les plus précises possibles sur votre bailleur. Veuillez au moins saisir son adresse postale ou son adresse e-mail, l'idéal étant de renseigner les deux si vous les avez.",
           "slug": "injonction_bailleur_oui_warning",
           "conditional": {
             "show": "formStore.data.injonction_bailleur_choice === 'oui'"
@@ -576,7 +576,7 @@
         },
         {
           "type": "SignalementFormEmailfield",
-          "label": "Adresse e-mail (facultatif)",
+          "label": "Adresse e-mail (recommandé)",
           "slug": "coordonnees_bailleur_email",
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
@@ -610,7 +610,7 @@
         },
         {
           "type": "SignalementFormAddress",
-          "label": "Adresse postale (facultatif)",
+          "label": "Adresse postale (recommandé)",
           "slug": "coordonnees_bailleur_adresse",
           "description": "Format attendu : Tapez l'adresse puis sélectionnez-la dans la liste. Si elle n'apparait pas, cliquez sur Saisir une adresse manuellement.",
           "validate": {
