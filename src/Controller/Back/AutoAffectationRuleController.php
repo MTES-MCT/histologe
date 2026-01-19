@@ -97,7 +97,7 @@ class AutoAffectationRuleController extends AbstractController
         } else {
             $autoAffectationRule->setStatus(AutoAffectationRule::STATUS_ARCHIVED);
             $entityManager->flush();
-            $flashMessages[] = ['type' => 'success', 'title' => 'Succès', 'message' => 'La règle a bien été archivée.'];
+            $flashMessages[] = ['type' => 'success', 'title' => 'Règle archivée', 'message' => 'La règle a bien été archivée.'];
         }
         $htmlTargetContents = $this->getHtmlTargetContentsForAutoAffectationList($request);
 
@@ -160,7 +160,7 @@ class AutoAffectationRuleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($autoAffectationRule);
             $entityManager->flush();
-            $this->addFlash('success', ['title' => 'Nouvelle auto-affectation',
+            $this->addFlash('success', ['title' => 'Règle créée',
                 'message' => 'La règle a bien été créée.',
             ]);
 
