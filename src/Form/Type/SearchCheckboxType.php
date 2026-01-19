@@ -18,6 +18,7 @@ class SearchCheckboxType extends AbstractType
             'attr' => ['class' => 'search-checkbox'],
             'noselectionlabel' => '',
             'nochoiceslabel' => '',
+            'showSelectionAsBadges' => false,
         ]);
     }
 
@@ -33,5 +34,6 @@ class SearchCheckboxType extends AbstractType
     {
         $view->vars['noselectionlabel'] = $options['noselectionlabel'];
         $view->vars['nochoiceslabel'] = $options['nochoiceslabel'];
+        $view->vars['showSelectionAsBadges'] = $options['showSelectionAsBadges'];
     }
 }

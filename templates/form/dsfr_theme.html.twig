@@ -192,6 +192,7 @@
             {% endif %}
             <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
         </div>
+        <div class="search-checkbox-badges" {% if not showSelectionAsBadges %}style="display:none"{% endif %}></div>
         <button type="button" class="fr-btn--close fr-btn fr-hidden">Fermer</button>
         {{ block('choice_enum_widget_expanded') }}
         {{ block('form_errors') }}
@@ -206,6 +207,7 @@
             {% endif %}
             <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
         </div>
+        <div class="search-checkbox-badges" {% if not showSelectionAsBadges %}style="display:none"{% endif %}></div>
         <button type="button" class="fr-btn--close fr-btn fr-hidden">Fermer</button>
         {{ block('choice_enum_widget_expanded') }}
         {{ block('form_errors') }}

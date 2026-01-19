@@ -118,6 +118,7 @@ class PartnerType extends AbstractType
                 'nochoiceslabel' => 'Aucune compétence disponible',
                 'help' => 'Choisissez une ou plusieurs compétences parmi la liste ci-dessous.',
                 'required' => false,
+                'showSelectionAsBadges' => true,
             ])
             ->add('isEsaboraActive', CheckboxType::class, [
                 'attr' => [
