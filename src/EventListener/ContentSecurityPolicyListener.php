@@ -49,6 +49,7 @@ readonly class ContentSecurityPolicyListener
 
         $cspDirectives = [
             'default-src' => $this->formatCspDirective($cspParameters['default-src'] ?? []),
+            'manifest-src' => $this->formatCspDirective($cspParameters['manifest-src'] ?? []),
             'script-src' => $this->formatCspDirective([...($cspParameters['script-src'] ?? []), "'nonce-$scriptNonce'"]),
             'style-src' => $this->formatCspDirective($cspParameters['style-src'] ?? []),
             'style-src-attr' => $this->formatCspDirective($cspParameters['style-src-attr'] ?? []),
