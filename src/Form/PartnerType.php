@@ -14,6 +14,7 @@ use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -39,6 +40,8 @@ class PartnerType extends AbstractType
         private readonly UserRepository $userRepository,
         private readonly TerritoryRepository $territoryRepository,
         private readonly Security $security,
+        #[Autowire(param: 'competence_per_type')]
+        private readonly array $competencePerType,
     ) {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $this->isAdmin = true;
@@ -86,6 +89,13 @@ class PartnerType extends AbstractType
                 'class' => EnumPartnerType::class,
                 'choice_label' => function ($choice) {
                     return $choice->label();
+                },
+                'choice_attr' => function (EnumPartnerType $choice) {
+                    $competences = $this->competencePerType[$choice->name] ?? [];
+
+                    return [
+                        'data-competences' => json_encode(array_map(fn (Qualification $q) => $q->value, $competences)),
+                    ];
                 },
                 'placeholder' => 'Sélectionner un type',
                 'disabled' => !$this->isAdminTerritory,

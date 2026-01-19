@@ -124,6 +124,7 @@ function initSearchCheckboxWidgets() {
     }
   });
 }
+
 function searchCheckboxCompleteInputValue(element) {
   const input = element.querySelector('input[type="text"]');
   const checkboxesContainer = element.querySelector('.search-checkbox');
@@ -136,7 +137,15 @@ function searchCheckboxCompleteInputValue(element) {
   } else {
     input.value = checkedCheckboxes.length + ' élément sélectionné';
   }
+  /*input.value = '';
+  checkedCheckboxes.forEach((checkbox) => {
+    const label = checkbox.closest('.fr-fieldset__element')?.querySelector('label')?.textContent?.trim();
+    if (label) {
+      input.value += '[' + label + '] ';
+    }
+  });*/
 }
+
 
 function searchCheckboxOrderCheckboxes(element) {
   const checkboxesContainer = element.querySelector('.search-checkbox');
