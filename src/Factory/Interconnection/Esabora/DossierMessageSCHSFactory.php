@@ -13,6 +13,8 @@ use App\Utils\EtageParser;
 
 class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 {
+    public const int MAX_COMMENT_LENGTH = 4000;
+
     public function __construct(
         private readonly UploadHandlerService $uploadHandlerService,
     ) {
@@ -103,7 +105,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             $commentaire .= \PHP_EOL.$affectation->getPartner()->getNom().' => '.$affectation->getStatut()->label();
         }
 
-        return $commentaire;
+        return mb_substr($commentaire, 0, self::MAX_COMMENT_LENGTH);
     }
 
     private function buildNbEnfants(Signalement $signalement): string
@@ -133,6 +135,6 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             $piecesJointesObservation .= $file->getFilename();
         }
 
-        return $piecesJointesObservation;
+        return mb_substr($piecesJointesObservation, 0, self::MAX_COMMENT_LENGTH);
     }
 }
