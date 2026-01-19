@@ -15,7 +15,8 @@
                 <div class="fr-container">
                   <div class="fr-notice__body">
                     <p>
-                      <span class="fr-notice__title">{{ messageEditConfirmation }}</span>
+                      <span class="fr-notice__title">{{ titleEditConfirmation }}</span>
+                      <span class="fr-notice__desc">{{ messageEditConfirmation }}</span>
                     </p>
                   </div>
                 </div>
@@ -94,6 +95,7 @@ export default defineComponent({
     return {
       sharedProps: store.props,
       sharedState: store.state,
+      titleEditConfirmation: '',
       messageEditConfirmation: '',
       classNameEditConfirmation: '',
       modalObserver: null as MutationObserver | null
@@ -122,6 +124,7 @@ export default defineComponent({
   },
   methods: {
     resetModalState() {
+      this.titleEditConfirmation = ''
       this.messageEditConfirmation = ''
       this.classNameEditConfirmation = ''
 
@@ -146,6 +149,7 @@ export default defineComponent({
       requests.editSearch(id, newName, this.sharedProps.csrfEditSearch, this.handleSearchEdited)
     },
     handleSearchEdited (requestResponse: any, id: string = '', newName: string = '') {
+      this.titleEditConfirmation = requestResponse.data.title
       this.messageEditConfirmation = requestResponse.data.message
       this.classNameEditConfirmation =
           requestResponse.status === 200
@@ -165,6 +169,7 @@ export default defineComponent({
       requests.deleteSearch(id, this.sharedProps.csrfDeleteSearch, this.handleSearchDeleted)
     },
     handleSearchDeleted (requestResponse: any, id: string = '') {
+      this.titleEditConfirmation = requestResponse.data.title
       this.messageEditConfirmation = requestResponse.data.message
       this.classNameEditConfirmation =
           requestResponse.status === 200

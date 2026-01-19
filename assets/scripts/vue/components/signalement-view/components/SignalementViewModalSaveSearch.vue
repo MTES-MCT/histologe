@@ -15,7 +15,8 @@
                 <div class="fr-container">
                   <div class="fr-notice__body">
                     <p>
-                      <span class="fr-notice__title">{{ messageSaveConfirmation }}</span>
+                      <span class="fr-notice__title">{{ titleSaveConfirmation }}</span>
+                      <span class="fr-notice__desc">{{ messageSaveConfirmation }}</span>
                     </p>
                   </div>
                 </div>
@@ -77,6 +78,7 @@ export default defineComponent({
     return {
       sharedProps: store.props,
       sharedState: store.state,
+      titleSaveConfirmation: '',
       messageSaveConfirmation: '',
       classNameSaveConfirmation: '',
       nameSearch: '',
@@ -112,6 +114,7 @@ export default defineComponent({
   methods: {
     resetModalState() {
       this.messageSaveConfirmation = ''
+      this.titleSaveConfirmation = ''
       this.classNameSaveConfirmation = ''
     },
     getBadgeFilterLabel (key: string, value: any) {
@@ -130,6 +133,7 @@ export default defineComponent({
     },
     handleSearchSaved (requestResponse: any) {
       const message = requestResponse.data?.message || 'Erreur inconnue'
+      const title = requestResponse.data?.title || 'Erreur'
       const isSuccess = requestResponse.status === 200
       const className = isSuccess ? 'fr-notice--success' : 'fr-notice--alert'
 
@@ -144,12 +148,13 @@ export default defineComponent({
         this.sharedState.selectedSavedSearchId = newOption.Id
         this.sharedState.savedSearchSelectKey++
         this.nameSearch = ''
-        this.$emit('savedSearchSuccess', message, className)
+        this.$emit('savedSearchSuccess', title, message, className)
         const closeBtn = document.querySelector(
           'button[aria-controls="modal-save-search"].fr-btn--close'
         ) as HTMLButtonElement | null
         closeBtn?.click()
       } else {
+        this.titleSaveConfirmation = title
         this.messageSaveConfirmation = message
         this.classNameSaveConfirmation = className
       }

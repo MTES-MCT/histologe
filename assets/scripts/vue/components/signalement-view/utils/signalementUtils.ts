@@ -294,6 +294,7 @@ export function buildUrl (context: any, ajaxurl: string): any {
 }
 
 export function clearScreen (context: any): any {
+  context.titleDeleteConfirmation = ''
   context.messageDeleteConfirmation = ''
   context.classNameDeleteConfirmation = ''
   context.sharedState.loadingList = true
