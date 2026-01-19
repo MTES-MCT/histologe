@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-IMAGE_VERSION="1.0.0"
+IMAGE_VERSION="1.0.1"
 
 log() {
   level="$1"
@@ -35,7 +35,7 @@ send_report() {
 }
 
 extract_last_stats_line() {
-  grep -E 'Transferred:.*\|.*Checks:' | tail -n 1 || true
+  grep -E '\(xf#[0-9]+/[0-9]+\)' | tail -n 1 || true
 }
 
 log INFO "Image version: ${IMAGE_VERSION}"
@@ -84,9 +84,12 @@ trap on_term INT TERM
 set +e
 RCLONE_OUTPUT="$(
   rclone sync "${RCLONE_SRC}" "${RCLONE_DST}" \
-    --verbose \
-    --stats="10s" \
+    --stats="1m" \
     --stats-one-line \
+    --retries 10 \
+    --retries-sleep 10s \
+    --low-level-retries 20 \
+    --log-level INFO \
     --max-duration "${RCLONE_MAX_DURATION}" 2>&1
 )"
 rc=$?
@@ -94,6 +97,8 @@ set -e
 
 LAST_STATS_LINE="$(printf "%s\n" "$RCLONE_OUTPUT" | extract_last_stats_line)"
 [ -n "${LAST_STATS_LINE:-}" ] || LAST_STATS_LINE="(stats line not found)"
+
+log INFO "Final rclone stats: ${LAST_STATS_LINE}"
 
 case "$rc" in
   0)
@@ -103,6 +108,7 @@ case "$rc" in
   10)
     log WARN "rclone sync stopped due to max-duration (partial sync)"
     send_report "partial" "$rc" "$LAST_STATS_LINE" "Synchronisation S3 partielle (max-duration atteinte, la suite au prochain cycle)."
+    rc=0
     ;;
   *)
     log ERROR "rclone sync failed with exit code: $rc"
