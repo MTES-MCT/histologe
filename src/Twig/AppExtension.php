@@ -3,10 +3,12 @@
 namespace App\Twig;
 
 use App\Controller\FileController;
+use App\Entity\Commune;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
 use App\Entity\Suivi;
+use App\Repository\CommuneRepository;
 use App\Service\EmailAlertChecker;
 use App\Service\Files\ImageBase64Encoder;
 use App\Service\Notification\NotificationCounter;
@@ -26,6 +28,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function __construct(
         private readonly TimezoneProvider $timezoneProvider,
         private readonly UrlSignerInterface $urlSigner,
+        private readonly CommuneRepository $communeRepository,
     ) {
     }
 
@@ -185,6 +188,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('singular_or_plural', [$this, 'displaySingularOrPlural']),
             new TwigFunction('transform_suivi_description', [$this, 'transformSuiviDescription']),
             new TwigFunction('sign_url', [$this, 'signUrl']),
+            new TwigFunction('get_communes_by_insee', [$this, 'getCommunesByInsee']),
             new TwigFunction('root_domain', [$this, 'extractRootDomain']),
         ];
     }
@@ -239,5 +243,17 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     public function signUrl(string $url): string
     {
         return $this->urlSigner->sign($url, FileController::SIGNATURE_VALIDITY_DURATION);
+    }
+
+    /**
+     * Récupère les communes distinctes (par code INSEE) à partir d'un tableau de codes INSEE.
+     *
+     * @param array<int, string> $codesInsee
+     *
+     * @return array<int, Commune>
+     */
+    public function getCommunesByInsee(array $codesInsee): array
+    {
+        return $this->communeRepository->findDistinctCommuneCodesInseeForCodeInseeList($codesInsee);
     }
 }

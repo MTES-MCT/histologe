@@ -55,4 +55,19 @@ class CommuneRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findDistinctCommuneCodesInseeForCodeInseeList(array $codesInsee): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.codeInsee IN (:codesInsee)')
+            ->andWhere('c.id IN (
+                SELECT MIN(c2.id) FROM '.Commune::class.' c2 
+                WHERE c2.codeInsee IN (:codesInsee) 
+                GROUP BY c2.codeInsee
+            )')
+            ->setParameter('codesInsee', $codesInsee)
+            ->orderBy('c.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

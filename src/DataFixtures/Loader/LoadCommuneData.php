@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 {
     private const FLUSH_COUNT = 1000;
-    private const ZIP_CODES_ALLOWED = ['01', '04', '2A', '06', '21', '13', '44', '30', '62', '64', '67', '69', '69A', '89', '93'];
+    private const ZIP_CODES_ALLOWED = ['01', '04', '2A', '06', '21', '13', '44', '30', '34', '62', '64', '67', '69', '69A', '89', '93'];
 
     public function __construct(
         private readonly ParameterBagInterface $params,
