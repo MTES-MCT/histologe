@@ -225,13 +225,12 @@
 						{# pas d'action possible #}
 					{% else %}
 						<h2 class="title-blue-france fr-mb-1w fr-text--center">Contrat d'engagement</h2>
-						{% if engagementTravauxPdf is not null %}
-							<div class="fr-consent-placeholder">
+
+						<div class="fr-consent-placeholder">
+							{% if engagementTravauxPdf is not null %}
 								<p>Vous optez pour une résolution amiable avant le déclenchement des contrôles et procédures.
 									<br>
 									Par ce choix vous vous engagez à remédier dans les meilleurs délais aux désordres déclarés afin de remettre le logement loué aux normes.
-									<br>
-									Un suivi sera réalisé mensuellement.
 								</p>
 								<iframe class="fr-mt-3w" src="{{ sign_url(path('show_file', {uuid: engagementTravauxPdf.uuid})) }}" type="application/pdf" width="100%" height="400px" id="engagement_travaux_bailleur_pdf"></iframe>
 								<a href="{{ sign_url(path('show_file', {uuid: engagementTravauxPdf.uuid})) }}" 
@@ -240,18 +239,21 @@
 									title="Télécharger le contrat d'engagement - Téléchargement du fichier">
 									Télécharger le contrat d'engagement
 								</a>
-							</div>
-						{% else %}
-							<div class="fr-consent-placeholder">
+							{% else %}
 								<h4 class="fr-h6">Je m'engage à résoudre les désordres</h4>
 								<p class="fr-mt-5w">{{signalement.prenomProprio}} {{signalement.nomProprio}} le {{ suiviReponse.createdAt|date('d/m/Y') }}</p>
 								<p>Vous optez pour une résolution amiable avant le déclenchement des contrôles et procédures.<br>
 									Par ce choix <strong>vous vous engagez à remédier dans les meilleurs délais aux désordres</strong> déclarés afin de remettre le logement loué aux normes.<br><br>
-									Pour formaliser votre engagement,  <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">merci de compléter le document suivant</a> et de l'envoyer à l'adresse e-mail <a href="mailto:demarche-acceleree@signal-logement.beta.gouv.fr">demarche-acceleree@signal-logement.beta.gouv.fr</a>.<br><br>
-									Un suivi sera réalisé mensuellement. Nous vous invitons à mettre à jour le dossier régulièrement avec les justificatifs permettant d’attester de l’avancement des démarches engagées.
+									Pour formaliser votre engagement, merci de <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">télécharger la lettre d'engagement</a>, puis de la compléter et de nous l'envoyer.
 								</p>
-							</div>
-						{% endif %}
+							{% endif %}
+							<p>
+								Un suivi sera réalisé mensuellement. Nous vous invitons à nous faire régulièrement parvenir les justificatifs permettant d’attester de l’avancement des démarches engagées.<br><br>
+								Pour tout envoi de document, merci d'utiliser l'adresse e-mail suivante :<br>
+								<a href="mailto:demarche-acceleree@signal-logement.beta.gouv.fr">demarche-acceleree@signal-logement.beta.gouv.fr</a>
+							</p>
+						</div>
+
 						{% if form is not null %}
 						<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
 							{{ form(form) }}
