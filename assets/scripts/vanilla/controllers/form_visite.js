@@ -7,35 +7,40 @@ const options = { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2
 const formatter = new Intl.DateTimeFormat('en-CA', options);
 const localDateString = formatter.format(todayDate);
 
+function addFieldsIfPastDate(dateField) {
+  const fieldToDisplay = dateField.dataset.displayfields;
+  const fieldToHide = dateField.dataset.hidefields;
+
+  if (dateField.value && dateField.value <= localDateString) {
+    document.querySelector('#' + fieldToDisplay).classList.remove('fr-hidden');
+    document.querySelector('#' + fieldToHide).classList.add('fr-hidden');
+  } else {
+    document.querySelector('#' + fieldToDisplay).classList.add('fr-hidden');
+    document.querySelector('#' + fieldToHide).classList.remove('fr-hidden');
+  }
+}
+
+function updateOperatorExternFieldRequirement(partnerSelect) {
+  const operatorExtern = partnerSelect.parentElement.nextElementSibling;
+  const operatorExternField = operatorExtern.querySelector('input');
+  if (partnerSelect.value === 'extern') {
+    operatorExtern.classList.remove('fr-hidden');
+    operatorExternField.setAttribute('required', 'required');
+  } else {
+    operatorExtern.classList.add('fr-hidden');
+    operatorExternField.removeAttribute('required');
+  }
+}
 document.addEventListener('change', (event) => {
-  console.log('Change event on', event.target);
   if (event.target.classList.contains('add-fields-if-past-date')) {
     const dateField = event.target;
-    const fieldToDisplay = dateField.dataset.displayfields;
-    const fieldToHide = dateField.dataset.hidefields;
-
-    if (dateField.value && dateField.value <= localDateString) {
-      document.querySelector('#' + fieldToDisplay).classList.remove('fr-hidden');
-      document.querySelector('#' + fieldToHide).classList.add('fr-hidden');
-    } else {
-      document.querySelector('#' + fieldToDisplay).classList.add('fr-hidden');
-      document.querySelector('#' + fieldToHide).classList.remove('fr-hidden');
-    }
+    addFieldsIfPastDate(dateField);
     return;
   }
 
   if (event.target.classList.contains('visite-partner-select')) {
     const partnerSelect = event.target;
-    const operatorExtern = partnerSelect.parentElement.nextElementSibling;
-    const operatorExternField = operatorExtern.querySelector('input');
-
-    if (partnerSelect.value === 'extern') {
-      operatorExtern.classList.remove('fr-hidden');
-      operatorExternField.setAttribute('required', 'required');
-    } else {
-      operatorExtern.classList.add('fr-hidden');
-      operatorExternField.removeAttribute('required');
-    }
+    updateOperatorExternFieldRequirement(partnerSelect);
     return;
   }
 
@@ -65,8 +70,7 @@ document.querySelectorAll('.visite-partner-select').forEach((partnerSelect) => {
   partnerSelect.dispatchEvent(new Event('change'));
 });
 
-export function histoCheckVisiteForms(formType, visiteForm) {
-  console.log('[histoCheckVisiteForms] Checking form type:', formType, visiteForm);
+function histoCheckVisiteForms(formType, visiteForm) {
   if (!visiteForm) {
     console.warn('[histoCheckVisiteForms] form not provided for', formType);
     return true;
@@ -176,8 +180,6 @@ export function histoCheckVisiteForms(formType, visiteForm) {
 }
 
 document.addEventListener('submit', (event) => {
-  console.log('Submit event on', event.target);
-
   const cancelVisiteForm = event.target.closest('form[name="signalement-cancel-visite"]');
   const visiteForm = event.target.closest(
     '.signalement-add-visite, .signalement-reschedule-visite, .signalement-confirm-visite'
@@ -228,3 +230,38 @@ document.addEventListener('submit', (event) => {
     }
   }
 });
+
+const modalAddVisite = document?.querySelector('#add-visite-modal');
+if (modalAddVisite) {
+  modalAddVisite.addEventListener('dsfr.disclose', () => {
+    const form = modalAddVisite.querySelector('form');
+    if (!form) return;
+
+    form.reset();
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Valider';
+    }
+
+    dateField = modalAddVisite.querySelector('.add-fields-if-past-date');
+    if (dateField) {
+      addFieldsIfPastDate(dateField);
+    }
+    partnerSelect = modalAddVisite.querySelector('.visite-partner-select');
+    if (partnerSelect) {
+      updateOperatorExternFieldRequirement(partnerSelect);
+    }
+
+    modalAddVisite
+      .querySelectorAll('.fr-error-text:not(.fr-hidden), .fr-message--error')
+      .forEach((el) => el.classList.add('fr-hidden'));
+
+    // reset TinyMCE
+    modalAddVisite.querySelectorAll('textarea').forEach((textarea) => {
+      const editor = tinymce.get(textarea.id);
+      if (editor) editor.setContent('');
+    });
+  });
+}

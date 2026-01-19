@@ -182,7 +182,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ path('back_signalement_visite_deleterapport',{intervention:intervention.id}) }}?_token={{ csrf_token('delete_rapport') }}" title="Supprimer le rapport" class="fr-btn fr-btn--secondary fr-background--white fr-fi-delete-line "></a>
+                <a href="{{ path('back_signalement_visite_deleterapport',{intervention:intervention.id}) }}?_token={{ csrf_token('delete_rapport') }}" title="Supprimer le rapport" class="fr-btn fr-btn--secondary fr-background--white fr-fi-delete-line  simple-ajax-link"></a>
             </li>
         </ul>
     </fieldset>
