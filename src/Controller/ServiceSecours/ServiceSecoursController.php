@@ -13,14 +13,15 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(
     path : '/',
     requirements: ['domain' => '[^.]+(?:\.[^.]+)*'],
-    host: 'service-secours.{domain}', )
+    host: 'service-secours.{domain}',
+    priority: 100
+)
 ]
 class ServiceSecoursController extends AbstractController
 {
     #[Route('/',
         name: 'service_secours_index',
-        methods: ['GET', 'POST'],
-        priority: 100)
+        methods: ['GET', 'POST'])
     ]
     public function index(Request $request): Response
     {
@@ -41,8 +42,7 @@ class ServiceSecoursController extends AbstractController
     #[Route(
         '/{any}',
         name: 'service_secours_fallback',
-        requirements: ['any' => '.*'],
-        priority: 50
+        requirements: ['any' => '(?!_wdt/|_profiler/).*'],
     )]
     public function fallback(): Response
     {
