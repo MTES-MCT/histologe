@@ -11,7 +11,14 @@
                   <small v-if="item.referenceInjonction && item.statut !== 'INJONCTION_BAILLEUR'">(#{{ item.referenceInjonction }})</small>
                   - {{ (item.nomOccupant ? item.nomOccupant.toUpperCase() : '') + ' ' + (item.prenomOccupant !== null ? item.prenomOccupant : '') }}
                 </h3>
-                <p class="fr-my-1v fr-text--bold fr-text--lg">{{ item.adresseOccupant }}, {{ item.codepostalOccupant }} {{ item.villeOccupant }}</p>
+                <p class="fr-my-1v">
+                  <span class="fr-text--bold fr-text--lg">{{ item.adresseOccupant }}, {{ item.codepostalOccupant }} {{ item.villeOccupant }}</span>
+                  <span class="fr-text--sm">&nbsp;({{
+                      item.isLogementSocial === null
+                          ? 'parc non renseigné'
+                          : (item.isLogementSocial ? 'parc public' : 'parc privé')
+                    }})</span>
+                </p>
               </div>
               <div class="fr-col-xl-4 fr-col-lg-6 fr-col-12">
                 <p class="fr-my-1v fr-text--right">Dossier déposé le : {{ formatDate(item.createdAt )}}</p>
