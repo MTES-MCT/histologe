@@ -451,4 +451,21 @@ class NotificationAndMailSender
         $recipients = new ArrayCollection($usagers);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::SUIVI_USAGER, suivi: $suivi);
     }
+
+    public function sendReminderToBailleur(Signalement $signalement): void
+    {
+        if (empty($signalement->getMailProprio())) {
+            return;
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_REMINDER_TO_BAILLEUR,
+                to: $signalement->getMailProprio(),
+                territory: $signalement->getTerritory(),
+                signalement: $signalement,
+                isRecipientVisible: false,
+            )
+        );
+    }
 }
