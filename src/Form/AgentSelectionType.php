@@ -134,7 +134,7 @@ class AgentSelectionType extends AbstractType
             'data_class' => AgentSelection::class,
             'exclude_user' => null,
             'only_rt' => false,
-            'label' => 'Sélectionnez le(s) agent(s) abonné(s) au dossier',
+            'label' => 'Sélectionnez le(s) agent(s) à abonner au dossier',
             'validation_groups' => function (Options $options) {
                 return $options['only_rt'] ? ['only_rt'] : null;
             },

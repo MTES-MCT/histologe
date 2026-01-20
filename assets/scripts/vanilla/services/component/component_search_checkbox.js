@@ -34,7 +34,9 @@ function initSearchCheckboxWidgets() {
         checkboxesContainer.scrollTop = 0;
         searchCheckboxOrderCheckboxes(element);
         input.value = '';
-        badgesContainer.innerHTML = '';
+        if (badgesContainer) {
+          badgesContainer.innerHTML = '';
+        }
         closeBtn.classList.remove('fr-hidden');
       });
       // filter choices on input keyup
@@ -133,7 +135,9 @@ function searchCheckboxCompleteInputValue(element) {
   const checkedCheckboxes = checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked');
   const badgesContainer = element.querySelector('.search-checkbox-badges');
 
-  badgesContainer.innerHTML = '';
+  if (badgesContainer) {
+    badgesContainer.innerHTML = '';
+  }
   input.value = '';
 
   if (checkedCheckboxes.length > 1) {
@@ -156,7 +160,10 @@ function searchCheckboxCompleteInputValue(element) {
       checkbox.checked = false;
       searchCheckboxCompleteInputValue(element);
     });
-    badgesContainer.appendChild(badge);
+    
+    if (badgesContainer) {
+      badgesContainer.appendChild(badge);
+    }
   });
 }
 

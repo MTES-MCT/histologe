@@ -24,7 +24,7 @@
                         </div>
                         {{ form_errors(acceptSignalementForm) }}
                         <div class="fr-select-group rt-selection-container">
-                            {{ form_label(acceptSignalementForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agent_selection[agents]'}}) }}
+                            {{ form_label(acceptSignalementForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agent_selection[agents]', 'data-error-target': '1'}}) }}
                             <div class="fr-grid-row">
                                 {% for agent in acceptSignalementForm.agents %}
                                     <div class="fr-checkbox-group fr-col-6">
