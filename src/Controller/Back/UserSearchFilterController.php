@@ -64,7 +64,8 @@ class UserSearchFilterController extends AbstractController
 
         return $this->json([
             'status' => Response::HTTP_OK,
-            'message' => 'Votre recherche a bien été sauvegardée',
+            'title' => 'Recherche sauvegardée',
+            'message' => 'La recherche sauvegardée a bien été enregistrée.',
             'data' => [
                 'savedSearch' => [
                     'id' => $search->getId(),
@@ -101,7 +102,8 @@ class UserSearchFilterController extends AbstractController
 
         return $this->json([
             'status' => Response::HTTP_OK,
-            'message' => 'Recherche supprimée',
+            'title' => 'Recherche supprimée',
+            'message' => 'La recherche sauvegardée a bien été supprimée.',
         ], Response::HTTP_OK);
     }
 
@@ -141,7 +143,8 @@ class UserSearchFilterController extends AbstractController
 
         return $this->json([
             'status' => Response::HTTP_OK,
-            'message' => 'Recherche éditée',
+            'title' => 'Modifications enregistrées',
+            'message' => 'Le titre de la recherche a bien été modifié.',
         ], Response::HTTP_OK);
     }
 

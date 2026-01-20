@@ -8,7 +8,8 @@
     <div class="fr-container">
       <div class="fr-notice__body">
         <p>
-          <span class="fr-notice__title">{{ messageDeleteConfirmation }}</span>
+          <span class="fr-notice__title">{{ titleDeleteConfirmation }}</span>
+          <span class="fr-notice__desc">{{ messageDeleteConfirmation }}</span>
         </p>
       </div>
     </div>
@@ -111,6 +112,7 @@ export default defineComponent({
     return {
       sharedProps: store.props,
       sharedState: store.state,
+      titleDeleteConfirmation: '',
       messageDeleteConfirmation: '',
       classNameDeleteConfirmation: '',
       abortRequest: null as AbortController | null
@@ -195,6 +197,10 @@ export default defineComponent({
       handleFilters(this, initElements.dataset.ajaxurl)
     },    
     handleDelete (requestResponse: any) {
+      this.titleDeleteConfirmation =
+          requestResponse.data.status === 200
+            ? requestResponse.data.title
+            : 'Erreur'
       this.messageDeleteConfirmation =
           requestResponse.data.status === 200
             ? requestResponse.data.message
@@ -207,7 +213,8 @@ export default defineComponent({
       buildUrl(this, initElements.dataset.ajaxurl)
       requests.getSignalements(this.handleSignalements)
     },
-    onSearchSaved(message: string, className: string ) {
+    onSearchSaved(title: string, message: string, className: string ) {
+      this.titleDeleteConfirmation = title
       this.messageDeleteConfirmation = message
       this.classNameDeleteConfirmation = className
     },
