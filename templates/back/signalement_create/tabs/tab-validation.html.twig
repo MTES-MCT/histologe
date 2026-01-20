@@ -175,9 +175,6 @@
     {% endif %}
 
     <div class="fr-grid-row fr-grid-row--right">
-        <div>
-            <button type="button" id="quit-validation" data-route="{{path('back_signalement_drafts')}}" class="fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline fr-btn">Finir plus tard</button>
-        </div>
         <div class="fr-ml-2w">
             <button type="submit" class="fr-btn fr-icon-check-line fr-btn--icon-left fr-btn">
                 {% if is_granted('ROLE_ADMIN_TERRITORY') or assignablePartners|length %}
