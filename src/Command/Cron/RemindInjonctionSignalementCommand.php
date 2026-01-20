@@ -54,7 +54,8 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
             }
 
             // Pour l'usager, on crée un suivi
-            $description = 'Comme chaque mois, pensez à saisir les informations dont vous disposez pour nous faire part de l\'avancée ou non des travaux dans votre logement.';
+            $description = 'Important - Point d\'avancement mensuel : ';
+            $description .= 'Merci d\'indiquer si des démarches ont été entamées par votre bailleur (devis reçus, rdv artisans, travaux débutés, aucune avancée...).';
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,

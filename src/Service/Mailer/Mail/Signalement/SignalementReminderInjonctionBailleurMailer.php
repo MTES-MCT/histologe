@@ -13,8 +13,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementReminderInjonctionBailleurMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_REMINDER_TO_BAILLEUR;
-    protected ?string $mailerSubject = 'Rappel : envoyez-nous des nouvelles concernant l\'avancée des travaux';
-    protected ?string $mailerTemplate = 'reminder_bailleur_injonction_signalement_email';
+    protected ?string $mailerSubject = "\u{200b}Mettez à jour la situation concernant votre logement";
+    protected ?string $brevoTemplateId = '287';
     protected ?string $tagHeader = 'Bailleur Rappel Avancées Signalement Injonction';
 
     public function __construct(
@@ -34,8 +34,8 @@ class SignalementReminderInjonctionBailleurMailer extends AbstractNotificationMa
         $signalement = $notificationMail->getSignalement();
 
         return [
-            'signalement_adresseOccupant' => $signalement->getAddressCompleteOccupant(),
-            'signalement_referenceInjonctionBailleur' => $signalement->getReferenceInjonction(),
+            'ADRESSE_OCCUPANT' => $signalement->getAddressCompleteOccupant(),
+            'REFERENCE_INJONCTION' => $signalement->getReferenceInjonction(),
         ];
     }
 }
