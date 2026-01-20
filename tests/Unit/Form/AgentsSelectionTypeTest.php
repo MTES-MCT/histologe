@@ -95,16 +95,13 @@ class AgentsSelectionTypeTest extends WebTestCase
         $em = static::getContainer()->get('doctrine')->getManager();
         $affectation = $em->getRepository(Affectation::class)->findOneBy([]);
 
-        $users = $affectation->getPartner()->getUsers();
-        $excluded = $users->first(); // prend le premier pour le test
-
         $dto = (new AgentSelection())->setSignalement($affectation->getSignalement());
         $form = $this->formFactory->create(AgentSelectionType::class, $dto);
 
         $config = $form->getConfig();
         $this->assertSame(AgentSelection::class, $config->getOption('data_class'));
         $this->assertNull($config->getOption('exclude_user'));
-        $this->assertSame('Sélectionnez le(s) agent(s) abonné(s) au dossier', $config->getOption('label'));
+        $this->assertSame('Sélectionnez le(s) agent(s) à abonner au dossier', $config->getOption('label'));
     }
 
     public function testBlockPrefix(): void

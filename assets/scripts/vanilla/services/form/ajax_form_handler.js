@@ -16,10 +16,10 @@ modalElements.forEach((modalElement) => {
 function clearErrors() {
   const divErrorElements = document.querySelectorAll('.fr-input-group--error');
   divErrorElements.forEach((divErrorElement) => {
-    divErrorElement.querySelectorAll('.fr-error-text').forEach((pErrorElement) => {
-      pErrorElement.remove();
-    });
-    divErrorElement.classList.remove('fr-input-group--error');
+    divErrorElement.classList.remove('fr-label--error', 'fr-input-group--error');
+  });
+  document.querySelectorAll('.fr-error-text').forEach((pErrorElement) => {
+    pErrorElement.remove();
   });
 }
 
@@ -84,32 +84,16 @@ async function submitPayload(formElement) {
       const errors = responseData.errors;
       let firstErrorElement = true;
       for (const property in errors) {
-        const inputElements = document.querySelectorAll(
-          `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"]`
+        const labelTargetErrors = document.querySelectorAll(
+          '.fr-modal--opened [data-error-target="1"], .single-ajax-form-container [data-error-target="1"]'
         );
-        let inputElement;
-        let parentElement;
-        if (inputElements.length > 1) {
-          inputElement = inputElements[0];
-          parentElement = inputElement.closest('.fr-fieldset');
-        } else {
-          inputElement =
-            document.querySelector(
-              `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"] `
-            ) ||
-            document.querySelector(
-              '.fr-modal--opened .no-field-errors, .single-ajax-form-container .no-field-errors'
-            ) ||
-            document.querySelector('.fr-modal--opened input, .single-ajax-form-container input');
-          parentElement = inputElement.parentElement;
-        }
-        inputElement.setAttribute('aria-describedby', `${property}-desc-error`);
-        parentElement.classList.add('fr-input-group--error');
 
-        const existingErrorElement = document.getElementById(`${property}-desc-error`);
-        if (!existingErrorElement) {
+        if (labelTargetErrors.length > 0) {
+          const labelElement = labelTargetErrors[0];
+          labelElement.classList.add('fr-label--error', 'fr-input-group--error');
+
           const pElement = document.createElement('p');
-          pElement.classList.add('fr-error-text');
+          pElement.classList.add('fr-error-text', 'fr-my-3v');
           pElement.id = `${property}-desc-error`;
 
           let messageError = '';
@@ -118,11 +102,49 @@ async function submitPayload(formElement) {
           });
           pElement.innerHTML = messageError;
 
-          parentElement.appendChild(pElement);
-        }
-        if (firstErrorElement) {
-          inputElement.focus();
-          firstErrorElement = false;
+          labelElement.after(pElement);
+        } else {
+          const inputElements = document.querySelectorAll(
+            `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"]`
+          );
+          let inputElement;
+          let parentElement;
+          if (inputElements.length > 1) {
+            inputElement = inputElements[0];
+            parentElement = inputElement.closest('.fr-fieldset');
+          } else {
+            inputElement =
+              document.querySelector(
+                `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"] `
+              ) ||
+              document.querySelector(
+                '.fr-modal--opened .no-field-errors, .single-ajax-form-container .no-field-errors'
+              ) ||
+              document.querySelector('.fr-modal--opened input, .single-ajax-form-container input');
+            parentElement = inputElement.parentElement;
+          }
+
+          inputElement.setAttribute('aria-describedby', `${property}-desc-error`);
+          parentElement.classList.add('fr-input-group--error');
+
+          const existingErrorElement = document.getElementById(`${property}-desc-error`);
+          if (!existingErrorElement) {
+            const pElement = document.createElement('p');
+            pElement.classList.add('fr-error-text');
+            pElement.id = `${property}-desc-error`;
+
+            let messageError = '';
+            errors[property].errors.forEach((error) => {
+              messageError = messageError + error;
+            });
+            pElement.innerHTML = messageError;
+
+            parentElement.appendChild(pElement);
+          }
+          if (firstErrorElement) {
+            inputElement.focus();
+            firstErrorElement = false;
+          }
         }
       }
       resetSubmitButton(submitElement);
@@ -157,6 +179,18 @@ function resetSubmitButton(submitElement) {
   }
 }
 
+function replaceAffectation(affectationId) {
+  // Prend l'option dans le select signalement-affectation-select-affecte et la place dans signalement-affectation-select-disponible
+  const selectAffecte = document.getElementById('signalement-affectation-select-affecte');
+  const selectDisponible = document.getElementById('signalement-affectation-select-disponible');
+
+  const optionToMove = selectAffecte.querySelector(`option[value="${affectationId}"]`);
+  if (optionToMove) {
+    selectAffecte.removeChild(optionToMove);
+    selectDisponible.appendChild(optionToMove);
+  }
+}
+
 //gère la suppression des affectations et des suivis
 document.addEventListener('click', (event) => {
   const actionBtn = event.target.closest('[data-delete]');
@@ -174,6 +208,10 @@ document.addEventListener('click', (event) => {
     }).then((r) => {
       if (r.ok) {
         jsonResponseHandler(r);
+        const affectationId = actionBtn.getAttribute('data-move-affectation-partner-id');
+        if (affectationId) {
+          replaceAffectation(affectationId);
+        }
       }
     });
   }

@@ -16,7 +16,7 @@
                         </div>
                         {{ form_errors(agentsSubscriptionForm) }}
                         <div class="fr-select-group agent-subscription-container">
-                            {{ form_label(agentsSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]'}}) }}
+                            {{ form_label(agentsSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]', 'data-error-target': '1'}}) }}
                             <div class="fr-grid-row">
                                 {% for agent in agentsSubscriptionForm.agents %}
                                     <div class="fr-checkbox-group fr-col-6">
