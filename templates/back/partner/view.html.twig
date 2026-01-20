@@ -172,7 +172,7 @@
                 <div class="fr-col-12">
                     <h3>Communes</h3>
                     {% for commune in get_communes_by_insee(partner.insee) %}
-                        <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ commune.nom }}</span>
+                        <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ commune.nom(withArrondissement: true) }}</span>
                     {% else %}
                         <b><i>Aucune commune</i></b>
                     {% endfor %}

@@ -34,7 +34,7 @@
             <td>
                 {% set communes = get_communes_by_insee(partner.insee) %}
                 {% for commune in communes|slice(0, 3) %}
-                    <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ commune.nom }}</div>
+                    <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ commune.nom(withArrondissement: true) }}</div>
                 {% else %}
                     /
                 {% endfor %}

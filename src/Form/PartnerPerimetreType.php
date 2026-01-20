@@ -45,7 +45,9 @@ class PartnerPerimetreType extends AbstractType
                         ->setParameter('territory', $territory)
                         ->orderBy('c.nom', 'ASC');
                 },
-                'choice_label' => 'nom',
+                'choice_label' => function (Commune $commune): string {
+                    return $commune->getNom(withArrondissement: true);
+                },
                 'help' => 'Sélectionner la ou la liste des communes d\'intervention',
                 'required' => false,
                 'noselectionlabel' => 'Sélectionnez les communes',
