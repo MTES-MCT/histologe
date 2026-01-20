@@ -2546,6 +2546,68 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return Signalement[]
+     *
+     * @throws \Exception
+     */
+    public function findInjonctionToRemind(\DateTimeImmutable $beforeDate): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.statut = :statut');
+
+        // Au moins une réponse "oui" ou "oui avec aide" avant la date
+        $qb->andWhere(
+            $qb->expr()->exists(
+                $this->createQueryBuilder('s1')
+                    ->select('1')
+                    ->join('s1.suivis', 'su1')
+                    ->where('s1 = s')
+                    ->andWhere('su1.category = :ouiCategory OR su1.category = :aideCategory')
+                    ->andWhere(
+                        $qb->expr()->lt('su1.createdAt', ':date')
+                    )
+                    ->getDQL()
+            )
+        );
+        $qb->setParameter('ouiCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI)
+            ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
+
+        // Soit pas de rappel envoyé, soit un rappel envoyé avant la date
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->not(
+                    $qb->expr()->exists(
+                        $this->createQueryBuilder('s2')
+                            ->select('1')
+                            ->join('s2.suivis', 'su2')
+                            ->where('s2 = s')
+                            ->andWhere('su2.category = :reminderCategory')
+                            ->getDQL()
+                    )
+                ),
+                $qb->expr()->exists(
+                    $this->createQueryBuilder('s3')
+                        ->select('1')
+                        ->join('s3.suivis', 'su3')
+                        ->where('s3 = s')
+                        ->andWhere('su3.category = :reminderCategory')
+                        ->andWhere(
+                            $qb->expr()->lt('su3.createdAt', ':date')
+                        )
+                        ->getDQL()
+                )
+            )
+        );
+        $qb->setParameter('reminderCategory', SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER);
+
+        $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('date', $beforeDate)
+            ->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function getActiveSignalementsForUser(User $user, ?bool $count = false): array|int
     {
         $qb = $this->createQueryBuilder('s');

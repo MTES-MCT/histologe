@@ -579,4 +579,22 @@ class SignalementRepositoryTest extends KernelTestCase
         $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
         $this->assertCount(1, $signalements);
     }
+
+    public function testFindInjonctionToRemind(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $beforeDate = new \DateTimeImmutable('-1 month');
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate);
+        $this->assertCount(0, $signalements);
+
+        $container = self::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        $beforeDate = $mockClock->now()->modify('-1 month');
+        $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
+        $this->assertCount(1, $signalements);
+    }
 }
