@@ -60,6 +60,7 @@ class SuiviRepository extends ServiceEntityRepository
         // - zéro ASK_FEEDBACK_SENT depuis ce dernier suivi public
         // - statut actif
         // - non importé
+        // - non vacant
         // - pas de demande d'abandon de procédure
         $connection = $this->getEntityManager()->getConnection();
 
@@ -87,6 +88,7 @@ class SuiviRepository extends ServiceEntityRepository
         AND (af.last_af IS NULL OR af.last_af < pub.last_public)
         AND s.statut = :status_active
         AND s.is_imported != 1
+        AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
         AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
         LIMIT '.$this->limitDailyRelancesByRequest;
 
@@ -107,6 +109,7 @@ class SuiviRepository extends ServiceEntityRepository
         // - 1 et un seul ASK_FEEDBACK_SENT depuis ce dernier suivi public > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
         // - statut actif
         // - non importé
+        // - non vacant
         // - pas de demande d'abandon de procédure
         $connection = $this->getEntityManager()->getConnection();
 
@@ -142,6 +145,7 @@ class SuiviRepository extends ServiceEntityRepository
                 ) af ON af.signalement_id = s.id
                 WHERE s.statut = :status_active
                 AND s.is_imported != 1
+                AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
                 LIMIT '.$this->limitDailyRelancesByRequest;
 
@@ -161,6 +165,7 @@ class SuiviRepository extends ServiceEntityRepository
         // - 2 et seulement 2 ASK_FEEDBACK_SENT depuis le dernier suivi public (dont le dernier) > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
         // - statut actif
         // - non importé
+        // - non vacant
         // - pas de demande d'abandon de procédure
         $connection = $this->getEntityManager()->getConnection();
 
@@ -191,6 +196,7 @@ class SuiviRepository extends ServiceEntityRepository
         // - au moins 3 ASK_FEEDBACK_SENT depuis le dernier suivi public (dont le dernier) > 90 jours (Suivi::DEFAULT_PERIOD_BOUCLE)
         // - statut actif
         // - non importé
+        // - non vacant
         // - pas de demande d'abandon de procédure
         $connection = $this->getEntityManager()->getConnection();
 
@@ -275,7 +281,8 @@ class SuiviRepository extends ServiceEntityRepository
                 AND su2.category <> :category_ask_feedback
                 WHERE su2.signalement_id IS NULL
                 AND s.statut = :status_active
-                AND s.is_imported != 1 '
+                AND s.is_imported != 1 
+                AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)'
                 .$whereLastSuiviDelay
                 .$whereExcludeUsagerAbandonProcedure
                 .$whereTerritory

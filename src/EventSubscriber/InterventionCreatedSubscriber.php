@@ -32,13 +32,14 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getIntervention();
         $signalement = $intervention->getSignalement();
+        $isLogementVacant = $signalement->getIsLogementVacant();
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
         $isPublic = true;
-        if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
+        if ($isLogementVacant || (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant())) {
             $isPublic = false;
         }
         $suivi = $this->suiviManager->createSuivi(
-            signalement: $intervention->getSignalement(),
+            signalement: $signalement,
             description: $description,
             type: Suivi::TYPE_AUTO,
             category : SuiviCategory::INTERVENTION_IS_CREATED,
@@ -48,22 +49,24 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
-        if (InterventionType::VISITE === $intervention->getType()
-            && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
-        ) {
-            $this->visiteNotifier->notifyUsagers(
-                intervention: $intervention,
-                notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER,
-                suivi: $suivi,
-            );
-        }
+        if (!$isLogementVacant) {
+            if (InterventionType::VISITE === $intervention->getType()
+                && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
+            ) {
+                $this->visiteNotifier->notifyUsagers(
+                    intervention: $intervention,
+                    notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER,
+                    suivi: $suivi,
+                );
+            }
 
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
-            $this->visiteNotifier->notifyUsagers(
-                intervention: $intervention,
-                notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
-                suivi: $suivi
-            );
+            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
+                $this->visiteNotifier->notifyUsagers(
+                    intervention: $intervention,
+                    notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
+                    suivi: $suivi
+                );
+            }
         }
 
         $this->visiteNotifier->notifyInAppSubscribers(

@@ -109,6 +109,33 @@ class SignalementVisitesControllerTest extends WebTestCase
         $this->assertEquals(['title' => 'Visite ajoutée', 'message' => 'La date de visite a bien été définie.'], $successMessages[0]);
     }
 
+    public function testVisiteOnLogementVacant(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000010']);
+        $route = $this->router->generate('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('GET', $route);
+
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'visite-add' => [
+                    'date' => '2123-01-01',
+                    'time' => '10:00',
+                    'partner' => 'extern',
+                    'externalOperator' => 'Opérateur externe',
+                ],
+                '_token' => $this->generateCsrfToken(
+                    $this->client,
+                    'signalement_add_visit_'.$signalement->getId()
+                ),
+            ]
+        );
+        $this->assertEmailCount(0);
+    }
+
     public function testAddPastVisite(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
