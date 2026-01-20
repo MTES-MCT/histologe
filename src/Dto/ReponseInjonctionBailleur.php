@@ -10,6 +10,7 @@ class ReponseInjonctionBailleur
 {
     public const REPONSE_OUI = 'REPONSE_OUI';
     public const REPONSE_OUI_AVEC_AIDE = 'REPONSE_OUI_AVEC_AIDE';
+    public const REPONSE_OUI_DEMARCHES_COMMENCEES = 'REPONSE_OUI_DEMARCHES_COMMENCEES';
     public const REPONSE_NON = 'REPONSE_NON';
 
     #[Assert\NotBlank()]
@@ -23,7 +24,7 @@ class ReponseInjonctionBailleur
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context, mixed $payload): void
     {
-        if (in_array($this->reponse, [self::REPONSE_OUI_AVEC_AIDE, self::REPONSE_NON])) {
+        if (in_array($this->reponse, [self::REPONSE_OUI_AVEC_AIDE, self::REPONSE_OUI_DEMARCHES_COMMENCEES, self::REPONSE_NON])) {
             if (empty($this->description)) {
                 $context->buildViolation('Veuillez renseigner un commentaire.')
                     ->atPath('description')
