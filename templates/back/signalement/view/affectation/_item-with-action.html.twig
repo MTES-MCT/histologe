@@ -66,6 +66,7 @@
                                 <button title="Désaffecter le partenaire"
                                         data-delete="{{ path('back_signalement_remove_partner',{uuid:signalement.uuid,affectation:partnerAffectation.id}) }}"
                                         data-token="{{ csrf_token('signalement_remove_partner_'~signalement.id) }}"
+                                        data-move-affectation-partner-id="{{ partnerAffectation.partner.id }}"
                                         class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line partner-row-delete"></button>
                             {% endif %}
                         </div>

@@ -85,13 +85,13 @@ async function submitPayload(formElement) {
       let firstErrorElement = true;
       for (const property in errors) {
         const labelTargetErrors = document.querySelectorAll(
-          `.fr-modal--opened [data-error-target="1"], .single-ajax-form-container [data-error-target="1"]`
+          '.fr-modal--opened [data-error-target="1"], .single-ajax-form-container [data-error-target="1"]'
         );
 
         if (labelTargetErrors.length > 0) {
           const labelElement = labelTargetErrors[0];
           labelElement.classList.add('fr-label--error', 'fr-input-group--error');
-          
+
           const pElement = document.createElement('p');
           pElement.classList.add('fr-error-text', 'fr-my-3v');
           pElement.id = `${property}-desc-error`;
@@ -103,7 +103,6 @@ async function submitPayload(formElement) {
           pElement.innerHTML = messageError;
 
           labelElement.after(pElement);
-
         } else {
           const inputElements = document.querySelectorAll(
             `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"]`
@@ -124,7 +123,7 @@ async function submitPayload(formElement) {
               document.querySelector('.fr-modal--opened input, .single-ajax-form-container input');
             parentElement = inputElement.parentElement;
           }
-        
+
           inputElement.setAttribute('aria-describedby', `${property}-desc-error`);
           parentElement.classList.add('fr-input-group--error');
 
@@ -180,6 +179,18 @@ function resetSubmitButton(submitElement) {
   }
 }
 
+function replaceAffectation(affectationId) {
+  // Prend l'option dans le select signalement-affectation-select-affecte et la place dans signalement-affectation-select-disponible
+  const selectAffecte = document.getElementById('signalement-affectation-select-affecte');
+  const selectDisponible = document.getElementById('signalement-affectation-select-disponible');
+
+  const optionToMove = selectAffecte.querySelector(`option[value="${affectationId}"]`);
+  if (optionToMove) {
+    selectAffecte.removeChild(optionToMove);
+    selectDisponible.appendChild(optionToMove);
+  }
+}
+
 //gère la suppression des affectations et des suivis
 document.addEventListener('click', (event) => {
   const actionBtn = event.target.closest('[data-delete]');
@@ -197,6 +208,10 @@ document.addEventListener('click', (event) => {
     }).then((r) => {
       if (r.ok) {
         jsonResponseHandler(r);
+        const affectationId = actionBtn.getAttribute('data-move-affectation-partner-id');
+        if (affectationId) {
+          replaceAffectation(affectationId);
+        }
       }
     });
   }

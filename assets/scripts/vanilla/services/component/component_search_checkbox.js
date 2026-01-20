@@ -160,7 +160,7 @@ function searchCheckboxCompleteInputValue(element) {
       checkbox.checked = false;
       searchCheckboxCompleteInputValue(element);
     });
-    
+
     if (badgesContainer) {
       badgesContainer.appendChild(badge);
     }
