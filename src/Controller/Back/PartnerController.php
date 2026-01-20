@@ -435,7 +435,7 @@ class PartnerController extends AbstractController
 
                 $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
 
-                return $this->json(['redirect' => true, 'url' => $url]);
+                return $this->json(['redirect' => true, 'url' => $url, '_fragment' => 'agents']);
             }
             $formMultiMail->get('email')->addError(new FormError('Agent introuvable avec cette adresse e-mail.'));
         }
@@ -490,7 +490,7 @@ class PartnerController extends AbstractController
 
             $url = $this->generateUrl('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'agents'], UrlGeneratorInterface::ABSOLUTE_URL);
 
-            return $this->json(['redirect' => true, 'url' => $url]);
+            return $this->json(['redirect' => true, 'url' => $url, '_fragment' => 'agents']);
         }
         $content = $this->renderView('_partials/_modal_user_create_form.html.twig', ['formUserPartner' => $formUserPartner]);
 

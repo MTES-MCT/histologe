@@ -111,8 +111,9 @@ class BackZoneController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', ['title' => 'Zone ajoutée', 'message' => 'La zone a bien été ajoutée.']);
+            $url = $this->generateUrl('back_territory_management_zone_show', ['zone' => $zone->getId()]);
 
-            return $this->redirectToRoute('back_territory_management_zone_show', ['zone' => $zone->getId()]);
+            return $this->json(['redirect' => true, 'url' => $url]);
         }
 
         return $this->json(['code' => Response::HTTP_OK]);
