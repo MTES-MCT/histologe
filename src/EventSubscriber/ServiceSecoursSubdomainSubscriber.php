@@ -18,28 +18,28 @@ readonly class ServiceSecoursSubdomainSubscriber implements EventSubscriberInter
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$event->isMainRequest()) {
-            return;
-        }
-
-        $request = $event->getRequest();
-        $host = $request->getHost();
-
-        if (!str_starts_with($host, 'service-secours.')) {
-            return;
-        }
-
-        $routeName = $request->attributes->get('_route');
-
-        // Autorise uniquement les routes du ServiceSecoursController (préfixées par "service_secours_")
-        // et les routes système nécessaires (_wdt, _profiler, etc.)
-        if (null !== $routeName && (
-            str_starts_with($routeName, 'service_secours_')
-            || str_starts_with($routeName, '_')
-        )) {
-            return;
-        }
-
-        throw new NotFoundHttpException();
+        //        if (!$event->isMainRequest()) {
+        //            return;
+        //        }
+        //
+        //        $request = $event->getRequest();
+        //        $host = $request->getHost();
+        //
+        //        if (!str_starts_with($host, 'service-secours.')) {
+        //            return;
+        //        }
+        //
+        //        $routeName = $request->attributes->get('_route');
+        //
+        //        // Autorise uniquement les routes du ServiceSecoursController (préfixées par "service_secours_")
+        //        // et les routes système nécessaires (_wdt, _profiler, etc.)
+        //        if (null !== $routeName && (
+        //            str_starts_with($routeName, 'service_secours_')
+        //            || str_starts_with($routeName, '_')
+        //        )) {
+        //            return;
+        //        }
+        //
+        //        throw new NotFoundHttpException();
     }
 }

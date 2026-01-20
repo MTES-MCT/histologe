@@ -10,10 +10,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/', host: 'service-secours.{domain}', requirements: ['domain' => '[^.]+(?:\.[^.]+)*'])]
+#[Route(
+    path : '/',
+    requirements: ['domain' => '[^.]+(?:\.[^.]+)*'],
+    host: 'service-secours.{domain}',
+    priority: 100
+)
+]
 class ServiceSecoursController extends AbstractController
 {
-    #[Route('/signalement', name: 'service_secours_index', methods: ['GET', 'POST'])]
+    #[Route('/',
+        name: 'service_secours_index',
+        methods: ['GET', 'POST'])
+    ]
     public function index(Request $request): Response
     {
         $signalementRequest = new SignalementRequest();
@@ -28,5 +37,15 @@ class ServiceSecoursController extends AbstractController
         return $this->render('service_secours/index.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    #[Route(
+        '/{any}',
+        name: 'service_secours_fallback',
+        requirements: ['any' => '(?!_wdt/|_profiler/).*'],
+    )]
+    public function fallback(): Response
+    {
+        throw $this->createNotFoundException();
     }
 }

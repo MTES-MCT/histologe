@@ -1,6 +1,8 @@
 {
     "name": "signal logement (service secours)",
     "short_name": "signal logement",
+    "start_url": "/",
+    "scope": "/",
     "icons": [
         {
             "src": "/service-secours/android-chrome-192x192.png",
@@ -15,5 +17,6 @@
     ],
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
-    "display": "standalone"
+    "display": "standalone",
+    "orientation": "portrait"
 }
