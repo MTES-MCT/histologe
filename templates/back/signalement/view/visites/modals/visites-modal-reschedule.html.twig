@@ -15,8 +15,10 @@
 
                             <div class="fr-alert fr-alert--info">
                                 <p>
-                                    Si vous choisissez une date future, un suivi de modification de date sera envoyé à l'usager.
-                                    <br>
+                                    {% if not signalement.isLogementVacant %}
+                                        Si vous choisissez une date future, un suivi de modification de date sera envoyé à l'usager.
+                                        <br>
+                                    {% endif %}
                                     Si vous choisissez une date passée, vous pourrez saisir les conclusions de la visite.
                                 </p>
                             </div>
