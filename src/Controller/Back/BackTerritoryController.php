@@ -8,7 +8,7 @@ use App\Repository\BailleurRepository;
 use App\Security\Voter\TerritoryVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/bo/territoires')]
 class BackTerritoryController extends AbstractController

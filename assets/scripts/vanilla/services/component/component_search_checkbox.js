@@ -8,6 +8,7 @@ function initSearchCheckboxWidgets() {
     try {
       searchCheckboxCompleteInputValue(element);
       const input = element.querySelector('input[type="text"]');
+      const badgesContainer = element.querySelector('.search-checkbox-badges');
       const checkboxesContainer = element.querySelector('.search-checkbox');
       const closeBtn = element.querySelector('.fr-btn--close');
       // init values
@@ -33,6 +34,7 @@ function initSearchCheckboxWidgets() {
         checkboxesContainer.scrollTop = 0;
         searchCheckboxOrderCheckboxes(element);
         input.value = '';
+        badgesContainer.innerHTML = '';
         closeBtn.classList.remove('fr-hidden');
       });
       // filter choices on input keyup
@@ -124,18 +126,38 @@ function initSearchCheckboxWidgets() {
     }
   });
 }
+
 function searchCheckboxCompleteInputValue(element) {
   const input = element.querySelector('input[type="text"]');
   const checkboxesContainer = element.querySelector('.search-checkbox');
   const checkedCheckboxes = checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked');
+  const badgesContainer = element.querySelector('.search-checkbox-badges');
 
-  if (checkedCheckboxes.length === 0) {
-    input.value = '';
-  } else if (checkedCheckboxes.length > 1) {
+  badgesContainer.innerHTML = '';
+  input.value = '';
+
+  if (checkedCheckboxes.length > 1) {
     input.value = checkedCheckboxes.length + ' éléments sélectionnés';
   } else {
     input.value = checkedCheckboxes.length + ' élément sélectionné';
   }
+
+  checkedCheckboxes.forEach((checkbox) => {
+    const label = checkbox.closest('.fr-fieldset__element').querySelector('label').textContent;
+    const badge = document.createElement('span');
+    badge.className = 'fr-badge fr-badge--blue-ecume fr-m-1v search-and-select-badge-remove';
+    badge.setAttribute('aria-label', `Retirer ${label}`);
+    badge.textContent = label;
+    const closeIcon = document.createElement('span');
+    closeIcon.className = 'fr-icon-close-line fr-ml-1v';
+    closeIcon.setAttribute('aria-hidden', 'true');
+    badge.appendChild(closeIcon);
+    badge.addEventListener('click', () => {
+      checkbox.checked = false;
+      searchCheckboxCompleteInputValue(element);
+    });
+    badgesContainer.appendChild(badge);
+  });
 }
 
 function searchCheckboxOrderCheckboxes(element) {

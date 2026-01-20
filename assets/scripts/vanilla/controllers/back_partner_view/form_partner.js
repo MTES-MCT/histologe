@@ -46,6 +46,36 @@ function histoUpdateFieldsVisibility() {
     }
   }
 }
+
+function histoUpdateCompetencesFromPartnerType() {
+  const partnerTypeSelect = document.getElementById('partner_type');
+  const competenceContainer = document.getElementById('partner_competence');
+
+  if (!partnerTypeSelect || !competenceContainer) {
+    return;
+  }
+
+  competenceContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+    checkbox.checked = false;
+  });
+
+  const selectedOption = partnerTypeSelect.options[partnerTypeSelect.selectedIndex];
+  if (!selectedOption || !selectedOption.hasAttribute('data-competences')) {
+    return;
+  }
+
+  const competences = JSON.parse(selectedOption.getAttribute('data-competences') || '[]');
+
+  competences.forEach((competenceValue) => {
+    const checkbox = competenceContainer.querySelector(
+      `input[type="checkbox"][value="${competenceValue}"]`
+    );
+    if (checkbox) {
+      checkbox.checked = true;
+    }
+  });
+}
+
 function histoUpdateValueFromData(elementName, elementData, target) {
   document.querySelector(elementName).value = target.getAttribute(elementData);
 }
@@ -122,8 +152,14 @@ document.addEventListener('click', (evt) => {
 
 if (document.querySelector('#partner_type')) {
   histoUpdateFieldsVisibility();
+  const partnerForm = document.querySelector('form[name="partner"]');
+  const isCreateMode = partnerForm && partnerForm.dataset.mode === 'create';
+
   document.querySelector('#partner_type').addEventListener('change', () => {
     histoUpdateFieldsVisibility();
+    if (isCreateMode) {
+      histoUpdateCompetencesFromPartnerType();
+    }
   });
 }
 
@@ -141,7 +177,7 @@ if (territorySelect) {
       }
 
       // route back_territory_bailleurs
-      fetch(`/bo/territoire/${territoryId}/bailleurs`)
+      fetch(`/bo/territoires/${territoryId}/bailleurs`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Erreur lors de la récupération des bailleurs sociaux.');
