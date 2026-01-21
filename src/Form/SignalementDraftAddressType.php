@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
@@ -162,6 +163,19 @@ class SignalementDraftAddressType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $signalement->getLienDeclarantOccupant(),
+            ])
+            ->add('profileOccupant', ChoiceType::class, [
+                'label' => 'Type d\'occupant',
+                'choices' => [
+                    ProfileOccupant::LOCATAIRE->label() => ProfileOccupant::LOCATAIRE->value,
+                    ProfileOccupant::BAILLEUR_OCCUPANT->label() => ProfileOccupant::BAILLEUR_OCCUPANT->value,
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $signalement->getProfileOccupant()?->value ?? '',
             ])
             ->add('isLogementSocial', ChoiceType::class, [
                 'label' => 'Logement social <span class="text-required">*</span>',

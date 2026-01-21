@@ -43,6 +43,8 @@ class CoordonneesFoyerRequest implements RequestInterface
         private readonly ?string $telephone = null,
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephoneBis = null,
+        #[Assert\Choice(choices: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'], message: 'Le type d\'occupant est incorrect.')]
+        private readonly ?string $profileOccupant = null,
     ) {
     }
 
@@ -84,5 +86,10 @@ class CoordonneesFoyerRequest implements RequestInterface
     public function getTelephoneBis(): ?string
     {
         return $this->telephoneBis;
+    }
+
+    public function getProfileOccupant(): ?string
+    {
+        return $this->profileOccupant;
     }
 }
