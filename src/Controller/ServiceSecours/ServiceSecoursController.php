@@ -42,7 +42,7 @@ class ServiceSecoursController extends AbstractController
     #[Route(
         '/{any}',
         name: 'service_secours_fallback',
-        requirements: ['any' => '(?!_wdt/|_profiler/).*'],
+        requirements: ['any' => '(?!_wdt/|_profiler/|csp-report).*'],
     )]
     public function fallback(): Response
     {
