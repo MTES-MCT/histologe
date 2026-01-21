@@ -10,6 +10,7 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
@@ -59,6 +60,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
     private ?ProfileDeclarant $profileDeclarant = null;
+
+    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileOccupant::class)]
+    private ?ProfileOccupant $profileOccupant = null;
 
     /** @var Collection<int, Criticite> $criticites */
     #[ORM\ManyToMany(targetEntity: Criticite::class, inversedBy: 'signalements')]
@@ -2391,6 +2395,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
             default:
                 return false;
         }
+    }
+
+    public function getProfileOccupant(): ?ProfileOccupant
+    {
+        return $this->profileOccupant;
+    }
+
+    public function setProfileOccupant(?ProfileOccupant $profileOccupant): static
+    {
+        $this->profileOccupant = $profileOccupant;
+
+        return $this;
     }
 
     public function getPrenomProprio(): ?string

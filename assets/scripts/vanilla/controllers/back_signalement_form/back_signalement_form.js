@@ -597,6 +597,13 @@ function initBoFormSignalementAdresse() {
   initRefreshFromRadio(
     'adresse',
     'signalement_draft_address_profileDeclarant',
+    ['#signalement_draft_address_profileOccupant'],
+    ['TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+  );
+
+  initRefreshFromRadio(
+    'adresse',
+    'signalement_draft_address_profileDeclarant',
     ['#signalement_draft_address_logementVacant'],
     ['TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', 'BAILLEUR']
   );

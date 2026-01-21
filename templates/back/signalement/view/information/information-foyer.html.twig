@@ -53,4 +53,8 @@
         <strong>Tél. sec. :</strong>
         <a href="tel:{{ signalement.telOccupantBisDecoded }}">{{ signalement.telOccupantBisDecoded|phone }}</a>
     </div>
+
+    <div class="fr-col-12">
+        <strong>Type d'occupant :</strong> {{ signalement.profileOccupant ? signalement.profileOccupant.label : 'N/C' }}
+    </div>
 </div>
