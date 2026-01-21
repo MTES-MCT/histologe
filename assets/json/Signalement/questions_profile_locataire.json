@@ -518,27 +518,26 @@
           "slug": "injonction_bailleur_paragraph_2"
         },
         {
+          "type": "SignalementFormParagraphList",
+          "values": [
+            "<strong>Engagement à réaliser les travaux :</strong> votre propriétaire reconnaît sa responsabilité et s'engage à réaliser les travaux.<br>L'avancement du dossier sera alors régulièrement suivi jusqu'à ce que le problème soit résolu.",
+            "<strong>Contestation du signalement :</strong> votre propriétaire conteste le signalement et les désordres signalés. Votre dossier sera pris en charge par les services compétents.",
+            "<strong>Pas de réponse du propriétaire :</strong> votre dossier sera pris en charge par les services compétents."
+          ],
+          "slug": "injonction_bailleur_paragraph_list_1"
+        },
+        {
           "type": "SignalementFormParagraph",
-          "customCss": "fr-ml-5v",
-          "label": "<strong>Engagement à réaliser les travaux :</strong> votre propriétaire reconnaît sa responsabilité et s'engage à réaliser les travaux.<br>L'avancement du dossier sera alors régulièrement suivi jusqu'à ce que le problème soit résolu.",
+          "label": "Bon à savoir :",
           "slug": "injonction_bailleur_paragraph_3"
         },
         {
-          "type": "SignalementFormParagraph",
-          "customCss": "fr-ml-5v",
-          "label": "<strong>Contestation du signalement :</strong> votre propriétaire conteste le signalement et les désordres signalés. Votre dossier sera pris en charge par les services compétents.",
-          "slug": "injonction_bailleur_paragraph_4"
-        },
-        {
-          "type": "SignalementFormParagraph",
-          "customCss": "fr-ml-5v",
-          "label": "<strong>Pas de réponse du propriétaire :</strong> votre dossier sera pris en charge par les services compétents.",
-          "slug": "injonction_bailleur_paragraph_5"
-        },
-        {
-          "type": "SignalementFormParagraph",
-          "label": "Bon à savoir : <br><ul><li>A tout moment, vous pouvez sortir de la démarche accélérée et passer sur une procédure ordinaire sans déposer un nouveau signalement.</li><li>Votre propriétaire accédera uniquement aux informations suivantes : votre identité, adresse, les désordres déclarés et les photos des désordres.</li></ul>",
-          "slug": "injonction_bailleur_paragraph_6"
+          "type": "SignalementFormParagraphList",
+          "values": [
+            "A tout moment, vous pouvez sortir de la démarche accélérée et passer sur une procédure ordinaire sans déposer un nouveau signalement.",
+            "Votre propriétaire accédera uniquement aux informations suivantes : votre identité, adresse, les désordres déclarés et les photos des désordres."
+          ],
+          "slug": "injonction_bailleur_paragraph_list_2"
         },
         {
           "type": "SignalementFormOnlyChoice",
@@ -564,7 +563,7 @@
         {
           "type": "SignalementFormParagraph",
           "label": "* Sous réserve de votre éligibilité à ce dispositif. Vous en serez informés après la validation de votre signalement.",
-          "slug": "injonction_bailleur_paragraph_7"
+          "slug": "injonction_bailleur_paragraph_4"
         },
         {
           "type": "SignalementFormWarning",
