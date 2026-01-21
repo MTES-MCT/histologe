@@ -57,13 +57,11 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
-            if (!$isLogementVacant) {
-                $this->visiteNotifier->notifyUsagers(
-                    intervention: $intervention,
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER,
-                    suivi: $suivi
-                );
-            }
+            $this->visiteNotifier->notifyUsagers(
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER,
+                suivi: $suivi
+            );
 
             $this->visiteNotifier->notifyInAppSubscribers(
                 intervention: $intervention,

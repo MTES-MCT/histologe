@@ -76,13 +76,11 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
-            if (!$isLogementVacant) {
-                $this->visiteNotifier->notifyUsagers(
-                    intervention: $intervention,
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER,
-                    suivi: $suivi
-                );
-            }
+            $this->visiteNotifier->notifyUsagers(
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_USAGER,
+                suivi: $suivi
+            );
 
             $this->visiteNotifier->notifySubscribers(
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_FUTURE_REMINDER_TO_PARTNER,

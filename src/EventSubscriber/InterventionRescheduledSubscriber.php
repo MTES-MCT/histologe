@@ -48,7 +48,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $signalement = $intervention->getSignalement();
             $isLogementVacant = $signalement->getIsLogementVacant();
             $suivi = $this->suiviManager->createSuivi(
-                signalement: $intervention->getSignalement(),
+                signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
@@ -58,14 +58,12 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
-            if (!$isLogementVacant) {
-                $this->visiteNotifier->notifyUsagers(
-                    intervention: $intervention,
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
-                    suivi: $suivi,
-                    previousDate: $event->getPreviousDate()
-                );
-            }
+            $this->visiteNotifier->notifyUsagers(
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
+                suivi: $suivi,
+                previousDate: $event->getPreviousDate()
+            );
 
             $this->visiteNotifier->notifyInAppSubscribers(
                 intervention: $intervention,
