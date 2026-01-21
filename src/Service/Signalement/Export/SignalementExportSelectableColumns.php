@@ -23,6 +23,7 @@ class SignalementExportSelectableColumns
         'ADRESSE_OCCUPANT' => ['name' => 'Adresse', 'description' => 'L\'adresse postale du logement', 'export' => 'adresseOccupant', 'preselected' => true],
         'CP_OCCUPANT' => ['name' => 'Code postal', 'description' => 'Le code postal du logement', 'export' => 'cpOccupant', 'preselected' => true],
         'VILLE_OCCUPANT' => ['name' => 'Commune', 'description' => 'La commune du logement', 'export' => 'villeOccupant', 'preselected' => true],
+        'PROFILE_OCCUPANT' => ['name' => 'Type occupant', 'description' => 'Le type d\'occupant du logement (locataire, propriétaire)', 'export' => 'profileOccupant', 'preselected' => false],
         'INSEE' => ['name' => 'Code INSEE', 'description' => 'Le code INSEE de la commune du signalement', 'export' => 'inseeOccupant', 'preselected' => false],
         'EPCI_NOM' => ['name' => 'EPCI', 'description' => 'L\'EPCI auquel appartient la commune du logement', 'export' => 'epciNom', 'preselected' => false],
         'ETAGE' => ['name' => 'Étage', 'description' => 'L\'étage du logement', 'export' => 'etageOccupant', 'preselected' => false],
