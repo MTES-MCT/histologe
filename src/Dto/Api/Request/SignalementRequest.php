@@ -6,6 +6,7 @@ use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
 use App\Validator as AppAssert;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -98,6 +99,19 @@ class SignalementRequest implements RequestInterface
         ],
     )]
     public ?string $profilDeclarant = null;
+
+    #[OA\Property(
+        description: 'Profil de l\'occupant.',
+        example: ProfileOccupant::LOCATAIRE->value,
+    )]
+    #[Assert\NotBlank(message: 'Veuillez renseigner le profil de l\'occupant.')]
+    #[Assert\Choice(
+        choices: [
+            ProfileOccupant::BAILLEUR_OCCUPANT->value,
+            ProfileOccupant::LOCATAIRE->value,
+        ],
+    )]
+    public ?string $profilOccupant = null;
 
     #[OA\Property(
         description: 'Lien entre le déclarant et l\'occupant.

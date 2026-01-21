@@ -255,6 +255,31 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
+          "label": "La personne qui occupe le logement est-elle propriétaire ou locataire du logement ?",
+          "slug": "signalement_concerne_profil_detail_profil_occupant",
+          "values": [
+            {
+              "label": "Locataire du logement",
+              "value": "locataire"
+            },
+            {
+              "label": "Propriétaire du logement",
+              "value": "bailleur_occupant"
+            },
+            {
+              "label": "Je ne sais pas",
+              "value": "nsp"
+            }
+          ],
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil === 'autre_logement' && (formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_particulier' || formStore.data.signalement_concerne_profil_detail_tiers === 'tiers_pro' || formStore.data.signalement_concerne_profil_detail_tiers === 'service_secours')"
+          },
+          "validate": {
+            "message": "Veuillez sélectionner le profil d'occupant"
+          }
+        },
+        {
+          "type": "SignalementFormOnlyChoice",
           "label": "Plus précisément…",
           "slug": "signalement_concerne_profil_detail_bailleur_proprietaire",
           "values": [

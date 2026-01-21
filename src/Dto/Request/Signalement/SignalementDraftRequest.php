@@ -90,7 +90,11 @@ class SignalementDraftRequest
         message: 'Le champs "signalementConcerneProfilDetailOccupant" est incorrect.'
     )]
     private ?string $signalementConcerneProfilDetailOccupant = null;
-
+    #[Assert\Choice(
+        choices: ['locataire', 'bailleur_occupant', 'nsp'],
+        message: 'Le champs "signalementConcerneProfilDetailProfilOccupant" est incorrect.'
+    )]
+    private ?string $signalementConcerneProfilDetailProfilOccupant = null;
     #[Assert\Choice(
         choices: ['tiers_particulier', 'tiers_pro', 'bailleur', 'service_secours'],
         message: 'Le champs "signalementConcerneProfilDetailTiers" est incorrect.'
@@ -700,6 +704,18 @@ class SignalementDraftRequest
     public function setSignalementConcerneProfilDetailOccupant(?string $signalementConcerneProfilDetailOccupant): self
     {
         $this->signalementConcerneProfilDetailOccupant = $signalementConcerneProfilDetailOccupant;
+
+        return $this;
+    }
+
+    public function getSignalementConcerneProfilDetailProfilOccupant(): ?string
+    {
+        return $this->signalementConcerneProfilDetailProfilOccupant;
+    }
+
+    public function setSignalementConcerneProfilDetailProfilOccupant(?string $signalementConcerneProfilDetailProfilOccupant): self
+    {
+        $this->signalementConcerneProfilDetailProfilOccupant = $signalementConcerneProfilDetailProfilOccupant;
 
         return $this;
     }
