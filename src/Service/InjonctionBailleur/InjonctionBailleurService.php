@@ -67,6 +67,13 @@ class InjonctionBailleurService
                 $this->saveEngagementTravauxBailleurPdf($signalement);
                 $this->assignHelpingPartners($signalement);
                 break;
+            case ReponseInjonctionBailleur::REPONSE_OUI_DEMARCHES_COMMENCEES:
+                $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés, et indique que les démarches ont déjà commencé.';
+                $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES;
+                $this->suiviManager->createSuivi(signalement: $signalement, description: $contenu, type: Suivi::TYPE_AUTO, category: $category, isPublic: true);
+                $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
+                $this->saveEngagementTravauxBailleurPdf($signalement);
+                break;
             case ReponseInjonctionBailleur::REPONSE_NON:
                 $contenu = 'Le bailleur refuse de résoudre les désordres signalés, le signalement va être pris en charge par les partenaires compétents.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON;

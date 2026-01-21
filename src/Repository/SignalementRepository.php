@@ -2531,13 +2531,14 @@ class SignalementRepository extends ServiceEntityRepository
                         ->select('1')
                         ->join('s1.suivis', 'su1')
                         ->where('s1 = s')
-                        ->andWhere('su1.category = :ouiCategory OR su1.category = :aideCategory')
+                        ->andWhere('su1.category = :ouiCategory OR su1.category = :aideCategory OR su1.category = :demarchesCategory')
                         ->getDQL()
                 )
             )
         );
         $qb->setParameter('ouiCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI)
-            ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
+            ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE)
+            ->setParameter('demarchesCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES);
 
         $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
@@ -2563,7 +2564,7 @@ class SignalementRepository extends ServiceEntityRepository
                     ->select('1')
                     ->join('s1.suivis', 'su1')
                     ->where('s1 = s')
-                    ->andWhere('su1.category = :ouiCategory OR su1.category = :aideCategory')
+                    ->andWhere('su1.category = :ouiCategory OR su1.category = :aideCategory OR su1.category = :demarchesCategory')
                     ->andWhere(
                         $qb->expr()->lt('su1.createdAt', ':date')
                     )
@@ -2571,7 +2572,8 @@ class SignalementRepository extends ServiceEntityRepository
             )
         );
         $qb->setParameter('ouiCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI)
-            ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
+            ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE)
+            ->setParameter('demarchesCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES);
 
         // Soit pas de rappel envoyé, soit un rappel envoyé avant la date
         $qb->andWhere(

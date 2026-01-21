@@ -20,6 +20,7 @@ class ReponseInjonctionBailleurType extends AbstractType
                 'choices' => [
                     'Oui' => ReponseInjonctionBailleur::REPONSE_OUI,
                     'Oui avec aide' => ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE,
+                    'Oui, les démarches ont commencé' => ReponseInjonctionBailleur::REPONSE_OUI_DEMARCHES_COMMENCEES,
                     'Non' => ReponseInjonctionBailleur::REPONSE_NON,
                 ],
                 'required' => false,
@@ -36,6 +37,10 @@ class ReponseInjonctionBailleurType extends AbstractType
                             'data-dsfr-label' => 'Oui, je m\'engage à réaliser les travaux nécessaires et j\'ai besoin d\'un accompagnement',
                             'data-dsfr-hint' => 'Les services de l\'ADIL et de France Rénov pourront vous accompagner',
                         ],
+                        ReponseInjonctionBailleur::REPONSE_OUI_DEMARCHES_COMMENCEES => [
+                            'data-dsfr-label' => 'Oui, je m\'engage à réaliser les travaux nécessaires et j\'ai déjà commencé les démarches',
+                            'data-dsfr-hint' => 'Les travaux ont déjà débuté ou les devis sont en cours',
+                        ],
                         ReponseInjonctionBailleur::REPONSE_NON => [
                             'data-dsfr-label' => 'Non, je conteste les désordres déclarés et ne m\'engage pas à réaliser de travaux',
                             'data-dsfr-hint' => 'Le dossier sera transmis aux autorités compétentes.',
@@ -49,6 +54,7 @@ class ReponseInjonctionBailleurType extends AbstractType
                 'label_attr' => [
                     'data-label-oui' => 'Souhaitez-vous apporter des précisions sur la situation ? (facultatif)',
                     'data-label-oui-avec-aide' => 'Précisez votre situation et l\'aide attendue',
+                    'data-label-oui-demarches-commencees' => 'Précisez les démarches que vous avez engagées',
                     'data-label-non' => 'Précisez la raison de votre refus',
                 ],
                 'help' => 'Dix (10) caractères minimum',

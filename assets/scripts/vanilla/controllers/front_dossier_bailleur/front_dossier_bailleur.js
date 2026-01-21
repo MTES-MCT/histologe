@@ -36,6 +36,10 @@ if (reponseInjonctionBailleurDescription) {
           textNode = document.createTextNode(label.getAttribute('data-label-oui-avec-aide'));
           reponseInjonctionBailleurEngagementTravaux.classList.remove('fr-hidden');
           break;
+        case 'REPONSE_OUI_DEMARCHES_COMMENCEES':
+          textNode = document.createTextNode(label.getAttribute('data-label-oui-demarches-commencees'));
+          reponseInjonctionBailleurEngagementTravaux.classList.remove('fr-hidden');
+          break;
         case 'REPONSE_NON':
           textNode = document.createTextNode(label.getAttribute('data-label-non'));
           reponseInjonctionBailleurEngagementTravaux.classList.add('fr-hidden');
