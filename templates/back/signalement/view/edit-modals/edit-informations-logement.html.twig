@@ -125,6 +125,12 @@
                                         signalement.isV2)
                                     }}
                                 </label>
+                                <div class="fr-alert fr-alert--warning fr-mt-2v fr-mb-2v">
+                                    <p>
+                                        Si vous indiquez que le logement est vacant, les usagers (occupant et tiers déclarant) ne recevront plus de mises à jour sur le dossier, 
+                                        et vous ne pourrez plus partager de suivis aux usagers. Vous pourrez toujours effectuer des actions sur le dossier.
+                                    </p>
+                                </div>
                                 <select class="fr-select" id="informationLogementVacant" name="logementVacant">
                                     <option value="" {{ signalement.isLogementVacant not in [true, false] ? 'selected' : '' }}></option>
                                     <option value="oui" {{ signalement.isLogementVacant is same as true ? 'selected' : '' }}>Oui</option>

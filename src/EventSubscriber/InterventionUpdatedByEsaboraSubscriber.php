@@ -44,26 +44,24 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
-        if (!$isLogementVacant) {
-            if (InterventionType::VISITE === $intervention->getType()
-                && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
-                && $suivi->getIsPublic()
-            ) {
-                $this->visiteNotifier->notifyUsagers(
-                    intervention: $intervention,
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
-                    suivi: $suivi,
-                    previousDate: $intervention->getPreviousScheduledAt()
-                );
-            }
+        if (InterventionType::VISITE === $intervention->getType()
+            && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
+            && $suivi->getIsPublic()
+        ) {
+            $this->visiteNotifier->notifyUsagers(
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
+                suivi: $suivi,
+                previousDate: $intervention->getPreviousScheduledAt()
+            );
+        }
 
-            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
-                $this->visiteNotifier->notifyUsagers(
-                    intervention: $intervention,
-                    notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
-                    suivi: $suivi,
-                );
-            }
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
+            $this->visiteNotifier->notifyUsagers(
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
+                suivi: $suivi,
+            );
         }
 
         $this->visiteNotifier->notifyInAppSubscribers(

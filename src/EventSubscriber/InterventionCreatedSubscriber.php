@@ -49,24 +49,22 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
-        if (!$isLogementVacant) {
-            if (InterventionType::VISITE === $intervention->getType()
-                && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
-            ) {
-                $this->visiteNotifier->notifyUsagers(
-                    intervention: $intervention,
-                    notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER,
-                    suivi: $suivi,
-                );
-            }
+        if (InterventionType::VISITE === $intervention->getType()
+            && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
+        ) {
+            $this->visiteNotifier->notifyUsagers(
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER,
+                suivi: $suivi,
+            );
+        }
 
-            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
-                $this->visiteNotifier->notifyUsagers(
-                    intervention: $intervention,
-                    notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
-                    suivi: $suivi
-                );
-            }
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
+            $this->visiteNotifier->notifyUsagers(
+                intervention: $intervention,
+                notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
+                suivi: $suivi
+            );
         }
 
         $this->visiteNotifier->notifyInAppSubscribers(
