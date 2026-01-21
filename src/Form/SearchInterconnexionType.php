@@ -92,8 +92,8 @@ class SearchInterconnexionType extends AbstractType
         ]);
         $builder->add('action', ChoiceType::class, [
             'required' => false,
-            'label' => 'Action',
-            'placeholder' => 'Toutes les actions',
+            'label' => 'Evénement',
+            'placeholder' => 'Tous les événements',
             'choices' => [
                 AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER,
                 AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
