@@ -60,7 +60,7 @@ class AnnuaireController extends AbstractController
             if (!in_array($format, ['csv', 'xlsx'])) {
                 $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');
 
-                return $this->redirectToRoute('back_annuaire_index', $search->getUrlParams());
+                return $this->redirectToRoute('back_annuaire_export', $search->getUrlParams());
             }
 
             $spreadsheet = new Spreadsheet();

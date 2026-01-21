@@ -10,8 +10,18 @@ export function jsonResponseHandler(response) {
 
 export function jsonResponseProcess(response) {
   if (response.redirect) {
-    window.location.href = response.url;
-    window.location.reload();
+    const targetUrl = new URL(response.url, window.location.origin);
+    const currentUrl = new URL(window.location.href);
+
+    if (currentUrl.pathname === targetUrl.pathname && currentUrl.search === targetUrl.search) {
+      if (response._fragment) {
+        window.location.hash = `#${response._fragment}`;
+      }
+
+      window.location.reload();
+    } else {
+      window.location.href = targetUrl.href;
+    }
   } else if (response.stayOnPage) {
     if (response.flashMessages) {
       response.flashMessages.forEach((flashMessage) => {
