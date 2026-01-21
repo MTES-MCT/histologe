@@ -37,6 +37,7 @@ enum SuiviCategory: string
     // cas liés à l'injonction bailleur
     case INJONCTION_BAILLEUR_REPONSE_OUI = 'INJONCTION_BAILLEUR_REPONSE_OUI';
     case INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE = 'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE';
+    case INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES = 'INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES';
     case INJONCTION_BAILLEUR_REPONSE_NON = 'INJONCTION_BAILLEUR_REPONSE_NON';
     case INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE = 'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE';
     case INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER = 'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER';
@@ -56,6 +57,7 @@ enum SuiviCategory: string
         $reponseList = [
             self::INJONCTION_BAILLEUR_REPONSE_OUI->name => 'Oui',
             self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE->name => 'Oui avec aide',
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES->name => 'Oui, les démarches ont commencé',
             self::INJONCTION_BAILLEUR_REPONSE_NON->name => 'Non',
         ];
 
@@ -97,6 +99,7 @@ enum SuiviCategory: string
             'MESSAGE_PARTNER' => 'Suivi du partenaire',
             'INJONCTION_BAILLEUR_REPONSE_OUI' => 'Réponse du bailleur : Oui',
             'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE' => 'Réponse du bailleur : Oui avec aide',
+            'INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES' => 'Réponse du bailleur : Oui, les démarches ont commencé',
             'INJONCTION_BAILLEUR_REPONSE_NON' => 'Réponse du bailleur : Non',
             'INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE' => 'Commentaire du bailleur',
             'INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER' => 'Bascule en procédure administrative par l\'usager',
@@ -113,6 +116,7 @@ enum SuiviCategory: string
         return [
             self::INJONCTION_BAILLEUR_REPONSE_OUI,
             self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES,
             self::INJONCTION_BAILLEUR_REPONSE_NON,
             self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
@@ -126,6 +130,7 @@ enum SuiviCategory: string
         return [
             self::INJONCTION_BAILLEUR_REPONSE_OUI,
             self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES,
             self::INJONCTION_BAILLEUR_REPONSE_NON,
             self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
@@ -143,6 +148,7 @@ enum SuiviCategory: string
         return [
             self::INJONCTION_BAILLEUR_REPONSE_OUI,
             self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES,
             self::INJONCTION_BAILLEUR_REPONSE_NON,
         ];
     }
