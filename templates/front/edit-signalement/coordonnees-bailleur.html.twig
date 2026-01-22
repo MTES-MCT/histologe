@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Compléter le dossier #{{ signalement.reference }}{% endblock %}
+{% block title %}Compléter les informations bailleur #{{ signalement.reference }}{% endblock %}
 
 {% block body %}
 
@@ -10,16 +10,14 @@
 		<div class="fr-collapse" id="breadcrumb-1">
 			<ol class="fr-breadcrumb__list">
 				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
-				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter le dossier</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter les informations bailleur</a></li>
 			</ol>
 		</div>
 	</nav>
 	<div class="fr-grid-row fr-grid-row--gutters fr-mt-3w fr-mx-1v">
-		<h1 class="title-blue-france">Compléter le dossier</h1>
+		<h1 class="title-blue-france">Compléter les informations</h1>
 		<div class="fr-mb-3w">
 			Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
-			<br>
-			NB : cette page va évoluer. Pour le moment, vous pouvez ajouter les coordonnées de votre bailleur. D'autres informations seront ajoutées par la suite. 
 		</div>
 		{{ form_start(formCoordonneesBailleur, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
 		{{ form_errors(formCoordonneesBailleur) }}				
