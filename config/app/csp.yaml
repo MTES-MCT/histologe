@@ -2,6 +2,8 @@ parameters:
   csp_parameters:
     default-src:
       - "'none'"
+    manifest-src:
+      - "'self'"
     script-src:
       - "'self'"
       - "'unsafe-inline'"

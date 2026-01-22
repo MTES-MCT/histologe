@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" {{ mise_en_berne ? 'data-fr-mourning' : '' }}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Service secours - {{ platform.name|replace({' ': '-'}) }}</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('service-secours/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('service-secours/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('service-secours/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('service-secours/site.webmanifest') }}">
+
+    <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
+
+    {% if matomo is defined and matomo.enable == 1 and 'activate_account' not in app.request.get('_route') %}
+        <!-- Matomo -->
+        <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
+            var _paq = window._paq = window._paq || [];
+            {% if platform.url starts with 'https' %}
+                _paq.push(['setSecureCookie', true]);
+            {% endif %}
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function() {
+                var u="{{ matomo.url }}";
+                _paq.push(['setTrackerUrl', u+'matomo.php']);
+                _paq.push(['setSiteId', '{{ matomo.site_id }}']);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                g.async=true; g.src='{{ matomo.cdn }}'; s.parentNode.insertBefore(g,s);
+            })();
+        </script>
+        <!-- End Matomo Code -->
+    {% endif %}
+</head>
+
+
+<body data-mode-maintenance="{{ maintenance.enable }}">
+{% include 'maintenance/banner.html.twig' %}
+{% include "service_secours/_header.html.twig" %}
+{% include "flash-messages.html.twig" %}
+
+{% block body %}{% endblock %}
+
+<script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
+<script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
+
+{% block javascripts %}{% endblock %}
+</body>
+</html>
