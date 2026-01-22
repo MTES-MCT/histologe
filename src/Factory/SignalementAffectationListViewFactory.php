@@ -55,6 +55,7 @@ class SignalementAffectationListViewFactory
             conclusionsProcedure: SignalementAffectationHelper::parseConclusionProcedure($data['conclusionsProcedure']),
             csrfToken: $canDeleteSignalement ? $this->csrfTokenManager->getToken('signalement_delete_'.$data['id']) : null,
             canDeleteSignalement: $canDeleteSignalement,
+            isLogementSocial: $data['isLogementSocial']
         );
     }
 }

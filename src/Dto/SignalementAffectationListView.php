@@ -26,29 +26,30 @@ class SignalementAffectationListView
      * @param array<mixed>         $conclusionsProcedure
      */
     public function __construct(
-        private ?int $id = null,
-        private ?string $uuid = null,
-        private ?string $reference = null,
-        private ?string $referenceInjonction = null,
-        private ?\DateTimeImmutable $createdAt = null,
-        private ?SignalementStatus $statut = null,
-        private ?string $score = null,
-        private ?bool $isNotOccupant = null,
-        private ?string $nomOccupant = null,
-        private ?string $prenomOccupant = null,
-        private ?string $adresseOccupant = null,
-        private ?string $codepostalOccupant = null,
-        private ?string $villeOccupant = null,
-        private \DateTimeImmutable|string|null $lastSuiviAt = null,
-        private ?string $lastSuiviBy = null,
-        private ?bool $lastSuiviIsPublic = null,
-        private ?string $profileDeclarant = null,
-        private ?array $affectations = null,
-        private ?array $qualifications = null,
-        private ?array $qualificationsStatuses = null,
-        private ?array $conclusionsProcedure = null,
+        private readonly ?int $id = null,
+        private readonly ?string $uuid = null,
+        private readonly ?string $reference = null,
+        private readonly ?string $referenceInjonction = null,
+        private readonly ?\DateTimeImmutable $createdAt = null,
+        private readonly ?SignalementStatus $statut = null,
+        private readonly ?string $score = null,
+        private readonly ?bool $isNotOccupant = null,
+        private readonly ?string $nomOccupant = null,
+        private readonly ?string $prenomOccupant = null,
+        private readonly ?string $adresseOccupant = null,
+        private readonly ?string $codepostalOccupant = null,
+        private readonly ?string $villeOccupant = null,
+        private readonly \DateTimeImmutable|string|null $lastSuiviAt = null,
+        private readonly ?string $lastSuiviBy = null,
+        private readonly ?bool $lastSuiviIsPublic = null,
+        private readonly ?string $profileDeclarant = null,
+        private readonly ?array $affectations = null,
+        private readonly ?array $qualifications = null,
+        private readonly ?array $qualificationsStatuses = null,
+        private readonly ?array $conclusionsProcedure = null,
         private ?string $csrfToken = null,
-        private ?bool $canDeleteSignalement = false,
+        private readonly ?bool $canDeleteSignalement = false,
+        private readonly ?bool $isLogementSocial = false,
     ) {
     }
 
@@ -214,5 +215,10 @@ class SignalementAffectationListView
     public function getCanDeleteSignalement(): bool
     {
         return $this->canDeleteSignalement;
+    }
+
+    public function getIsLogementSocial(): ?bool
+    {
+        return $this->isLogementSocial;
     }
 }
