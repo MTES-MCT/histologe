@@ -230,6 +230,10 @@ legend.required::after, label.required::after {
     justify-content: flex-end !important;
 }
 
+.fr-justify-content-space-between {
+    justify-content: space-between !important;
+}
+
 .fr-display-none {
     display: none;
 }
@@ -279,6 +283,10 @@ small {
 
 .fr-background-alt--grey {
     background-color: var(--background-alt-grey);
+}
+
+.fr-background-contrast--grey {
+    background-color: var(--background-contrast-grey);
 }
 
 .fr-background-alt--blue-france {
@@ -734,6 +742,31 @@ ul + p {
 
 .signalement-card.text-default-grey{
     color: var(--text-default-grey);
+}
+
+.signalement-group-data-card{
+    border : 1px solid var(--border-default-blue-france);
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    h3{
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .title-separator{
+        margin-top: 0.5rem;
+        font-weight: 700;
+    }
+    hr {
+        background: var(--text-title-blue-france);
+        margin-bottom: 1rem;
+        padding: 0;
+        height: 1px;
+    }
+    .fr-highlight {
+        margin-left: 0.25rem;
+        padding-left: 1rem;
+    }
 }
 
 .confetti {

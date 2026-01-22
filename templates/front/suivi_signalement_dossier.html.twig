@@ -20,23 +20,16 @@
 			<h1 class="title-blue-france">Détails du dossier</h1>
 			{% include 'front/_partials/_suivi_signalement_card.html.twig' %}
 
-			<h2 class="title-blue-france fr-mb-1w">Que voulez-vous faire ?</h2>
+			<h2 class="title-blue-france fr-mb-1w fr-h3">Que voulez-vous faire ?</h2>
 			<ul class="fr-btns-group fr-btns-group--center fr-btns-group--icon-left">
-				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
-					<li>
-						<a href="{{ path('front_suivi_signalement_complete', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-edit-box-line">
-							Compléter le dossier
-						</a>
-					</li>
-				{% endif %}
-				<li>
-					<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-mail-line">
-						Accéder à la messagerie
-					</a>
-				</li>
 				<li>
 					<a href="{{ path('front_suivi_signalement_documents', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-attachment-line">
 						Gérer les documents / photos
+					</a>
+				</li>
+				<li>
+					<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-mail-line">
+						Accéder à la messagerie
 					</a>
 				</li>
 				<li>
@@ -44,463 +37,496 @@
 						Télécharger le dossier
 					</a>
 				</li>
+
 			</ul>
 
-			<h2 class="title-blue-france fr-mb-1w">Votre déclaration</h2>
-			{% if signalement.debutDesordres is not null %}
-				<ul>
-					<li>Les désordres ont commencé il y a : 
-					{{ signalement.debutDesordres.label}}
-					</li>
-				{% if signalement.hasSeenDesordres is not null %}
-					<li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
+			<h2 class="title-blue-france fr-mb-1w fr-h3">Coordonnées et démarches</h2>
+			<div class="signalement-group-data-card">
+				<h3 class="title-blue-france fr-h5">Adresse du logement</h3>
+				{{ signalement.adresseOccupant }} {{ signalement.cpOccupant }} {{ signalement.villeOccupant }}
+				{% if signalement.complementAdresseOccupant %}
+					<div class="title-separator">Détails</div>
+					{{signalement.complementAdresseOccupant}}
 				{% endif %}
-				</ul>
-			{% endif %}
-
-			{% if signalement.isV2 %}
-				{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
-					<h3 class="fr-h5 fr-mb-3v">Désordres sur le logement</h3>
-					{% set zone = 'logement' %}
-					{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
-						{% include 'front/_partials/_desordre.html.twig' %}
-					{% endfor %}
-				{% endif %}
-				{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
-					<h3 class="fr-h5 fr-mb-3v">Désordres sur le bâtiment ou les parties communes</h3>
-					{% set zone = 'batiment' %}
-					{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
-						{% include 'front/_partials/_desordre.html.twig' %}
-					{% endfor %}
-				{% endif %}
-			{% else %}
-				<h3 class="fr-h5 fr-mb-3v">Désordres</h3>
-				{% for situation,criteres in infoDesordres['criticitesArranged'] %}
-					<strong>{{ situation|capitalize }}</strong>
-					{% for critere,criticite in criteres %}
-						{# TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3, et le isDanger est au niveau de la criticité) #}
-						{% if criticite.score is same as(1) %}
-							{% set icon = 'moyen' %}
-						{% elseif criticite.score is same as(2) %}
-							{% set icon = 'grave' %}
-						{% else %}
-							{% set icon = 'tres-grave' %}
-						{% endif %}
-						<ul>
-							<li class="fr-grid-row">
-								<div class="fr-col-md-2">
-									<img src="{{ asset('img/'~icon~'-actif.svg') }}" alt="" width="50">
-								</div>
-								<div class="fr-col-md-10">
-									<strong>{{ critere }}</strong>
-									<br>
-									{{ criticite.label|capitalize }}
-								</div>
-							</li>
-						</ul>
-					{% endfor %}
-				{% endfor %}
-			{% endif %}
-
-			<div class="signalement-card text-default-grey fr-mb-3w fr-mt-3w">
-				<h3 class="fr-h5 fr-mb-3v">Commentaire</h3>
-				{{ signalement.details|nl2br }}
 			</div>
-
-			<h3 class="fr-h5 fr-mb-3v">Type et composition du logement</h3>
-			<ul>
-				<li>Nature du logement :
-					{{ signalement.natureLogement|capitalize }}
-					{% if signalement.typeCompositionLogement %}
-						{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
-							({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
-						{% endif %}
-						{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
-						{% endif %}
-						{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
-						{% endif %}
-						{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
-						{% endif %}
-					{% endif %}
-				</li>
-				<li>Etage :
-					{% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
-				</li>
-				<li>Avec fenêtres :
-					{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
-				</li>
-				<li>Superficie en m² : {{ signalement.superficie }} m²</li>
-				{% if signalement.typeCompositionLogement %}
-					<li>Une seule ou plusieurs pièces ?
-						{{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
-					</li>
-					<li>Nombre de pièces à vivre :
-						{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
-					</li>
-					<li>Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
-						{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
-					</li>
-					<li>Cuisine ou coin cuisine ?
-						{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine|capitalize }}
-					</li>
-					{% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine == 'non' %}
-						<li>Accès à une cuisine collective ?
-							{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective|capitalize }}
-						</li>
-					{% endif %}
-					<li>Salle de bain, salle d'eau avec douche ou baignoire ?
-						{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain|capitalize }}
-					</li>
-					{% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain == 'non' %}
-						<li>Accès à une salle de bain ou des douches collectives ?
-							{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective|capitalize }}
-						</li>
-					{% endif %}
-					<li>Toilettes (WC) ?
-						{{ signalement.typeCompositionLogement.typeLogementCommoditesWc|capitalize }}
-					</li>
-					{% if signalement.typeCompositionLogement.typeLogementCommoditesWc == 'non' %}
-						<li>Accès à des toilettes (WC) collectives ?
-							{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective|capitalize }}
-						</li>
-					{% endif %}
-					{% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine == 'oui' %}
-						<li>Toilettes (WC) et cuisine dans la même pièce</li>
+			<div class="signalement-group-data-card">
+				<h3 class="title-blue-france fr-h5">Coordonnées de l'occupant</h3>
+				{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
+				{% if signalement.mailOccupant %}
+					<br>
+					{{ signalement.mailOccupant }}
+					{% if show_email_alert(signalement.mailOccupant) %}
+						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
 					{% endif %}
 				{% endif %}
-			</ul>
-		</div>
-
-		<div class="fr-col-12 fr-col-md-6">
-			<h3 class="fr-h5 fr-mb-3v">Coordonnées</h3>
-			<div class="fr-mb-1w">
-				<strong>Adresse du logement</strong>
-			</div>
-			{{ signalement.adresseOccupant }}
-			{{ signalement.cpOccupant }}
-			{{ signalement.villeOccupant }}
-			{% if signalement.complementAdresseOccupant %}
-				<br>
-				{{signalement.complementAdresseOccupant}}
-			{% endif %}
-
-			<div class="fr-mb-1w fr-mt-2w">
-				<strong>Coordonnées de l'occupant</strong>
-			</div>
-			{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
-			{% if signalement.mailOccupant %}
-				<br>
-				{{ signalement.mailOccupant }}
-				{% if show_email_alert(signalement.mailOccupant) %}
-					<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+				{% if signalement.telOccupant %}
+					<br>
+					{{ signalement.telOccupantDecoded|phone }}
 				{% endif %}
-			{% endif %}
-			{% if signalement.telOccupant %}
-				<br>
-				{{ signalement.telOccupantDecoded|phone }}
-			{% endif %}
-			{% if signalement.telOccupantBis %}
-				<br>
-				{{ signalement.telOccupantBisDecoded|phone }}
-			{% endif %}
+				{% if signalement.telOccupantBis %}
+					<br>
+					{{ signalement.telOccupantBisDecoded|phone }}
+				{% endif %}
+			</div>
 
 			{% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE %}
-				<div class="fr-mb-1w fr-mt-2w">
-					<strong>Coordonnées du tiers aidant</strong>
-				</div>
-
 				{% if signalement.mailDeclarant %}
+					<div class="signalement-group-data-card">
+						<h3 class="title-blue-france fr-h5">Coordonnées du tiers aidant</h3>
+						{{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
+						<br>
+						{{ signalement.mailDeclarant }}
+						{% if show_email_alert(signalement.mailDeclarant) %}
+							<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+						{% endif %}
+						{% if signalement.telDeclarant %}
+							<br>
+							{{ signalement.telDeclarantDecoded|phone }}
+						{% endif %}
+					</div>
+				{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
+					<div class="fr-callout fr-icon-information-line fr-callout--blue-cumulus fr-mt-3w">
+						<p class="fr-callout__title">Invitez un tiers</p>
+						<p>
+							Afin de faciliter les échanges avec l'administration, 
+							vous pouvez donner accès au dossier à un tiers (famille, travailleur social, association, etc.) 
+							en renseignant son adresse e-mail.
+							<br>
+							<a href="{{ path('front_suivi_signalement_coordonnees_tiers', {code: signalement.codeSuivi}) }}" 
+								class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-box-line fr-mt-3v">
+								Inviter un tiers sur mon dossier
+							</a>
+						</p>
+					</div>
+				{% endif %}
+			{% elseif signalement.isTiersDeclarant %}
+				<div class="signalement-group-data-card">
+					<h3 class="title-blue-france fr-h5">Coordonnées du tiers aidant</h3>
 					{{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
-					<br>
-					{{ signalement.mailDeclarant }}
-					{% if show_email_alert(signalement.mailDeclarant) %}
-						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+					{% if signalement.mailDeclarant %}
+						<br>
+						{{ signalement.mailDeclarant }}
+						{% if show_email_alert(signalement.mailDeclarant) %}
+							<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
+						{% endif %}
 					{% endif %}
 					{% if signalement.telDeclarant %}
 						<br>
 						{{ signalement.telDeclarantDecoded|phone }}
 					{% endif %}
-				{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
-					Afin de faciliter les échanges avec l'administration, vous pouvez donner accès au dossier à un tiers (famille, travailleur social, association, etc.) en renseignant son adresse e-mail.
-					<br>
-					<a href="{{ path('front_suivi_signalement_coordonnees_tiers', {code: signalement.codeSuivi}) }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-box-line fr-mt-3v"
-						>Inviter un tiers sur mon dossier</a>
-				{% endif %}
-
-			{% elseif signalement.isTiersDeclarant %}
-				<div class="fr-mb-1w fr-mt-2w">
-					<strong>Coordonnées du tiers déclarant</strong>
+					{% if signalement.telDeclarantSecondaire %}
+						<br>
+						{{ signalement.telDeclarantSecondaire|phone }}
+					{% endif %}
+					{% if signalement.structureDeclarant %}
+						<br>
+						{{ signalement.structureDeclarant }}
+					{% endif %}
 				</div>
-			    {{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
-			    {% if signalement.mailDeclarant %}
+			{% endif %}
+
+			<div class="signalement-group-data-card">
+				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+					<h3 class="title-blue-france fr-h5">Votre bailleur</h3>
+					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						<a href="{{ path('front_suivi_signalement_complete_bailleur', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md fr-text-right">
+							Compléter les informations
+						</a>
+					{% endif %}
+				</div>
+				<div class="title-separator">Coordonnées du bailleur</div>
+				{{signalement.nomProprio}}
+				{% if signalement.prenomProprio %}
+					{{ signalement.prenomProprio }}
+				{% endif %}
+				{% if signalement.adresseProprio %}
 					<br>
-					{{ signalement.mailDeclarant }}
-					{% if show_email_alert(signalement.mailDeclarant) %}
+					{{ signalement.adresseProprio }}
+				{% endif %}
+				{% if signalement.codePostalProprio %}
+					{{ signalement.codePostalProprio }}
+				{% endif %}
+				{% if signalement.villeProprio %}
+					{{ signalement.villeProprio }}
+				{% endif %}
+				{% if signalement.mailProprio %}
+					<br>
+					{{ signalement.mailProprio }}
+					{% if show_email_alert(signalement.mailProprio) %}
 						<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
 					{% endif %}
 				{% endif %}
-				{% if signalement.telDeclarant %}
+				{% if signalement.telProprio %}
 					<br>
-					{{ signalement.telDeclarantDecoded|phone }}
+					{{ signalement.telProprioDecoded|phone }}
 				{% endif %}
-				{% if signalement.telDeclarantSecondaire %}
+				{% if signalement.telProprioSecondaire %}
 					<br>
-					{{ signalement.telDeclarantSecondaire|phone }}
+					{{ signalement.telProprioSecondaireDecoded|phone }}
 				{% endif %}
-				{% if signalement.structureDeclarant %}
-					<br>
-					{{ signalement.structureDeclarant }}
-				{% endif %}
-			{% endif %}
-
-			<h3 class="fr-h5 fr-mb-3v fr-mt-2w">Votre bailleur</h3>
-			<div class="fr-mb-1w">
-				<strong>Coordonnées du bailleur</strong>
-			</div>
-			{{signalement.nomProprio}}
-			{% if signalement.prenomProprio %}
-				{{ signalement.prenomProprio }}
-			{% endif %}
-			{% if signalement.adresseProprio %}
-				<br>
-				{{ signalement.adresseProprio }}
-			{% endif %}
-			{% if signalement.codePostalProprio %}
-				{{ signalement.codePostalProprio }}
-			{% endif %}
-			{% if signalement.villeProprio %}
-				{{ signalement.villeProprio }}
-			{% endif %}
-			{% if signalement.mailProprio %}
-				<br>
-				{{ signalement.mailProprio }}
-				{% if show_email_alert(signalement.mailProprio) %}
-					<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
-				{% endif %}
-			{% endif %}
-			{% if signalement.telProprio %}
-				<br>
-				{{ signalement.telProprioDecoded|phone }}
-			{% endif %}
-			{% if signalement.telProprioSecondaire %}
-				<br>
-				{{ signalement.telProprioSecondaireDecoded|phone }}
-			{% endif %}
-			<ul>
-				<li>
-					Bailleur (propriétaire) prévenu ?
-					{% if signalement.isProprioAverti is null %}
-					{% elseif signalement.isProprioAverti %}
-						Oui
-					{% else %}
-						Non
-					{% endif %}
-				</li>
-				{% if signalement.informationProcedure %}
+				<div class="title-separator">Démarches auprès du bailleur</div>
+				<ul>
 					<li>
-						Moyen d'information du bailleur :
-						{% if signalement.informationProcedure.infoProcedureBailMoyen %}
-							{% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
-							{{ MoyenContact.label }}
+						Bailleur (propriétaire) prévenu ?
+						{% if signalement.isProprioAverti is null %}
+						{% elseif signalement.isProprioAverti %}
+							Oui
+						{% else %}
+							Non
 						{% endif %}
 					</li>
-					<li>
-						Date d'information du bailleur :
-						{# todo : check format date #}
-						{% if signalement.informationProcedure.infoProcedureBailDate %}
-							{{ signalement.informationProcedure.infoProcedureBailDate  }}
-						{% endif %}
-					</li>
-				    <li>
-						Réponse du bailleur :
-						{% if signalement.informationProcedure.infoProcedureBailReponse %}
-							{{ signalement.informationProcedure.infoProcedureBailReponse | nl2br  }}
-						{% endif %}
-					</li>
-					{% if signalement.isLogementSocial %}
+					{% if signalement.informationProcedure %}
 						<li>
-							Numéro de réclamation :
-							{% if signalement.informationProcedure.infoProcedureBailNumero %}
-								{{ signalement.informationProcedure.infoProcedureBailNumero | nl2br  }}
+							Moyen d'information du bailleur :
+							{% if signalement.informationProcedure.infoProcedureBailMoyen %}
+								{% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
+								{{ MoyenContact.label }}
 							{% endif %}
 						</li>
+						<li>
+							Date d'information du bailleur :
+							{# todo : check format date #}
+							{% if signalement.informationProcedure.infoProcedureBailDate %}
+								{{ signalement.informationProcedure.infoProcedureBailDate  }}
+							{% endif %}
+						</li>
+						<li>
+							Réponse du bailleur :
+							{% if signalement.informationProcedure.infoProcedureBailReponse %}
+								{{ signalement.informationProcedure.infoProcedureBailReponse | nl2br  }}
+							{% endif %}
+						</li>
+						{% if signalement.isLogementSocial %}
+							<li>
+								Numéro de réclamation :
+								{% if signalement.informationProcedure.infoProcedureBailNumero %}
+									{{ signalement.informationProcedure.infoProcedureBailNumero | nl2br  }}
+								{% endif %}
+							</li>
+						{% endif %}
 					{% endif %}
+				</ul>
+				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					<a href="{{ path('front_suivi_signalement_complete_bailleur', {'code': signalement.codeSuivi}) }}" 
+						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
+						Compléter les informations
+					</a>
 				{% endif %}
-			</ul>
-
+			</div>
 			{% include 'front/_partials/_suivi_signalement_prevenir_bailleur.html.twig' with {'cssDiv': 'fr-callout--brown-caramel fr-mt-2w'} %}
 
-			<h3 class="fr-h5 fr-mb-3v fr-mt-2w">Informations générales sur le logement</h3>
-			<ul>
-				{% if signalement.dateEntree %}
-					<li>Date arrivée :
-						{{ signalement.dateEntree.format('d/m/Y')}}
-					</li>
-				{% endif %}
-				{% if signalement.informationComplementaire and  signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
-					<li>Date d'effet du bail :
-						{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail('d/m/Y')}}
-					</li>
-				{% endif %}
-				<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
-				{% if signalement.typeCompositionLogement %}
-					{% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
-						- dont nombre d'enfants :
-							{{signalement.typeCompositionLogement.compositionLogementNombreEnfants}}
-					{% endif %}
-					{% if signalement.typeCompositionLogement.compositionLogementEnfants %}
-						<li>Enfants de moins de 6 ans ?
-							{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
-						</li>
-					{% endif %}
-					{% if signalement.typeCompositionLogement.bailDpeBail %}
-						<li>Bail :
-							{{signalement.typeCompositionLogement.bailDpeBail(false)}}
-						</li>
-					{% endif %}
-					{% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
-						<li>Etat des lieux :
-							{{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
-						</li>
-					{% endif %}
-					{% if signalement.typeCompositionLogement.bailDpeDpe %}
-						<li>DPE :
-							{{signalement.typeCompositionLogement.bailDpeDpe(false)}}
-						</li>
-					{% endif %}
-					{% if signalement.typeCompositionLogement.bailDpeClasseEnergetique %}
-						<li>Classe énergétique :
-							{{signalement.typeCompositionLogement.bailDpeClasseEnergetique}}
-						</li>
-					{% endif %}
-				{% endif %}
-				{% if signalement.numeroInvariant %}
-					<li>Invariant fiscal :
-						{{signalement.numeroInvariant}}
-					</li>
-				{% endif %}
-				{% if signalement.loyer %}
-					<li>Montant du loyer :
-						{{ signalement.loyer}} €
-					</li>
-				{% endif %}
-				{% if signalement.informationComplementaire %}				
-					{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes %}
-						<li>Paiement loyers à jour :
-							{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes}}
-						</li>
-					{% endif %}
-					{% if signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction %}
-						<li>Année de construction :
-							{{ signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction}}
-						</li>
-					{% endif %}
-				{% endif %}
-			</ul>
-
-			<h3 class="fr-h5 fr-mb-3v fr-mt-2w">Situation du foyer</h3>
-			<ul>
-				{% if signalement.isLogementSocial %}
-					<li>Logement social : Oui</li>
-				{% endif %}
-				{% if signalement.isRelogement is same as true %}
-					<li>Demande de relogement : Oui</li>
-				{% endif %}
-				{% if signalement.isAllocataire in [null, ''] %}
-				{% elseif signalement.isAllocataire in ['oui', '1'] %}
-					<li>Allocataire : Oui</li>
-				{% elseif signalement.isAllocataire in ['non', '0'] %}
-					<li>Allocataire : Non</li>
-				{% elseif signalement.isAllocataire %}
-					<li>Allocataire : {{ signalement.isAllocataire }}</li>
-				{% endif %}
-				{% if (signalement.dateNaissanceOccupant) %}
-					<li>Date de naissance : {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}</li>
-				{% elseif signalement.naissanceOccupants %}
-					<li>Date de naissance : {{ signalement.naissanceOccupants}}</li>
-				{% endif %}
-				{% if signalement.numAllocataire %}
-					<li>N° allocataire : {{ signalement.numAllocataire }}</li>
-				{% endif %}
-				{% if signalement.situationFoyer %}
-					{% if signalement.situationFoyer.logementSocialMontantAllocation %}
-						<li>Montant allocation :
-							{{ signalement.situationFoyer.logementSocialMontantAllocation }} €
-						</li>
-					{% endif %}
-					{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
-						<li>Souhaite quitter le logement :
-							{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
-						</li>
-					{% endif %}
-					{% if signalement.situationFoyer.travailleurSocialPreavisDepart(false) %}
-						<li>Préavis de départ :
-							{{signalement.situationFoyer.travailleurSocialPreavisDepart(false)|capitalize}}
-						</li>
-					{% endif %}
-					{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) %}
-						<li>Accompagnement par un ou une travailleuse sociale :
-							{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
-						</li>
-					{% endif %}
-					{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) and signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
-						<li>Nom de la structure d'accompagnement :
-							{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
-						</li>
-					{% endif %}
-				{% endif %}
-				{% if signalement.informationComplementaire %}
-					{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
-						<li>Bénéficiaire RSA :
-							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
-						</li>
-					{% endif %}
-					{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
-						<li>Bénéficiaire FSL :
-							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
-						</li>
-					{% endif %}
-					{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
-						<li>Revenu fiscal de référence :
-							{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}} €
-						</li>
-					{% endif %}
-				{% endif %}
-				{% if signalement.informationProcedure %}
-					<li>
-						Si des travaux sont faits, voulez-vous rester dans le logement ? 
-						{{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)|capitalize}}
-					</li>
-				{% endif %}
-			</ul>
+			{# TODO ajouter la partie agence #}
 
 			{% if signalement.informationProcedure %}
-			<h3 class="fr-h5 fr-mb-3v fr-mt-2w">Votre assurance</h3>
+				<div class="signalement-group-data-card">
+					<h3 class="title-blue-france fr-h5">Votre assurance</h3>
+					{% if signalement.informationProcedure.infoProcedureAssuranceContactee in ['non', 'nsp'] %}
+						<div class="fr-alert fr-alert--info fr-alert--sm">
+							<p>Votre assurance peut parfois prendre en charge vos problèmes. N'hésitez pas à la contacter !</p>
+						</div>
+					{% elseif signalement.informationProcedure.infoProcedureAssuranceContactee == 'pas_assurance_logement' %}
+						<div class="fr-alert fr-alert--warning fr-alert--sm">
+							<p>
+								D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur 
+								<a href="https://www.service-public.fr/particuliers/vosdroits/F31300" target="_blank" rel="noopener" title="Le site du Service Public - Ouvre une nouvelle fenêtre">le site du Service Public</a>.
+							</p>
+						</div>
+					{% endif %}
+					<ul>
+						<li> 
+							Assurance contactée ? 
+							{{signalement.informationProcedure.infoProcedureAssuranceContactee(false)|capitalize}}
+						</li>
+						{% if signalement.informationProcedure.infoProcedureAssuranceContactee == 'oui' %}
+							<li>
+								Réponse de l'assurance : 
+								{{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+			{% endif %}
+		</div>
+
+		<div class="fr-col-12 fr-col-md-6">
+			<h2 class="title-blue-france fr-mb-1w fr-h3">Votre déclaration</h2>
+			
+			<div class="signalement-group-data-card fr-background-contrast--grey">
+				<h3 class="fr-h5">Désordres</h3>
+				{% if signalement.debutDesordres is not null %}
+					<ul>
+						<li>Les désordres ont commencé il y a : 
+						{{ signalement.debutDesordres.label}}
+						</li>
+					{% if signalement.hasSeenDesordres is not null %}
+						<li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
+					{% endif %}
+					</ul>
+				{% endif %}
+
+				{% if signalement.isV2 %}
+					{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
+						<h3 class="fr-h5">Désordres sur le logement</h3>
+						{% set zone = 'logement' %}
+						{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
+							{% include 'front/_partials/_desordre.html.twig' %}
+						{% endfor %}
+					{% endif %}
+					{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
+						<h3 class="fr-h5">Désordres sur le bâtiment ou les parties communes</h3>
+						{% set zone = 'batiment' %}
+						{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
+							{% include 'front/_partials/_desordre.html.twig' %}
+						{% endfor %}
+					{% endif %}
+				{% else %}
+					<h3 class="fr-h5">Désordres</h3>
+					{% for situation,criteres in infoDesordres['criticitesArranged'] %}
+						<strong>{{ situation|capitalize }}</strong>
+						{% for critere,criticite in criteres %}
+							{# TODO à revoir avec le nouvel algo de criticité (les scores ne sont plus forcément 1, 2, 3, et le isDanger est au niveau de la criticité) #}
+							{% if criticite.score is same as(1) %}
+								{% set icon = 'moyen' %}
+							{% elseif criticite.score is same as(2) %}
+								{% set icon = 'grave' %}
+							{% else %}
+								{% set icon = 'tres-grave' %}
+							{% endif %}
+							<ul>
+								<li class="fr-grid-row">
+									<div class="fr-col-md-2">
+										<img src="{{ asset('img/'~icon~'-actif.svg') }}" alt="" width="50">
+									</div>
+									<div class="fr-col-md-10">
+										<strong>{{ critere }}</strong>
+										<br>
+										{{ criticite.label|capitalize }}
+									</div>
+								</li>
+							</ul>
+						{% endfor %}
+					{% endfor %}
+				{% endif %}
+				<hr>
+				<h3 class="fr-h5">Commentaire</h3>
+				<div class="fr-highlight">
+					<p>{{ signalement.details|nl2br }}</p>
+				</div>
+			</div>
+
+			<div class="signalement-group-data-card">
+				<h3 class="title-blue-france fr-h5">Type et composition du logement</h3>
 				<ul>
-					<li> 
-						Assurance contactée ? 
-						{{signalement.informationProcedure.infoProcedureAssuranceContactee(false)|capitalize}}
+					<li>Nature du logement :
+						{{ signalement.natureLogement|capitalize }}
+						{% if signalement.typeCompositionLogement %}
+							{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
+								({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
+							{% endif %}
+							{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
+							{% endif %}
+							{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
+							{% endif %}
+							{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
+							{% endif %}
+						{% endif %}
 					</li>
-					{% if signalement.informationProcedure.infoProcedureAssuranceContactee == 'oui' %}
+					<li>Etage :
+						{% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
+					</li>
+					<li>Avec fenêtres :
+						{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
+					</li>
+					<li>Superficie en m² : {{ signalement.superficie }} m²</li>
+					{% if signalement.typeCompositionLogement %}
+						<li>Une seule ou plusieurs pièces ?
+							{{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
+						</li>
+						<li>Nombre de pièces à vivre :
+							{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+						</li>
+						<li>Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
+							{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
+						</li>
+						<li>Cuisine ou coin cuisine ?
+							{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine|capitalize }}
+						</li>
+						{% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine == 'non' %}
+							<li>Accès à une cuisine collective ?
+								{{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective|capitalize }}
+							</li>
+						{% endif %}
+						<li>Salle de bain, salle d'eau avec douche ou baignoire ?
+							{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain|capitalize }}
+						</li>
+						{% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain == 'non' %}
+							<li>Accès à une salle de bain ou des douches collectives ?
+								{{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective|capitalize }}
+							</li>
+						{% endif %}
+						<li>Toilettes (WC) ?
+							{{ signalement.typeCompositionLogement.typeLogementCommoditesWc|capitalize }}
+						</li>
+						{% if signalement.typeCompositionLogement.typeLogementCommoditesWc == 'non' %}
+							<li>Accès à des toilettes (WC) collectives ?
+								{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective|capitalize }}
+							</li>
+						{% endif %}
+						{% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine == 'oui' %}
+							<li>Toilettes (WC) et cuisine dans la même pièce</li>
+						{% endif %}
+					{% endif %}
+				</ul>
+			</div>
+
+			<div class="signalement-group-data-card">
+				<h3 class="title-blue-france fr-h5">Informations générales sur le logement</h3>
+				<ul>
+					{% if signalement.dateEntree %}
+						<li>Date arrivée :
+							{{ signalement.dateEntree.format('d/m/Y')}}
+						</li>
+					{% endif %}
+					{% if signalement.informationComplementaire and  signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
+						<li>Date d'effet du bail :
+							{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail('d/m/Y')}}
+						</li>
+					{% endif %}
+					<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
+					{% if signalement.typeCompositionLogement %}
+						{% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+							- dont nombre d'enfants :
+								{{signalement.typeCompositionLogement.compositionLogementNombreEnfants}}
+						{% endif %}
+						{% if signalement.typeCompositionLogement.compositionLogementEnfants %}
+							<li>Enfants de moins de 6 ans ?
+								{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.typeCompositionLogement.bailDpeBail %}
+							<li>Bail :
+								{{signalement.typeCompositionLogement.bailDpeBail(false)}}
+							</li>
+						{% endif %}
+						{% if signalement.typeCompositionLogement.bailDpeEtatDesLieux %}
+							<li>Etat des lieux :
+								{{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
+							</li>
+						{% endif %}
+						{% if signalement.typeCompositionLogement.bailDpeDpe %}
+							<li>DPE :
+								{{signalement.typeCompositionLogement.bailDpeDpe(false)}}
+							</li>
+						{% endif %}
+						{% if signalement.typeCompositionLogement.bailDpeClasseEnergetique %}
+							<li>Classe énergétique :
+								{{signalement.typeCompositionLogement.bailDpeClasseEnergetique}}
+							</li>
+						{% endif %}
+					{% endif %}
+					{% if signalement.numeroInvariant %}
+						<li>Invariant fiscal :
+							{{signalement.numeroInvariant}}
+						</li>
+					{% endif %}
+					{% if signalement.loyer %}
+						<li>Montant du loyer :
+							{{ signalement.loyer}} €
+						</li>
+					{% endif %}
+					{% if signalement.informationComplementaire %}				
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes %}
+							<li>Paiement loyers à jour :
+								{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes}}
+							</li>
+						{% endif %}
+						{% if signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction %}
+							<li>Année de construction :
+								{{ signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction}}
+							</li>
+						{% endif %}
+					{% endif %}
+				</ul>
+			</div>
+
+			<div class="signalement-group-data-card">
+				<h3 class="title-blue-france fr-h5">Situation du foyer</h3>
+				<ul>
+					{% if signalement.isLogementSocial %}
+						<li>Logement social : Oui</li>
+					{% endif %}
+					{% if signalement.isRelogement is same as true %}
+						<li>Demande de relogement : Oui</li>
+					{% endif %}
+					{% if signalement.isAllocataire in [null, ''] %}
+					{% elseif signalement.isAllocataire in ['oui', '1'] %}
+						<li>Allocataire : Oui</li>
+					{% elseif signalement.isAllocataire in ['non', '0'] %}
+						<li>Allocataire : Non</li>
+					{% elseif signalement.isAllocataire %}
+						<li>Allocataire : {{ signalement.isAllocataire }}</li>
+					{% endif %}
+					{% if (signalement.dateNaissanceOccupant) %}
+						<li>Date de naissance : {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}</li>
+					{% elseif signalement.naissanceOccupants %}
+						<li>Date de naissance : {{ signalement.naissanceOccupants}}</li>
+					{% endif %}
+					{% if signalement.numAllocataire %}
+						<li>N° allocataire : {{ signalement.numAllocataire }}</li>
+					{% endif %}
+					{% if signalement.situationFoyer %}
+						{% if signalement.situationFoyer.logementSocialMontantAllocation %}
+							<li>Montant allocation :
+								{{ signalement.situationFoyer.logementSocialMontantAllocation }} €
+							</li>
+						{% endif %}
+						{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
+							<li>Souhaite quitter le logement :
+								{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.situationFoyer.travailleurSocialPreavisDepart(false) %}
+							<li>Préavis de départ :
+								{{signalement.situationFoyer.travailleurSocialPreavisDepart(false)|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) %}
+							<li>Accompagnement par un ou une travailleuse sociale :
+								{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) and signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
+							<li>Nom de la structure d'accompagnement :
+								{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
+							</li>
+						{% endif %}
+					{% endif %}
+					{% if signalement.informationComplementaire %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
+							<li>Bénéficiaire RSA :
+								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
+							<li>Bénéficiaire FSL :
+								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
+							<li>Revenu fiscal de référence :
+								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}} €
+							</li>
+						{% endif %}
+					{% endif %}
+					{% if signalement.informationProcedure %}
 						<li>
-							Réponse de l'assurance : 
-							{{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}
+							Si des travaux sont faits, voulez-vous rester dans le logement ? 
+							{{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)|capitalize}}
 						</li>
 					{% endif %}
 				</ul>
-			    {% if signalement.informationProcedure.infoProcedureAssuranceContactee in ['non', 'nsp'] %}
-				   <div class="fr-alert fr-alert--info fr-alert--sm">
-				   		<p>Votre assurance peut parfois prendre en charge vos problèmes. N'hésitez pas à la contacter !</p>
-				    </div>
-				{% elseif signalement.informationProcedure.infoProcedureAssuranceContactee == 'pas_assurance_logement' %}
-				   <div class="fr-alert fr-alert--warning fr-alert--sm">
-						<p>
-							D'après la loi, vous devez avoir une assurance habitation pour votre logement. Pour plus d'info, rendez-vous sur 
-							<a href="https://www.service-public.fr/particuliers/vosdroits/F31300" target="_blank" rel="noopener" title="Le site du Service Public - Ouvre une nouvelle fenêtre">le site du Service Public</a>.
-						</p>
-					</div>
-				{% endif %}
-			{% endif %}
+			</div>
 		</div>
 	</div>
 </main>
