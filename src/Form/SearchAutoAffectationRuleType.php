@@ -28,6 +28,27 @@ class SearchAutoAffectationRuleType extends AbstractType
                     ],
                 ]);
 
+        $builder->add('orderType', ChoiceType::class, [
+            'choices' => [
+                'Territoire (A -> Z)' => 'aar.territory-ASC',
+                'Territoire inversé (Z -> A)' => 'aar.territory-DESC',
+                'Type partenaire (A -> Z)' => 'aar.partnerType-ASC',
+                'Type partenaire inversé (Z -> A)' => 'aar.partnerType-DESC',
+                'Profil déclarant (Z -> A)' => 'aar.profileDeclarant-ASC',
+                'Profil déclarant inversé (Z -> A)' => 'aar.profileDeclarant-DESC',
+                'Parc (A -> Z)' => 'aar.parc-ASC',
+                'Parc inversé (A -> Z)' => 'aar.parc-ASC',
+                'Allocataire (A -> Z)' => 'aar.allocataire-ASC',
+                'Allocataire inversé (Z -> A)' => 'aar.allocataire-DESC',
+                'La plus récente' => 'aar.createdAt-DESC',
+                'La plus ancienne' => 'aar.createdAt-ASC',
+            ],
+            'required' => false,
+            'placeholder' => false,
+            'label' => 'Trier par',
+            'data' => 'aar.createdAt-DESC',
+        ]);
+
         $builder->add('page', HiddenType::class);
     }
 

@@ -30,6 +30,7 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
             maxResult: $maxResult,
             territory: $searchAutoAffectationRule->getTerritory(),
             isActive: $searchAutoAffectationRule->getIsActive(),
+            orderType: $searchAutoAffectationRule->getOrderType(),
         );
     }
 
@@ -41,6 +42,7 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
         int $maxResult,
         ?Territory $territory,
         ?bool $isActive,
+        ?string $orderType = null,
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('aar');
 
@@ -54,6 +56,13 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
 
         $firstResult = ($page - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        if (!empty($orderType)) {
+            [$orderField, $orderDirection] = explode('-', $orderType);
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('aar.createdAt', 'DESC');
+        }
 
         return new Paginator($queryBuilder->getQuery(), false);
     }

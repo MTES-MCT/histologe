@@ -121,7 +121,7 @@
             {% endfor %}
         {% endset %}
 
-        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des comptes archivés ou sans territoires et/ou partenaires', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des comptes archivés ou sans territoires et/ou partenaires', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
         <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}
