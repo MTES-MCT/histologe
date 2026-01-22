@@ -164,16 +164,23 @@ class SignalementDraftAddressType extends AbstractType
                 'data' => $signalement->getLienDeclarantOccupant(),
             ])
             ->add('isLogementSocial', ChoiceType::class, [
-                'label' => 'Logement social',
+                'label' => 'Logement social <span class="text-required">*</span>',
                 'label_html' => true,
                 'choices' => [
                     'Oui' => true,
                     'Non' => false,
+                    'Ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
+                'constraints' => [
+                    new Assert\NotNull(
+                        message: 'Veuillez renseigner si il s\'agit d\'un logement social.',
+                        groups: ['bo_step_address'],
+                    ),
+                ],
             ])
             ->add('natureLogement', ChoiceType::class, [
                 'label' => 'Type de logement <span class="text-required">*</span>',

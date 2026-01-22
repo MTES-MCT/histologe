@@ -50,6 +50,16 @@ class SignalementBoManager
         $typeCompositionLogement->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
+
+        if ('nsp' === $form->get('isLogementSocial')->getData()) {
+            $signalement->setIsLogementSocial(null);
+            $situationFoyer->setLogementSocialAllocation(null);
+        } if ($form->get('isLogementSocial')->getData()) {
+            $situationFoyer->setLogementSocialAllocation('oui');
+        } else {
+            $situationFoyer->setLogementSocialAllocation('non');
+        }
+
         $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
         $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
         $signalement->setSituationFoyer($situationFoyer);
