@@ -69,9 +69,7 @@ class AffectationVoter extends Voter
 
     private function canAcceptOrRefuse(Affectation $affectation, User $user): bool
     {
-        return $this->canAnswer($affectation, $user)
-        && (AffectationStatus::WAIT === $affectation->getStatut() || AffectationStatus::REFUSED === $affectation->getStatut())
-        ;
+        return $this->canAnswer($affectation, $user) && AffectationStatus::WAIT === $affectation->getStatut();
     }
 
     private function canCancelRefused(Affectation $affectation, User $user): bool
