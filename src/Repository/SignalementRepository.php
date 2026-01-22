@@ -2096,6 +2096,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
             $sql .= ' AND aff.partner_id IN (:partners)';
+            $sql .= ' AND aff.statut IN (\'EN_COURS\', \'NOUVEAU\')';
             $paramsToBind['partners'] = array_map(
                 fn ($partner) => $partner->getId(),
                 $user->getPartners()->toArray()
