@@ -54,7 +54,7 @@ class SignalementBoManager
         if ('nsp' === $form->get('isLogementSocial')->getData()) {
             $signalement->setIsLogementSocial(null);
             $situationFoyer->setLogementSocialAllocation(null);
-        } if ($form->get('isLogementSocial')->getData()) {
+        } elseif ($form->get('isLogementSocial')->getData()) {
             $situationFoyer->setLogementSocialAllocation('oui');
         } else {
             $situationFoyer->setLogementSocialAllocation('non');
