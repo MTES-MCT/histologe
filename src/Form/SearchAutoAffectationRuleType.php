@@ -37,7 +37,7 @@ class SearchAutoAffectationRuleType extends AbstractType
                 'Profil déclarant (Z -> A)' => 'aar.profileDeclarant-ASC',
                 'Profil déclarant inversé (Z -> A)' => 'aar.profileDeclarant-DESC',
                 'Parc (A -> Z)' => 'aar.parc-ASC',
-                'Parc inversé (A -> Z)' => 'aar.parc-ASC',
+                'Parc inversé (Z -> A)' => 'aar.parc-DESC',
                 'Allocataire (A -> Z)' => 'aar.allocataire-ASC',
                 'Allocataire inversé (Z -> A)' => 'aar.allocataire-DESC',
                 'La plus récente' => 'aar.createdAt-DESC',
