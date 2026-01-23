@@ -43,7 +43,7 @@
         {% set tableBody %}
             {% for item in results %}
                 <tr>
-                    <td>{{ item.signalement.reference}}</td>
+                    <td>{{ item.signalement.reference }}</td>
                     <td>
                         {% for affectation in item.signalement.affectations %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ affectation.partner.nom }}</div>
