@@ -135,16 +135,16 @@
                             <button
                                 class="fr-btn fr-btn--sm fr-icon-eye-line open-photo-album" 
                                 data-id="{{ photo.id }}"
-                                title="Voir la photo {{ photo.filename }}"
+                                title="Voir la photo {{ photo.getDisplayFilename }}"
                             ></button>
                             {% if is_granted('FILE_EDIT', photo) %}                   
                                 <button 
                                     class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                                     id="file_edit_{{ photo.id }}" 
-                                    title="Editer la photo {{ photo.filename }}"
+                                    title="Editer la photo {{ photo.getDisplayFilename }}"
                                     aria-controls="fr-modal-edit-file"
                                     data-fr-opened="false"
-                                    data-filename="{{ photo.filename }}"
+                                    data-filename="{{ photo.getDisplayFilename }}"
                                     data-type="photo" 
                                     data-file-id="{{ photo.id}}" 
                                     data-signalement-uuid="{{ photo.signalement.uuid}}" 
@@ -163,10 +163,10 @@
                             {% if is_granted('FILE_DELETE', photo) %}
                                 <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
                                     id="file_delete_{{ photo.id }}" 
-                                    title="Supprimer la photo {{ photo.filename }}"
+                                    title="Supprimer la photo {{ photo.getDisplayFilename }}"
                                     aria-controls="fr-modal-delete-file"
                                     data-fr-opened="false" 
-                                    data-filename="{{ photo.filename }}" 
+                                    data-filename="{{ photo.getDisplayFilename }}"
                                     data-file-id="{{ photo.id}}"                     
                                 ></button>
                             {% endif %}
@@ -216,15 +216,15 @@
 
                 {% if not doc.isSuspicious %}
                     <a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
-                            class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.filename }}"
+                            class="fr-btn fr-btn--sm fr-icon-eye-fill img-box" title="Afficher le document {{ doc.getDisplayFilename }}"
                             target="_blank" rel="noopener"></a>
                     {% if doc.documentType is not same as DocumentType.PHOTO_VISITE and is_granted('FILE_EDIT', doc) %}
                         <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                             id="file_edit_{{ doc.id }}"
-                            title="Editer le document {{ doc.filename }}"
+                            title="Editer le document {{ doc.getDisplayFilename }}"
                             aria-controls="fr-modal-edit-file"
                             data-fr-opened="false"
-                            data-filename="{{ doc.filename }}"
+                            data-filename="{{ doc.getDisplayFilename }}"
                             data-type="document"
                             data-file-id="{{ doc.id}}"
                             data-signalement-uuid="{{ signalement.uuid}}" 
@@ -241,10 +241,10 @@
                 {% if is_granted('FILE_DELETE', doc) %}
                     <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
                         id="file_delete_{{ doc.id }}" 
-                        title="Supprimer le document {{ doc.filename }}"
+                        title="Supprimer le document {{ doc.getDisplayFilename }}"
                         aria-controls="fr-modal-delete-file"
                         data-fr-opened="false" 
-                        data-filename="{{ doc.filename }}" 
+                        data-filename="{{ doc.getDisplayFilename }}"
                         data-file-id="{{ doc.id}}"                     
                     ></button>
                 {% endif %}
