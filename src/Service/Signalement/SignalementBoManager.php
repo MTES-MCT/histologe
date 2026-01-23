@@ -42,24 +42,22 @@ class SignalementBoManager
         $signalement->setProfileDeclarant($profileDeclarant);
         $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
 
-        $profileOccupant = null;
-        if (empty($profileOccupant)) {
-            switch ($profileDeclarant) {
-                case ProfileDeclarant::TIERS_PARTICULIER:
-                case ProfileDeclarant::TIERS_PRO:
-                case ProfileDeclarant::SERVICE_SECOURS:
-                    $profileOccupant = ProfileOccupant::tryFrom($form->get('profileOccupant')->getData());
-                    break;
-                case ProfileDeclarant::BAILLEUR:
-                case ProfileDeclarant::LOCATAIRE:
-                    $profileOccupant = ProfileOccupant::LOCATAIRE;
-                    break;
-                case ProfileDeclarant::BAILLEUR_OCCUPANT:
-                    $profileOccupant = ProfileOccupant::BAILLEUR_OCCUPANT;
-                    break;
-                default:
-                    break;
-            }
+        switch ($profileDeclarant) {
+            case ProfileDeclarant::TIERS_PARTICULIER:
+            case ProfileDeclarant::TIERS_PRO:
+            case ProfileDeclarant::SERVICE_SECOURS:
+                $profileOccupant = ProfileOccupant::tryFrom($form->get('profileOccupant')->getData());
+                break;
+            case ProfileDeclarant::BAILLEUR:
+            case ProfileDeclarant::LOCATAIRE:
+                $profileOccupant = ProfileOccupant::LOCATAIRE;
+                break;
+            case ProfileDeclarant::BAILLEUR_OCCUPANT:
+                $profileOccupant = ProfileOccupant::BAILLEUR_OCCUPANT;
+                break;
+            default:
+                $profileOccupant = null;
+                break;
         }
         $signalement->setProfileOccupant($profileOccupant);
 

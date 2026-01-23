@@ -6,6 +6,7 @@ use App\Dto\SignalementExport;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\User;
@@ -35,6 +36,7 @@ class SignalementExportFactoryTest extends TestCase
             'prenomOccupant' => $faker->firstName(),
             'adresseOccupant' => $faker->streetAddress(),
             'villeOccupant' => $faker->city(),
+            'profileOccupant' => ProfileOccupant::LOCATAIRE,
             'rawAffectations' => 'DDETS-PS-DL PE - Mission Logement indigne||0;M.A.M.P. - CT1 / EAH Marseille||0;MARSEILLE||1',
             'affectationPartnerName' => 'DDETS-PS-DL PE - Mission Logement indigne;M.A.M.P. - CT1 / EAH Marseille;MARSEILLE',
             'affectationStatus' => '0;1',
@@ -89,6 +91,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals('en cours', $signalementExportFactory->statut);
         $this->assertEquals(MotifCloture::INSALUBRITE->label(), $signalementExportFactory->motifCloture);
         $this->assertEquals(ProfileDeclarant::LOCATAIRE->label(), $signalementExportFactory->typeDeclarant);
+        $this->assertEquals(ProfileOccupant::LOCATAIRE->label(), $signalementExportFactory->typeOccupant);
 
         $dateFormatted = (new \DateTimeImmutable())->format(SignalementExportFactory::DATE_FORMAT);
         $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);
