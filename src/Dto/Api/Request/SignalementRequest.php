@@ -101,10 +101,10 @@ class SignalementRequest implements RequestInterface
     public ?string $profilDeclarant = null;
 
     #[OA\Property(
-        description: 'Profil de l\'occupant.',
+        description: 'Profil de l\'occupant.
+                      <br>⚠️Pris en compte uniquement dans les cas du profilDeclarant '.ProfileDeclarant::TIERS_PARTICULIER->value.', '.ProfileDeclarant::TIERS_PRO->value.' ou '.ProfileDeclarant::SERVICE_SECOURS->value.'.',
         example: ProfileOccupant::LOCATAIRE->value,
     )]
-    #[Assert\NotBlank(message: 'Veuillez renseigner le profil de l\'occupant.')]
     #[Assert\Choice(
         choices: [
             ProfileOccupant::BAILLEUR_OCCUPANT->value,

@@ -63,7 +63,7 @@ class SignalementApiFactory
         } elseif (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::BAILLEUR, ProfileDeclarant::LOCATAIRE])) {
             $signalement->setProfileOccupant(ProfileOccupant::LOCATAIRE);
         } else {
-            $signalement->setProfileOccupant(ProfileOccupant::from($request->profilOccupant));
+            $signalement->setProfileOccupant(ProfileOccupant::tryFrom($request->profilOccupant));
         }
 
         $signalement->setIsLogementSocial($request->isLogementSocial);
