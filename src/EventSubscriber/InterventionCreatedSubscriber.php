@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
 use App\Manager\SuiviManager;
@@ -37,11 +38,30 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
         if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
             $isPublic = false;
         }
+
+        $today = new \DateTimeImmutable();
+        $isInPast = $today > $intervention->getScheduledAt()
+            && Intervention::STATUS_DONE === $intervention->getStatus();
+
+        switch ($intervention->getType()) {
+            case InterventionType::VISITE:
+                $suiviCategory = $isInPast ? SuiviCategory::INTERVENTION_IS_DONE : SuiviCategory::INTERVENTION_IS_CREATED;
+                break;
+            case InterventionType::VISITE_CONTROLE:
+                $suiviCategory = $isInPast ? SuiviCategory::INTERVENTION_CONTROLE_IS_DONE : SuiviCategory::INTERVENTION_CONTROLE_IS_CREATED;
+                break;
+            case InterventionType::ARRETE_PREFECTORAL:
+                $suiviCategory = SuiviCategory::INTERVENTION_ARRETE_IS_CREATED;
+                break;
+            default:
+                $suiviCategory = SuiviCategory::INTERVENTION_IS_CREATED;
+        }
+
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
             description: $description,
             type: Suivi::TYPE_AUTO,
-            category : SuiviCategory::INTERVENTION_IS_CREATED,
+            category : $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
             isPublic: $isPublic,

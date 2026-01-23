@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Manager\Esabora;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -91,6 +92,7 @@ class EsaboraManagerTest extends KernelTestCase
         AffectationStatus $expectedAffectationStatus,
         int $suiviStatus,
         bool $mailSent,
+        SuiviCategory $suiviCategory,
     ): void {
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
@@ -140,6 +142,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertStringContainsString($suiviDescription, $suivi->getDescription(), $suiviDescription);
         $this->assertFalse($suivi->getIsPublic());
         $this->assertEquals($suiviStatus, $suivi->getType());
+        $this->assertEquals($suiviCategory, $suivi->getCategory());
         $this->assertEmailCount($mailSent ? 1 : 0);
 
         /** @var Affectation $affectationUpdated */
@@ -156,6 +159,7 @@ class EsaboraManagerTest extends KernelTestCase
             AffectationStatus::WAIT,
             Suivi::TYPE_TECHNICAL,
             false, // suivi mail not sent cause suivi technical
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
 
         yield EsaboraStatus::ESABORA_ACCEPTED->value => [
@@ -165,6 +169,7 @@ class EsaboraManagerTest extends KernelTestCase
             AffectationStatus::ACCEPTED,
             Suivi::TYPE_AUTO,
             true, // suivi mail sent
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
 
         yield EsaboraStatus::ESABORA_CLOSED->value => [
@@ -174,6 +179,7 @@ class EsaboraManagerTest extends KernelTestCase
             AffectationStatus::CLOSED,
             Suivi::TYPE_AUTO,
             true, // suivi mail sent
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
 
         yield EsaboraStatus::ESABORA_REFUSED->value => [
@@ -183,6 +189,7 @@ class EsaboraManagerTest extends KernelTestCase
             AffectationStatus::REFUSED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
 
         yield EsaboraStatus::ESABORA_REJECTED->value.' SISH' => [
@@ -192,6 +199,7 @@ class EsaboraManagerTest extends KernelTestCase
             AffectationStatus::REFUSED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
 
         yield EsaboraStatus::ESABORA_ACCEPTED->value.' SISH' => [
@@ -201,6 +209,7 @@ class EsaboraManagerTest extends KernelTestCase
             AffectationStatus::ACCEPTED,
             Suivi::TYPE_AUTO,
             false, // suivi mail not sent cause signalement closed
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
     }
 
@@ -319,6 +328,7 @@ class EsaboraManagerTest extends KernelTestCase
         }
 
         $this->assertStringContainsString('Visite de contrôle réalisée', $suivi->getDescription());
+        $this->assertEquals(SuiviCategory::INTERVENTION_CONTROLE_IS_DONE, $suivi->getCategory(), 'La catégorie du suivi doit être INTERVENTION_CONTROLE_IS_DONE');
         $this->assertEquals(Intervention::STATUS_DONE, $intervention->getStatus(), 'Le statut doit être DONE après application du workflow confirm');
     }
 }
