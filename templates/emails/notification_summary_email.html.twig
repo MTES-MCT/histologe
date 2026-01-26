@@ -14,6 +14,16 @@
     <br>
 {% endif %}
 
+{% if events[enum('App\\Entity\\Enum\\NotificationType').DEMANDE_ABANDON_PROCEDURE.name]|length %}
+    <p><u>Nouvelle demandes d'abandon de procédure :</u></p>
+    {% for event in events[enum('App\\Entity\\Enum\\NotificationType').DEMANDE_ABANDON_PROCEDURE.name] %}
+        <ul>
+            <li>Signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong>.</li>
+        </ul>
+    {% endfor %}
+    <br>
+{% endif %}
+
 {% if events[enum('App\\Entity\\Enum\\NotificationType').NOUVELLE_AFFECTATION.name]|length %}
     <p><u>Affectations :</u></p>
     {% for event in events[enum('App\\Entity\\Enum\\NotificationType').NOUVELLE_AFFECTATION.name] %}
