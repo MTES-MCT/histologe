@@ -87,6 +87,9 @@
                                 <input class="fr-input" type="text" id="coordonneesFoyerTelephoneBis" name="telephoneBis" value="{{ signalement.telOccupantBisDecoded }}">
                             </div>
 
+                            {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').TIERS_PRO
+                                or signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').TIERS_PARTICULIER
+                                or signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').SERVICE_SECOURS %}
                             <div class="fr-select-group">
                                 <label class="fr-label" for="coordonneesFoyerProfileOccupant">Type d'occupant</label>
                                 {% set ProfileOccupant = enum('\\App\\Entity\\Enum\\ProfileOccupant') %}
@@ -97,6 +100,7 @@
                                     <option value="{{ enum('App\\Entity\\Enum\\ProfileOccupant').BAILLEUR_OCCUPANT.name }}" {{ signalement.profileOccupant is same as enum('App\\Entity\\Enum\\ProfileOccupant').BAILLEUR_OCCUPANT ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProfileOccupant').BAILLEUR_OCCUPANT.label }}</option>
                                 </select>
                             </div>
+                            {% endif %}
 
                             <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_foyer_'~signalement.id) }}">
                         </div>
