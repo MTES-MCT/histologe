@@ -136,6 +136,10 @@
 					{% endif %}
 				</div>
 				<div class="title-separator">Coordonnées du bailleur</div>
+				{% if signalement.denominationProprio %}
+					{{ signalement.denominationProprio }}
+					<br>
+				{% endif %}
 				{{signalement.nomProprio}}
 				{% if signalement.prenomProprio %}
 					{{ signalement.prenomProprio }}
@@ -396,8 +400,7 @@
 					<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
 					{% if signalement.typeCompositionLogement %}
 						{% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
-							- dont nombre d'enfants :
-								{{signalement.typeCompositionLogement.compositionLogementNombreEnfants}}
+							<li>dont nombre d'enfants : {{signalement.typeCompositionLogement.compositionLogementNombreEnfants}}</li>
 						{% endif %}
 						{% if signalement.typeCompositionLogement.compositionLogementEnfants %}
 							<li>Enfants de moins de 6 ans ?
