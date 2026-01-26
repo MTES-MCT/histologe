@@ -138,12 +138,13 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
 
-        $listRT = $this->userRepository->findUsersSubscribedToSignalement(signalement: $this->signalement, onlyRT: true);
-        $listAdmins = $this->userRepository->findActiveAdmins();
-        $recipients = new ArrayCollection(array_merge($listRT, $listAdmins));
+        $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
+        $adminList = $this->userRepository->findActiveAdmins();
+        $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
+        $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
 
         $this->sendMail($recipients, NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_ADMIN);
-        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::DEMANDE_ABANDON_PROCEDURE, suivi: $suivi);
     }
 
     public function sendNewSuiviToUsagers(Suivi $suivi): void
