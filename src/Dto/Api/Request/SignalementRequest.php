@@ -799,6 +799,9 @@ class SignalementRequest implements RequestInterface
             if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value]) && $this->isLogementVacant) {
                 $context->buildViolation('Le champ isLogementVacant ne peut être true que si le profilDeclarant = TIERS_PARTICULIER, TIERS_PRO, SERVICE_SECOURS ou BAILLEUR.')->atPath('isLogementVacant')->addViolation();
             }
+            if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value, ProfileDeclarant::BAILLEUR->value]) && !empty($this->profilOccupant)) {
+                $context->buildViolation('Le champ profilOccupant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE, BAILLEUR_OCCUPANT ou BAILLEUR.')->atPath('profilOccupant')->addViolation();
+            }
         }
         if ($this->natureLogementAutre && 'autre' !== $this->natureLogement) {
             $context->buildViolation('Le champ natureLogementAutre ne peut être true que si natureLogement = "autre".')->atPath('natureLogementAutre')->addViolation();

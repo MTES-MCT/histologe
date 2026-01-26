@@ -12,7 +12,7 @@ class SignalementProfileOccupantMapperTest extends TestCase
     /**
      * @dataProvider provideInputValue
      */
-    public function testMap(string $profileOccupantInput, ?ProfileDeclarant $profileDeclarant, ?ProfileOccupant $profileOccupant): void
+    public function testMap(?string $profileOccupantInput, ?ProfileDeclarant $profileDeclarant, ?ProfileOccupant $profileOccupant): void
     {
         $this->assertEquals($profileOccupant, SignalementProfileOccupantMapper::map($profileOccupantInput, $profileDeclarant));
     }
@@ -25,5 +25,6 @@ class SignalementProfileOccupantMapperTest extends TestCase
         yield 'Occupant locataire, Declarant tiers particulier' => [ProfileOccupant::LOCATAIRE->value, ProfileDeclarant::TIERS_PARTICULIER, ProfileOccupant::LOCATAIRE];
         yield 'Occupant bailleur occupant, Declarant tiers pro' => [ProfileOccupant::BAILLEUR_OCCUPANT->value, ProfileDeclarant::TIERS_PRO, ProfileOccupant::BAILLEUR_OCCUPANT];
         yield 'Occupant empty, Declarant service secours' => ['', ProfileDeclarant::SERVICE_SECOURS, null];
+        yield 'Occupant null, Declarant service secours' => [null, ProfileDeclarant::SERVICE_SECOURS, null];
     }
 }
