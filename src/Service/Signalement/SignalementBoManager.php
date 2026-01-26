@@ -6,7 +6,6 @@ use App\Entity\DesordreCritere;
 use App\Entity\DesordrePrecision;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
-use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
@@ -41,25 +40,7 @@ class SignalementBoManager
         $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarant')->getData());
         $signalement->setProfileDeclarant($profileDeclarant);
         $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
-
-        switch ($profileDeclarant) {
-            case ProfileDeclarant::TIERS_PARTICULIER:
-            case ProfileDeclarant::TIERS_PRO:
-            case ProfileDeclarant::SERVICE_SECOURS:
-                $profileOccupant = ProfileOccupant::tryFrom($form->get('profileOccupant')->getData());
-                break;
-            case ProfileDeclarant::BAILLEUR:
-            case ProfileDeclarant::LOCATAIRE:
-                $profileOccupant = ProfileOccupant::LOCATAIRE;
-                break;
-            case ProfileDeclarant::BAILLEUR_OCCUPANT:
-                $profileOccupant = ProfileOccupant::BAILLEUR_OCCUPANT;
-                break;
-            default:
-                $profileOccupant = null;
-                break;
-        }
-        $signalement->setProfileOccupant($profileOccupant);
+        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map($form->get('profileOccupant')->getData(), $profileDeclarant));
 
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
         $signalement->setNatureLogement($form->get('natureLogement')->getData());

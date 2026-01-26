@@ -5,7 +5,6 @@ namespace App\Service\Signalement;
 use App\Dto\Api\Request\SignalementRequest;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
-use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
@@ -58,13 +57,7 @@ class SignalementApiFactory
         $signalement->setProfileDeclarant(ProfileDeclarant::from($request->profilDeclarant));
         $signalement->setLienDeclarantOccupant($request->lienDeclarantOccupant);
 
-        if (ProfileDeclarant::BAILLEUR_OCCUPANT === $signalement->getProfileDeclarant()) {
-            $signalement->setProfileOccupant(ProfileOccupant::BAILLEUR_OCCUPANT);
-        } elseif (in_array($signalement->getProfileDeclarant(), [ProfileDeclarant::BAILLEUR, ProfileDeclarant::LOCATAIRE])) {
-            $signalement->setProfileOccupant(ProfileOccupant::LOCATAIRE);
-        } else {
-            $signalement->setProfileOccupant(ProfileOccupant::tryFrom($request->profilOccupant));
-        }
+        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map($request->profilOccupant, $signalement->getProfileDeclarant()));
 
         $signalement->setIsLogementSocial($request->isLogementSocial);
         if (in_array($signalement->getProfileDeclarant(),

@@ -8,7 +8,6 @@ use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
-use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
@@ -518,19 +517,10 @@ class SignalementBuilder
 
     private function setOccupantProfileData(): void
     {
-        if ($this->isBailleurOccupant()) {
-            $this->signalement->setProfileOccupant(ProfileOccupant::BAILLEUR_OCCUPANT);
-        } elseif ($this->isOccupant()) {
-            $this->signalement->setProfileOccupant(ProfileOccupant::LOCATAIRE);
-        } elseif ($this->isBailleur()) {
-            $this->signalement->setProfileOccupant(ProfileOccupant::BAILLEUR_OCCUPANT);
-        } elseif ('nsp' !== $this->signalementDraftRequest->getSignalementConcerneProfilDetailProfilOccupant()) {
-            $this->signalement->setProfileOccupant(
-                ProfileOccupant::tryFrom(
-                    strtoupper($this->signalementDraftRequest->getSignalementConcerneProfilDetailProfilOccupant())
-                )
-            );
-        }
+        $this->signalement->setProfileOccupant(SignalementProfileOccupantMapper::map(
+            profileOccupant: strtoupper($this->signalementDraftRequest->getSignalementConcerneProfilDetailProfilOccupant()),
+            profileDeclarant: $this->signalement->getProfileDeclarant()
+        ));
     }
 
     private function isOccupant(): bool
