@@ -75,15 +75,17 @@
       <div class="pick-location-footer fr-mt-3v">
         <button
           class="fr-btn fr-icon-check-line"
-          id="fr-modal-pick-localisation-submit"
+          :id="id + '_pick_location_submit'"
           :disabled="!selectedRnbId"
+          :title="selectedRnbId ? 'Valider la sélection du bâtiment' : 'Veuillez sélectionner un bâtiment sur la carte'"
           @click="handleSubmitPickLocation"
           type="button">
-          Valider
+          Valider la sélection
         </button>
         <button
           type="button"
           class="fr-btn fr-btn--secondary fr-icon-close-line"
+          title="Fermer sans enregistrer"
           @click="closePickLocation">
           Annuler
         </button>
@@ -324,6 +326,10 @@ export default defineComponent({
       this.showPickLocation = !this.showPickLocation
 
       if (this.showPickLocation) {
+        // Réinitialiser la sélection à chaque ouverture
+        this.selectedRnbId = null
+        this.previousRnbId = undefined
+
         // Incrémenter la clé pour forcer Vue à recréer l'élément
         this.mapKey++
 
@@ -342,7 +348,6 @@ export default defineComponent({
     },
     closePickLocation () {
       this.showPickLocation = false
-      this.selectedRnbId = null
       // La carte sera détruite dans togglePickLocation
     },
     initMap () {
