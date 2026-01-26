@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-IMAGE_VERSION="1.0.1"
+IMAGE_VERSION="1.0.2"
 
 log() {
   level="$1"
@@ -24,18 +24,17 @@ send_report() {
   HOSTNAME=$(hostname)
   TITLE="Synchronisation buckets S3 (${status})"
 
-  stats_line_escaped="$(printf "%s" "${stats_line:-}" | sed 's/\\/\\\\/g; s/"/\\"/g')"
-  message_escaped="$(printf "%s" "${message:-}" | sed 's/\\/\\\\/g; s/"/\\"/g')"
-
   curl -fsS -X POST "${SIGNAL_LOGEMENT_PROD_URL}/webhook/cron-report-mail" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${SEND_ERROR_EMAIL_TOKEN}" \
-    -d "{\"title\":\"$TITLE\",\"timestamp\":\"$TIMESTAMP\",\"host\":\"$HOSTNAME\",\"message\":\"$message_escaped\",\"exit_code\":$rc,\"rclone_stats\":\"$stats_line_escaped\"}" \
+    -d "{\"title\":\"$TITLE\",\"timestamp\":\"$TIMESTAMP\",\"host\":\"$HOSTNAME\",\"message\":\"$message\",\"exit_code\":$rc,\"stats\":\"$stats_line\"}" \
     || log WARN "Report call failed (curl exit=$?)"
 }
 
 extract_last_stats_line() {
-  grep -E '\(xf#[0-9]+/[0-9]+\)' | tail -n 1 || true
+  grep -E ' INFO  :' \
+    | tail -n 1 \
+    | sed -E 's/^.* INFO  :[[:space:]]*//'
 }
 
 log INFO "Image version: ${IMAGE_VERSION}"
@@ -70,6 +69,15 @@ log INFO "Source: ${RCLONE_SRC}"
 log INFO "Destination: ${RCLONE_DST}"
 log INFO "Max duration: ${RCLONE_MAX_DURATION}"
 
+PREFIX_YYYY_MM="$(date -u '+%Y/%m')"
+SRC_WITH_PREFIX="${RCLONE_SRC%/}/${PREFIX_YYYY_MM}/"
+DST_WITH_PREFIX="${RCLONE_DST%/}/${PREFIX_YYYY_MM}/"
+
+log INFO "Monthly prefix (UTC): ${PREFIX_YYYY_MM}"
+log INFO "Source (monthly): ${SRC_WITH_PREFIX}"
+log INFO "Destination (monthly): ${DST_WITH_PREFIX}"
+
+
 # Notifie si le script est interrompu (Ctrl+C ou Ctrl+Z, ... ou arrêt Docker)
 on_term() {
   # shellcheck disable=SC2317
@@ -83,7 +91,7 @@ trap on_term INT TERM
 
 set +e
 RCLONE_OUTPUT="$(
-  rclone sync "${RCLONE_SRC}" "${RCLONE_DST}" \
+  rclone sync "${SRC_WITH_PREFIX}" "${DST_WITH_PREFIX}" \
     --stats="1m" \
     --stats-one-line \
     --retries 10 \

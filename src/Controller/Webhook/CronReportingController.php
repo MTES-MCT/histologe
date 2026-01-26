@@ -35,6 +35,7 @@ class CronReportingController extends AbstractController
         $timestamp = $data['timestamp'] ?? date('Y-m-d H:i:s');
         $database = $data['database'] ?? 'N/A';
         $host = $data['host'] ?? 'N/A';
+        $stats = $data['stats'] ?? 'N/A';
 
         if (isset($data['error'])) {
             $logger->error('Cron job error: {job_title}', [
@@ -43,12 +44,14 @@ class CronReportingController extends AbstractController
                 'database' => $database,
                 'host' => $host,
                 'timestamp' => $timestamp,
+                'stats' => $stats,
             ]);
 
             $errorMessages = [];
             $errorMessages[] = '📅 Date : '.$timestamp;
             $errorMessages[] = '💾 Base : '.$database;
             $errorMessages[] = '🔍 Hôte : '.$host;
+            $errorMessages[] = '📊 Stats : '.$stats;
             $errorMessages[] = '❗ Erreur : '.$data['error'];
 
             $notificationMailerRegistry->send(
@@ -71,7 +74,7 @@ class CronReportingController extends AbstractController
                     cronLabel: $data['title'],
                     params: [
                         'count_success' => 1,
-                        'message_success' => ($data['message'] ?? 'Succès')." (DB: {$database}, Host: {$host}, Time: {$timestamp})",
+                        'message_success' => ($data['message'] ?? 'Succès')." (DB: {$database}, Host: {$host}, Time: {$timestamp}, Stats: {$stats})",
                     ],
                 )
             );
@@ -80,6 +83,7 @@ class CronReportingController extends AbstractController
                 'job_title' => $data['title'],
                 'database' => $database,
                 'host' => $host,
+                'stats' => $stats,
                 'timestamp' => $timestamp,
             ]);
         }
