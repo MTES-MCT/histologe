@@ -1,7 +1,3 @@
-<section class="fr-col-12 fr-p-5v">
-    <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(autoAffectationRules|length, 'règle d\'auto-affectation trouvée', 'règles d\'auto-affectation trouvées') }}</h2>
-</section>
-
 <section class="fr-col-12 fr-pt-0 fr-px-5v">
     {% set tableHead %}
         <th scope="col" data-responsive-title="1">Territoire</th>
@@ -27,7 +23,7 @@
                     {% else %}
                         {% set classe = 'fr-badge--blue-ecume' %}
                     {% endif %}
-                    <span class="fr-badge {{ classe }} fr-mb-1v">{{ autoaffectationrule.status  }}</span></td>
+                    <span class="fr-badge {{ classe }} fr-mb-1v">{{ autoaffectationrule.status  }}</span>
                 </td>
                 <td>{{ autoaffectationrule.partnerType.label }}</td>
                 <td>{{ autoaffectationrule.profileDeclarant }}</td>

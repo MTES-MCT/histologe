@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
@@ -16,6 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: AutoAffectationRuleRepository::class)]
 class AutoAffectationRule implements EntityHistoryInterface
 {
+    use TimestampableTrait;
+
     public const string STATUS_ACTIVE = 'ACTIVE';
     public const string STATUS_ARCHIVED = 'ARCHIVED';
 
@@ -115,7 +118,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(string $status): static
     {
         $this->status = $status;
 
@@ -127,7 +130,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this->partnerType;
     }
 
-    public function setPartnerType(?PartnerType $partnerType): self
+    public function setPartnerType(?PartnerType $partnerType): static
     {
         $this->partnerType = $partnerType;
 
@@ -139,7 +142,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this->profileDeclarant;
     }
 
-    public function setProfileDeclarant(?string $profileDeclarant): self
+    public function setProfileDeclarant(?string $profileDeclarant): static
     {
         $this->profileDeclarant = $profileDeclarant;
 
@@ -151,7 +154,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this->inseeToInclude;
     }
 
-    public function setInseeToInclude(string $inseeToInclude): self
+    public function setInseeToInclude(string $inseeToInclude): static
     {
         $this->inseeToInclude = $inseeToInclude;
 
@@ -165,7 +168,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     }
 
     /** @param array<string> $inseeToExclude */
-    public function setInseeToExclude(?array $inseeToExclude): self
+    public function setInseeToExclude(?array $inseeToExclude): static
     {
         $this->inseeToExclude = $inseeToExclude;
 
@@ -179,7 +182,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     }
 
     /** @param array<string> $partnerToExclude */
-    public function setPartnerToExclude(?array $partnerToExclude): self
+    public function setPartnerToExclude(?array $partnerToExclude): static
     {
         $this->partnerToExclude = $partnerToExclude;
 
@@ -191,7 +194,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this->parc;
     }
 
-    public function setParc(string $parc): self
+    public function setParc(string $parc): static
     {
         $this->parc = $parc;
 
@@ -203,7 +206,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this->allocataire;
     }
 
-    public function setAllocataire(string $allocataire): self
+    public function setAllocataire(string $allocataire): static
     {
         $this->allocataire = $allocataire;
 
@@ -217,7 +220,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     }
 
     /** @param array<Qualification> $proceduresSuspectees */
-    public function setProceduresSuspectees(?array $proceduresSuspectees): self
+    public function setProceduresSuspectees(?array $proceduresSuspectees): static
     {
         $this->proceduresSuspectees = $proceduresSuspectees;
 
