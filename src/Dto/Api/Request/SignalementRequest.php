@@ -6,6 +6,7 @@ use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
 use App\Validator as AppAssert;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -98,6 +99,19 @@ class SignalementRequest implements RequestInterface
         ],
     )]
     public ?string $profilDeclarant = null;
+
+    #[OA\Property(
+        description: 'Profil de l\'occupant.
+                      <br>⚠️Pris en compte uniquement dans les cas du profilDeclarant '.ProfileDeclarant::TIERS_PARTICULIER->value.', '.ProfileDeclarant::TIERS_PRO->value.' ou '.ProfileDeclarant::SERVICE_SECOURS->value.'.',
+        example: ProfileOccupant::LOCATAIRE->value,
+    )]
+    #[Assert\Choice(
+        choices: [
+            ProfileOccupant::BAILLEUR_OCCUPANT->value,
+            ProfileOccupant::LOCATAIRE->value,
+        ],
+    )]
+    public ?string $profilOccupant = null;
 
     #[OA\Property(
         description: 'Lien entre le déclarant et l\'occupant.
@@ -784,6 +798,9 @@ class SignalementRequest implements RequestInterface
             }
             if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value]) && $this->isLogementVacant) {
                 $context->buildViolation('Le champ isLogementVacant ne peut être true que si le profilDeclarant = TIERS_PARTICULIER, TIERS_PRO, SERVICE_SECOURS ou BAILLEUR.')->atPath('isLogementVacant')->addViolation();
+            }
+            if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value, ProfileDeclarant::BAILLEUR->value]) && !empty($this->profilOccupant)) {
+                $context->buildViolation('Le champ profilOccupant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE, BAILLEUR_OCCUPANT ou BAILLEUR.')->atPath('profilOccupant')->addViolation();
             }
         }
         if ($this->natureLogementAutre && 'autre' !== $this->natureLogement) {

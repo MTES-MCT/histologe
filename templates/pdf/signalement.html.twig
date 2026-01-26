@@ -53,6 +53,7 @@
                             </li>
                             <li><b>Téléphone :</b> <a
                                         href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
+                            <li><b>Profil :</b> {{ signalement.profileOccupant ? signalement.profileOccupant.label : 'N/R' }}</li>
                             <li>
                                 <b>Adresse :</b> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
                                 {% if signalement.complementAdresseOccupant %}

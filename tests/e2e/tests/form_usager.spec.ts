@@ -17,7 +17,7 @@ test('bouton finir plus tard locataire', async ({ page }) => {
     await page.getByText('8 la bodiniere 44850 Saint-').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Pour vous-même', { exact: true }).click();
-    await page.getByText('Locataire du logement').click();
+    await page.locator('#signalement_concerne_profil_detail_occupant').getByText('Locataire du logement').click();
     await page.locator('#signalement_concerne_logement_social_autre_tiers').getByText('Non').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Madame').click();

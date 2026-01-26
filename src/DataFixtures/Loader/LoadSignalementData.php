@@ -32,6 +32,7 @@ use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\Signalement\SignalementProfileOccupantMapper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -138,6 +139,9 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     : (new \DateTimeImmutable())->modify('-15 days')
             )
             ->setIsUsagerAbandonProcedure($row['usager_abandon_procedure'] ?? null);
+
+        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map('', $signalement->getProfileDeclarant()));
+
         if (isset($row['is_not_occupant'])) {
             $linkChoices = OccupantLink::getLabelList();
             $signalement
@@ -374,6 +378,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsUsagerAbandonProcedure($row['usager_abandon_procedure'] ?? null)
             ->setNbPiecesLogement($row['nb_pieces_logement'] ?? 1)
             ->setIsLogementVacant($row['logement_vacant'] ?? false);
+
+        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map('', $signalement->getProfileDeclarant()));
 
         if (isset($row['created_from_uuid'])) {
             $signalement->setCreatedFrom(

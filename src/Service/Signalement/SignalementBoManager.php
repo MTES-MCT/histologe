@@ -40,6 +40,8 @@ class SignalementBoManager
         $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarant')->getData());
         $signalement->setProfileDeclarant($profileDeclarant);
         $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
+        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map($form->get('profileOccupant')->getData(), $profileDeclarant));
+
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
         $signalement->setNatureLogement($form->get('natureLogement')->getData());
         if ('autre' === $signalement->getNatureLogement()) {
