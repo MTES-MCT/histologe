@@ -282,7 +282,7 @@ class SignalementController extends AbstractController
                 $profil = $data['profil'] ?? null;
                 $manageFlashMessages = true;
             } else {
-                $profil = $request->request->get('profil');
+                $profil = $request->query->get('profil');
             }
             $success = $notificationMailerRegistry->send(
                 new NotificationMail(
