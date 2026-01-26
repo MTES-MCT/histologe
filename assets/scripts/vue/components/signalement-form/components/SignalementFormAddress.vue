@@ -56,53 +56,39 @@
       @update:modelValue="handleSubscreenModelUpdate"
     />
 
-    <button 
-      class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-map-pin-2-line" 
-      data-fr-opened="false" 
-      :aria-controls="idModalPickLocation"
+    <button
+      class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-map-pin-2-line"
+      @click="togglePickLocation"
       v-if="displayPickLocationButton">
         Sélectionner le bâtiment sur la carte
     </button>
 
-    <dialog
-      aria-labelledby="fr-modal-pick-localisation-title"
-      :id="idModalPickLocation"
-      class="fr-modal"
-      :data-address="formStore.data[id + '_detail_numero'] + ' ' + formStore.data[id + '_detail_commune']"
-      :data-postcode="formStore.data[id + '_detail_code_postal']"
-      data-loaded="false"
-      >
-      <div class="fr-container fr-container--fluid fr-container-md">
-          <div class="fr-grid-row fr-grid-row--center">
-              <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                  <div class="fr-modal__body">
-                      <div class="fr-modal__header">
-                        <button type="button" class="fr-btn--close fr-btn" :aria-controls="idModalPickLocation">Fermer</button>
-                      </div>
-                      <div class="fr-modal__content">
-                          <h1 class="fr-modal__title">Sélectionner le bâtiment correspondant au logement</h1>
-                          <div id="fr-modal-pick-localisation-message" class="fr-hidden">Chargement en cours</div>
-                          <div id="fr-modal-pick-localisation-map"></div>
-                      </div>
-                      <div class="fr-modal__footer">
-                          <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                              <li>
-                                  <button class="fr-btn fr-icon-check-line" id="fr-modal-pick-localisation-submit" disabled type="button">
-                                      Valider
-                                  </button>
-                              </li>
-                              <li>
-                                  <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" :aria-controls="idModalPickLocation">
-                                      Annuler
-                                  </button>
-                              </li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-          </div>
+    <div v-if="showPickLocation" class="pick-location-container fr-mt-3v">
+      <div class="pick-location-header">
+        <h3>Sélectionner le bâtiment correspondant au logement</h3>
+        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-icon-close-line" @click="closePickLocation">
+          Fermer
+        </button>
       </div>
-    </dialog>
+      <div ref="pickLocationMessage" class="fr-hidden fr-mb-2v">Chargement en cours</div>
+      <div :key="mapKey" ref="pickLocationMapContainer" :id="idPickLocationMap" class="pick-location-map"></div>
+      <div class="pick-location-footer fr-mt-3v">
+        <button
+          class="fr-btn fr-icon-check-line"
+          id="fr-modal-pick-localisation-submit"
+          :disabled="!selectedRnbId"
+          @click="handleSubmitPickLocation"
+          type="button">
+          Valider
+        </button>
+        <button
+          type="button"
+          class="fr-btn fr-btn--secondary fr-icon-close-line"
+          @click="closePickLocation">
+          Annuler
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -118,6 +104,11 @@ import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 import L from 'leaflet'
 import 'leaflet.vectorgrid'
+
+// Import des fichiers CSS nécessaires pour Leaflet
+import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 export default defineComponent({
   name: 'SignalementFormAddress',
@@ -155,12 +146,13 @@ export default defineComponent({
       idAddress: this.id + '_suggestion',
       idShow: this.id + '_afficher_les_champs',
       idSubscreen: this.id + '_detail',
-      idModalPickLocation: this.id + '_modal_pick_localisation',
+      idPickLocationMap: this.id + '_pick_location_map',
       actionShow: 'show:' + this.id + '_detail',
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
       canPickLocation: this.customCss.includes('can-pick-location'),
       displayPickLocationButton: false,
+      showPickLocation: false,
       formStore,
       // Avoids searching when an option is selected in the list
       isSearchSkipped: false,
@@ -168,7 +160,8 @@ export default defineComponent({
       map: null as any,
       vectorTileLayer: null as any,
       previousRnbId: undefined as string | undefined,
-      handleModalDisclose: null as any
+      selectedRnbId: null as string | null,
+      mapKey: 0
     }
   },
   created () {
@@ -211,14 +204,7 @@ export default defineComponent({
       }
     )
   },
-  mounted () {
-    this.initPickLocationModal()
-  },
   beforeUnmount () {
-    const modalElement = document.getElementById(this.idModalPickLocation)
-    if (modalElement && this.handleModalDisclose) {
-      modalElement.removeEventListener('dsfr.disclose', this.handleModalDisclose)
-    }
     if (this.map) {
       this.map.remove()
     }
@@ -334,60 +320,105 @@ export default defineComponent({
       const urlParams = new URLSearchParams(queryString)
       return urlParams.get('cp') || ''
     },
-    initPickLocationModal () {
-      if (!this.canPickLocation) {
-        return
-      }
+    togglePickLocation () {
+      this.showPickLocation = !this.showPickLocation
 
-      const modalElement = document.getElementById(this.idModalPickLocation)
-      if (!modalElement) {
-        return
-      }
+      if (this.showPickLocation) {
+        // Incrémenter la clé pour forcer Vue à recréer l'élément
+        this.mapKey++
 
-      // Gérer l'événement d'ouverture de la modale
-      this.handleModalDisclose = () => {
-        console.log('Modal disclose event triggered', modalElement.dataset.loaded)
-        if (modalElement.dataset.loaded === 'false') {
-          modalElement.dataset.loaded = 'true'
-
-          // Attendre que la modale soit vraiment affichée
-          setTimeout(() => {
-            if (!this.map) {
-              console.log('Initializing map...')
-
-              // Initialiser la carte
-              this.map = L.map('fr-modal-pick-localisation-map')
-              L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              }).addTo(this.map)
-
-              console.log('Initializing vector tile layer...')
-              // Initialiser la couche vectorielle
-              this.initVectorTileLayer()
-            }
-
-            console.log('Geocoding address...')
-            // Géocoder l'adresse
-            this.geocodeAddress()
-          }, 100)
+        // Attendre que le DOM soit mis à jour
+        this.$nextTick(() => {
+          this.initMap()
+        })
+      } else {
+        // Détruire la carte quand on ferme
+        if (this.map) {
+          this.map.remove()
+          this.map = null
+          this.vectorTileLayer = null
         }
       }
-
-      modalElement.addEventListener('dsfr.disclose', this.handleModalDisclose)
-
-      // Gérer le bouton de validation
-      const submitButton = document.getElementById('fr-modal-pick-localisation-submit')
-      if (submitButton) {
-        submitButton.addEventListener('click', () => {
-          this.handleSubmitPickLocation()
-        })
+    },
+    closePickLocation () {
+      this.showPickLocation = false
+      this.selectedRnbId = null
+      // La carte sera détruite dans togglePickLocation
+    },
+    initMap () {
+      // Détruire la carte existante si elle existe
+      if (this.map) {
+        this.map.remove()
+        this.map = null
+        this.vectorTileLayer = null
       }
+
+      // Géocoder l'adresse d'abord pour obtenir les coordonnées
+      const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
+      const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
+      const postCode = this.formStore.data[this.id + '_detail_code_postal']
+
+      fetch(apiAdresse + address + '&postcode=' + postCode)
+        .then((response) => response.json())
+        .then((json) => {
+          let center: [number, number] = [48.8566, 2.3522] // Paris par défaut
+          let zoom = 13
+
+          if (json.features && json.features.length > 0) {
+            center = [json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]]
+            zoom = 18
+          }
+
+          // Pas de setTimeout, initialisation directe
+          this.$nextTick(() => {
+            const container = this.$refs.pickLocationMapContainer as HTMLElement
+            if (!container) {
+              return
+            }
+
+            // Initialiser la carte
+            this.map = L.map(container, {
+              center: center,
+              zoom: zoom,
+              scrollWheelZoom: true,
+              zoomControl: true
+            })
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(this.map)
+
+            // Initialiser la couche vectorielle RNB
+            this.map.whenReady(() => {
+              this.initVectorTileLayer()
+            })
+          })
+        })
+        .catch((error) => {
+          console.error('Geocoding error:', error)
+          // Initialiser avec Paris en cas d'erreur
+          this.$nextTick(() => {
+            const container = this.$refs.pickLocationMapContainer as HTMLElement
+            if (!container) {
+              return
+            }
+
+            this.map = L.map(container, {
+              center: [48.8566, 2.3522],
+              zoom: 13,
+              scrollWheelZoom: true,
+              zoomControl: true
+            })
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(this.map)
+          })
+        })
     },
     initVectorTileLayer () {
-      console.log('VectorGrid available?', (L as any).vectorGrid)
-      console.log('Canvas.tile available?', (L.canvas as any).tile)
-
       // Patch pour rendre les couches vectorielles interactives
       // @ts-ignore - Extension Leaflet pour VectorGrid
       if ((L as any).Canvas && (L as any).Canvas.Tile) {
@@ -428,21 +459,16 @@ export default defineComponent({
         }
       }
 
-      console.log('Creating vector tile layer with options:', vectorTileOptions)
-
       // @ts-ignore - Extension Leaflet.VectorGrid
       this.vectorTileLayer = (L as any).vectorGrid.protobuf(
         'https://rnb-api.beta.gouv.fr/api/alpha/tiles/{x}/{y}/{z}.pbf',
         vectorTileOptions
       )
 
-      console.log('Vector tile layer created:', this.vectorTileLayer)
       this.vectorTileLayer.addTo(this.map)
-      console.log('Vector tile layer added to map')
 
       // Gérer les clics sur les bâtiments
       this.vectorTileLayer.on('click', (e: any) => {
-        console.log('Building clicked:', e.layer.properties)
         const properties = e.layer.properties
         const rnbId = properties.rnb_id
 
@@ -453,14 +479,8 @@ export default defineComponent({
         this.vectorTileLayer.setFeatureStyle(rnbId, this.getClickedBuildingStyle())
         this.previousRnbId = rnbId
 
-        // Stocker le RNB ID dans formStore
-        this.formStore.data[this.id + '_detail_rnb_id'] = rnbId
-
-        // Activer le bouton de validation
-        const submitButton = document.getElementById('fr-modal-pick-localisation-submit') as HTMLButtonElement
-        if (submitButton) {
-          submitButton.disabled = false
-        }
+        // Stocker le RNB ID
+        this.selectedRnbId = rnbId
       })
     },
     getInitialBuildingStyle () {
@@ -485,40 +505,13 @@ export default defineComponent({
         opacity: 1
       }
     },
-    geocodeAddress () {
-      const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
-      const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
-      const postCode = this.formStore.data[this.id + '_detail_code_postal']
-      const messageElement = document.getElementById('fr-modal-pick-localisation-message')
-      const mapElement = document.getElementById('fr-modal-pick-localisation-map')
-
-      fetch(apiAdresse + address + '&postcode=' + postCode)
-        .then((response) => response.json())
-        .then((json) => {
-          if (!json.features || json.features.length === 0) {
-            if (messageElement) {
-              messageElement.innerText = 'Adresse introuvable, merci de préciser l\'adresse grâce au formulaire.'
-              messageElement.classList.remove('fr-hidden')
-            }
-            if (mapElement) {
-              mapElement.classList.add('fr-hidden')
-            }
-            return
-          }
-
-          this.map.setView(
-            [json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]],
-            18
-          )
-
-          if (messageElement) {
-            messageElement.classList.add('fr-hidden')
-          }
-        })
-    },
     handleSubmitPickLocation () {
-      // Fermer la modale (le DSFR s'en occupe via le bouton)
-      // La valeur RNB ID est déjà stockée dans formStore
+      if (this.selectedRnbId) {
+        // Stocker le RNB ID dans formStore
+        this.formStore.data[this.id + '_detail_rnb_id'] = this.selectedRnbId
+        // Fermer le sélecteur
+        this.closePickLocation()
+      }
     }
   },
   emits: ['update:modelValue']
@@ -537,10 +530,50 @@ export default defineComponent({
   width: 100%;
   text-align: center;
 }
-#fr-modal-pick-localisation-map {
+
+.pick-location-container {
+  border: 1px solid #ddd;
+  padding: 1.5rem;
+  border-radius: 0.25rem;
+  background-color: #f6f6f6;
+}
+
+.pick-location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.pick-location-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.pick-location-map {
   height: 500px;
   width: 100%;
-  position: relative;
-  z-index: 0;
+  overflow: hidden;
+}
+
+/* Forcer les styles Leaflet pour éviter les interférences CSS - spécificité max */
+.pick-location-map.leaflet-container {
+  position: relative !important;
+}
+
+.pick-location-map .leaflet-pane.leaflet-map-pane, .pick-location-map .leaflet-pane.leaflet-tile-pane {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+}
+
+.pick-location-map .leaflet-tile-container {
+  position: absolute !important;
+}
+
+.pick-location-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
 }
 </style>
