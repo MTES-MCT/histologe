@@ -2,7 +2,7 @@ window.addEventListener('refreshSearchCheckboxContainerEvent', () => {
   initSearchCheckboxWidgets();
 });
 document.addEventListener('DOMContentLoaded', initSearchCheckboxWidgets);
-function initSearchCheckboxWidgets() {
+export function initSearchCheckboxWidgets() {
   const all = document.querySelectorAll('.search-checkbox-container');
   Array.from(all).forEach((element, idx) => {
     try {
