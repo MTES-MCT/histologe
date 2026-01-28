@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('service-secours/apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('service-secours/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('service-secours/favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ asset('service-secours/site.webmanifest') }}">
+    <link rel="manifest" href="{{ path('service_secours_webmanifest', {'name': serviceSecoursRoute.name, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)}) }}">
 
     <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
 
