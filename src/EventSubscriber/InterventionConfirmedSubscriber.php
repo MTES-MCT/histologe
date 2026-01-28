@@ -56,9 +56,11 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             $description .= '<br>Commentaire opérateur :<br>';
             $description .= $intervention->getDetails();
 
-            $isUsagerNotified = $event->getContext()['isUsagerNotified'] ?? true;
+            $signalement = $intervention->getSignalement();
+            $isLogementVacant = $signalement->getIsLogementVacant();
+            $isUsagerNotified = ($event->getContext()['isUsagerNotified'] ?? true) && !$isLogementVacant;
             $suivi = $this->suiviManager->createSuivi(
-                signalement: $intervention->getSignalement(),
+                signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION,

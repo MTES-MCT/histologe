@@ -24,6 +24,7 @@ class AddSuiviType extends AbstractType
         $suivi = $builder->getData();
         $signalement = $suivi->getSignalement();
         $isNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailDeclarant()) && EmailFormatValidator::isInvalidEmail($signalement->getMailOccupant());
+        $isLogementVacant = $signalement->getIsLogementVacant();
 
         $builder->add('isPublic', null, [
             'label' => 'En cochant cette case, le suivi sera envoyé à l\'usager',
@@ -37,7 +38,7 @@ class AddSuiviType extends AbstractType
                 'class' => 'fr-toggle__input',
             ],
             'required' => false,
-            'disabled' => $isNotNotifiable,
+            'disabled' => $isNotNotifiable || $isLogementVacant,
         ]);
         $builder->add('description', null, [
             'label' => false,
