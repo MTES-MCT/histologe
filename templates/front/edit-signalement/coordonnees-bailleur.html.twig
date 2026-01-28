@@ -10,6 +10,7 @@
 		<div class="fr-collapse" id="breadcrumb-1">
 			<ol class="fr-breadcrumb__list">
 				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}">Détails du dossier</a></li>
 				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter les informations bailleur</a></li>
 			</ol>
 		</div>
@@ -68,6 +69,7 @@
 			</div>
 		</fieldset>
 		{{ form_end(formCoordonneesBailleur) }}
+		<a href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}" class="fr-btn fr-btn--secondary fr-mt-2w">Annuler</a>
 	</div>
 </main>
 {% endblock %}
