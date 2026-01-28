@@ -91,34 +91,11 @@ class ConfigServiceSecoursController extends AbstractController
         }
         $entityManager->remove($serviceSecoursRoute);
         $entityManager->flush();
-        $flashMessages[] = ['type' => 'success', 'title' => 'Règle archivée', 'message' => 'La règle a bien été archivée.'];
+        $flashMessages[] = ['type' => 'success', 'title' => 'Route supprimée', 'message' => 'La route a bien été supprimée.'];
 
         $htmlTargetContents = $this->getHtmlTargetContentsForServiceSecoursRouteList($request);
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
-    }
-
-    #[Route('/{id}/editer', name: 'back_config_service_secours_route_edit', methods: ['GET', 'POST'])]
-    public function editServiceSecoursRoute(
-        Request $request,
-        ServiceSecoursRoute $serviceSecoursRoute,
-        EntityManagerInterface $entityManager,
-    ): Response {
-        $form = $this->createForm(ServiceSecoursRouteType::class, $serviceSecoursRoute);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-            $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La règle a bien été modifiée.']);
-
-            return $this->redirectToRoute('back_config_service_secours_route_index', []);
-        }
-
-        return $this->render('back/config-service-secours-route/edit.html.twig', [
-            'serviceSecoursRoute' => $serviceSecoursRoute,
-            'form' => $form,
-            'create' => false,
-        ]);
     }
 
     #[Route('/ajout', name: 'back_config_service_secours_route_new', methods: ['GET', 'POST'])]
@@ -130,8 +107,8 @@ class ConfigServiceSecoursController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($serviceSecoursRoute);
             $entityManager->flush();
-            $this->addFlash('success', ['title' => 'Règle créée',
-                'message' => 'La règle a bien été créée.',
+            $this->addFlash('success', ['title' => 'Route créée',
+                'message' => 'La route a bien été créée.',
             ]);
 
             return $this->redirectToRoute('back_config_service_secours_route_index', [], Response::HTTP_SEE_OTHER);

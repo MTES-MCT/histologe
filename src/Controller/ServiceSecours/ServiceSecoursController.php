@@ -80,7 +80,10 @@ class ServiceSecoursController extends AbstractController
             'orientation' => 'portrait',
         ];
 
-        return new JsonResponse($manifest);
+        $response = new JsonResponse($manifest);
+        $response->headers->set('Content-Type', 'application/manifest+json');
+
+        return $response;
     }
 
     #[Route(
