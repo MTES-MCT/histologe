@@ -71,6 +71,18 @@
 				{% endif %}
 			</div>
 
+			{% if signalement.isV2 %}
+				{% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE %}
+					{% set declarant_label = 'tiers aidant' %}
+				{% elseif signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
+					{% set declarant_label = 'tiers aidant' %}
+				{% else %}
+					{% set declarant_label = 'tiers déclarant' %}
+				{% endif %}
+			{% else %}
+				{% set declarant_label = 'tiers déclarant' %}
+			{% endif %}
+
 			{% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE %}
 				{% if signalement.mailDeclarant %}
 					<div class="signalement-group-data-card">

@@ -169,13 +169,14 @@ class SignalementDraftAddressType extends AbstractType
                 'choices' => [
                     ProfileOccupant::LOCATAIRE->label() => ProfileOccupant::LOCATAIRE->value,
                     ProfileOccupant::BAILLEUR_OCCUPANT->label() => ProfileOccupant::BAILLEUR_OCCUPANT->value,
+                    'Logement vacant' => 'vacant',
                 ],
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => $signalement->getProfileOccupant()?->value ?? '',
+                'data' => $signalement->getProfileOccupant()?->value ?? $signalement->getIsLogementVacant() ? 'vacant' : null,
             ])
             ->add('isLogementSocial', ChoiceType::class, [
                 'label' => 'Logement social <span class="text-required">*</span>',
@@ -222,19 +223,6 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $signalement->getTypeCompositionLogement()?->getTypeLogementNatureAutrePrecision(),
-            ])
-            ->add('logementVacant', ChoiceType::class, [
-                'label' => 'S\'agit-il d\'un logement vacant ?',
-                'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
-                ],
-                'expanded' => true,
-                'multiple' => false,
-                'required' => false,
-                'placeholder' => false,
-                'mapped' => false,
-                'data' => $signalement->getIsLogementVacant(),
             ])
             ->add('nbOccupantsLogement', NumberType::class, [
                 'label' => 'Nombre de personnes occupant le logement',
