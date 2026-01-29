@@ -187,6 +187,10 @@
 			<div class="fr-mb-1w fr-mt-2w">
 				<strong>Coordonnées de l'occupant</strong>
 			</div>
+			{% if signalement.profileOccupant is defined %}
+				{{ signalement.profileOccupant.label }}
+				<br>
+			{% endif %}
 			{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
 			{% if signalement.mailOccupant %}
 				<br>
@@ -202,6 +206,18 @@
 			{% if signalement.telOccupantBis %}
 				<br>
 				{{ signalement.telOccupantBisDecoded|phone }}
+			{% endif %}
+
+			{% if signalement.isV2 %}
+				{% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE %}
+					{% set declarant_label = 'tiers aidant' %}
+				{% elseif signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
+					{% set declarant_label = 'tiers aidant' %}
+				{% else %}
+					{% set declarant_label = 'tiers déclarant' %}
+				{% endif %}
+			{% else %}
+				{% set declarant_label = 'tiers déclarant' %}
 			{% endif %}
 
 			{% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE %}

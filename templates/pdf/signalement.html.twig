@@ -239,6 +239,7 @@
                     </td>
                 </tr>
 
+                {% if signalement|display_signalement_info_bailleur %}
                 <tr>
                     <td>
                         <h3 style="margin-bottom: 0">Informations sur le bailleur</h3>
@@ -258,6 +259,7 @@
                         </ul>
                     </td>
                 </tr>
+                {% endif %}
             </table>
         </section>
         <section>
@@ -266,6 +268,7 @@
         </section>
         <section>
             <table>
+                {% if signalement|display_signalement_info_bailleur %}
                 <tr>
                     <td style="width: 50%">
                         <h3>Informations propriétaire</h3>
@@ -318,20 +321,12 @@
                         </ul>
                     </td>
                 </tr>
+                {% endif %}
 
                 <tr>
                     <td>
                         <h3 style="margin-bottom: 0">Informations procédure</h3>
                         <ul style="list-style:none; margin-left:0px;padding-left:0px;">
-                            <li>
-                                <b>Bailleur averti :</b>
-                                {% if signalement.isProprioAverti is null %}
-                                {% elseif signalement.isProprioAverti %}
-                                    {{ picto_yes|raw }}
-                                {% else %}
-                                    {{ picto_no|raw }}
-                                {% endif %}
-                            </li>
                             {% if signalement.informationProcedure %}
                                 <li>
                                     <b>Contact assurance :</b>

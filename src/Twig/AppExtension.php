@@ -4,8 +4,11 @@ namespace App\Twig;
 
 use App\Controller\FileController;
 use App\Entity\Enum\OccupantLink;
+use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\File;
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Service\EmailAlertChecker;
 use App\Service\Files\ImageBase64Encoder;
@@ -40,6 +43,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('date', [$this, 'customDateFilter'], ['is_safe' => ['html']]),
             new TwigFilter('status_to_css', [$this, 'getCssFromStatus']),
             new TwigFilter('signalement_lien_declarant_occupant', [$this, 'getLabelLienDeclarantOccupant']),
+            new TwigFilter('display_signalement_info_bailleur', [$this, 'isDisplaySignalementInfoBailleur']),
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
             new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
@@ -120,6 +124,19 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         }
 
         return '';
+    }
+
+    public function isDisplaySignalementInfoBailleur(Signalement $signalement): bool
+    {
+        return ProfileDeclarant::LOCATAIRE === $signalement->getProfileDeclarant()
+            || (
+                (
+                    ProfileDeclarant::SERVICE_SECOURS === $signalement->getProfileDeclarant()
+                    || ProfileDeclarant::TIERS_PARTICULIER === $signalement->getProfileDeclarant()
+                    || ProfileDeclarant::TIERS_PRO === $signalement->getProfileDeclarant()
+                )
+                && ProfileOccupant::LOCATAIRE === $signalement->getProfileOccupant()
+            );
     }
 
     public function getTruncatedFilename(string $fileName, int $maxCharacters = 50): string

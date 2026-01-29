@@ -35,12 +35,15 @@ class SignalementBoManager
 
     public function formAddressManager(FormInterface $form, Signalement $signalement): bool
     {
-        $signalement->setIsLogementVacant($form->get('logementVacant')->getData());
-
         $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarant')->getData());
         $signalement->setProfileDeclarant($profileDeclarant);
         $signalement->setLienDeclarantOccupant($form->get('lienDeclarantOccupant')->getData());
-        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map($form->get('profileOccupant')->getData(), $profileDeclarant));
+        if ('vacant' === $form->get('profileOccupant')->getData()) {
+            $signalement->setIsLogementVacant(true);
+        } elseif (!empty($form->get('profileOccupant')->getData())) {
+            $signalement->setIsLogementVacant(false);
+            $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map($form->get('profileOccupant')->getData(), $profileDeclarant));
+        }
 
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
         $signalement->setNatureLogement($form->get('natureLogement')->getData());

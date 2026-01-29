@@ -172,9 +172,22 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Suivant",
-                "slug": "coordonnees_occupant_next",
+                "slug": "coordonnees_occupant_next_zone_concernee",
+                "action": "goto.save:zone_concernee",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_profil_detail_profil_occupant === 'bailleur_occupant'"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Suivant",
+                "slug": "coordonnees_occupant_next_coordonnees_bailleur",
                 "action": "goto.save:coordonnees_bailleur",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'"
+                }
               },
               {
                 "type": "SignalementFormButton",
@@ -686,9 +699,22 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
-                "slug": "zone_concernee_zone_previous",
+                "slug": "zone_concernee_zone_previous_info_procedure_bail",
                 "action": "goto:info_procedure_bail",
-                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "zone_concernee_zone_previous_coordonnees_occupant",
+                "action": "goto:coordonnees_occupant",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+                "conditional": {
+                  "show": "formStore.data.signalement_concerne_profil_detail_profil_occupant === 'bailleur_occupant'"
+                }
               }
             ]
           }
@@ -948,7 +974,7 @@
         },
         {
           "type": "SignalementFormCounter",
-          "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans votre logement ?",
+          "label": "Quel est le nombre de pièces à vivre (salon, chambre) dans le logement ?",
           "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nb_pieces",
           "defaultValue": 1,
@@ -1254,7 +1280,7 @@
           "description": "Format attendu : Saisir un nombre entier",
           "slug": "composition_logement_nombre_personnes",
           "validate": {
-            "message": "Veuillez renseigner le nombre de personnes vivant dans votre logement.",
+            "message": "Veuillez renseigner le nombre de personnes vivant dans le logement.",
             "pattern": "^[0-9]*$",
             "patternMessage": "Veuillez renseigner un nombre de personnes valide."          },
           "accessibility": {
@@ -1364,6 +1390,9 @@
           },
           "accessibility": {
             "focus": true
+          },
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'"
           }
         },
         {
@@ -1405,6 +1434,9 @@
           ],
           "validate": {
             "message": "Veuillez indiquer si un état des lieux a été réalisé à l'entrée du foyer dans le logement."
+          },
+          "conditional": {
+            "show": "formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'"
           }
         },
         {
@@ -1429,7 +1461,7 @@
         {
           "type": "SignalementFormOnlyChoice",
           "slug": "bail_dpe_dpe",
-          "label": "Est-ce que le foyer a reçu DPE du logement ? (diagnostic performance énergétique)",
+          "label": "Est-ce que le foyer a reçu le DPE du logement ? (diagnostic performance énergétique)",
           "values": [
             {
               "label": "Oui",
@@ -1515,7 +1547,7 @@
         },
         {
           "type": "SignalementFormOnlyChoice",
-          "label": "Quand le DPE de votre logement a-t-il été réalisé ?",
+          "label": "Quand le DPE du logement a-t-il été réalisé ?",
           "conditional": {
             "show": "formStore.data.bail_dpe_dpe === 'oui'"
           },
@@ -1808,7 +1840,7 @@
             "message": "Veuillez indiquer si le foyer a déposé un préavis de départ."
           },
           "conditional": {
-            "show": "formStore.data.travailleur_social_quitte_logement === 'oui'"
+            "show": "formStore.data.travailleur_social_quitte_logement === 'oui' && formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'"
           }
         },
         {
@@ -2052,7 +2084,7 @@
           "slug": "utilisation_service_ok_prevenir_bailleur",
           "label": "Je comprends que {{formStore.props.platformName}} va prévenir le bailleur (propriétaire) du logement.",
           "validate": {
-            "message": "Veuillez confirmer que vous comprenez que la plateforme va prévenir le bailleur (propriétaire) de votre logement."
+            "message": "Veuillez confirmer que vous comprenez que la plateforme va prévenir le bailleur (propriétaire) du logement."
           },
           "accessibility": {
             "focus": true
