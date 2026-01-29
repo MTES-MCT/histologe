@@ -3,11 +3,43 @@ nelmio_api_doc:
         info:
             title: '%platform_name%'
             description:  |
+             ## CHANGELOG 1.3.0 - 2026-01
+             Cette version introduit un nouvel endpoint permettant la création de signalement.
+             ### AJOUTS
+                - Crée un nouveau signalement en tant que partenaire.
+                > Où trouver `partenaireUuid` ?  
+                > Récupérez l’UUID du partenaire via `GET /api/users/me`, dans `partenairesAutorises[].uuid`, puis renseignez-le dans le champ `partenaireUuid`.
+             
+                  *Requête* 
+             
+                  `POST /api/signalements`
+                  ```json
+                  {
+                      "partenaireUuid": "00000000-0000-0000-0000-000000000000",
+                      "...": "..."
+                  }
+                  ```
+             
+                  *Réponse (exemple simplifié)*
+                  ```json 
+                  { 
+                     "uuid": "00000000-0000-0000-0000-000000000000", 
+                     "reference": "2026-27", 
+                     "dateCreation": "2026-01-29T09:27:17+00:00", 
+                     "statut": "NEED_VALIDATION", 
+                     "adresse": { 
+                        "adresse": "29 Rue de la République", 
+                        "codePostal": "13002", 
+                        "ville": "Marseille" 
+                     }
+                     "...": "..."
+                  }
+                  ```
              ## CHANGELOG 1.2.0 - 2025-10
               Cette version introduit **une nouvelle structure pour les désordres** des signalements et **améliore la lisibilité des messages d’erreur** lors des actions non autorisées.
               Ces évolutions renforcent la cohérence des données et la compréhension des retours côté API.
               
-                #### MODIFICATIONS
+                ### MODIFICATIONS
                 - Mise à jour des messages d’erreur lors des actions non autorisées (création de suivi, de visite ou d’arrêté).
                 | Cas métier                           | Ancien message                                                | Nouveau message                                   |
                 | ------------------------------------ | ------------------------------------------------------------- | ------------------------------------------------- |
@@ -16,7 +48,7 @@ nelmio_api_doc:
                 | Affectation non encore acceptée      | `Vous n'avez pas l'autorisation d’accéder à cette ressource.` | `L'affectation doit être au statut EN_COURS.    ` |
                 | Partenaire sans compétence `VISITES` | `Vous n'avez pas l'autorisation d’accéder à cette ressource.` | `Le partenaire n'a pas la compétence visite.`     |
     
-                #### BREAKING CHANGES
+                ### BREAKING CHANGES
                 - La structure des désordres a été entièrement revue.<br>Les anciens champs `categorie`, `zone` et `details` ont été supprimés.<br>
                 - Nouvelle structure des désordres :
                   - identifiant : identifiant metier unique du désordre.
@@ -51,7 +83,7 @@ nelmio_api_doc:
                 Cette version introduit la **gestion des permissions API** et facilite l'intégration avec les partenaires en permettant l'utilisation d'un seul compte pour des interventions impliquant plusieurs partenaires. 
                 
                 À l'exception du breaking change (voir plus bas), ces évolutions sont rétrocompatibles pour un utilisateur ayant une permission sur un seul partenaire.
-                #### AJOUTS
+                ### AJOUTS
                 - Retourne l’e-mail de l’utilisateur authentifié et la liste de ses **partenaires autorisés**.
                 
                   *Requête* 
@@ -79,7 +111,7 @@ nelmio_api_doc:
                     }
                     ```
               
-                #### MODIFICATIONS
+                ### MODIFICATIONS
                 - Les routes suivantes acceptent désormais l’identifiant **UUID du partenaire** (obligatoire quand l’utilisateur possède plusieurs partenaires autorisés) :
                     - `POST /api/signalements/arretes`
                     - `POST /api/signalements/files`
@@ -93,7 +125,7 @@ nelmio_api_doc:
                     "...": "..."
                   }
       
-                #### BREAKING CHANGES
+                ### BREAKING CHANGES
                 - La ressource `signalement` retourne désormais un tableau d’`affectations` (multi-partenaires) au lieu d’un objet `affectation`.
               
                    *Requête* 
@@ -192,7 +224,7 @@ nelmio_api_doc:
                 | 404  | Not Found             | La ressource est introuvable                                                         |
                 | 500  | Internal Server Error | Une erreur serveur s'est produite (l'équipe technique est notifiée automatiquement)  |
 
-            version: 1.2.0
+            version: 1.3.0
         components:
             securitySchemes:
                 Bearer:
