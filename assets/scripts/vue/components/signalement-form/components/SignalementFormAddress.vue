@@ -56,12 +56,17 @@
       @update:modelValue="handleSubscreenModelUpdate"
     />
 
-    <button
-      class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-map-pin-2-line"
-      @click="togglePickLocation"
-      v-if="displayPickLocationButton">
-        Sélectionner le bâtiment sur la carte
-    </button>
+    <div v-if="displayPickLocationButton" class="pick-location-button-container">
+      <button
+        class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-map-pin-2-line"
+        @click="togglePickLocation">
+          Sélectionner le bâtiment sur la carte
+      </button>
+      <span v-if="formStore.data[id + '_detail_rnb_id']" class="pick-location-success fr-ml-2v">
+        <span class="fr-icon-check-line" aria-hidden="true"></span>
+        Bâtiment sélectionné
+      </span>
+    </div>
 
     <div v-if="showPickLocation" class="pick-location-container fr-mt-3v">
       <div class="pick-location-header">
@@ -329,26 +334,18 @@ export default defineComponent({
         // Réinitialiser la sélection à chaque ouverture
         this.selectedRnbId = null
         this.previousRnbId = undefined
+        delete this.formStore.data[this.id + '_detail_rnb_id']
 
         // Incrémenter la clé pour forcer Vue à recréer l'élément
         this.mapKey++
 
-        // Attendre que le DOM soit mis à jour
         this.$nextTick(() => {
           this.initMap()
         })
-      } else {
-        // Détruire la carte quand on ferme
-        if (this.map) {
-          this.map.remove()
-          this.map = null
-          this.vectorTileLayer = null
-        }
       }
     },
     closePickLocation () {
       this.showPickLocation = false
-      // La carte sera détruite dans togglePickLocation
     },
     initMap () {
       // Détruire la carte existante si elle existe
@@ -374,11 +371,15 @@ export default defineComponent({
             zoom = 18
           }
 
-          // Pas de setTimeout, initialisation directe
           this.$nextTick(() => {
             const container = this.$refs.pickLocationMapContainer as HTMLElement
             if (!container) {
               return
+            }
+
+            // Supprimer l'attribut _leaflet_id du conteneur si présent
+            if ((container as any)._leaflet_id) {
+              delete (container as any)._leaflet_id
             }
 
             // Initialiser la carte
@@ -407,6 +408,11 @@ export default defineComponent({
             const container = this.$refs.pickLocationMapContainer as HTMLElement
             if (!container) {
               return
+            }
+
+            // Supprimer l'attribut _leaflet_id du conteneur si présent
+            if ((container as any)._leaflet_id) {
+              delete (container as any)._leaflet_id
             }
 
             this.map = L.map(container, {
@@ -484,7 +490,6 @@ export default defineComponent({
         this.vectorTileLayer.setFeatureStyle(rnbId, this.getClickedBuildingStyle())
         this.previousRnbId = rnbId
 
-        // Stocker le RNB ID
         this.selectedRnbId = rnbId
       })
     },
@@ -534,6 +539,20 @@ export default defineComponent({
 .signalement-form-address .signalement-form-button {
   width: 100%;
   text-align: center;
+}
+
+.pick-location-button-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pick-location-success {
+  color: #18753c;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .pick-location-container {
