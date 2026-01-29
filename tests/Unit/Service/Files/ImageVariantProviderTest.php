@@ -81,9 +81,10 @@ class ImageVariantProviderTest extends KernelTestCase
 
     protected function tearDown(): void
     {
+        $currentYear = date('Y');
         $this->filesystem->remove([
-            $this->bucketDir.'/2026',
-            $this->tmpDir.'2026',
+            $this->bucketDir.'/'.$currentYear,
+            $this->tmpDir.$currentYear,
         ]);
 
         parent::tearDown();
