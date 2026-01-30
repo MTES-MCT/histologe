@@ -16,8 +16,10 @@
 	</nav>
 	<div class="fr-grid-row fr-grid-row--gutters">
 
+		<div class="fr-col-12">
+			<h1 class="title-blue-france fr-mb-0">Détails du dossier</h1>
+		</div>
 		<div class="fr-col-12 fr-col-md-6">
-			<h1 class="title-blue-france">Détails du dossier</h1>
 			{% include 'front/_partials/_suivi_signalement_card.html.twig' %}
 
 			<h2 class="title-blue-france fr-mb-1w fr-h3">Que voulez-vous faire ?</h2>
@@ -257,7 +259,9 @@
 			<h2 class="title-blue-france fr-mb-1w fr-h3">Votre déclaration</h2>
 			
 			<div class="signalement-group-data-card fr-background-contrast--grey">
-				<h3 class="fr-h5">Désordres</h3>
+				{% if signalement.isV2 %}
+					<h3 class="fr-h5">Désordres</h3>
+				{% endif %}
 				{% if signalement.debutDesordres is not null %}
 					<ul>
 						<li>Les désordres ont commencé il y a : 
@@ -271,14 +275,14 @@
 
 				{% if signalement.isV2 %}
 					{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
-						<h3 class="fr-h5">Désordres sur le logement</h3>
+						<h4 class="fr-h6 fr-mb-2v">Désordres sur le logement</h3>
 						{% set zone = 'logement' %}
 						{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
 							{% include 'front/_partials/_desordre.html.twig' %}
 						{% endfor %}
 					{% endif %}
 					{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
-						<h3 class="fr-h5">Désordres sur le bâtiment ou les parties communes</h3>
+						<h4 class="fr-h6 fr-mb-2v">Désordres sur le bâtiment ou les parties communes</h3>
 						{% set zone = 'batiment' %}
 						{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
 							{% include 'front/_partials/_desordre.html.twig' %}
