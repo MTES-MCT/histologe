@@ -45,6 +45,7 @@ class ExportIterableQuery
             s.escalierOccupant,
             s.numAppartOccupant,
             s.adresseAutreOccupant,
+            s.profileOccupant,
             s.nomProprio,
             s.prenomProprio,
             s.denominationProprio,

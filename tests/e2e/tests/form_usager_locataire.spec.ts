@@ -28,7 +28,7 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByText('Rue de l\'ecole 13007 Marseille').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Pour vous-même', { exact: true }).click();
-    await page.getByText('Locataire du logement').click();
+    await page.locator('#signalement_concerne_profil_detail_occupant').getByText('Locataire du logement').click();
     await page.locator('#signalement_concerne_logement_social_autre_tiers').getByText('Non').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Monsieur').click();

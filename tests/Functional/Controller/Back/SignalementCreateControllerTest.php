@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\SignalementStatus;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -210,6 +211,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('44350', $signalement->getCpOccupant());
         $this->assertEquals('Guérande', $signalement->getVilleOccupant());
         $this->assertEquals(ProfileDeclarant::BAILLEUR_OCCUPANT, $signalement->getProfileDeclarant());
+        $this->assertEquals(ProfileOccupant::BAILLEUR_OCCUPANT, $signalement->getProfileOccupant());
         $this->assertEquals('maison', $signalement->getNatureLogement());
         $this->assertEquals(4, $signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes());
         $this->assertEquals(2, $signalement->getTypeCompositionLogement()->getCompositionLogementNombreEnfants());

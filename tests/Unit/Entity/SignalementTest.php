@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
@@ -76,6 +77,15 @@ class SignalementTest extends KernelTestCase
         yield 'BAILLEUR_OCCUPANT' => [ProfileDeclarant::BAILLEUR_OCCUPANT];
         yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
         yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE];
+    }
+
+    public function testSetProfileOccupantFromDraft(): void
+    {
+        $signalement = new Signalement();
+        $signalement->setCreatedFrom(new SignalementDraft());
+        $signalement->setProfileOccupant(ProfileOccupant::LOCATAIRE);
+
+        $this->assertEquals(ProfileOccupant::LOCATAIRE, $signalement->getProfileOccupant());
     }
 
     public function testHasNoSuiviUsagerPostCloture(): void

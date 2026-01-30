@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
@@ -72,6 +73,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals($signalement->getNumAppartOccupant(), $payload['numAppartOccupant']);
         $this->assertEquals($signalement->getAdresseAutreOccupant(), $payload['adresseAutreOccupant']);
         $this->assertEquals($signalement->getProfileDeclarant(), ProfileDeclarant::from($payload['profilDeclarant']));
+        $this->assertEquals($signalement->getProfileOccupant(), ProfileOccupant::LOCATAIRE);
         $this->assertEquals($signalement->getLienDeclarantOccupant(), $payload['lienDeclarantOccupant']);
         $this->assertEquals($signalement->getIsLogementSocial(), $payload['isLogementSocial']);
         $this->assertEquals($signalement->getIsLogementVacant(), $payload['isLogementVacant']);
@@ -202,6 +204,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals($signalement->getMailOccupant(), $payload['mailOccupant']);
         $this->assertEquals($signalement->getTerritory()->getZip(), 30);
         $this->assertEquals($signalement->getProfileDeclarant(), ProfileDeclarant::from($payload['profilDeclarant']));
+        $this->assertEquals($signalement->getProfileOccupant(), ProfileOccupant::LOCATAIRE);
         $this->assertEquals($signalement->getIsLogementSocial(), $payload['isLogementSocial']);
         $this->assertEquals($signalement->getIsLogementVacant(), false);
         $this->assertEquals($signalement->getNomOccupant(), $payload['nomOccupant']);
@@ -500,6 +503,7 @@ class SignalementCreateControllerTest extends WebTestCase
             "numAppartOccupant": "24B",
             "adresseAutreOccupant": "Résidence les oliviers",
             "profilDeclarant": "TIERS_PARTICULIER",
+            "profilOccupant": "LOCATAIRE",
             "lienDeclarantOccupant": "PROCHE",
             "isLogementSocial": false,
             "isLogementVacant": false,

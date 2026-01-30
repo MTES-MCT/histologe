@@ -18,6 +18,7 @@ use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
@@ -419,6 +420,17 @@ class SignalementManager extends AbstractManager
             ->setMailOccupant($coordonneesFoyerRequest->getMail())
             ->setTelOccupant($coordonneesFoyerRequest->getTelephone())
             ->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
+
+        if (ProfileDeclarant::TIERS_PARTICULIER == $signalement->getProfileDeclarant()
+            || ProfileDeclarant::TIERS_PRO == $signalement->getProfileDeclarant()
+            || ProfileDeclarant::SERVICE_SECOURS == $signalement->getProfileDeclarant()
+        ) {
+            $signalement->setProfileOccupant(
+                $coordonneesFoyerRequest->getProfileOccupant()
+                    ? ProfileOccupant::from($coordonneesFoyerRequest->getProfileOccupant())
+                    : null
+            );
+        }
 
         $this->save($signalement);
 

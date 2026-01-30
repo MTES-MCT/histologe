@@ -57,7 +57,7 @@
       </div>
 
       <!-- LES COORDONNEES DU BAILLEUR -->
-      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'bailleur'">
+      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'bailleur' && formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
             <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les coordonnées du bailleur</h4>
@@ -299,6 +299,13 @@ export default defineComponent({
       }
       result += this.addLineIfNeeded('coordonnees_occupant_email', 'Adresse email : ')
       result += this.addLineIfNeeded('coordonnees_occupant_tel', 'Numéro de téléphone : ')
+      if (this.isFormDataSet('signalement_concerne_profil_detail_profil_occupant')) {
+        if (this.formStore.data.signalement_concerne_profil_detail_profil_occupant === 'locataire') {
+          result += 'Locataire<br>'
+        } else if (this.formStore.data.signalement_concerne_profil_detail_profil_occupant === 'bailleur_occupant') {
+          result += 'Propriétaire occupant<br>'
+        }
+      }
       return result
     },
     getFormDataCoordonneesDeclarant (): string {
