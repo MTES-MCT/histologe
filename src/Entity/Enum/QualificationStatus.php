@@ -20,6 +20,8 @@ enum QualificationStatus: string
     case NON_DECENCE_AVEREE = 'NON_DECENCE_AVEREE';
     case RSD_CHECK = 'RSD_CHECK';
     case RSD_AVEREE = 'RSD_AVEREE';
+    case SALETE_CHECK = 'SALETE_CHECK';
+    case SALETE_AVEREE = 'SALETE_AVEREE';
 
     public function label(): string
     {
@@ -46,6 +48,8 @@ enum QualificationStatus: string
             'NON_DECENCE_AVEREE' => 'Non décence',
             'RSD_CHECK' => 'Suspicion RSD',
             'RSD_AVEREE' => 'RSD',
+            'SALETE_CHECK' => 'Suspicion Saleté',
+            'SALETE_AVEREE' => 'Saleté',
         ];
     }
 }
