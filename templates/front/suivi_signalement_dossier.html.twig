@@ -275,14 +275,14 @@
 
 				{% if signalement.isV2 %}
 					{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] is defined %}
-						<h4 class="fr-h6 fr-mb-2v">Désordres sur le logement</h3>
+						<h4 class="fr-h6 fr-mb-2v">Désordres sur le logement</h4>
 						{% set zone = 'logement' %}
 						{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').LOGEMENT.name] %}
 							{% include 'front/_partials/_desordre.html.twig' %}
 						{% endfor %}
 					{% endif %}
 					{% if infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] is defined %}
-						<h4 class="fr-h6 fr-mb-2v">Désordres sur le bâtiment ou les parties communes</h3>
+						<h4 class="fr-h6 fr-mb-2v">Désordres sur le bâtiment ou les parties communes</h4>
 						{% set zone = 'batiment' %}
 						{% for situation,criteres in infoDesordres['criticitesArranged'][enum('App\\Entity\\Enum\\DesordreCritereZone').BATIMENT.name] %}
 							{% include 'front/_partials/_desordre.html.twig' %}
