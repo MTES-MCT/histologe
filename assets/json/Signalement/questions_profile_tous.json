@@ -84,6 +84,7 @@
           "type": "SignalementFormAddress",
           "label": "Adresse du logement",
           "slug": "adresse_logement_adresse",
+          "customCss": "can-pick-location",
           "description": "Format attendu : Tapez l'adresse puis sélectionnez-la dans la liste. Si elle n'apparait pas, cliquez sur Saisir une adresse manuellement."
         },
         {

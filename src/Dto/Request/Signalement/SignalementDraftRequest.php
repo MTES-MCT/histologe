@@ -70,6 +70,7 @@ class SignalementDraftRequest
     #[Assert\NotBlank(message: 'Merci de saisir un code INSEE.')]
     #[Assert\Regex(pattern: '/^[0-9][0-9A-Za-z][0-9]{3}$/', message: 'Le code insee doit être composé de 5 caractères.')]
     private ?string $adresseLogementAdresseDetailInsee = null;
+    private ?string $adresseLogementAdresseDetailRnbId = null;
     private ?bool $adresseLogementAdresseDetailManual = null;
     #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEscalier = null;
@@ -615,6 +616,18 @@ class SignalementDraftRequest
     public function setAdresseLogementAdresseDetailInsee(?string $adresseLogementAdresseDetailInsee): self
     {
         $this->adresseLogementAdresseDetailInsee = $adresseLogementAdresseDetailInsee;
+
+        return $this;
+    }
+
+    public function getAdresseLogementAdresseDetailRnbId(): ?string
+    {
+        return $this->adresseLogementAdresseDetailRnbId;
+    }
+
+    public function setAdresseLogementAdresseDetailRnbId(?string $adresseLogementAdresseDetailRnbId): self
+    {
+        $this->adresseLogementAdresseDetailRnbId = $adresseLogementAdresseDetailRnbId;
 
         return $this;
     }

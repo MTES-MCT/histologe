@@ -35,7 +35,10 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
 
         try {
             $signalement = $this->signalementRepository->find($signalementDraftProcessMessage->getSignalementId());
-            $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
+            $this->signalementAddressUpdater->updateAddressOccupantFromBanData(
+                signalement: $signalement,
+                updateRnbId: !$signalement->getRnbIdOccupant()
+            );
             $this->entityManager->flush();
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
                 $this->notificationAndMailSender->sendNewSignalementInjonction($signalement);
