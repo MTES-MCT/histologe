@@ -140,14 +140,14 @@
             {% for index, document in signalement.files(true) %}
                 <div class="fr-grid-row">
                     <div class="fr-col-8">
-                        <i>{{ document.filename }}</i> (Type {{ document.documentType.label() }})
+                        <i>{{ document.getDisplayFilename }}</i> (Type {{ document.documentType.label() }})
                     </div>
                     <div class="fr-col-4">
                         <button
                             form="form-delete-file"
                             class="fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error"
-                            aria-label="Supprimer le fichier {{ document.filename }}"
-                            title="Supprimer le fichier {{ document.filename }}"
+                            aria-label="Supprimer le fichier {{ document.getDisplayFilename }}"
+                            title="Supprimer le fichier {{ document.getDisplayFilename }}"
                             data-doc="{{ document.id }}"
                             >
                         Supprimer

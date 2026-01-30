@@ -184,8 +184,8 @@ class SignalementFileUploadController extends AbstractController
         $this->signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,
             signalement: $signalement,
-            user: $user,
             partner: $partner,
+            user: $user,
         );
 
         $this->entityManager->persist($signalement);

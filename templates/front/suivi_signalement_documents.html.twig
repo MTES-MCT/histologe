@@ -68,12 +68,12 @@
 								<a  href="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'resize'})) }}" target="_blank" rel="noopener"
 									class="fr-btn fr-btn--sm fr-icon-eye-line" 
 									data-id={{ photo.id }} 
-									title="Voir la photo {{ photo.filename }} - ouvre une nouvelle fenêtre"
+									title="Voir la photo {{ photo.getDisplayFilename }} - ouvre une nouvelle fenêtre"
 								></a>
 								{% if is_granted('FILE_FRONT_DELETE', photo) and is_granted('SIGN_USAGER_EDIT', signalement) %}
 									<button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-delete-line btn-signalement-file-delete"
 										id="file_delete_{{ photo.id }}" 
-										title="Supprimer la photo {{ photo.filename }}"
+										title="Supprimer la photo {{ photo.getDisplayFilename }}"
 										aria-controls="fr-modal-delete-file"
 										data-fr-opened="false" 
 										data-filename="{{ photo.filename }}" 
@@ -112,7 +112,7 @@
 								{% if not doc.isSuspicious %}
 									<a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
 									class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-eye-fill img-box"
-									title="Afficher le document {{ doc.filename }} - ouvre une nouvelle fenêtre"
+									title="Afficher le document {{ doc.getDisplayFilename }} - ouvre une nouvelle fenêtre"
 									target="_blank"
 									rel="noopener">
 										Afficher
@@ -121,7 +121,7 @@
 								{% if is_granted('FILE_FRONT_DELETE', doc) %}
 									<button class="fr-btn fr-btn--sm fr-btn--icon-left fr-btn--secondary fr-fi-delete-line btn-signalement-file-delete"
 										id="file_delete_{{ doc.id }}" 
-										title="Supprimer le document {{ doc.filename }}"
+										title="Supprimer le document {{ doc.getDisplayFilename }}"
 										aria-controls="fr-modal-delete-file"
 										data-fr-opened="false" 
 										data-filename="{{ doc.filename }}" 

@@ -92,6 +92,9 @@ class ImageManipulationHandler
         return $this;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function rotate(File $file, int $angle): void
     {
         $variantNames = self::getVariantNames($file->getFilename());
@@ -128,10 +131,12 @@ class ImageManipulationHandler
     private function getNewPath(string $suffix): string
     {
         $pathInfo = pathinfo($this->imagePath);
+        $dirname = $pathInfo['dirname'] ?? '';
+        $dirname = ('' === $dirname || '.' === $dirname) ? '' : $dirname.'/';
         $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
-        $newName = $pathInfo['filename'].$suffix.$ext;
+        $newName = $dirname.$pathInfo['filename'].$suffix.$ext;
         $newPath = $newName;
-        if ($this->useTmpDir) {
+        if ($this->useTmpDir && !str_starts_with($newName, $this->parameterBag->get('bucket_tmp_dir'))) {
             $newPath = $this->parameterBag->get('bucket_tmp_dir').$newName;
         }
 
@@ -145,8 +150,11 @@ class ImageManipulationHandler
     {
         $pathInfo = pathinfo($filename);
         $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
-        $resize = $pathInfo['filename'].self::SUFFIX_RESIZE.$ext;
-        $thumb = $pathInfo['filename'].self::SUFFIX_THUMB.$ext;
+        $dirname = $pathInfo['dirname'] ?? '';
+        $dirname = ('' === $dirname || '.' === $dirname) ? '' : $dirname.'/';
+
+        $resize = $dirname.$pathInfo['filename'].self::SUFFIX_RESIZE.$ext;
+        $thumb = $dirname.$pathInfo['filename'].self::SUFFIX_THUMB.$ext;
 
         return [self::SUFFIX_RESIZE => $resize, self::SUFFIX_THUMB => $thumb];
     }

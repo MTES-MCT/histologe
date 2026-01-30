@@ -231,6 +231,21 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
+    /**
+     * @see templates/front/suivi_signalement_documents.html.twig
+     * @see templates/front/dossier_bailleur.html.twig
+     * @see templates/back/signalement/view/photos-documents.html.twig
+     * @see templates/back/signalement_create/tabs/tab-situation.html.twig
+     */
+    public function getDisplayFilename(): ?string
+    {
+        if (null === $this->filename) {
+            return null;
+        }
+
+        return basename($this->filename);
+    }
+
     public function getFilename(?string $variantName = null): ?string
     {
         if ($this->isVariantsGenerated && $variantName) {

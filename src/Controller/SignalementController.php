@@ -438,7 +438,7 @@ class SignalementController extends AbstractController
 
                     return $this->json($res);
                 }
-            } catch (\Exception $exception) {
+            } catch (\Throwable $exception) {
                 $logger->error($exception->getMessage());
 
                 return $this->json(['error' => $exception->getMessage()], 400);
