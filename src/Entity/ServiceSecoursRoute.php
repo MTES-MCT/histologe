@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\ServiceSecoursRouteRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -9,7 +11,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ServiceSecoursRouteRepository::class)]
 #[UniqueEntity('name')]
-class ServiceSecoursRoute
+class ServiceSecoursRoute implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -54,5 +56,11 @@ class ServiceSecoursRoute
         $this->name = $name;
 
         return $this;
+    }
+
+    /** @return array<HistoryEntryEvent> */
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }
