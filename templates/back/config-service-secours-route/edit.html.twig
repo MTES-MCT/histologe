@@ -1,0 +1,44 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Route service secours{% endblock %}
+
+{% block content %}
+    <section class="fr-col-12 fr-p-5v">
+        {% if create %}
+            {% include 'back/breadcrumb_bo.html.twig' with {
+                'level2Title': 'Outils SA',
+                'level2Link': '',
+                'level2Label': '',
+                'level3Title': 'Routes service secours',
+                'level3Link': path('back_config_service_secours_route_index'),
+                'level3Label': 'Retour à la liste des routes service secours',
+                'level4Title': 'Ajouter une route service secours',
+                'level4Link': '',
+                'level4Label': '',
+            } %}
+            <h2 class="fr-h2 fr-mb-0"> Ajouter une route service secours </h2>
+            <span>Remplissez le formulaire ci-dessous pour créer une route service secours.</span><br>                
+        {% else %}
+            {% include 'back/breadcrumb_bo.html.twig' with {
+                'level2Title': 'Outils SA',
+                'level2Link': '',
+                'level2Label': '',
+                'level3Title': 'Routes service secours',
+                'level3Link': path('back_config_service_secours_route_index'),
+                'level3Label': 'Retour à la liste des routes service secours',
+                'level4Title': 'Modifier une route service secours',
+                'level4Link': '',
+                'level4Label': '',
+            } %}
+            <h2 class="fr-h2 fr-mb-0"> Modifier la route service secours : {{ serviceSecoursRoute.name }} </h2>
+        {% endif %}
+        <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
+        <div class="fr-pt-5v">
+            {{ include('back/config-service-secours-route/_form.html.twig') }}
+        </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+

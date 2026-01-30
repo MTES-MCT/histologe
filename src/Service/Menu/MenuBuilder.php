@@ -76,7 +76,9 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Règles d\'auto-affectation', route: 'back_auto_affectation_rule_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Événements', route: 'back_config_club_event_index', routeParameters: ['isInFuture' => 1], roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Permissions utilisateurs API', route: 'back_api_user_index', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN));
+            ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Services secours', route: 'back_config_service_secours_route_index', roleGranted: User::ROLE_ADMIN))
+        ;
         $superAdminToolsSubItem
             ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))

@@ -37,7 +37,9 @@ if (reponseInjonctionBailleurDescription) {
           reponseInjonctionBailleurEngagementTravaux.classList.remove('fr-hidden');
           break;
         case 'REPONSE_OUI_DEMARCHES_COMMENCEES':
-          textNode = document.createTextNode(label.getAttribute('data-label-oui-demarches-commencees'));
+          textNode = document.createTextNode(
+            label.getAttribute('data-label-oui-demarches-commencees')
+          );
           reponseInjonctionBailleurEngagementTravaux.classList.remove('fr-hidden');
           break;
         case 'REPONSE_NON':

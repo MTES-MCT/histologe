@@ -4,7 +4,7 @@
     <main class="fr-container fr-mb-5w" id="content">
         <section class="fr-grid-row fr-grid-row--center">
             <div class="fr-mt-5v fr-col-md-12">
-                <h1>Bienvenue service secours</h1>
+                <h1>Bienvenue {{serviceSecoursRoute.name}}</h1>
 
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
@@ -13,22 +13,68 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <fieldset role="group" aria-labelledby="declarant-infos-fieldset-legend">
                             <legend class="fr-fieldset__legend" id="declarant-infos-fieldset-legend">Le déclarant</legend>
-                                {{ form_row(form.structureDeclarant) }}
-                                {{ form_row(form.mailDeclarant) }}
-                                {{ form_row(form.telDeclarant) }}
-                                {{ form_row(form.nomDeclarant) }}
-                                {{ form_row(form.prenomDeclarant) }}
-                                {{ form_row(form.dateVisite) }}
+                            {{ form_row(form.structureDeclarant) }}
+                            {{ form_row(form.mailDeclarant) }}
+                            {{ form_row(form.telDeclarant) }}
+                            {{ form_row(form.nomDeclarant) }}
+                            {{ form_row(form.prenomDeclarant) }}
+                            {{ form_row(form.dateVisite) }}
+                        </fieldset>
+                        <fieldset role="group" aria-labelledby="bailleur-infos-fieldset-legend">
+                            <legend class="fr-fieldset__legend" id="bailleur-infos-fieldset-legend">Le propriétaire</legend>
+                            {{ form_row(form.nomBailleur) }}
+                            {{ form_row(form.prenomBailleur) }}
+                            {{ form_row(form.mailBailleur) }}
+                            {{ form_row(form.telBailleur) }}
+                            {{ form_row(form.isLogementSocial) }}
+                        </fieldset>
+                        <fieldset role="group" aria-labelledby="localisation-logement-fieldset-legend">
+                            <legend class="fr-fieldset__legend" id="localisation-logement-fieldset-legend">Localisation du logement</legend>
+                            {{ form_row(form.adresseComplete) }}
+                            {{ form_row(form.adresseAutreOccupant) }}
+                            {{ form_row(form.profilOccupant) }}
+                        </fieldset>
+                        <fieldset role="group" aria-labelledby="categorie-logement-fieldset-legend">
+                            <legend class="fr-fieldset__legend" id="categorie-logement-fieldset-legend">Catégorie du logement</legend>
+                            {{ form_row(form.natureLogement) }}
+                            {{ form_row(form.natureLogementAutre) }}
+                            {{ form_row(form.nombrePieces) }}
+                        </fieldset>
+                        <fieldset role="group" aria-labelledby="occupant-infos-fieldset-legend">
+                            <legend class="fr-fieldset__legend" id="occupant-infos-fieldset-legend">Occupant du logement</legend>
+                            {{form_row(form.nomOccupant)}}
+                            {{form_row(form.prenomOccupant)}}
+                            {{form_row(form.mailOccupant)}}
+                            {{form_row(form.telOccupant)}}
+                            {{form_row(form.nbOccupantsLogement)}}
+                            {{form_row(form.nbEnfantsDansLogement)}}
+                            {{form_row(form.commentaireOccupant)}}
                         </fieldset>
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
-                        <fieldset role="group" aria-labelledby="bailleur-infos-fieldset-legend">
-                            <legend class="fr-fieldset__legend" id="bailleur-infos-fieldset-legend">Le propriétaire</legend>
-                                {{ form_row(form.nomBailleur) }}
-                                {{ form_row(form.prenomBailleur) }}
-                                {{ form_row(form.mailBailleur) }}
-                                {{ form_row(form.telBailleur) }}
-                                {{ form_row(form.isLogementSocial) }}
+                        <fieldset role="group" aria-labelledby="desordres-infos-fieldset-legend">
+                            <legend class="fr-fieldset__legend" id="desordres-infos-fieldset-legend">Elements motivant le signalement</legend>
+                                {% for choice in form.desordres %}
+                                    <div class="fr-checkbox-group fr-mb-6v">
+                                        {{ form_widget(choice) }}
+                                        <label class="fr-label" for="{{ choice.vars.id }}">
+                                            {{ choice.vars.label|raw }}
+                                            <span id="{{ choice.vars.id }}_help" class="fr-hint-text">
+                                                {% set value = choice.vars.value %}
+                                                {% set enum = constant('App\\Entity\\Enum\\DesordreSecours::' ~ value) %}
+                                                {{ enum.getDescription() }}
+                                            </span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {{form_row(form.desordresAutre)}}
+                        </fieldset>
+                        <fieldset role="group" aria-labelledby="divers-infos-fieldset-legend">
+                            <legend class="fr-fieldset__legend" id="divers-infos-fieldset-legend">Divers</legend>
+                            {{form_row(form.coordonneesSyndic)}}
+                            {{form_row(form.desagrementsImmeuble)}}
+                            {{form_row(form.isTransmisMairie)}}
+                            {{form_row(form.isBailleurAverti)}}
                         </fieldset>
                     </div>
                     <div class="fr-col-12">
