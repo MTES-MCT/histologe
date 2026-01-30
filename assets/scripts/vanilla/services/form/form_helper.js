@@ -40,3 +40,11 @@ export function initTinyMCE(selector) {
     });
   }
 }
+
+export function reloadTinyMCE(selector, container = document) {
+  if (window.tinymce) {
+    tinymce.remove();
+  }
+
+  initTinyMCE(selector);
+}
