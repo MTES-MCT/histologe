@@ -291,6 +291,9 @@ class NotificationAndMailSender
 
     private function sendMailToUsagers(NotificationMailerType $mailType, ?string $motif = null): void
     {
+        if ($this->signalement->getIsLogementVacant()) {
+            return;
+        }
         $recipients = new ArrayCollection($this->signalement->getMailUsagers());
         if (!$recipients->isEmpty()) {
             $recipients->removeElement($this->suivi->getCreatedBy()?->getEmail());

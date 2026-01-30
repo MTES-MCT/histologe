@@ -44,14 +44,16 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
             $description .= ' la visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= ' a été annulée pour le motif suivant : <br>';
             $description .= $intervention->getDetails();
+            $signalement = $intervention->getSignalement();
+            $isLogementVacant = $signalement->getIsLogementVacant();
             $suivi = $this->suiviManager->createSuivi(
-                signalement: $intervention->getSignalement(),
+                signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_IS_CANCELED,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isPublic: true,
+                isPublic: !$isLogementVacant,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
