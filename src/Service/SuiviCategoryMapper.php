@@ -58,6 +58,42 @@ class SuiviCategoryMapper
             'title' => 'Changement de la date de visite !',
             'icon' => 'notification.svg',
         ],
+        SuiviCategory::INTERVENTION_IS_DONE->name => [
+            'label' => 'Nouveauté',
+            'labelClass' => 'fr-badge--success',
+            'title' => 'Visite du logement réalisée',
+            'icon' => 'house.svg',
+        ],
+        SuiviCategory::INTERVENTION_CONTROLE_IS_CREATED->name => [
+            'label' => 'Nouveauté',
+            'labelClass' => 'fr-badge--success',
+            'title' => 'Visite de contrôle du logement programmée',
+            'icon' => 'house.svg',
+        ],
+        SuiviCategory::INTERVENTION_CONTROLE_IS_RESCHEDULED->name => [
+            'label' => 'Nouveauté',
+            'labelClass' => 'fr-badge--warning',
+            'title' => 'Changement de la date de visite de contrôle !',
+            'icon' => 'notification.svg',
+        ],
+        SuiviCategory::INTERVENTION_CONTROLE_IS_DONE->name => [
+            'label' => 'Nouveauté',
+            'labelClass' => 'fr-badge--success',
+            'title' => 'Visite de contrôle du logement réalisée',
+            'icon' => 'house.svg',
+        ],
+        SuiviCategory::INTERVENTION_ARRETE_IS_CREATED->name => [
+            'label' => 'Nouveauté',
+            'labelClass' => 'fr-badge--success',
+            'title' => 'Prise d\'arrêté',
+            'icon' => 'house.svg',
+        ],
+        SuiviCategory::INTERVENTION_ARRETE_IS_RESCHEDULED->name => [
+            'label' => 'Nouveauté',
+            'labelClass' => 'fr-badge--warning',
+            'title' => 'Modification d\'arrêté',
+            'icon' => 'notification.svg',
+        ],
         SuiviCategory::SIGNALEMENT_IS_CLOSED->name => [
             'label' => 'Important',
             'labelClass' => 'fr-badge--error',
