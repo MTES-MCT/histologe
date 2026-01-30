@@ -224,7 +224,7 @@ class SignalementVisitesController extends AbstractController
 
         $errorRedirect = $this->getSecurityRedirect(
             $request,
-            'signalement_cancel_visit_'.$requestData['intervention'],
+            'signalement_cancel_visit_'.$requestCancelData['intervention'],
             $intervention,
             $interventionRepository,
             $affectationRepository,
@@ -360,7 +360,7 @@ class SignalementVisitesController extends AbstractController
 
         $errorRedirect = $this->getSecurityRedirect(
             $request,
-            'signalement_confirm_visit_'.$requestData['intervention'],
+            'signalement_confirm_visit_'.$requestConfirmData['intervention'],
             $intervention,
             $interventionRepository,
             $affectationRepository,
@@ -372,12 +372,15 @@ class SignalementVisitesController extends AbstractController
         $fileName = $this->getUploadedFile($request, 'visite-confirm', $uploadHandler, $filenameGenerator);
 
         $visiteRequest = new VisiteRequest(
-            idIntervention: $requestData['intervention'],
-            details: $requestData['details'],
-            concludeProcedure: $requestData['concludeProcedure'] ?? null,
-            isVisiteDone: $requestData['visiteDone'] ?? null,
-            isOccupantPresent: $requestData['occupantPresent'] ?? null,
-            isProprietairePresent: $requestData['proprietairePresent'] ?? null,
+            idIntervention: $requestConfirmData['intervention'],
+            date: $intervention->getScheduledAt()->format('Y-m-d'),
+            idPartner: $intervention->getPartner()?->getId(),
+            externalOperator: $intervention->getExternalOperator(),
+            details: $requestConfirmData['details'],
+            concludeProcedure: $requestConfirmData['concludeProcedure'] ?? null,
+            isVisiteDone: $requestConfirmData['visiteDone'] ?? null,
+            isOccupantPresent: $requestConfirmData['occupantPresent'] ?? null,
+            isProprietairePresent: $requestConfirmData['proprietairePresent'] ?? null,
             document: $fileName,
         );
         /** @var User $user */
@@ -426,7 +429,7 @@ class SignalementVisitesController extends AbstractController
 
         $errorRedirect = $this->getSecurityRedirect(
             $request,
-            'signalement_edit_visit_'.$requestData['intervention'],
+            'signalement_edit_visit_'.$requestEditData['intervention'],
             $intervention,
             $interventionRepository,
             $affectationRepository,
