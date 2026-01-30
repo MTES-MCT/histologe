@@ -51,6 +51,7 @@ readonly class QueryBuilderFactory
             s.lastSuiviBy,
             s.lastSuiviIsPublic,
             s.profileDeclarant,
+            s.isLogementSocial,
             territory.id as territoryId,
             GROUP_CONCAT(DISTINCT CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
             GROUP_CONCAT(DISTINCT p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,

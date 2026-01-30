@@ -760,9 +760,9 @@ class SignalementManager extends AbstractManager
             $signalement->setIsPreavisDepart(null);
         }
 
-        if ('non' === $situationFoyerRequest->getIsAllocataire()) {
+        if ('non' === $situationFoyerRequest->getIsLogementSocial()) {
             $situationFoyer->setLogementSocialAllocation('non');
-        } elseif ('nsp' === $situationFoyerRequest->getIsAllocataire()) {
+        } elseif ('nsp' === $situationFoyerRequest->getIsLogementSocial()) {
             $situationFoyer->setLogementSocialAllocation(null);
         } else {
             $situationFoyer->setLogementSocialAllocation('oui');

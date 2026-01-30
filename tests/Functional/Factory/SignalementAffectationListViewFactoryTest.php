@@ -63,6 +63,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'qualificationsStatuses' => 'NDE_AVEREE',
             'conclusionsProcedure' => $procedures,
             'territoryId' => 13,
+            'isLogementSocial' => 1,
         ];
 
         $expectedAffectations = [
@@ -107,6 +108,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertSame(
             array_values(ProcedureType::getLabelList()),
             $signalementAffectationListView->getConclusionsProcedure());
+        $this->assertEquals($dataSignalement['isLogementSocial'], $signalementAffectationListView->getIsLogementSocial());
         $this->assertFalse($signalementAffectationListView->getCanDeleteSignalement());
     }
 }

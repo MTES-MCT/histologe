@@ -23,6 +23,12 @@ enum SuiviCategory: string
     case INTERVENTION_HAS_CONCLUSION_EDITED = 'INTERVENTION_HAS_CONCLUSION_EDITED';
     case INTERVENTION_IS_RESCHEDULED = 'INTERVENTION_IS_RESCHEDULED';
     case INTERVENTION_PLANNED_REMINDER = 'INTERVENTION_PLANNED_REMINDER';
+    case INTERVENTION_IS_DONE = 'INTERVENTION_IS_DONE';
+    case INTERVENTION_CONTROLE_IS_CREATED = 'INTERVENTION_CONTROLE_IS_CREATED';
+    case INTERVENTION_CONTROLE_IS_RESCHEDULED = 'INTERVENTION_CONTROLE_IS_RESCHEDULED';
+    case INTERVENTION_CONTROLE_IS_DONE = 'INTERVENTION_CONTROLE_IS_DONE';
+    case INTERVENTION_ARRETE_IS_CREATED = 'INTERVENTION_ARRETE_IS_CREATED';
+    case INTERVENTION_ARRETE_IS_RESCHEDULED = 'INTERVENTION_ARRETE_IS_RESCHEDULED';
     case NEW_DOCUMENT = 'NEW_DOCUMENT';
     case DOCUMENT_DELETED_BY_USAGER = 'DOCUMENT_DELETED_BY_USAGER';
     case DOCUMENT_DELETED_BY_PARTNER = 'DOCUMENT_DELETED_BY_PARTNER';
@@ -87,6 +93,12 @@ enum SuiviCategory: string
             'INTERVENTION_HAS_CONCLUSION_EDITED' => 'Edition de la conclusion de visite',
             'INTERVENTION_IS_RESCHEDULED' => 'Changement de date de visite',
             'INTERVENTION_PLANNED_REMINDER' => 'Rappel de visite envoyé',
+            'INTERVENTION_IS_DONE' => 'Visite réalisée',
+            'INTERVENTION_CONTROLE_IS_CREATED' => 'Visite de contrôle programmée',
+            'INTERVENTION_CONTROLE_IS_RESCHEDULED' => 'Changement de date de visite de contrôle',
+            'INTERVENTION_CONTROLE_IS_DONE' => 'Visite de contrôle réalisée',
+            'INTERVENTION_ARRETE_IS_CREATED' => 'Prise d\'arrêté',
+            'INTERVENTION_ARRETE_IS_RESCHEDULED' => 'Modification d\'arrêté',
             'NEW_DOCUMENT' => 'Ajout de documents',
             'DOCUMENT_DELETED_BY_USAGER' => 'Document supprimé par l\'usager',
             'DOCUMENT_DELETED_BY_PARTNER' => 'Document supprimé par le partenaire',

@@ -14,6 +14,7 @@ enum NotificationType: string
     case CLOTURE_PARTENAIRE = 'CLOTURE_PARTENAIRE';
     case SUIVI_USAGER = 'SUIVI_USAGER';
     case NOUVEL_ABONNEMENT = 'NOUVEL_ABONNEMENT';
+    case DEMANDE_ABANDON_PROCEDURE = 'DEMANDE_ABANDON_PROCEDURE';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -26,6 +27,7 @@ enum NotificationType: string
             self::CLOTURE_PARTENAIRE->name => self::CLOTURE_PARTENAIRE->value,
             self::SUIVI_USAGER->name => self::SUIVI_USAGER->value,
             self::NOUVEL_ABONNEMENT->name => self::NOUVEL_ABONNEMENT->value,
+            self::DEMANDE_ABANDON_PROCEDURE->name => self::DEMANDE_ABANDON_PROCEDURE->value,
         ];
     }
 

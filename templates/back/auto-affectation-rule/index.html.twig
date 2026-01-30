@@ -27,8 +27,8 @@
             </div>
         </header>
     </section>
+    {{ form_start(form) }}
     <section class="fr-container--fluid">
-        {{ form_start(form) }}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-4">
@@ -38,8 +38,14 @@
                 {{ form_row(form.isActive) }}
             </div>
         </div>
-        {{ form_end(form) }}
     </section>
+    <section class="fr-col-12 fr-pt-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(autoAffectationRules|length, 'règle d\'auto-affectation trouvée', 'règles d\'auto-affectation trouvées') }}</h2>
+    </section>
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+    {{ form_end(form) }}
 
     <div id="title-and-table-list-results">
         {% include 'back/auto-affectation-rule/_title-and-table-list-results.html.twig' %}

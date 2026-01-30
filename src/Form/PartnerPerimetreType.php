@@ -6,22 +6,18 @@ use App\Entity\Commune;
 use App\Entity\Partner;
 use App\Entity\Zone;
 use App\Form\Type\SearchCheckboxType;
-use App\Manager\CommuneManager;
+use App\Repository\CommuneRepository;
 use App\Repository\ZoneRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class PartnerPerimetreType extends AbstractType
 {
     public function __construct(
-        private readonly CommuneManager $communeManager,
+        private readonly CommuneRepository $communeRepository,
     ) {
     }
 
@@ -30,22 +26,32 @@ class PartnerPerimetreType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $territory = false;
         /** @var Partner $partner */
         $partner = $builder->getData();
         $territory = $partner->getTerritory();
 
         $builder
-            ->add('insee', TextType::class, [
-                'label' => 'Code(s) INSEE',
-                'help' => 'Renseignez le ou les codes INSEE, séparés par une virgule. Exemple: 67001, 67002, 67003.',
-                'attr' => [
-                    'class' => 'fr-input',
-                ],
+            ->add('insee', SearchCheckboxType::class, [
+                'class' => Commune::class,
+                'label' => 'Commune(s)',
+                'query_builder' => function (CommuneRepository $communeRepository) use ($territory) {
+                    return $communeRepository->createQueryBuilder('c')
+                        ->where('c.territory = :territory')
+                        ->andWhere('c.id IN (
+                            SELECT MIN(c2.id) FROM '.Commune::class.' c2 
+                            WHERE c2.territory = :territory 
+                            GROUP BY c2.codeInsee
+                        )')
+                        ->setParameter('territory', $territory)
+                        ->orderBy('c.nom', 'ASC');
+                },
+                'choice_label' => function (Commune $commune): string {
+                    return $commune->getNom(withArrondissement: true);
+                },
+                'help' => 'Sélectionner la ou la liste des communes d\'intervention',
                 'required' => false,
-                'constraints' => [
-                    new Assert\Callback([$this, 'validateInseeInTerritory']),
-                ],
+                'noselectionlabel' => 'Sélectionnez les communes',
+                'nochoiceslabel' => 'Aucune commune disponible',
             ])->add('zones', SearchCheckboxType::class, [
                 'class' => Zone::class,
                 'query_builder' => function (ZoneRepository $zoneRepository) use ($territory) {
@@ -81,15 +87,16 @@ class PartnerPerimetreType extends AbstractType
             ]);
 
         $builder->get('insee')->addModelTransformer(new CallbackTransformer(
-            function ($tagsAsArray) {
-                // transform the array to a string
-                return implode(',', $tagsAsArray);
+            function (array $arrayOfCodesInsee) {
+                return $this->communeRepository->findDistinctCommuneCodesInseeForCodeInseeList($arrayOfCodesInsee);
             },
-            function ($tagsAsString) {
-                // transform the string back to an array
-                $pattern = '/(\s*,*\s*)*,+(\s*,*\s*)*/';
+            function (array $arrayOfCommunes) {
+                $codesInsee = [];
+                foreach ($arrayOfCommunes as $commune) {
+                    $codesInsee[] = $commune->getCodeInsee();
+                }
 
-                return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
+                return $codesInsee;
             }
         ));
     }
@@ -99,28 +106,5 @@ class PartnerPerimetreType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Partner::class,
         ]);
-    }
-
-    /**
-     * @param array<int, string> $codesInsee
-     */
-    public function validateInseeInTerritory(array $codesInsee, ExecutionContextInterface $context): void
-    {
-        /** @var FormInterface $form */
-        $form = $context->getObject();
-        $partner = $form->getParent()->getData();
-        $territory = $partner->getTerritory();
-        if (empty($codesInsee)) {
-            return;
-        }
-        foreach ($codesInsee as $insee) {
-            /** @var ?Commune $commune */
-            $commune = $this->communeManager->findOneBy(['codeInsee' => mb_trim($insee)]);
-            if (null === $commune) {
-                $context->buildViolation('Il n\'existe pas de commune avec le code insee '.$insee)->atPath('insee')->addViolation();
-            } elseif ($commune->getTerritory() !== $territory) {
-                $context->buildViolation('La commune avec le code insee '.$insee.' ne fait pas partie du territoire du partenaire')->atPath('insee')->addViolation();
-            }
-        }
     }
 }

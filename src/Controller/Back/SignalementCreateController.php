@@ -576,9 +576,6 @@ class SignalementCreateController extends AbstractController
         if (!$signalement->getAdresseOccupant()) {
             $errorMsgs[] = 'Vous devez renseigner l\'adresse du logement pour pouvoir soumettre le signalement.';
         }
-        if (null === $signalement->getIsLogementSocial()) {
-            $errorMsgs[] = 'Vous devez renseigner le champ logement social pour pouvoir soumettre le signalement.';
-        }
         if (null === $signalement->getProfileDeclarant()) {
             $errorMsgs[] = 'Vous devez renseigner le profil du déclarant pour pouvoir soumettre le signalement.';
         }

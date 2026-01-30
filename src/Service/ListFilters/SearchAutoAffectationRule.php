@@ -11,6 +11,7 @@ class SearchAutoAffectationRule
 
     private ?Territory $territory = null;
     private ?bool $isActive = null;
+    private ?string $orderType = null;
 
     public function getTerritory(): ?Territory
     {
@@ -30,5 +31,17 @@ class SearchAutoAffectationRule
     public function setIsActive(?bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getOrderType(): ?string
+    {
+        return $this->orderType;
+    }
+
+    public function setOrderType(?string $orderType): self
+    {
+        $this->orderType = $orderType;
+
+        return $this;
     }
 }

@@ -36,12 +36,13 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     {
         $qb = $this->createQueryBuilder('n')
             ->where('n.user = :user')
-            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement, :nouvel_abonnement)')
+            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement, :nouvel_abonnement, :demande_abandon_procedure)')
             ->andWhere('n.deleted = :deleted')
             ->setParameter('user', $searchNotification->getUser())
             ->setParameter('nouveau_suivi', NotificationType::NOUVEAU_SUIVI)
             ->setParameter('cloture_signalement', NotificationType::CLOTURE_SIGNALEMENT)
             ->setParameter('nouvel_abonnement', NotificationType::NOUVEL_ABONNEMENT)
+            ->setParameter('demande_abandon_procedure', NotificationType::DEMANDE_ABANDON_PROCEDURE)
             ->setParameter('deleted', false)
             ->leftJoin('n.user', 'u')
             ->leftJoin('n.suivi', 's')
@@ -102,9 +103,11 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->set('n.isSeen', 1)
             ->where('n.user = :user')
             ->setParameter('user', $user)
-            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement)')
+            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement, :nouvel_abonnement, :demande_abandon_procedure)')
             ->setParameter('nouveau_suivi', NotificationType::NOUVEAU_SUIVI)
             ->setParameter('cloture_signalement', NotificationType::CLOTURE_SIGNALEMENT)
+            ->setParameter('nouvel_abonnement', NotificationType::NOUVEL_ABONNEMENT)
+            ->setParameter('demande_abandon_procedure', NotificationType::DEMANDE_ABANDON_PROCEDURE)
             ->andWhere('n.deleted = :deleted')
             ->setParameter('deleted', false);
         if (\count($ids)) {
@@ -127,9 +130,11 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->setParameter('user', $user)
             ->andWhere('n.deleted = :deleted')
             ->setParameter('deleted', false)
-            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement)')
+            ->andWhere('n.type IN (:nouveau_suivi, :cloture_signalement, :nouvel_abonnement, :demande_abandon_procedure)')
             ->setParameter('nouveau_suivi', NotificationType::NOUVEAU_SUIVI)
-            ->setParameter('cloture_signalement', NotificationType::CLOTURE_SIGNALEMENT);
+            ->setParameter('cloture_signalement', NotificationType::CLOTURE_SIGNALEMENT)
+            ->setParameter('nouvel_abonnement', NotificationType::NOUVEL_ABONNEMENT)
+            ->setParameter('demande_abandon_procedure', NotificationType::DEMANDE_ABANDON_PROCEDURE);
         if (\count($ids)) {
             $qb->andWhere('n.id IN (:ids)')
                 ->setParameter('ids', $ids);

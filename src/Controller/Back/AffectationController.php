@@ -189,12 +189,15 @@ class AffectationController extends AbstractController
     }
 
     #[Route('/affectation/{affectation}/accept', name: 'back_signalement_affectation_accept', methods: 'POST')]
-    #[IsGranted(AffectationVoter::AFFECTATION_ACCEPT_OR_REFUSE, subject: 'affectation')]
     public function affectationResponseSignalement(
         Affectation $affectation,
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
     ): Response {
+        if (!$this->isGranted(AffectationVoter::AFFECTATION_ACCEPT_OR_REFUSE, subject: $affectation)
+            && !$this->isGranted(AffectationVoter::AFFECTATION_CANCEL_REFUSED, subject: $affectation)) {
+            throw $this->createAccessDeniedException();
+        }
         $signalement = $affectation->getSignalement();
         /** @var User $user */
         $user = $this->getUser();

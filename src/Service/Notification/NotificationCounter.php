@@ -19,7 +19,7 @@ class NotificationCounter implements RuntimeExtensionInterface
         return $this->notificationRepository->count([
             'user' => $user,
             'isSeen' => 0,
-            'type' => [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT, NotificationType::NOUVEL_ABONNEMENT],
+            'type' => [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT, NotificationType::NOUVEL_ABONNEMENT, NotificationType::DEMANDE_ABANDON_PROCEDURE],
             'deleted' => false]
         );
     }

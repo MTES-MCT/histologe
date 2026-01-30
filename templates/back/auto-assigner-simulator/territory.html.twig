@@ -37,12 +37,13 @@
             <th scope="col" data-responsive-title="1">Signalement</th>
             <th scope="col">Partenaires affectés</th>
             <th scope="col">Affectations simulées</th>
+            <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
         {% set tableBody %}
             {% for item in results %}
                 <tr>
-                    <td><a href="{{path('back_signalement_view', {uuid:item.signalement.uuid})}}">{{ item.signalement.reference}}</a></td>
+                    <td>{{ item.signalement.reference }}</td>
                     <td>
                         {% for affectation in item.signalement.affectations %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ affectation.partner.nom }}</div>
@@ -52,6 +53,12 @@
                         {% for partner in item.assignablePartners %}
                             <div class="fr-badge fr-mb-1v">{{ partner.nom }}</div>
                         {% endfor %}
+                    </td>
+                    <td class="fr-text--right">
+                        <a href="{{ path('back_signalement_view', {'uuid': item.signalement.uuid}) }}"
+                           class="fr-btn fr-btn--sm fr-fi-arrow-right-line"
+                           title="Voir le signalement {{ item.signalement.reference }}"
+                        >{{ item.signalement.reference }}</a>
                     </td>
                 </tr>
             {% endfor %}

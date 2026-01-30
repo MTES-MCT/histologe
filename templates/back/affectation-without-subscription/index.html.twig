@@ -87,7 +87,7 @@
             {% endfor %}
         {% endset %}
 
-        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des affectations sans prise en charge', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des affectations sans prise en charge', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
         <div id="territory-pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center">
             {% import '_partials/macros.html.twig' as macros %}

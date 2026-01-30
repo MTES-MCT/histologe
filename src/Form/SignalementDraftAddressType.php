@@ -169,6 +169,7 @@ class SignalementDraftAddressType extends AbstractType
                 'choices' => [
                     'Oui' => true,
                     'Non' => false,
+                    'Ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,

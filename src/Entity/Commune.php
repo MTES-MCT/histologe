@@ -39,8 +39,12 @@ class Commune
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getNom(bool $withArrondissement = false): ?string
     {
+        if ($withArrondissement) {
+            return $this->nom;
+        }
+
         return ImportCommune::sanitizeCommuneWithArrondissement($this->nom);
     }
 

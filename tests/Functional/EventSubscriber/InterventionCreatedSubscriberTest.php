@@ -83,6 +83,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
             $this->fail('No suivi found for the intervention');
         }
         $this->assertStringContainsString('Visite programmée :', $suivi->getDescription());
+        $this->assertEquals(SuiviCategory::INTERVENTION_IS_CREATED, $suivi->getCategory(), 'La catégorie du suivi doit être INTERVENTION_IS_CREATED');
     }
 
     public function testBuildVisiteDescriptionTimezone(): void
@@ -128,6 +129,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
             $this->fail('No suivi found for the intervention');
         }
         $this->assertStringContainsString($dateDay, $suivi->getDescription());
+        $this->assertEquals(SuiviCategory::INTERVENTION_IS_CREATED, $suivi->getCategory(), 'La catégorie du suivi doit être INTERVENTION_IS_CREATED');
     }
 
     public function testInterventionVisitInPast(): void

@@ -6,7 +6,7 @@
     <th scope="col" data-responsive-title="1">Nom</th>
     <th scope="col">Type</th>
     <th scope="col">Compétences</th>
-    <th scope="col">Codes INSEE</th>
+    <th scope="col">Communes</th>
     <th scope="col">Zones</th>
     <th scope="col">Notifiable</th>
     <th scope="col">Nb utilisateurs actifs</th>
@@ -32,15 +32,14 @@
                 {% endif %}
             </td>
             <td>
-                {% if partner.insee %}
-                    {% for insee in partner.insee|slice(0, 4) %}
-                        <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
-                    {% endfor %}
-                    {% if partner.insee|length > 4 %}
-                        + {{partner.insee|length - 4}}
-                    {% endif %}
+                {% set communes = get_communes_by_insee(partner.insee) %}
+                {% for commune in communes|slice(0, 3) %}
+                    <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ commune.nom(withArrondissement: true) }}</div>
                 {% else %}
                     /
+                {% endfor %}
+                {% if communes|length > 3 %}
+                    <div class="fr-badge fr-mb-1v">+{{communes|length - 3}}</div>
                 {% endif %}
             </td>
             <td>
@@ -80,7 +79,7 @@
     {% endfor %}
 {% endset %}
 
-{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
 <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="partner-pagination">
     {% import '_partials/macros.html.twig' as macros %}

@@ -2059,6 +2059,12 @@ class SignalementRepository extends ServiceEntityRepository
             'INTERVENTION_HAS_CONCLUSION',
             'INTERVENTION_HAS_CONCLUSION_EDITED',
             'INTERVENTION_IS_RESCHEDULED',
+            'INTERVENTION_IS_DONE',
+            'INTERVENTION_CONTROLE_IS_CREATED',
+            'INTERVENTION_CONTROLE_IS_RESCHEDULED',
+            'INTERVENTION_CONTROLE_IS_DONE',
+            'INTERVENTION_ARRETE_IS_CREATED',
+            'INTERVENTION_ARRETE_IS_RESCHEDULED',
             'NEW_DOCUMENT',
         ];
 
@@ -2096,6 +2102,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
             $sql .= ' AND aff.partner_id IN (:partners)';
+            $sql .= ' AND aff.statut IN (\'EN_COURS\', \'NOUVEAU\')';
             $paramsToBind['partners'] = array_map(
                 fn ($partner) => $partner->getId(),
                 $user->getPartners()->toArray()

@@ -32,11 +32,26 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
         $intervention = $event->getIntervention();
         $signalement = $intervention->getSignalement();
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionUpdatedByEsaboraEvent::NAME);
+
+        switch ($intervention->getType()) {
+            case InterventionType::VISITE:
+                $suiviCategory = SuiviCategory::INTERVENTION_IS_RESCHEDULED;
+                break;
+            case InterventionType::VISITE_CONTROLE:
+                $suiviCategory = SuiviCategory::INTERVENTION_CONTROLE_IS_RESCHEDULED;
+                break;
+            case InterventionType::ARRETE_PREFECTORAL:
+                $suiviCategory = SuiviCategory::INTERVENTION_ARRETE_IS_RESCHEDULED;
+                break;
+            default:
+                $suiviCategory = SuiviCategory::INTERVENTION_IS_RESCHEDULED;
+        }
+
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
             description: $description,
             type: Suivi::TYPE_AUTO,
-            category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
+            category: $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
             isPublic: !$signalement->isTiersDeclarant(),

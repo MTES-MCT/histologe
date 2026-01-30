@@ -27,12 +27,19 @@
     <section class="fr-col-12 fr-pt-0 fr-px-5v">
         {% set tableHead %}
             <th scope="col">Territoire</th>
+            <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
         {% set tableBody %}
             {% for item in territories %}
                 <tr>
-                    <td><a href="{{path('back_auto_assigner_simulator_territory', {territory:item.id})}}">{{ item.zip}} - {{item.name}}</a></td>
+                    <td>{{ item.zip}} - {{item.name}}</td>
+                    <td class="fr-text--right">
+                        <a href="{{path('back_auto_assigner_simulator_territory', {territory:item.id})}}"
+                           class="fr-btn fr-btn--sm fr-fi-arrow-right-line"
+                           title="Voir le territoire ayant des regles d'affectations {{ item.zip}} - {{item.name}}"
+                        >{{ item.zip}} - {{item.name}}</a>
+                    </td>
                 </tr>
             {% endfor %}
         {% endset %}

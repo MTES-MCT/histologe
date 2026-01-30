@@ -6,61 +6,71 @@
 <p>Voici le récapitulatif de l'activité sur votre plateforme {{ platform.name }} pour les dernières 24h</p>
 {% if events[enum('App\\Entity\\Enum\\NotificationType').NOUVEAU_SIGNALEMENT.name]|length %}
     <p><u>Nouveaux signalements :</u></p>
+    <ul>
     {% for event in events[enum('App\\Entity\\Enum\\NotificationType').NOUVEAU_SIGNALEMENT.name] %}
-        <ul>
-            <li>Signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong>.</li>
-        </ul>
+        <li>Signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong></li>
     {% endfor %}
+    </ul>
+    <br>
+{% endif %}
+
+{% if events[enum('App\\Entity\\Enum\\NotificationType').DEMANDE_ABANDON_PROCEDURE.name]|length %}
+    <p><u>Nouvelles demandes d'abandon de procédure :</u></p>
+    <ul>
+    {% for event in events[enum('App\\Entity\\Enum\\NotificationType').DEMANDE_ABANDON_PROCEDURE.name] %}
+        <li>Signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong></li>
+    {% endfor %}
+    </ul>
     <br>
 {% endif %}
 
 {% if events[enum('App\\Entity\\Enum\\NotificationType').NOUVELLE_AFFECTATION.name]|length %}
     <p><u>Affectations :</u></p>
+    <ul>
     {% for event in events[enum('App\\Entity\\Enum\\NotificationType').NOUVELLE_AFFECTATION.name] %}
-        <ul>
-            <li>Affectation sur le signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong>.</li>
-        </ul>
+        <li>Affectation sur le signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong></li>
     {% endfor %}
+    </ul>
     <br>
 {% endif %}
 
 {% if events[enum('App\\Entity\\Enum\\NotificationType').NOUVEL_ABONNEMENT.name]|length %}
     <p><u>Affectations :</u></p>
+    <ul>
     {% for event in events[enum('App\\Entity\\Enum\\NotificationType').NOUVEL_ABONNEMENT.name] %}
-        <ul>
-            <li>Prise en charge du signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong>.</li>
-        </ul>
+        <li>Prise en charge du signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong></li>
     {% endfor %}
+    </ul>
     <br>
 {% endif %}
 
 {% if events[enum('App\\Entity\\Enum\\NotificationType').NOUVEAU_SUIVI.name]|length %}
     <p><u>Nouveaux suivis :</u></p>
+    <ul>
     {% for event in events[enum('App\\Entity\\Enum\\NotificationType').NOUVEAU_SUIVI.name] %}
-        <ul>
-            <li>{{event.nb}} nouveaux suivis sur le signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong>.</li>
-        </ul>
+        <li>{{event.nb}} nouveaux suivis sur le signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong></li>
     {% endfor %}
+    </ul>
     <br>
 {% endif %}
 
 {% if events[enum('App\\Entity\\Enum\\NotificationType').CLOTURE_SIGNALEMENT.name]|length %}
     <p><u>Clôtures de signalements :</u></p>
+    <ul>
     {% for event in events[enum('App\\Entity\\Enum\\NotificationType').CLOTURE_SIGNALEMENT.name] %}
-        <ul>
-            <li>Clôture du signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong>.</li>
-        </ul>
+        <li>Clôture du signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong></li>
     {% endfor %}
+    </ul>
     <br>
 {% endif %}
 
 {% if events[enum('App\\Entity\\Enum\\NotificationType').CLOTURE_PARTENAIRE.name]|length %}
     <p><u>Clôtures de partenaires :</u></p>
+    <ul>
     {% for event in events[enum('App\\Entity\\Enum\\NotificationType').CLOTURE_PARTENAIRE.name] %}
-        <ul>
-            <li>Clôture du partenaire <strong>{{event.partenaire}}</strong> sur le signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong>.</li>
-        </ul>
+        <li>Clôture du partenaire <strong>{{event.partenaire}}</strong> sur le signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong></li>
     {% endfor %}
+    </ul>
     <br>
 {% endif %}
 
