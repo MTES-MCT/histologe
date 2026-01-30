@@ -419,12 +419,18 @@ class SignalementManager extends AbstractManager
             ->setPrenomOccupant($coordonneesFoyerRequest->getPrenom())
             ->setMailOccupant($coordonneesFoyerRequest->getMail())
             ->setTelOccupant($coordonneesFoyerRequest->getTelephone())
-            ->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis())
-            ->setProfileOccupant(
+            ->setTelOccupantBis($coordonneesFoyerRequest->getTelephoneBis());
+
+        if (ProfileDeclarant::TIERS_PARTICULIER == $signalement->getProfileDeclarant()
+            || ProfileDeclarant::TIERS_PRO == $signalement->getProfileDeclarant()
+            || ProfileDeclarant::SERVICE_SECOURS == $signalement->getProfileDeclarant()
+        ) {
+            $signalement->setProfileOccupant(
                 $coordonneesFoyerRequest->getProfileOccupant()
                     ? ProfileOccupant::from($coordonneesFoyerRequest->getProfileOccupant())
                     : null
             );
+        }
 
         $this->save($signalement);
 

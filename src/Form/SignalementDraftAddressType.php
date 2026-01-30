@@ -176,7 +176,7 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => $signalement->getProfileOccupant()?->value ?? $signalement->getIsLogementVacant() ? 'vacant' : null,
+                'data' => $signalement->getIsLogementVacant() ? 'vacant' : $signalement->getProfileOccupant()?->value ?? null,
             ])
             ->add('isLogementSocial', ChoiceType::class, [
                 'label' => 'Logement social <span class="text-required">*</span>',
