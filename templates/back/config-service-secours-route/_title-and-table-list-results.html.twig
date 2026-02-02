@@ -1,0 +1,40 @@
+<section class="fr-col-12 fr-pt-0 fr-px-5v">
+    {% set tableHead %}
+        <th scope="col">ID</th>
+        <th scope="col">Nom</th>
+        <th scope="col">URL</th>
+        <th scope="col" class="fr-text--right">Actions</th>
+    {% endset %}
+
+    {% set tableBody %}
+        {% for serviceSecoursRoute in serviceSecoursRoutes %}
+            <tr class="autoaffectationrule-row">
+                <td>{{ serviceSecoursRoute.id }}</td>
+                <td>{{ serviceSecoursRoute.name }}</td>
+                <td>
+                    <a href="{{ path('service_secours_index', {'name': serviceSecoursRoute.name, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)}) }}">{{ serviceSecoursRoute.uuid }}</a>
+                </td>
+                <td class="fr-text--right">
+                    <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line fr-mt-3v btn-delete-config-service-secours-route"
+                        id="config_service_secours_route_delete_{{ serviceSecoursRoute.id }}" aria-controls="fr-modal-config-service-secours-route-delete"
+                        data-fr-opened="false" 
+                        data-config-service-secours-route-url="{{ path('back_config_service_secours_route_delete', {'id': serviceSecoursRoute.id}) }}" 
+                        data-config-service-secours-route-name="{{ serviceSecoursRoute.name }}"
+                        >
+                    </button>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">Aucune route trouvée</td>
+            </tr>
+        {% endfor %}
+    {% endset %}
+
+    {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste routes service secours', 'tableHead': tableHead, 'tableBody': tableBody } %}
+
+    <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="aconfig-service-secours-route-pagination">
+        {% import '_partials/macros.html.twig' as macros %}
+        {{ macros.customPagination(pages, searchServiceSecoursRoute.page, 'back_config_service_secours_route_index', searchServiceSecoursRoute.urlParams) }}
+    </div>
+</section>

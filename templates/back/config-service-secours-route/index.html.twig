@@ -1,0 +1,51 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Config service secours{% endblock %}
+
+{% block content %}
+    <div data-ajax-form>
+        {% include 'back/config-service-secours-route/_modal_config_service_secours_delete.html.twig' %}
+    </div>
+    <section class="fr-p-4v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Config service secours',
+            'level3Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-7 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Config service secours</h1>
+                </div>
+                <div class="fr-col-12 fr-col-md-5 fr-text--md-right">
+                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-circle-line fr-btn--block fr-btn--md-inline" href="{{ path('back_config_service_secours_route_new') }}">Ajouter une route service secours</a>
+                </div>
+            </div>
+        </header>
+    </section>
+    {{ form_start(form) }}
+    <section class="fr-container--fluid">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.queryName) }}
+            </div>
+        </div>
+    </section>
+    <section class="fr-col-12 fr-pt-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(serviceSecoursRoutes|length, 'service secours trouvé', 'services secours trouvés') }}</h2>
+    </section>
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+    {{ form_end(form) }}
+
+    <div id="title-and-table-list-results">
+        {% include 'back/config-service-secours-route/_title-and-table-list-results.html.twig' %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
