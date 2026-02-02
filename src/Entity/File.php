@@ -22,7 +22,7 @@ class File implements EntityHistoryInterface
 {
     use TimestampableTrait;
 
-    public const STANDALONE_FILES = [
+    public const array STANDALONE_FILES = [
         'Demande de copie de DPE (non décence énergétique)' => '1_Demande_de_transmission_d_une_copie_d_un_DPE.docx',
         'Information problème performance énergétique (non décence énergétique)' => '2_Information_au_bailleur_Mise_en_conformite.docx',
         'Mise en demeure (non décence énergétique)' => '3_Mise_en_demeure.docx',
