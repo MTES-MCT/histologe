@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { matomo } from '../matomo'
 import { variablesReplacer } from './../services/variableReplacer'
 
 export default defineComponent({
@@ -71,6 +72,7 @@ export default defineComponent({
   },
   data () {
     return {
+      matomo,
       variablesReplacer,
       idRef: this.id + '_ref'
     }
@@ -85,6 +87,9 @@ export default defineComponent({
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).getAttribute('value')
       this.$emit('update:modelValue', value)
+      if (this.customCss.includes('send-injonction-event')) {
+        matomo.pushInjonctionEvent('changeRadioValue', this.id + ' >> ' + (value ?? ''))
+      }
     },
     focusInput () {
       const focusableElement = (this.$refs[this.id + '_' + this.values[0].value + '_ref']) as Array<HTMLElement>
