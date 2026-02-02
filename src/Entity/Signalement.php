@@ -1177,6 +1177,19 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function hasInfosAgence(): bool
+    {
+        return $this->nomAgence
+            || $this->denominationAgence
+            || $this->prenomAgence
+            || $this->adresseAgence
+            || $this->codePostalAgence
+            || $this->villeAgence
+            || $this->telAgence
+            || $this->telAgenceSecondaire
+            || $this->mailAgence;
+    }
+
     public function getNomAgence(): ?string
     {
         return $this->nomAgence;
