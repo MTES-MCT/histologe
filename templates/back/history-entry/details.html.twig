@@ -1,0 +1,71 @@
+{% set container_class = 'fr-container-fluid' %}
+{% extends 'back/base_bo.html.twig' %}
+{% import '_partials/macros.html.twig' as macros %}
+
+{% block title %}Partenaires archivés ou sans territoires{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Historique des modifications',
+            'level3Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-h1 fr-mb-0">Historique des modifications</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-col-12 fr-p-5v">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(historyEntries|length, 'Modification trouvée', 'Modifications trouvées') }}</h2>
+    </section>
+
+    <section class="fr-col-12 fr-pt-0 fr-px-4v">
+        {% set tableHead %}
+            <th scope="col">User</th>
+            <th scope="col">Event</th>
+            <th scope="col">Date</th>
+            <th scope="col">Changes</th>
+            <th scope="col">Source</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for entry in historyEntries %}
+                <tr class="user-row">
+                    <td>
+                        {% if entry.user %}
+                            {{ entry.user.email }}
+                            <br>
+                            {{ entry.user.fullName }}
+                            <br>
+                            Id {{entry.user.id}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="fr-badge {% if entry.event.value == 'CREATE' %}fr-badge--success{% elseif entry.event.value == 'UPDATE' %}fr-badge--info{% endif %}">{{ entry.event.value }}</span>
+                    </td>
+                    <td>{{ entry.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% if entry.changes|length > 0 %}
+                            {{ macros.historyEntriesVizualisation(entry.changes) }}
+                        {% endif %}
+                    </td>
+                    <td>{{ entry.source }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucune modification trouvée</td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des modifications', 'tableHead': tableHead, 'tableBody': tableBody } %}
+        
+    </section>
+{% endblock %}

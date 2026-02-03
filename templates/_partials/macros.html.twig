@@ -82,3 +82,62 @@
     </ul>
 </nav>
 {% endmacro %}
+
+{% macro historyEntriesVizualisation(historyEntryChanges, isSubChange = false) %}
+{% import _self as macros %}
+{% if not isSubChange %}
+<div class="fr-table fr-table--sm fr-table--multiline fr-m-0">
+    <div class="fr-table__wrapper">
+        <div class="fr-table__container">
+            <div class="fr-table__content">
+                <table style="table-layout: fixed;">
+{% endif %}
+                    {% for name, change in historyEntryChanges %}
+                        {% if change.old is defined and change.new is defined %}
+                            <tr>
+                                <td class="history-diff-title">{{ name }}</td>
+                                {% if change.old is defined %}
+                                    <td class="history-diff-old">
+                                        {% if change.old is iterable %}
+                                            {{ change.old|join(', ')|diff(change.new|join(', '), 'old') }}
+                                        {% else %}
+                                            {{ change.old|diff(change.new, 'old') }}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                                {% if change.new is defined %}
+                                    <td class="history-diff-new">
+                                        {% if change.new is iterable %}
+                                            {{ change.new|join(', ')|diff(change.old|join(', '), 'new') }}
+                                        {% else %}
+                                            {{ change.new|diff(change.old, 'new') }}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% elseif change.old is defined or change.new is defined %}
+                            <tr>
+                                <td class="history-diff-title">{{ name }}</td>
+                                <td class="history-diff-old">
+                                    {% if change.old is defined %}
+                                        {{ change.old|join(', ')|diff('', 'old') }}
+                                    {% endif %}
+                                </td>
+                                <td class="history-diff-new">
+                                    {% if change.new is defined %}
+                                        {{ change.new|join(', ')|diff('', 'new') }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            {{ macros.historyEntriesVizualisation(change, true) }}
+                        {% endif %}
+                    {% endfor %}
+{% if not isSubChange %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endmacro %}
