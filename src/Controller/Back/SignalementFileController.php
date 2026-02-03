@@ -175,8 +175,13 @@ class SignalementFileController extends AbstractController
     ): Response {
         $fileId = $request->request->get('file_id');
         $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
+        if (!$file) {
+            $this->addFlash('error', "Ce document n'existe pas.");
+
+            return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        }
         $this->denyAccessUnlessGranted(FileVoter::FILE_DELETE, $file);
-        $fragment = in_array($request->request->get('hash_src'), ['activite', 'situation']) ? $request->request->get('hash_src') : 'documents';
+        $fragment = in_array($request->request->get('hash_src'), ['activite', 'situation', 'documents']) ? $request->request->get('hash_src') : 'activite';
         if (!$this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $message = MessageHelper::ERROR_MESSAGE_CSRF;
             if ('1' === $request->request->get('is_draft')) {

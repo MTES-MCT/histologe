@@ -479,16 +479,28 @@ class SignalementVisitesController extends AbstractController
         AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
     ): Response {
-        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
-        if (!$this->isCsrfTokenValid('delete_rapport', (string) $request->get('_token')) || !$intervention->getRapportDeVisite()) {
-            // TODO
+        if (!$intervention->getRapportDeVisite()) {
+            $this->addFlash('error', "Ce rapport n'existe pas.");
+
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $intervention->getSignalement()->getUuid()]);
         }
+        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
+
+        $errorRedirect = $this->getSecurityRedirect(
+            $request,
+            'delete_rapport',
+            $intervention,
+            $interventionRepository,
+            $affectationRepository,
+        );
+        if ($errorRedirect) {
+            return $errorRedirect;
+        }
+
         $file = $intervention->getRapportDeVisite();
         $uploadHandlerService->deleteFileInBucket($file);
         $entityManager->remove($file);
         $entityManager->flush();
-
         $flashMessages[] = ['type' => 'success', 'title' => 'Document supprimé', 'message' => 'Le rapport de visite a bien été supprimé.'];
 
         return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages);
