@@ -9,6 +9,9 @@ attacheAutocompleteAddressEvents();
 if (document.querySelector('#coordonnees_bailleur_adresseCompleteProprio')) {
   initComponentAdress('#coordonnees_bailleur_adresseCompleteProprio');
 }
+if (document.querySelector('#coordonnees_agence_adresseCompleteAgence')) {
+  initComponentAdress('#coordonnees_agence_adresseCompleteAgence');
+}
 
 const fieldsetVisitorType = document?.querySelector('#fieldset-visitor-type');
 if (fieldsetVisitorType) {

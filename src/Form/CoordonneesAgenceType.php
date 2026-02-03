@@ -40,10 +40,12 @@ class CoordonneesAgenceType extends AbstractType
             ])
             ->add('telAgence', null, [
                 'label' => 'Numéro de téléphone de l\'agence',
+                'help' => 'Format attendu : 0639987654',
                 'required' => false,
             ])
             ->add('telAgenceSecondaire', null, [
                 'label' => 'Numéro de téléphone secondaire de l\'agence',
+                'help' => 'Format attendu : 0639987654',
                 'required' => false,
             ])
             ->add('adresseCompleteAgence', null, [
