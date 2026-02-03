@@ -12,7 +12,7 @@
         {% include "flash-messages.html.twig" %}
         <div id="flash-messages-live-container"></div>
 
-        <div class="{{ app.request.get('_route') in ['back_cartographie', 'back_signalements_index', 'back_dashboard'] ? 'fr-container-fluid' : container_class }}">
+        <div class="{{ app.request.get('_route') in ['back_cartographie', 'back_signalements_index', 'back_dashboard', 'back_history_entry_details'] ? 'fr-container-fluid' : container_class }}">
             <div class="fr-grid-row">
                 <div class="fr-col-12" id="content">
                     {% block content %}{% endblock %}

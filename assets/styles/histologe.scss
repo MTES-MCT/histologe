@@ -1356,3 +1356,26 @@ ul.fr-toggle__list.fr-toggle__list--inline {
         }
     }
 }
+
+.history-diff-title {
+    width: 30%;
+}
+.history-diff-old {
+    background-color: #ffeef0;
+    width: 35%;
+}
+
+.history-diff-new {
+    background-color: #e6ffed;
+    width: 35%;
+}
+
+.diff-removed {
+    background-color: #fdb8c0;
+    text-decoration: none;
+}
+
+.diff-added {
+    background-color: #acf2bd;
+    text-decoration: none;
+}
