@@ -96,6 +96,13 @@
                             </a>
                         </li>
                     {% endif %}
+                    <li>
+                        <a href="{{ path('back_history_entry_details', {entity_id: signalement.id, entity_name: 'Signalement'}) }}"
+                            class="fr-nav__link fr-btn--icon-left fr-icon-stack-line"
+                            title="Voir l'historique des modifications">
+                            Historique des modifications
+                        </a>
+                    </li>
                 {% endif %}
                 {% if is_granted('SIGN_SUBSCRIBE', signalement) %}
                     {% if isUserSubscribed %}
