@@ -22,16 +22,20 @@ class SignalementAddressUpdater
     {
         $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant(false));
         if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
-            $signalement->setBanIdOccupant($addressResult->getBanId());
             $signalement
+                ->setBanIdOccupant($addressResult->getBanId())
                 ->setAdresseOccupant($addressResult->getStreet())
                 ->setVilleOccupant($addressResult->getCity())
                 ->setCpOccupant($addressResult->getZipCode())
-                ->setInseeOccupant($addressResult->getInseeCode())
-                ->setGeoloc([
+                ->setInseeOccupant($addressResult->getInseeCode());
+
+            if (empty($signalement->getGeoloc()) || empty($signalement->getGeoloc()['lat']) || empty($signalement->getGeoloc()['lng'])) {
+                $signalement->setGeoloc([
                     'lat' => $addressResult->getLatitude(),
                     'lng' => $addressResult->getLongitude(),
                 ]);
+            }
+
             if ($updateRnbId) {
                 $buildings = $this->rnbService->getBuildings($signalement->getBanIdOccupant());
                 $signalement->setRnbIdOccupant('');
