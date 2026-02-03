@@ -29,7 +29,7 @@ final class ArreteSISHCollectionResponseNormalizerTest extends TestCase
         self::assertNull($arreteOnly->getArreteMLNumero());
         self::assertNull($arreteOnly->getArreteMLDate());
 
-        self::assertNotNull($mainLevee->getArreteMLNumero(), );
+        self::assertNotNull($mainLevee->getArreteMLNumero());
         self::assertNotNull($mainLevee->getArreteMLDate());
         self::assertNotNull($mainLevee->getArreteNumero());
     }

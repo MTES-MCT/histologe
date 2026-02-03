@@ -9,7 +9,9 @@ use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Interconnection\Esabora\Handler\InterventionArreteServiceHandler;
+use App\Service\Interconnection\Esabora\Normalizer\ArreteSISHCollectionResponseNormalizer;
 use App\Service\Interconnection\Esabora\Response\DossierArreteSISHCollectionResponse;
+use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,6 +24,7 @@ class InterventionArreteServiceHandlerTest extends TestCase
     protected SerializerInterface&MockObject $serializer;
     protected EsaboraSISHService&MockObject $esaboraSISHService;
     protected EsaboraManager&MockObject $esaboraManager;
+    protected ArreteSISHCollectionResponseNormalizer&MockObject $normalizer;
     protected JobEventManager $jobEventManager;
     protected InterventionArreteServiceHandler $handler;
     protected Affectation $affectation;
@@ -30,9 +33,11 @@ class InterventionArreteServiceHandlerTest extends TestCase
     {
         $this->esaboraSISHService = $this->createMock(EsaboraSISHService::class);
         $this->esaboraManager = $this->createMock(EsaboraManager::class);
+        $this->normalizer = $this->createMock(ArreteSISHCollectionResponseNormalizer::class);
 
         $this->handler = new InterventionArreteServiceHandler(
             $this->esaboraSISHService,
+            $this->normalizer,
             $this->esaboraManager,
         );
     }
@@ -58,8 +63,38 @@ class InterventionArreteServiceHandlerTest extends TestCase
             ->method('createOrUpdateArrete')
             ->with($this->affectation, $dossierArreteCollection->getCollection()[0]);
 
+        $originalItem = $dossierArreteCollection->getCollection()[0];
+
+        $arreteOnly = new DossierArreteSISH([
+            'keyDataList' => [null, $originalItem->getArreteId()],
+            'columnDataList' => [
+                $originalItem->getLogicielProvenance(),
+                $originalItem->getReferenceDossier(),
+                $originalItem->getDossNum(),
+                $originalItem->getArreteDate(),
+                $originalItem->getArreteNumero(),
+                $originalItem->getArreteType(),
+                null,
+                null,
+            ],
+        ]);
+
+        $normalizedResponse = DossierArreteSISHCollectionResponse::fromCollection(
+            [$arreteOnly, $originalItem],
+            200,
+            'Imported',
+            null
+        );
+
+        $this->normalizer
+            ->expects($this->once())
+            ->method('normalize')
+            ->with($dossierArreteCollection)
+            ->willReturn($normalizedResponse);
+
         $this->handler = new InterventionArreteServiceHandler(
             $this->esaboraSISHService,
+            $this->normalizer,
             $this->esaboraManager,
         );
 
