@@ -57,12 +57,6 @@ class InterventionArreteServiceHandlerTest extends TestCase
                 $dossierArreteCollection = new DossierArreteSISHCollectionResponse($responseEsabora, 200)
             );
 
-        $this->esaboraManager = $this->createMock(EsaboraManager::class);
-        $this->esaboraManager
-            ->expects($this->once())
-            ->method('createOrUpdateArrete')
-            ->with($this->affectation, $dossierArreteCollection->getCollection()[0]);
-
         $originalItem = $dossierArreteCollection->getCollection()[0];
 
         $arreteOnly = new DossierArreteSISH([
@@ -78,6 +72,14 @@ class InterventionArreteServiceHandlerTest extends TestCase
                 null,
             ],
         ]);
+
+        $this->esaboraManager = $this->createMock(EsaboraManager::class);
+        $this->esaboraManager
+            ->expects($this->exactly(2))
+            ->method('createOrUpdateArrete')
+            ->willReturnCallback(function (Affectation $affectation, DossierArreteSISH $item) use (&$calls) {
+                $calls[] = [$affectation, $item];
+            });
 
         $normalizedResponse = DossierArreteSISHCollectionResponse::fromCollection(
             [$arreteOnly, $originalItem],
@@ -99,6 +101,8 @@ class InterventionArreteServiceHandlerTest extends TestCase
         );
 
         $this->handler->handle($this->affectation, $this->affectation->getSignalement()->getUuid());
+        $this->assertCount(2, $calls);
+
         $this->assertEquals(1, $this->handler->getCountSuccess());
         $this->assertEquals(0, $this->handler->getCountFailed());
     }
