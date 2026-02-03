@@ -32,18 +32,30 @@ class ReponseInjonctionBailleurType extends AbstractType
                         ReponseInjonctionBailleur::REPONSE_OUI => [
                             'data-dsfr-label' => 'Oui, je m\'engage à réaliser les travaux nécessaires',
                             'data-dsfr-hint' => null,
+                            'data-matomo-clickable-event-category' => 'Espace bailleur',
+                            'data-matomo-clickable-event-action' => 'clickRadio',
+                            'data-matomo-clickable-event-name' => 'Oui, je m\'engage à réaliser les travaux nécessaires',
                         ],
                         ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE => [
                             'data-dsfr-label' => 'Oui, je m\'engage à réaliser les travaux nécessaires et j\'ai besoin d\'un accompagnement',
                             'data-dsfr-hint' => 'Les services de l\'ADIL et de France Rénov pourront vous accompagner',
+                            'data-matomo-clickable-event-category' => 'Espace bailleur',
+                            'data-matomo-clickable-event-action' => 'clickRadio',
+                            'data-matomo-clickable-event-name' => 'Oui, je m\'engage à réaliser les travaux nécessaires et j\'ai besoin d\'un accompagnement',
                         ],
                         ReponseInjonctionBailleur::REPONSE_OUI_DEMARCHES_COMMENCEES => [
                             'data-dsfr-label' => 'Oui, je m\'engage à réaliser les travaux nécessaires et j\'ai déjà commencé les démarches',
                             'data-dsfr-hint' => 'Les travaux ont déjà débuté ou les devis sont en cours',
+                            'data-matomo-clickable-event-category' => 'Espace bailleur',
+                            'data-matomo-clickable-event-action' => 'clickRadio',
+                            'data-matomo-clickable-event-name' => 'Oui, je m\'engage à réaliser les travaux nécessaires et j\'ai déjà commencé les démarches',
                         ],
                         ReponseInjonctionBailleur::REPONSE_NON => [
                             'data-dsfr-label' => 'Non, je conteste les désordres déclarés et ne m\'engage pas à réaliser de travaux',
                             'data-dsfr-hint' => 'Le dossier sera transmis aux autorités compétentes.',
+                            'data-matomo-clickable-event-category' => 'Espace bailleur',
+                            'data-matomo-clickable-event-action' => 'clickRadio',
+                            'data-matomo-clickable-event-name' => 'Non, je conteste les désordres déclarés et ne m\'engage pas à réaliser de travaux',
                         ],
                         default => [],
                     };
@@ -67,6 +79,9 @@ class ReponseInjonctionBailleurType extends AbstractType
                 'label' => 'Confirmer ma réponse',
                 'attr' => [
                     'class' => 'fr-btn--primary',
+                    'data-matomo-clickable-event-category' => 'Espace bailleur',
+                    'data-matomo-clickable-event-action' => 'clickButton',
+                    'data-matomo-clickable-event-name' => 'Confirmer ma réponse',
                 ],
             ]);
     }

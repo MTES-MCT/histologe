@@ -38,7 +38,7 @@ export default defineComponent({
   },
   methods: {
     monAvisClicked () {
-      matomo.pushInjonctionEvent('clickLink', 'Je donne mon avis')
+      matomo.pushFormEvent('clickLink', 'Je donne mon avis')
     },
   }
 })

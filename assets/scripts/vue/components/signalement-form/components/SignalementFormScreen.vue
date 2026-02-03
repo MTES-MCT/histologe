@@ -127,7 +127,7 @@ export default defineComponent({
     },
     async handleClickComponent (type:string, param:string, param2:string) {
       if (type === 'link') {
-        matomo.pushInjonctionEvent('clickLink', param)
+        matomo.pushFormEvent('clickLink', param)
         window.location.href = param
       } else if (type === 'show') {
         this.showComponentBySlug(param, param2)
@@ -216,7 +216,6 @@ export default defineComponent({
       }
     },
     async navigateToDisorderScreen (action: string, slugButton:string, isSaveAndCheck:boolean) {
-      matomo.pushInjonctionEvent('navigateToDisorderScreen', slugButton)
       if (action === 'findNextScreen') {
         const index = formStore.data.currentStep.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
         const { currentCategory, incrementIndex, nextScreenSlug } = findNextScreen(formStore, index, slugButton)
@@ -235,7 +234,7 @@ export default defineComponent({
       }
     },
     finishLater (slugButton:string) {
-      matomo.pushInjonctionEvent('finishLater', slugButton)
+      matomo.pushFormEvent('finishLater', slugButton)
       this.formStore.lastButtonClicked = slugButton
       if (this.mailSentForDraftThisSession) {
         return

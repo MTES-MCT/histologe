@@ -543,7 +543,7 @@
           "type": "SignalementFormOnlyChoice",
           "label": "Souhaitez-vous opter pour la procédure accélérée ? *",
           "slug": "injonction_bailleur_choice",
-          "customCss": "send-injonction-event",
+          "customCss": "send-matomo-event",
           "values": [
             {
               "label": "Oui",

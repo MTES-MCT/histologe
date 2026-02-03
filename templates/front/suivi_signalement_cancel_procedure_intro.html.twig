@@ -10,7 +10,12 @@
 		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
 		<div class="fr-collapse" id="breadcrumb-1">
 			<ol class="fr-breadcrumb__list">
-				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}"
+						data-matomo-clickable-event-category="Suivre mon signalement - Arrêter la procédure"
+						data-matomo-clickable-event-action="clickLink"
+						data-matomo-clickable-event-name="Votre dossier #{{ signalement.reference }}"
+						>Votre dossier #{{ signalement.reference }}</a>
+				</li>
 				<li><a class="fr-breadcrumb__link" aria-current="page">Demander l'arrêt de la procédure</a></li>
 			</ol>
 		</div>
@@ -41,12 +46,18 @@
 	
 			<ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
 				<li>
-					<a class="fr-btn fr-icon-check-line" href="{{ path('front_suivi_signalement_procedure_abandon', {code: signalement.codeSuivi}) }}">
-						Oui, continuer
-					</a>
+					<a class="fr-btn fr-icon-check-line" href="{{ path('front_suivi_signalement_procedure_abandon', {code: signalement.codeSuivi}) }}"
+						data-matomo-clickable-event-category="Suivre mon signalement - Arrêter la procédure"
+						data-matomo-clickable-event-action="clickLink"
+						data-matomo-clickable-event-name="Oui, continuer"
+						>Oui, continuer</a>
 				</li>
 				<li>					
-					<a class="fr-btn fr-btn--secondary fr-icon-close-line" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}" >Non, annuler</a>
+					<a class="fr-btn fr-btn--secondary fr-icon-close-line" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}"
+						data-matomo-clickable-event-category="Suivre mon signalement - Arrêter la procédure"
+						data-matomo-clickable-event-action="clickLink"
+						data-matomo-clickable-event-name="Non, annuler"
+						>Non, annuler</a>
 				</li>
 			</ul>
 
@@ -67,9 +78,11 @@
 
 				<ul class="fr-btns-group fr-btns-group--inline-lg">
 					<li>
-						<a class="fr-btn" href="{{ path('front_suivi_signalement_procedure_bascule', {code: signalement.codeSuivi}) }}">
-							Basculer en procédure administrative
-						</a>
+						<a class="fr-btn" href="{{ path('front_suivi_signalement_procedure_bascule', {code: signalement.codeSuivi}) }}"
+							data-matomo-clickable-event-category="Suivre mon signalement - Arrêter la procédure"
+							data-matomo-clickable-event-action="clickLink"
+							data-matomo-clickable-event-name="Basculer en procédure administrative"
+							>Basculer en procédure administrative</a>
 					</li>
 				</ul>
 			{% endif %}

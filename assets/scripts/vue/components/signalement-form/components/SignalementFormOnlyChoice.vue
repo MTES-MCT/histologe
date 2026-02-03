@@ -87,8 +87,8 @@ export default defineComponent({
     updateValue (event: Event) {
       const value = (event.target as HTMLInputElement).getAttribute('value')
       this.$emit('update:modelValue', value)
-      if (this.customCss.includes('send-injonction-event')) {
-        matomo.pushInjonctionEvent('changeRadioValue', this.id + ' >> ' + (value ?? ''))
+      if (this.customCss.includes('send-matomo-event')) {
+        matomo.pushFormEvent('changeRadioValue', 'Element : ' + this.id + ' - Valeur : ' + (value ?? ''))
       }
     },
     focusInput () {
