@@ -1,0 +1,64 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Liste des communes{% endblock %}
+
+{% block content %}
+    <section class="fr-p-4v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Communes',
+            'level3Link': '',
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-mb-0">Liste des communes</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    {{ form_start(form) }}
+
+    <section class="fr-container--fluid overflow-visible">
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.queryName) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.territory) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.epci) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.codePostal) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.codeInsee) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                <a href="{{ path('back_commune_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-py-4v" id="title-list-results">
+        {% include 'back/commune/_title-list-results.html.twig' %}
+    </section>
+    
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+
+    {{ form_end(form) }}
+
+    <section class="fr-col-12 fr-pt-0 fr-px-4v" id="table-list-results">
+        {% include 'back/commune/_table-list-results.html.twig' with { 'communes': communes, 'pages': pages, 'searchCommune': searchCommune } %}
+    </section>
+
+{% endblock %}

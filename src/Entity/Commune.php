@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\CommuneRepository;
 use App\Utils\ImportCommune;
 use Doctrine\ORM\Mapping as ORM;
@@ -9,7 +11,7 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[ORM\Entity(repositoryClass: CommuneRepository::class)]
 #[UniqueConstraint(name: 'code_postal_code_insee_unique', columns: ['code_postal', 'code_insee'])]
-class Commune
+class Commune implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -118,5 +120,11 @@ class Commune
         $this->isZonePermisLouer = $isZonePermisLouer;
 
         return $this;
+    }
+
+    /** @return array<HistoryEntryEvent> */
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Entity\Commune;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\ListFilters\SearchCommune;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -69,5 +71,47 @@ class CommuneRepository extends ServiceEntityRepository
             ->orderBy('c.nom', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return Paginator<Commune>
+     */
+    public function findFilteredPaginated(SearchCommune $searchCommune, int $maxResult): Paginator
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->select('c', 't', 'e');
+        $qb->leftJoin('c.territory', 't');
+        $qb->leftJoin('c.epci', 'e');
+
+        if (!empty($searchCommune->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchCommune->getOrderType());
+            $qb->orderBy($orderField, $orderDirection);
+        } else {
+            $qb->orderBy('c.nom', 'ASC');
+        }
+
+        if ($searchCommune->getQueryName()) {
+            $qb->andWhere('LOWER(c.nom) LIKE :queryName');
+            $qb->setParameter('queryName', '%'.strtolower($searchCommune->getQueryName()).'%');
+        }
+        if (null !== $searchCommune->getTerritory()) {
+            $qb->andWhere('c.territory = :territory')->setParameter('territory', $searchCommune->getTerritory());
+        }
+        if (null !== $searchCommune->getEpci()) {
+            $qb->andWhere('c.epci = :epci')->setParameter('epci', $searchCommune->getEpci());
+        }
+        if ($searchCommune->getCodePostal()) {
+            $qb->andWhere('c.codePostal = :codePostal');
+            $qb->setParameter('codePostal', $searchCommune->getCodePostal());
+        }
+        if ($searchCommune->getCodeInsee()) {
+            $qb->andWhere('c.codeInsee = :codeInsee');
+            $qb->setParameter('codeInsee', $searchCommune->getCodeInsee());
+        }
+
+        $firstResult = ($searchCommune->getPage() - 1) * $maxResult;
+        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($qb->getQuery());
     }
 }
