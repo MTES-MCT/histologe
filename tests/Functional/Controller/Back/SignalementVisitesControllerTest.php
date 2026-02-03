@@ -63,15 +63,18 @@ class SignalementVisitesControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'La date de visite a bien été définie.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
 
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
-        $this->assertTrue($flashBag->has('success'));
-        $successMessages = $flashBag->get('success');
-        $this->assertEquals(['title' => 'Visite ajoutée', 'message' => 'La date de visite a bien été définie.'], $successMessages[0]);
-
-        $this->client->followRedirect();
-        $crawler = $this->client->getCrawler();
+        $route = $this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+        $crawler = $this->client->request('GET', $route);
         $highlights = $crawler->filter('.fr-highlight');
         $this->assertCount(2, $highlights);
         $this->assertStringContainsString('Commentaire avant visite', $highlights->eq(1)->text());
@@ -101,12 +104,15 @@ class SignalementVisitesControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
-        $this->assertTrue($flashBag->has('success'));
-        $successMessages = $flashBag->get('success');
-        $this->assertEquals(['title' => 'Visite ajoutée', 'message' => 'La date de visite a bien été définie.'], $successMessages[0]);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'La date de visite a bien été définie.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testAddPastVisite(): void
@@ -135,12 +141,15 @@ class SignalementVisitesControllerTest extends WebTestCase
                 ),
             ]
         );
-
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
-        $this->assertTrue($flashBag->has('success'));
-        $successMessages = $flashBag->get('success');
-        $this->assertEquals(['title' => 'Visite ajoutée', 'message' => 'Les informations de la visite ont bien été enregistrées.'], $successMessages[0]);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les informations de la visite ont bien été enregistrées.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testAddPastVisiteNotDone(): void
@@ -181,10 +190,17 @@ class SignalementVisitesControllerTest extends WebTestCase
             'signalement' => $signalement,
             'status' => Intervention::STATUS_NOT_DONE]
         );
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $this->assertEquals('2023-01-01 09:00', $intervention->getScheduledAt()->format('Y-m-d H:i'));
-
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les informations de la visite ont bien été enregistrées.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
         $this->assertEmailCount(2);
+        $this->assertEquals('2023-01-01 09:00', $intervention->getScheduledAt()->format('Y-m-d H:i'));
     }
 
     public function testcancelVisiteFromSignalement(): void
@@ -196,12 +212,29 @@ class SignalementVisitesControllerTest extends WebTestCase
         }
 
         $route = $this->router->generate('back_signalement_visite_cancel', ['uuid' => $signalement->getUuid()]);
-        $this->client->request('POST', $route, ['visite-cancel' => [
-            'intervention' => $intervention->getId(), 'details' => 'nanana',
-        ]]);
+        $this->client->request(
+            'POST',
+            $route,
+            [
+                'visite-cancel' => [
+                    'intervention' => $intervention->getId(), 'details' => 'nanana',
+                ],
+                '_token' => $this->generateCsrfToken(
+                    $this->client,
+                    'signalement_cancel_visit_'.$signalement->getId()
+                ),
+            ]
+        );
 
-        $this->assertResponseStatusCodeSame(302);
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'La visite a bien été annulée.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     public function testcancelVisiteFromSignalementDeny(): void
@@ -259,8 +292,15 @@ class SignalementVisitesControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les informations de la visite ont bien été enregistrées.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
         $this->assertEmailCount(1);
     }
 
@@ -300,8 +340,15 @@ class SignalementVisitesControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les informations de la visite ont bien été enregistrées.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
         $this->assertEmailCount(0);
     }
 }
