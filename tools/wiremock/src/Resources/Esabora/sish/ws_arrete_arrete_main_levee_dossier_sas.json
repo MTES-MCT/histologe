@@ -1,0 +1,36 @@
+{
+  "searchId": 9066669,
+  "nbResults": 1,
+  "columnList": [
+    "Sas_LogicielProvenance",
+    "Reference_Dossier",
+    "SISH_DossNum",
+    "SISH_ArreteDate",
+    "SISH_ArreteNumero",
+    "SISH_ArreteType",
+    "SISH_ArreteMLDate",
+    "SISH_ArreteMLNumero"
+  ],
+  "keyList": [
+    "i1.imdo_id",
+    "a3_t2.arre_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "Signal Logement",
+        "e8b0f2fd-7b38-4925-ac6f-115099dae1ad",
+        "2026\/DD13\/00005",
+        "22\/01\/2026",
+        "AP45OL023",
+        "Arr\u00eat\u00e9 L.511-11 - Impropre",
+        "22\/01\/2026",
+        "APML45K09O"
+      ],
+      "keyDataList": [
+        9815,
+        1123970
+      ]
+    }
+  ]
+}

@@ -4,14 +4,14 @@ namespace App\Service\Interconnection\Esabora\Response\Model;
 
 class DossierArreteSISH
 {
-    public const SAS_LOGICIEL_PROVENANCE = 0;
-    public const REFERENCE_DOSSIER = 1;
-    public const DOSS_NUM = 2;
-    public const ARRETE_DATE = 3;
-    public const ARRETE_NUMERO = 4;
-    public const ARRETE_TYPE = 5;
-    public const ARRETE_MAINLEVEE_DATE = 6;
-    public const ARRETE_MAINLEVEE_NUMERO = 7;
+    public const int SAS_LOGICIEL_PROVENANCE = 0;
+    public const int REFERENCE_DOSSIER = 1;
+    public const int DOSS_NUM = 2;
+    public const int ARRETE_DATE = 3;
+    public const int ARRETE_NUMERO = 4;
+    public const int ARRETE_TYPE = 5;
+    public const int ARRETE_MAINLEVEE_DATE = 6;
+    public const int ARRETE_MAINLEVEE_NUMERO = 7;
 
     private ?int $arreteId = null;
     private ?string $logicielProvenance = null;
