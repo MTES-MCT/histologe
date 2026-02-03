@@ -89,21 +89,18 @@ class NotificationController extends AbstractController
         $user = $this->getUser();
         $token = is_string($request->request->get('csrf_token')) ? $request->request->get('csrf_token') : '';
         $flashMessages = [];
-        $isCsrfOk = false;
-        if ($request->request->get('selected_notifications') && $this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $token)) {
-            $notificationRepository->markUserNotificationsAsSeen($user, explode(',', (string) $request->request->get('selected_notifications')));
-            $isCsrfOk = true;
-        } elseif ($this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $token)) {
-            $notificationRepository->markUserNotificationsAsSeen($user);
-            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Toutes les notifications ont bien été marquées comme lues.'];
-            $isCsrfOk = true;
-        }
-        if (!$isCsrfOk) {
+        if (!$this->isCsrfTokenValid('mark_as_read_'.$user->getId(), $token)) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
+        if ($request->request->get('selected_notifications')) {
+            $notificationRepository->markUserNotificationsAsSeen($user, explode(',', (string) $request->request->get('selected_notifications')));
+        } else {
+            $notificationRepository->markUserNotificationsAsSeen($user);
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Toutes les notifications ont bien été marquées comme lues.'];
+        }
         $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents]);
@@ -118,19 +115,16 @@ class NotificationController extends AbstractController
         $user = $this->getUser();
         $token = is_string($request->request->get('csrf_token')) ? $request->request->get('csrf_token') : '';
         $flashMessages = [];
-        $isCsrfOk = false;
-        if ($request->request->get('selected_notifications') && $this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $token)) {
-            $notificationRepository->deleteUserNotifications($user, explode(',', (string) $request->request->get('selected_notifications')));
-            $isCsrfOk = true;
-        } elseif ($this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $token)) {
-            $notificationRepository->deleteUserNotifications($user);
-            $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Toutes les notifications ont bien été supprimées.'];
-            $isCsrfOk = true;
-        }
-        if (!$isCsrfOk) {
+        if (!$this->isCsrfTokenValid('delete_notifications_'.$user->getId(), $token)) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        if ($request->request->get('selected_notifications')) {
+            $notificationRepository->deleteUserNotifications($user, explode(',', (string) $request->request->get('selected_notifications')));
+        } else {
+            $notificationRepository->deleteUserNotifications($user);
+            $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Toutes les notifications ont bien été supprimées.'];
         }
 
         $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
