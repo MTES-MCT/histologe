@@ -90,12 +90,6 @@ class ImageInterventionHandlerTest extends TestCase
             ->method('stream')
             ->willReturn($streamMock);
 
-        $this->parameterBag
-            ->expects($this->once())
-            ->method('get')
-            ->with('bucket_tmp_dir')
-            ->willReturn('/tmp');
-
         $this->imageManager
             ->expects($this->once())
             ->method('make')

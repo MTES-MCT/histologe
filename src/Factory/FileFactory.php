@@ -40,6 +40,7 @@ class FileFactory
         ?array $partnerType = null,
     ): ?File {
         $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
+        $title = basename($title);
         $file = (new File())
             ->setFilename($filename)
             ->setTitle($title)

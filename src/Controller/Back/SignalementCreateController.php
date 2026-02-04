@@ -163,7 +163,7 @@ class SignalementCreateController extends AbstractController
         foreach ($files as $file) {
             $jsonResult[] = [
                 'id' => $file->getId(),
-                'filename' => $file->getFilename(),
+                'filename' => $file->getDisplayFilename(),
                 'type' => $file->getDocumentType()->label(),
             ];
         }

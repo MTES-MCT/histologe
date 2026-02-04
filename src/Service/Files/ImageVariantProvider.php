@@ -34,6 +34,12 @@ readonly class ImageVariantProvider
         $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
         $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
         $content = file_get_contents($bucketFilepath);
+
+        $dir = dirname($tmpFilepath);
+        if (!is_dir($dir) && !mkdir($dir, 0775, true)) {
+            throw new \Exception(sprintf('Impossible de créer le dossier : %s', $dir));
+        }
+
         file_put_contents($tmpFilepath, $content);
 
         return new File($tmpFilepath);
