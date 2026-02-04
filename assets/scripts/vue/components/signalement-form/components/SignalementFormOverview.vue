@@ -57,7 +57,7 @@
       </div>
 
       <!-- LES COORDONNEES DU BAILLEUR -->
-      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'bailleur' && formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'">
+      <div v-if="formStore.shouldDisplaySignalementInfoBailleur()">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
             <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les coordonnées du bailleur</h4>
@@ -74,7 +74,7 @@
       </div>
 
       <!-- LES COORDONNEES DU FOYER -->
-      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.data.profil !== 'service_secours'">
+      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire'">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
             <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les coordonnées du foyer</h4>
@@ -297,6 +297,9 @@ export default defineComponent({
       if (this.isFormDataSet('coordonnees_occupant_nom')) {
         result += this.formStore.data.coordonnees_occupant_nom + '<br>'
       }
+      if (result === '') {
+        result = 'Nom et prénom non renseignés<br>'
+      }
       result += this.addLineIfNeeded('coordonnees_occupant_email', 'Adresse email : ')
       result += this.addLineIfNeeded('coordonnees_occupant_tel', 'Numéro de téléphone : ')
       if (this.isFormDataSet('signalement_concerne_profil_detail_profil_occupant')) {
@@ -304,6 +307,8 @@ export default defineComponent({
           result += 'Locataire<br>'
         } else if (this.formStore.data.signalement_concerne_profil_detail_profil_occupant === 'bailleur_occupant') {
           result += 'Propriétaire occupant<br>'
+        } else {
+          result += 'Profil d\'occupant non renseigné<br>'
         }
       }
       return result

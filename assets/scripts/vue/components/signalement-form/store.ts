@@ -261,6 +261,16 @@ const formStore: FormStore = reactive({
 
       return true
     },
+    shouldDisplaySignalementInfoBailleur(): boolean {
+      if (formStore.data.profil === 'bailleur_occupant' && formStore.data.profil === 'bailleur') {
+        return false
+      }
+      if (formStore.data.signalement_concerne_profil_detail_profil_occupant === 'bailleur_occupant') {
+        return false
+      }
+
+      return true
+    }
 })
 
 export default formStore
