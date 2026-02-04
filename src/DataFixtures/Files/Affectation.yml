@@ -346,3 +346,12 @@ affectations:
     affected_by: "admin-01@signal-logement.fr"
     motif_cloture: ""
     territory: "Hérault"
+  -
+    signalement: 2023-120
+    partner: "partenaire-13-06@signal-logement.fr"
+    statut: "EN_COURS"
+    answered_by: ""
+    affected_by: "admin-territoire-13-01@signal-logement.fr"
+    motif_cloture: ""
+    territory: "Bouches-du-Rhône"
+    is_synchronized: true

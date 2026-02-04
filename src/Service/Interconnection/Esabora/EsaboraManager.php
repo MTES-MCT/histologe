@@ -412,10 +412,21 @@ class EsaboraManager
     private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH, array $additionalInformation): bool
     {
         $hasChanged = false;
-        $additionalInformationInterventionSorted = $intervention->getAdditionalInformation();
-        ksort($additionalInformationInterventionSorted);
-        ksort($additionalInformation);
-        if ($additionalInformationInterventionSorted !== $additionalInformation) {
+        $currentAdditionalInformationSorted = $intervention->getAdditionalInformation() ?? [];
+
+        // Pour rappel, une seule intervention regroupe les deux arrêtés.
+        // Un arrêté seul produit un tableau `$additionalInformation` avec des champs de main-levée à null,
+        // tandis qu'un arrêté de main-levée produit un tableau `$additionalInformation` complet.
+        // On ignore donc ces valeurs null et on merge avec la dernière version enregistrée en base pour éviter qu'il soit
+        // systématiquement détecté comme modifié lors de la comparaison (présence de clé avec valeur null).
+        $additionalInformationNonNull = array_filter($additionalInformation);
+        $mergedAdditionalInformation = array_replace($currentAdditionalInformationSorted, $additionalInformationNonNull);
+        $mergedAdditionalInformationSorted = $mergedAdditionalInformation;
+
+        ksort($currentAdditionalInformationSorted);
+        ksort($mergedAdditionalInformationSorted);
+
+        if ($currentAdditionalInformationSorted !== $mergedAdditionalInformationSorted) {
             $intervention->setAdditionalInformation($additionalInformation);
             $hasChanged = true;
         }
