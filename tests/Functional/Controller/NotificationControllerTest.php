@@ -87,7 +87,7 @@ class NotificationControllerTest extends WebTestCase
         $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('stayOnPage', $response);
         $this->assertTrue($response['stayOnPage']);
-        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+        $this->assertEquals([], $response['flashMessages']);
     }
 
     public function provideSelectedNotificationOptions(): \Generator
