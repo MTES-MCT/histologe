@@ -27,7 +27,9 @@ class InterventionArreteServiceHandler implements InterventionSISHHandlerInterfa
     {
         $dossierArreteSISHCollectionResponse = $this->esaboraSISHService->getArreteDossier($affectation, $uuidSignalement);
         if (AbstractEsaboraService::hasSuccess($dossierArreteSISHCollectionResponse)) {
-            $dossierArreteSISHCollectionResponseNormalized = $this->arreteSISHCollectionResponseNormalizer->normalize($dossierArreteSISHCollectionResponse);
+            $dossierArreteSISHCollectionResponseNormalized = $this->arreteSISHCollectionResponseNormalizer->normalize(
+                $dossierArreteSISHCollectionResponse
+            );
             foreach ($dossierArreteSISHCollectionResponseNormalized->getCollection() as $dossierArrete) {
                 $this->esaboraManager->createOrUpdateArrete($affectation, $dossierArrete);
             }

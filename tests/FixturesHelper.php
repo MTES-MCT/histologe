@@ -420,7 +420,7 @@ trait FixturesHelper
 
     public function getDossierArreteAndArreteMainLeveeSISHResponse(): array
     {
-        $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_arrete_arrete_main_levee_dossier_sas.json';
+        $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';
 
         return json_decode((string) file_get_contents((string) $filepath), true);
     }

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Service\Interconnection\Esabora\Normalizer;
+namespace App\Tests\Unit\Service\Interconnection\Esabora\Normalizer;
 
 use App\Service\Interconnection\Esabora\Normalizer\ArreteSISHCollectionResponseNormalizer;
 use App\Service\Interconnection\Esabora\Response\DossierArreteSISHCollectionResponse;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 
-final class ArreteSISHCollectionResponseNormalizerTest extends TestCase
+class ArreteSISHCollectionResponseNormalizerTest extends TestCase
 {
     use FixturesHelper;
 

@@ -7,8 +7,9 @@ use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 
 class ArreteSISHCollectionResponseNormalizer
 {
-    public function normalize(DossierArreteSISHCollectionResponse $dossierArreteSISHCollectionResponse): DossierArreteSISHCollectionResponse
-    {
+    public function normalize(
+        DossierArreteSISHCollectionResponse $dossierArreteSISHCollectionResponse,
+    ): DossierArreteSISHCollectionResponse {
         $normalizedCollection = [];
 
         foreach ($dossierArreteSISHCollectionResponse->getCollection() as $item) {
@@ -21,7 +22,8 @@ class ArreteSISHCollectionResponseNormalizer
                 continue;
             }
 
-            // On supprime les infos de main-lévée
+            // Dans le cas contraire, on split l'objet en deux
+            // Pour le premier objet, on supprime les infos de main-lévée
             $normalizedCollection[] = new DossierArreteSISH([
                 'keyDataList' => [
                     null,
@@ -39,7 +41,7 @@ class ArreteSISHCollectionResponseNormalizer
                 ],
             ]);
 
-            // On garde tout comme le fait Esabora lorsqu'une main-levée est envoyée
+            // Pour le second objet, on le conserve tel quel (comportement Esabora à l'envoi d'une mainlevée).
             $normalizedCollection[] = $item;
         }
 
