@@ -30,6 +30,23 @@ class DossierArreteSISHCollectionResponse implements DossierCollectionResponseIn
         $this->sasEtat = EsaboraStatus::ESABORA_ACCEPTED->value;
     }
 
+    /**
+     * @param list<DossierArreteSISH> $collection
+     */
+    public static function fromCollection(
+        array $collection,
+        int $statusCode,
+        string $sasEtat,
+        ?string $errorReason,
+    ): self {
+        $self = new self([], $statusCode);
+        $self->collection = $collection;
+        $self->sasEtat = $sasEtat;
+        $self->errorReason = $errorReason;
+
+        return $self;
+    }
+
     public function getSasEtat(): string
     {
         return $this->sasEtat;
