@@ -363,7 +363,7 @@ class NotificationAndMailSender
         foreach ($this->signalement->getAffectations() as $affectation) {
             if (!$isFilteredAffectationStatus || AffectationStatus::WAIT === $affectation->getStatut() || AffectationStatus::ACCEPTED === $affectation->getStatut()) {
                 $partner = $affectation->getPartner();
-                if ($partner->getEmail() && $partner->isEmailNotifiable()) {
+                if ($partner->getEmail() && $partner->isEmailNotifiable() && !$partner->getIsArchive()) {
                     // on ne notifie pas l'email générique du partenaire si l'utilisateur courant en fait partie
                     if (!$this->user || !$this->user->hasPartner($partner)) {
                         $partners[] = $partner;
