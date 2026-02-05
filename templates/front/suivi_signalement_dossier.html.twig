@@ -132,7 +132,7 @@
 					<h3 class="title-blue-france fr-h5">Votre bailleur</h3>
 					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_bailleur', {'code': signalement.codeSuivi}) }}" 
-							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md fr-text-right">
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
 							Compléter les informations
 						</a>
 					{% endif %}
@@ -228,7 +228,7 @@
 						<h3 class="title-blue-france fr-h5">Coordonnées de l'agence</h3>
 						{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 							<a href="{{ path('front_suivi_signalement_complete_agence', {'code': signalement.codeSuivi}) }}" 
-								class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md fr-text-right">
+								class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
 								Compléter les informations
 							</a>
 						{% endif %}
@@ -261,9 +261,6 @@
 					{% endif %}
 					{% if signalement.mailAgence %}
 						{{ signalement.mailAgence }}
-						{% if show_email_alert(signalement.mailAgence) %}
-							<p class="fr-badge fr-badge--error">Format non valide, merci de nous le signaler.</p>
-						{% endif %}
 						<br>
 					{% endif %}
 					{% if signalement.telAgence %}
