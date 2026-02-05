@@ -23,10 +23,44 @@
     </section>
 
     <section class="fr-grid-row fr-grid-row--gutters fr-px-5v fr-pb-5v">
-        <div class="fr-col-6">
-            {{form(form, {'attr': {'id': 'form-edit-commune'}} )}}
+        <div class="fr-col-12 fr-col-md-6">
+            {{form_start(form, {'attr': {'id': 'form-edit-commune'}} )}}
+            {{ form_errors(form) }}
+            {{ form_row(form.territory) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.epci) }}
+            {{ form_row(form.codePostal) }}
+            {{ form_row(form.codeInsee) }}
+            <div class="fr-grid-row">
+                <div class="fr-col-6">
+                    <a href="{{ path('back_commune_index') }}" class="fr-btn fr-btn--secondary">Annuler</a>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    {{ form_row(form.submit) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
         </div>
-        <div class="fr-col-6">
+        <div class="fr-col-12 fr-col-md-6">
+            {% if poiCommune %}
+                <div class="fr-alert {% if poiCommune.names|length == 1 and poiCommune.names[0] == commune.nom %}fr-alert--success{% else %}fr-alert--error{% endif %}">
+                    <p>
+                        La BAN retourne un résultat pour cette commune (Code INSEE {{ commune.codeInsee }}, Nom {{ commune.nom }}).
+                        <br>
+                        {% if poiCommune.names|length == 1 %}
+                            Le nom retourné est : {{ poiCommune.names[0] }}.
+                        {% else %}
+                            Les noms retournés sont : {{ poiCommune.names|join(', ') }}.
+                        {% endif %}
+                    </p>
+                </div>
+            {% else %}
+                <div class="fr-alert fr-alert--error">
+                    <p>
+                        La BAN ne retourne aucun résultat pour cette commune (Code INSEE {{ commune.codeInsee }}, Nom {{ commune.nom }}).
+                    </p>
+                </div>
+            {% endif %}
             {% if countSignalements > 0 %}
                 <div class="fr-alert fr-alert--warning">
                     <p>

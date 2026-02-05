@@ -20,6 +20,12 @@ class CommuneType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('territory', EntityType::class, [
+                'class' => Territory::class,
+                'label' => 'Territoire',
+                'choice_label' => 'zipAndName',
+                'disabled' => true,
+            ])
             ->add('nom', null, [
                 'label' => 'Nom',
             ])
@@ -31,12 +37,6 @@ class CommuneType extends AbstractType
                 'choice_label' => 'nom',
                 'label' => 'EPCI',
                 'required' => false,
-            ])
-            ->add('territory', EntityType::class, [
-                'class' => Territory::class,
-                'label' => 'Territoire',
-                'choice_label' => 'zipAndName',
-                'disabled' => true,
             ])
             ->add('codePostal', null, [
                 'label' => 'Code postal',

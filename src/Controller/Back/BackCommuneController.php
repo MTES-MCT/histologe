@@ -8,6 +8,7 @@ use App\Form\SearchCommuneType;
 use App\Repository\CommuneRepository;
 use App\Repository\SignalementRepository;
 use App\Service\FormHelper;
+use App\Service\Gouv\Ban\AddressService;
 use App\Service\ListFilters\SearchCommune;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -66,14 +67,18 @@ class BackCommuneController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
         EntityManagerInterface $em,
+        AddressService $addressService,
     ): Response {
+        $poiCommune = $addressService->getMunicipalityByCityCode($commune->getNom(), $commune->getCodeInsee());
         $countSignalements = $signalementRepository->countForCommune($commune);
         $inconsistentSignalements = $signalementRepository->findWithInconsistentCommuneName($commune);
         $form = $this->createForm(CommuneType::class, $commune);
         $originalNom = $commune->getNom();
         $form->handleRequest($request);
+        $nomUpdated = false;
         if ($form->isSubmitted() && $form->isValid()) {
             if ($originalNom !== $commune->getNom()) {
+                $nomUpdated = true;
                 // on refait la requete suite au changement de nom pour avoir la liste à jour des signalements à modifier
                 $inconsistentSignalements = $signalementRepository->findWithInconsistentCommuneName($commune);
                 foreach ($inconsistentSignalements as $signalement) {
@@ -81,7 +86,11 @@ class BackCommuneController extends AbstractController
                 }
             }
             $em->flush();
-            $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La commune a bien été modifiée.']);
+            $message = 'La commune a bien été modifiée.';
+            if ($nomUpdated && count($inconsistentSignalements) > 0) {
+                $message .= sprintf(' %d signalement(s) ont été mis à jour pour être cohérents avec le nouveau nom de la commune.', count($inconsistentSignalements));
+            }
+            $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => $message]);
 
             return $this->redirectToRoute('back_commune_edit', ['commune' => $commune->getId()]);
         }
@@ -91,6 +100,7 @@ class BackCommuneController extends AbstractController
             'commune' => $commune,
             'countSignalements' => $countSignalements,
             'inconsistentSignalements' => $inconsistentSignalements,
+            'poiCommune' => $poiCommune,
         ]);
     }
 }
