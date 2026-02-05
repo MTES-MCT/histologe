@@ -320,9 +320,6 @@ class PartnerController extends AbstractController
                         }
                     }
                 } else {
-                    $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
-                    $user->setStatut(UserStatus::ARCHIVE);
-                    $entityManager->persist($user);
                     $notificationMailerRegistry->send(
                         new NotificationMail(
                             type: NotificationMailerType::TYPE_ACCOUNT_DELETE,
@@ -330,6 +327,9 @@ class PartnerController extends AbstractController
                             territory: $partner->getTerritory()
                         )
                     );
+                    $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
+                    $user->setStatut(UserStatus::ARCHIVE);
+                    $entityManager->persist($user);
                 }
             }
 

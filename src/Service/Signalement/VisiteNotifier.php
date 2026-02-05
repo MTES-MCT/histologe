@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -121,6 +122,9 @@ class VisiteNotifier
         ?NotificationMailerType $notificationMailerType = null,
         ?Affectation $affectation = null,
     ): void {
+        if (UserStatus::ARCHIVE === $user->getStatut()) {
+            return;
+        }
         if ($notificationMailerType) {
             if ($user->getIsMailingActive()) {
                 $this->notificationMailerRegistry->send(
@@ -153,7 +157,7 @@ class VisiteNotifier
         );
 
         foreach ($listUsersToNotify as $user) {
-            if ($user->getIsMailingActive()) {
+            if ($user->getIsMailingActive() && UserStatus::ACTIVE === $user->getStatut()) {
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
