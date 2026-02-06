@@ -72,7 +72,8 @@ class SignalementSearchQuery
             'insalubrite',
             'mise_en_securite_peril',
             'suroccupation',
-            'assurantiel', ],
+            'assurantiel',
+            'salete', ],
             message: 'Procédure suspectée invalide')]
         private readonly ?string $procedure = null,
         #[Assert\Choice([
@@ -82,6 +83,7 @@ class SignalementSearchQuery
             'mise_en_securite_peril',
             'logement_decent',
             'responsabilite_occupant_assurantiel',
+            'salete',
             'autre', ],
             message: 'Procédure constatée invalide')]
         private readonly ?string $procedureConstatee = null,

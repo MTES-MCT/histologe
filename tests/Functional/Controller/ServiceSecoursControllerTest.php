@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Controller\Back;
+namespace App\Tests\Functional\Controller;
 
 use App\Repository\ServiceSecoursRouteRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

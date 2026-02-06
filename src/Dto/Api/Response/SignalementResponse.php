@@ -691,7 +691,7 @@ class SignalementResponse
                 Qualification::CONCILIATION,
                 Qualification::CONSIGNATION_AL,
                 Qualification::DALO,
-                Qualification::DIOGENE,
+                Qualification::SALETE,
                 Qualification::FSL,
                 Qualification::HEBERGEMENT_RELOGEMENT,
                 Qualification::MISE_EN_SECURITE_PERIL,

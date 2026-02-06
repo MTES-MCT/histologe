@@ -17,7 +17,7 @@ enum Qualification: string
     case CONCILIATION = 'CONCILIATION';
     case CONSIGNATION_AL = 'CONSIGNATION_AL';
     case DALO = 'DALO';
-    case DIOGENE = 'DIOGENE';
+    case SALETE = 'SALETE';
     case FSL = 'FSL';
     case HEBERGEMENT_RELOGEMENT = 'HEBERGEMENT_RELOGEMENT';
     case INSALUBRITE = 'INSALUBRITE';
@@ -43,7 +43,7 @@ enum Qualification: string
             'CONCILIATION' => 'Conciliation',
             'CONSIGNATION_AL' => 'Consignation AL',
             'DALO' => 'DALO',
-            'DIOGENE' => 'Diogène',
+            'SALETE' => 'Saleté',
             'FSL' => 'FSL',
             'HEBERGEMENT_RELOGEMENT' => 'Hébergement / relogement',
             'INSALUBRITE' => 'Insalubrité',
@@ -78,6 +78,7 @@ enum Qualification: string
             self::RSD,
             self::DANGER,
             self::SUROCCUPATION,
+            self::SALETE,
         ];
     }
 }
