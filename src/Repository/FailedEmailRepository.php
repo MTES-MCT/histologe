@@ -27,7 +27,7 @@ class FailedEmailRepository extends ServiceEntityRepository
      */
     public function findEmailToResend(): array
     {
-        $startAt = new \DateTimeImmutable(RetryFailedEmailsCommand::START_AT_YEAR.'-01-01 00:00:00');
+        $startAt = new \DateTimeImmutable('-1 month');
 
         return $this->createQueryBuilder('f')
             ->where('f.isResendSuccessful = :isResendSuccessful')
