@@ -5,7 +5,7 @@
 {% block content %}
     {% include '_partials/_modal_user_edit.html.twig' %}
     {% include '_partials/_modal_user_disable.html.twig' %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -17,7 +17,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1>Liste des utilisateurs</h1>
+                    <h1 class="fr-mb-0">Liste des utilisateurs</h1>
                     <p>
                         La liste des agents ayant un compte sur {{ platform.name }}. Vous pouvez filtrer les utilisateurs et exporter la liste.
                     </p>
@@ -28,7 +28,16 @@
 
     {{ form_start(form) }}
 
-    <section class="fr-container--fluid overflow-visible">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        <div class="fr-grid-row fr-grid-row--gutters fr-mb-2v">
+            <div class="fr-col-12">
+                <h2 class="fr-h4 fr-mb-0" id="filters-title">Filtres de recherche</h2>
+                <div class="fr-skiplinks">
+                    <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#list-users" aria-label="Accéder à la liste"
+                        >Accéder à la liste</a>
+                </div>
+            </div>
+        </div>
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-3">
@@ -63,9 +72,13 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-py-5v">
-        <div class="fr-col-12 fr-col-md-6">
+    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-py-5v" aria-labelledby="desc-table">
+        <div class="fr-col-12 fr-col-md-6" id="list-users">
             <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'utilisateur trouvé', 'utilisateurs trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
         </div>
         <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
             <a 
@@ -81,7 +94,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v">
+    <section class="fr-col-12">
         {% set tableHead %}
             {% if is_granted('ROLE_ADMIN') or (is_granted('ROLE_ADMIN_TERRITORY') and app.user.userPartners|length > 1) %}
                 <th scope="col">Territoire</th>
@@ -159,17 +172,19 @@
                                 aria-controls="fr-modal-user-edit"
                                 data-fr-opened="false"
                                 data-refresh-url="{{ path('back_partner_user_edit',{partner:user.partners.first.id, user:user.id}) }}?from=users"
-                                title="Editer l'utilisateur {{ user.nomComplet(true) }}"
+                                aria-label="Éditer l'utilisateur {{ user.nomComplet(true) }}"
+                                title="Éditer l'utilisateur {{ user.nomComplet(true) }}"
                                 ></button>
                         {% endif %}
                         {% if is_granted('ROLE_ADMIN') and user.statut is same as enum('App\\Entity\\Enum\\UserStatus').ACTIVE %}
-                            <button 
+                            <button
                                 class="fr-btn fr-icon-rotate-lock-line fr-btn--sm btn-disable-user"
                                 aria-controls="fr-modal-user-disable"
                                 data-fr-opened="false"
                                 data-username="{{ user.nomComplet(true) }}"
                                 data-userid="{{ user.id }}"
-                                title="Désactiver l'utilisateur {{ user.prenom }} {{ user.nom }}">
+                                aria-label="Désactiver l'utilisateur {{ user.nomComplet(true) }}"
+                                title="Désactiver l'utilisateur {{ user.nomComplet(true) }}">
                             </button>
                         {% endif %}
                     </td>
@@ -178,8 +193,8 @@
         {% endset %}
 
         {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des utilisateurs', 'tableHead': tableHead, 'tableBody': tableBody } %}
-        
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des utilisateurs">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchUser.page, 'back_user_index', searchUser.urlParams) }}
         </div>

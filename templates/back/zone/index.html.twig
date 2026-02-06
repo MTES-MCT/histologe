@@ -3,7 +3,7 @@
 {% block title %}Zones du territoire{% endblock %}
 
 {% block content %}
-    <section class="fr-pt-5v fr-px-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -34,7 +34,16 @@
 
     {{ form_start(form) }}
 
-    <section class="fr-container--fluid">
+    <section class="fr-container--fluid" aria-labelledby="filters-title">
+        <div class="fr-grid-row fr-grid-row--gutters fr-mb-2v">
+            <div class="fr-col-12">
+                <h2 class="fr-h4 fr-mb-0" id="filters-title">Filtres de recherche</h2>
+                <div class="fr-skiplinks">
+                    <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#list-zones" aria-label="Accéder à la liste"
+                        >Accéder à la liste</a>
+                </div>
+            </div>
+        </div>
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-3">
@@ -54,7 +63,7 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-4v" id="title-list-results">
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
         {% include 'back/zone/_title-list-results.html.twig' %}
     </section>
     
@@ -64,7 +73,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v" id="table-list-results">
+    <section class="fr-col-12" id="table-list-results">
         {% include 'back/zone/_table-list-results.html.twig' %}
     </section>
 
@@ -133,8 +142,4 @@
             </div>
         </dialog>
     </div>
-
-
 {% endblock %}
-
-
