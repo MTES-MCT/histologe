@@ -51,7 +51,17 @@
 
     {{ form_start(form) }}
 
-    <section class="fr-col-12">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        <div class="fr-grid-row fr-grid-row--gutters fr-mb-2v">
+            <div class="fr-col-12">
+                <h2 class="fr-h2 fr-mb-0" id="filters-title">Filtres de recherche</h2>
+                <div class="fr-skiplinks">
+                    <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#list-partners" aria-label="Accéder à la liste">
+                        Accéder à la liste
+                    </a>
+                </div>
+            </div>
+        </div>
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
         
@@ -77,7 +87,7 @@
             </div>
     </section>
 
-    <section class="fr-col-12 fr-py-4v" id="title-list-results">
+    <section class="fr-col-12 fr-py-4v" id="title-list-results" aria-labelledby="desc-table">
         {% include 'back/partner/_title-list-results.html.twig' %}
     </section>
     
