@@ -10,6 +10,8 @@ class UserQueryService
 {
     public const string OCCUPANT = 'occupant';
     public const string DECLARANT = 'declarant';
+    public const string PROPRIETAIRE = 'proprietaire';
+    public const string AGENCE = 'agence';
 
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {
@@ -21,7 +23,21 @@ class UserQueryService
             return 0;
         }
 
-        $mailField = self::OCCUPANT === $typeUsager ? 's.mailOccupant' : 's.mailDeclarant';
+        switch ($typeUsager) {
+            case self::DECLARANT:
+                $mailField = 's.mailDeclarant';
+                break;
+            case self::PROPRIETAIRE:
+                $mailField = 's.mailProprio';
+                break;
+            case self::AGENCE:
+                $mailField = 's.mailAgence';
+                break;
+            case self::OCCUPANT:
+            default:
+                $mailField = 's.mailOccupant';
+                break;
+        }
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('COUNT(s.id)')
             ->from(Signalement::class, 's')

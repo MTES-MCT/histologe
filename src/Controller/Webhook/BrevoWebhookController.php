@@ -5,6 +5,7 @@ namespace App\Controller\Webhook;
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\BrevoEvent;
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Sentry\Severity;
@@ -49,16 +50,7 @@ class BrevoWebhookController extends AbstractController
         $isDeliveryFailure = BrevoEvent::isErrorEvent($event);
 
         $emailDeliveryIssueRepository = $this->entityManager->getRepository(EmailDeliveryIssue::class);
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-
-        $user = $userRepository->findOneBy(['email' => $payload['email']]);
-        $partner = null;
-        if (!$user) {
-            $partner = $partnerRepository->findOneBy(['email' => $email]);
-        }
-
-        if (!$user && !$partner) {
+        if (!$this->emailExistsInSystem($email)) {
             \Sentry\configureScope(function (Scope $scope) use ($email, $payload): void {
                 $scope->setTag('email_recipient', $email);
                 $scope->setExtra('brevo_payload', $payload);
@@ -95,6 +87,64 @@ class BrevoWebhookController extends AbstractController
         }
 
         return new Response('OK', Response::HTTP_OK);
+    }
+
+    private function emailExistsInSystem(string $email): bool
+    {
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $partnerRepository = $this->entityManager->getRepository(Partner::class);
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        // Cherche l'email exact
+        $user = $userRepository->findOneBy(['email' => $email]);
+        if ($user) {
+            return true;
+        }
+
+        $partner = $partnerRepository->findOneBy(['email' => $email]);
+        if ($partner) {
+            return true;
+        }
+
+        // Cherche les utilisateurs ou partenaires archivés
+        $pattern = User::SUFFIXE_ARCHIVED;
+        $emailPrefix = explode($pattern, $email)[0];
+
+        $user = $userRepository->createQueryBuilder('u')
+            ->where('u.email LIKE :emailPrefix')
+            ->setParameter('emailPrefix', $emailPrefix.'%')
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($user) {
+            return true;
+        }
+
+        $partner = $partnerRepository->createQueryBuilder('p')
+            ->where('p.email LIKE :emailPrefix')
+            ->setParameter('emailPrefix', $emailPrefix.'%')
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($partner) {
+            return true;
+        }
+
+        // Cherche parmi les mails du signalement
+        $qb = $signalementRepository->createQueryBuilder('s');
+        $qb->select('1')
+            ->where('s.mailOccupant = :email')
+            ->orWhere('s.mailDeclarant = :email')
+            ->orWhere('s.mailProprio = :email')
+            ->orWhere('s.mailAgence = :email')
+            ->setParameter('email', $email)
+            ->setMaxResults(1);
+
+        if ($qb->getQuery()->getOneOrNullResult()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function isAllowedIp(?string $ip): bool
