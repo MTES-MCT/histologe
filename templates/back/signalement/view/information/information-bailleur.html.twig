@@ -36,6 +36,9 @@
             {% if show_email_alert(signalement.mailProprio) %}
                 <p class="fr-badge fr-badge--error">Format non valide</p>
             {% endif %}
+            {% if show_email_usager_alert_brevo('proprietaire', signalement.mailProprio) %}
+                <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
+            {% endif %}
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">

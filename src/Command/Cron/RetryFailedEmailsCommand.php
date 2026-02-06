@@ -25,9 +25,9 @@ class RetryFailedEmailsCommand extends AbstractCronCommand
     /** @var string[] */
     public const array ERRORS_TO_IGNORE = [
         'Unable to send an email: email is not valid in to (code 400).',
+        'Unable to send an email: email is not valid in bcc (code 400).',
         'An email must have a "To", "Cc", or "Bcc" header.',
     ];
-    public const int START_AT_YEAR = 2025;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -42,6 +42,8 @@ class RetryFailedEmailsCommand extends AbstractCronCommand
     {
         $io = new SymfonyStyle($input, $output);
 
+        // on ne récupère que les FailedEmail qui ne sont pas liés à des erreurs de format d'email ou d'absence de destinataire
+        // et qui ont été créés depuis 1 mois
         /** @var FailedEmail[] $failedEmails */
         $failedEmails = $this->failedEmailRepository->findEmailToResend();
 
