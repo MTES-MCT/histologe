@@ -1,0 +1,100 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Modifier la commune {{commune.nom}}{% endblock %}
+
+{% block content %}
+    <section class="fr-p-5v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Communes',
+            'level3Link': path('back_commune_index'),
+            'level4Title': 'Modifier la commune '~ commune.nom,
+            'level4Link': '',
+        } %}
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-text--left">
+                    <h1 class="fr-mb-0">Commune {{commune.nom}}</h1>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-grid-row fr-grid-row--gutters fr-px-5v fr-pb-5v">
+        <div class="fr-col-12 fr-col-md-6">
+            {{form_start(form, {'attr': {'id': 'form-edit-commune'}} )}}
+            {{ form_errors(form) }}
+            {{ form_row(form.territory) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.epci) }}
+            {{ form_row(form.codePostal) }}
+            {{ form_row(form.codeInsee) }}
+            <div class="fr-grid-row">
+                <div class="fr-col-6">
+                    <a href="{{ path('back_commune_index') }}" class="fr-btn fr-btn--secondary">Annuler</a>
+                </div>
+                <div class="fr-col-6 fr-text--right">
+                    {{ form_row(form.submit) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+            {% if poiCommune %}
+                <div class="fr-alert {% if poiCommune.names|length == 1 and poiCommune.names[0] == commune.nom %}fr-alert--success{% else %}fr-alert--error{% endif %}">
+                    <p>
+                        La BAN retourne un résultat pour cette commune (Code INSEE {{ commune.codeInsee }}, Nom {{ commune.nom }}).
+                        <br>
+                        {% if poiCommune.names|length == 1 %}
+                            Le nom retourné est : {{ poiCommune.names[0] }}.
+                        {% else %}
+                            Les noms retournés sont : {{ poiCommune.names|join(', ') }}.
+                        {% endif %}
+                    </p>
+                </div>
+            {% else %}
+                <div class="fr-alert fr-alert--error">
+                    <p>
+                        La BAN ne retourne aucun résultat pour cette commune (Code INSEE {{ commune.codeInsee }}, Nom {{ commune.nom }}).
+                    </p>
+                </div>
+            {% endif %}
+            {% if countSignalements > 0 %}
+                <div class="fr-alert fr-alert--warning">
+                    <p>
+                        Il y a {{ countSignalements }} signalement(s) associé(s) à cette commune (Code INSEE {{ commune.codeInsee }}).
+                        <br>
+                        En modifiant le nom de la commune il sera aussi mis à jour dans les signalements associés.
+                    </p>
+                </div>
+            {% else %}
+                <div class="fr-alert fr-alert--info">
+                    <p>
+                        Aucun signalement n'est associé à cette commune (Code INSEE {{ commune.codeInsee }}).
+                    </p>
+                </div>
+            {% endif %}
+            {% if inconsistentSignalements|length > 0 %}
+                <div class="fr-alert fr-alert--warning fr-mt-2v">
+                    <p>
+                        Attention, il y a {{ inconsistentSignalements|length }} signalement(s) avec un nom de commune différent du nom actuel ({{ commune.nom }}).
+                        <br>
+                        Voici la liste des signalements concernés et le nom de commune enregistré :
+                    </p>
+                    <ul class="fr-mt-2v">
+                        {% for signalement in inconsistentSignalements %}
+                            <li>
+                                <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}">
+                                    Signalement #{{ signalement.reference }} - {{ signalement.villeOccupant }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

@@ -2679,4 +2679,25 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function countForCommune(Commune $commune): int
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('COUNT(s.id)')
+            ->where('s.inseeOccupant = :insee')
+            ->setParameter('insee', $commune->getCodeInsee());
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findWithInconsistentCommuneName(Commune $commune): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.inseeOccupant = :insee')
+            ->andWhere('s.villeOccupant != :ville')
+            ->setParameter('insee', $commune->getCodeInsee())
+            ->setParameter('ville', $commune->getNom());
+
+        return $qb->getQuery()->getResult();
+    }
 }

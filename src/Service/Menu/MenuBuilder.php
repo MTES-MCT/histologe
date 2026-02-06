@@ -81,6 +81,7 @@ readonly class MenuBuilder
         ;
         $superAdminToolsSubItem
             ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Communes', route: 'back_commune_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Connexions SI externes', route: 'back_interconnexion_index', roleGranted: User::ROLE_ADMIN));
         $superAdminToolsSubItem
