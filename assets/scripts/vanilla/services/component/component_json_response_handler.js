@@ -1,4 +1,7 @@
 import { applyFilter } from '../../controllers/back_signalement_view/toggle-suivi-auto';
+import { reloadTinyMCE } from '../form/form_helper';
+import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
+import { initSearchCheckboxWidgets } from '../component/component_search_checkbox.js';
 
 const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
@@ -47,6 +50,15 @@ export function jsonResponseProcess(response) {
         switch (fn.name) {
           case 'applyFilter':
             applyFilter();
+            break;
+          case 'reloadTinyMCE':
+            reloadTinyMCE(fn.args[0]);
+            break;
+          case 'attachAjaxFormHandlers':
+            attachAjaxFormHandlers();
+            break;
+          case 'initSearchCheckboxWidgets':
+            initSearchCheckboxWidgets();
             break;
         }
       });

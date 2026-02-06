@@ -1,0 +1,54 @@
+<hr class="fr-mt-3w">
+
+<div class="fr-grid-row" data-territory-timezone="{{ territory_timezone }}">
+    <div class="fr-col-12 fr-col-md-6">
+        <h3 class="fr-h5 fr-mb-3v">Visites du logement</h3>
+
+        <p class="fr-text--sm fr-pb-5v">
+            Les visites sont gérées par les partenaires ayant la compétence "Visites" et les responsables de territoires.
+        </p>
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        {% if is_granted('SIGN_ADD_VISITE', signalement) %}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
+            </div>
+            {% set displayAddVisiteButton = true %}
+            {% set listPendingVisiteExternalOperatorNames = [] %}
+            {% for pendingVisite in pendingVisites %}
+                {% set partner = app.user.partnerInTerritoryOrFirstOne(signalement.territory) %}
+                {% if pendingVisite.partner and pendingVisite.partner.id is same as partner.id %}
+                    {% set displayAddVisiteButton = false %}
+                {% endif %}
+                {% if pendingVisite.externalOperator and pendingVisite.partner.id is null %}
+                    {% set listPendingVisiteExternalOperatorNames = listPendingVisiteExternalOperatorNames|merge([pendingVisite.externalOperator]) %}
+                {% endif %}
+            {% endfor %}
+            <span id="list-pending-visite-external-operator-names" data-list="{{ listPendingVisiteExternalOperatorNames|json_encode}}"></span>
+
+            <div class="fr-my-5v fr-text--right">
+                {% if linkToVisitGrid %}
+                    <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
+                    title="Télécharger la grille de visite {% if signalement.territory.grilleVisiteFilename %}du territoire{% endif %}"
+                    download href="{{ sign_url(linkToVisitGrid) }}">
+                        Grille de visite
+                    </a>
+                {% endif %}
+                {% if displayAddVisiteButton %}
+                    <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
+                        Ajouter une visite
+                    </button>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="list-visites">
+    {% if signalement.interventions is empty %}
+        {% include 'back/signalement/view/visites/visite-item.html.twig' with { 'isForBO': true } %}
+    {% else %}
+        {% include 'back/signalement/view/visites/visites-list.html.twig' %}
+    {% endif %}
+</div>
+
