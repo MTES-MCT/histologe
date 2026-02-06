@@ -27,20 +27,22 @@ class SignalementAddressUpdater
                 ->setAdresseOccupant($addressResult->getStreet())
                 ->setVilleOccupant($addressResult->getCity())
                 ->setCpOccupant($addressResult->getZipCode())
-                ->setInseeOccupant($addressResult->getInseeCode());
-
-            if (empty($signalement->getGeoloc()) || empty($signalement->getGeoloc()['lat']) || empty($signalement->getGeoloc()['lng'])) {
-                $signalement->setGeoloc([
+                ->setInseeOccupant($addressResult->getInseeCode())
+                ->setGeoloc([
                     'lat' => $addressResult->getLatitude(),
                     'lng' => $addressResult->getLongitude(),
                 ]);
-            }
 
             if ($updateRnbId) {
                 $buildings = $this->rnbService->getBuildings($signalement->getBanIdOccupant());
                 $signalement->setRnbIdOccupant('');
                 if (1 === \count($buildings)) {
-                    $signalement->setRnbIdOccupant($buildings[0]->getRnbId());
+                    $signalement
+                        ->setRnbIdOccupant($buildings[0]->getRnbId())
+                        ->setGeoloc([
+                            'lat' => $buildings[0]->getLat(),
+                            'lng' => $buildings[0]->getLng(),
+                        ]);
                 }
             } else {
                 $this->updateGeolocFromRnbService($signalement);
@@ -86,7 +88,7 @@ class SignalementAddressUpdater
     private function updateGeolocFromRnbService(Signalement $signalement): void
     {
         // Si on vient du formulaire front, et qu'on a déjà un RNB ID, on ne le met pas à jour ($updateRnbId est false)
-        // Par contre, on refait un appel à rnbservice pour mettre à jour la géoloc
+        // Par contre, on refait un appel à rnbservice pour mettre à jour la géoloc spécifique du bâtiment
         if ($signalement->getRnbIdOccupant()) {
             $building = $this->rnbService->getBuilding($signalement->getRnbIdOccupant());
 
