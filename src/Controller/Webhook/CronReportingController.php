@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Webhook;
 
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-class SendEmailController extends AbstractController
+class CronReportingController extends AbstractController
 {
-    #[Route('/send-email', methods: ['POST'])]
+    #[Route('/webhook/cron-report-mail', name: 'app_webhook_cron_report_mail', methods: ['POST'])]
     public function handleSendEmail(
         Request $request,
         LoggerInterface $logger,
@@ -28,20 +28,31 @@ class SendEmailController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        if (!$data || !isset($data['title'], $data['timestamp'], $data['host'], $data['database'])) {
+        if (!$data || !isset($data['title'])) {
             return new JsonResponse(['error' => 'Invalid request'], 400);
         }
 
-        if (isset($data['error'])) {
-            // Log de l'erreur
-            $logger->error("send-error-mail: {$data['title']} {$data['error']} (DB: {$data['database']}, Host: {$data['host']}, Time: {$data['timestamp']})");
+        $timestamp = $data['timestamp'] ?? date('Y-m-d H:i:s');
+        $database = $data['database'] ?? 'N/A';
+        $host = $data['host'] ?? 'N/A';
+        $stats = $data['stats'] ?? 'N/A';
 
-            $message = " erreur s'est produite.";
+        if (isset($data['error'])) {
+            $logger->error('Cron job error: {job_title}', [
+                'job_title' => $data['title'],
+                'error' => $data['error'],
+                'database' => $database,
+                'host' => $host,
+                'timestamp' => $timestamp,
+                'stats' => $stats,
+            ]);
+
             $errorMessages = [];
-            $errorMessages[] = '📅 Date : '.($data['timestamp'] ?? 'N/A');
-            $errorMessages[] = '💾 Base : '.($data['database'] ?? 'N/A');
-            $errorMessages[] = '🔍 Hôte : '.($data['host'] ?? 'N/A');
-            $errorMessages[] = '❗ Erreur : '.($data['error'] ?? 'N/A');
+            $errorMessages[] = '📅 Date : '.$timestamp;
+            $errorMessages[] = '💾 Base : '.$database;
+            $errorMessages[] = '🔍 Hôte : '.$host;
+            $errorMessages[] = '📊 Stats : '.$stats;
+            $errorMessages[] = '❗ Erreur : '.$data['error'];
 
             $notificationMailerRegistry->send(
                 new NotificationMail(
@@ -50,7 +61,7 @@ class SendEmailController extends AbstractController
                     cronLabel: $data['title'],
                     params: [
                         'count_failed' => 1,
-                        'message_failed' => $message,
+                        'message_failed' => "Une erreur s'est produite lors de l'exécution du job.",
                         'error_messages' => $errorMessages,
                     ],
                 )
@@ -63,10 +74,18 @@ class SendEmailController extends AbstractController
                     cronLabel: $data['title'],
                     params: [
                         'count_success' => 1,
-                        'message_success' => $data['message']." (DB: {$data['database']}, Host: {$data['host']}, Time: {$data['timestamp']})",
+                        'message_success' => ($data['message'] ?? 'Succès')." (DB: {$database}, Host: {$host}, Time: {$timestamp}, Stats: {$stats})",
                     ],
                 )
             );
+
+            $logger->info('Cron job success: {job_title}', [
+                'job_title' => $data['title'],
+                'database' => $database,
+                'host' => $host,
+                'stats' => $stats,
+                'timestamp' => $timestamp,
+            ]);
         }
 
         return new JsonResponse(['message' => 'Mail sent']);
