@@ -36,6 +36,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'MISE_EN_SECURITE_PERIL',
             'LOGEMENT_DECENT',
             'RESPONSABILITE_OCCUPANT_ASSURANTIEL',
+            'SALETE',
             'AUTRE',
         ]);
 
