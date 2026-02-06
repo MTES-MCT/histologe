@@ -171,28 +171,6 @@ class SignalementQualificationUpdater
             }
         }
 
-        if (0 <= $score && $score <= 10) {
-            $this->addQualificationScore0To10(
-                $signalement,
-                $desordrePrecisionsQualifications,
-                $isInsalubriteObligatoire
-            );
-        } elseif (10 < $score && $score <= 30) {
-            $this->addQualificationScore11To30(
-                $signalement,
-                $isInsalubriteObligatoire
-            );
-        } elseif (30 < $score && $score <= 50) {
-            $this->addQualificationScore31To50(
-                $signalement,
-            );
-        } else {
-            $this->addQualificationScore51AndAbove(
-                $signalement,
-                $desordrePrecisionsQualifications,
-            );
-        }
-
         // In all cases
         if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
             $this->addOneQualification(
@@ -213,6 +191,29 @@ class SignalementQualificationUpdater
                 $signalement,
                 Qualification::SALETE,
                 QualificationStatus::SALETE_CHECK
+            );
+        }
+
+        // Depending on score
+        if (0 <= $score && $score <= 10) {
+            $this->addQualificationScore0To10(
+                $signalement,
+                $desordrePrecisionsQualifications,
+                $isInsalubriteObligatoire
+            );
+        } elseif (10 < $score && $score <= 30) {
+            $this->addQualificationScore11To30(
+                $signalement,
+                $isInsalubriteObligatoire
+            );
+        } elseif (30 < $score && $score <= 50) {
+            $this->addQualificationScore31To50(
+                $signalement,
+            );
+        } else {
+            $this->addQualificationScore51AndAbove(
+                $signalement,
+                $desordrePrecisionsQualifications,
             );
         }
     }
