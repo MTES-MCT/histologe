@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\TerritoryRepository;
@@ -163,6 +164,20 @@ class SignalementDraftAddressType extends AbstractType
                 'mapped' => false,
                 'data' => $signalement->getLienDeclarantOccupant(),
             ])
+            ->add('profileOccupant', ChoiceType::class, [
+                'label' => 'Type d\'occupant',
+                'choices' => [
+                    ProfileOccupant::LOCATAIRE->label() => ProfileOccupant::LOCATAIRE->value,
+                    ProfileOccupant::BAILLEUR_OCCUPANT->label() => ProfileOccupant::BAILLEUR_OCCUPANT->value,
+                    'Logement vacant' => 'vacant',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $signalement->getIsLogementVacant() ? 'vacant' : $signalement->getProfileOccupant()?->value ?? null,
+            ])
             ->add('isLogementSocial', ChoiceType::class, [
                 'label' => 'Logement social <span class="text-required">*</span>',
                 'label_html' => true,
@@ -208,19 +223,6 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $signalement->getTypeCompositionLogement()?->getTypeLogementNatureAutrePrecision(),
-            ])
-            ->add('logementVacant', ChoiceType::class, [
-                'label' => 'S\'agit-il d\'un logement vacant ?',
-                'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
-                ],
-                'expanded' => true,
-                'multiple' => false,
-                'required' => false,
-                'placeholder' => false,
-                'mapped' => false,
-                'data' => $signalement->getIsLogementVacant(),
             ])
             ->add('nbOccupantsLogement', NumberType::class, [
                 'label' => 'Nombre de personnes occupant le logement',

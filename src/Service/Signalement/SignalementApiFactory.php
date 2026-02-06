@@ -57,6 +57,8 @@ class SignalementApiFactory
         $signalement->setProfileDeclarant(ProfileDeclarant::from($request->profilDeclarant));
         $signalement->setLienDeclarantOccupant($request->lienDeclarantOccupant);
 
+        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map($request->profilOccupant, $signalement->getProfileDeclarant()));
+
         $signalement->setIsLogementSocial($request->isLogementSocial);
         if (in_array($signalement->getProfileDeclarant(),
             [ProfileDeclarant::TIERS_PARTICULIER, ProfileDeclarant::TIERS_PRO, ProfileDeclarant::SERVICE_SECOURS, ProfileDeclarant::BAILLEUR]

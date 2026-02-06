@@ -33,6 +33,7 @@ class SignalementExportHeader
             'Escalier',
             'Appartement',
             'Complément',
+            'Type occupant',
             'Situations',
             'Désordres',
             'Criticité au dépôt',

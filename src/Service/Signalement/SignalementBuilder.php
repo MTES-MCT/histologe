@@ -98,6 +98,7 @@ class SignalementBuilder
         $this->setAddressData();
         $this->setOccupantDeclarantData();
         $this->setProprietaireData();
+        $this->setOccupantProfileData();
 
         return $this;
     }
@@ -512,6 +513,14 @@ class SignalementBuilder
                 $this->signalement->setDenominationProprio($bailleurNom);
             }
         }
+    }
+
+    private function setOccupantProfileData(): void
+    {
+        $this->signalement->setProfileOccupant(SignalementProfileOccupantMapper::map(
+            profileOccupant: strtoupper($this->signalementDraftRequest->getSignalementConcerneProfilDetailProfilOccupant()),
+            profileDeclarant: $this->signalement->getProfileDeclarant()
+        ));
     }
 
     private function isOccupant(): bool

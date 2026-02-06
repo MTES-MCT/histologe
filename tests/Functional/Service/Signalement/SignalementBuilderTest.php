@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Service\Signalement;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\SignalementDraft;
@@ -129,6 +130,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertNotEmpty($signalement->getCodeSuivi());
         $this->assertEquals('13', $signalement->getTerritory()->getZip());
         $this->assertEquals(ProfileDeclarant::LOCATAIRE, $signalement->getProfileDeclarant());
+        $this->assertEquals(ProfileOccupant::LOCATAIRE, $signalement->getProfileOccupant());
         $this->assertEquals(
             '+'.self::FR_PHONE_COUNTRY_CODE.'0644784515',
             $signalement->getTelOccupant()

@@ -43,6 +43,16 @@ class CoordonneesFoyerRequest implements RequestInterface
         private readonly ?string $telephone = null,
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephoneBis = null,
+        #[Assert\Choice(choices: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'], message: 'Le type d\'occupant est incorrect.')]
+        #[Assert\EqualTo(
+            value: 'LOCATAIRE',
+            message: 'Le type d\'occupant doit être Locataire pour les déclarant de type Locataire ou Bailleur.',
+            groups: ['LOCATAIRE', 'BAILLEUR'])]
+        #[Assert\EqualTo(
+            value: 'BAILLEUR_OCCUPANT',
+            message: 'Le type d\'occupant doit être Propriétaire occupant pour les déclarant de type Bailleur occupant.',
+            groups: ['BAILLEUR_OCCUPANT'])]
+        private readonly ?string $profileOccupant = null,
     ) {
     }
 
@@ -84,5 +94,10 @@ class CoordonneesFoyerRequest implements RequestInterface
     public function getTelephoneBis(): ?string
     {
         return $this->telephoneBis;
+    }
+
+    public function getProfileOccupant(): ?string
+    {
+        return $this->profileOccupant;
     }
 }
