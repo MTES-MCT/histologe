@@ -6,7 +6,7 @@
     <div data-ajax-form>
         {% include 'back/auto-affectation-rule/_modal_autoaffectationrule_delete.html.twig' %}
     </div>
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -16,19 +16,22 @@
         } %}
         <header>
             <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12 fr-col-md-7 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Règles d'auto-affectation</h1>
+                <div class="fr-col-12 fr-col-md-6 fr-text--left">
+                    <h1 class="fr-mb-0">Règles d'auto-affectation</h1>
                 </div>
-                <div class="fr-col-12 fr-col-md-5 fr-text--md-right">
-                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-btn--md fr-fi-add-circle-line fr-btn--block fr-btn--md-inline" href="{{ path('back_auto_affectation_rule_new') }}">Ajouter une règle d'auto-affection</a>
-                    <br>
-                    <a class="fr-btn fr-btn--secondary fr-mt-2v fr-btn--block fr-btn--md-inline" href="{{ path('back_auto_assigner_simulator_index') }}">Simulateur</a>
+                <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
+                    <a class="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-eye-line fr-mr-md-2v fr-mb-md-0 fr-mb-2v fr-btn--block fr-btn--md-inline" href="{{ path('back_auto_assigner_simulator_index') }}">Simulateur</a>
+                    <a class="fr-btn fr-btn--success fr-btn--icon-left fr-fi-add-circle-line fr-btn--block fr-btn--md-inline" href="{{ path('back_auto_affectation_rule_new') }}">Ajouter une règle d'auto-affection</a>
                 </div>
             </div>
         </header>
     </section>
     {{ form_start(form) }}
-    <section class="fr-container--fluid">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-rules',
+            'skiplink_label': 'Accéder à la liste des règles d\'auto-affectation'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-4">
@@ -39,8 +42,14 @@
             </div>
         </div>
     </section>
-    <section class="fr-col-12 fr-pt-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(autoAffectationRules|length, 'règle d\'auto-affectation trouvée', 'règles d\'auto-affectation trouvées') }}</h2>
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+        <div id="list-rules">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(autoAffectationRules|length, 'règle d\'auto-affectation trouvée', 'règles d\'auto-affectation trouvées') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
         {{ form_row(form.orderType) }}

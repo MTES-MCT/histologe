@@ -66,10 +66,14 @@
             </td>
             <td class="fr-text--right fr-ws-nowrap">
                 <a href="{{ path('back_partner_view', {'id': partner.id}) }}"
-                class="fr-btn fr-fi-arrow-right-line fr-btn--sm"></a>
+                    class="fr-btn fr-fi-arrow-right-line fr-btn--sm"
+                    aria-label="Voir le partenaire {{ partner.nom }}"
+                    title="Voir le partenaire {{ partner.nom }}"></a>
                 <button class="fr-btn fr-btn--danger fr-fi-delete-line fr-btn--sm btn-delete-partner"
                     id="partners_delete_{{ partner.id }}" aria-controls="fr-modal-partner-delete"
-                    data-fr-opened="false" data-partnername="{{ partner.nom }}" data-partnerid="{{ partner.id }}"></button>
+                    data-fr-opened="false" data-partnername="{{ partner.nom }}" data-partnerid="{{ partner.id }}"
+                    aria-label="Supprimer le partenaire {{ partner.nom }}"
+                    title="Supprimer le partenaire {{ partner.nom }}"></button>
             </td>
         </tr>
     {% else %}
@@ -81,7 +85,7 @@
 
 {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-<div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="partner-pagination">
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" role="navigation" aria-label="Pagination de la liste des partenaires">
     {% import '_partials/macros.html.twig' as macros %}
     {{ macros.customPagination(pages, searchPartner.page, 'back_partner_index', searchPartner.urlParams) }}
 </div>
