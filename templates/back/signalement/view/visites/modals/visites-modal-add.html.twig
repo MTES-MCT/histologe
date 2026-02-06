@@ -22,12 +22,14 @@
                                     </a>
                                 </div>
                             {% endif %}
-                            <div class="fr-alert fr-alert--warning">
-                                <p>
-                                    Si vous choisissez une <strong>date à venir</strong>,
-                                    un e-mail sera automatiquement envoyé à l'usager.
-                                </p>
-                            </div>
+                            {% if not signalement.isLogementVacant %}
+                                <div class="fr-alert fr-alert--warning">
+                                    <p>
+                                        Si vous choisissez une <strong>date à venir</strong>,
+                                        un e-mail sera automatiquement envoyé à l'usager.
+                                    </p>
+                                </div>
+                            {% endif %}
 
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
                                 <div class="fr-col-12 fr-mb-3v">

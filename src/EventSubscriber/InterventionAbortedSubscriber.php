@@ -43,14 +43,16 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
             $description = 'La visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= ' n\'a pas pu avoir lieu pour le motif suivant :<br>';
             $description .= $intervention->getDetails();
+            $signalement = $intervention->getSignalement();
+            $isLogementVacant = $signalement->getIsLogementVacant();
             $suivi = $this->suiviManager->createSuivi(
-                signalement: $intervention->getSignalement(),
+                signalement: $signalement,
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_IS_ABORTED,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isPublic: true,
+                isPublic: !$isLogementVacant,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

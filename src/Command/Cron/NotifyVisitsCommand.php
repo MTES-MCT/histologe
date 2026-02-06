@@ -62,6 +62,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
             if (!$signalement || SignalementStatus::ACTIVE !== $signalement->getStatut()) {
                 continue;
             }
+            $isLogementVacant = $signalement->getIsLogementVacant();
             $description = '<strong>Rappel de visite :</strong> la visite du logement situé ';
             $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
             $description .= ' aura lieu le '.$intervention->getScheduledAt()->format('d/m/Y');
@@ -71,7 +72,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 description: $description,
                 type: Suivi::TYPE_TECHNICAL,
                 category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
-                isPublic: true,
+                isPublic: !$isLogementVacant,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

@@ -34,6 +34,9 @@ class VisiteNotifier
         Suivi $suivi,
         ?\DateTimeImmutable $previousDate = null,
     ): void {
+        if ($intervention->getSignalement()->getIsLogementVacant()) {
+            return;
+        }
         $toRecipients = $intervention->getSignalement()->getMailUsagers();
         $this->notificationAndMailSender->createInAppUsagersNotifications($suivi);
         foreach ($toRecipients as $toRecipient) {

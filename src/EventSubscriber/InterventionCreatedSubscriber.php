@@ -33,9 +33,10 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
     {
         $intervention = $event->getIntervention();
         $signalement = $intervention->getSignalement();
+        $isLogementVacant = $signalement->getIsLogementVacant();
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
         $isPublic = true;
-        if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
+        if ($isLogementVacant || (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant())) {
             $isPublic = false;
         }
 
@@ -58,7 +59,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
         }
 
         $suivi = $this->suiviManager->createSuivi(
-            signalement: $intervention->getSignalement(),
+            signalement: $signalement,
             description: $description,
             type: Suivi::TYPE_AUTO,
             category : $suiviCategory,
