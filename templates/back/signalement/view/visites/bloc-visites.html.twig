@@ -44,11 +44,11 @@
     </div>
 </div>
 
-{% if signalement.interventions is empty %}
-    {% include 'back/signalement/view/visites/visite-item.html.twig' with { 'isForBO': true } %}
-{% else %}
-    <div id="list-visites">
+<div id="list-visites">
+    {% if signalement.interventions is empty %}
+        {% include 'back/signalement/view/visites/visite-item.html.twig' with { 'isForBO': true } %}
+    {% else %}
         {% include 'back/signalement/view/visites/visites-list.html.twig' %}
-    </div>
-{% endif %}
+    {% endif %}
+</div>
 
