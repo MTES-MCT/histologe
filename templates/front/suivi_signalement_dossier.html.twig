@@ -132,7 +132,7 @@
 					<h3 class="title-blue-france fr-h5">Votre bailleur</h3>
 					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_bailleur', {'code': signalement.codeSuivi}) }}" 
-							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md fr-text-right">
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
 							Compléter les informations
 						</a>
 					{% endif %}
@@ -222,7 +222,74 @@
 			</div>
 			{% include 'front/_partials/_suivi_signalement_prevenir_bailleur.html.twig' with {'cssDiv': 'fr-callout--brown-caramel fr-mt-2w'} %}
 
-			{# TODO ajouter la partie agence #}
+			{% if signalement.hasInfosAgence %}
+				<div class="signalement-group-data-card">
+					<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+						<h3 class="title-blue-france fr-h5">Coordonnées de l'agence</h3>
+						{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+							<a href="{{ path('front_suivi_signalement_complete_agence', {'code': signalement.codeSuivi}) }}" 
+								class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
+								Compléter les informations
+							</a>
+						{% endif %}
+					</div>
+					<div class="title-separator">Coordonnées de l'agence</div>
+					{% if signalement.denominationAgence %}
+						{{ signalement.denominationAgence }}
+						<br>
+					{% endif %}
+					{% if signalement.nomAgence or signalement.prenomAgence %}
+						{% if signalement.nomAgence %}
+							{{ signalement.nomAgence }}
+						{% endif %}
+						{% if signalement.prenomAgence %}
+							{{ signalement.prenomAgence }}
+						{% endif %}
+						<br>
+					{% endif %}
+					{% if signalement.adresseAgence or signalement.codePostalAgence or signalement.villeAgence %}
+						{% if signalement.adresseAgence %}
+							{{ signalement.adresseAgence }}
+						{% endif %}
+						{% if signalement.codePostalAgence %}
+							{{ signalement.codePostalAgence }}
+						{% endif %}
+						{% if signalement.villeAgence %}
+							{{ signalement.villeAgence }}
+						{% endif %}
+						<br>
+					{% endif %}
+					{% if signalement.mailAgence %}
+						{{ signalement.mailAgence }}
+						<br>
+					{% endif %}
+					{% if signalement.telAgence %}
+						{{ signalement.telAgenceDecoded|phone }}
+						<br>
+					{% endif %}
+					{% if signalement.telAgenceSecondaire %}
+						{{ signalement.telAgenceSecondaireDecoded|phone }}
+					{% endif %}
+					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						<a href="{{ path('front_suivi_signalement_complete_agence', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
+							Compléter les informations
+						</a>
+					{% endif %}
+				</div>
+			{% elseif is_granted('SIGN_USAGER_COMPLETE', signalement) %}
+				<div class="fr-callout fr-icon-information-line fr-callout--blue-cumulus fr-mt-3w">
+					<p class="fr-callout__title">Agence de gestion</p>
+					<p>
+						Si votre logement est géré par une agence immobilière, vous pouvez renseigner ses coordonnées.
+						<br>
+						<a href="{{ path('front_suivi_signalement_complete_agence', {code: signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line fr-mt-3v">
+							Ajouter les coordonnées
+						</a>
+					</p>
+				</div>
+			{% endif %}
 
 			{% if signalement.informationProcedure %}
 				<div class="signalement-group-data-card">

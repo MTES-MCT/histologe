@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Compléter les informations bailleur #{{ signalement.reference }}{% endblock %}
+{% block title %}Compléter les informations de l'agence #{{ signalement.reference }}{% endblock %}
 
 {% block body %}
 
@@ -11,36 +11,41 @@
 			<ol class="fr-breadcrumb__list">
 				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
 				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}">Détails du dossier</a></li>
-				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter les informations bailleur</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter les informations de l'agence</a></li>
 			</ol>
 		</div>
 	</nav>
-	{{ form_start(formCoordonneesBailleur, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
+	{{ form_start(form, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
 	<div class="fr-grid-row fr-mt-3w">
 		<div class="fr-col-12">
 			<h1 class="title-blue-france">Compléter les informations</h1>
 			<div class="fr-mb-3w">
 				Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
+				<br>
+				Toutes les informations sont facultatives.</p>
 			</div>
-			{{ form_errors(formCoordonneesBailleur) }}				
+			{{ form_errors(form) }}				
 			<fieldset class="fr-fieldset">
 				<legend class="fr-fieldset__legend">
-					<h3 class="fr-h5">Coordonnées du bailleur</h3>
+					<h3 class="fr-h5">Coordonnées de l'agence</h3>
 				</legend>
 				<div class="fr-fieldset__element">
-					{{ form_row(formCoordonneesBailleur.nomProprio) }}
+					{{ form_row(form.denominationAgence) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(formCoordonneesBailleur.prenomProprio) }}
+					{{ form_row(form.nomAgence) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(formCoordonneesBailleur.mailProprio) }}
+					{{ form_row(form.prenomAgence) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(formCoordonneesBailleur.telProprio) }}
+					{{ form_row(form.mailAgence) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(formCoordonneesBailleur.telProprioSecondaire) }}
+					{{ form_row(form.telAgence) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(form.telAgenceSecondaire) }}
 				</div>
 			</fieldset>
 			<fieldset class="fr-fieldset">
@@ -48,9 +53,9 @@
 					<h4 class="fr-h6">Adresse postale</h4>
 				</legend>
 				<div class="fr-fieldset__element">
-					{{ form_row(formCoordonneesBailleur.adresseCompleteProprio) }}
+					{{ form_row(form.adresseCompleteAgence) }}
 					<div class="fr-address-group-container">
-						<div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-proprio-group">
+						<div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-agence-group">
 						</div>
 					</div>
 					<div class="fr-mt-n2w">
@@ -59,13 +64,13 @@
 				</div>
 				<div class="fr-hidden fr-w-100 manual-address-container">
 					<div class="fr-fieldset__element">
-						{{ form_row(formCoordonneesBailleur.adresseProprio) }}
+						{{ form_row(form.adresseAgence) }}
 					</div>
 					<div class="fr-fieldset__element">
-						{{ form_row(formCoordonneesBailleur.codePostalProprio) }}
+						{{ form_row(form.codePostalAgence) }}
 					</div>
 					<div class="fr-fieldset__element">
-						{{ form_row(formCoordonneesBailleur.villeProprio) }}
+						{{ form_row(form.villeAgence) }}
 					</div>
 				</div>
 			</fieldset>
@@ -74,9 +79,9 @@
 			<a href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}" class="fr-btn fr-btn--secondary">Annuler</a>
 		</div>
 		<div class="fr-col-6 fr-text--right">
-			{{ form_row(formCoordonneesBailleur.save) }}
+			{{ form_row(form.save) }}
 		</div>
 	</div>
-	{{ form_end(formCoordonneesBailleur) }}
+	{{ form_end(form) }}
 </main>
 {% endblock %}
