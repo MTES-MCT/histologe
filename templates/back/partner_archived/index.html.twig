@@ -3,7 +3,7 @@
 {% block title %}Partenaires archivés ou sans territoires{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -14,7 +14,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Partenaires archivés</h1>
+                    <h1 class="fr-mb-0">Partenaires archivés</h1>
                 </div>
             </div>
         </header>
@@ -23,7 +23,11 @@
     {{ form_start(form) }}
 
     {% if is_granted('ROLE_ADMIN') %}
-    <section class="fr-container--fluid">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-partners',
+            'skiplink_label': 'PaAccéder à la liste des partenaires'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-4">
@@ -39,8 +43,14 @@
     </section>
     {% endif %}
 
-    <section class="fr-col-12 fr-py-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(archivedPartners|length, 'partenaire archivé ou sans territoire trouvé', 'partenaires archivés ou sans territoire trouvés') }}</h2>
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+        <div id="list-partners">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(archivedPartners|length, 'partenaire archivé ou sans territoire trouvé', 'partenaires archivés ou sans territoire trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
     
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
@@ -49,7 +59,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v">
+    <section class="fr-col-12" id="table-list-results">
         {% set tableHead %}
             <th scope="col">Territoire</th>
             <th scope="col" data-responsive-title="1">Nom</th>
@@ -85,12 +95,10 @@
         {% endset %}
 
         {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des partenaires archivés ou sans territoires', 'tableHead': tableHead, 'tableBody': tableBody } %}
-        
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">    
+
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des partenaires">    
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchArchivedPartner.page, 'back_archived_partner_index', searchArchivedPartner.urlParams) }}
         </div>
     </section>
-
-
 {% endblock %}

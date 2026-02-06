@@ -36,15 +36,10 @@
     {{ form_start(form) }}
 
     <section class="fr-container--fluid" aria-labelledby="filters-title">
-        <div class="fr-grid-row fr-grid-row--gutters fr-mb-2v">
-            <div class="fr-col-12">
-                <h2 class="fr-h4 fr-mb-0" id="filters-title">Filtres de recherche</h2>
-                <div class="fr-skiplinks">
-                    <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#list-documents" aria-label="Accéder à la liste"
-                        >Accéder à la liste</a>
-                </div>
-            </div>
-        </div>
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-documents',
+            'skiplink_label': 'Accéder à la liste des documents'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-3">

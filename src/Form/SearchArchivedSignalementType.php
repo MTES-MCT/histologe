@@ -49,7 +49,7 @@ class SearchArchivedSignalementType extends AbstractType
             'data_class' => SearchArchivedSignalement::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-archived-signalement-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-archived-signalement-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 
