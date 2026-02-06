@@ -322,6 +322,10 @@ class SignalementManager extends AbstractManager
         Signalement $signalement,
         AdresseOccupantRequest $adresseOccupantRequest,
     ): bool {
+        $addressIsModified = $signalement->getAdresseOccupant() !== $adresseOccupantRequest->getAdresse()
+                || $signalement->getVilleOccupant() !== $adresseOccupantRequest->getVille()
+                || $signalement->getCpOccupant() !== $adresseOccupantRequest->getCodePostal();
+
         $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse())
             ->setCpOccupant($adresseOccupantRequest->getCodePostal())
             ->setVilleOccupant($adresseOccupantRequest->getVille())
@@ -333,7 +337,9 @@ class SignalementManager extends AbstractManager
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre())
             ->setManualAddressOccupant('1' === $adresseOccupantRequest->getManual());
 
-        $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
+        if ($addressIsModified) {
+            $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
+        }
 
         $this->save($signalement);
 
