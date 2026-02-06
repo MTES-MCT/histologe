@@ -50,7 +50,7 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 | MailCatcher                | [localhost:1080](http://localhost:1080) |
 | Wiremock                   | [localhost:1082](http://localhost:1082) |
 | Metabase                   | [localhost:3007](http://localhost:3007) |
-| Matomo                     | [localhost:1083](http://localhost:1083) |
+| Matomo                     | [localhost:8083](http://localhost:8083) |
 
 ### Hôtes des environnements et ports
 
@@ -66,7 +66,7 @@ Merci de vérifier que ces ports ne soient pas utilisés sur votre poste local
 | Mailcatcher | signal_logement_mailer     | **1025** et **1080** |
 | Wiremock    | signal_logement_wiremock   | **8082**             |
 | Metabase    | signal_logement_metabase   | **3007**             |
-| Matomo      | signal_logement_matomo     | **1083**             |
+| Matomo      | signal_logement_matomo     | **8083**             |
 | Redis       | signal_logement_redis      | /                    |
 | ClamAV      | signal_logement_clamav     | /                    |
 

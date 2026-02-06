@@ -7,7 +7,10 @@
       Cliquez sur le bouton ci-dessous pour donner votre avis.
     </p>
     <p class="fr-text--center">
-      <a href="https://jedonnemonavis.numerique.gouv.fr/Demarches/3742?&view-mode=formulaire-avis&nd_source=button&key=743c44c1973b9adfe59223f5ecb7c4b3">
+      <a
+        href="https://jedonnemonavis.numerique.gouv.fr/Demarches/3742?&view-mode=formulaire-avis&nd_source=button&key=743c44c1973b9adfe59223f5ecb7c4b3"
+        @click="monAvisClicked"
+        >
         <img src="https://jedonnemonavis.numerique.gouv.fr/static/bouton-bleu.svg" alt="Je donne mon avis" />
       </a>
     </p>
@@ -16,6 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { matomo } from '../matomo'
 
 export default defineComponent({
   name: 'SignalementFormConfirmation',
@@ -31,6 +35,11 @@ export default defineComponent({
     access_name: { type: String, default: '' },
     access_autocomplete: { type: String, default: '' },
     access_focus: { type: Boolean, default: false }
+  },
+  methods: {
+    monAvisClicked () {
+      matomo.pushFormEvent('clickLink', 'Je donne mon avis')
+    },
   }
 })
 </script>

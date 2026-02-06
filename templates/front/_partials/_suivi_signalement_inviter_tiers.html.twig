@@ -13,7 +13,11 @@
             Afin de faciliter les échanges avec l'administration, vous pouvez donner accès au dossier à un tiers
             (famille, travailleur social, association, etc.) en renseignant son adresse e-mail.
             <br>
-            <a href="{{ path('front_suivi_signalement_coordonnees_tiers', {code: signalement.codeSuivi}) }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-box-line fr-mt-3v"
+            <a href="{{ path('front_suivi_signalement_coordonnees_tiers', {code: signalement.codeSuivi}) }}"
+                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-box-line fr-mt-3v"
+                data-matomo-clickable-event-category="Suivre mon signalement"
+                data-matomo-clickable-event-action="clickLink"
+                data-matomo-clickable-event-name="Inviter un tiers sur mon dossier"
                 >Inviter un tiers sur mon dossier</a>
         </p>
     </div>

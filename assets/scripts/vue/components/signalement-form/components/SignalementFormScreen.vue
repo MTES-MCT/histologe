@@ -48,6 +48,7 @@
 import { defineComponent } from 'vue'
 import formStore from './../store'
 import { requests } from '../requests'
+import { matomo } from '../matomo'
 import { variablesReplacer } from './../services/variableReplacer'
 import { componentValidator } from './../services/componentValidator'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
@@ -72,6 +73,7 @@ export default defineComponent({
     return {
       formStore,
       requests,
+      matomo,
       variablesReplacer,
       componentValidator,
       currentDisorderIndex: {
@@ -125,6 +127,7 @@ export default defineComponent({
     },
     async handleClickComponent (type:string, param:string, param2:string) {
       if (type === 'link') {
+        matomo.pushFormEvent('clickLink', param)
         window.location.href = param
       } else if (type === 'show') {
         this.showComponentBySlug(param, param2)
@@ -231,6 +234,7 @@ export default defineComponent({
       }
     },
     finishLater (slugButton:string) {
+      matomo.pushFormEvent('finishLater', slugButton)
       this.formStore.lastButtonClicked = slugButton
       if (this.mailSentForDraftThisSession) {
         return
