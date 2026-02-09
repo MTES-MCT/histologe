@@ -57,22 +57,19 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 }
             }
 
-            $signalement = $intervention->getSignalement();
-            $isLogementVacant = $signalement->getIsLogementVacant();
-            $isUsagerNotified = $event->isUsagerNotified() && !$isLogementVacant;
             $suivi = $this->suiviManager->createSuivi(
-                signalement: $signalement,
+                signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
                 partner: $event->getPartner(),
                 user: $currentUser,
-                isPublic: $isUsagerNotified,
+                isPublic: $event->isUsagerNotified(),
                 context: Suivi::CONTEXT_INTERVENTION,
                 files: $intervention->getFiles(),
             );
 
-            if ($isUsagerNotified) {
+            if ($event->isUsagerNotified()) {
                 $this->visiteNotifier->notifyUsagers(
                     intervention: $intervention,
                     notificationMailerType: NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER,

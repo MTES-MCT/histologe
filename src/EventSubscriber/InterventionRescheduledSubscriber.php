@@ -45,16 +45,14 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             if (!empty($commentBeforeVisite)) {
                 $description .= '<br>Informations complémentaires : '.$commentBeforeVisite;
             }
-            $signalement = $intervention->getSignalement();
-            $isLogementVacant = $signalement->getIsLogementVacant();
             $suivi = $this->suiviManager->createSuivi(
-                signalement: $signalement,
+                signalement: $intervention->getSignalement(),
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
                 partner: $event->getPartner(),
                 user: $event->getUser(),
-                isPublic: !$isLogementVacant,
+                isPublic: true,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

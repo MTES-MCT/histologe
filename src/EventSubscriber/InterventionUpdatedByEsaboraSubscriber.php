@@ -31,7 +31,6 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
     {
         $intervention = $event->getIntervention();
         $signalement = $intervention->getSignalement();
-        $isLogementVacant = $signalement->getIsLogementVacant();
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionUpdatedByEsaboraEvent::NAME);
 
         switch ($intervention->getType()) {
@@ -49,13 +48,13 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
         }
 
         $suivi = $this->suiviManager->createSuivi(
-            signalement: $signalement,
+            signalement: $intervention->getSignalement(),
             description: $description,
             type: Suivi::TYPE_AUTO,
             category: $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            isPublic: !$signalement->isTiersDeclarant() && !$isLogementVacant,
+            isPublic: !$signalement->isTiersDeclarant(),
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
