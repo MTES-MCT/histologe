@@ -26,7 +26,7 @@ class ConfigClubEventControllerTest extends WebTestCase
         $route = $router->generate('back_config_club_event_index');
         $client->request('GET', $route);
 
-        $this->assertSelectorTextContains('h2', '6 événements trouvés');
+        $this->assertSelectorTextContains('h2#desc-table', '6 événements trouvés');
     }
 
     public function testIndexForUnauthorizedUser(): void

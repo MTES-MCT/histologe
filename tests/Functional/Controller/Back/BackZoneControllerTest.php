@@ -31,7 +31,7 @@ class BackZoneControllerTest extends WebTestCase
         $route = $router->generate('back_territory_management_zone_index');
         $client->request('GET', $route, $params);
 
-        $this->assertSelectorTextContains('h2', $nb.' zone');
+        $this->assertSelectorTextContains('h2#desc-table', $nb.' zone');
     }
 
     public function provideParamsZoneList(): \Generator
