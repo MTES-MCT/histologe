@@ -2,9 +2,9 @@
 <div class="fr-mb-4v">
     Dossier déposé le : {{ signalement.createdAt|date('d/m/Y') }}
     {% if signalement.createdBy and 'ROLE_API_USER' in signalement.createdBy.roles %}
-        Via l'API
+        via API par {{ signalement.createdBy.email }} pour le partenaire {{ signalement.createdByPartner.nom }}.
     {% elseif signalement.createdBy is not null %}
-        depuis le formulaire pro.
+        par {{ signalement.createdBy.prenom }} {{ signalement.createdBy.nom }}{% if signalement.createdBy.getPartnerInTerritory(signalement.territory) %}, du partenaire {{ signalement.createdBy.getPartnerInTerritory(signalement.territory).nom }}{% endif %} depuis le formulaire pro.    
     {% elseif signalement.isImported is same as true %}
         par import
     {% else %}
