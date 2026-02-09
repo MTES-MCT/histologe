@@ -9,7 +9,7 @@
     {% endif %}
     <div>
         <div class="fr-my-3v">
-            {% for tag in signalement.tags %}
+            {% for tag in signalement.tags|sort((a, b) => a.label <=> b.label) %}
                 <span class="fr-badge fr-badge--info fr-badge--no-icon fr-m-1v">{{ tag.label }}</span>
             {% else %}
                 <em class="fr-text-default--warning fr-fi-close-line fr-icon--xs">
