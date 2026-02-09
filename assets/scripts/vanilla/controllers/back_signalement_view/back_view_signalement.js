@@ -118,8 +118,8 @@ export function openPhotoAlbumAddEventListeners() {
   document?.querySelectorAll('.photo-album-save-rotation')?.forEach((btn) => {
     btn.addEventListeners('click touchdown', () => {
       const photoId = btn.dataset.id;
-      const rotate = document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset
-        .rotate;
+      const rotate = document.querySelector('.photos-album-image[data-id="' + photoId + '"]')
+        .dataset.rotate;
       const action = btn.dataset.action;
       const form = document.querySelector('#form-save-file-rotation');
       form.querySelector('input[name="rotate"]').value = rotate;

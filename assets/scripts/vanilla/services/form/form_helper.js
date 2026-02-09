@@ -41,7 +41,7 @@ export function initTinyMCE(selector) {
   }
 }
 
-export function reloadTinyMCE(selector, container = document) {
+export function reloadTinyMCE(selector) {
   if (window.tinymce) {
     tinymce.remove();
   }
