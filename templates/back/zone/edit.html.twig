@@ -3,7 +3,7 @@
 {% block title %}Modifier la zone {{zone.name}}{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -26,7 +26,7 @@
         </header>
     </section>
 
-    <section class="fr-px-5v fr-pb-5v fr-grid-row">
+    <section class="fr-pt-4v fr-grid-row">
         <div class="fr-col-12">
             {{ form_start(form, {'attr': {'id': 'form-add-zone'}}) }}
             {{ form_errors(form) }}

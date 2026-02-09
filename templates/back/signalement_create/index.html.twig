@@ -8,7 +8,7 @@
 
     {% include '_partials/_modal_duplicate.html.twig' %}
     {% include '_partials/_modal_form_bo_quit_validation.html.twig' %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Mes brouillons',
             'level2Link': path('back_signalement_drafts'),
@@ -19,7 +19,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-text--left">
-                    <h1 class="fr-h1 fr-mb-1v">Créer un signalement</h1>
+                    <h1 class="fr-mb-1v">Créer un signalement</h1>
                     <p>
                         {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                             Ajoutez un signalement en complétant le formulaire ci-dessous. <br>

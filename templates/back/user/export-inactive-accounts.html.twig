@@ -3,7 +3,7 @@
 {% block title %}Liste des utilisateurs{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -33,7 +33,7 @@
         </header>
     </section>
 
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         <form action="" method="POST" id="export-user">
             <h2>Format</h2>
             {% include 'form/form-choice-export-format.html.twig' %}

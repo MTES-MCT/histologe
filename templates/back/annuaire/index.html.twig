@@ -3,7 +3,7 @@
 {% block title %}Annuaire des agents{% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Annuaire',
             'level2Link': '',
@@ -13,7 +13,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1>Annuaire des agents</h1>
+                    <h1 class="fr-mb-0">Annuaire des agents</h1>
                 </div>
             </div>
         </header>
@@ -40,7 +40,7 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-py-4v">
+    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-pt-4v">
         <div class="fr-col-12 fr-col-md-6">
             <h2 class="fr-mb-0">{{ singular_or_plural(userPartners|length, 'Agent trouvé', 'Agents trouvés') }}</h2>
         </div>
@@ -58,7 +58,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-container--fluid fr-px-4v">
+    <section class="fr-container--fluid fr-pt-4v">
 
         <div class="fr-grid-row fr-grid-row--gutters">
             {% for userPartner in userPartners %}

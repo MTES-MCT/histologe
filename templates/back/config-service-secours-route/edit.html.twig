@@ -3,7 +3,7 @@
 {% block title %}Route service secours{% endblock %}
 
 {% block content %}
-    <section class="fr-col-12 fr-p-5v">
+    <section class="fr-col-12 fr-pt-4v">
         {% if create %}
             {% include 'back/breadcrumb_bo.html.twig' with {
                 'level2Title': 'Outils SA',
@@ -33,7 +33,7 @@
             <h2 class="fr-h2 fr-mb-0"> Modifier la route service secours : {{ serviceSecoursRoute.name }} </h2>
         {% endif %}
         <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
-        <div class="fr-pt-5v">
+        <div class="fr-pt-4v">
             {{ include('back/config-service-secours-route/_form.html.twig') }}
         </div>
     </section>

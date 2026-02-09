@@ -3,7 +3,7 @@
 {% block title %}Export de l'annuaire des agents{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Annuaire',
             'level2Link': path('back_annuaire_index', searchAnnuaire.urlParams),
@@ -27,7 +27,7 @@
         </header>
     </section>
 
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         <h2>Filtres actifs</h2>
         <div class="fr-mb-3v">
             Votre liste contient {{ nbResults }} agents. Les filtres suivants sont actifs :
@@ -39,7 +39,7 @@
         {% endfor %}
     </section>
 
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         <form action="" method="POST" id="export-annuaire">
             <h2>Format</h2>
             {% include 'form/form-choice-export-format.html.twig' %}
