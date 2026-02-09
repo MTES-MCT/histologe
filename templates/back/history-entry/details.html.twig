@@ -2,7 +2,7 @@
 {% extends 'back/base_bo.html.twig' %}
 {% import '_partials/macros.html.twig' as macros %}
 
-{% block title %}Partenaires archivés ou sans territoires{% endblock %}
+{% block title %}Historique des modifications pour {{ entityName }} #{{ entityId }}{% endblock %}
 
 {% block content %}
     <section class="fr-p-5v">
@@ -16,7 +16,13 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Historique des modifications</h1>
+                    <h1 class="fr-h1 fr-mb-0">Historique des modifications pour 
+                        {% if entityUrl is defined %}
+                            <a href="{{entityUrl}}">{{ entityName }} #{{ entityId }}</a>
+                        {% else %}
+                            {{ entityName }} #{{ entityId }}
+                        {% endif %}
+                    </h1>
                 </div>
             </div>
         </header>
@@ -28,10 +34,10 @@
 
     <section class="fr-col-12 fr-pt-0 fr-px-4v">
         {% set tableHead %}
-            <th scope="col">User</th>
-            <th scope="col">Event</th>
+            <th scope="col">Utilisateur</th>
+            <th scope="col">Type</th>
             <th scope="col">Date</th>
-            <th scope="col">Changes</th>
+            <th scope="col">Modifications</th>
             <th scope="col">Source</th>
         {% endset %}
 

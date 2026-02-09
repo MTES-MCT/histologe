@@ -17,12 +17,11 @@ class DiffExtension extends AbstractExtension
     /**
      * Compare deux textes et retourne le HTML avec les différences mises en évidence.
      *
-     * @param string      $text     Le texte à afficher
-     * @param string      $compare  Le texte à comparer
-     * @param string      $mode     'old' pour montrer les suppressions, 'new' pour montrer les ajouts
-     * @param string|null $cssClass Classe CSS personnalisée (optionnel)
+     * @param string $text    Le texte à afficher
+     * @param string $compare Le texte à comparer
+     * @param string $mode    'old' pour montrer les suppressions, 'new' pour montrer les ajouts
      */
-    public function diff(?string $text, ?string $compare, string $mode = 'new', ?string $cssClass = null): string
+    public function diff(?string $text, ?string $compare, string $mode = 'new'): string
     {
         if (null === $text && null === $compare) {
             return '';
@@ -45,7 +44,7 @@ class DiffExtension extends AbstractExtension
 
         $diff = $this->computeDiff($oldWords, $newWords);
 
-        return $this->renderDiff($diff, $mode, $cssClass);
+        return $this->renderDiff($diff, $mode);
     }
 
     /**
@@ -109,8 +108,16 @@ class DiffExtension extends AbstractExtension
                 --$i;
             }
         }
+        $mergedDiff = [];
+        foreach ($diff as $part) {
+            if (!empty($mergedDiff) && $mergedDiff[count($mergedDiff) - 1]['type'] === $part['type']) {
+                $mergedDiff[count($mergedDiff) - 1]['value'] .= $part['value'];
+            } else {
+                $mergedDiff[] = $part;
+            }
+        }
 
-        return $diff;
+        return $mergedDiff;
     }
 
     /**
@@ -118,7 +125,7 @@ class DiffExtension extends AbstractExtension
      *
      * @param array<array{type: string, value: string}> $diff
      */
-    private function renderDiff(array $diff, string $mode, ?string $cssClass): string
+    private function renderDiff(array $diff, string $mode): string
     {
         $result = '';
 
@@ -131,14 +138,12 @@ class DiffExtension extends AbstractExtension
                     break;
                 case 'added':
                     if ('new' === $mode) {
-                        $class = $cssClass ?? 'diff-added';
-                        $result .= '<ins class="'.$class.'">'.$value.'</ins>';
+                        $result .= '<ins class="diff-added">'.$value.'</ins>';
                     }
                     break;
                 case 'removed':
                     if ('old' === $mode) {
-                        $class = $cssClass ?? 'diff-removed';
-                        $result .= '<del class="'.$class.'">'.$value.'</del>';
+                        $result .= '<del class="diff-removed">'.$value.'</del>';
                     }
                     break;
             }
