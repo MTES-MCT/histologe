@@ -56,7 +56,7 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
 
 openPhotoAlbumAddEventListeners();
 
-function openPhotoAlbumAddEventListeners() {
+export function openPhotoAlbumAddEventListeners() {
   document?.querySelectorAll('.open-photo-album')?.forEach((btn) => {
     const swipeId = btn.getAttribute('data-id');
     btn.addEventListeners('click touchdown', () => {
@@ -66,79 +66,79 @@ function openPhotoAlbumAddEventListeners() {
       });
     });
   });
+
+  /* global histoPhotoIds */
+  document?.querySelectorAll('.photos-album-btn-close')?.forEach((btn) => {
+    btn.addEventListeners('click touchdown', () => {
+      document?.querySelectorAll('.photos-album')?.forEach((element) => {
+        element.classList?.add('fr-hidden');
+      });
+    });
+  });
+  document?.querySelectorAll('.photos-album-swipe')?.forEach((btn) => {
+    const swipeDirection = Number(btn.getAttribute('data-direction'));
+
+    btn.addEventListeners('click touchdown', () => {
+      let currentId = null;
+      document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach((element) => {
+        currentId = Number(element.getAttribute('data-id'));
+      });
+      let newIndex = histoPhotoIds.indexOf(currentId);
+      newIndex += Number(swipeDirection);
+      if (newIndex < 0) {
+        newIndex = histoPhotoIds.length - 1;
+      }
+      if (newIndex > histoPhotoIds.length - 1) {
+        newIndex = 0;
+      }
+      displayPhotoAlbum(histoPhotoIds[newIndex]);
+    });
+  });
+  document?.querySelectorAll('.photos-album-main-btn-edit')?.forEach((btn) => {
+    btn.addEventListeners('click touchdown', () => {
+      const photoId = btn.dataset.id;
+      btn.classList?.add('fr-hidden');
+      document
+        ?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')
+        ?.classList?.remove('fr-hidden');
+    });
+  });
+  document?.querySelectorAll('.photo-album-rotate-left-btn')?.forEach((btn) => {
+    btn.addEventListeners('click touchdown', () => {
+      const photoId = btn.dataset.id;
+      rotatePhotoAlbumImage(photoId, 'left');
+    });
+  });
+  document?.querySelectorAll('.photo-album-rotate-right-btn')?.forEach((btn) => {
+    btn.addEventListeners('click touchdown', () => {
+      const photoId = btn.dataset.id;
+      rotatePhotoAlbumImage(photoId, 'right');
+    });
+  });
+  document?.querySelectorAll('.photo-album-save-rotation')?.forEach((btn) => {
+    btn.addEventListeners('click touchdown', () => {
+      const photoId = btn.dataset.id;
+      const rotate = document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset
+        .rotate;
+      const action = btn.dataset.action;
+      const form = document.querySelector('#form-save-file-rotation');
+      form.querySelector('input[name="rotate"]').value = rotate;
+      form.action = action;
+      form.submit();
+    });
+  });
+  document?.querySelectorAll('.photos-album-btn-zoom-in')?.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setZoom(btn.dataset.id, true);
+    });
+  });
+
+  document?.querySelectorAll('.photos-album-btn-zoom-out')?.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setZoom(btn.dataset.id, false);
+    });
+  });
 }
-
-/* global histoPhotoIds */
-document?.querySelectorAll('.photos-album-btn-close')?.forEach((btn) => {
-  btn.addEventListeners('click touchdown', () => {
-    document?.querySelectorAll('.photos-album')?.forEach((element) => {
-      element.classList?.add('fr-hidden');
-    });
-  });
-});
-document?.querySelectorAll('.photos-album-swipe')?.forEach((btn) => {
-  const swipeDirection = Number(btn.getAttribute('data-direction'));
-
-  btn.addEventListeners('click touchdown', () => {
-    let currentId = null;
-    document?.querySelectorAll('.photos-album-image-item.loop-current')?.forEach((element) => {
-      currentId = Number(element.getAttribute('data-id'));
-    });
-    let newIndex = histoPhotoIds.indexOf(currentId);
-    newIndex += Number(swipeDirection);
-    if (newIndex < 0) {
-      newIndex = histoPhotoIds.length - 1;
-    }
-    if (newIndex > histoPhotoIds.length - 1) {
-      newIndex = 0;
-    }
-    displayPhotoAlbum(histoPhotoIds[newIndex]);
-  });
-});
-document?.querySelectorAll('.photos-album-main-btn-edit')?.forEach((btn) => {
-  btn.addEventListeners('click touchdown', () => {
-    const photoId = btn.dataset.id;
-    btn.classList?.add('fr-hidden');
-    document
-      ?.querySelector('.photos-album-list-btn-edit[data-id="' + photoId + '"]')
-      ?.classList?.remove('fr-hidden');
-  });
-});
-document?.querySelectorAll('.photo-album-rotate-left-btn')?.forEach((btn) => {
-  btn.addEventListeners('click touchdown', () => {
-    const photoId = btn.dataset.id;
-    rotatePhotoAlbumImage(photoId, 'left');
-  });
-});
-document?.querySelectorAll('.photo-album-rotate-right-btn')?.forEach((btn) => {
-  btn.addEventListeners('click touchdown', () => {
-    const photoId = btn.dataset.id;
-    rotatePhotoAlbumImage(photoId, 'right');
-  });
-});
-document?.querySelectorAll('.photo-album-save-rotation')?.forEach((btn) => {
-  btn.addEventListeners('click touchdown', () => {
-    const photoId = btn.dataset.id;
-    const rotate = document.querySelector('.photos-album-image[data-id="' + photoId + '"]').dataset
-      .rotate;
-    const action = btn.dataset.action;
-    const form = document.querySelector('#form-save-file-rotation');
-    form.querySelector('input[name="rotate"]').value = rotate;
-    form.action = action;
-    form.submit();
-  });
-});
-document?.querySelectorAll('.photos-album-btn-zoom-in')?.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    setZoom(btn.dataset.id, true);
-  });
-});
-
-document?.querySelectorAll('.photos-album-btn-zoom-out')?.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    setZoom(btn.dataset.id, false);
-  });
-});
 
 const setZoom = (photoId, isZoomIn) => {
   const img = document.querySelector('.photos-album-image[data-id="' + photoId + '"]');

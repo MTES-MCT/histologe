@@ -9,6 +9,13 @@ document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach((modalVisi
   initializeUploadModal('#' + modalVisiteUpload.id, true);
 });
 
+export function initializeVisitesUploadFilesModal() {
+  document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach((modalVisiteUpload) => {
+    initializeUploadModal('#' + modalVisiteUpload.id, true);
+  });
+}
+initializeVisitesUploadFilesModal();
+
 function initializeUploadModal(modalSelector, isModalUploadVisite) {
   const modal = document?.querySelector(modalSelector);
   if (!modal) return;

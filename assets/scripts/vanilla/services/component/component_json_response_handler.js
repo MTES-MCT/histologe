@@ -2,6 +2,10 @@ import { applyFilter } from '../../controllers/back_signalement_view/toggle-suiv
 import { reloadTinyMCE } from '../form/form_helper';
 import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
 import { initSearchCheckboxWidgets } from '../component/component_search_checkbox.js';
+import { initializeVisitesUploadFilesModal } from '../../controllers/back_signalement_view/form_upload_documents.js';
+import { openPhotoAlbumAddEventListeners } from '../../controllers/back_signalement_view/back_view_signalement.js';
+import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file.js';
+import { btnSignalementFileDeleteAddEventListeners } from '../file/file_delete.js';
 
 const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
@@ -60,6 +64,20 @@ export function jsonResponseProcess(response) {
           case 'initSearchCheckboxWidgets':
             initSearchCheckboxWidgets();
             break;
+          case 'initializeVisitesUploadFilesModal':
+            initializeVisitesUploadFilesModal();
+            break;
+          case 'openPhotoAlbumAddEventListeners':
+            openPhotoAlbumAddEventListeners();
+            break;
+          case 'btnSignalementFileEditAddEventListeners':
+            btnSignalementFileEditAddEventListeners();
+            break;
+          case 'btnSignalementFileDeleteAddEventListeners':
+            btnSignalementFileDeleteAddEventListeners();
+            break;
+          default:
+            console.warn(`Unknown function name: ${fn.name}`);
         }
       });
     }

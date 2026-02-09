@@ -152,7 +152,6 @@
                                     data-file-path="{{ sign_url(path('show_file', {uuid: photo.uuid, variant: 'thumb'})) }}"
                                     data-file-filter="{{ filesFilter }}"
                                     data-documentType="{{ photo.documentType.name }}" 
-                                    data-desodreSlug="{{ photo.desordreSlug }}"
                                     data-createdAt="{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}"
                                     data-partner-name="{{ photo.partner ? photo.partner.nom ~ ' - ' : '' }}"
                                     data-user-name="{{ photo.uploadedBy.nomComplet ?? 'N/R' }}"

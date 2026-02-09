@@ -31,50 +31,6 @@ function updateOperatorExternFieldRequirement(partnerSelect) {
     operatorExternField.removeAttribute('required');
   }
 }
-document.addEventListener(
-  'change',
-  (event) => {
-    if (event.target.classList.contains('add-fields-if-past-date')) {
-      const dateField = event.target;
-      addFieldsIfPastDate(dateField);
-      return;
-    }
-
-    if (event.target.classList.contains('visite-partner-select')) {
-      const partnerSelect = event.target;
-      updateOperatorExternFieldRequirement(partnerSelect);
-      return;
-    }
-
-    const checkField = event.target.closest('input[name^="visite-"][name$="[visiteDone]"]');
-    if (!checkField) {
-      return;
-    }
-
-    const visiteForm = checkField.closest('form');
-    const fieldsetConcludeProcedure = visiteForm.querySelector('#fieldset-conclude-procedure');
-    const isVisiteDone = checkField.value === '1';
-
-    if (isVisiteDone) {
-      fieldsetConcludeProcedure.classList.remove('fr-hidden');
-    } else {
-      fieldsetConcludeProcedure.classList.add('fr-hidden');
-      const selectConcludeProcedure = visiteForm.querySelector(
-        'select[name$="[concludeProcedure]"]'
-      );
-      if (selectConcludeProcedure) {
-        selectConcludeProcedure.value = '';
-      }
-    }
-  },
-  true
-);
-document.querySelectorAll('.add-fields-if-past-date').forEach((dateField) => {
-  dateField.dispatchEvent(new Event('change'));
-});
-document.querySelectorAll('.visite-partner-select').forEach((partnerSelect) => {
-  partnerSelect.dispatchEvent(new Event('change'));
-});
 
 function histoCheckVisiteForms(formType, visiteForm) {
   if (!visiteForm) {
@@ -185,64 +141,101 @@ function histoCheckVisiteForms(formType, visiteForm) {
   return isValid;
 }
 
-document.addEventListener(
-  'submit',
-  (event) => {
-    const cancelVisiteForm = event.target.closest('form[name="signalement-cancel-visite"]');
-    const visiteForm = event.target.closest(
-      '.signalement-add-visite, .signalement-reschedule-visite, .signalement-confirm-visite'
-    );
-
-    if (!cancelVisiteForm && !visiteForm) {
-      return;
-    }
-
-    // ---- CANCEL VISITE ----
-    if (cancelVisiteForm) {
-      const idIntervention = cancelVisiteForm.getAttribute('data-intervention-id');
-      const tinyMCE = tinymce.get('visite-cancel[details]-' + idIntervention);
-      const textContent = tinyMCE ? tinyMCE.getContent() : '';
-      const textareaDetailsError = cancelVisiteForm.querySelector(
-        '#signalement-cancel-visite-details-error-' + idIntervention
-      );
-
-      if (textContent === '') {
-        textareaDetailsError.classList.remove('fr-hidden');
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        return;
-      }
-
-      textareaDetailsError.classList.add('fr-hidden');
-      return;
-    }
-
-    // ---- VISITE FORMS ----
-    if (visiteForm) {
-      const match = visiteForm.className.match(/signalement-(add|reschedule|confirm)-visite/);
-      if (!match) return;
-
-      const formType = match[1];
-
-      if (!histoCheckVisiteForms(formType, visiteForm)) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        return;
-      }
-
-      // uniquement ici si formulaire valide
-      const submitButton = visiteForm.querySelector('button[type=submit]');
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.textContent = 'En cours';
-      }
-    }
-  },
-  true
-);
-
 const modalAddVisite = document?.querySelector('#add-visite-modal');
 if (modalAddVisite) {
+  document.addEventListener(
+    'change',
+    (event) => {
+      if (event.target.classList.contains('add-fields-if-past-date')) {
+        const dateField = event.target;
+        addFieldsIfPastDate(dateField);
+        return;
+      }
+
+      if (event.target.classList.contains('visite-partner-select')) {
+        const partnerSelect = event.target;
+        updateOperatorExternFieldRequirement(partnerSelect);
+        return;
+      }
+
+      const checkField = event.target.closest('input[name^="visite-"][name$="[visiteDone]"]');
+      if (!checkField) {
+        return;
+      }
+
+      const visiteForm = checkField.closest('form');
+      const fieldsetConcludeProcedure = visiteForm.querySelector('#fieldset-conclude-procedure');
+      const isVisiteDone = checkField.value === '1';
+
+      if (isVisiteDone) {
+        fieldsetConcludeProcedure.classList.remove('fr-hidden');
+      } else {
+        fieldsetConcludeProcedure.classList.add('fr-hidden');
+        const selectConcludeProcedure = visiteForm.querySelector(
+          'select[name$="[concludeProcedure]"]'
+        );
+        if (selectConcludeProcedure) {
+          selectConcludeProcedure.value = '';
+        }
+      }
+    },
+    true
+  );
+  document.addEventListener(
+    'submit',
+    (event) => {
+      const cancelVisiteForm = event.target.closest('form[name="signalement-cancel-visite"]');
+      const visiteForm = event.target.closest(
+        '.signalement-add-visite, .signalement-reschedule-visite, .signalement-confirm-visite'
+      );
+
+      if (!cancelVisiteForm && !visiteForm) {
+        return;
+      }
+
+      // ---- CANCEL VISITE ----
+      if (cancelVisiteForm) {
+        const idIntervention = cancelVisiteForm.getAttribute('data-intervention-id');
+        const tinyMCE = tinymce.get('visite-cancel[details]-' + idIntervention);
+        const textContent = tinyMCE ? tinyMCE.getContent() : '';
+        const textareaDetailsError = cancelVisiteForm.querySelector(
+          '#signalement-cancel-visite-details-error-' + idIntervention
+        );
+
+        if (textContent === '') {
+          textareaDetailsError.classList.remove('fr-hidden');
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+
+        textareaDetailsError.classList.add('fr-hidden');
+        return;
+      }
+
+      // ---- VISITE FORMS ----
+      if (visiteForm) {
+        const match = visiteForm.className.match(/signalement-(add|reschedule|confirm)-visite/);
+        if (!match) return;
+
+        const formType = match[1];
+
+        if (!histoCheckVisiteForms(formType, visiteForm)) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+
+        // uniquement ici si formulaire valide
+        const submitButton = visiteForm.querySelector('button[type=submit]');
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = 'En cours';
+        }
+      }
+    },
+    true
+  );
   modalAddVisite.addEventListener('dsfr.disclose', () => {
     const form = modalAddVisite.querySelector('form');
     if (!form) return;
@@ -275,3 +268,10 @@ if (modalAddVisite) {
     });
   });
 }
+
+document.querySelectorAll('.add-fields-if-past-date').forEach((dateField) => {
+  dateField.dispatchEvent(new Event('change'));
+});
+document.querySelectorAll('.visite-partner-select').forEach((partnerSelect) => {
+  partnerSelect.dispatchEvent(new Event('change'));
+});

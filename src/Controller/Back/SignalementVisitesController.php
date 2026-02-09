@@ -21,6 +21,8 @@ use App\Security\Voter\SignalementVoter;
 use App\Service\Files\FilenameGenerator;
 use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
+use App\Service\Signalement\PhotoHelper;
+use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -76,6 +78,7 @@ class SignalementVisitesController extends AbstractController
         Intervention $intervention,
         InterventionRepository $interventionRepository,
         AffectationRepository $affectationRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
         array $flashMessages,
         bool $closeModalAndReload = true,
     ): Response {
@@ -83,6 +86,8 @@ class SignalementVisitesController extends AbstractController
         $visites = $interventionRepository->getOrderedVisitesForSignalement($signalement);
         $pendingVisites = $interventionRepository->getPendingVisitesForSignalement($signalement);
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
+        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+        $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
 
         $htmlTargetContents = [
             [
@@ -93,12 +98,22 @@ class SignalementVisitesController extends AbstractController
                         'visites' => $visites,
                         'partnersCanVisite' => $partnerVisite,
                         'pendingVisites' => $pendingVisites,
+                        'criteres' => $infoDesordres['criteres'],
                     ]),
             ],
             [
                 'target' => '#list-suivis',
                 'content' => $this->renderView('back/signalement/view/suivis.html.twig',
                     ['signalement' => $signalement]
+                ),
+            ],
+            [
+                'target' => '#photos-album',
+                'content' => $this->renderView('back/signalement/view/photos-album.html.twig',
+                    [
+                        'signalement' => $signalement, 
+                        'allPhotosOrdered' => $allPhotosOrdered
+                    ]
                 ),
             ],
         ];
@@ -109,14 +124,24 @@ class SignalementVisitesController extends AbstractController
             ],
             [
                 'name' => 'attachAjaxFormHandlers',
-                'args' => [],
             ],
             [
                 'name' => 'initSearchCheckboxWidgets',
-                'args' => [],
             ],
             [
                 'name' => 'applyFilter',
+            ],
+            [
+                'name' => 'initializeVisitesUploadFilesModal',
+            ],
+            [
+                'name' => 'openPhotoAlbumAddEventListeners',
+            ],
+            [
+                'name' => 'btnSignalementFileEditAddEventListeners',
+            ],
+            [
+                'name' => 'btnSignalementFileDeleteAddEventListeners',
             ],
         ];
 
@@ -142,6 +167,7 @@ class SignalementVisitesController extends AbstractController
         TimezoneProvider $timezoneProvider,
         InterventionRepository $interventionRepository,
         AffectationRepository $affectationRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_ADD_VISITE, $signalement);
 
@@ -198,7 +224,7 @@ class SignalementVisitesController extends AbstractController
                 );
             }
 
-            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages);
+            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor,$flashMessages);
         } else {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'enregistrement de la visite, veuillez réessayer.'];
         }
@@ -213,6 +239,7 @@ class SignalementVisitesController extends AbstractController
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
         AffectationRepository $affectationRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         $requestData = $request->request->all();
         $requestCancelData = RequestDataExtractor::getArray($requestData, 'visite-cancel');
@@ -228,7 +255,7 @@ class SignalementVisitesController extends AbstractController
         if ($intervention->hasScheduledDatePassed()) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Cette visite est déja passée et ne peut pas être annulée, merci de la noter comme non-effectuée.'];
 
-            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages);
+            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor,$flashMessages);
         }
 
         $errorRedirect = $this->getSecurityResponse(
@@ -251,7 +278,7 @@ class SignalementVisitesController extends AbstractController
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'annulation de la visite.'];
         }
 
-        return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages);
+            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor,$flashMessages);
     }
 
     /**
@@ -269,6 +296,7 @@ class SignalementVisitesController extends AbstractController
         ValidatorInterface $validator,
         TimezoneProvider $timezoneProvider,
         AffectationRepository $affectationRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         $requestData = $request->request->all();
         $requestRescheduleData = RequestDataExtractor::getArray($requestData, 'visite-reschedule');
@@ -333,7 +361,7 @@ class SignalementVisitesController extends AbstractController
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de la modification de la visite, veuillez réessayer.'];
         }
 
-        return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages);
+            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor,$flashMessages);
     }
 
     /**
@@ -349,6 +377,7 @@ class SignalementVisitesController extends AbstractController
         FilenameGenerator $filenameGenerator,
         AffectationRepository $affectationRepository,
         ValidatorInterface $validator,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         $requestData = $request->request->all();
         $requestConfirmData = RequestDataExtractor::getArray($requestData, 'visite-confirm');
@@ -393,11 +422,11 @@ class SignalementVisitesController extends AbstractController
         if ($interventionManager->confirmVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getTerritory()))) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
 
-            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages);
+            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor,$flashMessages);
         }
         $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de la conclusion de la visite, veuillez réessayer.'];
 
-        return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages, false);
+        return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor,$flashMessages, false);
     }
 
     /**
@@ -413,6 +442,7 @@ class SignalementVisitesController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
         AffectationRepository $affectationRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         $requestData = $request->request->all();
         $requestEditData = RequestDataExtractor::getArray($requestData, 'visite-edit');
@@ -460,11 +490,11 @@ class SignalementVisitesController extends AbstractController
                 $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             ), InterventionEditedEvent::NAME);
 
-            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages);
+            return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor, $flashMessages);
         }
         $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de la modification de la visite, veuillez réessayer.'];
 
-        return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages, false);
+        return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor,$flashMessages, false);
     }
 
     #[Route('/visites/{intervention}/delete-rapport', name: 'back_signalement_visite_deleterapport')]
@@ -475,6 +505,7 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
+        SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         if (!$intervention->getRapportDeVisite()) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => "Ce rapport n'existe pas."];
@@ -497,7 +528,7 @@ class SignalementVisitesController extends AbstractController
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Document supprimé', 'message' => 'Le rapport de visite a bien été supprimé.'];
 
-        return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $flashMessages);
+        return $this->buildVisitesAjaxResponse($intervention, $interventionRepository, $affectationRepository, $signalementDesordresProcessor, $flashMessages);
     }
 
     private function validateRequest(VisiteRequest $visiteRequest, ValidatorInterface $validator): string
