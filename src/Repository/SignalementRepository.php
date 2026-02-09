@@ -2477,8 +2477,26 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $userPartners->toArray());
         }
 
-        if (!empty($searchSignalementInjonction->getInjonctionAvecAide())) {
-            if ('oui' === $searchSignalementInjonction->getInjonctionAvecAide()) {
+        if (!empty($searchSignalementInjonction->getReponseBailleur())) {
+            if ('aucune' === $searchSignalementInjonction->getReponseBailleur()) {
+                $queryBuilder->andWhere(
+                    $queryBuilder->expr()->not(
+                        $queryBuilder->expr()->exists(
+                            $this->createQueryBuilder('s3')
+                                ->select('1')
+                                ->join('s3.suivis', 'su3')
+                                ->where('s3 = s')
+                                ->andWhere('su3.category IN (:aideCategories)')
+                                ->getDQL()
+                        )
+                    )
+                );
+
+                $queryBuilder->setParameter(
+                    'aideCategories',
+                    SuiviCategory::injonctionBailleurReponseCategories()
+                );
+            } else {
                 $queryBuilder->andWhere(
                     $queryBuilder->expr()->exists(
                         $this->createQueryBuilder('s2')
@@ -2489,22 +2507,8 @@ class SignalementRepository extends ServiceEntityRepository
                             ->getDQL()
                     )
                 );
-            } else {
-                $queryBuilder->andWhere(
-                    $queryBuilder->expr()->not(
-                        $queryBuilder->expr()->exists(
-                            $this->createQueryBuilder('s3')
-                                ->select('1')
-                                ->join('s3.suivis', 'su3')
-                                ->where('s3 = s')
-                                ->andWhere('su3.category = :aideCategory')
-                                ->getDQL()
-                        )
-                    )
-                );
+                $queryBuilder->setParameter('aideCategory', SuiviCategory::tryFrom($searchSignalementInjonction->getReponseBailleur()));
             }
-
-            $queryBuilder->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE);
         }
 
         if (!empty($searchSignalementInjonction->getOrderType())) {

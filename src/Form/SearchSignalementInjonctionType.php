@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\SuiviCategory;
 use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -32,14 +33,16 @@ class SearchSignalementInjonctionType extends AbstractType
             $builder->add('territoire', TerritoryChoiceType::class);
         }
 
-        $builder->add('injonctionAvecAide', ChoiceType::class, [
+        $builder->add('reponseBailleur', ChoiceType::class, [
             'choices' => [
-                'Oui' => 'oui',
-                'Non' => 'non',
+                SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI->labelReponseBailleur() => SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI->value,
+                SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE->labelReponseBailleur() => SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE->value,
+                SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES->labelReponseBailleur() => SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES->value,
+                'Aucune réponse' => 'aucune',
             ],
             'required' => false,
             'placeholder' => 'Tous',
-            'label' => 'Injonction avec aide',
+            'label' => 'Réponse bailleur',
         ]);
 
         $builder->add('orderType', ChoiceType::class, [
