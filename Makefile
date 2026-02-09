@@ -266,7 +266,7 @@ tools-logs: ## [Tools] Show container-tools logs
 	@$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) logs --follow
 
 matomo-disable-ssl: ## Disable ssl use for matomo local instance
-	@docker exec -it signal_logement-matomo_app-1 sh /var/www/html/update-config-ini.sh
+	@docker exec -it histologe-matomo_app-1 sh /var/www/html/update-config-ini.sh
 
 scalingo-update-cli: ## Install/Update Scalingo CLI
 	@bash -l -c 'curl -O https://cli-dl.scalingo.com/install && bash install && scalingo --version'

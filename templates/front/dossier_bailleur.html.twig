@@ -4,7 +4,15 @@
 
 {% block body %}
 
-<main class="fr-container fr-pb-5w fr-pt-5w" id="content">
+<main class="fr-container fr-pb-5w fr-pt-5w" id="content"
+	data-matomo-scrollable-event-element="window"
+	data-matomo-scrollable-event-category="Espace bailleur"
+	data-matomo-scrollable-event-action="scroll"
+	data-matomo-scrollable-event-name="Page"
+	data-matomo-scrollable-event-value="50"
+	data-matomo-timer-event-category="Suivre mon signalement"
+	data-matomo-timer-event-action="timer"
+	data-matomo-timer-event-name="40">
 	<div class="fr-grid-row fr-grid-row--gutters">
 
 		<div class="fr-col-12 fr-col-md-12 fr-background-alt--blue-france">
@@ -78,12 +86,10 @@
 				<h2 class="title-blue-france fr-mb-1w">Déclaration</h2>
 				{% if signalement.debutDesordres is not null %}
 					<ul>
-						<li>Les désordres ont commencé il y a : 
-						{{ signalement.debutDesordres.label}}
-						</li>
-					{% if signalement.hasSeenDesordres is not null %}
-						<li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
-					{% endif %}
+						<li>Les désordres ont commencé il y a : {{ signalement.debutDesordres.label}}</li>
+						{% if signalement.hasSeenDesordres is not null %}
+							<li>Désordres constatés: {{ signalement.hasSeenDesordres ? 'Oui' : 'Non' }}</li>
+						{% endif %}
 					</ul>
 				{% endif %}
 
@@ -144,12 +150,10 @@
 								</div>
 								<div class="fr-col-12">
 									<a href="{{ sign_url(path('show_file', {uuid: doc.uuid})) }}"
-									class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-eye-fill img-box"
-									title="Afficher le document {{ doc.getDisplayFilename }} - ouvre une nouvelle fenêtre"
-									target="_blank"
-									rel="noopener">
-										Afficher
-									</a>
+										class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-eye-fill img-box"
+										title="Afficher le document {{ doc.getDisplayFilename }} - ouvre une nouvelle fenêtre"
+										target="_blank"
+										rel="noopener">Afficher</a>
 								</div>
 							</div>
 						</div>
@@ -200,7 +204,11 @@
 				<div class="fr-callout">
 					<h3 class="fr-callout__title">Quelles aides pour rénover mon logement ?</h3>
 					<p class="fr-callout__text">En tant que propriétaire, vous pouvez bénéficier d'aides pour rénover votre logement. Estimez vos aides grâce au simulateur France Rénov' en cliquant sur le bouton ci-dessous.</p>
-					<a href="https://mesaidesreno.beta.gouv.fr/simulation" target="_blank" title="Mes Aides Réno - Ouvre une nouvelle fenêtre" class="fr-btn">Accéder au simulateur</a>
+					<a href="https://mesaidesreno.beta.gouv.fr/simulation" target="_blank" title="Mes Aides Réno - Ouvre une nouvelle fenêtre" class="fr-btn"
+						data-matomo-clickable-event-category="Espace bailleur"
+						data-matomo-clickable-event-action="clickLink"
+						data-matomo-clickable-event-name="Accéder au simulateur"
+						>Accéder au simulateur</a>
 				</div>
 			</div>
 		</div>
@@ -213,7 +221,21 @@
 						<li>Si vous acceptez de remédier aux désordres, <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">vous devrez signer une lettre d’engagement à réalisation des travaux</a>. Un suivi sera opéré mensuellement avec les deux parties afin de vérifier l’avancement.</li>
 						<li>En cas de nécessité vous pourrez mettre un terme à votre engagement et le dossier sera automatiquement transmis aux autorités compétentes.</li>
 						<li>Les éléments constitutifs d’un logement décent sont définis par la loi et peuvent être consultés ici : <a href="{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/" target="_blank" rel="noopener external" title="Signal Logement : procédures de l'habitat indigne - Ouvre une nouvelle fenêtre">{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/</a></li>
-						<li>Afin d’améliorer les rapports locatifs, la <a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000509310/2025-01-01/" target="_blank" rel="noopener external" title="legifrance.gouv.fr - Ouvre une nouvelle fenêtre">loi n°89-462 du 6 juillet 1989 </a>dispose quelles réparations incombent au locataire d’un logement et lesquelles incombent au propriétaire. Vous pouvez consulter le guide ici : <a href="{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/" target="_blank" rel="noopener external" title="Signal Logement : qui paye quoi - Ouvre une nouvelle fenêtre">{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/</a></li>
+						<li>Afin d’améliorer les rapports locatifs, la 
+							<a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000509310/2025-01-01/"
+								target="_blank" rel="noopener external" title="legifrance.gouv.fr - Ouvre une nouvelle fenêtre"
+								data-matomo-clickable-event-category="Espace bailleur"
+								data-matomo-clickable-event-action="clickLink"
+								data-matomo-clickable-event-name="loi n°89-462 du 6 juillet 1989"
+								>loi n°89-462 du 6 juillet 1989</a>
+							dispose quelles réparations incombent au locataire d’un logement et lesquelles incombent au propriétaire. Vous pouvez consulter le guide ici : 
+							<a href="{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/"
+								target="_blank" rel="noopener external" title="Signal Logement : qui paye quoi - Ouvre une nouvelle fenêtre"
+								data-matomo-clickable-event-category="Espace bailleur"
+								data-matomo-clickable-event-action="clickLink"
+								data-matomo-clickable-event-name="blog/entretien-logement-qui-paye-quoi"
+								>{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/</a>
+						</li>
 					</ul>
 				</p>
 			</div>
@@ -232,25 +254,42 @@
 									<br>
 									Par ce choix vous vous engagez à remédier dans les meilleurs délais aux désordres déclarés afin de remettre le logement loué aux normes.
 								</p>
-								<iframe class="fr-mt-3w" src="{{ sign_url(path('show_file', {uuid: engagementTravauxPdf.uuid})) }}" type="application/pdf" width="100%" height="400px" id="engagement_travaux_bailleur_pdf"></iframe>
+								<iframe class="fr-mt-3w" src="{{ sign_url(path('show_file', {uuid: engagementTravauxPdf.uuid})) }}" type="application/pdf" width="100%" height="400px" id="engagement_travaux_bailleur_pdf"
+									data-matomo-scrollable-event-category="Espace bailleur"
+									data-matomo-scrollable-event-action="scroll"
+									data-matomo-scrollable-event-name="PDF existant"
+									data-matomo-scrollable-event-value="50"
+									></iframe>
 								<a href="{{ sign_url(path('show_file', {uuid: engagementTravauxPdf.uuid})) }}" 
 									class="fr-btn fr-btn--icon-left fr-icon-download-line fr-mt-3w" 
 									download 
-									title="Télécharger le contrat d'engagement - Téléchargement du fichier">
-									Télécharger le contrat d'engagement
-								</a>
+									title="Télécharger le contrat d'engagement - Téléchargement du fichier"
+									data-matomo-clickable-event-category="Espace bailleur"
+									data-matomo-clickable-event-action="clickFile"
+									data-matomo-clickable-event-name="Télécharger le contrat d'engagement"
+									>Télécharger le contrat d'engagement</a>
 							{% else %}
 								<h4 class="fr-h6">Je m'engage à résoudre les désordres</h4>
 								<p class="fr-mt-5w">{{signalement.prenomProprio}} {{signalement.nomProprio}} le {{ suiviReponse.createdAt|date('d/m/Y') }}</p>
 								<p>Vous optez pour une résolution amiable avant le déclenchement des contrôles et procédures.<br>
 									Par ce choix <strong>vous vous engagez à remédier dans les meilleurs délais aux désordres</strong> déclarés afin de remettre le logement loué aux normes.<br><br>
-									Pour formaliser votre engagement, merci de <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">télécharger la lettre d'engagement</a>, puis de la compléter et de nous l'envoyer.
+									Pour formaliser votre engagement, merci de
+									<a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre"
+										data-matomo-clickable-event-category="Espace bailleur"
+										data-matomo-clickable-event-action="clickFile"
+										data-matomo-clickable-event-name="Télécharger le modèle de lettre d'engagement"
+										>télécharger la lettre d'engagement</a>,
+									puis de la compléter et de nous l'envoyer.
 								</p>
 							{% endif %}
 							<p>
 								Un suivi sera réalisé mensuellement. Nous vous invitons à nous faire régulièrement parvenir les justificatifs permettant d’attester de l’avancement des démarches engagées.<br><br>
 								Pour tout envoi de document, merci d'utiliser l'adresse e-mail suivante :<br>
-								<a href="mailto:demarche-acceleree@signal-logement.beta.gouv.fr">demarche-acceleree@signal-logement.beta.gouv.fr</a>
+								<a href="mailto:demarche-acceleree@signal-logement.beta.gouv.fr"
+									data-matomo-clickable-event-category="Espace bailleur"
+									data-matomo-clickable-event-action="clickLink"
+									data-matomo-clickable-event-name="Envoi de mail au service démarche accélérée"
+									>demarche-acceleree@signal-logement.beta.gouv.fr</a>
 							</p>
 						</div>
 
@@ -261,7 +300,11 @@
 						{% if formStopProcedure is not null %}
 							<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_stop_procedure_bailleur_title">Arrêter la procédure</h2>
 							<div class="fr-mt-3w">
-								<button type="button" id="stop-procedure-btn" class="fr-btn fr-btn--secondary">Arrêter la procédure</button>
+								<button type="button" id="stop-procedure-btn" class="fr-btn fr-btn--secondary"
+									data-matomo-clickable-event-category="Espace bailleur"
+									data-matomo-clickable-event-action="clickButton"
+									data-matomo-clickable-event-name="Arrêter la procédure"
+									>Arrêter la procédure</button>
 							</div>
 							<div id="stop-procedure-form-container" class="fr-hidden fr-mt-2w">
 								{{ form(formStopProcedure) }}
@@ -273,7 +316,12 @@
 					    {{ form_start(form) }}
 						{{ form_errors(form) }}
 						{{ form_row(form.reponse) }}
-						<iframe class="fr-mb-3w" src="{{ path('front_engagement_travaux_bailleur') }}" type="application/pdf" width="100%" height="400px" id="reponse_injonction_bailleur_engagement_travaux"></iframe>
+						<iframe class="fr-mb-3w" src="{{ path('front_engagement_travaux_bailleur') }}" type="application/pdf" width="100%" height="400px" id="reponse_injonction_bailleur_engagement_travaux"
+							data-matomo-scrollable-event-category="Espace bailleur"
+							data-matomo-scrollable-event-action="scroll"
+							data-matomo-scrollable-event-name="Modèle PDF"
+							data-matomo-scrollable-event-value="50"
+							></iframe>
 						{{ form_row(form.description) }}
 						{{ form_end(form) }}
 				{% endif %}

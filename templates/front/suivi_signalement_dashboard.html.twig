@@ -4,7 +4,15 @@
 
 {% block body %}
 
-<main class="fr-container fr-pb-5w" id="content">
+<main class="fr-container fr-pb-5w" id="content"
+	data-matomo-scrollable-event-element="window"
+	data-matomo-scrollable-event-category="Suivre mon signalement"
+	data-matomo-scrollable-event-action="scroll"
+	data-matomo-scrollable-event-name="Page"
+	data-matomo-scrollable-event-value="50"
+	data-matomo-timer-event-category="Suivre mon signalement"
+	data-matomo-timer-event-action="timer"
+	data-matomo-timer-event-name="40">
 	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
 		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
 		<div class="fr-collapse" id="breadcrumb-1">
@@ -30,9 +38,11 @@
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement refusé</p>           
 							</div>
 							<h3 class="fr-tile__title">
-								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
-									<span class="fr-hidden">Signalement refusé</span>
-								</a>
+								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}"
+									data-matomo-clickable-event-category="Suivre mon signalement"
+									data-matomo-clickable-event-action="clickLink"
+									data-matomo-clickable-event-name="Signalement fermé"
+									><span class="fr-hidden">Signalement fermé</span></a>
 							</h3>  
 						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED and signalement.hasSuiviUsagerPostCloture %}
 							<p class="fr-tile__detail">Votre message suite à la clôture de votre dossier a bien été envoyé. Vous ne pouvez désormais plus envoyer de messages.</p>            
@@ -40,9 +50,11 @@
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement fermé</p>           
 							</div>
 							<h3 class="fr-tile__title">
-								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
-									<span class="fr-hidden">Signalement fermé</span>
-								</a>
+								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}"
+									data-matomo-clickable-event-category="Suivre mon signalement"
+									data-matomo-clickable-event-action="clickLink"
+									data-matomo-clickable-event-name="Signalement fermé"
+									><span class="fr-hidden">Signalement fermé</span></a>
 							</h3>  
 						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED and date(signalement.closedAt) < date('-30days') %}
 							<p class="fr-tile__detail">Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.</p>            
@@ -50,9 +62,11 @@
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement fermé</p>           
 							</div> 
 							<h3 class="fr-tile__title">
-								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
-									<span class="fr-hidden">Signalement fermé</span>
-								</a>
+								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}"
+									data-matomo-clickable-event-category="Suivre mon signalement"
+									data-matomo-clickable-event-action="clickLink"
+									data-matomo-clickable-event-name="Signalement fermé"
+									><span class="fr-hidden">Signalement fermé</span></a>
 							</h3>  
 						{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').ARCHIVED %}
 							<p class="fr-tile__detail">Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.</p>            
@@ -60,16 +74,20 @@
 								<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--error">Signalement archivé</p>           
 							</div>
 							<h3 class="fr-tile__title">
-								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
-									<span class="fr-hidden">Signalement archivé</span>
-								</a>
+								<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}"
+									data-matomo-clickable-event-category="Suivre mon signalement"
+									data-matomo-clickable-event-action="clickLink"
+									data-matomo-clickable-event-name="Signalement archivé"
+									><span class="fr-hidden">Signalement archivé</span></a>
 							</h3>
 						{% else %}
 							{% if suiviCategory %}
 								<h3 class="fr-tile__title">
-									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}{% if suiviCategory.suivi.id %}#suivi_{{suiviCategory.suivi.id}}{% endif %}">
-										{{suiviCategory.title}}
-									</a>
+									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}{% if suiviCategory.suivi.id %}#suivi_{{suiviCategory.suivi.id}}{% endif %}"
+										data-matomo-clickable-event-category="Suivre mon signalement"
+										data-matomo-clickable-event-action="clickLink"
+										data-matomo-clickable-event-name="{{suiviCategory.title}}"
+										>{{suiviCategory.title}}</a>
 								</h3>
 								<p class="fr-tile__detail">{{suiviCategory.suivi.createdAt|date('d/m/Y')}}</p>
 								<div class="fr-tile__start">
@@ -83,18 +101,22 @@
 							{% else %}
 								{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
 									<p class="fr-tile__detail">
-										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
-											Votre signalement est en attente d'une réponse de votre bailleur.
-										</a>
+										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}"
+											data-matomo-clickable-event-category="Suivre mon signalement"
+											data-matomo-clickable-event-action="clickLink"
+											data-matomo-clickable-event-name="Votre signalement est en attente d'une réponse de votre bailleur."
+											>Votre signalement est en attente d'une réponse de votre bailleur.</a>
 									</p>            
 									<div class="fr-tile__start">
 										<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info">Démarche accelérée</p>           
 									</div>
 								{% else %}
 									<p class="fr-tile__detail">
-										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}">
-											Votre signalement est en cours de validation.
-										</a>
+										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}"
+											data-matomo-clickable-event-category="Suivre mon signalement"
+											data-matomo-clickable-event-action="clickLink"
+											data-matomo-clickable-event-name="Votre signalement est en cours de validation."
+											>Votre signalement est en cours de validation.</a>
 									</p>            
 									<div class="fr-tile__start">
 										<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info">Validation en cours</p>           
@@ -115,25 +137,33 @@
 
 			<ul class="fr-btns-group fr-btns-group--center fr-btns-group--icon-left">
 				<li>
-					<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-mail-line">
-						Accéder à la messagerie
-					</a>
+					<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-mail-line"
+						data-matomo-clickable-event-category="Suivre mon signalement"
+						data-matomo-clickable-event-action="clickButton"
+						data-matomo-clickable-event-name="Accéder à la messagerie"
+						>Accéder à la messagerie</a>
 				</li>
 				<li>
-					<a href="{{ path('front_suivi_signalement_dossier', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-edit-box-line">
-						Voir {% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}et compléter {% endif %}le dossier
-					</a>
+					<a href="{{ path('front_suivi_signalement_dossier', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-edit-box-line"
+						data-matomo-clickable-event-category="Suivre mon signalement"
+						data-matomo-clickable-event-action="clickButton"
+						data-matomo-clickable-event-name="Voir le dossier"
+						>Voir {% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}et compléter {% endif %}le dossier</a>
 				</li>
 				<li>
-					<a href="{{ path('front_suivi_signalement_documents', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-attachment-line">
-						Gérer les documents / photos
-					</a>
+					<a href="{{ path('front_suivi_signalement_documents', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-attachment-line"
+						data-matomo-clickable-event-category="Suivre mon signalement"
+						data-matomo-clickable-event-action="clickButton"
+						data-matomo-clickable-event-name="Gérer les documents / photos"
+						>Gérer les documents / photos</a>
 				</li>
 				{% if signalement.isUsagerAbandonProcedure is not same as true and is_granted('SIGN_USAGER_EDIT', signalement) %}
 					<li>
-						<a href="{{ path('front_suivi_signalement_procedure', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-close-circle-line fr-btn--secondary" >
-							Arrêter la procédure
-						</a>
+						<a href="{{ path('front_suivi_signalement_procedure', {'code': signalement.codeSuivi}) }}" class="fr-btn fr-icon-close-circle-line fr-btn--secondary"
+							data-matomo-clickable-event-category="Suivre mon signalement"
+							data-matomo-clickable-event-action="clickButton"
+							data-matomo-clickable-event-name="Arrêter la procédure"
+							>Arrêter la procédure</a>
 					</li>				
 				{% endif %}
 			</ul>
@@ -159,16 +189,32 @@
 
 			<ul class="fr-list fr-list--none">
 				<li>
-					<a href="{{ sites_faciles_url }}une-question/" class="fr-link" target="_blank" rel="noopener">Questions fréquentes</a>
+					<a href="{{ sites_faciles_url }}une-question/" class="fr-link" target="_blank" rel="noopener"
+						data-matomo-clickable-event-category="Suivre mon signalement"
+						data-matomo-clickable-event-action="clickLink"
+						data-matomo-clickable-event-name="Questions fréquentes"
+						>Questions fréquentes</a>
 				</li>
 				<li>
-					<a href="{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/" class="fr-link" target="_blank" rel="noopener">Entretien du logement, qui paye quoi ?</a>
+					<a href="{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/" class="fr-link" target="_blank" rel="noopener"
+						data-matomo-clickable-event-category="Suivre mon signalement"
+						data-matomo-clickable-event-action="clickLink"
+						data-matomo-clickable-event-name="Entretien du logement, qui paye quoi ?"
+						>Entretien du logement, qui paye quoi ?</a>
 				</li>
 				<li>
-					<a href="{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/" class="fr-link" target="_blank" rel="noopener">Habitat indigne : quelles procédures ?</a>
+					<a href="{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/" class="fr-link" target="_blank" rel="noopener"
+						data-matomo-clickable-event-category="Suivre mon signalement"
+						data-matomo-clickable-event-action="clickLink"
+						data-matomo-clickable-event-name="Habitat indigne : quelles procédures ?"
+						>Habitat indigne : quelles procédures ?</a>
 				</li>
 				<li>
-					<a href="{{ sites_faciles_url }}politique-de-confidentialite/" class="fr-link" target="_blank" rel="noopener">Politique de confidentialité</a>
+					<a href="{{ sites_faciles_url }}politique-de-confidentialite/" class="fr-link" target="_blank" rel="noopener"
+						data-matomo-clickable-event-category="Suivre mon signalement"
+						data-matomo-clickable-event-action="clickLink"
+						data-matomo-clickable-event-name="Politique de confidentialité"
+						>Politique de confidentialité</a>
 				</li>
 			</ul>
 

@@ -110,7 +110,13 @@
             </fieldset>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
             <div class="fr-form-group fr-mt-3v">
-                <button class="fr-btn fr-btn--icon-left fr-icon-check-line" aria-label="Accéder au signalement">
+                <button
+                    class="fr-btn fr-btn--icon-left fr-icon-check-line"
+                    aria-label="Accéder au signalement"
+                    data-matomo-clickable-event-category="Suivre mon signalement"
+                    data-matomo-clickable-event-action="clickButton"
+                    data-matomo-clickable-event-name="Accéder au signalement"
+                    type="submit">
                     {% if app.request.get('_route') == 'show_export_pdf_usager' %}
                         Accéder au fichier
                     {% else %}

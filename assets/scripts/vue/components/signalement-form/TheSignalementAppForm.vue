@@ -234,7 +234,7 @@ export default defineComponent({
           formStore.alreadyExists.updatedAt = requestResponse.updated_at
           formStore.alreadyExists.draftExists = requestResponse.draft_exists
           if (formStore.alreadyExists.type === 'signalement') {
-            matomo.pushEvent('showModal', 'Signalement existant')
+            matomo.pushFormEvent('showModal', 'Signalement existant')
           }
           if (link) {
             formStore.lastButtonClicked = ''
@@ -348,7 +348,7 @@ export default defineComponent({
             // Prétraitement des composants avec repeat
             formStore.currentScreen.components.body = formStore.preprocessScreen(formStore.currentScreen.components.body)
           }
-          matomo.pushEvent('changeScreen', formStore.data.currentStep)
+          matomo.pushFormEvent('changeScreen', formStore.data.currentStep)
         } else {
           if (this.slugCoordonnees.includes(this.nextSlug)) { // TODO à mettre à jour suivant le slug des différents profils
             // on fait un appel API pour charger la suite des questions avant de changer d'écran
