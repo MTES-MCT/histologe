@@ -171,6 +171,30 @@ class SignalementQualificationUpdater
             }
         }
 
+        // In all cases
+        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::NON_DECENCE,
+                QualificationStatus::NON_DECENCE_CHECK
+            );
+        }
+        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::RSD,
+                QualificationStatus::RSD_CHECK
+            );
+        }
+        if (\in_array(Qualification::SALETE->value, $desordrePrecisionsQualifications)) {
+            $this->addOneQualification(
+                $signalement,
+                Qualification::SALETE,
+                QualificationStatus::SALETE_CHECK
+            );
+        }
+
+        // Depending on score
         if (0 <= $score && $score <= 10) {
             $this->addQualificationScore0To10(
                 $signalement,
@@ -180,13 +204,11 @@ class SignalementQualificationUpdater
         } elseif (10 < $score && $score <= 30) {
             $this->addQualificationScore11To30(
                 $signalement,
-                $desordrePrecisionsQualifications,
                 $isInsalubriteObligatoire
             );
         } elseif (30 < $score && $score <= 50) {
             $this->addQualificationScore31To50(
                 $signalement,
-                $desordrePrecisionsQualifications,
             );
         } else {
             $this->addQualificationScore51AndAbove(
@@ -252,20 +274,6 @@ class SignalementQualificationUpdater
         array $desordrePrecisionsQualifications,
         bool $isInsalubriteObligatoire,
     ): void {
-        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::NON_DECENCE,
-                QualificationStatus::NON_DECENCE_CHECK
-            );
-        }
-        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::RSD,
-                QualificationStatus::RSD_CHECK
-            );
-        }
         if ($isInsalubriteObligatoire) {
             $this->addOneQualification(
                 $signalement,
@@ -284,28 +292,10 @@ class SignalementQualificationUpdater
         }
     }
 
-    /**
-     * @param array<mixed> $desordrePrecisionsQualifications
-     */
     private function addQualificationScore11To30(
         Signalement $signalement,
-        array $desordrePrecisionsQualifications,
         bool $isInsalubriteObligatoire,
     ): void {
-        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::NON_DECENCE,
-                QualificationStatus::NON_DECENCE_CHECK
-            );
-        }
-        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::RSD,
-                QualificationStatus::RSD_CHECK
-            );
-        }
         if ($isInsalubriteObligatoire) {
             $this->addOneQualification(
                 $signalement,
@@ -321,27 +311,9 @@ class SignalementQualificationUpdater
         }
     }
 
-    /**
-     * @param array<mixed> $desordrePrecisionsQualifications
-     */
     private function addQualificationScore31To50(
         Signalement $signalement,
-        array $desordrePrecisionsQualifications,
     ): void {
-        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::NON_DECENCE,
-                QualificationStatus::NON_DECENCE_CHECK
-            );
-        }
-        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::RSD,
-                QualificationStatus::RSD_CHECK
-            );
-        }
         $this->addOneQualification(
             $signalement,
             Qualification::INSALUBRITE,
@@ -356,20 +328,6 @@ class SignalementQualificationUpdater
         Signalement $signalement,
         array $desordrePrecisionsQualifications,
     ): void {
-        if (\in_array(Qualification::NON_DECENCE->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::NON_DECENCE,
-                QualificationStatus::NON_DECENCE_CHECK
-            );
-        }
-        if (\in_array(Qualification::RSD->value, $desordrePrecisionsQualifications)) {
-            $this->addOneQualification(
-                $signalement,
-                Qualification::RSD,
-                QualificationStatus::RSD_CHECK
-            );
-        }
         if (\in_array(Qualification::MISE_EN_SECURITE_PERIL->value, $desordrePrecisionsQualifications)) {
             $this->addOneQualification(
                 $signalement,

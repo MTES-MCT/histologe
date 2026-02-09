@@ -6,11 +6,11 @@ parameters:
     - !php/enum App\Entity\Enum\Qualification::NON_DECENCE_ENERGETIQUE
     ARS:
     - !php/enum App\Entity\Enum\Qualification::ARRETES
-    - !php/enum App\Entity\Enum\Qualification::DIOGENE
+    - !php/enum App\Entity\Enum\Qualification::SALETE
     - !php/enum App\Entity\Enum\Qualification::INSALUBRITE
     - !php/enum App\Entity\Enum\Qualification::VISITES
     BAILLEUR_SOCIAL:
-    - !php/enum App\Entity\Enum\Qualification::DIOGENE
+    - !php/enum App\Entity\Enum\Qualification::SALETE
     - !php/enum App\Entity\Enum\Qualification::HEBERGEMENT_RELOGEMENT
     - !php/enum App\Entity\Enum\Qualification::MISE_EN_SECURITE_PERIL
     - !php/enum App\Entity\Enum\Qualification::NON_DECENCE
@@ -25,11 +25,11 @@ parameters:
     CCAS:
     - !php/enum App\Entity\Enum\Qualification::ACCOMPAGNEMENT_SOCIAL
     - !php/enum App\Entity\Enum\Qualification::CONCILIATION
-    - !php/enum App\Entity\Enum\Qualification::DIOGENE
+    - !php/enum App\Entity\Enum\Qualification::SALETE
     COMMUNE_SCHS:
     - !php/enum App\Entity\Enum\Qualification::ARRETES
     - !php/enum App\Entity\Enum\Qualification::CONCILIATION
-    - !php/enum App\Entity\Enum\Qualification::DIOGENE
+    - !php/enum App\Entity\Enum\Qualification::SALETE
     - !php/enum App\Entity\Enum\Qualification::INSALUBRITE
     - !php/enum App\Entity\Enum\Qualification::MISE_EN_SECURITE_PERIL
     - !php/enum App\Entity\Enum\Qualification::NUISIBLES

@@ -8,7 +8,8 @@
 {% elseif procedure.label is same as 'Responsabilité occupant / Assurantiel' %}
     {% set typeBadge = 'blue-ecume' %}
 {% elseif procedure.label is same as 'Non décence'
-    or procedure.label is same as 'Infraction RSD' %}
+    or procedure.label is same as 'Infraction RSD'
+    or procedure.label is same as 'Saleté' %}
     {% set typeBadge = 'info' %}
 {% endif %}
 

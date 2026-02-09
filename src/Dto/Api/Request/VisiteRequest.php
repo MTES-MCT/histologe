@@ -56,6 +56,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
             <li>`MISE_EN_SECURITE_PERIL`</li>
             <li>`LOGEMENT_DECENT`</li>
             <li>`RESPONSABILITE_OCCUPANT_ASSURANTIEL`</li>
+            <li>`SALETE`</li>
             <li>`AUTRE`</li>
         </ul>
         ',
@@ -71,6 +72,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
             'MISE_EN_SECURITE_PERIL',
             'LOGEMENT_DECENT',
             'RESPONSABILITE_OCCUPANT_ASSURANTIEL',
+            'SALETE',
             'AUTRE',
         ],
         multiple: true,

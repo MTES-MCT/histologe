@@ -118,7 +118,8 @@ export const store = {
       { Id: 'insalubrite', Text: 'Insalubrité' },
       { Id: 'mise_en_securite_peril', Text: 'Péril' },
       { Id: 'suroccupation', Text: 'Suroccupation' },
-      { Id: 'assurantiel', Text: 'Assurantiel' }
+      { Id: 'assurantiel', Text: 'Assurantiel' },
+      { Id: 'salete', Text: 'Saleté' }
     ],
     procedureConstateeList: [
       { Id: 'non_decence', Text: 'Non décence' },
@@ -127,6 +128,7 @@ export const store = {
       { Id: 'mise_en_securite_peril', Text: 'Mise en sécurité / Péril' },
       { Id: 'logement_decent', Text: 'Logement décent / Pas d\'infraction' },
       { Id: 'responsabilite_occupant_assurantiel', Text: 'Responsabilité occupant / Assurantiel' },
+      { Id: 'salete', Text: 'Saleté' },
       { Id: 'autre', Text: 'Autre' },
     ],    
     typeDernierSuiviList: [

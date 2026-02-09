@@ -58,7 +58,7 @@ class Partner
                 'CONCILIATION',
                 'CONSIGNATION_AL',
                 'DALO',
-                'DIOGENE',
+                'SALETE',
                 'FSL',
                 'HEBERGEMENT_RELOGEMENT',
                 'INSALUBRITE',
