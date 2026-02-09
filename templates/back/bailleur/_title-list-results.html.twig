@@ -1,2 +1,7 @@
-
-<h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(bailleurs|length, 'bailleur trouvé', 'bailleurs trouvés') }}</h2>
+<div id="list-bailleurs">
+    <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(bailleurs|length, 'bailleur trouvé', 'bailleurs trouvés') }}</h2>
+    <div class="fr-skiplinks">
+        <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+            >Accéder à la pagination</a>
+    </div>
+</div>

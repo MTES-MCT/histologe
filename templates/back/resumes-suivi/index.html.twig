@@ -4,7 +4,7 @@
 
 {% block content %}
     {% if is_granted('ROLE_ADMIN') %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -15,7 +15,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Résumés de suivis</h1>
+                    <h1 class="fr-mb-0">Résumés de suivis</h1>
                     <p>
                         Cette fonctionnalité interroge l'API de l'IA Albert pour générer des résumés de suivis qui vous seront envoyés par e-mail.
                     </p>
@@ -23,7 +23,7 @@
             </div>
         </header>
     </section>
-    <section class="fr-container--fluid fr-p-5v">
+    <section class="fr-container--fluid fr-pt-4v">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-lg-6">
                 {{ form(form) }}

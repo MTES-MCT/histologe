@@ -37,7 +37,7 @@ class ArchivedSignalementControllerTest extends WebTestCase
         $this->client->request('GET', $route);
         $this->assertResponseIsSuccessful();
 
-        $this->assertSelectorTextContains('h2', '3 signalements archivés');
+        $this->assertSelectorTextContains('h2#desc-table', '3 signalements archivés');
     }
 
     public function testReactiveSignalement(): void

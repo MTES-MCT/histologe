@@ -3,7 +3,7 @@
 {% block title %}Configuration des événements clubs{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -15,7 +15,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-col-lg-8 fr-text--left">
-                    <h1>Liste des événements</h1>
+                    <h1 class="fr-mb-0">Liste des événements</h1>
                 </div>
                 <div class="fr-col-12 fr-col-lg-4 fr-text--md-right">
                     <a href="{{ path('back_config_club_event_add') }}" class="fr-btn fr-btn--icon-left fr-icon-add-line fr-btn--block fr-btn--md-inline" title="Ajouter un événement">Ajouter un événement</a>
@@ -25,7 +25,11 @@
     </section>
     {{ form_start(form) }}
 
-    <section class="fr-container--fluid overflow-visible">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-events',
+            'skiplink_label': 'Accéder à la liste des événements'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-3">
@@ -46,8 +50,14 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-my-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(clubEvents|length, 'événement trouvé', 'événements trouvés') }}</h2>
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+        <div id="list-events">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(clubEvents|length, 'événement trouvé', 'événements trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
 
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
@@ -55,7 +65,7 @@
     </section>
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-5v">
+    <section class="fr-col-12" id="table-list-results">
         {% set tableHead %}
             <th scope="col">ID évènement</th>
             <th scope="col" data-responsive-title="1">Nom et lien</th>
@@ -92,17 +102,20 @@
                         {% endfor %}
                     </td>
                     <td class="fr-cell--right fr-ws-nowrap">
-                        <a href="{{path('back_config_club_event_edit', {id: event.id})}}" class="fr-btn fr-icon-edit-line" title="Editer l'événement {{event.name}}">
-                            Editer l'événement {{ event.name }}
-                        </a>
-                        <a href="{{path('back_config_club_event_copy', {id: event.id})}}" class="fr-btn fr-icon-add-circle-fill" title="Dupliquer l'événement {{event.name}}">
-                            Dupliquer l'événement {{ event.name }}
-                        </a>
+                        <a href="{{path('back_config_club_event_edit', {id: event.id})}}" class="fr-btn fr-icon-edit-line"
+                            aria-label="Éditer l'événement {{ event.name }}"
+                            title="Éditer l'événement {{ event.name }}"
+                            >Éditer l'événement {{ event.name }}</a>
+                        <a href="{{path('back_config_club_event_copy', {id: event.id})}}" class="fr-btn fr-icon-add-circle-fill"
+                            aria-label="Dupliquer l'événement {{ event.name }}"
+                            title="Dupliquer l'événement {{ event.name }}"
+                            >Dupliquer l'événement {{ event.name }}</a>
                         <form method="post" class="fr-display-inline-flex" action="{{path('back_config_club_event_delete', {id: event.id})}}">
                             <input type="hidden" name="_token" value="{{ csrf_token('club_event_delete') }}">
-                            <button type="submit" class="fr-btn fr-btn--secondary fr-icon-delete-line"  title="Supprimer l'événement {{event.name}}">
-                                Supprimer l'événement {{ event.name }}
-                            </button>
+                            <button type="submit" class="fr-btn fr-btn--secondary fr-icon-delete-line"
+                                aria-label="Supprimer l'événement {{ event.name }}"
+                                title="Supprimer l'événement {{ event.name }}"
+                                >Supprimer l'événement {{ event.name }}</button>
                         </form>
                     </td>
                 </tr>
@@ -110,7 +123,7 @@
         {% endset %}
         {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des événements', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des événements">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchClubEvent.page, 'back_config_club_event_index', searchClubEvent.urlParams) }}
         </div>

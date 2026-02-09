@@ -41,7 +41,7 @@ class SearchServiceSecoursRouteType extends AbstractType
             'data_class' => SearchServiceSecoursRoute::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-service-secours-route-form', 'class' => 'fr-p-5v bo-filter-form'],
+            'attr' => ['id' => 'search-service-secours-route-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 
