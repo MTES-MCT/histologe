@@ -3,6 +3,7 @@
 namespace App\Service\Gouv\Ban;
 
 use App\Service\Gouv\Ban\Response\Address;
+use App\Service\Gouv\Ban\Response\Poi;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -29,6 +30,21 @@ class AddressService
 
             if (Response::HTTP_OK === $response->getStatusCode()) {
                 return $response->toArray();
+            }
+        } catch (\Throwable $exception) {
+            $this->logger->error($exception->getMessage());
+        }
+
+        return null;
+    }
+
+    public function getMunicipalityByCityCode(string $cityName, string $cityCode): ?Poi
+    {
+        try {
+            $url = self::API_URL.urlencode($cityName).'&citycode='.urlencode($cityCode).'&index=poi&category=commune&autocomplete=0'.self::API_PARAM_LIMIT;
+            $response = $this->httpClient->request('GET', $url);
+            if (Response::HTTP_OK === $response->getStatusCode()) {
+                return new Poi($response->toArray());
             }
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
