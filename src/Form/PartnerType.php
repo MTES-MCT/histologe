@@ -225,7 +225,10 @@ class PartnerType extends AbstractType
             $user = $this->userRepository->findOneBy(['email' => $partner->getEmail()]);
 
             if (!empty($user) && !$user->isUsager()) {
-                $context->addViolation('Un utilisateur existe déjà avec cette adresse e-mail.');
+                $context
+                    ->buildViolation('Un utilisateur existe déjà avec cette adresse e-mail.')
+                    ->atPath('email')
+                    ->addViolation();
             }
         }
     }
